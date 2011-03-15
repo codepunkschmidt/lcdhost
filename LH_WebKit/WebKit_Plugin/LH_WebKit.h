@@ -45,6 +45,8 @@
 #include "../../LH_QtInstance.h"
 #include "../../LH_Qt_QSlider.h"
 #include "../../LH_Qt_QProgressBar.h"
+#include "../../LH_Qt_bool.h"
+#include "../../LH_Qt_QTextEdit.h"
 #include "../WebKitCommand.h"
 
 extern LH_QtPlugin_WebKit thePlugin;
@@ -63,12 +65,18 @@ class LH_WebKit : public LH_QtInstance
 
     void sendData(bool resize = false );
 
+    QString getParsedHtml();
+
 protected:
+    LH_Qt_bool *setup_parse_;
+    LH_Qt_QTextEdit *setup_regexp_;
+    LH_Qt_QTextEdit *setup_template_;
+
     LH_Qt_QSlider *zoom_;
     LH_Qt_QProgressBar *progress_;
 
 public:
-    LH_WebKit( const char *name );
+    LH_WebKit( const char *name, const bool enableParsing = false);
     ~LH_WebKit();
 
     int notify(int, void *);
@@ -86,6 +94,7 @@ public slots:
     void error(QLocalSocket::LocalSocketError);
     void connected();
     void disconnected();
+    void reparse();
 };
 
 #endif // LH_WEBKIT_H

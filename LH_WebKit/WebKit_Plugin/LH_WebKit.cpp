@@ -35,11 +35,23 @@
 
 #include <QDebug>
 #include <QtNetwork>
+#include <QRegExp>
 
 #include "LH_WebKit.h"
 
-LH_WebKit::LH_WebKit( const char *name ) : LH_QtInstance(name)
+LH_WebKit::LH_WebKit( const char *name, const bool enableParsing) : LH_QtInstance(name)
 {
+
+    int parseFlags = (!enableParsing? LH_FLAG_HIDDEN | LH_FLAG_READONLY | LH_FLAG_NOSAVE : 0);
+
+    setup_parse_ = new LH_Qt_bool(this, "Enable Parsing", false, parseFlags);
+    connect( setup_parse_, SIGNAL(changed()), this, SLOT(reparse()) );
+    setup_regexp_ = new LH_Qt_QTextEdit(this, "Parsing Expression", "(.*)", parseFlags | LH_FLAG_HIDDEN);
+    connect( setup_regexp_, SIGNAL(changed()), this, SLOT(reparse()) );
+    setup_template_ = new LH_Qt_QTextEdit(this, "Parsing Template", "\\1", parseFlags | LH_FLAG_HIDDEN);
+    connect( setup_template_, SIGNAL(changed()), this, SLOT(reparse()) );
+
+
     zoom_ = new LH_Qt_QSlider(this,"Zoom",10,1,20,LH_FLAG_FOCUS);
     zoom_->setOrder(1);
     connect( zoom_, SIGNAL(change(int)), this, SLOT(zoomChanged(int)) );
@@ -186,11 +198,28 @@ void LH_WebKit::sendData( bool resize )
             else
             {
                 // qDebug() << "LH_WebKit: sending data" << scaled_size << url_ << html_.size();
-                WebKitCommand(0, scaled_size,url_,html_).write(sock_);
+                WebKitCommand(0, scaled_size,url_,getParsedHtml()).write(sock_);
                 sent_html_ = true;
             }
         }
     }
+}
+
+QString LH_WebKit::getParsedHtml()
+{
+    if (setup_parse_->value())
+    {
+        QString parsedHtml = setup_template_->value();
+        QRegExp rx(setup_regexp_->value(), Qt::CaseInsensitive, QRegExp::RegExp2 );
+        if (rx.indexIn(html_)!=-1)
+        {
+            for(int i=1; i <= rx.captureCount(); i++)
+                parsedHtml = parsedHtml.replace(QRegExp(QString("\\\\%1(?=[^0-9]|$)").arg(i), Qt::CaseInsensitive, QRegExp::RegExp2), rx.cap(i) );
+        }
+        return parsedHtml;
+    }
+    else
+        return html_;
 }
 
 void LH_WebKit::sendRequest( QUrl url, QString html )
@@ -255,4 +284,13 @@ void LH_WebKit::readyRead()
     lastpong_ = QTime::currentTime();
     memset( &kitdata_, 0, sizeof(kitdata_) );
     callback( lh_cb_render, 0 );
+}
+
+void LH_WebKit::reparse()
+{
+    setup_regexp_->setFlag(LH_FLAG_HIDDEN, !setup_parse_->value());
+    setup_template_->setFlag(LH_FLAG_HIDDEN, !setup_parse_->value());
+    sent_html_ = false;
+    sendData(false);
+    requestRender();
 }

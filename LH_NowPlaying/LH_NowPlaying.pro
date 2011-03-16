@@ -8,6 +8,9 @@ DEFINES += LH_NOWPLAYING_LIBRARY
 
 include(../Plugins.pri)
 
+# We don't want warnings from 3rd party C code
+QMAKE_CFLAGS_WARN_ON = -w
+
 SOURCES += ../lh_plugin.c \
     ../LH_QtPlugin.cpp \
     ../LH_QtObject.cpp \

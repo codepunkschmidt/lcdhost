@@ -23,6 +23,17 @@ LH_RSSBody::LH_RSSBody(const char *name) : LH_WebKit(name, true)
     connect( rss_, SIGNAL(changed()), this, SLOT(setRssItem()) );
     connect( rss_, SIGNAL(begin()), this, SLOT(beginFetch()) );
 
+    setup_template_->setHelp(setup_template_->help() + ""
+                             "<br><b>\\title</b> : RSS item title "
+                             "<br><b>\\author</b> : RSS item author "
+                             "<br><b>\\link</b> : RSS item link url "
+                             "<br><b>\\pubDate</b> : RSS item published date "
+                             "<br><b>\\thumbnail_url</b> : RSS item thumbnail url "
+                             "<br><b>\\thumbnail_height</b> : RSS item thumbnail height "
+                             "<br><b>\\thumbnail_width</b> : RSS item thumbnail width "
+
+                             );
+
     setRssItem();
 }
 
@@ -34,31 +45,25 @@ int LH_RSSBody::notify(int code,void* param)
 void LH_RSSBody::setRssItem()
 {
     sendRequest( QUrl::fromLocalFile( QString::fromUtf8( state()->dir_layout ) + "/" ), rss_->item().description );
-    //if( setText(rss_->item().title) ) requestRender();
 }
 
-/*QImage *LH_RSSBody::render_qimage( int w, int h )
+QString LH_RSSBody::getParsedHtml()
 {
-    if( !prepareForRender(w,h) ) return NULL;
-
-    QPainter painter;
-    if( painter.begin(image_) )
+    if (setup_parse_->value())
     {
-        QRectF target;
-
-        target.setSize( textimage().size() );
-        target.moveLeft( image_->width()/2 - textimage().width()/2 );
-        target.moveTop( image_->height()/2 - textimage().height()/2 );
-
-        if( textimage().width() > image_->width() )
-            target.moveLeft( 0 );
-
-        painter.drawImage( target, textimage(), textimage().rect() );
-        painter.end();
+        QString parsedHtml = LH_WebKit::getParsedHtml();
+        parsedHtml = parseToken(parsedHtml, "title",            rss_->item().title );
+        parsedHtml = parseToken(parsedHtml, "author",           rss_->item().author );
+        parsedHtml = parseToken(parsedHtml, "link",             rss_->item().link );
+        parsedHtml = parseToken(parsedHtml, "pubDate",          rss_->item().pubDate );
+        parsedHtml = parseToken(parsedHtml, "thumbnail_url",    rss_->item().thumbnail.url );
+        parsedHtml = parseToken(parsedHtml, "thumbnail_height", QString::number(rss_->item().thumbnail.height) );
+        parsedHtml = parseToken(parsedHtml, "thumbnail_width",  QString::number(rss_->item().thumbnail.width) );
+        return parsedHtml;
     }
-
-    return image_;
-}*/
+    else
+        return html_;
+}
 
 void LH_RSSBody::beginFetch()
 {

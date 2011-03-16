@@ -57,7 +57,6 @@ class LH_WebKit : public LH_QtInstance
 
     QSize size_;
     QUrl url_;
-    QString html_;
     QLocalSocket *sock_;
     QTime lastpong_;
     bool sent_html_;
@@ -65,9 +64,11 @@ class LH_WebKit : public LH_QtInstance
 
     void sendData(bool resize = false );
 
-    QString getParsedHtml();
-
 protected:
+    QString parseToken(QString beforeParsing, QString token, QString value, QString lookAheadChars = "0-9a-zA-Z_" );
+    QString virtual getParsedHtml();
+    QString html_;
+
     LH_Qt_bool *setup_parse_;
     LH_Qt_QTextEdit *setup_regexp_;
     LH_Qt_QTextEdit *setup_template_;

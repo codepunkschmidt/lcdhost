@@ -44,14 +44,6 @@ LH_WebKit::LH_WebKit( const char *name, const bool enableParsing) : LH_QtInstanc
 
     int parseFlags = (!enableParsing? LH_FLAG_HIDDEN | LH_FLAG_READONLY | LH_FLAG_NOSAVE : 0);
 
-    setup_parse_ = new LH_Qt_bool(this, "Enable Parsing", false, parseFlags);
-    connect( setup_parse_, SIGNAL(changed()), this, SLOT(reparse()) );
-    setup_regexp_ = new LH_Qt_QTextEdit(this, "Parsing Expression", "(.*)", parseFlags | LH_FLAG_HIDDEN);
-    connect( setup_regexp_, SIGNAL(changed()), this, SLOT(reparse()) );
-    setup_template_ = new LH_Qt_QTextEdit(this, "Parsing Template", "\\1", parseFlags | LH_FLAG_HIDDEN);
-    connect( setup_template_, SIGNAL(changed()), this, SLOT(reparse()) );
-
-
     zoom_ = new LH_Qt_QSlider(this,"Zoom",10,1,20,LH_FLAG_FOCUS);
     zoom_->setOrder(1);
     connect( zoom_, SIGNAL(change(int)), this, SLOT(zoomChanged(int)) );
@@ -63,6 +55,23 @@ LH_WebKit::LH_WebKit( const char *name, const bool enableParsing) : LH_QtInstanc
     lastpong_ = QTime::currentTime();
     sent_html_ = false;
     memset( &kitdata_, 0, sizeof(kitdata_) );
+
+    setup_parse_ = new LH_Qt_bool(this, "Enable Parsing", false, parseFlags | LH_FLAG_LAST);
+    setup_parse_->setHelp("Enabling this allows you to extract or reformat the html data.<br><br>N.B.: This requires an understanding of regular expressions and HTML.");
+    connect( setup_parse_, SIGNAL(changed()), this, SLOT(reparse()) );
+
+    setup_regexp_ = new LH_Qt_QTextEdit(this, "Parsing Expression", "(.*)", parseFlags | LH_FLAG_HIDDEN | LH_FLAG_LAST);
+    setup_regexp_->setHelp("This is a \"Regular Expression\" and parses the entire web page. Use capture groups to extract data. Note that the expression is only applied once; also as this is a regualar expression, be careful to ensure there are no undesired trailing spaces or carridge returns etc as they will affect the matching.");
+    connect( setup_regexp_, SIGNAL(changed()), this, SLOT(reparse()) );
+
+    setup_template_ = new LH_Qt_QTextEdit(this, "Parsing Template", "\\1", parseFlags | LH_FLAG_HIDDEN | LH_FLAG_LAST);
+    setup_template_->setHelp("This contains the html that will be displayed with any tokens from the regular expression.<br>"
+                             "<br>Tokens:"
+                             "<br><b>\\n</b> : To place the first capture group in the template, use the token \\1, the second one \\2, the third is \\3 etc."
+                             "<br><b>\\layout_path</b> : This token represents the path of the currently loaded layout; "
+                             "<br>e.g. &lt;img src=\"file:///\\layout_path/Wallpaper.png\"&gt;"
+                             );
+    connect( setup_template_, SIGNAL(changed()), this, SLOT(reparse()) );
 
     return;
 }
@@ -205,6 +214,12 @@ void LH_WebKit::sendData( bool resize )
     }
 }
 
+QString LH_WebKit::parseToken(QString beforeParsing, QString token, QString value, QString lookAheadChars)
+{
+    QString regExp = QString("\\\\%1(?=[^%2]|$)").arg(token).arg(lookAheadChars);
+    return beforeParsing.replace(QRegExp(regExp, Qt::CaseInsensitive, QRegExp::RegExp2), value  );
+}
+
 QString LH_WebKit::getParsedHtml()
 {
     if (setup_parse_->value())
@@ -212,10 +227,13 @@ QString LH_WebKit::getParsedHtml()
         QString parsedHtml = setup_template_->value();
         QRegExp rx(setup_regexp_->value(), Qt::CaseInsensitive, QRegExp::RegExp2 );
         if (rx.indexIn(html_)!=-1)
-        {
             for(int i=1; i <= rx.captureCount(); i++)
-                parsedHtml = parsedHtml.replace(QRegExp(QString("\\\\%1(?=[^0-9]|$)").arg(i), Qt::CaseInsensitive, QRegExp::RegExp2), rx.cap(i) );
-        }
+                parsedHtml = parseToken(parsedHtml, QString::number(i), rx.cap(i), "0-9" );
+
+        QString layoutPath = state()->dir_layout;
+        if (layoutPath.endsWith('\\') || layoutPath.endsWith('/'))
+            layoutPath = layoutPath.left(layoutPath.length()-1);
+        parsedHtml = parseToken(parsedHtml, "layout_path", layoutPath );
         return parsedHtml;
     }
     else

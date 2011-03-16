@@ -31,7 +31,6 @@ LH_RSSBody::LH_RSSBody(const char *name) : LH_WebKit(name, true)
                              "<br><b>\\thumbnail_url</b> : RSS item thumbnail url "
                              "<br><b>\\thumbnail_height</b> : RSS item thumbnail height "
                              "<br><b>\\thumbnail_width</b> : RSS item thumbnail width "
-
                              );
 
     setRssItem();

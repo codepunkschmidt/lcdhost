@@ -47,13 +47,12 @@ LH_RSSInterface::~LH_RSSInterface()
 
 QString LH_RSSInterface::getDefaultURL()
 {
-    if(rssFeeds==NULL)
-        return "";
-    if(rssFeeds->count()==0)
-        return "";
-    for(int i=0; i<rssFeeds->count(); i++)
-        if(rssFeeds->keys().at(i)!="") return rssFeeds->keys().at(i);
-    return "";
+    if( rssFeeds )
+    {
+        for(int i=0; i<rssFeeds->count(); i++)
+            if( !rssFeeds->keys().at(i).isEmpty() ) return rssFeeds->keys().at(i);
+    }
+    return QString();
 }
 
 LH_RSSFeed* LH_RSSInterface::getFeed()

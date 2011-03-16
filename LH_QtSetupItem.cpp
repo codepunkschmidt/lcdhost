@@ -95,3 +95,8 @@ void LH_QtSetupItem::setHelp(QString s)
     else help_ = s.toUtf8();
     item_.help = help_.constData();
 }
+
+QString LH_QtSetupItem::help()
+{
+    return QString::fromUtf8(help_);
+}

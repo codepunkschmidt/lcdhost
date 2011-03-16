@@ -240,10 +240,12 @@ void LH_RSSFeed::parseXml()
             if( xml_.name() == "thumbnail" )
             {
                 item.thumbnail.url = xml_.text().toString();
+                if(xml_.attributes().hasAttribute("url"))
+                    item.thumbnail.url = xml_.attributes().value("url").toString();
                 if(xml_.attributes().hasAttribute("width"))
                     item.thumbnail.width = xml_.attributes().value("width").toString().toInt();
                 if(xml_.attributes().hasAttribute("height"))
-                    item.thumbnail.width = xml_.attributes().value("height").toString().toInt();
+                    item.thumbnail.height = xml_.attributes().value("height").toString().toInt();
             }
             currentTag = xml_.name().toString();
         }

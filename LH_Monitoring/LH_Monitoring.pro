@@ -73,7 +73,7 @@ HEADERS += \
     LH_RivaWriter.h \
     LH_AidaWriter.h \
     SpeedFan/LH_SpeedFanText.h \
-    ../lh_library.h \
+    ../lh_plugin.h \
     Logitech/LH_LogitechText.h \
     Logitech/LH_LogitechData.h \
     Logitech/LH_LogitechImage.h \

@@ -1,9 +1,7 @@
 TARGET = LH_NowPlaying
 TEMPLATE = lib
-CONFIG  += qaxserver \
-    QAxContainer
-QT += network \
-    xml
+win32: CONFIG  += qaxserver qaxcontainer
+QT += network xml
 DEFINES += LH_NOWPLAYING_LIBRARY
 
 include(../Plugins.pri)

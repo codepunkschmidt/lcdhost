@@ -37,6 +37,7 @@
 #include <QtNetwork>
 #include <QFileInfo>
 
+#include "LH_RSSInterface.h"
 #include "LH_QtPlugin_WebKit.h"
 #include "../WebKitCommand.h"
 
@@ -73,4 +74,20 @@ bool LH_QtPlugin_WebKit::sendQuit()
 void LH_QtPlugin_WebKit::lh_unload()
 {
     sendQuit();
+
+    if(rssFeeds != NULL)
+    {
+        for(int i=rssFeeds->count()-1; i>=0; i--)
+        {
+            QString url = rssFeeds->keys().at(i);
+            LH_RSSFeed* feed = rssFeeds->value(url);
+            rssFeeds->remove(url);
+            delete feed;
+        }
+        if(rssFeeds->count() == 0)
+        {
+            delete rssFeeds;
+            rssFeeds = NULL;
+        }
+    }
 }

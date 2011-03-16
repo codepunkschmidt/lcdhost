@@ -52,3 +52,4 @@ contains( TEMPLATE, lib ) {
             $$DESTDIR/$$TARGET
     }
 }
+

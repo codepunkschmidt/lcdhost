@@ -11,11 +11,13 @@ class LH_RSSBody : public LH_WebKit
 
     LH_RSSInterface* rss_;
 
+protected:
+    QString getParsedHtml();
+
 public:
     LH_RSSBody(const char *name);
 
     int notify(int code,void* param);
-    //QImage *render_qimage( int w, int h );
 
     static lh_class *classInfo();
 

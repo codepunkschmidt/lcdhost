@@ -71,6 +71,7 @@ public:
     QString name() const { return objectName(); }
     void setName(QString s);
     void setHelp(QString s);
+    QString help();
     lh_setup_item *item() { return &item_; }
 
     int order() const { return order_; }

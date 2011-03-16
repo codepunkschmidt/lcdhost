@@ -77,17 +77,13 @@ void LH_QtPlugin_WebKit::lh_unload()
 
     if(rssFeeds != NULL)
     {
-        for(int i=rssFeeds->count()-1; i>=0; i--)
+        while( !rssFeeds->isEmpty() )
         {
-            QString url = rssFeeds->keys().at(i);
-            LH_RSSFeed* feed = rssFeeds->value(url);
-            rssFeeds->remove(url);
-            delete feed;
+            QString url = rssFeeds->keys().at(0);
+            LH_RSSFeed* feed = rssFeeds->take(url);
+            if( feed ) delete feed;
         }
-        if(rssFeeds->count() == 0)
-        {
-            delete rssFeeds;
-            rssFeeds = NULL;
-        }
+        delete rssFeeds;
+        rssFeeds = NULL;
     }
 }

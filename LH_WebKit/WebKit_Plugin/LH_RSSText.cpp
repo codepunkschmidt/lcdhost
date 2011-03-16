@@ -38,6 +38,8 @@ LH_RSSText::LH_RSSText(const char *name) : LH_Text(name)
     setup_scrollrate_->setFlag( LH_FLAG_HIDDEN, true );
     setup_scrollstep_->setFlag( LH_FLAG_HIDDEN, true );
     setup_text_->setFlag( LH_FLAG_HIDDEN, true );
+    setup_text_->setFlag( LH_FLAG_NOSAVE, true );
+    setup_text_->setFlag( LH_FLAG_READONLY, true );
 
     setRssItem();
 }

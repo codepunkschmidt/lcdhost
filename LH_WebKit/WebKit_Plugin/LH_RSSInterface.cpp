@@ -33,6 +33,7 @@ LH_RSSInterface::LH_RSSInterface(LH_QtObject* parent)
     connect( setup_refresh_, SIGNAL(changed()), this, SLOT(changeRefresh()) );
 
     setup_modify_ = new LH_Qt_int(parent,tr("Modify Visible"),0,-20,20);
+    setup_modify_->setHelp("Use this to display a different item from the one that is currently active: set it to 1 for the \"next\" item, \"-1\" for the previous item, etc.");
     connect( setup_modify_, SIGNAL(changed()), this, SLOT(reemitChanged()) );
 
     connectRSS();

@@ -2,7 +2,7 @@
 #define LH_MONITORINGDIAL_H
 
 #include "LH_MonitoringData.h"
-#include "..\LH_Dial\LH_Dial.h"
+#include "../LH_Dial/LH_Dial.h"
 
 class LH_MonitoringDial : public LH_Dial
 {

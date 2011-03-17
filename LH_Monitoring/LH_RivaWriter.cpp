@@ -48,6 +48,7 @@ int LH_RivaWriter::notify(int code,void* param)
 
 bool LH_RivaWriter::updateRivaMemory()
 {
+#ifdef Q_WS_WIN
     const char* mapname = "MAHMSharedMemory";
     bool resultVal = true;
 
@@ -93,6 +94,9 @@ bool LH_RivaWriter::updateRivaMemory()
 
 
     return resultVal;
+#else
+    return false;
+#endif
 }
 
 QString LH_RivaWriter::reverse(QString str)
@@ -105,6 +109,7 @@ QString LH_RivaWriter::reverse(QString str)
 
 bool LH_RivaWriter::createRivaMemory(int entryCount, DWORD dwSignature)
 {
+#ifdef Q_WS_WIN
     const char* mapname_riva = "RTHMSharedMemory";
 
     DWORD sz = sizeof(RTHM_SHARED_MEMORY_HEADER) + entryCount * sizeof(RTHM_SHARED_MEMORY_ENTRY);
@@ -124,10 +129,17 @@ bool LH_RivaWriter::createRivaMemory(int entryCount, DWORD dwSignature)
             CloseHandle(filemap_riva);
     }
     return false;
+#else
+    Q_UNUSED(entryCount);
+    Q_UNUSED(dwSignature);
+    return false;
+#endif
 }
 
 void LH_RivaWriter::destroyRivaMemory()
 {
+#ifdef Q_WS_WIN
     if (RTHMHeader) UnmapViewOfFile(RTHMHeader);
     if (filemap_riva) CloseHandle(filemap_riva);
+#endif
 }

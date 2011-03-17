@@ -2,7 +2,6 @@
 #define LH_LOGITECHDATA_H
 
 #include "../_Templates/LH_MonitoringData.h"
-#include <windows.h>
 #include <QSettings>
 #include <QList>
 

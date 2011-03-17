@@ -176,6 +176,13 @@ bool LH_AfterburnerData::getData(float& value, QString& text, QString& units, QS
     setup_value_item_->setFlag(LH_FLAG_READONLY, !resultVal);
     return resultVal;
 #else
+    Q_UNUSED(value);
+    Q_UNUSED(text);
+    Q_UNUSED(units);
+    Q_UNUSED(format);
+    Q_UNUSED(min);
+    Q_UNUSED(max);
+    Q_UNUSED(index);
     return false;
 #endif
 }

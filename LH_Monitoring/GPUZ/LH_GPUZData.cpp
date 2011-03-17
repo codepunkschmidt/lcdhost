@@ -37,6 +37,7 @@ monitoringDataType LH_GPUZData::getType()
 
 bool LH_GPUZData::getData(float& value, QString& text, QString& units)
 {
+#ifdef Q_WS_WIN
     const char* mapname  = "GPUZShMem";
     float resultVal = true;
 
@@ -61,6 +62,12 @@ bool LH_GPUZData::getData(float& value, QString& text, QString& units)
 
     setup_value_type_->setFlag(LH_FLAG_READONLY, !resultVal);
     return resultVal;
+#else
+    Q_UNUSED(value);
+    Q_UNUSED(text);
+    Q_UNUSED(units);
+    return false;
+#endif
 }
 
 void LH_GPUZData::getSelectedValue(GPUZ_SH_MEM* gpuzMemory, float& value, QString& text, QString& units)

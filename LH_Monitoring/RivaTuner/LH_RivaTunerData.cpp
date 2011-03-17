@@ -88,8 +88,10 @@ bool LH_RivaTunerData::getData(float& value, QString& text, QString& units)
 {
     return (getData(value, text, units, getIndex()));
 }
+
 bool LH_RivaTunerData::getData(float& value, QString& text, QString& units, int index)
 {
+#ifdef Q_WS_WIN
     const char* mapname = "RTHMSharedMemory";
     bool resultVal = true;
 
@@ -121,6 +123,13 @@ bool LH_RivaTunerData::getData(float& value, QString& text, QString& units, int 
     setup_value_type_->setFlag(LH_FLAG_READONLY, !resultVal);
     setup_value_item_->setFlag(LH_FLAG_READONLY, !resultVal);
     return resultVal;
+#else
+    Q_UNUSED(value);
+    Q_UNUSED(text);
+    Q_UNUSED(index);
+    Q_UNUSED(units);
+    return false;
+#endif
 }
 
 void LH_RivaTunerData::getSelectedValue(RTHM_SHARED_MEMORY_HEADER* RTHMHeader, float& value, QString& text, QString& units, int index)
@@ -145,7 +154,7 @@ void LH_RivaTunerData::getSelectedValue(RTHM_SHARED_MEMORY_HEADER* RTHMHeader, f
                     if (index<(int)RTHMHeader->dwNumEntries && index >= 0)
                     {
                         valCount++;
-                        RTHM_SHARED_MEMORY_ENTRY* RTHMMemory = (RTHM_SHARED_MEMORY_ENTRY*)((LPBYTE)(RTHMHeader + 1) + index * RTHMHeader->dwEntrySize);
+                        RTHM_SHARED_MEMORY_ENTRY* RTHMMemory = (RTHM_SHARED_MEMORY_ENTRY*)((uchar*)(RTHMHeader + 1) + index * RTHMHeader->dwEntrySize);
 
                         float dataVal;
                         if (setup_value_format_->value())
@@ -182,7 +191,7 @@ void LH_RivaTunerData::getSelectedValue(RTHM_SHARED_MEMORY_HEADER* RTHMHeader, f
     } else
     if (index<(int)RTHMHeader->dwNumEntries)
     {
-        RTHM_SHARED_MEMORY_ENTRY* RTHMMemory = (RTHM_SHARED_MEMORY_ENTRY*)((LPBYTE)(RTHMHeader + 1) + index * RTHMHeader->dwEntrySize);
+        RTHM_SHARED_MEMORY_ENTRY* RTHMMemory = (RTHM_SHARED_MEMORY_ENTRY*)((uchar*)(RTHMHeader + 1) + index * RTHMHeader->dwEntrySize);
 
         if (setup_value_format_->value())
             value = RTHMMemory->dataTransformed;
@@ -219,7 +228,7 @@ void LH_RivaTunerData::loadTypesList(RTHM_SHARED_MEMORY_HEADER* RTHMHeader)
         sensors_.clear();
         while (i<RTHMHeader->dwNumEntries)
         {
-            RTHM_SHARED_MEMORY_ENTRY* RTHMMemory = (RTHM_SHARED_MEMORY_ENTRY*)((LPBYTE)(RTHMHeader + 1) + i * RTHMHeader->dwEntrySize);
+            RTHM_SHARED_MEMORY_ENTRY* RTHMMemory = (RTHM_SHARED_MEMORY_ENTRY*)((uchar*)(RTHMHeader + 1) + i * RTHMHeader->dwEntrySize);
             QString sensorName = QString(RTHMMemory->czSrc);
             if(rx.indexIn(reverse(sensorName)) >-1)
             {

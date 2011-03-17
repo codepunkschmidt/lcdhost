@@ -16,17 +16,16 @@ SOURCES += ../lh_plugin.c \
     LH_TextNowPlaying.cpp \
     LH_QtPlugin_NowPlaying.cpp \
     ../LH_Text/LH_Text.cpp \
-    ../LH_QtInstance.cpp \
-    wmp.c \
-    iTunesCOMInterface_i.c
+    ../LH_QtInstance.cpp
+
+win32: SOURCES += wmp.c iTunesCOMInterface_i.c
 
 HEADERS += ../lh_plugin.h \
     ../LH_QtPlugin.h \
     ../LH_QtObject.h \
     ../LH_QtSetupItem.h \
-    wmp.h \
-    wa_ipc.h \
-    iTunesCOMInterface.h \
     LH_QtPlugin_NowPlaying.h \
     ../LH_Text/LH_Text.h \
     ../LH_QtInstance.h
+
+win32: HEADERS += wmp.h wa_ipc.h iTunesCOMInterface.h

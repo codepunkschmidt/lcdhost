@@ -32,9 +32,11 @@ LH_FrapsData::~LH_FrapsData()
 
 }
 
+
 FRAPS_SHARED_DATA *(WINAPI *FrapsSharedData) ();
 bool LH_FrapsData::getData(float& value, QString& text, QString& units)
 {
+#ifdef Q_WS_WIN
     HMODULE frapsDLL;
     FRAPS_SHARED_DATA *fsd;
     frapsDLL = GetModuleHandleA("FRAPS32.DLL");
@@ -77,10 +79,17 @@ bool LH_FrapsData::getData(float& value, QString& text, QString& units)
         }
     }
     return resultVal;
+#else
+    Q_UNUSED(value);
+    Q_UNUSED(text);
+    Q_UNUSED(units);
+    return false;
+#endif
 }
 
 void LH_FrapsData::pingFraps()
 {
+#ifdef Q_WS_WIN
     if( FindWindowA( "#32770", NULL ) != (HWND)NULL )
     {
         HWND hWndLH = FindWindowA( "QWidget" , "LCDHost" );
@@ -94,6 +103,9 @@ void LH_FrapsData::pingFraps()
             DestroyWindow( hWnd );
         }
     }
+#else
+    return;
+#endif
 }
 
 monitoringDataType LH_FrapsData::getType()

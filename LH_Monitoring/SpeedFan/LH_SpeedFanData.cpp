@@ -88,6 +88,11 @@ bool LH_SpeedFanData::getData(float& value, QString& text, QString& units, int& 
     setup_value_index_->setFlag(LH_FLAG_READONLY, !resultVal);
     return resultVal;
 #else
+    Q_UNUSED(value);
+    Q_UNUSED(text);
+    Q_UNUSED(units);
+    Q_UNUSED(count);
+    Q_UNUSED(index);
     return false;
 #endif
 }

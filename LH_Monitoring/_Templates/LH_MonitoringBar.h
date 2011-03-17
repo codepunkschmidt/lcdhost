@@ -2,7 +2,7 @@
 #define LH_MONITORINGBAR_H
 
 #include "LH_MonitoringData.h"
-#include "..\LH_Bar\LH_Bar.h"
+#include "../LH_Bar/LH_Bar.h"
 
 class LH_MonitoringBar : public LH_Bar
 {

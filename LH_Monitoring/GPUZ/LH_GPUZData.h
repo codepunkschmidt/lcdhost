@@ -6,7 +6,9 @@
 #include "../LH_Qt_bool.h"
 #include "../LH_Qt_int.h"
 
-#include <windows.h>
+#ifdef Q_WS_WIN
+# include <windows.h>
+#endif
 #include "../_Templates/LH_MonitoringData.h"
 
 // pragma pack is included here because the struct is a pascal Packed Record,
@@ -14,33 +16,30 @@
 // 2-byte records.
 #define MAX_RECORDS 128
 
-#pragma pack(push, 1)
-
+#pragma pack(1)
 // This is the struct we're using to access the shared memory.
 struct GPUZ_RECORD
 {
-WCHAR key[256];
-WCHAR value[256];
+wchar_t key[256];
+wchar_t value[256];
 };
 
 struct GPUZ_SENSOR_RECORD
 {
-WCHAR name[256];
-WCHAR unit[8];
-UINT32 digits;
+wchar_t name[256];
+wchar_t unit[8];
+quint32 digits;
 double value;
 };
 
 struct GPUZ_SH_MEM
 {
-UINT32 version; // Version number, 1 for the struct here
-volatile LONG busy;	 // Is data being accessed?
-UINT32 lastUpdate; // GetTickCount() of last update
+quint32 version; // Version number, 1 for the struct here
+volatile long busy;	 // Is data being accessed?
+quint32 lastUpdate; // GetTickCount() of last update
 GPUZ_RECORD data[MAX_RECORDS];
 GPUZ_SENSOR_RECORD sensors[MAX_RECORDS];
 };
-#pragma pack(pop)
-
 #pragma pack()
 
 class LH_GPUZData: public LH_MonitoringData

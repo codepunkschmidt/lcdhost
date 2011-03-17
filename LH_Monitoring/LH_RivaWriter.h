@@ -2,7 +2,22 @@
 #define LH_RIVAWRITER_H
 
 #include "../LH_Text/LH_Text.h"
-#include <windows.h>
+
+#ifdef Q_WS_WIN
+# include <windows.h>
+#endif
+
+#ifndef DWORD
+# define DWORD quint32
+#endif
+
+#ifndef MAX_PATH
+# define MAX_PATH 260
+#endif
+
+#ifndef HANDLE
+# define HANDLE qptrdiff
+#endif
 
 // MSI Afterburner Data
 struct MAHM_SHARED_MEMORY_HEADER

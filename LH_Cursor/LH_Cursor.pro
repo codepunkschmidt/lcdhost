@@ -22,7 +22,8 @@ HEADERS += \
     ../LH_Qt_QFileInfo.h \
     LH_CursorImage.h \
     LH_CursorAction.h \
-    LH_QuickAction.h
+    LH_QuickAction.h \
+    LH_CursorInstance.h
 
 SOURCES += \
     LH_CursorController.cpp \
@@ -36,4 +37,5 @@ SOURCES += \
     ../LH_QtInstance.cpp \
     LH_CursorImage.cpp \
     LH_CursorAction.cpp \
-    LH_QuickAction.cpp
+    LH_QuickAction.cpp \
+    LH_CursorInstance.cpp

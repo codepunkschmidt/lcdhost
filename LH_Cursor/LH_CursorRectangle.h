@@ -32,8 +32,9 @@
 #include "../LH_Qt_QColor.h"
 #include "../LH_Qt_QString.h"
 #include "../LH_Qt_QFileInfo.h"
+#include "LH_CursorInstance.h"
 
-#include <LH_CursorStructs.h>
+// #include <LH_CursorStructs.h>
 
 #include <QHash>
 
@@ -47,11 +48,10 @@ struct colorMapData
 };
 
 
-class LH_CursorRectangle : public LH_QtInstance
+class LH_CursorRectangle : public LH_CursorInstance
 {
     Q_OBJECT
 
-    cursorData getCursorData();
     bool updateState();
     void applyOverrides();
     void applyOverrides(QString testState, LH_Qt_bool *testOverride, LH_Qt_QColor *testCol1, LH_Qt_QColor *testCol2);

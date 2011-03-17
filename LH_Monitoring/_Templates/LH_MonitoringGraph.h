@@ -2,7 +2,7 @@
 #define LH_MONITORINGGRAPH_H
 
 #include "LH_MonitoringData.h"
-#include "..\LH_Graph\LH_Graph.h"
+#include "../LH_Graph/LH_Graph.h"
 
 class LH_MonitoringGraph : public LH_Graph
 {

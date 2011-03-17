@@ -42,7 +42,7 @@ lh_class *LH_CursorAction::classInfo()
     return &classInfo;
 }
 
-LH_CursorAction::LH_CursorAction(const char *name, LH_QtPlugin *parent ) : LH_QtInstance( name, 0, parent )
+LH_CursorAction::LH_CursorAction(const char *name, LH_QtPlugin *parent ) : LH_CursorInstance( name, parent )
 {
     waiting = false;
     selected = false;
@@ -130,62 +130,12 @@ int LH_CursorAction::polling()
     return 200;
 }
 
-cursorData LH_CursorAction::getCursorData()
-{
-    cursorData resultData;
-
-    const char* mapname  = "LHCursorSharedMemory";
-    // Create file mapping
-    HANDLE memMap = (HANDLE)CreateFileMappingA(INVALID_HANDLE_VALUE,NULL,PAGE_READWRITE,0,sizeof(cursorData),mapname);
-    if(memMap)
-    {
-        cursorData* cursor_location_ = (cursorData*)MapViewOfFile(memMap, FILE_MAP_READ, 0, 0, sizeof(cursorData));
-
-        if (cursor_location_) {
-            resultData = *cursor_location_;
-            UnmapViewOfFile(cursor_location_);
-        }
-
-        CloseHandle(memMap);
-    }
-
-    return resultData;
-}
-
-void LH_CursorAction::setCursorData( cursorData cd )
-{
-    const char* mapname  = "LHCursorSharedMemory";
-    // Create file mapping
-    HANDLE memMap = (HANDLE)CreateFileMappingA(INVALID_HANDLE_VALUE,NULL,PAGE_READWRITE,0,sizeof(cursorData),mapname);
-    if(memMap)
-    {
-        cursorData* cursor_location_ = (cursorData*)MapViewOfFile(memMap, FILE_MAP_READ|FILE_MAP_WRITE, 0, 0, sizeof(cursorData));
-
-        if (cursor_location_) {
-            cursor_location_->active = cd.active;
-            cursor_location_->lastSelSet = cd.lastSelSet;
-            cursor_location_->lastSelX = cd.lastSelX;
-            cursor_location_->lastSelY = cd.lastSelY;
-            cursor_location_->selState = cd.selState;
-            cursor_location_->selX = cd.selX;
-            cursor_location_->selY = cd.selY;
-            cursor_location_->x = cd.x;
-            cursor_location_->y = cd.y;
-            cursor_location_->sendSelect = cd.sendSelect;
-            cursor_location_->lastSelX2 = cd.lastSelX2;
-            cursor_location_->lastSelY2 = cd.lastSelY2;
-            cursor_location_->range = cd.range;
-            UnmapViewOfFile(cursor_location_);
-        }
-
-        CloseHandle(memMap);
-    }
-}
 
 
 bool LH_CursorAction::updateState()
 {
-    cursorData cd = getCursorData();
+    cursorData cd;
+    getCursorData(cd);
     QStringList mycoords = setup_coordinate_->value().split(';');
 
     bool newSelected = false;
@@ -263,14 +213,16 @@ void LH_CursorAction::fire(int startAt)
             }else
             if(typeCode=="move")
             {
-                cursorData cd = getCursorData();
+                cursorData cd;
+                getCursorData(cd);
                 cd.x = action.getParameter(e,0).toInt();
                 cd.y = action.getParameter(e,1).toInt();
                 setCursorData(cd);
             }else
             if(typeCode=="select")
             {
-                cursorData cd = getCursorData();
+                cursorData cd;
+                getCursorData(cd);
                 cd.x = action.getParameter(e,0).toInt();
                 cd.y = action.getParameter(e,1).toInt();
                 cd.sendSelect = true;
@@ -278,19 +230,22 @@ void LH_CursorAction::fire(int startAt)
             }else
             if(typeCode=="deselect")
             {
-                cursorData cd = getCursorData();
+                cursorData cd;
+                getCursorData(cd);
                 cd.selState = false;
                 setCursorData(cd);
             }else
             if(typeCode=="deactivate")
             {
-                cursorData cd = getCursorData();
+                cursorData cd;
+                getCursorData(cd);
                 cd.active = false;
                 setCursorData(cd);
             }else
             if(typeCode=="reselect")
             {
-                cursorData cd = getCursorData();
+                cursorData cd;
+                getCursorData(cd);
                 cd.x = cd.lastSelX2;
                 cd.y = cd.lastSelY2;
                 cd.sendSelect = true;
@@ -304,7 +259,8 @@ void LH_CursorAction::fire(int startAt)
 void LH_CursorAction::doJumpTo(QString key, int flags, int value)
 {
     QString coord = setup_coordinate_->value().split(';')[0];
-    cursorData cd = getCursorData();
+    cursorData cd;
+    getCursorData(cd);
     cd.x = coord.split(',')[0].toInt();
     cd.y = coord.split(',')[1].toInt();
     cd.sendSelect = true;
@@ -360,6 +316,8 @@ void LH_CursorAction::actionSelected()
     QDomDocument actionsXML("actionsXML");
     if(actionsXML.setContent(setup_actions_xml_->value()) && actionsXML.firstChild().childNodes().count()!=0 && setup_actions_->value()!=-1)
     {
+        cursorData cd;
+        getCursorData(cd);
         QDomElement e = actionsXML.firstChild().childNodes().at(setup_actions_->value()).toElement();
         QString typeCode = e.attribute("type");
 
@@ -367,8 +325,8 @@ void LH_CursorAction::actionSelected()
         setup_action_desc_->setValue( e.attribute("desc") );
         setup_action_index_->setValue( setup_actions_->value() );
 
-        actionTypes_.at(typeCode).displayParameter(0,setup_action_parameter1_desc_,setup_action_parameter1_str_,setup_action_parameter1_int_,setup_action_parameter1_file_, getCursorData(), e);
-        actionTypes_.at(typeCode).displayParameter(1,setup_action_parameter2_desc_,setup_action_parameter2_str_,setup_action_parameter2_int_,setup_action_parameter2_file_, getCursorData(), e);
+        actionTypes_.at(typeCode).displayParameter(0,setup_action_parameter1_desc_,setup_action_parameter1_str_,setup_action_parameter1_int_,setup_action_parameter1_file_, cd, e);
+        actionTypes_.at(typeCode).displayParameter(1,setup_action_parameter2_desc_,setup_action_parameter2_str_,setup_action_parameter2_int_,setup_action_parameter2_file_, cd, e);
 
         setup_action_enabled_->setValue( e.attribute("enabled")!="false" );
     }
@@ -376,6 +334,8 @@ void LH_CursorAction::actionSelected()
 
 void LH_CursorAction::actionEdited()
 {
+    cursorData cd;
+    getCursorData(cd);
     if(setup_actions_->list().count()==0) return;
     actionType at = actionTypes_.at(setup_action_type_->value());
 
@@ -385,8 +345,8 @@ void LH_CursorAction::actionEdited()
     paramValues.append( at.getParameterValue(1,setup_action_parameter2_str_,setup_action_parameter2_int_,setup_action_parameter2_file_));
 
     //in case the type has changed, update the parameter visibility
-    at.displayParameter(0,setup_action_parameter1_desc_,setup_action_parameter1_str_,setup_action_parameter1_int_,setup_action_parameter1_file_, getCursorData());
-    at.displayParameter(1,setup_action_parameter2_desc_,setup_action_parameter2_str_,setup_action_parameter2_int_,setup_action_parameter2_file_, getCursorData());
+    at.displayParameter(0,setup_action_parameter1_desc_,setup_action_parameter1_str_,setup_action_parameter1_int_,setup_action_parameter1_file_, cd);
+    at.displayParameter(1,setup_action_parameter2_desc_,setup_action_parameter2_str_,setup_action_parameter2_int_,setup_action_parameter2_file_, cd);
 
     //Update the caption in case the description or enabled state has changed
     QString desc = (setup_action_desc_->value()==""? at.description : setup_action_desc_->value());

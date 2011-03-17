@@ -1,7 +1,10 @@
 /**
   \file     LH_CursorPage.h
   \author   Andy Bridges <triscopic@codeleap.co.uk>
+  \author   Johan Lindh <johan@linkdata.se>
   \legalese Copyright (c) 2010,2011 Andy Bridges
+  \legalese Copyright (c) 2011 Johan Lindh
+
     Permission is hereby granted, free of charge, to any person obtaining a copy
     of this software and associated documentation files (the "Software"), to deal
     in the Software without restriction, including without limitation the rights
@@ -31,16 +34,16 @@
 #include "../LH_Qt_QString.h"
 #include "../LH_Qt_bool.h"
 #include "../LH_Qt_QStringList.h"
+#include "LH_CursorInstance.h"
 
-#include <LH_CursorStructs.h>
+// #include <LH_CursorStructs.h>
 
-class LH_CursorPage:public LH_QtInstance
+class LH_CursorPage : public LH_CursorInstance
 {
     Q_OBJECT
 
     bool active;
     bool selected;
-    cursorData getCursorData();
     bool updateState();
 
 protected:
@@ -49,7 +52,6 @@ protected:
 
 public:
     LH_CursorPage( const char * name, LH_QtPlugin *parent = 0 );
-    ~LH_CursorPage();
 
     int polling();
     int width( int forHeight = -1 );

@@ -32,9 +32,9 @@ protected:
     bool is_group_;
 
     // get the selected data item
-    virtual bool getData(float& value, QString& text, QString& units) { return false; }
+    virtual bool getData(float& , QString& , QString& ) { return false; }
     // get the specified data item (for grouped data items, e.g. averages etc)
-    virtual bool getData(float& value, QString& text, QString& units, int index) { return false; }
+    virtual bool getData(float& , QString& , QString& , int ) { return false; }
 
     float getValueFromSet(int index, int count, float valueSet[]);
     float getValueFromSet(int index, int count, unsigned int valueSet[]);
@@ -53,8 +53,8 @@ public:
     virtual monitoringDataType getType() {return mdtInt;}
     virtual int getThreshMin() {return 0;}
     virtual int getThreshMax();
-    virtual bool getGraphMin(float& min) {return false;}
-    virtual bool getGraphMax(float& max) {return false;}
+    virtual bool getGraphMin(float& ) {return false;}
+    virtual bool getGraphMax(float& ) {return false;}
     virtual bool getNames(QStringList& names);
     virtual bool getValue(float& value);
     virtual bool getValue(float& value, int index);
@@ -63,7 +63,7 @@ public:
 
     // if a sensor reports a specific value when the sensor is dead or disconnected,
     // define the value here:
-    virtual bool getDeadValue(float& value) {return false;}
+    virtual bool getDeadValue(float& ) {return false;}
     // if the data value has to be transformed before plotting, apply the transformation
     // here (e.g. speedfan reports all temperature values multiplied 100, so these need
     // to be divided by 100 before displaying them)

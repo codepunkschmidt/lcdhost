@@ -33,8 +33,9 @@
 #include "../LH_Qt_QFileInfo.h"
 #include "../LH_Qt_int.h"
 #include "../LH_Qt_bool.h"
+#include "LH_CursorInstance.h"
 
-#include <LH_CursorStructs.h>
+// #include <LH_CursorStructs.h>
 
 #include <QHash>
 #include <QList>
@@ -257,13 +258,11 @@ public:
     }
 };
 
-class LH_CursorAction: public LH_QtInstance
+class LH_CursorAction : public LH_CursorInstance
 {
     Q_OBJECT
     actionTypes actionTypes_;
 
-    cursorData getCursorData();
-    void setCursorData( cursorData );
     bool updateState();
 
     bool fired;

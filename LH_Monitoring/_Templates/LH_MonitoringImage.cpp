@@ -33,7 +33,6 @@
 #include <QRegExp>
 #include <QHash>
 
-#include <windows.h>
 #include "../LH_Qt_QStringList.h"
 
 LH_MonitoringImage::LH_MonitoringImage(const char *name, LH_QtPlugin *parent ) : LH_QtInstance( name, 0, parent )//, data_(this)

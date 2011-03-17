@@ -43,7 +43,7 @@ lh_class *LH_CursorController::classInfo()
     return &classInfo;
 }
 
-LH_CursorController::LH_CursorController(const char * name) : LH_Text(name)
+LH_CursorController::LH_CursorController(const char * name) : LH_Text(name), shmem_(NULL), cursor_location_(NULL)
 {
     cursorModes.append((cursorMode){smSelectDeselect, true , "Activate, Move & Select / Deselect"});
     cursorModes.append((cursorMode){smSelect        , true , "Activate, Move & Select Only (one is always selected)"});
@@ -51,10 +51,27 @@ LH_CursorController::LH_CursorController(const char * name) : LH_Text(name)
     cursorModes.append((cursorMode){smNone          , false, "Move Only (Highlighted option is selected, always activated)"});
     cursorModes.append((cursorMode){smSelectDeselect, false, "Move & Select / Deselect Only (Always activated)"});
 
-    if(!openMemory())
-        qWarning() << "LH_Cursor: Critical Failure: Unable to open shared memory!.";
-    else
-        qDebug() << "LH_Cursor: memory created OK.";
+    shmem_ = new QSharedMemory( "LHCursorSharedMemory", this );
+    if( shmem_->create(sizeof(cursorData)) )
+    {
+        if( shmem_->lock() )
+        {
+            cursor_location_ = static_cast<cursorData*>( shmem_->data() );
+            if( cursor_location_ )
+            {
+                memset(cursor_location_, '\0', sizeof(cursorData));
+                cursor_location_->active = false;
+                cursor_location_->x=1;
+                cursor_location_->y=1;
+                cursor_location_->selX = 0;
+                cursor_location_->selY = 0;
+                cursor_location_->selState = false;
+            }
+            shmem_->unlock();
+        }
+        else qWarning() << "LH_CursorController: failed to lock shared memory";
+    }
+    else qWarning() << "LH_CursorController: failed to create shared memory";
 
     setup_text_->setFlag(LH_FLAG_HIDDEN,true);
     setup_font_->setFlag(LH_FLAG_HIDDEN,true);
@@ -396,10 +413,12 @@ void LH_CursorController::changeBounds()
     }
 }
 
+#if 0
 LH_CursorController::~LH_CursorController()
 {
-    closeMemory();
+    // closeMemory();
 }
+#endif
 
 int LH_CursorController::polling()
 {
@@ -407,9 +426,12 @@ int LH_CursorController::polling()
     return 200;
 }
 
+#if 0
 bool LH_CursorController::openMemory()
 {
     const char* mapname  = "LHCursorSharedMemory";
+
+    if( shmem_ )
 
     if(debugMemory) qDebug() << "LH_CursorController: open memory: CreateFileMapping";
     memMap = (HANDLE)CreateFileMappingA(INVALID_HANDLE_VALUE,NULL,PAGE_READWRITE,0,sizeof(cursorData),mapname); //INVALID_HANDLE_VALUE
@@ -452,7 +474,7 @@ void LH_CursorController::closeMemory()
     }
     if(debugMemory) qDebug() << "LH_CursorController: close memory: Done.";
 }
-
+#endif
 void LH_CursorController::changePersistent()
 {
     setup_persistent_file_->setFlag(LH_FLAG_HIDDEN, !setup_persistent_->value());

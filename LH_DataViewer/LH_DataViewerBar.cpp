@@ -1,5 +1,5 @@
 #include "LH_DataViewerBar.h"
-#include <windows.h>
+// #include <windows.h>
 
 LH_PLUGIN_CLASS(LH_DataViewerBar)
 

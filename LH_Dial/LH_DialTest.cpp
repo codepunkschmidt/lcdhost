@@ -68,6 +68,9 @@ public:
 
     int notify(int n, void *p)
     {
+        Q_UNUSED(n);
+        Q_UNUSED(p);
+
         setMin(setup_min_->value());
         setMax(setup_max_->value());
         setup_val_->setMinimum(setup_min_->value());

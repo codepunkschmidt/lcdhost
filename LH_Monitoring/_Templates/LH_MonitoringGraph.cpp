@@ -51,6 +51,8 @@ LH_MonitoringGraph::~LH_MonitoringGraph()
 
 int LH_MonitoringGraph::notify(int n, void *p)
 {
+    Q_UNUSED(p);
+
     if(!n || n&LH_NOTE_SECOND)
         if(data_)
         {

@@ -147,6 +147,8 @@ bool LH_RSSFeed::release(QObject* intrfce)
 
 int LH_RSSFeed::notify(int code,void* param)
 {
+    Q_UNUSED(param);
+
     if( code & LH_NOTE_SECOND  && notifyTimer_.elapsed() >= 1000)
     {
         notifyTimer_.restart();

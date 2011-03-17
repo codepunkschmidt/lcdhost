@@ -2,17 +2,16 @@
 #define LH_SPEEDFANDATA_H
 
 #include "../_Templates/LH_MonitoringData.h"
-#include <windows.h>
 
 #pragma pack(1)
 struct SFMemory {
-        WORD version;
-        WORD flags;
+        quint32 version;
+        quint32 flags;
         int MemSize;
         int handle;
-        WORD NumTemps;
-        WORD NumFans;
-        WORD NumVolts;
+        quint32 NumTemps;
+        quint32 NumFans;
+        quint32 NumVolts;
         signed int temps[32];
         signed int fans[32];
         signed int volts[32];

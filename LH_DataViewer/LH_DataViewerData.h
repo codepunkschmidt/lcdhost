@@ -8,8 +8,8 @@
 #include <QDebug>
 #include <QRegExp>
 
-#include <stdio.h>
-#include <windows.h>
+// #include <stdio.h>
+// #include <windows.h>
 
 #include <LH_DataViewerDataTypes.h>
 extern dataNode* rootNode;

@@ -50,13 +50,16 @@ bool LH_SpeedFanData::getData(float& value, QString& text, QString& units)
     int count;
     return getData(value, text, units, count, setup_value_index_->value());
 }
+
 bool LH_SpeedFanData::getData(float& value, QString& text, QString& units, int index)
 {
     int count;
     return getData(value, text, units, count, index);
 }
+
 bool LH_SpeedFanData::getData(float& value, QString& text, QString& units, int& count, int index)
 {
+#ifdef Q_WS_WIN
     const char* mapname  = "SFSharedMemory_ALM";
     bool resultVal = true;
 
@@ -83,6 +86,8 @@ bool LH_SpeedFanData::getData(float& value, QString& text, QString& units, int& 
     setup_value_type_->setFlag(LH_FLAG_READONLY, !resultVal);
     setup_value_index_->setFlag(LH_FLAG_READONLY, !resultVal);
     return resultVal;
+#endif
+    return false;
 }
 
 bool LH_SpeedFanData::getCount(int& count)

@@ -32,7 +32,7 @@
 #include <QHash>
 
 #include "LH_DataViewerImage.h"
-#include <windows.h>
+// #include <windows.h>
 #include "../LH_Qt_QStringList.h"
 
 LH_PLUGIN_CLASS(LH_DataViewerImage)

@@ -138,10 +138,12 @@ bool LH_AfterburnerData::getData(float& value, QString& text, QString& units, in
     QString format;
     return (getData(value, text, units, format, max, min, index));
 }
+
 bool LH_AfterburnerData::getData(float& value, QString& text, QString& units, QString& format, float& min, float& max, int index)
 {
-    const char* mapname = "MAHMSharedMemory";
     bool resultVal = true;
+#ifdef Q_WS_WIN
+    const char* mapname = "MAHMSharedMemory";
 
     // Create file mapping
     HANDLE filemap = OpenFileMappingA(FILE_MAP_READ, FALSE, mapname);
@@ -172,6 +174,9 @@ bool LH_AfterburnerData::getData(float& value, QString& text, QString& units, QS
 
     setup_value_type_->setFlag(LH_FLAG_READONLY, !resultVal);
     setup_value_item_->setFlag(LH_FLAG_READONLY, !resultVal);
+#else
+    resultVal = false;
+#endif
     return resultVal;
 }
 

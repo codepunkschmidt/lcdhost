@@ -32,7 +32,6 @@
 #include <QHash>
 
 #include "LH_DataViewerExpiredImage.h"
-#include <windows.h>
 #include "../LH_Qt_QStringList.h"
 
 LH_PLUGIN_CLASS(LH_DataViewerExpiredImage)

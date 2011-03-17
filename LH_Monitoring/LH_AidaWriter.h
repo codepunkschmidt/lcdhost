@@ -6,14 +6,13 @@
 
 #ifdef Q_WS_WIN
 # include <windows.h>
-#endif
-
-#ifndef DWORD
-# define DWORD quint32
-#endif
-
-#ifndef HANDLE
-# define HANDLE qptrdiff
+#else
+# ifndef DWORD
+#  define DWORD quint32
+# endif
+# ifndef HANDLE
+#  define HANDLE void*
+# endif
 #endif
 
 class LH_AidaWriter : public LH_Text

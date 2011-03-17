@@ -1,4 +1,9 @@
+#include <QSharedMemory>
 #include "LH_SpeedFanData.h"
+
+#ifdef Q_WS_WIN
+# include <windows.h>
+#endif
 
 LH_SpeedFanData::LH_SpeedFanData(LH_QtObject *parent, bool includeGroups): LH_MonitoringData( parent, includeGroups )
 {
@@ -60,34 +65,31 @@ bool LH_SpeedFanData::getData(float& value, QString& text, QString& units, int i
 bool LH_SpeedFanData::getData(float& value, QString& text, QString& units, int& count, int index)
 {
 #ifdef Q_WS_WIN
-    const char* mapname  = "SFSharedMemory_ALM";
-    bool resultVal = true;
+    bool resultVal = false;
 
-    // Create file mapping
-    HANDLE filemap = OpenFileMappingA(FILE_MAP_READ, FALSE, mapname);
-    // Get pointer
+    HANDLE filemap = OpenFileMappingA(FILE_MAP_READ, FALSE, "SFSharedMemory_ALM");
     if(filemap != NULL)
     {
         SFMemory* sfmemory = (SFMemory*)MapViewOfFile(filemap, FILE_MAP_READ, 0, 0, sizeof(SFMemory));
-
-        if (sfmemory) {
-            if(sfmemory->MemSize!=0) {
+        if (sfmemory)
+        {
+            if(sfmemory->MemSize!=0)
+            {
                 if (setup_value_index_->list().length() == 0)
                     loadSensorList(sfmemory);
                 getSelectedValue(sfmemory, value, text, units, count, index);
+                resultVal = true;
             }
             UnmapViewOfFile(sfmemory);
-        } else
-            resultVal = false;
+        }
         CloseHandle(filemap);
-    } else
-        resultVal = false;
-
+    }
     setup_value_type_->setFlag(LH_FLAG_READONLY, !resultVal);
     setup_value_index_->setFlag(LH_FLAG_READONLY, !resultVal);
     return resultVal;
-#endif
+#else
     return false;
+#endif
 }
 
 bool LH_SpeedFanData::getCount(int& count)
@@ -150,7 +152,7 @@ bool LH_SpeedFanData::getDeadValue_Transformed(float& value)
     return result;
 }
 
-void LH_SpeedFanData::getSelectedValue(SFMemory* sfmemory, float& value, QString& text, QString& units, int& count, int index)
+void LH_SpeedFanData::getSelectedValue(const SFMemory* sfmemory, float& value, QString& text, QString& units, int& count, int index)
 {
     QString type;
 
@@ -187,7 +189,7 @@ void LH_SpeedFanData::getSelectedValue(SFMemory* sfmemory, float& value, QString
     return ;
 }
 
-void LH_SpeedFanData::loadSensorList(SFMemory* sfmemory)
+void LH_SpeedFanData::loadSensorList(const SFMemory* sfmemory)
 {
     setup_value_index_->list().clear();
     int count = 0;

@@ -85,7 +85,7 @@ QString LH_MonitoringData::getUnits()
     return units;
 }
 
-float LH_MonitoringData::getValueFromSet(int index, int count, float valueSet[])
+float LH_MonitoringData::getValueFromSet(int index, int count, const float *valueSet)
 {
     float deadVal = 0;
     bool hasDeadVal = (getDeadValue(deadVal));
@@ -111,7 +111,7 @@ float LH_MonitoringData::getValueFromSet(int index, int count, float valueSet[])
         value = valueSet[index];
     return value;
 }
-float LH_MonitoringData::getValueFromSet(int index, int count, unsigned int valueSet[])
+float LH_MonitoringData::getValueFromSet(int index, int count, const unsigned int *valueSet)
 {
     float deadVal = 0;
     bool hasDeadVal = (getDeadValue(deadVal));
@@ -137,7 +137,7 @@ float LH_MonitoringData::getValueFromSet(int index, int count, unsigned int valu
         value = valueSet[index];
     return value;
 }
-float LH_MonitoringData::getValueFromSet(int index, int count, signed int valueSet[])
+float LH_MonitoringData::getValueFromSet(int index, int count, const int *valueSet)
 {
     float deadVal = 0;
     bool hasDeadVal = (getDeadValue(deadVal));

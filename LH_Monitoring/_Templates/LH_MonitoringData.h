@@ -36,9 +36,9 @@ protected:
     // get the specified data item (for grouped data items, e.g. averages etc)
     virtual bool getData(float& , QString& , QString& , int ) { return false; }
 
-    float getValueFromSet(int index, int count, float valueSet[]);
-    float getValueFromSet(int index, int count, unsigned int valueSet[]);
-    float getValueFromSet(int index, int count, signed int valueSet[]);
+    float getValueFromSet(int index, int count, const float *valueSet);
+    float getValueFromSet(int index, int count, const unsigned int *valueSet);
+    float getValueFromSet(int index, int count, const int *valueSet);
     //template<typename T> float getValueFromSet(int& index, int& count, T valueSet[]);
 
 public:

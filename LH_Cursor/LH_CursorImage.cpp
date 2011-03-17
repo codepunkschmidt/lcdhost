@@ -33,7 +33,7 @@
 #include <QRegExp>
 #include <QHash>
 
-#include <windows.h>
+// #include <windows.h>
 #include "../LH_Qt_QStringList.h"
 
 LH_PLUGIN_CLASS(LH_CursorImage)
@@ -53,7 +53,7 @@ lh_class *LH_CursorImage::classInfo()
     return &classInfo;
 }
 
-LH_CursorImage::LH_CursorImage(const char *name, LH_QtPlugin *parent ) : LH_QtInstance( name, 0, parent )//, data_(this)
+LH_CursorImage::LH_CursorImage(const char *name, LH_QtPlugin *parent ) : LH_CursorInstance( name, parent )
 {
     setup_file_ = new LH_Qt_QFileInfo( this, tr("File"), QFileInfo(), LH_FLAG_AUTORENDER );
     setup_file_->setHelp( "<p>The image map file instructs the status image on how to match up "
@@ -190,31 +190,10 @@ void LH_CursorImage::fileChanged()
     }
 }
 
-cursorData LH_CursorImage::getCursorData()
-{
-    cursorData resultData;
-
-    const char* mapname  = "LHCursorSharedMemory";
-    // Create file mapping
-    HANDLE memMap = (HANDLE)CreateFileMappingA(INVALID_HANDLE_VALUE,NULL,PAGE_READWRITE,0,sizeof(cursorData),mapname);
-    if(memMap)
-    {
-        cursorData* cursor_location_ = (cursorData*)MapViewOfFile(memMap, FILE_MAP_READ, 0, 0, sizeof(cursorData));
-
-        if (cursor_location_) {
-            resultData = *cursor_location_;
-            UnmapViewOfFile(cursor_location_);
-        }
-
-        CloseHandle(memMap);
-    }
-
-    return resultData;
-}
-
 bool LH_CursorImage::updateState()
 {
-    cursorData cd = getCursorData();
+    cursorData cd;
+    getCursorData(cd);
     QStringList mycoords = setup_coordinate_->value().split(';');
 
     bool newSelected = false;

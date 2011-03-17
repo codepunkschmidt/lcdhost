@@ -26,9 +26,9 @@
 #include <QFontMetrics>
 #include <QTime>
 #include <QRegExp>
+#include <QSharedMemory>
 
 #include <stdio.h>
-#include <windows.h>
 
 #include "LH_WeatherText.h"
 
@@ -147,26 +147,18 @@ int LH_WeatherText::notify(int n,void* p)
 
 void LH_WeatherText::updateText()
 {
-    const char* mapname  = "LHWeatherSharedMemory";
-    // Create file mapping
-    HANDLE weatherMap = OpenFileMappingA(FILE_MAP_READ, FALSE, mapname);
-    if(weatherMap)
+    QSharedMemory shmem("LHWeatherSharedMemory");
+
+    if( shmem.attach() )
     {
-        weatherData* weather = (weatherData*)MapViewOfFile(weatherMap, FILE_MAP_READ, 0, 0, sizeof(weatherData));
-
-        if (weather) {
-            if( setText( getSelectedValueText(weather)  ) )
+        if( shmem.lock() )
+        {
+            weatherData* weather = (weatherData*)shmem.data();
+            if( weather && setText( getSelectedValueText(weather)  ) )
                 callback(lh_cb_render,NULL); // only render if the text changed
-            UnmapViewOfFile(weather);
-        } else {
-            if( setText( "Failed to open shared memory (1)." ) )
-                callback(lh_cb_render,NULL); // only render if the text changed
+            shmem.unlock();
         }
-
-        CloseHandle(weatherMap);
-    } else {
-        if( setText( "Failed to open shared memory (2)." ) )
-            callback(lh_cb_render,NULL); // only render if the text changed
+        shmem.detach();
     }
 }
 

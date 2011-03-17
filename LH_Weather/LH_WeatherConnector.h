@@ -31,6 +31,7 @@
 #include <QBuffer>
 #include <QXmlStreamReader>
 #include <QDateTime>
+#include <QSharedMemory>
 
 #include "../LH_Text/LH_Text.h"
 #include "../LH_Qt_QString.h"
@@ -41,7 +42,6 @@
 #include "../LH_Qt_QTextEdit.h"
 
 #include <stdio.h>
-#include <windows.h>
 
 #include "LH_WeatherStructs.cpp"
 
@@ -77,7 +77,7 @@ class LH_WeatherConnector : public LH_Text
     QByteArray getWeatherValue(QXmlStreamReader& xml_, QString attrName);
     QByteArray getWeatherValue(QXmlStreamReader& xml_, QString attrName, QString preText);
 
-    HANDLE weatherMap;
+    QSharedMemory weatherMap;
     weatherData *weather;
 
     void setNoForecast(forecastData& forecast);

@@ -44,7 +44,7 @@ lh_class *LH_CursorRectangle::classInfo()
     return &classInfo;
 }
 
-LH_CursorRectangle::LH_CursorRectangle( const char *name ) : LH_QtInstance(name)
+LH_CursorRectangle::LH_CursorRectangle( const char *name ) : LH_CursorInstance(name)
 {
     setup_penwidth_ = new LH_Qt_QSlider(this,tr("Pen width"),0,0,1000,LH_FLAG_AUTORENDER);
     setup_rounding_ = new LH_Qt_QSlider(this,tr("Corner rounding"),20,0,100,LH_FLAG_AUTORENDER);
@@ -217,31 +217,10 @@ int LH_CursorRectangle::polling()
     return 100;
 }
 
-cursorData LH_CursorRectangle::getCursorData()
-{
-    cursorData resultData;
-
-    const char* mapname  = "LHCursorSharedMemory";
-    // Create file mapping
-    HANDLE memMap = (HANDLE)CreateFileMappingA(INVALID_HANDLE_VALUE,NULL,PAGE_READWRITE,0,sizeof(cursorData),mapname);
-    if(memMap)
-    {
-        cursorData* cursor_location_ = (cursorData*)MapViewOfFile(memMap, FILE_MAP_READ, 0, 0, sizeof(cursorData));
-
-        if (cursor_location_) {
-            resultData = *cursor_location_;
-            UnmapViewOfFile(cursor_location_);
-        }
-
-        CloseHandle(memMap);
-    }
-
-    return resultData;
-}
-
 bool LH_CursorRectangle::updateState()
 {
-    cursorData cd = getCursorData();
+    cursorData cd;
+    getCursorData(cd);
     QStringList mycoords = setup_coordinate_->value().split(';');
 
     bool newSelected = false;

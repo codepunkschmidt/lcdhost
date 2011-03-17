@@ -30,9 +30,9 @@
 #include <QString>
 #include <QRegExp>
 #include <QHash>
+#include <QSharedMemory>
 
 #include "LH_WeatherImage.h"
-#include <windows.h>
 #include "../LH_Qt_QStringList.h"
 
 LH_PLUGIN_CLASS(LH_WeatherImage)
@@ -198,58 +198,58 @@ void LH_WeatherImage::fileChanged()
 
 void LH_WeatherImage::updateImage(bool rerender)
 {
+    QSharedMemory shmem("LHWeatherSharedMemory");
+
     setup_text_->setFlag(LH_FLAG_HIDDEN,false);
     setup_text_->setValue("Accessing memory..." );
-    const char* mapname  = "LHWeatherSharedMemory";
 
-    // Create file mapping
-    HANDLE weatherMap = OpenFileMappingA(FILE_MAP_READ, FALSE, mapname);
-    if(weatherMap)
+    if( shmem.attach() )
     {
-        weatherData* weather = (weatherData*)MapViewOfFile(weatherMap, FILE_MAP_READ, 0, 0, sizeof(weatherData));
+        if( shmem.lock() )
+        {
+            weatherData* weather = (weatherData*)shmem.data();
 
-        if (weather) {
-            bool newIsNight = (setup_value_type_->value()<=1) && weather->isNight;
-            if (isNight!=newIsNight) rerender = true;
-            isNight = newIsNight;
+            if (weather) {
+                bool newIsNight = (setup_value_type_->value()<=1) && weather->isNight;
+                if (isNight!=newIsNight) rerender = true;
+                isNight = newIsNight;
 
-            QString newWeatherCode = weather->condition.code;
-            switch(setup_value_type_->value())
-            {
-            case 1:
-                newWeatherCode = weather->forecastToday.code;
-                break;
-            case 2:
-                newWeatherCode = weather->forecastTomorrow.code;
-                break;
-            case 3:
-                newWeatherCode = weather->forecastDay3.code;
-                break;
-            case 4:
-                newWeatherCode = weather->forecastDay4.code;
-                break;
-            case 5:
-                newWeatherCode = weather->forecastDay5.code;
-                break;
+                QString newWeatherCode = weather->condition.code;
+                switch(setup_value_type_->value())
+                {
+                case 1:
+                    newWeatherCode = weather->forecastToday.code;
+                    break;
+                case 2:
+                    newWeatherCode = weather->forecastTomorrow.code;
+                    break;
+                case 3:
+                    newWeatherCode = weather->forecastDay3.code;
+                    break;
+                case 4:
+                    newWeatherCode = weather->forecastDay4.code;
+                    break;
+                case 5:
+                    newWeatherCode = weather->forecastDay5.code;
+                    break;
+                }
+
+
+                if(weatherCode != newWeatherCode) rerender = true;
+                weatherCode = newWeatherCode;
+
+                QString dayNight;
+                if (isNight)
+                    dayNight = "Night";
+                else
+                    dayNight = "Day";
+
+                setup_text_->setValue(QString("Weather Code %1 received for %2; resolved to image: %3").arg(weatherCode, dayNight, getWeatherImageName()));
             }
-
-
-            if(weatherCode != newWeatherCode) rerender = true;
-            weatherCode = newWeatherCode;
-
-            QString dayNight;
-            if (isNight)
-                dayNight = "Night";
-            else
-                dayNight = "Day";
-
-            setup_text_->setValue(QString("Weather Code %1 received for %2; resolved to image: %3").arg(weatherCode, dayNight, getWeatherImageName()));
-            UnmapViewOfFile(weather);
-        } else
-            setup_text_->setValue( "Failed to open shared memory (1)." );
-        CloseHandle(weatherMap);
-    } else
-        setup_text_->setValue( "Failed to open shared memory (2)." ) ;
+            shmem.unlock();
+        }
+        shmem.detach();
+    }
 
     if (rerender) callback(lh_cb_render,NULL);
 }

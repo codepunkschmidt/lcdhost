@@ -84,6 +84,9 @@ lh_class *LH_DialTime::classInfo()
 
 int LH_DialTime::notify(int n, void *p)
 {
+    Q_UNUSED(n);
+    Q_UNUSED(p);
+
     QTime now = QTime::currentTime();
     if(setup_manual_adjust_->value())
     {

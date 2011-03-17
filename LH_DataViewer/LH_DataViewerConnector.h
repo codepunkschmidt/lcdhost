@@ -36,8 +36,8 @@
 #include "../LH_Qt_int.h"
 #include "../LH_Qt_QTextEdit.h"
 
-#include <stdio.h>
-#include <windows.h>
+// #include <stdio.h>
+// #include <windows.h>
 
 #include "LH_DataViewerData.h"
 

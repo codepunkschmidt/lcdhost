@@ -25,15 +25,16 @@
 #ifndef LH_CURSORCONTROLLER_H
 #define LH_CURSORCONTROLLER_H
 
-#include <windows.h>
-#include <tchar.h>
-#include <stdio.h>
+// #include <windows.h>
+// #include <tchar.h>
+// #include <stdio.h>
+
+#include <QSharedMemory>
 
 #include "../LH_Text/LH_Text.h"
 #include "../LH_Qt_InputState.h"
 #include "../LH_Qt_QFileInfo.h"
-
-#include <LH_CursorStructs.h>
+#include "LH_CursorStructs.h"
 
 enum selectMode
 {
@@ -52,12 +53,12 @@ class LH_CursorController : public LH_Text
 {
     Q_OBJECT
 
-    HANDLE memMap;
+    QSharedMemory *shmem_;
     cursorData *cursor_location_;
 
     static const bool debugMemory = false;
-    bool openMemory();
-    void closeMemory();
+    // bool openMemory();
+    // void closeMemory();
 
     QList<cursorMode> cursorModes;
 
@@ -83,7 +84,7 @@ protected:
 
 public:
     LH_CursorController(const char * name);
-    ~LH_CursorController();
+    // ~LH_CursorController();
 
     int polling();
 

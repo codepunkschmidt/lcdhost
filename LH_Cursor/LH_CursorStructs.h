@@ -25,9 +25,9 @@
 #ifndef LH_CursorStructs_H
 #define LH_CursorStructs_H
 
-#include <windows.h>
-#include <tchar.h>
-#include <stdio.h>
+// #include <windows.h>
+// #include <tchar.h>
+// #include <stdio.h>
 
 struct minmax {
     int min;

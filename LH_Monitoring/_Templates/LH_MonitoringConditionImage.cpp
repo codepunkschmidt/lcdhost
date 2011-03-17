@@ -35,7 +35,6 @@
 #include <QTime>
 #include <QRgb>
 
-#include <windows.h>
 #include "../LH_Qt_QStringList.h"
 
 LH_MonitoringConditionImage::LH_MonitoringConditionImage(const char *name, LH_QtPlugin *parent ) : LH_QtInstance( name, 0,  parent )
@@ -100,7 +99,10 @@ int LH_MonitoringConditionImage::height( void*obj,int h )
 
 QImage *LH_MonitoringConditionImage::render_qimage(int w, int h)
 {
-    delete image_;
+    Q_UNUSED(w);
+    Q_UNUSED(h);
+
+    if( image_ ) delete image_;
 
     QFileInfo imageFile = QFileInfo( getImageName() );
     if(imageFile.isFile())

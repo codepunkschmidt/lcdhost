@@ -23,7 +23,9 @@
  **/
 
 #include "LH_CursorPage.h"
+#include <QtGlobal>
 #include <QDebug>
+#include <QSharedMemory>
 
 LH_PLUGIN_CLASS(LH_CursorPage)
 
@@ -43,7 +45,7 @@ lh_class *LH_CursorPage::classInfo()
 }
 
 
-LH_CursorPage::LH_CursorPage(const char * name, LH_QtPlugin *parent ) : LH_QtInstance( name, 0, parent )
+LH_CursorPage::LH_CursorPage(const char * name, LH_QtPlugin *parent ) : LH_CursorInstance( name, parent )
 {
     setup_coordinate_ = new LH_Qt_QString(this, "Coordinate", "1,1", LH_FLAG_AUTORENDER);
     setup_coordinate_->setHelp("This is the coordinate of this object, i.e. when the cursor is at the point specified here this object is selected. <br/>"
@@ -59,11 +61,6 @@ LH_CursorPage::LH_CursorPage(const char * name, LH_QtPlugin *parent ) : LH_QtIns
                                );
     active = false;
     selected = false;
-}
-
-LH_CursorPage::~LH_CursorPage()
-{
-    return;
 }
 
 int LH_CursorPage::polling()
@@ -89,35 +86,18 @@ int LH_CursorPage::height( int forWidth )
 
 QImage *LH_CursorPage::render_qimage( int w, int h )
 {
+    Q_UNUSED(w);
+    Q_UNUSED(h);
     return image_;
 }
 
-cursorData LH_CursorPage::getCursorData()
-{
-    cursorData resultData;
-
-    const char* mapname  = "LHCursorSharedMemory";
-    // Create file mapping
-    HANDLE memMap = (HANDLE)CreateFileMappingA(INVALID_HANDLE_VALUE,NULL,PAGE_READWRITE,0,sizeof(cursorData),mapname);
-    if(memMap)
-    {
-        cursorData* cursor_location_ = (cursorData*)MapViewOfFile(memMap, FILE_MAP_READ, 0, 0, sizeof(cursorData));
-
-        if (cursor_location_) {
-            resultData = *cursor_location_;
-            UnmapViewOfFile(cursor_location_);
-        }
-        CloseHandle(memMap);
-    }
-
-    return resultData;
-}
 
 bool LH_CursorPage::updateState()
 {
-    cursorData cd = getCursorData();
+    cursorData cd;
     QStringList mycoords = setup_coordinate_->value().split(';');
 
+    getCursorData(cd);
     bool newSelected = false;
     bool newActive = false;
     foreach (QString mycoord_str, mycoords)

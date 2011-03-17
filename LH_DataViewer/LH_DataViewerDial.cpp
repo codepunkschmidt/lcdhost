@@ -1,5 +1,4 @@
 #include "LH_DataViewerDial.h"
-#include <windows.h>
 
 LH_PLUGIN_CLASS(LH_DataViewerDial)
 

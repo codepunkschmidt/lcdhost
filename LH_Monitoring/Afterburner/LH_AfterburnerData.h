@@ -2,7 +2,10 @@
 #define LH_AFTERBURNERDATA_H
 
 #include "../_Templates/LH_MonitoringData.h"
-#include <windows.h>
+
+#ifndef DWORD
+# define DWORD quint32
+#endif
 
 struct MAHM_SHARED_MEMORY_HEADER
 {
@@ -30,6 +33,10 @@ struct MAHM_SHARED_MEMORY_HEADER
 #define	MAHM_SHARED_MEMORY_ENTRY_FLAG_SHOW_IN_OSD   0x00000001 //item is configured to display in On-Screen Display
 #define	MAHM_SHARED_MEMORY_ENTRY_FLAG_SHOW_IN_LCD   0x00000002 //item is configured to display in Logitech keyboard LCD
 #define	MAHM_SHARED_MEMORY_ENTRY_FLAG_SHOW_IN_TRAY  0x00000004 //item is configured to display in tray icon
+
+#ifndef MAX_PATH
+# define MAX_PATH 260
+#endif
 
 struct MAHM_SHARED_MEMORY_ENTRY
 {

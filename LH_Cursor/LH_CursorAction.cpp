@@ -258,6 +258,9 @@ void LH_CursorAction::fire(int startAt)
 
 void LH_CursorAction::doJumpTo(QString key, int flags, int value)
 {
+    Q_UNUSED(key);
+    Q_UNUSED(flags);
+    Q_UNUSED(value);
     QString coord = setup_coordinate_->value().split(';')[0];
     cursorData cd;
     getCursorData(cd);

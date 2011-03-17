@@ -38,8 +38,8 @@ public:
         static lh_buildinfo buildinfo =
         {
             "0.3",
-            4,
-            "http://codeleap.co.uk/lcdhost/lh_cursor/ver.txt"
+            REVISION,
+            "http://codeleap.co.uk/lcdhost/lh_cursor/ver.txt",
             "http://codeleap.co.uk/lcdhost/lh_cursor/LH_Cursor.dll"
         };
         return &buildinfo;

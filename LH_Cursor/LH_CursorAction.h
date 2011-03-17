@@ -55,14 +55,21 @@ enum actionLimitType
     altCursorY
 };
 
-struct actionParameter
+class actionParameter
 {
+public:
     QString description;
     actionParameterType type;
     QString xmlTag;
     QString xmlAttribute;
     actionLimitType limitType;
-    ;
+
+    actionParameter( QString d,
+                    actionParameterType t = aptString,
+                    QString xt = QString(),
+                    QString xa = QString(),
+                    actionLimitType lt = altWait ) :
+        description(d), type(t), xmlTag(xt), xmlAttribute(xa), limitType(lt) {}
 };
 
 class actionType
@@ -78,20 +85,12 @@ private:
     }
 
 public:
-    actionType() {
-        typeCode = "";
-        description = "";
-        parameters = QList<actionParameter>();
-    }
-    actionType(QString typeCode__, QString description__, QList<actionParameter> parameters__) {
-        typeCode = typeCode__;
-        description = description__;
-        parameters = parameters__;
-    }
-
     QString typeCode;
     QString description;
     QList<actionParameter> parameters;
+
+    actionType(QString typeCode__ = QString(), QString description__ = QString(), QList<actionParameter> parameters__ = QList<actionParameter>() )
+        : typeCode(typeCode__), description(description__), parameters(parameters__) {}
 
     QString getParameter(QDomElement e, int index)
     {
@@ -227,15 +226,15 @@ private:
 
 public:
     actionTypes() {
-        add( actionType("open"      ,"Open Layout"               , QList<actionParameter>() << (actionParameter){"Layout File",aptFile}) );
-        add( actionType("run"       ,"Run Application"           , QList<actionParameter>() << (actionParameter){"Application",aptFile,"path"} << (actionParameter){"Parameters",aptString,"args"}) );
-        add( actionType("url"       ,"Open URL"                  , QList<actionParameter>() << (actionParameter){"URL",aptString}) );
-        add( actionType("move"      ,"Move Cursor"               , QList<actionParameter>() << (actionParameter){"New X Coordinate",aptInteger,"","x",altCursorX} << (actionParameter){"New Y Coordinate",aptInteger,"","y",altCursorY}) );
-        add( actionType("select"    ,"Move Cursor & Select"      , QList<actionParameter>() << (actionParameter){"New X Coordinate",aptInteger,"","x",altCursorX} << (actionParameter){"New Y Coordinate",aptInteger,"","y",altCursorY}) );
-        add( actionType("wait"      ,"Wait"                      , QList<actionParameter>() << (actionParameter){"Delay (in ms)",aptInteger,"","",altWait}) );
-        add( actionType("deselect"  ,"Clear Selection"           , QList<actionParameter>()) );
-        add( actionType("deactivate","Deactivate the Cursor"     , QList<actionParameter>()) );
-        add( actionType("reselect"  ,"Reselect the previous item", QList<actionParameter>()) );
+        add( actionType("open"      ,"Open Layout"               , QList<actionParameter>() << actionParameter("Layout File",aptFile) ) );
+        add( actionType("run"       ,"Run Application"           , QList<actionParameter>() << actionParameter("Application",aptFile,"path") << actionParameter("Parameters",aptString,"args") ) );
+        add( actionType("url"       ,"Open URL"                  , QList<actionParameter>() << actionParameter("URL",aptString) ) );
+        add( actionType("move"      ,"Move Cursor"               , QList<actionParameter>() << actionParameter("New X Coordinate",aptInteger,"","x",altCursorX) << actionParameter("New Y Coordinate",aptInteger,"","y",altCursorY)) );
+        add( actionType("select"    ,"Move Cursor & Select"      , QList<actionParameter>() << actionParameter("New X Coordinate",aptInteger,"","x",altCursorX) << actionParameter("New Y Coordinate",aptInteger,"","y",altCursorY)) );
+        add( actionType("wait"      ,"Wait"                      , QList<actionParameter>() << actionParameter("Delay (in ms)",aptInteger,"","",altWait)) );
+        add( actionType("deselect"  ,"Clear Selection") );
+        add( actionType("deactivate","Deactivate the Cursor") );
+        add( actionType("reselect"  ,"Reselect the previous item") );
     }
     actionType at(int index)
     {

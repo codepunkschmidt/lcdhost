@@ -46,7 +46,7 @@ public:
         static lh_buildinfo buildinfo =
         {
             "1.02",
-            3,
+            REVISION,
             "http://codeleap.co.uk/lcdhost/lh_dataviewer/ver.txt",
             "http://codeleap.co.uk/lcdhost/lh_dataviewer/LH_DataViewer.dll"
         };

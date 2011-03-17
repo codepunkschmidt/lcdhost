@@ -20,8 +20,8 @@ struct SFMemory {
 
 class LH_SpeedFanData: public LH_MonitoringData
 {
-    void getSelectedValue(SFMemory* sfmemory, float& value, QString& text, QString& units, int& count, int index);
-    void loadSensorList(SFMemory* sfmemory);
+    void getSelectedValue(const SFMemory* sfmemory, float& value, QString& text, QString& units, int& count, int index);
+    void loadSensorList(const SFMemory* sfmemory);
 
     bool is_avg_;
 protected:

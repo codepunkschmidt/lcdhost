@@ -1,7 +1,14 @@
-#include "LH_AfterburnerData.h"
+
 #include <QDebug>
 #include <QRegExp>
+#include <QSharedMemory>
 #include <algorithm>
+
+#ifdef Q_WS_WIN
+# include <windows.h>
+#endif
+
+#include "LH_AfterburnerData.h"
 
 LH_AfterburnerData::LH_AfterburnerData(LH_QtObject *parent, bool includeGroups) : LH_MonitoringData( parent, includeGroups)
 {
@@ -141,43 +148,36 @@ bool LH_AfterburnerData::getData(float& value, QString& text, QString& units, in
 
 bool LH_AfterburnerData::getData(float& value, QString& text, QString& units, QString& format, float& min, float& max, int index)
 {
-    bool resultVal = true;
 #ifdef Q_WS_WIN
-    const char* mapname = "MAHMSharedMemory";
+    bool resultVal = false;
 
-    // Create file mapping
-    HANDLE filemap = OpenFileMappingA(FILE_MAP_READ, FALSE, mapname);
-    // Get pointer
+    HANDLE filemap = OpenFileMappingA(FILE_MAP_READ, FALSE, "MAHMSharedMemory");
     if(filemap != NULL)
     {
         MAHM_SHARED_MEMORY_HEADER* MAHMHeader = (MAHM_SHARED_MEMORY_HEADER*)MapViewOfFile(filemap, FILE_MAP_READ, 0, 0, 0);
 
-        if (MAHMHeader) {
-
-
+        if (MAHMHeader)
+        {
             if (MAHMHeader->dwSignature == 0xDEAD)
             {
                 qDebug() << "LH_Afterburner: Shared memory has been terminated; try again later.";
-                resultVal = false;
             }
             else
             {
                 if (setup_value_type_->list().length() == 0) loadTypesList(MAHMHeader);
                 getSelectedValue(MAHMHeader, value, text, units, format, min, max, index);
+                resultVal = true;
             }
             UnmapViewOfFile(MAHMHeader);
-        } else
-            resultVal = false;
+        }
         CloseHandle(filemap);
-    } else
-        resultVal = false;
-
+    }
     setup_value_type_->setFlag(LH_FLAG_READONLY, !resultVal);
     setup_value_item_->setFlag(LH_FLAG_READONLY, !resultVal);
-#else
-    resultVal = false;
-#endif
     return resultVal;
+#else
+    return false;
+#endif
 }
 
 void LH_AfterburnerData::getSelectedValue(MAHM_SHARED_MEMORY_HEADER* MAHMHeader, float& value, QString& text, QString& units, QString& format, float& min, float& max, int index)
@@ -202,7 +202,7 @@ void LH_AfterburnerData::getSelectedValue(MAHM_SHARED_MEMORY_HEADER* MAHMHeader,
                     if (index<(int)MAHMHeader->dwNumEntries && index >= 0)
                     {
                         valCount++;
-                        MAHM_SHARED_MEMORY_ENTRY* MAHMMemory = (MAHM_SHARED_MEMORY_ENTRY*)((LPBYTE)MAHMHeader + MAHMHeader->dwHeaderSize + index * MAHMHeader->dwEntrySize);
+                        MAHM_SHARED_MEMORY_ENTRY* MAHMMemory = (MAHM_SHARED_MEMORY_ENTRY*)((uchar*)MAHMHeader + MAHMHeader->dwHeaderSize + index * MAHMHeader->dwEntrySize);
                         //qDebug() << "Value[" << j <<"] = " << MAHMMemory->data;
                         if (j==0)
                             value = MAHMMemory->data;
@@ -235,7 +235,7 @@ void LH_AfterburnerData::getSelectedValue(MAHM_SHARED_MEMORY_HEADER* MAHMHeader,
     } else
     if (index<(int)MAHMHeader->dwNumEntries)
     {
-        MAHM_SHARED_MEMORY_ENTRY* MAHMMemory = (MAHM_SHARED_MEMORY_ENTRY*)((LPBYTE)MAHMHeader + MAHMHeader->dwHeaderSize + index * MAHMHeader->dwEntrySize);
+        MAHM_SHARED_MEMORY_ENTRY* MAHMMemory = (MAHM_SHARED_MEMORY_ENTRY*)((uchar*)MAHMHeader + MAHMHeader->dwHeaderSize + index * MAHMHeader->dwEntrySize);
 
         value = MAHMMemory->data;
         text = "";
@@ -274,7 +274,7 @@ void LH_AfterburnerData::loadTypesList(MAHM_SHARED_MEMORY_HEADER* MAHMHeader)
         sensors_.clear();
         while (i<MAHMHeader->dwNumEntries)
         {
-            MAHM_SHARED_MEMORY_ENTRY* MAHMMemory = (MAHM_SHARED_MEMORY_ENTRY*)((LPBYTE)MAHMHeader + MAHMHeader->dwHeaderSize + i * MAHMHeader->dwEntrySize);
+            MAHM_SHARED_MEMORY_ENTRY* MAHMMemory = (MAHM_SHARED_MEMORY_ENTRY*)((uchar*)MAHMHeader + MAHMHeader->dwHeaderSize + i * MAHMHeader->dwEntrySize);
             QString sensorName = QString(MAHMMemory->szSrcName);
             if(rx.indexIn(reverse(sensorName)) >-1)
             {

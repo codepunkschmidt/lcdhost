@@ -2,7 +2,6 @@
 #define LH_AIDA64DATA_H
 
 #include "../_Templates/LH_MonitoringData.h"
-#include <windows.h>
 
 #include <QtXML>
 #include <QRegExp>

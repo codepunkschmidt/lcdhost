@@ -103,8 +103,10 @@ bool LH_CoreTempData::getData(float& value, QString& text, QString& units, int i
     int count;
     return getData(value, text, units, count, index);
 }
+
 bool LH_CoreTempData::getData(float& value, QString& text, QString& units, int& count, int index)
 {
+#ifdef Q_WS_WIN
     const char* mapname  = "CoreTempMappingObject";
     bool resultVal = true;
 
@@ -128,6 +130,14 @@ bool LH_CoreTempData::getData(float& value, QString& text, QString& units, int& 
     setup_value_type_->setFlag(LH_FLAG_READONLY, !resultVal);
     setup_value_index_->setFlag(LH_FLAG_READONLY, !resultVal);
     return resultVal;
+#else
+    Q_UNUSED(value);
+    Q_UNUSED(text);
+    Q_UNUSED(units);
+    Q_UNUSED(count);
+    Q_UNUSED(index);
+    return false;
+#endif
 }
 
 bool LH_CoreTempData::getCount(int& count)

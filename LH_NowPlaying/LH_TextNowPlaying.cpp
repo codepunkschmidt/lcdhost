@@ -29,15 +29,14 @@
 #include <QTime>
 #include <QRegExp>
 
-#include <windows.h>
-
-#include "iTunesCOMInterface.h"
-#include "wa_ipc.h"
-#include "wmp.h"
+#ifdef Q_WS_WIN
+# include <windows.h>
+# include "iTunesCOMInterface.h"
+# include "wa_ipc.h"
+# include "wmp.h"
+#endif
 
 #include "../LH_Text/LH_Text.h"
-
-
 
 class LH_TextNowPlaying : public LH_Text
 {
@@ -123,6 +122,7 @@ public:
 
     bool getSpotify(QString& qTitle, QString& qArtist)
     {
+#ifdef Q_WS_WIN
         //~~~ Spotify ~~~
         HWND hwnd = FindWindowA("SpotifyMainWindow",NULL);
         if (hwnd != 0)
@@ -151,11 +151,16 @@ public:
             }
             return true;
         }
-        else
-            return false;
+#else
+        Q_UNUSED(qTitle);
+        Q_UNUSED(qArtist);
+#endif
+        return false;
     }
+
     bool getiTunes(QString& qTitle, QString& qArtist)
     {
+#ifdef Q_WS_WIN
         HWND hwnd = FindWindowA("iTunes",NULL);
         if (hwnd != 0)
         {
@@ -209,10 +214,16 @@ public:
             }
             CoUninitialize();
         }
+#else
+        Q_UNUSED(qTitle);
+        Q_UNUSED(qArtist);
+#endif
         return false;
     }
+
     bool getWinamp(QString& qTitle, QString& qArtist)
     {
+#ifdef Q_WS_WIN
         //IPC_GET_PLAYING_TITLE
         Q_UNUSED(qArtist);
         HWND hwnd = FindWindowA("Winamp v1.x",NULL);
@@ -241,11 +252,16 @@ public:
             //qTitle = qTitle + QString::fromWCharArray(wcTitle);
             //return true;
         }
+#else
+        Q_UNUSED(qTitle);
+        Q_UNUSED(qArtist);
+#endif
         return false;
     }
 
     bool getWMP(QString& qTitle, QString& qArtist)
-    {        
+    {
+#ifdef Q_WS_WIN
         // is there a clue in
         //          http://code.google.com/p/onlylyric/source/browse/trunk/components/winPlayer.cpp?r=2
 
@@ -279,6 +295,10 @@ public:
             }
             return false;
         }
+#else
+        Q_UNUSED(qTitle);
+        Q_UNUSED(qArtist);
+#endif
         return false;
     }
 };

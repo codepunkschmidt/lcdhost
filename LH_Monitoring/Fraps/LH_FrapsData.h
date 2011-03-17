@@ -2,7 +2,18 @@
 #define LH_FRAPSDATA_H
 
 #include "../_Templates/LH_MonitoringData.h"
-#include <windows.h>
+
+#ifdef Q_WS_WIN
+# include <windows.h>
+#endif
+
+#ifndef DWORD
+# define DWORD quint32
+#endif
+
+#ifndef WINAPI
+# define WINAPI
+#endif
 
 struct FRAPS_SHARED_DATA {
    DWORD sizeOfStruct;

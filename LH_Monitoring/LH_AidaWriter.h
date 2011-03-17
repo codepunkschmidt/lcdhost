@@ -3,11 +3,18 @@
 
 #include "../LH_Text/LH_Text.h"
 #include "../LH_Qt_QTextEdit.h"
-#include <windows.h>
 
+#ifdef Q_WS_WIN
+# include <windows.h>
+#endif
 
+#ifndef DWORD
+# define DWORD quint32
+#endif
 
-
+#ifndef HANDLE
+# define HANDLE qptrdiff
+#endif
 
 class LH_AidaWriter : public LH_Text
 {

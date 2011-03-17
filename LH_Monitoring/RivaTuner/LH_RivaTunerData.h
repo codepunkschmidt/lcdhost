@@ -2,7 +2,14 @@
 #define LH_RIVATUNERDATA_H
 
 #include "../_Templates/LH_MonitoringData.h"
-#include <windows.h>
+
+#ifdef Q_WS_WIN
+# include <windows.h>
+#endif
+
+#ifndef DWORD
+# define DWORD quint32
+#endif
 
 struct RTHM_SHARED_MEMORY_HEADER
 {

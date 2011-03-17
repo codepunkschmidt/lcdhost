@@ -32,7 +32,6 @@
 #include <QHash>
 
 #include "LH_RivaTunerImage.h"
-#include <windows.h>
 #include "../LH_Qt_QStringList.h"
 
 LH_PLUGIN_CLASS(LH_RivaTunerImage)

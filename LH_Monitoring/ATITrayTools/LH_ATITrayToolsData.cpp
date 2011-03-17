@@ -45,6 +45,7 @@ LH_ATITrayToolsData::~LH_ATITrayToolsData()
 
 bool LH_ATITrayToolsData::getData(float& value, QString& text, QString& units)
 {
+#ifdef Q_WS_WIN
     const char* mapname  = "ATITRAY_SMEM";
     float resultVal = true;
 
@@ -66,6 +67,12 @@ bool LH_ATITrayToolsData::getData(float& value, QString& text, QString& units)
 
     setup_value_type_->setFlag(LH_FLAG_READONLY, !resultVal);
     return resultVal;
+#else
+    Q_UNUSED(value);
+    Q_UNUSED(text);
+    Q_UNUSED(units);
+    return false;
+#endif
 }
 
 void LH_ATITrayToolsData::getSelectedValue(tagTATTData* memoryData, float& value, QString& text, QString& units)

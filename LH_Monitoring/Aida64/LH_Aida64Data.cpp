@@ -1,6 +1,10 @@
 #include "LH_Aida64Data.h"
 #include <QDebug>
 
+#ifdef Q_WS_WIN
+# include <windows.h>
+#endif
+
 LH_Aida64Data::LH_Aida64Data( LH_QtObject *parent, monitoringDataMode dataMode, bool includeGroups) : LH_MonitoringData( parent, includeGroups)
 {
     dataMode_ = dataMode;
@@ -179,6 +183,7 @@ void LH_Aida64Data::updateLists()
 
 bool LH_Aida64Data::loadXML(bool doListUpdate)
 {
+#ifdef Q_WS_WIN
     bool resultVal = true;
 
     const char* mapnameAida64  = "AIDA64_SensorValues";
@@ -221,6 +226,10 @@ bool LH_Aida64Data::loadXML(bool doListUpdate)
         setItemSelection();
     }
     return resultVal;
+#else
+    Q_UNUSED(doListUpdate);
+    return false;
+#endif
 }
 
 bool LH_Aida64Data::getData(float& value, QString& text, QString& units)

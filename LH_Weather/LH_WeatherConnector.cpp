@@ -236,6 +236,8 @@ void LH_WeatherConnector::fetchWOEID()
 
 void LH_WeatherConnector::finished2Day( int id, bool error )
 {
+    Q_UNUSED(id);
+
     if (error)
     {
         qWarning() << "LH_WeatherConnector: Error during HTTP (2Day) fetch:" << http2Day.errorString() << http2Day.lastResponse().statusCode();
@@ -256,6 +258,7 @@ void LH_WeatherConnector::finished2Day( int id, bool error )
 
 void LH_WeatherConnector::finished5Day( int id, bool error )
 {
+    Q_UNUSED(id);
     if (error)
     {
         qWarning() << "LH_WeatherConnector: Error during HTTP (5Day) fetch:" << http5Day.errorString() << http5Day.lastResponse().statusCode();
@@ -276,6 +279,7 @@ void LH_WeatherConnector::finished5Day( int id, bool error )
 
 void LH_WeatherConnector::finishedWOEID( int id, bool error )
 {
+    Q_UNUSED(id);
     if (error)
     {
         qWarning() << "LH_WeatherConnector: Error during HTTP (WOEID) fetch:" << httpWOEID.errorString() << httpWOEID.lastResponse().statusCode();
@@ -368,6 +372,7 @@ void LH_WeatherConnector::parseXml5Day()
 
 void LH_WeatherConnector::parseXmlWeather(bool is5Day, QXmlStreamReader& xml_, QHttp& http)
 {
+    Q_UNUSED(http);
     if( weather )
     {
         weather->forecastDays = 0;

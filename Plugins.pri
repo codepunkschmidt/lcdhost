@@ -17,7 +17,7 @@ CHANGESET_REVISION = $$system(hg log -l 1 --template {node}/{rev} $$PWD/$$TARGET
 CHANGESET = $$section(CHANGESET_REVISION,"/",0,0)
 REVISION = $$section(CHANGESET_REVISION,"/",1,1)
 DEFINES += CHANGESET=\"\\\"$$CHANGESET\\\"\"
-DEFINES += REVISION=\"\\\"$$REVISION\\\"\"
+DEFINES += REVISION=$$REVISION
 
 win32 {
     LCDHOST_PLUGINS = $$PWD/../$$RELDEB/plugins

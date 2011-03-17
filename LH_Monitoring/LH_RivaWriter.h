@@ -5,18 +5,16 @@
 
 #ifdef Q_WS_WIN
 # include <windows.h>
-#endif
-
-#ifndef DWORD
-# define DWORD quint32
-#endif
-
-#ifndef MAX_PATH
-# define MAX_PATH 260
-#endif
-
-#ifndef HANDLE
-# define HANDLE qptrdiff
+#else
+# ifndef DWORD
+#  define DWORD quint32
+# endif
+# ifndef MAX_PATH
+#  define MAX_PATH 260
+# endif
+# ifndef HANDLE
+#  define HANDLE void*
+# endif
 #endif
 
 // MSI Afterburner Data

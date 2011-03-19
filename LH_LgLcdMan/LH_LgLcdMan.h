@@ -66,14 +66,25 @@ public:
 
     virtual const char *lh_name() { return "LgLcdMan"; }
     virtual const char *lh_shortdesc() { return "Logitech G-series keyboard driver using the Logitech software"; }
-    virtual const char *lh_author() { return "Johan Lindh"; }
+    virtual const char *lh_author() { return "Johan \"SirReal\" Lindh"; }
     virtual const char *lh_homepage() { return "<a href=\"http://www.linkdata.se/software/lcdhost\">Link Data Stockholm</a>"; }
     virtual const char *lh_longdesc() { return "This driver interfaces with the Logitech LCD Manager, which is part of the Logitech G-series keyboard driver software."; }
     virtual const lh_blob *lh_logo();
     virtual const char *lh_load();
     virtual void lh_unload();
     virtual int lh_notify(int code,void *param);
-
+    const lh_buildinfo * lh_get_buildinfo()
+    {
+        static lh_buildinfo buildinfo =
+        {
+            LH_BUILDINFO_SIG,
+            sizeof(lh_buildinfo),
+            REVISION,
+            "http://www.linkdata.se/lcdhost/version.php",
+            "r" STRINGIZE(REVISION)
+        };
+        return &buildinfo;
+    }
     bool event( QEvent * e );
 
     void setBW( QImage img ) { if( thread_ ) thread_->setBW(img); }

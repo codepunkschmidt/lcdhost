@@ -44,7 +44,7 @@ class LH_QtPlugin_Text : public LH_QtPlugin
 public:
     const char * lh_name() { return "Text"; }
     const char * lh_shortdesc() { return "Displays texts. Among other things static texts, dates and time in textual formats."; }
-    const char * lh_author() { return "Johan Lindh"; }
+    const char * lh_author() { return "Johan \"SirReal\" Lindh"; }
     const char * lh_homepage() { return "<a href=\"http://www.linkdata.se/software/lcdhost\">Link Data Stockholm</a>"; }
     const char * lh_longdesc()
     {
@@ -52,6 +52,18 @@ public:
                "Static (user-selected) texts, dates and times are available. "
                "Additionally, this plugin's source code is provided as a "
                "sample of a plugin written in C++ with <a href=\"http://qt.nokia.com/\">Qt</a>.";
+    }
+    const lh_buildinfo * lh_get_buildinfo()
+    {
+        static lh_buildinfo buildinfo =
+        {
+            LH_BUILDINFO_SIG,
+            sizeof(lh_buildinfo),
+            REVISION,
+            "http://www.linkdata.se/lcdhost/version.php",
+            "r" STRINGIZE(REVISION)
+        };
+        return &buildinfo;
     }
 };
 

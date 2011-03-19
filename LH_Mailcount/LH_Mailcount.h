@@ -51,12 +51,24 @@ class LH_QtPlugin_Mailcount : public LH_QtPlugin
 public:
     const char * lh_name() { return "Mailcount"; }
     const char * lh_shortdesc() { return "Unread mail indicator."; }
-    const char * lh_author() { return "Johan Lindh"; }
+    const char * lh_author() { return "Johan \"SirReal\" Lindh"; }
     const char * lh_homepage() { return "<a href=\"http://www.linkdata.se/software/lcdhost\">Link Data Stockholm</a>"; }
     const char * lh_longdesc() { return "Show unread e-mails. Requires an e-mail client with shell support, like Mozilla Thunderbird or Microsoft Outlook."; }
     const lh_blob *lh_logo();
     const char *lh_load();
     void lh_unload();
+    const lh_buildinfo * lh_get_buildinfo()
+    {
+        static lh_buildinfo buildinfo =
+        {
+            LH_BUILDINFO_SIG,
+            sizeof(lh_buildinfo),
+            REVISION,
+            "http://www.linkdata.se/lcdhost/version.php",
+            "r" STRINGIZE(REVISION)
+        };
+        return &buildinfo;
+    }
 };
 
 class LH_Mailcount : public LH_QtInstance

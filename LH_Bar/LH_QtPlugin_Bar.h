@@ -48,7 +48,7 @@ public:
 
     const char * lh_name() { return "Bar"; }
     const char * lh_shortdesc() { return "Bar and histogram graphs"; }
-    const char * lh_author() { return "Johan Lindh"; }
+    const char * lh_author() { return "Johan \"SirReal\" Lindh"; }
     const char * lh_homepage() { return "<a href=\"http://www.linkdata.se/software/lcdhost\">Link Data Stockholm</a>"; }
     const char * lh_longdesc()
     {
@@ -58,6 +58,18 @@ public:
 
     const char *lh_load();
     void lh_unload();
+    const lh_buildinfo * lh_get_buildinfo()
+    {
+        static lh_buildinfo buildinfo =
+        {
+            LH_BUILDINFO_SIG,
+            sizeof(lh_buildinfo),
+            REVISION,
+            "http://www.linkdata.se/lcdhost/version.php",
+            "r" STRINGIZE(REVISION)
+        };
+        return &buildinfo;
+    }
 };
 
 extern LH_QtPlugin_Bar thePlugin;

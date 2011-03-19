@@ -38,10 +38,11 @@ public:
     const lh_buildinfo * lh_get_buildinfo() {
         static lh_buildinfo buildinfo =
         {
-            "1.03",
+            LH_BUILDINFO_SIG,
+            sizeof(lh_buildinfo),
             REVISION,
-            "http://codeleap.co.uk/lcdhost/lh_monitoring/ver.txt",
-            "http://codeleap.co.uk/lcdhost/lh_monitoring/LH_Monitoring.dll"
+            "http://codeleap.co.uk/lcdhost/lh_monitoring/version.php",
+            "1.03"
         };
         return &buildinfo;
     }

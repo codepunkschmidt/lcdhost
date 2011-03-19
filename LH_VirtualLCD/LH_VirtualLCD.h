@@ -46,13 +46,25 @@ public:
 
     virtual const char *lh_name() { return "Virtual LCD"; }
     virtual const char *lh_shortdesc() { return "Virtual LCD driver"; }
-    virtual const char *lh_author() { return "Johan Lindh"; }
+    virtual const char *lh_author() { return "Johan \"SirReal\" Lindh"; }
     virtual const char *lh_homepage() { return "<a href=\"http://www.linkdata.se/software/lcdhost\">Link Data Stockholm</a>"; }
     virtual const char *lh_longdesc() { return "This driver provides two software emulated LCD's, one QVGA and one monochrome 160x43."; }
     virtual const lh_blob *lh_logo();
     virtual const char *lh_load();
     virtual void lh_unload() {}
     virtual int lh_notify(int,void*) { return 0; }
+    const lh_buildinfo * lh_get_buildinfo()
+    {
+        static lh_buildinfo buildinfo =
+        {
+            LH_BUILDINFO_SIG,
+            sizeof(lh_buildinfo),
+            REVISION,
+            "http://www.linkdata.se/lcdhost/version.php",
+            "r" STRINGIZE(REVISION)
+        };
+        return &buildinfo;
+    }
 };
 
 #endif // LH_VIRTUALLCD_H

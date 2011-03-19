@@ -147,20 +147,42 @@ typedef struct lh_class_t lh_class;
   Contains the libraries internal version number, which is a UTF-8 encoded
   string simply shown to the user, the build number which is an increasing
   sequence number used to determine if there is a newer version of the
-  library available, and the check and download URLs.
+  library available, and the version info URL.
 
-  The check URL should return a simple string (mime type text/plain) with
-  the build number available at the download URL.
+  The URL should return an XML document with one or more entries like this:
 
-  The download URL should download the latest version of the plugin.
+  <file>
+    <name>LH_Plugin</name>
+    <arch>win32</arch>
+    <rev>6</rev>
+    <url>http://somewhere.org/download?file=LH_Plugin_R6.zip</url>
+  </file>
+
+  Where
+    'name' is the base name of the plugin,
+    'arch' is one of "win32", "mac32" or "lin64" (others may be added later)
+    'rev' is the revision number to be compared with the 'revision' struct member,
+    'url' is the download URL
+
+  The document will be cached, so if several plugins refer to the same URL,
+  the cached copy will be used. The cache is cleared intermittently. Note
+  that the document may contain information for multiple plugins.
   */
 typedef struct lh_buildinfo_t
 {
-    const char *version;        /* UTF-8 encoded version string, not interpreted, may be NULL */
-    int build;                  /* build number */
-    const char *check_url;      /* see above for comments, may be NULL */
-    const char *download_url;   /* see above for comments, may be NULL */
+    char sig[8];        /* LH_BUILDINFO_SIG */
+    int size;           /* sizeof(lh_buildinfo_t) */
+    int revision;       /* revision number */
+    char url[256];      /* see above for comments */
+    char version[32];   /* UTF-8 encoded version string, not interpreted */
 } lh_buildinfo;
+
+#define LH_BUILDINFO_SIG {0xde,0x42,0xab,0xca,0xe2,0x60,0x66,0x87}
+
+#ifndef STRINGIZE
+# define STRINGIZE_(x) #x
+# define STRINGIZE(x) STRINGIZE_(x)
+#endif
 
 /**
   The lh_blob type is used to embed binary data, usually a JPG or PNG image file.
@@ -440,6 +462,7 @@ public:
     const lh_blob * (*lh_logo) (void); /* return blob containing JPG or PNG */
     const char * (*lh_load)(void *id, lh_callback_t, lh_systemstate*); /* return NULL for success, else error message */
     void (*lh_unload)(void);
+    lh_buildinfo *(*lh_get_buildinfo)(void);
 
     /* Optional, but might be useful */
     int (*lh_polling)();

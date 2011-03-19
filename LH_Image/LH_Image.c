@@ -340,7 +340,7 @@ EXPORT int lh_version(int hostversion)
 
 EXPORT const char * lh_author(void)
 {
-    return "Johan Lindh";
+    return "Johan \"SirReal\" Lindh";
 }
 
 EXPORT const char * lh_homepage(void)
@@ -381,6 +381,19 @@ EXPORT const char * lh_load(void *id, lh_callback_t callback, lh_systemstate *p_
 EXPORT void lh_unload(void)
 {
     return;
+}
+
+EXPORT const lh_buildinfo * lh_get_buildinfo(void)
+{
+    static lh_buildinfo buildinfo =
+    {
+        LH_BUILDINFO_SIG,
+        sizeof(lh_buildinfo),
+        REVISION,
+        "http://www.linkdata.se/lcdhost/version.php",
+        "r" STRINGIZE(REVISION)
+    };
+    return &buildinfo;
 }
 
 /* eof */

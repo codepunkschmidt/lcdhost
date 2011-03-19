@@ -44,9 +44,21 @@ class LH_QtPlugin_Decor : public LH_QtPlugin
 public:
     const char * lh_name(void) { return "Decor"; }
     const char * lh_shortdesc(void) { return "Static decorations."; }
-    const char * lh_author(void) { return "Johan Lindh"; }
+    const char * lh_author(void) { return "Johan \"SirReal\" Lindh"; }
     const char * lh_homepage(void) { return "<a href=\"http://www.linkdata.se/software/lcdhost\">Link Data Stockholm</a>"; }
     const char * lh_longdesc(void) {  return "Backgrounds, rectangles, lines, circles."; }
+    const lh_buildinfo * lh_get_buildinfo()
+    {
+        static lh_buildinfo buildinfo =
+        {
+            LH_BUILDINFO_SIG,
+            sizeof(lh_buildinfo),
+            REVISION,
+            "http://www.linkdata.se/lcdhost/version.php",
+            "r" STRINGIZE(REVISION)
+        };
+        return &buildinfo;
+    }
 };
 
 #endif // LH_QTPLUGIN_DECOR_H

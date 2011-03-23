@@ -149,24 +149,25 @@ typedef struct lh_class_t lh_class;
   sequence number used to determine if there is a newer version of the
   library available, and the version info URL.
 
-  The URL should return an XML document with one or more entries like this:
+  The URL should return a text/xml document like the following sample:
 
-  <file>
-    <name>LH_Plugin</name>
-    <arch>win32</arch>
-    <rev>6</rev>
-    <url>http://somewhere.org/download?file=LH_Plugin_R6.zip</url>
-  </file>
+  <lhver arch="win32" url="http://lcdhost.googlecode.com/files/%1_%2_R%3.zip">
+   <file name="LH_Text" rev="6" />
+  </lhver>
 
-  Where
-    'name' is the base name of the plugin,
-    'arch' is one of "win32", "mac32" or "lin64" (others may be added later)
-    'rev' is the revision number to be compared with the 'revision' struct member,
-    'url' is the download URL
+  The 'lhver' element contains default attribute values for 'file' elements.
+  The 'url' attribute expands %1 to 'name', %2 to 'arch' and %3 to 'rev'.
+
+  A 'file' element may contain the following attributes:
+  'name'      The plain filename, without system prefix or suffixes
+  'arch'      The architecture (ex, 'win32', 'mac32' or 'lin64d')
+  'rev'       The revision number
+  'url'       The download URL
+
+  There may be any number of 'file' elements.
 
   The document will be cached, so if several plugins refer to the same URL,
-  the cached copy will be used. The cache is cleared intermittently. Note
-  that the document may contain information for multiple plugins.
+  the cached copy will be used. The cache is cleared intermittently.
   */
 typedef struct lh_buildinfo_t
 {

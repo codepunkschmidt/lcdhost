@@ -56,15 +56,7 @@ public:
     const lh_buildinfo * lh_version( int av )
     {
         Q_UNUSED(av);
-        static lh_buildinfo buildinfo =
-        {
-            LH_BUILDINFO_SIG,
-            sizeof(lh_buildinfo),
-            REVISION,
-            LH_API_VERSION,
-            "r" STRINGIZE(REVISION),
-            "http://www.linkdata.se/lcdhost/version.php"
-        };
+        static lh_buildinfo buildinfo = LH_STD_BUILDINFO;
         return &buildinfo;
     }
 };

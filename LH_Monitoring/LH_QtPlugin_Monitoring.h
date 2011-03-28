@@ -35,14 +35,17 @@ public:
     const char * lh_shortdesc() { return "Connects to a variety of 3rd party applications and reports statistics such as Temperatures, Fan Speeds, Voltages, etc."; }
     const char * lh_author() { return "Andy \"Triscopic\" Bridges"; }
     const char * lh_homepage() { return "<a href=\"http://www.codeleap.co.uk\">CodeLeap</a>"; }
-    const lh_buildinfo * lh_get_buildinfo() {
+    const lh_buildinfo * lh_version( int av )
+    {
+        Q_UNUSED(av);
         static lh_buildinfo buildinfo =
         {
             LH_BUILDINFO_SIG,
             sizeof(lh_buildinfo),
             REVISION,
-            "http://codeleap.co.uk/lcdhost/lh_monitoring/version.php",
-            "1.03"
+            LH_API_VERSION,
+            "1.03",
+            "http://codeleap.co.uk/lcdhost/lh_monitoring/ver.xml"
         };
         return &buildinfo;
     }

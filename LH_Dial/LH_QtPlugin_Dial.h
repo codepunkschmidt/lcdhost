@@ -46,6 +46,20 @@ public:
 
     const char *lh_load();
     void lh_unload();
+    const lh_buildinfo * lh_version( int av )
+    {
+        Q_UNUSED(av);
+        static lh_buildinfo buildinfo =
+        {
+            LH_BUILDINFO_SIG,
+            sizeof(lh_buildinfo),
+            REVISION,
+            LH_API_VERSION,
+            "1.00",
+            "http://codeleap.co.uk/lcdhost/lh_dial/ver.xml"
+        };
+        return &buildinfo;
+    }
 };
 
 extern LH_QtPlugin_Dial thePlugin;

@@ -40,6 +40,20 @@ public:
         return "This plugin provides a text item that can display the currently playing track in one of several popular "
                "3rd-party music players, namely <a href=\"http://www.spotify.com/\">Spotify</a>, <a href=\"http://www.apple.com/itunes/\">iTunes</a> or <a href=\"http://www.winamp.com/\">Winamp</a>.";
     }
+    const lh_buildinfo * lh_version( int av )
+    {
+        Q_UNUSED(av);
+        static lh_buildinfo buildinfo =
+        {
+            LH_BUILDINFO_SIG,
+            sizeof(lh_buildinfo),
+            REVISION,
+            LH_API_VERSION,
+            "1.00",
+            "http://codeleap.co.uk/lcdhost/lh_nowplaying/ver.xml"
+        };
+        return &buildinfo;
+    }
 };
 
 extern LH_QtPlugin_NowPlaying thePlugin;

@@ -39,6 +39,7 @@
 #include <string.h>
 #include <locale.h>
 #include <ctype.h>
+#include <assert.h>
 
 #include "LH_Image.h"
 #include "logo_blob.h"
@@ -332,10 +333,26 @@ EXPORT const char * lh_shortdesc(void)
     return "Display images files";
 }
 
-EXPORT int lh_version(int hostversion)
+#ifndef STRINGIZE
+# define STRINGIZE_(x) #x
+# define STRINGIZE(x) STRINGIZE_(x)
+#endif
+
+EXPORT const lh_buildinfo* lh_version(int hostversion)
 {
-    hostversion = 0;
-    return LH_LIBRARY_VERSION;
+    static lh_buildinfo bi =
+    {
+        LH_BUILDINFO_SIG,
+        sizeof(lh_buildinfo),
+        REVISION,
+        LH_API_VERSION,
+        "r" STRINGIZE(REVISION),
+        "http://www.linkdata.se/lcdhost/version.php"
+    };
+
+    assert( hostversion == LH_API_VERSION );
+
+    return &bi;
 }
 
 EXPORT const char * lh_author(void)
@@ -390,8 +407,9 @@ EXPORT const lh_buildinfo * lh_get_buildinfo(void)
         LH_BUILDINFO_SIG,
         sizeof(lh_buildinfo),
         REVISION,
-        "http://www.linkdata.se/lcdhost/version.php",
-        "r" STRINGIZE(REVISION)
+        LH_API_VERSION,
+        "r" STRINGIZE(REVISION),
+        "http://www.linkdata.se/lcdhost/version.php"
     };
     return &buildinfo;
 }

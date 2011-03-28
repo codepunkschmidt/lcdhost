@@ -42,14 +42,17 @@ public:
                "language to export text. This plugin can then be used to read in that data and display it on screen "
                "in various formats to create a layout that displays useful in-game stats.";
     }
-    const lh_buildinfo * lh_get_buildinfo() {
+    const lh_buildinfo * lh_version( int av )
+    {
+        Q_UNUSED(av);
         static lh_buildinfo buildinfo =
         {
             LH_BUILDINFO_SIG,
             sizeof(lh_buildinfo),
             REVISION,
-            "http://codeleap.co.uk/lcdhost/lh_dataviewer/version.php",
-            "1.02"
+            LH_API_VERSION,
+            "1.02",
+            "http://codeleap.co.uk/lcdhost/lh_dataviewer/ver.xml"
         };
         return &buildinfo;
     }

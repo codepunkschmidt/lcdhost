@@ -34,14 +34,17 @@ public:
     const char * lh_shortdesc() { return "Allows some complex cursor-like and tab-like behaviours"; }
     const char * lh_author() { return "Andy \"Triscopic\" Bridges"; }
     const char * lh_homepage() { return "<a href=\"http://www.codeleap.co.uk\">CodeLeap</a> / <a href=\"http://www.linkdata.se/forum/lcdhost-plugins/(release)-lh_cursor/\">LCDHost: LH_Cursor Thread</a>"; }
-    const lh_buildinfo * lh_get_buildinfo() {
+    const lh_buildinfo * lh_version( int av )
+    {
+        Q_UNUSED(av);
         static lh_buildinfo buildinfo =
         {
             LH_BUILDINFO_SIG,
             sizeof(lh_buildinfo),
             REVISION,
-            "http://codeleap.co.uk/lcdhost/lh_cursor/version.php",
-            "0.3"
+            LH_API_VERSION,
+            "0.3",
+            "http://codeleap.co.uk/lcdhost/lh_cursor/ver.xml"
         };
         return &buildinfo;
     }

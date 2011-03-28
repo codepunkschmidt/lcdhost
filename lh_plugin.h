@@ -46,9 +46,9 @@
   const char *lh_shortdesc()
     Return a short description of the library.
 
-  int lh_version( int lcdhost_library_version )
-    Parameter is the value of LCDHost's LH_LIBRARY_VERSION.
-    Return your own LH_LIBRARY_VERSION.
+  const lh_buildinfo* lh_version( int lcdhost_library_version )
+    Parameter is the value of LCDHost's LH_API_VERSION.
+    Return the librarys build information, or NULL if none is provided.
 
   const char *lh_author()
     Return the author. You can use hyperlinks here, if you like.
@@ -97,10 +97,6 @@
     If you add or remove classes dynamically, use lh_callback() with
     lh_cb_class_refresh to have LCDHost call lh_class_list() again.
 
-  const lh_buildinfo *lh_get_buildinfo()
-    Return the librarys build information, or NULL if none is provided.
-    \sa lh_build
-
   */
 
 #ifndef LH_PLUGIN_H
@@ -111,7 +107,7 @@
 
 #include "lh_systemstate.h"
 
-#define LH_LIBRARY_VERSION 3
+#define LH_API_VERSION 4
 #define LH_DEVICE_MAXBUTTONS 32
 
 /**
@@ -144,12 +140,24 @@
 typedef struct lh_class_t lh_class;
 
 /**
-  Contains the libraries internal version number, which is a UTF-8 encoded
-  string simply shown to the user, the build number which is an increasing
-  sequence number used to determine if there is a newer version of the
-  library available, and the version info URL.
+  Contains the library version information.
 
-  The URL should return a text/xml document like the following sample:
+  'sig' is a magic cookie so that external application can find
+  the structure within a plugin without having to load it.
+
+  'size' is sizeof(lh_buildinfo_t), and may be used to version this
+  structure in the future.
+
+  'revision' is an increasing sequence number used to determine if
+  there is a newer version of the library available.
+
+  'apiversion' is the LH_API_VERSION value. LCDHost will use this
+  to determine if it can safely use a plugin or not.
+
+  'version' is an UTF-8 encoded string simply shown to the user.
+
+  'url' is the version information URL. This URL should return a text/xml
+  document like the following sample:
 
   <lhver arch="win32" url="http://lcdhost.googlecode.com/files/%1_%2_R%3.zip">
    <file name="LH_Text" rev="6" />
@@ -174,8 +182,9 @@ typedef struct lh_buildinfo_t
     char sig[8];        /* LH_BUILDINFO_SIG */
     int size;           /* sizeof(lh_buildinfo_t) */
     int revision;       /* revision number */
-    char url[256];      /* see above for comments */
+    int apiversion;     /* LH_API_VERSION */
     char version[32];   /* UTF-8 encoded version string, not interpreted */
+    char url[256];      /* see above for comments */
 } lh_buildinfo;
 
 #define LH_BUILDINFO_SIG {0xde,0x42,0xab,0xca,0xe2,0x60,0x66,0x87}
@@ -456,7 +465,7 @@ class lh_library_calltable
 public:
     const char * (*lh_name) (void); /* Required */
     const char * (*lh_shortdesc) (void); /* Required */
-    int (*lh_version) (int); /* Required */
+    const lh_buildinfo* (*lh_version) (int); /* Required */
     const char * (*lh_author) (void);
     const char * (*lh_homepage) (void);
     const char * (*lh_longdesc) (void);

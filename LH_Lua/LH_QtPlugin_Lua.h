@@ -83,15 +83,17 @@ public:
     const char *lh_load();
     int lh_notify( int code, void *);
     void lh_unload();
-    const lh_buildinfo * lh_get_buildinfo()
+    const lh_buildinfo * lh_version(int av)
     {
+        Q_UNUSED(av);
         static lh_buildinfo buildinfo =
         {
             LH_BUILDINFO_SIG,
             sizeof(lh_buildinfo),
             REVISION,
-            "http://www.linkdata.se/lcdhost/version.php",
-            "r" STRINGIZE(REVISION)
+            LH_API_VERSION,
+            "r" STRINGIZE(REVISION),
+            "http://www.linkdata.se/lcdhost/version.php"
         };
         return &buildinfo;
     }

@@ -60,12 +60,10 @@ lh_systemstate *lcdhost_state()
 /**
   Exported from all LCDHost shared libraries.
 */
-EXPORT int lh_version(int hostversion)
+EXPORT const lh_buildinfo* lh_version(int hostversion)
 {
-    Q_ASSERT( hostversion == LH_LIBRARY_VERSION );
-    Q_UNUSED( hostversion );
     Q_ASSERT( LH_QtPlugin::instance() != NULL );
-    return LH_LIBRARY_VERSION;
+    return LH_QtPlugin::instance()->lh_version( hostversion );
 }
 EXPORT const char * lh_name(void) { return LH_QtPlugin::instance()->lh_name(); }
 EXPORT const char * lh_shortdesc(void) { return LH_QtPlugin::instance()->lh_shortdesc(); }
@@ -75,7 +73,6 @@ EXPORT const char * lh_longdesc(void) { return LH_QtPlugin::instance()->lh_longd
 EXPORT const lh_blob *lh_logo(void) { return LH_QtPlugin::instance()->lh_logo(); }
 EXPORT int lh_polling(void) { return LH_QtPlugin::instance()->lh_polling(); }
 EXPORT int lh_notify(int code, void *param) { return LH_QtPlugin::instance()->lh_notify(code,param); }
-EXPORT const lh_buildinfo *lh_get_buildinfo() { return LH_QtPlugin::instance()->lh_get_buildinfo(); }
 
 EXPORT const char * lh_load( void *id, lh_callback_t p_callback, lh_systemstate *p_state )
 {

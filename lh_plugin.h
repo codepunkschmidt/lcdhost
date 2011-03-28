@@ -194,6 +194,16 @@ typedef struct lh_buildinfo_t
 # define STRINGIZE(x) STRINGIZE_(x)
 #endif
 
+#define LH_STD_BUILDINFO \
+    { \
+        LH_BUILDINFO_SIG, \
+        sizeof(lh_buildinfo), \
+        REVISION, \
+        LH_API_VERSION, \
+        "R" STRINGIZE(REVISION), \
+        "http://www.linkdata.se/lcdhost/version.php" \
+    }
+
 /**
   The lh_blob type is used to embed binary data, usually a JPG or PNG image file.
   */

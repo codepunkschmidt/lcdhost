@@ -73,18 +73,11 @@ public:
     virtual const char *lh_load();
     virtual void lh_unload();
     virtual int lh_notify(int code,void *param);
-    const lh_buildinfo * lh_version( int av )
+    const lh_buildinfo * lh_version( int amaj, int amin )
     {
-        Q_UNUSED(av);
-        static lh_buildinfo buildinfo =
-        {
-            LH_BUILDINFO_SIG,
-            sizeof(lh_buildinfo),
-            REVISION,
-            LH_API_VERSION,
-            "r" STRINGIZE(REVISION),
-            "http://www.linkdata.se/lcdhost/version.php"
-        };
+        static lh_buildinfo buildinfo = LH_STD_BUILDINFO;
+        Q_ASSERT( amaj == LH_API_MAJOR );
+        Q_ASSERT( amin >= LH_API_MINOR );
         return &buildinfo;
     }
     bool event( QEvent * e );

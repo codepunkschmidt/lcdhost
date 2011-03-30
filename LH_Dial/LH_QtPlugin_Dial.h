@@ -46,18 +46,20 @@ public:
 
     const char *lh_load();
     void lh_unload();
-    const lh_buildinfo * lh_version( int av )
+    const lh_buildinfo * lh_version( int amaj, int amin )
     {
-        Q_UNUSED(av);
         static lh_buildinfo buildinfo =
         {
             LH_BUILDINFO_SIG,
             sizeof(lh_buildinfo),
             REVISION,
-            LH_API_VERSION,
-            "1.00",
+            LH_API_MAJOR,
+            LH_API_MINOR,
+            "1.03",
             "http://codeleap.co.uk/lcdhost/lh_dial/ver.xml"
         };
+        Q_ASSERT( amaj == LH_API_MAJOR );
+        Q_ASSERT( amin >= LH_API_MINOR );
         return &buildinfo;
     }
 };

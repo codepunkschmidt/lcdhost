@@ -60,10 +60,10 @@ lh_systemstate *lcdhost_state()
 /**
   Exported from all LCDHost shared libraries.
 */
-EXPORT const lh_buildinfo* lh_version(int hostversion)
+EXPORT const lh_buildinfo* lh_version(int amaj, int amin )
 {
     Q_ASSERT( LH_QtPlugin::instance() != NULL );
-    return LH_QtPlugin::instance()->lh_version( hostversion );
+    return LH_QtPlugin::instance()->lh_version( amaj, amin );
 }
 EXPORT const char * lh_name(void) { return LH_QtPlugin::instance()->lh_name(); }
 EXPORT const char * lh_shortdesc(void) { return LH_QtPlugin::instance()->lh_shortdesc(); }

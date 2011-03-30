@@ -46,8 +46,8 @@
   const char *lh_shortdesc()
     Return a short description of the library.
 
-  const lh_buildinfo* lh_version( int lcdhost_library_version )
-    Parameter is the value of LCDHost's LH_API_VERSION.
+  const lh_buildinfo* lh_version( int api_major, int api_minor )
+    api_minor and api_major is the value of LCDHost's LH_API_MAJOR and LH_API_MINOR.
     Return the librarys build information, or NULL if none is provided.
 
   const char *lh_author()
@@ -107,7 +107,8 @@
 
 #include "lh_systemstate.h"
 
-#define LH_API_VERSION 4
+#define LH_API_MAJOR 4
+#define LH_API_MINOR 0
 #define LH_DEVICE_MAXBUTTONS 32
 
 /**
@@ -151,8 +152,12 @@ typedef struct lh_class_t lh_class;
   'revision' is an increasing sequence number used to determine if
   there is a newer version of the library available.
 
-  'apiversion' is the LH_API_VERSION value. LCDHost will use this
-  to determine if it can safely use a plugin or not.
+  'api_major' is the LH_API_MAJOR value. LCDHost will use this
+  to determine if it can safely use a plugin or not. The major
+  api version number must be identical in both LCDHost and plugin.
+
+  'api_minor' is the LH_API_MINOR value. LCDHost will load plugins
+  with a minor version number equal to or lower than it's own.
 
   'version' is an UTF-8 encoded string simply shown to the user.
 
@@ -171,6 +176,7 @@ typedef struct lh_class_t lh_class;
   'arch'      The architecture (ex, 'win32', 'mac32' or 'lin64d')
   'rev'       The revision number
   'url'       The download URL
+  'api'       The API versions in the form 'major.minor'
 
   There may be any number of 'file' elements.
 
@@ -182,7 +188,8 @@ typedef struct lh_buildinfo_t
     char sig[8];        /* LH_BUILDINFO_SIG */
     int size;           /* sizeof(lh_buildinfo_t) */
     int revision;       /* revision number */
-    int apiversion;     /* LH_API_VERSION */
+    int api_major;      /* LH_API_MAJOR */
+    int api_minor;      /* LH_API_MINOR */
     char version[32];   /* UTF-8 encoded version string, not interpreted */
     char url[256];      /* see above for comments */
 } lh_buildinfo;
@@ -199,7 +206,8 @@ typedef struct lh_buildinfo_t
         LH_BUILDINFO_SIG, \
         sizeof(lh_buildinfo), \
         REVISION, \
-        LH_API_VERSION, \
+        LH_API_MAJOR, \
+        LH_API_MINOR, \
         "R" STRINGIZE(REVISION), \
         "http://www.linkdata.se/lcdhost/version.php" \
     }
@@ -475,14 +483,13 @@ class lh_library_calltable
 public:
     const char * (*lh_name) (void); /* Required */
     const char * (*lh_shortdesc) (void); /* Required */
-    const lh_buildinfo* (*lh_version) (int); /* Required */
+    const lh_buildinfo* (*lh_version) (int,int); /* Required */
     const char * (*lh_author) (void);
     const char * (*lh_homepage) (void);
     const char * (*lh_longdesc) (void);
     const lh_blob * (*lh_logo) (void); /* return blob containing JPG or PNG */
     const char * (*lh_load)(void *id, lh_callback_t, lh_systemstate*); /* return NULL for success, else error message */
     void (*lh_unload)(void);
-    lh_buildinfo *(*lh_get_buildinfo)(void);
 
     /* Optional, but might be useful */
     int (*lh_polling)();

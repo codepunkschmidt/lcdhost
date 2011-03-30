@@ -106,7 +106,12 @@ public:
     virtual void lh_unload() {}
     virtual int lh_polling() { return 0; }
     virtual int lh_notify(int, void *) { return 0; }
-    virtual const lh_buildinfo *lh_version( int av ) { Q_UNUSED(av); return NULL; }
+    virtual const lh_buildinfo *lh_version( int amaj, int amin )
+    {
+        Q_ASSERT( amaj == LH_API_MAJOR );
+        Q_ASSERT( amin >= LH_API_MINOR );
+        return NULL;
+    }
 
     static const lh_systemstate *state() { return lcdhost_state(); }
     static void callback( const void *obj, lh_callbackcode_t code, void *param ) { lh_callback( obj, code, param ); }

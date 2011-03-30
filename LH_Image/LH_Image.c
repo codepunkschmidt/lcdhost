@@ -338,19 +338,21 @@ EXPORT const char * lh_shortdesc(void)
 # define STRINGIZE(x) STRINGIZE_(x)
 #endif
 
-EXPORT const lh_buildinfo* lh_version(int hostversion)
+EXPORT const lh_buildinfo* lh_version(int api_major, int api_minor )
 {
     static lh_buildinfo bi =
     {
         LH_BUILDINFO_SIG,
         sizeof(lh_buildinfo),
         REVISION,
-        LH_API_VERSION,
+        LH_API_MAJOR,
+        LH_API_MINOR,
         "r" STRINGIZE(REVISION),
         "http://www.linkdata.se/lcdhost/version.php"
     };
 
-    assert( hostversion == LH_API_VERSION );
+    assert( api_major == LH_API_MAJOR );
+    assert( api_minor >= LH_API_MINOR );
 
     return &bi;
 }
@@ -398,20 +400,6 @@ EXPORT const char * lh_load(void *id, lh_callback_t callback, lh_systemstate *p_
 EXPORT void lh_unload(void)
 {
     return;
-}
-
-EXPORT const lh_buildinfo * lh_get_buildinfo(void)
-{
-    static lh_buildinfo buildinfo =
-    {
-        LH_BUILDINFO_SIG,
-        sizeof(lh_buildinfo),
-        REVISION,
-        LH_API_VERSION,
-        "r" STRINGIZE(REVISION),
-        "http://www.linkdata.se/lcdhost/version.php"
-    };
-    return &buildinfo;
 }
 
 /* eof */

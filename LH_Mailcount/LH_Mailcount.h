@@ -57,18 +57,11 @@ public:
     const lh_blob *lh_logo();
     const char *lh_load();
     void lh_unload();
-    const lh_buildinfo * lh_version( int av )
+    const lh_buildinfo * lh_version( int amaj, int amin )
     {
-        static lh_buildinfo buildinfo =
-        {
-            LH_BUILDINFO_SIG,
-            sizeof(lh_buildinfo),
-            REVISION,
-            LH_API_VERSION,
-            "r" STRINGIZE(REVISION),
-            "http://www.linkdata.se/lcdhost/version.php"
-        };
-        Q_ASSERT( av == LH_API_VERSION );
+        static lh_buildinfo buildinfo = LH_STD_BUILDINFO;
+        Q_ASSERT( amaj == LH_API_MAJOR );
+        Q_ASSERT( amin >= LH_API_MINOR );
         return &buildinfo;
     }
 };

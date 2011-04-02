@@ -599,7 +599,7 @@ QImage *LH_WeatherConnector::render_qimage( int w, int h )
 
 bool LH_WeatherConnector::openWeatherMemory()
 {
-    if( !weatherMap.create(sizeof(weatherData)) )
+    if( !weatherMap.create(sizeof(weatherData)) && !weatherMap.attach() )
     {
         qWarning() << "LH_WeatherConnector: create memory failed:" << weatherMap.errorString();
         return false;

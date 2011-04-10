@@ -3,7 +3,7 @@
 
 #include "../_Templates/LH_MonitoringData.h"
 
-#include <QtXML>
+#include <QtXml>
 #include <QRegExp>
 #include <algorithm>
 

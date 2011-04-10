@@ -161,15 +161,16 @@ typedef struct lh_class_t lh_class;
 
   'version' is an UTF-8 encoded string simply shown to the user.
 
-  'url' is the version information URL. This URL should return a text/xml
+  'url' is the version information URL. It replaces $NAME to 'name',
+  $ARCH to 'arch' and $REV to 'rev'. This URL should return a text/xml
   document like the following sample:
 
-  <lhver arch="win32" url="http://lcdhost.googlecode.com/files/%1_%2_R%3.zip">
+  <lhver arch="win32" url="http://lcdhost.googlecode.com/files/$NAME_$ARCH_R$REV.zip">
    <file name="LH_Text" rev="6" />
   </lhver>
 
   The 'lhver' element contains default attribute values for 'file' elements.
-  The 'url' attribute expands %1 to 'name', %2 to 'arch' and %3 to 'rev'.
+  The 'url' attribute expands the same parameters as the version url.
 
   A 'file' element may contain the following attributes:
   'name'      The plain filename, without system prefix or suffixes
@@ -209,7 +210,7 @@ typedef struct lh_buildinfo_t
         LH_API_MAJOR, \
         LH_API_MINOR, \
         "R" STRINGIZE(REVISION), \
-        "http://www.linkdata.se/lcdhost/version.php" \
+        "http://www.linkdata.se/lcdhost/version.php?arch=$ARCH" \
     }
 
 /**

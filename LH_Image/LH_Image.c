@@ -340,20 +340,9 @@ EXPORT const char * lh_shortdesc(void)
 
 EXPORT const lh_buildinfo* lh_version(int api_major, int api_minor )
 {
-    static lh_buildinfo bi =
-    {
-        LH_BUILDINFO_SIG,
-        sizeof(lh_buildinfo),
-        REVISION,
-        LH_API_MAJOR,
-        LH_API_MINOR,
-        "r" STRINGIZE(REVISION),
-        "http://www.linkdata.se/lcdhost/version.php"
-    };
-
+    static lh_buildinfo bi = LH_STD_BUILDINFO;
     assert( api_major == LH_API_MAJOR );
     assert( api_minor >= LH_API_MINOR );
-
     return &bi;
 }
 

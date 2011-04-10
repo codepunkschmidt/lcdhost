@@ -25,7 +25,7 @@
   */
 
 #include "LH_SpeedFanGraph.h"
-#include <qDebug>
+#include <QDebug>
 
 lh_class *LH_SpeedFanGraph::classInfo()
 {

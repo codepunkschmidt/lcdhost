@@ -39,7 +39,7 @@
 
 #include <QHash>
 #include <QList>
-#include <QtXML>
+#include <QtXml>
 
 enum actionParameterType
 {

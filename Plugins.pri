@@ -16,6 +16,7 @@ else:RELDEB = Release
 CHANGESET_REVISION = $$system(hg log -l 1 --template {node}/{rev} $$PWD/$$TARGET)
 CHANGESET = $$section(CHANGESET_REVISION,"/",0,0)
 REVISION = $$section(CHANGESET_REVISION,"/",1,1)
+isEmpty( REVISION ): REVISION = 0
 DEFINES += CHANGESET=\"\\\"$$CHANGESET\\\"\"
 DEFINES += REVISION=$$REVISION
 

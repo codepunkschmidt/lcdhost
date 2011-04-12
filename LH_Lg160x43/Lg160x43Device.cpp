@@ -44,17 +44,23 @@ static void make_output_report(unsigned char *lcd_buffer, unsigned char const *d
     {
         for( int col=0; col<G15_LCD_WIDTH; ++col)
         {
+            unsigned char b;
             unsigned int bit = col % 8;
-            lcd_buffer[output_offset] = ~(
-                        (((data[base_offset                        ] << bit) & 0x80) >> 7) |
-                        (((data[base_offset +  G15_LCD_WIDTH/8     ] << bit) & 0x80) >> 6) |
-                        (((data[base_offset + (G15_LCD_WIDTH/8 * 2)] << bit) & 0x80) >> 5) |
-                        (((data[base_offset + (G15_LCD_WIDTH/8 * 3)] << bit) & 0x80) >> 4) |
-                        (((data[base_offset + (G15_LCD_WIDTH/8 * 4)] << bit) & 0x80) >> 3) |
-                        (((data[base_offset + (G15_LCD_WIDTH/8 * 5)] << bit) & 0x80) >> 2) |
-                        (((data[base_offset + (G15_LCD_WIDTH/8 * 6)] << bit) & 0x80) >> 1) |
-                        (((data[base_offset + (G15_LCD_WIDTH/8 * 7)] << bit) & 0x80) >> 0) );
-            ++output_offset;
+
+            b = (((data[base_offset                        ] << bit) & 0x80) >> 7) |
+                (((data[base_offset +  G15_LCD_WIDTH/8     ] << bit) & 0x80) >> 6) |
+                (((data[base_offset + (G15_LCD_WIDTH/8 * 2)] << bit) & 0x80) >> 5);
+
+            if( row < 5 )
+            {
+                b |= (((data[base_offset + (G15_LCD_WIDTH/8 * 3)] << bit) & 0x80) >> 4) |
+                     (((data[base_offset + (G15_LCD_WIDTH/8 * 4)] << bit) & 0x80) >> 3) |
+                     (((data[base_offset + (G15_LCD_WIDTH/8 * 5)] << bit) & 0x80) >> 2) |
+                     (((data[base_offset + (G15_LCD_WIDTH/8 * 6)] << bit) & 0x80) >> 1) |
+                     (((data[base_offset + (G15_LCD_WIDTH/8 * 7)] << bit) & 0x80) >> 0);
+            }
+
+            lcd_buffer[ output_offset++ ] = ~b;
             if( bit == 7 ) base_offset++;
         }
         base_offset += G15_LCD_WIDTH - (G15_LCD_WIDTH / 8);
@@ -63,6 +69,7 @@ static void make_output_report(unsigned char *lcd_buffer, unsigned char const *d
 
 const char* Lg160x43Device::render_qimage(QImage *img)
 {
+    int retv;
     unsigned char buffer[ G15_BUFFER_LEN ];
 
     if( !img ) return NULL;
@@ -75,10 +82,11 @@ const char* Lg160x43Device::render_qimage(QImage *img)
         make_output_report( buffer, tmp.bits() );
     }
 
-    if( hid_write( hiddev_, buffer, sizeof(buffer) ) != sizeof(buffer) )
+    retv = hid_write( hiddev_, buffer, sizeof(buffer) );
+    if( retv > 0 && retv != sizeof(buffer) )
     {
         // handle error
-        qDebug() << "hid_write error";
+        return "hid_write() error";
     }
     return NULL;
 }

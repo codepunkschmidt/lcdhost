@@ -18,6 +18,9 @@ INCLUDEPATH += hidapi
 win32: SOURCES += hidapi/win/hid.cpp
 win32: LIBS += -lsetupapi
 
+macx: SOURCES += hidapi/osx/hid.c
+macx: LIBS += -framework CoreFoundation -framework IOKit
+
 HEADERS += \
     ../lh_plugin.h \
     ../LH_QtPlugin.h \

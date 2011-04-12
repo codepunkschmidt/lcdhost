@@ -85,6 +85,9 @@ LH_QtDevice::~LH_QtDevice()
 
 void LH_QtDevice::arrive()
 {
+    Q_ASSERT( !id().isEmpty() );
+    Q_ASSERT( !size().isEmpty() );
+    Q_ASSERT( depth() > 0 );
     callback(lh_cb_arrive,dev());
 }
 

@@ -1,6 +1,6 @@
 
 INCLUDEPATH += $$PWD
-HEADERS += hidapi.h
+HEADERS += $$PWD/hidapi.h
 
 win32 {
         SOURCES += $$PWD/win/hid.cpp

@@ -21,12 +21,29 @@
 #ifndef __LIBUSB_H__
 #define __LIBUSB_H__
 
-/* MSVC doesn't like inline, but does accept __inline ?? */
 #ifdef _MSC_VER
+/* on MS environments, the inline keyword is available in C++ only */
 #define inline __inline
+/* ssize_t is also not available (copy/paste from MinGW) */
+#ifndef _SSIZE_T_DEFINED
+#define _SSIZE_T_DEFINED
+#undef ssize_t
+#ifdef _WIN64
+  typedef __int64 ssize_t;
+#else
+  typedef int ssize_t;
+#endif /* _WIN64 */
+#endif /* _SSIZE_T_DEFINED */
+#endif /* _MSC_VER */
+
+/* stdint.h is also not usually available on MS */
+#if defined(_MSC_VER) && (_MSC_VER < 1600) && (!defined(_STDINT)) && (!defined(_STDINT_H))
+typedef unsigned __int8   uint8_t;
+typedef unsigned __int16  uint16_t;
+#else
+#include <stdint.h>
 #endif
 
-#include <stdint.h>
 #include <sys/types.h>
 #include <time.h>
 #include <limits.h>
@@ -79,7 +96,7 @@
  * return type, before the function name. See internal documentation for
  * API_EXPORTED.
  */
-#if defined(_WIN32) || defined(__CYGWIN__)
+#if defined(_WIN32)
 #define LIBUSB_CALL WINAPI
 #else
 #define LIBUSB_CALL
@@ -602,6 +619,16 @@ struct libusb_device;
 struct libusb_device_handle;
 
 /** \ingroup lib
+ * Structure providing the version of libusb being used
+ */
+struct libusb_version {
+	uint16_t major;
+	uint16_t minor;
+	uint16_t micro;
+	uint16_t nano;
+};
+
+/** \ingroup lib
  * Structure representing a libusb session. The concept of individual libusb
  * sessions allows for your program to use two libraries (or dynamically
  * load two modules) which both independently use libusb. This will prevent
@@ -647,6 +674,7 @@ typedef struct libusb_device libusb_device;
  * with a device handle, you should call libusb_close().
  */
 typedef struct libusb_device_handle libusb_device_handle;
+
 
 /** \ingroup misc
  * Error codes. Most libusb functions return 0 on success or one of these
@@ -838,6 +866,7 @@ int LIBUSB_CALL libusb_init(libusb_context **ctx);
 void LIBUSB_CALL libusb_exit(libusb_context *ctx);
 void LIBUSB_CALL libusb_set_debug(libusb_context *ctx, int level);
 const char * LIBUSB_CALL libusb_strerror(enum libusb_error errcode);
+const struct libusb_version * LIBUSB_CALL libusb_getversion(void);
 
 ssize_t LIBUSB_CALL libusb_get_device_list(libusb_context *ctx,
 	libusb_device ***list);
@@ -859,6 +888,9 @@ int LIBUSB_CALL libusb_get_config_descriptor_by_value(libusb_device *dev,
 void LIBUSB_CALL libusb_free_config_descriptor(
 	struct libusb_config_descriptor *config);
 uint8_t LIBUSB_CALL libusb_get_bus_number(libusb_device *dev);
+uint8_t LIBUSB_CALL libusb_get_port_number(libusb_device *dev);
+libusb_device * LIBUSB_CALL libusb_get_parent(libusb_device *dev);
+int LIBUSB_CALL libusb_get_port_path(libusb_context *ctx, libusb_device *dev, uint8_t* path, uint8_t path_length);
 uint8_t LIBUSB_CALL libusb_get_device_address(libusb_device *dev);
 int LIBUSB_CALL libusb_get_max_packet_size(libusb_device *dev,
 	unsigned char endpoint);

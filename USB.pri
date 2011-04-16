@@ -1,4 +1,7 @@
 
+# We don't want warnings from 3rd party C code
+QMAKE_CFLAGS_WARN_ON = -w
+
 INCLUDEPATH += $$PWD/libusb $$PWD/libusb
 HEADERS += $$PWD/libusb/libusb.h
 SOURCES += $$PWD/libusb/core.c $$PWD/libusb/descriptor.c $$PWD/libusb/io.c $$PWD/libusb/sync.c
@@ -6,7 +9,7 @@ SOURCES += $$PWD/libusb/core.c $$PWD/libusb/descriptor.c $$PWD/libusb/io.c $$PWD
 win32 {
         DEFINES += OS_WINDOWS
         SOURCES += $$PWD/libusb/os/windows_usb.c $$PWD/libusb/os/threads_windows.c $$PWD/libusb/os/poll_windows.c
-        LIBS += -lole32
+        LIBS += -lole32 -lsetupapi -lcfgmgr32
 }
 
 macx {

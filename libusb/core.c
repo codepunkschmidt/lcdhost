@@ -39,7 +39,13 @@ const struct usbi_os_backend * const usbi_backend = &windows_backend;
 #error "Unsupported OS"
 #endif
 
+#ifdef QT_CORE_LIB
+void libusb_log( const char *fmt, va_list args );
+#endif
+
 struct libusb_context *usbi_default_context = NULL;
+const struct libusb_version libusb_version_internal = { LIBUSB_VERSION_MAJOR,
+LIBUSB_VERSION_MINOR, LIBUSB_VERSION_MICRO, LIBUSB_VERSION_NANO};
 static int default_context_refcnt = 0;
 static usbi_mutex_static_t default_context_lock = USBI_MUTEX_INITIALIZER;
 
@@ -508,7 +514,7 @@ struct libusb_device *usbi_alloc_device(struct libusb_context *ctx,
 	unsigned long session_id)
 {
 	size_t priv_size = usbi_backend->device_priv_size;
-	struct libusb_device *dev = malloc(sizeof(*dev) + priv_size);
+	struct libusb_device *dev = calloc(1, sizeof(*dev) + priv_size);
 	int r;
 
 	if (!dev)
@@ -668,6 +674,62 @@ void API_EXPORTED libusb_free_device_list(libusb_device **list,
 uint8_t API_EXPORTED libusb_get_bus_number(libusb_device *dev)
 {
 	return dev->bus_number;
+}
+
+/** \ingroup dev
+ * Get the number of the port that a device is connected to
+ * \param dev a device
+ * \returns the port number (0 if not available)
+ */
+uint8_t API_EXPORTED libusb_get_port_number(libusb_device *dev)
+{
+	return dev->port_number;
+}
+
+/** \ingroup dev
+ * Get the list of all port numbers from root for the specified device
+ * \param dev a device
+ * \param path the array that should contain the port numbers
+ * \param path_len the maximum length of the array
+ * \returns the number of elements filled
+ * \returns LIBUSB_ERROR_OVERFLOW if the array is too small
+ */
+int API_EXPORTED libusb_get_port_path(libusb_context *ctx, libusb_device *dev, uint8_t* path, uint8_t path_len)
+{
+	int i = path_len;
+	ssize_t r;
+	struct libusb_device **devs;
+
+	/* The device needs to be open, else the parents may have been destroyed */
+	r = libusb_get_device_list(ctx, &devs);
+	if (r < 0)
+		return (int)r;
+
+	while(dev) {
+		// HCDs can be listed as devices and would have port #0
+		// TODO: see how the other backends want to implement HCDs as parents
+		if (dev->port_number == 0)
+			break;
+		if (--i<0) {
+			return LIBUSB_ERROR_OVERFLOW;
+		}
+		path[i] = dev->port_number;
+		dev = dev->parent_dev;
+	}
+	libusb_free_device_list(devs, 1);
+	memmove(path, &path[i], path_len-i);
+	return path_len-i;
+}
+
+/** \ingroup dev
+ * Get the the parent from the specified device
+ * \param dev a device
+ * \returns the device parent or NULL if not available
+ */
+DEFAULT_VISIBILITY
+libusb_device * LIBUSB_CALL libusb_get_parent(libusb_device *dev)
+{
+	return dev->parent_dev;
 }
 
 /** \ingroup dev
@@ -1529,6 +1591,12 @@ int API_EXPORTED libusb_init(libusb_context **context)
 			ctx->debug_fixed = 1;
 	}
 
+	// default context should be initialized before any call to usbi_dbg
+	if (!usbi_default_context) {
+		usbi_default_context = ctx;
+		usbi_dbg("created default context");
+	}
+
 	usbi_dbg("");
 
 	if (usbi_backend->init) {
@@ -1561,6 +1629,8 @@ int API_EXPORTED libusb_init(libusb_context **context)
 	return 0;
 
 err_destroy_mutex:
+	if (usbi_default_context == ctx)
+		usbi_default_context = NULL;
 	usbi_mutex_destroy(&ctx->open_devs_lock);
 	usbi_mutex_destroy(&ctx->usb_devs_lock);
 err_free_ctx:
@@ -1577,8 +1647,8 @@ err_unlock:
  */
 void API_EXPORTED libusb_exit(struct libusb_context *ctx)
 {
-	usbi_dbg("");
 	USBI_GET_CONTEXT(ctx);
+	usbi_dbg("");
 
 	/* if working with default context, only actually do the deinitialization
 	 * if we're the last user */
@@ -1616,11 +1686,15 @@ void usbi_log_v(struct libusb_context *ctx, enum usbi_log_level level,
 
 #ifndef ENABLE_DEBUG_LOGGING
 	USBI_GET_CONTEXT(ctx);
+	if (ctx == NULL)
+		return;
 	if (!ctx->debug)
 		return;
 	if (level == LOG_LEVEL_WARNING && ctx->debug < 2)
 		return;
 	if (level == LOG_LEVEL_INFO && ctx->debug < 3)
+		return;
+	if (level == LOG_LEVEL_DEBUG && ctx->debug < 4)
 		return;
 #endif
 
@@ -1645,7 +1719,9 @@ void usbi_log_v(struct libusb_context *ctx, enum usbi_log_level level,
 		prefix = "unknown";
 		break;
 	}
-
+#ifdef QT_CORE_LIB
+        libusb_log( format, args );
+#endif
 	fprintf(stream, "libusb:%s [%s] ", prefix, function);
 
 	vfprintf(stream, format, args);
@@ -1678,9 +1754,9 @@ void usbi_log(struct libusb_context *ctx, enum usbi_log_level level,
  * error descriptions are unavailable
  */
 DEFAULT_VISIBILITY
-const char * LIBUSB_CALL libusb_strerror(enum libusb_error errcode)
+const char * LIBUSB_CALL libusb_strerror(enum libusb_error error_code)
 {
-	switch (errcode) {
+	switch (error_code) {
 	case LIBUSB_SUCCESS:
 		return "Success";
 	case LIBUSB_ERROR_IO:
@@ -1711,4 +1787,14 @@ const char * LIBUSB_CALL libusb_strerror(enum libusb_error errcode)
 		return "Other error";
 	}
 	return "Unknown error";
+}
+
+/** \ingroup misc
+ * Fills a libusb_version struct with the full version (major, minor,
+ * micro, nano) of this library
+ */
+DEFAULT_VISIBILITY
+const struct libusb_version * LIBUSB_CALL libusb_getversion(void)
+{
+	return &libusb_version_internal;
 }

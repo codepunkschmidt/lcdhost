@@ -26,8 +26,12 @@
 #include <stddef.h>
 #include <stdint.h>
 #include <time.h>
+#ifdef HAVE_POLL_H
+#include <poll.h>
+#endif
 
 #include <libusb.h>
+#include "libusb_version.h"
 
 /* Inside the libusb code, mark all public functions as follows:
  *   return_type API_EXPORTED function_name(params) { ... }
@@ -132,7 +136,7 @@ void usbi_log(struct libusb_context *ctx, enum usbi_log_level level,
 #define _usbi_log(ctx, level, ...) do {} while(0)
 #endif
 
-#ifdef ENABLE_DEBUG_LOGGING
+#if defined(ENABLE_DEBUG_LOGGING) || defined(INCLUDE_DEBUG_LOGGING)
 #define usbi_dbg(...) _usbi_log(NULL, LOG_LEVEL_DEBUG, __VA_ARGS__)
 #else
 #define usbi_dbg(...) do {} while(0)
@@ -170,7 +174,7 @@ static inline void usbi_err( struct libusb_context *ctx, const char *format,
 	LOG_BODY(ctx,LOG_LEVEL_ERROR)
 
 static inline void usbi_dbg(const char *format, ...)
-#ifdef ENABLE_DEBUG_LOGGING
+#if defined(ENABLE_DEBUG_LOGGING) || defined(INCLUDE_DEBUG_LOGGING)
 	LOG_BODY(NULL,LOG_LEVEL_DEBUG)
 #else
 { }
@@ -193,6 +197,7 @@ static inline void usbi_dbg(const char *format, ...)
 #endif
 
 #if defined(OS_LINUX) || defined(OS_DARWIN)
+#include <unistd.h>
 #include <os/poll_posix.h>
 #elif defined(OS_WINDOWS)
 #include <os/poll_windows.h>
@@ -270,6 +275,8 @@ struct libusb_device {
 	struct libusb_context *ctx;
 
 	uint8_t bus_number;
+	uint8_t port_number;
+	struct libusb_device* parent_dev;
 	uint8_t device_address;
 	uint8_t num_configurations;
 
@@ -828,7 +835,7 @@ struct usbi_os_backend {
 	 * Return 0 on success, or a LIBUSB_ERROR code on failure.
 	 */
 	int (*handle_events)(struct libusb_context *ctx,
-		struct pollfd *fds, nfds_t nfds, int num_ready);
+		struct pollfd *fds, POLL_NFDS_TYPE nfds, int num_ready);
 
 	/* Get time from specified clock. At least two clocks must be implemented
 	   by the backend: USBI_CLOCK_REALTIME, and USBI_CLOCK_MONOTONIC.

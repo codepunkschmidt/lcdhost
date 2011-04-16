@@ -308,4 +308,3 @@ int API_EXPORTED libusb_interrupt_transfer(
 	return do_sync_bulk_transfer(dev_handle, endpoint, data, length,
 		transferred, timeout, LIBUSB_TRANSFER_TYPE_INTERRUPT);
 }
-

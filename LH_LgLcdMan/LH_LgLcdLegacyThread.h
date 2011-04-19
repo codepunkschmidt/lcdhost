@@ -36,14 +36,11 @@
 #define LH_LGLCDLEGACYTHREAD_H
 
 #include "LH_LgLcdThread.h"
-#include <QMutex>
-#include <QSemaphore>
 #include <QImage>
 
 class LH_LgLcdLegacyThread : public LH_LgLcdThread
 {
     Q_OBJECT
-    QMutex mtx_;
 
     bool enumerate( int conn );
     bool render( int conn );

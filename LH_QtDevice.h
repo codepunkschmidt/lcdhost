@@ -51,15 +51,15 @@ class LH_QtDevice : public LH_QtObject
     QByteArray id_;
     QByteArray name_;
     QByteArray buttonNames_[LH_DEVICE_MAXBUTTONS];
-    lh_device dev_;
+    lh_device lh_dev_;
 
 public:
-    LH_QtDevice( const char *name, LH_QtPlugin *drv );
+    LH_QtDevice( const char *name, QObject *parent = 0); //LH_QtPlugin *drv );
     virtual ~LH_QtDevice();
 
     void callback( lh_callbackcode code, void *param ) const { LH_QtPlugin::callback(this,code,param); }
-    LH_QtPlugin *drv() const { return static_cast<LH_QtPlugin*>(parent()); }
-    lh_device *dev() { return &dev_; }
+    // LH_QtPlugin *drv() const { return static_cast<LH_QtPlugin*>(parent()); }
+    lh_device *lh_dev() { return &lh_dev_; }
 
     /**
       These methods are the ones you need to override in your
@@ -78,18 +78,18 @@ public:
     void arrive();
     void leave();
 
-    QString id() const { return QString::fromUtf8(dev_.id); }
+    QString id() const { return QString::fromUtf8(lh_dev_.id); }
     void setId( QString );
-    QString name() const { return QString::fromUtf8(dev_.name); }
+    QString name() const { return QString::fromUtf8(lh_dev_.name); }
     void setName( QString );
-    QSize size() const { return QSize( dev_.width, dev_.height); }
-    void setSize( QSize s ) { dev_.width = s.width(); dev_.height = s.height(); }
-    void setSize( int w, int h ) { dev_.width = w; dev_.height = h; }
-    int depth() const { return dev_.depth; }
-    void setDepth( int n ) { dev_.depth = n; }
-    void setAutoselect(bool b) { dev_.noauto = !b; }
-    bool autoselect() const { return dev_.noauto == 0; } /* available for autoselection by LCDHost */
-    bool monochrome() const { return dev_.depth == 1; }
+    QSize size() const { return QSize( lh_dev_.width, lh_dev_.height); }
+    void setSize( QSize s ) { lh_dev_.width = s.width(); lh_dev_.height = s.height(); }
+    void setSize( int w, int h ) { lh_dev_.width = w; lh_dev_.height = h; }
+    int depth() const { return lh_dev_.depth; }
+    void setDepth( int n ) { lh_dev_.depth = n; }
+    void setAutoselect(bool b) { lh_dev_.noauto = !b; }
+    bool autoselect() const { return lh_dev_.noauto == 0; } /* available for autoselection by LCDHost */
+    bool monochrome() const { return lh_dev_.depth == 1; }
 
     QString buttonName( int bitmask );
     void setButtonName( int bitmask, QString name ); /* having more than one bit set in the mask will break things */

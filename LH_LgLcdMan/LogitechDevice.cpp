@@ -41,8 +41,9 @@
 #include "EventLgLcdNotification.h"
 #include "LogitechDevice.h"
 
-LogitechDevice::LogitechDevice( LH_LgLcdMan *drv, bool bw ) : LH_QtDevice(0,drv)
+LogitechDevice::LogitechDevice( LH_LgLcdMan *drv, bool bw ) : LH_QtDevice(0,0)
 {
+    drv_ = drv;
     opened_ = false;
     bw_ = bw;
     buttonState_ = 0;

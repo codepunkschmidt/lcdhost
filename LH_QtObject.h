@@ -50,14 +50,14 @@ class LH_QtObject : public QObject
     QVector<lh_setup_item*> setup_item_vector_;
 
 public:
-    LH_QtObject( const char *name, LH_QtPlugin *parent = 0 ) : QObject(parent)
+    LH_QtObject( const char *name, QObject *parent = 0 ) : QObject(parent) // , LH_QtPlugin *parent = 0 ) : QObject(parent)
     {
         if( name ) setObjectName( QString::fromUtf8(name) );
     }
 
     virtual ~LH_QtObject() {}
 
-    LH_QtPlugin *parent() const { return static_cast<LH_QtPlugin *>(QObject::parent()); }
+    // LH_QtPlugin *parent() const { return static_cast<LH_QtPlugin *>(QObject::parent()); }
 
     void callback( lh_callbackcode_t code, void *param ) const { LH_QtPlugin::callback( this, code, param ); }
     const lh_systemstate *state() const { return LH_QtPlugin::state(); }

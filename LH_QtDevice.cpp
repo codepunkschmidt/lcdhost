@@ -55,31 +55,31 @@ static const char* obj_set_backlight(void*obj,lh_device_backlight*p) { return RE
 static const char* obj_close(void*obj) { return RECAST(obj)->close(); }
 
 
-LH_QtDevice::LH_QtDevice( const char *name, LH_QtPlugin *drv ) : LH_QtObject( name, drv )
+LH_QtDevice::LH_QtDevice( const char *name, QObject *parent ) : LH_QtObject( name, parent )
 {
-    memset( &dev_, 0, sizeof(dev_) );
-    dev_.size = sizeof(dev_);
-    dev_.table.size = sizeof(dev_.table);
-    dev_.table.o.size = sizeof(dev_.table.o);
-    dev_.table.o.obj_setup_input = obj_setup_input;
-    dev_.table.o.obj_setup_resize = obj_setup_resize;
-    dev_.table.o.obj_setup_change = obj_setup_change;
-    dev_.table.o.obj_setup_data = obj_setup_data;
-    dev_.table.obj_open = obj_open;
-    dev_.table.obj_render_qimage = obj_render_qimage;
-    dev_.table.obj_render_argb32 = obj_render_argb32;
-    dev_.table.obj_render_mono = obj_render_mono;
-    dev_.table.obj_buttons = obj_buttons;
-    dev_.table.obj_get_backlight = obj_get_backlight;
-    dev_.table.obj_set_backlight = obj_set_backlight;
-    dev_.table.obj_close = obj_close;
+    memset( &lh_dev_, 0, sizeof(lh_dev_) );
+    lh_dev_.size = sizeof(lh_dev_);
+    lh_dev_.table.size = sizeof(lh_dev_.table);
+    lh_dev_.table.o.size = sizeof(lh_dev_.table.o);
+    lh_dev_.table.o.obj_setup_input = obj_setup_input;
+    lh_dev_.table.o.obj_setup_resize = obj_setup_resize;
+    lh_dev_.table.o.obj_setup_change = obj_setup_change;
+    lh_dev_.table.o.obj_setup_data = obj_setup_data;
+    lh_dev_.table.obj_open = obj_open;
+    lh_dev_.table.obj_render_qimage = obj_render_qimage;
+    lh_dev_.table.obj_render_argb32 = obj_render_argb32;
+    lh_dev_.table.obj_render_mono = obj_render_mono;
+    lh_dev_.table.obj_buttons = obj_buttons;
+    lh_dev_.table.obj_get_backlight = obj_get_backlight;
+    lh_dev_.table.obj_set_backlight = obj_set_backlight;
+    lh_dev_.table.obj_close = obj_close;
 
     return;
 }
 
 LH_QtDevice::~LH_QtDevice()
 {
-    memset( &dev_, 0, sizeof(dev_) );
+    memset( &lh_dev_, 0, sizeof(lh_dev_) );
     return;
 }
 
@@ -88,18 +88,18 @@ void LH_QtDevice::arrive()
     Q_ASSERT( !id().isEmpty() );
     Q_ASSERT( !size().isEmpty() );
     Q_ASSERT( depth() > 0 );
-    callback(lh_cb_arrive,dev());
+    callback(lh_cb_arrive,lh_dev());
 }
 
 void LH_QtDevice::leave()
 {
-    callback(lh_cb_leave,dev());
+    callback(lh_cb_leave,lh_dev());
 }
 
 void LH_QtDevice::setId( QString s )
 {
     id_ = s.toUtf8();
-    dev_.id = id_.constData();
+    lh_dev_.id = id_.constData();
     return;
 }
 
@@ -107,7 +107,7 @@ void LH_QtDevice::setName( QString s )
 {
     setObjectName(s);
     name_ = s.toUtf8();
-    dev_.name = name_.constData();
+    lh_dev_.name = name_.constData();
     return;
 }
 
@@ -115,8 +115,8 @@ QString LH_QtDevice::buttonName( int bitmask )
 {
     int index = 0;
     while( bitmask && !(bitmask&1) ) { index++; bitmask>>=1; }
-    if( index >= LH_DEVICE_MAXBUTTONS || dev_.button[index] == NULL ) return QString();
-    return QString::fromUtf8( dev_.button[index] );
+    if( index >= LH_DEVICE_MAXBUTTONS || lh_dev_.button[index] == NULL ) return QString();
+    return QString::fromUtf8( lh_dev_.button[index] );
 }
 
 void LH_QtDevice::setButtonName( int bitmask, QString name )
@@ -127,12 +127,12 @@ void LH_QtDevice::setButtonName( int bitmask, QString name )
     if( name.isEmpty() )
     {
         buttonNames_[index].clear();;
-        dev_.button[index] = NULL;
+        lh_dev_.button[index] = NULL;
     }
     else
     {
         buttonNames_[index] = name.toUtf8();
-        dev_.button[index] = buttonNames_[index].constData();
+        lh_dev_.button[index] = buttonNames_[index].constData();
     }
     return;
 }

@@ -35,7 +35,7 @@
 #include <QFile>
 #include <QDebug>
 
-#include "hidapi/hidapi.h"
+#include "hidapi.h"
 #include "../LH_QtDevice.h"
 #include "LH_Lg160x43.h"
 #include "Lg160x43Device.h"

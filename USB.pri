@@ -13,7 +13,7 @@ win32 {
 }
 
 macx {
-        DEFINES += OS_DARWIN THREADS_POSIX
+        DEFINES += OS_DARWIN THREADS_POSIX HAVE_SYS_TIME_H HAVE_POLL_H
         SOURCES += $$PWD/libusb/os/darwin_usb.c
 	LIBS += -framework CoreFoundation -framework IOKit
 }

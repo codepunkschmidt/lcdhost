@@ -70,21 +70,24 @@ static void make_output_report(unsigned char *lcd_buffer, unsigned char const *d
 const char* Lg160x43Device::render_qimage(QImage *img)
 {
     int retv;
-    unsigned char buffer[ G15_BUFFER_LEN ];
+    unsigned char buffer[ G15_BUFFER_LEN+1 ];
 
     if( !img ) return NULL;
     if( !hiddev_ ) return "Device not open";
 
-    if( img->depth() == 1 ) make_output_report( buffer, img->bits() );
+    if( img->depth() == 1 ) make_output_report( buffer+1, img->bits() );
     else
     {
         QImage tmp = img->convertToFormat(QImage::Format_Mono,Qt::ThresholdDither|Qt::NoOpaqueDetection);
-        make_output_report( buffer, tmp.bits() );
+        make_output_report( buffer+1, tmp.bits() );
     }
 
+    buffer[0] = 0;
+
     retv = hid_write( hiddev_, buffer, sizeof(buffer) );
-    if( retv > 0 && retv != sizeof(buffer) )
+    if( retv != sizeof(buffer) )
     {
+        qDebug() << "Lg160x43Device: hid write error";
         // handle error
         return "hid_write() error";
     }

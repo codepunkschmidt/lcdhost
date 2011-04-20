@@ -56,6 +56,7 @@ extern "C"
 
 int LH_Lg320x240::lh_notify(int note, void*param)
 {
+    Q_UNUSED(param);
     if( !note || (note&LH_NOTE_SECOND) )
     {
     }

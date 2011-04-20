@@ -45,10 +45,11 @@ LH_Lg160x43 theDriver;
 
 int LH_Lg160x43::lh_notify(int note, void*param)
 {
+    Q_UNUSED(param);
     if( !note || note&LH_NOTE_SECOND )
     {
         // Maintain list of available devices
-        struct hid_device_info *hdi_head = hid_enumerate( 0x046d, 0x0 );
+        struct hid_device_info *hdi_head = hid_enumerate( 0x0, 0x0 );
         if( hdi_head )
         {
             struct hid_device_info *hdi = 0;
@@ -61,13 +62,14 @@ int LH_Lg160x43::lh_notify(int note, void*param)
 
             for( hdi = hdi_head; hdi; hdi = hdi->next )
             {
-                if( hdi->product_id == 0xC222 /* G15 */ ||
+                if( hdi->vendor_id == 0x046d && (
+                    hdi->product_id == 0xC222 /* G15 */ ||
                     hdi->product_id == 0x0A07 /* Z10 */ ||
                     hdi->product_id == 0xC227 /* G15v2 */ ||
                     hdi->product_id == 0xC21C /* G13 */ ||
                     hdi->product_id == 0xC22D /* G510 without audio */ ||
                     hdi->product_id == 0xC22E /* G510 with audio */
-                    )
+                    ) )
                 {
                     bool found = false;
                     foreach( QObject *kid, children() )

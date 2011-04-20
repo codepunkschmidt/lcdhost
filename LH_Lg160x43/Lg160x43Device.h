@@ -2,7 +2,7 @@
 #define LG160X43DEVICE_H
 
 #include "../LH_QtDevice.h"
-#include "hidapi/hidapi.h"
+#include "hidapi.h"
 
 class Lg160x43Device : public LH_QtDevice
 {

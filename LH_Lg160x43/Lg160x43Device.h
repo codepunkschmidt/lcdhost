@@ -12,6 +12,7 @@ class Lg160x43Device : public LH_QtDevice
     unsigned product_id_;
     hid_device *hiddev_;
     QByteArray path_;
+    bool offline_;
 
 public:
     Lg160x43Device( const struct hid_device_info *di, LH_QtPlugin *drv = 0 );
@@ -23,25 +24,13 @@ public:
 
     unsigned productId() const { return product_id_; }
 
-    const char* open()
-    {
-        hiddev_ = hid_open_path( path_.constData() );
-        if( !hiddev_ ) return "Can't open HID device";
-        return NULL;
-    }
-
+    const char* open();
     const char* render_argb32(int,int,const void*) { return NULL; }
     const char* render_mono(int,int,const void*) { return NULL; }
     int buttons() { return 0; }
     const char* get_backlight(lh_device_backlight*) { return NULL; }
     const char* set_backlight(lh_device_backlight*) { return NULL; }
-
-    const char* close()
-    {
-        if( hiddev_ ) hid_close( hiddev_ );
-        hiddev_ = 0;
-        return NULL;
-    }
+    const char* close();
 
     virtual int lh_notify(int,void*) { return 0; }
     const char* render_qimage(QImage *img);

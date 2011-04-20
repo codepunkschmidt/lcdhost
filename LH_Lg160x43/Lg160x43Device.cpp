@@ -18,6 +18,8 @@ Lg160x43Device::Lg160x43Device( const struct hid_device_info *di, LH_QtPlugin *d
     product_id_ = di->product_id;
     hiddev_ = 0;
     path_ = di->path;
+    offline_ = false;
+
     setId(di->path);
     setName( QString::fromWCharArray(di->product_string) );
     setSize(160,43);
@@ -30,6 +32,20 @@ Lg160x43Device::~Lg160x43Device()
 {
     close();
     leave();
+}
+
+const char* Lg160x43Device::open()
+{
+    hiddev_ = hid_open_path( path_.constData() );
+    if( !hiddev_ ) return "Can't open HID device";
+    return NULL;
+}
+
+const char* Lg160x43Device::close()
+{
+    if( hiddev_ ) hid_close( hiddev_ );
+    hiddev_ = 0;
+    return NULL;
 }
 
 static void make_output_report(unsigned char *lcd_buffer, unsigned char const *data)
@@ -71,28 +87,38 @@ static void make_output_report(unsigned char *lcd_buffer, unsigned char const *d
     }
 }
 
+#ifdef Q_OS_MAC
+# define EXTRABYTE 1
+#else
+# define EXTRABYTE 0
+#endif
+
 const char* Lg160x43Device::render_qimage(QImage *img)
 {
     int retv;
-    unsigned char buffer[ G15_BUFFER_LEN+1 ];
+    unsigned char buffer[ G15_BUFFER_LEN + EXTRABYTE ];
 
     if( !img ) return NULL;
+    if( offline_ ) return NULL;
     if( !hiddev_ ) return "Device not open";
 
-    if( img->depth() == 1 ) make_output_report( buffer+1, img->bits() );
+    if( img->depth() == 1 ) make_output_report( buffer + EXTRABYTE, img->bits() );
     else
     {
         QImage tmp = img->convertToFormat(QImage::Format_Mono,Qt::ThresholdDither|Qt::NoOpaqueDetection);
-        make_output_report( buffer+1, tmp.bits() );
+        make_output_report( buffer + EXTRABYTE, tmp.bits() );
     }
 
+#if EXTRABYTE
     buffer[0] = 0;
+#endif
 
     retv = hid_write( hiddev_, buffer, sizeof(buffer) );
     if( retv != sizeof(buffer) )
     {
-        qDebug() << "Lg160x43Device: hid write error";
+        qDebug() << "Lg160x43Device:" << retv << "bytes written of" << sizeof(buffer);
         // handle error
+        offline_ = true;
         return "hid_write() error";
     }
     return NULL;

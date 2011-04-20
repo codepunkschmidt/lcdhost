@@ -60,7 +60,11 @@ static void make_output_report(unsigned char *lcd_buffer, unsigned char const *d
                      (((data[base_offset + (G15_LCD_WIDTH/8 * 7)] << bit) & 0x80) >> 0);
             }
 
+#ifdef Q_OS_MAC
+            lcd_buffer[ output_offset++ ] = b;
+#else
             lcd_buffer[ output_offset++ ] = ~b;
+#endif
             if( bit == 7 ) base_offset++;
         }
         base_offset += G15_LCD_WIDTH - (G15_LCD_WIDTH / 8);

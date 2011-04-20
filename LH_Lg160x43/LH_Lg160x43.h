@@ -48,7 +48,13 @@ public:
     virtual const char *lh_shortdesc() { return "Logitech 160x43 LCD"; }
     virtual const char *lh_author() { return "Johan \"SirReal\" Lindh"; }
     virtual const char *lh_homepage() { return "<a href=\"http://www.linkdata.se/software/lcdhost\">Link Data Stockholm</a>"; }
-    virtual const char *lh_longdesc() { return "HID-level driver for Logitech 160x43 LCD displays, such as G13 or G15."; }
+    virtual const char *lh_longdesc()
+    {
+        return  "HID-level driver for Logitech 160x43 LCD displays, such as G13 or G15.<br>"
+                "Note that to use this driver you may need to uninstall existing drivers for "
+                "these devices. This is a must on OS/X, and may be needed on Linux too."
+                ;
+    }
     // virtual const char *lh_load();
     // virtual void lh_unload() {}
     virtual int lh_notify(int,void*);

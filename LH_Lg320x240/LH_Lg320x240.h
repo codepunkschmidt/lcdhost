@@ -52,7 +52,13 @@ public:
     virtual const char *lh_shortdesc() { return "Logitech 320x240 LCD"; }
     virtual const char *lh_author() { return "Johan \"SirReal\" Lindh"; }
     virtual const char *lh_homepage() { return "<a href=\"http://www.linkdata.se/software/lcdhost\">Link Data Stockholm</a>"; }
-    virtual const char *lh_longdesc() { return "HID-level driver for Logitech 320x240 LCD displays, such as G19."; }
+    virtual const char *lh_longdesc()
+    {
+        return "USB-level driver for Logitech 320x240 LCD displays, such as the G19.<br>"
+                "On Windows, you'll need a <a href=\"http://en.wikipedia.org/wiki/WinUSB\">WinUSB</a> driver for your device.<br>"
+                "The easiest way to do that is to download <a href=\"http://sourceforge.net/projects/libwdi/files/zadig/zadig_v1.1.1.137.7z/download\">zadig</a> which can generate a driver for your G19."
+                ;
+    }
     virtual const char *lh_load();
     virtual void lh_unload();
     virtual int lh_notify(int,void*);

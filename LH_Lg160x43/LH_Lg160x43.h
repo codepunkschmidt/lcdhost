@@ -51,8 +51,7 @@ public:
     virtual const char *lh_longdesc()
     {
         return  "HID-level driver for Logitech 160x43 LCD displays, such as G13 or G15.<br>"
-                "Note that to use this driver you may need to uninstall existing drivers for "
-                "these devices. This is a must on OS/X, and may be needed on Linux too."
+                "Note that to use this driver you may need to uninstall existing drivers for these devices."
                 ;
     }
     // virtual const char *lh_load();

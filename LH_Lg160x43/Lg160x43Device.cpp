@@ -24,7 +24,7 @@ Lg160x43Device::Lg160x43Device( const struct hid_device_info *di, LH_QtPlugin *d
     setName( QString::fromWCharArray(di->product_string) );
     setSize(160,43);
     setDepth(1);
-    setAutoselect(false);
+    setAutoselect(true);
     arrive();
 }
 
@@ -87,31 +87,21 @@ static void make_output_report(unsigned char *lcd_buffer, unsigned char const *d
     }
 }
 
-#ifdef Q_OS_MAC
-# define EXTRABYTE 1
-#else
-# define EXTRABYTE 0
-#endif
-
 const char* Lg160x43Device::render_qimage(QImage *img)
 {
     int retv;
-    unsigned char buffer[ G15_BUFFER_LEN + EXTRABYTE ];
+    unsigned char buffer[ G15_BUFFER_LEN ];
 
     if( !img ) return NULL;
     if( offline_ ) return NULL;
     if( !hiddev_ ) return "Device not open";
 
-    if( img->depth() == 1 ) make_output_report( buffer + EXTRABYTE, img->bits() );
+    if( img->depth() == 1 ) make_output_report( buffer, img->bits() );
     else
     {
         QImage tmp = img->convertToFormat(QImage::Format_Mono,Qt::ThresholdDither|Qt::NoOpaqueDetection);
-        make_output_report( buffer + EXTRABYTE, tmp.bits() );
+        make_output_report( buffer, tmp.bits() );
     }
-
-#if EXTRABYTE
-    buffer[0] = 0;
-#endif
 
     retv = hid_write( hiddev_, buffer, sizeof(buffer) );
     if( retv != sizeof(buffer) )

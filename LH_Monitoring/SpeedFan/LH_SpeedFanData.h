@@ -5,13 +5,13 @@
 
 #pragma pack(1)
 struct SFMemory {
-        quint32 version;
-        quint32 flags;
+        quint16 version;
+        quint16 flags;
         int MemSize;
         int handle;
-        quint32 NumTemps;
-        quint32 NumFans;
-        quint32 NumVolts;
+        quint16 NumTemps;
+        quint16 NumFans;
+        quint16 NumVolts;
         signed int temps[32];
         signed int fans[32];
         signed int volts[32];

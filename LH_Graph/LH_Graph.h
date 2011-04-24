@@ -37,7 +37,9 @@
 #include "../LH_Qt_float.h"
 #include "../LH_Qt_QTextEdit.h"
 #include "../LH_Qt_QFont.h"
+#include "../LH_Qt_QFileInfo.h"
 #include "QList"
+#include "QHash"
 
 class LH_Graph : public LH_QtInstance
 {
@@ -58,6 +60,11 @@ class LH_Graph : public LH_QtInstance
 
     QString unitText_;
 
+    QSize img_size_;
+    QImage bgImg_;
+    QHash<int,QImage> fgImgs_;
+    void reload_images();
+
     QList< QList<qreal> > values_;
     QVector<int> cacheCount_;
     QVector<qreal> cacheVal_;
@@ -72,7 +79,8 @@ class LH_Graph : public LH_QtInstance
 protected:
     bool graph_empty_;
 
-    LH_Qt_QStringList *setup_type_;
+    LH_Qt_QStringList *setup_fg_type_;
+    LH_Qt_QStringList *setup_bg_type_;
     LH_Qt_QStringList *setup_orientation_;
     LH_Qt_QStringList *setup_line_selection_;
     LH_Qt_QColor *setup_pencolor_;
@@ -98,6 +106,10 @@ protected:
     LH_Qt_QFont *setup_label_font_;
     LH_Qt_QColor *setup_label_color_;
     LH_Qt_QColor *setup_label_shadow_;
+
+    LH_Qt_QFileInfo *setup_fg_image_;
+    LH_Qt_QFileInfo *setup_bg_image_;
+    LH_Qt_int *setup_fg_alpha_;
 
 public:
     LH_Graph( const char *name, LH_QtPlugin *parent = 0, float defaultMin = 0, float defaultMax = 0 );
@@ -129,7 +141,7 @@ public:
     void addValues(QVector<float> values ) { for( int i=0; i<values.size(); ++i ) addValue( values.at(i), i ); }
 
     void updateDescText();
-    void loadColors(int lineID, QColor& penColor, QColor& fillColor1, QColor& fillColor2);
+    void loadColors(int lineID, QColor& penColor, QColor& fillColor1, QColor& fillColor2, QString& fgImgPath, int& fgImgAlpha);
     QString buildColorConfig();
 
     void findDataBounds();
@@ -155,6 +167,8 @@ public slots:
     void updateSelectedLine();
     void updateLabelSelection();
     void updateLimitControls();
+    void updateFGImage();
+    void updateBGImage();
 };
 
 #endif // LH_GRAPH_H

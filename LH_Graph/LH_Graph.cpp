@@ -57,11 +57,20 @@ LH_Graph::LH_Graph( const char *name, LH_QtPlugin *parent, float defaultMin, flo
     divisorY_ = 1;
     unitText_ = "";
 
-    QStringList valueTypes = QStringList();
-    valueTypes.append("Line Only");
-    valueTypes.append("Area Fill");
-    setup_type_ = new LH_Qt_QStringList(this, "Graph Style", valueTypes, LH_FLAG_AUTORENDER);
-    setup_type_->setHelp( "<p>The graph's style.</p>");
+    QStringList fgTypes = QStringList();
+    fgTypes.append("Line Only");
+    fgTypes.append("Area Fill");
+    fgTypes.append("Image");
+    setup_fg_type_ = new LH_Qt_QStringList(this, "Graph Style", fgTypes, LH_FLAG_AUTORENDER);
+    setup_fg_type_->setHelp( "<p>The graph's style.</p><p style='color:red'>IMPORTANT NOTE: Using a foreground image for a large graph, especially one with multiple lines can have a significant impact on CPU usage.</p>");
+
+    QStringList bgTypes = QStringList();
+    bgTypes.append("None");
+    bgTypes.append("Area Fill");
+    bgTypes.append("Image");
+    setup_bg_type_ = new LH_Qt_QStringList(this, "Graph Background", bgTypes, LH_FLAG_AUTORENDER);
+    setup_bg_type_->setHelp( "<p>The graph's background style.</p>");
+    setup_bg_type_->setValue(1);
 
     QStringList orientations = QStringList();
     orientations.append("Time Horizontal (Now = Right), Max Value = Top");
@@ -77,6 +86,9 @@ LH_Graph::LH_Graph( const char *name, LH_QtPlugin *parent, float defaultMin, flo
 
     setup_bgcolor_ = new LH_Qt_QColor(this,"Background color",Qt::transparent,LH_FLAG_AUTORENDER);
     setup_bgcolor_->setHelp( "<p>The color for the background.</p>");
+
+    setup_bg_image_ = new LH_Qt_QFileInfo(this, "Background Image", QFileInfo(""), LH_FLAG_AUTORENDER | LH_FLAG_HIDDEN);
+    setup_bgcolor_->setHelp( "<p>The image used for the background.</p>");
 
     setup_max_samples_ = new LH_Qt_int(this,"Max Samples",len_,5,600,LH_FLAG_AUTORENDER);
     setup_max_samples_->setHelp( "<p>How many data points to store &amp; plot.</p>");
@@ -97,6 +109,11 @@ LH_Graph::LH_Graph( const char *name, LH_QtPlugin *parent, float defaultMin, flo
     setup_fillcolor1_->setHelp( "<p>The color used to fill the area between the line and the axis, at the furthest point from the axis (this color is only truely visible when the graph is full).</p>");
     setup_fillcolor2_ = new LH_Qt_QColor(this,"Area color (end)",Qt::red,LH_FLAG_AUTORENDER);
     setup_fillcolor2_->setHelp( "<p>The color used to fill the area between the line and the axis, at the axis.</p>");
+
+    setup_fg_image_ = new LH_Qt_QFileInfo(this, "Fill Image", QFileInfo(""), LH_FLAG_AUTORENDER | LH_FLAG_HIDDEN);
+    setup_fg_image_->setHelp( "<p>This image is used to create the foreground, filling the area between the line and the axis.</p>");
+    setup_fg_alpha_ = new LH_Qt_int(this,"Fill Image Opacity", 255, 0, 255, LH_FLAG_AUTORENDER | LH_FLAG_HIDDEN);
+    setup_fg_alpha_->setHelp( "<p>This value affects the opacity of the fill image.</p>");
 
     setup_max_ = new LH_Qt_float(this, "Graph Ymax",defaultMax,-99999999,99999999, LH_FLAG_AUTORENDER | LH_FLAG_HIDDEN);
     setup_max_->setHelp( "<p>The maximum value displayed on the graph.</p>"
@@ -148,13 +165,17 @@ LH_Graph::LH_Graph( const char *name, LH_QtPlugin *parent, float defaultMin, flo
 
     addLine("Default");
 
-    connect( setup_type_, SIGNAL(changed()), this, SLOT(changeType()) );
+    connect( setup_fg_type_, SIGNAL(changed()), this, SLOT(changeType()) );
+    connect( setup_bg_type_, SIGNAL(changed()), this, SLOT(changeType()) );
     connect( setup_max_samples_, SIGNAL(changed()), this, SLOT(changeMaxSamples()) );
     connect( setup_sample_rate_, SIGNAL(changed()), this, SLOT(changeSampleRate()) );
     connect( setup_line_selection_, SIGNAL(changed()), this, SLOT(changeSelectedLine()) );
     connect( setup_pencolor_, SIGNAL(changed()), this, SLOT(updateSelectedLine()) );
     connect( setup_fillcolor1_, SIGNAL(changed()), this, SLOT(updateSelectedLine()) );
     connect( setup_fillcolor2_, SIGNAL(changed()), this, SLOT(updateSelectedLine()) );
+    connect( setup_fg_image_, SIGNAL(changed()), this, SLOT(updateFGImage()) );
+    connect( setup_bg_image_, SIGNAL(changed()), this, SLOT(updateBGImage()) );
+    connect( setup_fg_alpha_, SIGNAL(changed()), this, SLOT(updateSelectedLine()) );
     connect( setup_show_y_max_, SIGNAL(changed()), this, SLOT(updateLabelSelection()) );
     connect( setup_show_y_min_, SIGNAL(changed()), this, SLOT(updateLabelSelection()) );
     connect( setup_show_real_limits_, SIGNAL(changed()), this, SLOT(updateLabelSelection()) );
@@ -168,13 +189,15 @@ LH_Graph::~LH_Graph()
 {
     if (isDebug) qDebug() << "graph: destroy: begin";
 
-    disconnect( setup_type_, SIGNAL(changed()) );
+    disconnect( setup_fg_type_, SIGNAL(changed()) );
     disconnect( setup_max_samples_, SIGNAL(changed()) );
     disconnect( setup_sample_rate_, SIGNAL(changed()) );
     disconnect( setup_line_selection_, SIGNAL(changed()) );
     disconnect( setup_pencolor_, SIGNAL(changed()) );
     disconnect( setup_fillcolor1_, SIGNAL(changed()) );
     disconnect( setup_fillcolor2_, SIGNAL(changed()) );
+    disconnect( setup_fg_image_, SIGNAL(changed()) );
+    disconnect( setup_fg_alpha_, SIGNAL(changed()) );
     disconnect( setup_show_y_max_, SIGNAL(changed()) );
     disconnect( setup_show_y_min_, SIGNAL(changed()) );
     disconnect( setup_show_real_limits_, SIGNAL(changed()) );
@@ -308,9 +331,11 @@ void LH_Graph::drawSingle( int lineID )
     QColor penColor = QColor();
     QColor fillColor1 = QColor();
     QColor fillColor2 = QColor();
+    QString fgImgPath = "";
+    int fgImgAlpha = 255;
 
     //get the colours required for this line & it's fill area
-    loadColors(lineID, penColor, fillColor1, fillColor2);
+    loadColors(lineID, penColor, fillColor1, fillColor2, fgImgPath, fgImgAlpha);
 
     QPainter painter;
 
@@ -322,137 +347,197 @@ void LH_Graph::drawSingle( int lineID )
     //empty the graph when drawing line 0
     if(lineID==0)
     {
+        if (img_size_.width() != w || img_size_.height()!= h)
+            reload_images();
+
         delete image_;
-        image_ = new QImage(w,h,QImage::Format_ARGB32_Premultiplied);
-        image_->fill( PREMUL( setup_bgcolor_->value().rgba() ) );
+
+        switch(setup_bg_type_->value())
+        {
+        case 2:
+            if(setup_bg_image_->value().isFile())
+            {
+                image_ = new QImage(bgImg_);
+                break;
+            }
+        case 0:
+            image_ = new QImage(w,h,QImage::Format_ARGB32_Premultiplied);
+            image_->fill( PREMUL( QColor(0,0,0,0).rgba() ) );
+            break;
+        case 1:
+            image_ = new QImage(w,h,QImage::Format_ARGB32_Premultiplied);
+            image_->fill( PREMUL( setup_bgcolor_->value().rgba() ) );
+            break;
+        }
+
+
+
         findDataBounds();
     }
 
+    //assemble the array of points for the graph (based on values & orientation)
+    bool isConstant = true;
+    float constantValue = 0;
+    int i;
+    for(i=0;i<values_[lineID].length() && i<len_;i++)
+    {
+        qreal x = 0; qreal y=0;
+        switch(setup_orientation_->value())
+        {
+        case 0:
+            x = ((len_-1) - i) * w / (len_-1);
+            y = h - (((values_[lineID].at(i) ) - graphMinY_) * h / (graphMaxY_ - graphMinY_));
+            break;
+        case 1:
+            x = ((len_-1) - i) * w / (len_-1);
+            y = (((values_[lineID].at(i) ) - graphMinY_) * h / (graphMaxY_ - graphMinY_));
+            break;
+        case 2:
+            x = w - ((len_-1) - i) * w / (len_-1);
+            y = h - (((values_[lineID].at(i) ) - graphMinY_) * h / (graphMaxY_ - graphMinY_));
+            break;
+        case 3:
+            x = w - ((len_-1) - i) * w / (len_-1);
+            y = (((values_[lineID].at(i) ) - graphMinY_) * h / (graphMaxY_ - graphMinY_));
+            break;
+        case 4:
+            x = w - (((values_[lineID].at(i) ) - graphMinY_) * w / (graphMaxY_ - graphMinY_));
+            y = h - ((len_-1) - i) * h / (len_-1);
+            break;
+        case 5:
+            x = (((values_[lineID].at(i) ) - graphMinY_) * w / (graphMaxY_ - graphMinY_));
+            y = h - ((len_-1) - i) * h / (len_-1);
+            break;
+        case 6:
+            x = w - (((values_[lineID].at(i) ) - graphMinY_) * w / (graphMaxY_ - graphMinY_));
+            y = ((len_-1) - i) * h / (len_-1);
+            break;
+        case 7:
+            x = (((values_[lineID].at(i) ) - graphMinY_) * w / (graphMaxY_ - graphMinY_));
+            y = ((len_-1) - i) * h / (len_-1);
+            break;
+        }
+        if(i==0)
+            constantValue = values_[lineID].at(i);
+        else
+            isConstant = isConstant && (constantValue == values_[lineID].at(i));
+        points[i] = QPointF(x, y);
+    }
+
+
+    //apply point corrections & prep gradient
+    QLinearGradient gradient;
+    qreal x = points[i-1].x();
+    qreal y = points[i-1].y();
+    switch(setup_orientation_->value())
+    {
+    case 0:
+        points[i++] =  QPointF(x, h+10);
+        points[i++] =  QPointF(w, h+10);
+        gradient.setStart( QPointF(0, 0) );
+        gradient.setFinalStop( QPointF(0,h) );
+        break;
+    case 1:
+        points[i++] =  QPointF(x, -10);
+        points[i++] =  QPointF(w, -10);
+        gradient.setStart( QPointF(0, h) );
+        gradient.setFinalStop( QPointF(0,0) );
+        break;
+    case 2:
+        points[i++] =  QPointF(x, h+10);
+        points[i++] =  QPointF(0, h+10);
+        gradient.setStart( QPointF(0, 0) );
+        gradient.setFinalStop( QPointF(0,h) );
+        break;
+    case 3:
+        points[i++] =  QPointF(x, -10);
+        points[i++] =  QPointF(0, -10);
+        gradient.setStart( QPointF(0, h) );
+        gradient.setFinalStop( QPointF(0,0) );
+        break;
+    case 4:
+        points[i++] =  QPointF(w+10, y);
+        points[i++] =  QPointF(w+10, 0);
+        gradient.setStart( QPointF( 0,0 ) );
+        gradient.setFinalStop( QPointF(w, 0) );
+        break;
+    case 5:
+        points[i++] =  QPointF(-10, y);
+        points[i++] =  QPointF(-10, 0);
+        gradient.setStart( QPointF(w, 0) );
+        gradient.setFinalStop( QPointF(0,0) );
+        break;
+    case 6:
+        points[i++] =  QPointF(w+10, y);
+        points[i++] =  QPointF(w+10, h);
+        gradient.setStart( QPointF( 0,0 ) );
+        gradient.setFinalStop( QPointF(w, 0) );
+        break;
+    case 7:
+        points[i++] =  QPointF(-10, y);
+        points[i++] =  QPointF(-10, h);
+        gradient.setStart( QPointF(w, 0) );
+        gradient.setFinalStop( QPointF(0,0) );
+        break;
+    }
+    gradient.setColorAt(0,fillColor2);
+    gradient.setColorAt(1,fillColor1);
+
     if( painter.begin( image_ ) )
     {
-        int i = 0;
-        bool isConstant = true;
-        float constantValue = 0;
-
-        //assemble the array of points for the graph (based on values & orientation)
-        for(i=0;i<values_[lineID].length() && i<len_;i++)
-        {
-            qreal x = 0; qreal y=0;
-            switch(setup_orientation_->value())
-            {
-            case 0:
-                x = ((len_-1) - i) * w / (len_-1);
-                y = h - (((values_[lineID].at(i) ) - graphMinY_) * h / (graphMaxY_ - graphMinY_));
-                break;
-            case 1:
-                x = ((len_-1) - i) * w / (len_-1);
-                y = (((values_[lineID].at(i) ) - graphMinY_) * h / (graphMaxY_ - graphMinY_));
-                break;
-            case 2:
-                x = w - ((len_-1) - i) * w / (len_-1);
-                y = h - (((values_[lineID].at(i) ) - graphMinY_) * h / (graphMaxY_ - graphMinY_));
-                break;
-            case 3:
-                x = w - ((len_-1) - i) * w / (len_-1);
-                y = (((values_[lineID].at(i) ) - graphMinY_) * h / (graphMaxY_ - graphMinY_));
-                break;
-            case 4:
-                x = w - (((values_[lineID].at(i) ) - graphMinY_) * w / (graphMaxY_ - graphMinY_));
-                y = h - ((len_-1) - i) * h / (len_-1);
-                break;
-            case 5:
-                x = (((values_[lineID].at(i) ) - graphMinY_) * w / (graphMaxY_ - graphMinY_));
-                y = h - ((len_-1) - i) * h / (len_-1);
-                break;
-            case 6:
-                x = w - (((values_[lineID].at(i) ) - graphMinY_) * w / (graphMaxY_ - graphMinY_));
-                y = ((len_-1) - i) * h / (len_-1);
-                break;
-            case 7:
-                x = (((values_[lineID].at(i) ) - graphMinY_) * w / (graphMaxY_ - graphMinY_));
-                y = ((len_-1) - i) * h / (len_-1);
-                break;
-            }
-            if(i==0)
-                constantValue = values_[lineID].at(i);
-            else
-                isConstant = isConstant && (constantValue == values_[lineID].at(i));
-            points[i] = QPointF(x, y);
-        }
-
         painter.setRenderHint( QPainter::Antialiasing, true );
-        QPen pen = QPen(penColor);
-        painter.setPen(pen);
+        painter.setPen(penColor);
 
         //draw the line and fill the area if required
         bool doDraw = !(hasDeadValue_ && isConstant && (deadValue_ == constantValue));
-        //qDebug() << lineID << ":" << hasDeadValue_ <<","<< isConstant <<","<< deadValue_ << constantValue;
         if (doDraw)
         {
-            if(setup_type_->value()!=0)
+            switch(setup_fg_type_->value())
             {
-                QLinearGradient gradient;
-
-                qreal x = points[i-1].x();
-                qreal y = points[i-1].y();
-                switch(setup_orientation_->value())
-                {
-                case 0:
-                    points[i++] =  QPointF(x, h+10);
-                    points[i++] =  QPointF(w, h+10);
-                    gradient.setStart( QPointF(0, 0) );
-                    gradient.setFinalStop( QPointF(0,h) );
-                    break;
-                case 1:
-                    points[i++] =  QPointF(x, -10);
-                    points[i++] =  QPointF(w, -10);
-                    gradient.setStart( QPointF(0, h) );
-                    gradient.setFinalStop( QPointF(0,0) );
-                    break;
-                case 2:
-                    points[i++] =  QPointF(x, h+10);
-                    points[i++] =  QPointF(0, h+10);
-                    gradient.setStart( QPointF(0, 0) );
-                    gradient.setFinalStop( QPointF(0,h) );
-                    break;
-                case 3:
-                    points[i++] =  QPointF(x, -10);
-                    points[i++] =  QPointF(0, -10);
-                    gradient.setStart( QPointF(0, h) );
-                    gradient.setFinalStop( QPointF(0,0) );
-                    break;
-                case 4:
-                    points[i++] =  QPointF(w+10, y);
-                    points[i++] =  QPointF(w+10, 0);
-                    gradient.setStart( QPointF( 0,0 ) );
-                    gradient.setFinalStop( QPointF(w, 0) );
-                    break;
-                case 5:
-                    points[i++] =  QPointF(-10, y);
-                    points[i++] =  QPointF(-10, 0);
-                    gradient.setStart( QPointF(w, 0) );
-                    gradient.setFinalStop( QPointF(0,0) );
-                    break;
-                case 6:
-                    points[i++] =  QPointF(w+10, y);
-                    points[i++] =  QPointF(w+10, h);
-                    gradient.setStart( QPointF( 0,0 ) );
-                    gradient.setFinalStop( QPointF(w, 0) );
-                    break;
-                case 7:
-                    points[i++] =  QPointF(-10, y);
-                    points[i++] =  QPointF(-10, h);
-                    gradient.setStart( QPointF(w, 0) );
-                    gradient.setFinalStop( QPointF(0,0) );
-                    break;
-                }
-                gradient.setColorAt(0,fillColor2);
-                gradient.setColorAt(1,fillColor1);
-
+            case 0:
+                painter.drawPolyline(points, values_[lineID].length());
+                break;
+            case 1:
                 painter.setBrush(QBrush(gradient));
                 painter.drawPolygon(points, values_[lineID].length()+2);
-            } else
-                painter.drawPolyline(points, values_[lineID].length());
+                break;
+            case 2:
+                {
+                    QRectF graph_area = QRectF( 0,0, w, h );
+
+                    //build mask
+                    uchar *blank_data = (uchar[4]){0,0,0,0};
+                    QImage maskImg = QImage(blank_data,1,1,QImage::Format_ARGB32).scaled(w,h);
+                    QPainter maskPaint;
+                    if( maskPaint.begin( &maskImg ) )
+                    {
+                        maskPaint.setRenderHint( QPainter::Antialiasing, true );
+                        QColor maskCol = QColor(0,0,0,fgImgAlpha);
+                        maskPaint.setPen(maskCol);
+                        maskPaint.setBrush(QBrush(maskCol));
+                        maskPaint.drawPolygon(points, values_[lineID].length()+2);
+                        maskPaint.end();
+                    }
+
+                    //apply mask
+                    if(!fgImgs_.contains(lineID) && QFileInfo(fgImgPath).isFile())
+                         fgImgs_.insert(lineID,QImage(fgImgPath).scaled(w,h));
+                    if(fgImgs_.contains(lineID))
+                    {
+                        QImage tempImg = fgImgs_.value(lineID);
+                        QPainter tempPaint;
+                        if( tempPaint.begin( &tempImg ) )
+                        {
+                            tempPaint.setCompositionMode(QPainter::CompositionMode_DestinationIn);
+                            tempPaint.drawImage(graph_area, maskImg);
+                            tempPaint.end();
+                        }
+                        painter.drawImage(graph_area, tempImg);
+                    }
+                    painter.drawPolyline(points, values_[lineID].length());
+                }
+                break;
+            }
         }
 
         // when completing the last line, add any labels if required
@@ -626,7 +711,7 @@ void LH_Graph::addValue(float value, int lineID )
     if (isDebug) qDebug() << "graph: add value: end ";
 }
 
-void LH_Graph::loadColors(int lineID, QColor& penColor, QColor& fillColor1, QColor& fillColor2)
+void LH_Graph::loadColors(int lineID, QColor& penColor, QColor& fillColor1, QColor& fillColor2, QString& fgImgPath, int& fgImgAlpha)
 {
     if (isDebug) qDebug() << "graph: load colours: begin " << lineID;
     QStringList configs = setup_line_configs_->value().split('~',QString::SkipEmptyParts);
@@ -651,6 +736,10 @@ void LH_Graph::loadColors(int lineID, QColor& penColor, QColor& fillColor1, QCol
     fillColor2.setGreen(QString(config.at(9)).toInt());
     fillColor2.setBlue(QString(config.at(10)).toInt());
     fillColor2.setAlpha(QString(config.at(11)).toInt());
+
+    if(config.length()>12)fgImgPath = config.at(12);
+    if(config.length()>13)fgImgAlpha = config.at(13).toInt();
+
     if (isDebug) qDebug() << "graph: load colours: end ";
 }
 
@@ -676,6 +765,9 @@ QString LH_Graph::buildColorConfig()
     config.append(QString::number(fillColor2.green()));
     config.append(QString::number(fillColor2.blue()));
     config.append(QString::number(fillColor2.alpha()));
+
+    config.append(setup_fg_image_->value().absoluteFilePath());
+    config.append(QString::number(setup_fg_alpha_->value()));
 
     return config.join(",");
 }
@@ -719,8 +811,13 @@ void LH_Graph::updateDescText()
 
 void LH_Graph::changeType()
 {
-    setup_fillcolor1_->setFlag(LH_FLAG_HIDDEN, (setup_type_->value()==0));
-    setup_fillcolor2_->setFlag(LH_FLAG_HIDDEN, (setup_type_->value()==0));
+    setup_fillcolor1_->setFlag(LH_FLAG_HIDDEN, (setup_fg_type_->value()!=1));
+    setup_fillcolor2_->setFlag(LH_FLAG_HIDDEN, (setup_fg_type_->value()!=1));
+    setup_fg_image_->setFlag(LH_FLAG_HIDDEN, (setup_fg_type_->value()!=2));
+    setup_fg_alpha_->setFlag(LH_FLAG_HIDDEN, (setup_fg_type_->value()!=2));
+
+    setup_bgcolor_->setFlag(LH_FLAG_HIDDEN, (setup_bg_type_->value()!=1));
+    setup_bg_image_->setFlag(LH_FLAG_HIDDEN, (setup_bg_type_->value()!=2));
 }
 
 void LH_Graph::changeSelectedLine()
@@ -728,15 +825,19 @@ void LH_Graph::changeSelectedLine()
     QColor penColor = QColor();
     QColor fillColor1 = QColor();
     QColor fillColor2 = QColor();
+    QString fgImgPath = "";
+    int fgImgAlpha = 255;
 
     if (setup_line_selection_->value() >= lineCount()) setup_line_selection_->setValue(lineCount()-1);
     if (setup_line_selection_->value() < 0) setup_line_selection_->setValue(0);
 
-    loadColors(setup_line_selection_->value(), penColor, fillColor1, fillColor2);
+    loadColors(setup_line_selection_->value(), penColor, fillColor1, fillColor2, fgImgPath, fgImgAlpha);
 
     setup_pencolor_->setValue(penColor);
     setup_fillcolor1_->setValue(fillColor1);
     setup_fillcolor2_->setValue(fillColor2);
+    setup_fg_image_->setValue(QFileInfo(fgImgPath));
+    setup_fg_alpha_->setValue(fgImgAlpha);
 }
 
 void LH_Graph::updateSelectedLine()
@@ -799,4 +900,45 @@ void LH_Graph::updateLimitControls()
     setup_max_->setFlag(LH_FLAG_READONLY, !userDefinableLimits_ || canGrow());
     setup_min_->setFlag(LH_FLAG_HIDDEN, !userDefinableLimits_);
     setup_min_->setFlag(LH_FLAG_READONLY, !userDefinableLimits_);
+}
+
+void LH_Graph::updateFGImage()
+{
+    updateSelectedLine();
+    reload_images();
+}
+
+void LH_Graph::updateBGImage()
+{
+    reload_images();
+}
+
+void LH_Graph::reload_images()
+{
+    if(image_ == NULL)
+        return;
+
+    int w = image_->width();
+    int h = image_->height();
+
+    img_size_.setHeight(h);
+    img_size_.setWidth(w);
+
+    if(setup_bg_image_->value().isFile())
+        bgImg_ = QImage(setup_bg_image_->value().absoluteFilePath()).scaled(w,h);
+
+    for(int lineID=0;lineID<lineCount(); lineID++)
+    {
+        QColor penColor = QColor();
+        QColor fillColor1 = QColor();
+        QColor fillColor2 = QColor();
+        QString fgImgPath = "";
+        int fgImgAlpha = 255;
+
+        loadColors(lineID, penColor, fillColor1, fillColor2, fgImgPath, fgImgAlpha);
+
+        fgImgs_.remove(lineID);
+        if(QFileInfo(fgImgPath).isFile())
+            fgImgs_.insert(lineID, QImage(fgImgPath).scaled(w,h));
+    }
 }

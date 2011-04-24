@@ -49,7 +49,7 @@ public:
             REVISION,
             LH_API_MAJOR,
             LH_API_MINOR,
-            "1.21",
+            "1.30",
             "http://codeleap.co.uk/lcdhost/lh_graph/ver.xml"
         };
         Q_ASSERT( amaj == LH_API_MAJOR );

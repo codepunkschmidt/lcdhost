@@ -57,11 +57,7 @@ static inline uint PREMUL(uint x) {
 
 LH_Bar::LH_Bar( const char *name, LH_QtPlugin *parent ) : LH_QtInstance( name, 0, parent )
 {
-    uchar *data = new uchar[4];
-    data[0] = 255;
-    data[1] = 0;
-    data[2] = 0;
-    data[3] = 0;
+    uchar *data = (uchar[4]){255,0,0,0};
     bar_img_emptyMask_ = QImage(data,1,1,QImage::Format_ARGB32);
 
     QStringList valueTypes = QStringList();

@@ -39,9 +39,12 @@
 #include <QString>
 #include <QUrl>
 #include <QByteArray>
+#include <QNetworkAccessManager>
 
 #include "LH_WebKit.h"
 #include "../../LH_Qt_QString.h"
+
+#define USE_NAM
 
 class LH_WebKitURL : public LH_WebKit
 {
@@ -51,6 +54,11 @@ class LH_WebKitURL : public LH_WebKit
     LH_Qt_QString *setup_url_;
     LH_Qt_QString *setup_url_sanitized_;
 
+#ifdef USE_NAM
+    QNetworkAccessManager *nam_;
+#endif
+
+
 public:
     LH_WebKitURL(const char *name);
 
@@ -58,6 +66,11 @@ public:
 
 public slots:
     void urlChanged();
+
+#ifdef USE_NAM
+    void fetch();
+    void finished(QNetworkReply*);
+#endif
 };
 
 #endif // LH_WEBKITURL_H

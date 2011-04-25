@@ -38,6 +38,7 @@
 
 #include <QProcess>
 #include <QtNetwork>
+#include <QThread>
 
 #include "LH_QtPlugin_WebKit.h"
 
@@ -51,6 +52,22 @@
 
 extern LH_QtPlugin_WebKit thePlugin;
 
+class LH_ParseThread : public QThread {
+    Q_OBJECT
+protected:
+    QString parseToken(QString beforeParsing, QString token, QString value, QString lookAheadChars = "0-9a-zA-Z_" );
+public:
+    LH_ParseThread( LH_QtObject *parent ) : QThread( parent ) { return; }
+    QString parsedHtml;
+    QString sourceHtml;
+    QString regex;
+    QHash<QString,QString> tokensList;
+    bool isLazy;
+    bool doParse;
+
+    virtual void run();
+};
+
 class LH_WebKit : public LH_QtInstance
 {
     Q_OBJECT
@@ -62,11 +79,13 @@ class LH_WebKit : public LH_QtInstance
     bool sent_html_;
     WebKitData kitdata_;
 
+    LH_ParseThread *parseThread;
+
     void sendData(bool resize = false );
 
+    QSize scaled_size();
+
 protected:
-    QString parseToken(QString beforeParsing, QString token, QString value, QString lookAheadChars = "0-9a-zA-Z_" );
-    QString virtual getParsedHtml();
     QString html_;
 
     LH_Qt_bool *setup_parse_;
@@ -77,6 +96,7 @@ protected:
     LH_Qt_QSlider *zoom_;
     LH_Qt_QProgressBar *progress_;
 
+    QHash<QString, QString> virtual getTokens();
 public:
     LH_WebKit( const char *name, const bool enableParsing = false);
     ~LH_WebKit();
@@ -97,6 +117,7 @@ public slots:
     void connected();
     void disconnected();
     void reparse();
+    void doneParsing();
 };
 
 #endif // LH_WEBKIT_H

@@ -46,22 +46,18 @@ void LH_RSSBody::setRssItem()
     sendRequest( QUrl::fromLocalFile( QString::fromUtf8( state()->dir_layout ) + "/" ), rss_->item().description );
 }
 
-QString LH_RSSBody::getParsedHtml()
+QHash<QString, QString> LH_RSSBody::getTokens()
 {
-    if (setup_parse_->value())
-    {
-        QString parsedHtml = LH_WebKit::getParsedHtml();
-        parsedHtml = parseToken(parsedHtml, "title",            rss_->item().title );
-        parsedHtml = parseToken(parsedHtml, "author",           rss_->item().author );
-        parsedHtml = parseToken(parsedHtml, "link",             rss_->item().link );
-        parsedHtml = parseToken(parsedHtml, "pubDate",          rss_->item().pubDate );
-        parsedHtml = parseToken(parsedHtml, "thumbnail_url",    rss_->item().thumbnail.url );
-        parsedHtml = parseToken(parsedHtml, "thumbnail_height", QString::number(rss_->item().thumbnail.height) );
-        parsedHtml = parseToken(parsedHtml, "thumbnail_width",  QString::number(rss_->item().thumbnail.width) );
-        return parsedHtml;
-    }
-    else
-        return html_;
+    QHash<QString, QString> tokens = LH_WebKit::getTokens();
+
+    tokens.insert( "title",            rss_->item().title );
+    tokens.insert( "author",           rss_->item().author );
+    tokens.insert( "link",             rss_->item().link );
+    tokens.insert( "pubDate",          rss_->item().pubDate );
+    tokens.insert( "thumbnail_url",    rss_->item().thumbnail.url );
+    tokens.insert( "thumbnail_height", QString::number(rss_->item().thumbnail.height) );
+    tokens.insert( "thumbnail_width",  QString::number(rss_->item().thumbnail.width) );
+    return tokens;
 }
 
 void LH_RSSBody::beginFetch()

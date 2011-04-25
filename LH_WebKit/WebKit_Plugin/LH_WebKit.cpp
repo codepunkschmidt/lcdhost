@@ -77,6 +77,10 @@ LH_WebKit::LH_WebKit( const char *name, const bool enableParsing) : LH_QtInstanc
                              );
     connect( setup_template_, SIGNAL(changed()), this, SLOT(reparse()) );
 
+    parseThread = new LH_ParseThread(this);
+
+    connect( parseThread, SIGNAL(finished()), this, SLOT(doneParsing()));
+
     return;
 }
 
@@ -194,55 +198,56 @@ void LH_WebKit::error(QLocalSocket::LocalSocketError err)
     return;
 }
 
+QSize LH_WebKit::scaled_size()
+{
+    QSize _scaled_size;
+    _scaled_size.setWidth( size_.width() * 10 / zoom_->value() );
+    _scaled_size.setHeight( size_.height() * 10 / zoom_->value() );
+    return _scaled_size;
+}
+
 void LH_WebKit::sendData( bool resize )
 {
     if( sock_ && sock_->state() == QLocalSocket::ConnectedState )
     {
         if( size_.isValid() )
         {
-            QSize scaled_size;
-            scaled_size.setWidth( size_.width() * 10 / zoom_->value() );
-            scaled_size.setHeight( size_.height() * 10 / zoom_->value() );
             if( resize && sent_html_ )
             {
                 // qDebug() << "LH_WebKit: sending resize" << scaled_size;
-                WebKitCommand('R', scaled_size).write(sock_);
+                WebKitCommand('R', scaled_size()).write(sock_);
             }
             else
             {
-                // qDebug() << "LH_WebKit: sending data" << scaled_size << url_ << html_.size();
-                WebKitCommand(0, scaled_size,url_,getParsedHtml()).write(sock_);
-                sent_html_ = true;
+                if(parseThread->isRunning())
+                {
+                    WebKitCommand(0, scaled_size(),url_,"Aborting...").write(sock_);
+                    parseThread->terminate();
+                }
+                WebKitCommand(0, scaled_size(),url_,"Parsing...").write(sock_);
+                parseThread->parsedHtml = setup_template_->value();
+                parseThread->sourceHtml = html_;
+                parseThread->regex = setup_regexp_->value();
+                parseThread->isLazy = setup_regexp_lazy_->value();
+                parseThread->doParse = setup_parse_->value();
+                parseThread->tokensList = getTokens();
+
+                parseThread->start();
             }
         }
     }
 }
 
-QString LH_WebKit::parseToken(QString beforeParsing, QString token, QString value, QString lookAheadChars)
+QHash<QString, QString> LH_WebKit::getTokens()
 {
-    QString regExp = QString("\\\\%1(?=[^%2]|$)").arg(token).arg(lookAheadChars);
-    return beforeParsing.replace(QRegExp(regExp, Qt::CaseInsensitive, QRegExp::RegExp2), value  );
-}
-// .*<table [^>]* (id="callchecker_results")>.*
-QString LH_WebKit::getParsedHtml()
-{
-    if (setup_parse_->value())
-    {
-        QString parsedHtml = setup_template_->value();
-        QRegExp rx(setup_regexp_->value(), Qt::CaseInsensitive, QRegExp::RegExp2 );
-        rx.setMinimal(setup_regexp_lazy_->value());
-        if (rx.indexIn(html_)!=-1)
-            for(int i=1; i <= rx.captureCount(); i++)
-                parsedHtml = parseToken(parsedHtml, QString::number(i), rx.cap(i), "0-9" );
+    QHash<QString, QString> tokens;
 
-        QString layoutPath = state()->dir_layout;
-        if (layoutPath.endsWith('\\') || layoutPath.endsWith('/'))
-            layoutPath = layoutPath.left(layoutPath.length()-1);
-        parsedHtml = parseToken(parsedHtml, "layout_path", layoutPath );
-        return parsedHtml;
-    }
-    else
-        return html_;
+    QString layoutPath = state()->dir_layout;
+    if (layoutPath.endsWith('\\') || layoutPath.endsWith('/'))
+        layoutPath = layoutPath.left(layoutPath.length()-1);
+    tokens.insert( "layout_path", layoutPath );
+
+    return tokens;
 }
 
 void LH_WebKit::sendRequest( QUrl url, QString html )
@@ -317,4 +322,36 @@ void LH_WebKit::reparse()
     sent_html_ = false;
     sendData(false);
     requestRender();
+}
+
+void LH_WebKit::doneParsing()
+{
+    // qDebug() << "LH_WebKit: sending data" << scaled_size << url_ << html_.size();
+    WebKitCommand(0, scaled_size(),url_,parseThread->parsedHtml).write(sock_);
+    sent_html_ = true;
+}
+
+void LH_ParseThread::run()
+{
+    if (doParse)
+    {
+        QRegExp rx(regex, Qt::CaseInsensitive, QRegExp::RegExp2 );
+        rx.setMinimal(isLazy);
+        if (rx.indexIn(sourceHtml)!=-1)
+            for(int i=1; i <= rx.captureCount(); i++)
+                parsedHtml = parseToken(parsedHtml, QString::number(i), rx.cap(i), "0-9" );
+        for(int i=0; i<tokensList.count(); i++)
+        {
+            QString key = tokensList.keys().at(i);
+            parsedHtml = parseToken(parsedHtml, key, tokensList.value(key) );
+        }
+    }
+    else
+        parsedHtml = sourceHtml;
+}
+
+QString LH_ParseThread::parseToken(QString beforeParsing, QString token, QString value, QString lookAheadChars)
+{
+    QString regExp = QString("\\\\%1(?=[^%2]|$)").arg(token).arg(lookAheadChars);
+    return beforeParsing.replace(QRegExp(regExp, Qt::CaseInsensitive, QRegExp::RegExp2), value  );
 }

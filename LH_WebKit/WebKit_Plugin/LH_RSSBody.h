@@ -12,7 +12,7 @@ class LH_RSSBody : public LH_WebKit
     LH_RSSInterface* rss_;
 
 protected:
-    QString getParsedHtml();
+    QHash<QString, QString> getTokens();
 
 public:
     LH_RSSBody(const char *name);

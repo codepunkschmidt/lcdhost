@@ -71,6 +71,7 @@ protected:
 
     LH_Qt_bool *setup_parse_;
     LH_Qt_QTextEdit *setup_regexp_;
+    LH_Qt_bool *setup_regexp_lazy_;
     LH_Qt_QTextEdit *setup_template_;
 
     LH_Qt_QSlider *zoom_;

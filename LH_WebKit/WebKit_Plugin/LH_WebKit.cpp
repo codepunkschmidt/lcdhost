@@ -60,6 +60,10 @@ LH_WebKit::LH_WebKit( const char *name, const bool enableParsing) : LH_QtInstanc
     setup_parse_->setHelp("Enabling this allows you to extract or reformat the html data.<br><br>N.B.: This requires an understanding of regular expressions and HTML.");
     connect( setup_parse_, SIGNAL(changed()), this, SLOT(reparse()) );
 
+    setup_regexp_lazy_ = new LH_Qt_bool(this, "Lazy Regular Expressions", false, parseFlags | LH_FLAG_HIDDEN | LH_FLAG_LAST);
+    setup_regexp_lazy_->setHelp("QT's regex engine does not support the \"?\" OR \"lazy\" modifier. Instead you can only set ALL wildcards as being either greedy or lazy.");
+    connect( setup_regexp_lazy_, SIGNAL(changed()), this, SLOT(reparse()) );
+
     setup_regexp_ = new LH_Qt_QTextEdit(this, "Parsing Expression", "(.*)", parseFlags | LH_FLAG_HIDDEN | LH_FLAG_LAST);
     setup_regexp_->setHelp("This is a \"Regular Expression\" and parses the entire web page. Use capture groups to extract data. Note that the expression is only applied once; also as this is a regualar expression, be careful to ensure there are no undesired trailing spaces or carridge returns etc as they will affect the matching.");
     connect( setup_regexp_, SIGNAL(changed()), this, SLOT(reparse()) );
@@ -219,13 +223,14 @@ QString LH_WebKit::parseToken(QString beforeParsing, QString token, QString valu
     QString regExp = QString("\\\\%1(?=[^%2]|$)").arg(token).arg(lookAheadChars);
     return beforeParsing.replace(QRegExp(regExp, Qt::CaseInsensitive, QRegExp::RegExp2), value  );
 }
-
+// .*<table [^>]* (id="callchecker_results")>.*
 QString LH_WebKit::getParsedHtml()
 {
     if (setup_parse_->value())
     {
         QString parsedHtml = setup_template_->value();
         QRegExp rx(setup_regexp_->value(), Qt::CaseInsensitive, QRegExp::RegExp2 );
+        rx.setMinimal(setup_regexp_lazy_->value());
         if (rx.indexIn(html_)!=-1)
             for(int i=1; i <= rx.captureCount(); i++)
                 parsedHtml = parseToken(parsedHtml, QString::number(i), rx.cap(i), "0-9" );
@@ -307,6 +312,7 @@ void LH_WebKit::readyRead()
 void LH_WebKit::reparse()
 {
     setup_regexp_->setFlag(LH_FLAG_HIDDEN, !setup_parse_->value());
+    setup_regexp_lazy_->setFlag(LH_FLAG_HIDDEN, !setup_parse_->value());
     setup_template_->setFlag(LH_FLAG_HIDDEN, !setup_parse_->value());
     sent_html_ = false;
     sendData(false);

@@ -52,11 +52,20 @@ lh_class *LH_WebKitURL::classInfo()
     return &classinfo;
 }
 
+#ifdef USE_NAM
+LH_WebKitURL::LH_WebKitURL(const char *name) : LH_WebKit(name,true)
+#else
 LH_WebKitURL::LH_WebKitURL(const char *name) : LH_WebKit(name)
+#endif
 {
     setup_url_ = new LH_Qt_QString(this,"URL",QString(),LH_FLAG_FOCUS);
     connect( setup_url_, SIGNAL(changed()), this, SLOT(urlChanged()) );
     setup_url_sanitized_ = new LH_Qt_QString(this,"Sanitized URL",QString(),LH_FLAG_READONLY);
+
+#ifdef USE_NAM
+    nam_ = new QNetworkAccessManager(this);
+    connect(nam_, SIGNAL(finished(QNetworkReply*)), this, SLOT(finished(QNetworkReply*)));
+#endif
 }
 
 void LH_WebKitURL::urlChanged()
@@ -65,8 +74,59 @@ void LH_WebKitURL::urlChanged()
     if( url_.isValid() )
     {
         setup_url_sanitized_->setValue( url_.toString() );
+#ifdef USE_NAM
+        fetch();
+#else
         sendRequest( url_ );
+#endif
     }
     else setup_url_sanitized_->setValue( QString() );
     return;
 }
+
+#ifdef USE_NAM
+
+void LH_WebKitURL::finished( QNetworkReply* reply )
+{
+    if( reply != NULL )
+    {
+        if( reply->error() == QNetworkReply::NoError )
+        {
+            if( reply->attribute(QNetworkRequest::HttpStatusCodeAttribute) == 200 )
+            {
+                sendRequest( QUrl::fromLocalFile( QString::fromUtf8( state()->dir_layout ) + "/" ), reply->readAll() );
+            }
+            else if( reply->attribute(QNetworkRequest::HttpStatusCodeAttribute) == 301 )
+            {
+                QString dest = reply->header(QNetworkRequest::LocationHeader).toString();
+                qDebug() << "LH_WebKitURL: Changing URL, content permanently moved to" << dest;
+                url_ = QUrl::fromUserInput( dest );
+                setup_url_->setValue(dest);
+                fetch();
+            }
+            else
+            {
+                qWarning() << "LH_WebKitURL: HTTP code" << reply->attribute(QNetworkRequest::HttpStatusCodeAttribute) << reply->errorString() << reply->url().toString();
+            }
+        }
+        else
+        {
+
+        }
+        reply->deleteLater();
+    }
+}
+
+void LH_WebKitURL::fetch()
+{
+    //lastrefresh_ = QDateTime::currentDateTime();
+    QNetworkProxyQuery npq(url_);
+    QList<QNetworkProxy> listOfProxies = QNetworkProxyFactory::systemProxyForQuery(npq);
+    if(listOfProxies.count()!=0)
+        if(listOfProxies.at(0).type() != QNetworkProxy::NoProxy)
+            nam_->setProxy(listOfProxies.at(0));
+
+    nam_->get( QNetworkRequest(url_) );
+}
+
+#endif

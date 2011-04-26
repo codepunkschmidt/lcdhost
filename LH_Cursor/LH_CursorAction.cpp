@@ -196,10 +196,19 @@ void LH_CursorAction::fire(int startAt)
             }else
             if(typeCode=="run")
             {
+                QRegExp rx("((?:[^\\s\"]*(?:\"[^\"]*\")?)*)");
                 QProcess process;
                 QString path = action.getParameter(e,0);
-                QStringList args = QStringList() << action.getParameter(e,1);
-                process.startDetached(path,args,lcdhost_state()->dir_layout);
+                QFileInfo exe = QFileInfo(path);
+                if(!exe.isFile())
+                    exe = QFileInfo(QString("%1%2").arg(state()->dir_layout).arg(path));
+                QString argsString = action.getParameter(e,1);
+                QStringList argsList;
+                if(rx.indexIn(argsString) != -1)
+                    for(int i=1; i<=rx.captureCount(); i++)
+                        if(rx.cap(i)!="")
+                            argsList.append(rx.cap(i));
+                process.startDetached(exe.absoluteFilePath(),argsList,lcdhost_state()->dir_layout);
             }else
             if(typeCode=="url")
             {

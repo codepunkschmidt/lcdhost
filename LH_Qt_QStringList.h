@@ -75,6 +75,18 @@ public:
         return item_.data.i;
     }
 
+    QString valueText() const
+    {
+        int i = item_.data.i;
+        if( i < -1 )
+            return "";
+        else
+            if( i >= list_.size() )
+                return "";
+            else
+                return list_.at(i);
+    }
+
     virtual void setup_change()
     {
         emit change( value() );
@@ -90,6 +102,11 @@ public:
             item_.data.i = i;
             refresh();
         }
+    }
+
+    void setValue(QString str)
+    {
+        setValue( list_.indexOf(str) );
     }
 };
 

@@ -50,6 +50,7 @@ LH_CursorController::LH_CursorController(const char * name) : LH_Text(name), shm
     cursorModes.append((cursorMode){smNone          , true , "Activate & Move Only (Highlighted option is selected)"});
     cursorModes.append((cursorMode){smNone          , false, "Move Only (Highlighted option is selected, always activated)"});
     cursorModes.append((cursorMode){smSelectDeselect, false, "Move & Select / Deselect Only (Always activated)"});
+    cursorModes.append((cursorMode){smSelect        , false, "Move & Select Only (Always activated)"});
 
     shmem_ = new QSharedMemory( "LHCursorSharedMemory", this );
     if( shmem_->create(sizeof(cursorData)) )

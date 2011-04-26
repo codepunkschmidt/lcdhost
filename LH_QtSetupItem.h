@@ -74,6 +74,8 @@ public:
     QString help();
     lh_setup_item *item() { return &item_; }
 
+    lh_setup_type type() { return item_.type; }
+
     int order() const { return order_; }
     void setOrder( int n );
 

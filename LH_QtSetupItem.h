@@ -86,6 +86,7 @@ signals:
     void change( float );
     void change( QString );
     void input( QString, int, int );
+    void set();
 
 public slots:
     void setVisible( bool b ) { setFlag( LH_FLAG_HIDDEN, !b ); }
@@ -94,10 +95,10 @@ public slots:
     void setWriteable( bool b ) { setFlag( LH_FLAG_READONLY, !b ); }
     void setSaving( bool b ) { setFlag( LH_FLAG_NOSAVE, !b ); }
 
-    virtual void setValue( bool ) {}
-    virtual void setValue( int ) {}
-    virtual void setValue( float ) {}
-    virtual void setValue( QString ) {}
+    virtual void setValue( bool ) { emit set(); }
+    virtual void setValue( int ) { emit set(); }
+    virtual void setValue( float ) { emit set(); }
+    virtual void setValue( QString ) { emit set(); }
 };
 
 #endif // LH_QTSETUPITEM_H

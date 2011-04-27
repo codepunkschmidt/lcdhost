@@ -57,6 +57,7 @@ public:
         {
             item_.data.i = ( b ? 1 : 0 );
             refresh();
+            emit set();
         }
     }
 

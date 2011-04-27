@@ -58,6 +58,7 @@ public:
         {
             item_.data.i = c.rgba();
             refresh();
+            emit set();
         }
     }
 };

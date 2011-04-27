@@ -90,6 +90,7 @@ public:
             item_.param.size = array_.capacity();
             item_.data.s = array_.data();
             refresh();
+            emit set();
         }
     }
 };

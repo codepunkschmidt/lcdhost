@@ -63,6 +63,7 @@ public:
             Q_ASSERT( i <= item_.param.slider.max );
             item_.data.i = i;
             refresh();
+            emit set();
         }
     }
 

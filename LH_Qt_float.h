@@ -86,6 +86,7 @@ public:
         {
             item_.data.f = f;
             refresh();
+            emit set();
         }
     }
 

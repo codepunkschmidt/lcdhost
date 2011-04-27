@@ -101,6 +101,7 @@ public:
         {
             item_.data.i = i;
             refresh();
+            emit set();
         }
     }
 

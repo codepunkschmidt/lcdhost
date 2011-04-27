@@ -60,6 +60,7 @@ public:
     {
         image_ = i;
         refresh();
+        emit set();
     }
 };
 

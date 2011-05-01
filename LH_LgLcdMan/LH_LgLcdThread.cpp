@@ -69,28 +69,19 @@ LH_LgLcdThread::~LH_LgLcdThread()
 
 void LH_LgLcdThread::setBW( QImage img )
 {
-    uchar mask;
-    uchar *bits;
-    int count;
-
-    if( img.isNull() )
+    if( img.isNull() || img.width() != 160 || img.height() != 43 )
     {
         bw_bm.hdr.Format = 0;
         return;
     }
 
     bw_bm.bmp_mono.hdr.Format = LGLCD_BMP_FORMAT_160x43x1;
-    bits = img.bits();
-    if( bits )
+    for( int y=0; y<43; ++y )
     {
-        count = 0;
-        mask = 0x80;
-        while( count < (160*43) )
+        for( int x=0; x<160; ++x )
         {
-            bw_bm.bmp_mono.pixels[count] = (*bits & mask) ? 0xFF : 0x00;
-            count ++;
-            mask >>= 1;
-            if( !mask ) { bits++; mask=0x80; }
+            Q_ASSERT( (size_t)(y*160+x) < sizeof(bw_bm.bmp_mono.pixels) );
+            bw_bm.bmp_mono.pixels[y*160 + x] = ( qGray( img.pixel(x,y) ) > 128) ? 0xFF : 0x00;
         }
     }
 

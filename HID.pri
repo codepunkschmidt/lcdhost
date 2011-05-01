@@ -16,4 +16,5 @@ macx {
 
 unix:!macx {
         SOURCES += $$PWD/hidapi/lin/hid.c
+        LIBS += -ludev
 }

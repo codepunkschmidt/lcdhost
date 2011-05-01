@@ -19,6 +19,6 @@ macx {
 }
 
 unix:!macx {
-        DEFINES += OS_LINUX THREADS_POSIX
+        DEFINES += OS_LINUX THREADS_POSIX HAVE_SYS_TIME_H HAVE_POLL_H
         SOURCES += $$PWD/libusb/os/linux_usbfs.c
 }

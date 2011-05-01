@@ -10,7 +10,8 @@ SOURCES += \
     ../LH_QtInstance.cpp \
     ../LH_QtObject.cpp \
     ../LH_QtSetupItem.cpp \
-    LH_Mailcount.cpp
+    LH_Mailcount.cpp \
+    ../LH_Text/LH_Text.cpp
 
 HEADERS += \
     ../lh_plugin.h \
@@ -18,6 +19,7 @@ HEADERS += \
     ../LH_QtInstance.h \
     ../LH_QtObject.h \
     ../LH_QtSetupItem.h \
-    LH_Mailcount.h
+    LH_Mailcount.h \
+    ../LH_Text/LH_Text.h
 
 RESOURCES += LH_Mailcount.qrc

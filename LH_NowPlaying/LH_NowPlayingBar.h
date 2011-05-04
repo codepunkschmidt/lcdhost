@@ -1,5 +1,5 @@
 /**
-  \file     LH_QtPlugin_NowPlaying.cpp
+  \file     LH_NowPlayingBar.h
   \author   Johan Lindh <johan@linkdata.se>
   \author   Andy Bridges <andy@bridgesuk.com>
   \legalese Copyright (c) 2010 Johan Lindh, Andy Bridges
@@ -32,74 +32,38 @@
   ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
   POSSIBILITY OF SUCH DAMAGE.
 
+
   **/
+
+#ifndef LH_NOWPLAYINGBAR_H
+#define LH_NOWPLAYINGBAR_H
+
+#include <QTime>
+#include <QRegExp>
+
+#include "../LH_Bar/LH_Bar.h"
 
 #include "LH_QtPlugin_NowPlaying.h"
 
-LH_QtPlugin_NowPlaying thePlugin;
-
-LH_NowPlaying_Reader* currentTrack;
-
-#include "utils.cpp"
-
-#include "LH_NP_Winamp.cpp"
-#include "LH_NP_WMP.cpp"
-#include "LH_NP_MSN_Compat.cpp"
-#ifdef QT_NO_DEBUG
-#include "LH_NP_iTunes.cpp"
-#endif
-
-void LH_NowPlaying_Reader::refresh()
+class LH_NowPlayingBar : public LH_Bar
 {
-    playerFound_ = false;
-    TrackInfo newInfo;
+    Q_OBJECT
 
-#ifdef QT_NO_DEBUG
-    //itunes doesn't like debug mode
-    playerFound_ = playerFound_ || get_itunes_info(newInfo);
-#endif
-    playerFound_ = playerFound_ || get_winamp_info(newInfo);
-    playerFound_ = playerFound_ || get_msn_compat_info(newInfo);
+    int value_;
+    bool setValue(int val,int max);
 
-    if(storeInfo(newInfo))
-    {
-        emit changed();
-    }
+protected:
 
-}
+public:
+    LH_NowPlayingBar(const char* name, LH_QtPlugin* parent = 0);
 
-bool LH_NowPlaying_Reader::storeInfo(TrackInfo newInfo)
-{
-    bool dirty = false;
-    dirty = dirty || (info_.album != newInfo.album);
-    dirty = dirty || (info_.artist != newInfo.artist);
-    dirty = dirty || (info_.currentSecs != newInfo.currentSecs);
-    dirty = dirty || (info_.player != newInfo.player);
-    dirty = dirty || (info_.status != newInfo.status);
-    dirty = dirty || (info_.totalSecs!= newInfo.totalSecs);
-    dirty = dirty || (info_.track!= newInfo.track);
+    static lh_class *classInfo();
 
-    info_ = newInfo;
-    return dirty;
-}
+    QImage *render_qimage( int w, int h );
 
-const char *LH_QtPlugin_NowPlaying::lh_load() {
-    t.start();
-    currentTrack = new LH_NowPlaying_Reader(this);
-    return NULL;
-}
+public slots:
+    void refresh_pos();
+};
 
-void LH_QtPlugin_NowPlaying::lh_unload() {
-    delete currentTrack;
-}
 
-int LH_QtPlugin_NowPlaying::lh_notify(int code, void *param) {
-    Q_UNUSED(code);
-    Q_UNUSED(param);
-    if (t.elapsed()>=500)
-    {
-        t.restart();
-        currentTrack->refresh();
-    }
-    return 0;
-}
+#endif // LH_NOWPLAYINGBAR_H

@@ -14,12 +14,20 @@ SOURCES += ../lh_plugin.c \
     ../LH_QtPlugin.cpp \
     ../LH_QtObject.cpp \
     ../LH_QtSetupItem.cpp \
-    LH_TextNowPlaying.cpp \
     LH_QtPlugin_NowPlaying.cpp \
     ../LH_Text/LH_Text.cpp \
-    ../LH_QtInstance.cpp
+    ../LH_QtInstance.cpp \
+    LH_NP_Winamp.cpp \
+    LH_NP_iTunes.cpp \
+    utils.cpp \
+    disphelper.c \
+    LH_NP_MSN_Compat.cpp \
+    LH_NowPlayingText.cpp \
+    ../LH_Bar/LH_Bar.cpp \
+    LH_NowPlayingBar.cpp \
+    LH_NowPlayingEmulator.cpp
 
-win32: SOURCES += wmp.c iTunesCOMInterface_i.c
+win32: SOURCES += iTunesCOMInterface_i.c
 
 HEADERS += ../lh_plugin.h \
     ../LH_QtPlugin.h \
@@ -27,6 +35,11 @@ HEADERS += ../lh_plugin.h \
     ../LH_QtSetupItem.h \
     LH_QtPlugin_NowPlaying.h \
     ../LH_Text/LH_Text.h \
-    ../LH_QtInstance.h
+    ../LH_QtInstance.h \
+    disphelper.h \
+    LH_NowPlayingText.h \
+    ../LH_Bar/LH_Bar.h \
+    LH_NowPlayingBar.h \
+    LH_NowPlayingEmulator.h
 
-win32: HEADERS += wmp.h wa_ipc.h iTunesCOMInterface.h
+win32: HEADERS += wa_ipc.h iTunesCOMInterface.h

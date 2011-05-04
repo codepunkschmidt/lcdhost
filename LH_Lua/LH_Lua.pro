@@ -26,6 +26,22 @@ HEADERS += \
     LH_LuaClass.h \
     LH_LuaInstance.h
 
+
+macx {
+    # Uglyhack until Qt fixes CGFontRef export: http://bugreports.qt.nokia.com/browse/QTBUG-17890
+    QTBASE = $$replace(QMAKE_QMAKE,/gcc/bin/qmake,/../../..)
+    !exists( $$QTBASE/QtSources ): error(QTBASE is not correctly set or Qt sources not installed)
+    QTSRC = $$quote($$QTBASE/QtSources/$$QT_VERSION/src)
+    !exists( $$QTSRC/corelib ): error(QTSRC is not correctly set or Qt sources not installed)
+    INCLUDEPATH += \
+        $$QTSRC/3rdparty/harfbuzz/src \
+        $$QTSRC/gui/text \
+        $$QTSRC/corelib/kernel \
+        $$QTSRC/corelib/tools \
+        $$QTSRC/gui/painting \
+        $$QTSRC/gui/kernel
+}
+
 DEFINES += LUA_STATIC GD_FREETYPE GD_PNG GD_GIF NONDLL HAVE_LIBZ HAVE_LIBPNG HAVE_LIBFREETYPE HAVE_FT2BUILD_H
 
 # libz
@@ -154,7 +170,7 @@ macx {
     DEFINES += CAIRO_HAS_QUARTZ_SURFACE=1 CAIRO_HAS_QUARTZ_FONT=1 CAIRO_HAS_QUARTZ_IMAGE_SURFACE=1
     DEFINES += CAIRO_HAS_FT_FONT=0 CAIRO_HAS_FC_FONT=0
     DEFINES += CAIRO_HAS_PTHREAD
-    LIBS += -framework Carbon -framework CoreFoundation
+    LIBS += -framework Carbon -framework CoreFoundation -framework Cocoa
 }
 
 unix:!macx {

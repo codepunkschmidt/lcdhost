@@ -140,11 +140,12 @@ bool LH_LogitechData::monitoringEnabled()
 {
     if(logitechEnabled_==-1)
     {
-        QSettings reg("HKEY_CURRENT_USER\\Software\\CodeLeap\\LogitechMonitoring", QSettings::NativeFormat);
+        logitechEnabled_ == 1;
+        /*QSettings reg("HKEY_CURRENT_USER\\Software\\CodeLeap\\LogitechMonitoring", QSettings::NativeFormat);
         int installedVersion = 0;
         if (reg.contains("MonitoringInstalled"))
             installedVersion = reg.value("MonitoringInstalled").toInt();
-        logitechEnabled_ = (installedVersion==1? 1 : 0);
+        logitechEnabled_ = (installedVersion==1? 1 : 0);*/
     }
     return (logitechEnabled_ == 1);
 }

@@ -1,5 +1,5 @@
 /**
-  \file     LH_QtPlugin_NowPlaying.cpp
+  \file     LH_NowPlayingText.h
   \author   Johan Lindh <johan@linkdata.se>
   \author   Andy Bridges <andy@bridgesuk.com>
   \legalese Copyright (c) 2010 Johan Lindh, Andy Bridges
@@ -34,72 +34,32 @@
 
   **/
 
+#include <QFont>
+#include <QFontMetrics>
+#include <QTime>
+#include <QRegExp>
+
+#include "../LH_Text/LH_Text.h"
+
 #include "LH_QtPlugin_NowPlaying.h"
 
-LH_QtPlugin_NowPlaying thePlugin;
-
-LH_NowPlaying_Reader* currentTrack;
-
-#include "utils.cpp"
-
-#include "LH_NP_Winamp.cpp"
-#include "LH_NP_WMP.cpp"
-#include "LH_NP_MSN_Compat.cpp"
-#ifdef QT_NO_DEBUG
-#include "LH_NP_iTunes.cpp"
-#endif
-
-void LH_NowPlaying_Reader::refresh()
+class LH_NowPlayingText : public LH_Text
 {
-    playerFound_ = false;
-    TrackInfo newInfo;
+    Q_OBJECT
 
-#ifdef QT_NO_DEBUG
-    //itunes doesn't like debug mode
-    playerFound_ = playerFound_ || get_itunes_info(newInfo);
-#endif
-    playerFound_ = playerFound_ || get_winamp_info(newInfo);
-    playerFound_ = playerFound_ || get_msn_compat_info(newInfo);
+    void replace_token(QString &str, QString token, QString val);
+    void replace_token(QString &str, QString token, int seconds, int totalSeconds);
+protected:
+    LH_Qt_QStringList* setup_item_;
+    LH_Qt_QString* setup_custom_;
+    LH_Qt_bool* setup_hide_playing_state_;
 
-    if(storeInfo(newInfo))
-    {
-        emit changed();
-    }
+public:
+    LH_NowPlayingText(const char* name);
 
-}
+    static lh_class *classInfo();
 
-bool LH_NowPlaying_Reader::storeInfo(TrackInfo newInfo)
-{
-    bool dirty = false;
-    dirty = dirty || (info_.album != newInfo.album);
-    dirty = dirty || (info_.artist != newInfo.artist);
-    dirty = dirty || (info_.currentSecs != newInfo.currentSecs);
-    dirty = dirty || (info_.player != newInfo.player);
-    dirty = dirty || (info_.status != newInfo.status);
-    dirty = dirty || (info_.totalSecs!= newInfo.totalSecs);
-    dirty = dirty || (info_.track!= newInfo.track);
-
-    info_ = newInfo;
-    return dirty;
-}
-
-const char *LH_QtPlugin_NowPlaying::lh_load() {
-    t.start();
-    currentTrack = new LH_NowPlaying_Reader(this);
-    return NULL;
-}
-
-void LH_QtPlugin_NowPlaying::lh_unload() {
-    delete currentTrack;
-}
-
-int LH_QtPlugin_NowPlaying::lh_notify(int code, void *param) {
-    Q_UNUSED(code);
-    Q_UNUSED(param);
-    if (t.elapsed()>=500)
-    {
-        t.restart();
-        currentTrack->refresh();
-    }
-    return 0;
-}
+public slots:
+    void refresh_text();
+    void setup_item_changed();
+};

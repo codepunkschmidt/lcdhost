@@ -43,7 +43,6 @@ LH_NowPlaying_Reader* currentTrack;
 #include "utils.cpp"
 
 #include "LH_NP_Winamp.cpp"
-#include "LH_NP_WMP.cpp"
 #include "LH_NP_MSN_Compat.cpp"
 #ifdef QT_NO_DEBUG
 #include "LH_NP_iTunes.cpp"

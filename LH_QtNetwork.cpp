@@ -73,9 +73,8 @@ qint64 LH_QtNetwork::inRate() const
     if( data_.size() < 2 ) return 0;
     if( data_.last()->device != data_.first()->device ) return 0;
     if( data_.last()->in < data_.first()->in ) return 0;
-    Q_ASSERT( data_.last()->when >= data_.first()->when );
     qint64 timedelta = data_.last()->when - data_.first()->when;
-    if( timedelta ) return (data_.last()->in - data_.first()->in) * Q_INT64_C(1000) / timedelta;
+    if( timedelta > 0 ) return (data_.last()->in - data_.first()->in) * Q_INT64_C(1000) / timedelta;
     return 0;
 }
 
@@ -84,9 +83,8 @@ qint64 LH_QtNetwork::outRate() const
     if( data_.size() < 2 ) return 0;
     if( data_.last()->device != data_.first()->device ) return 0;
     if( data_.last()->out < data_.first()->out ) return 0;
-    Q_ASSERT( data_.last()->when >= data_.first()->when );
     qint64 timedelta = data_.last()->when - data_.first()->when;
-    if( timedelta ) return (data_.last()->out - data_.first()->out) * Q_INT64_C(1000) / timedelta;
+    if( timedelta > 0 ) return (data_.last()->out - data_.first()->out) * Q_INT64_C(1000) / timedelta;
     return 0;
 }
 

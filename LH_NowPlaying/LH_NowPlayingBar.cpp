@@ -1,5 +1,5 @@
 /**
-  \file     LH_QtPlugin_NowPlaying.cpp
+  \file     LH_NowPlayingBar.cpp
   \author   Johan Lindh <johan@linkdata.se>
   \author   Andy Bridges <andy@bridgesuk.com>
   \legalese Copyright (c) 2010 Johan Lindh, Andy Bridges
@@ -32,74 +32,63 @@
   ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
   POSSIBILITY OF SUCH DAMAGE.
 
+
   **/
 
-#include "LH_QtPlugin_NowPlaying.h"
+#include "LH_NowPlayingBar.h"
 
-LH_QtPlugin_NowPlaying thePlugin;
+LH_PLUGIN_CLASS(LH_NowPlayingBar)
 
-LH_NowPlaying_Reader* currentTrack;
-
-#include "utils.cpp"
-
-#include "LH_NP_Winamp.cpp"
-#include "LH_NP_WMP.cpp"
-#include "LH_NP_MSN_Compat.cpp"
-#ifdef QT_NO_DEBUG
-#include "LH_NP_iTunes.cpp"
-#endif
-
-void LH_NowPlaying_Reader::refresh()
+LH_NowPlayingBar::LH_NowPlayingBar(const char* name, LH_QtPlugin* parent) : LH_Bar(name, parent)
 {
-    playerFound_ = false;
-    TrackInfo newInfo;
+    connect( currentTrack, SIGNAL(changed()), this, SLOT(refresh_pos()) );
+    setMin(0);
+    setMax(1);
 
-#ifdef QT_NO_DEBUG
-    //itunes doesn't like debug mode
-    playerFound_ = playerFound_ || get_itunes_info(newInfo);
-#endif
-    playerFound_ = playerFound_ || get_winamp_info(newInfo);
-    playerFound_ = playerFound_ || get_msn_compat_info(newInfo);
-
-    if(storeInfo(newInfo))
-    {
-        emit changed();
-    }
-
+    return;
 }
 
-bool LH_NowPlaying_Reader::storeInfo(TrackInfo newInfo)
+lh_class *LH_NowPlayingBar::classInfo()
 {
-    bool dirty = false;
-    dirty = dirty || (info_.album != newInfo.album);
-    dirty = dirty || (info_.artist != newInfo.artist);
-    dirty = dirty || (info_.currentSecs != newInfo.currentSecs);
-    dirty = dirty || (info_.player != newInfo.player);
-    dirty = dirty || (info_.status != newInfo.status);
-    dirty = dirty || (info_.totalSecs!= newInfo.totalSecs);
-    dirty = dirty || (info_.track!= newInfo.track);
-
-    info_ = newInfo;
-    return dirty;
-}
-
-const char *LH_QtPlugin_NowPlaying::lh_load() {
-    t.start();
-    currentTrack = new LH_NowPlaying_Reader(this);
-    return NULL;
-}
-
-void LH_QtPlugin_NowPlaying::lh_unload() {
-    delete currentTrack;
-}
-
-int LH_QtPlugin_NowPlaying::lh_notify(int code, void *param) {
-    Q_UNUSED(code);
-    Q_UNUSED(param);
-    if (t.elapsed()>=500)
+    static lh_class classInfo =
     {
-        t.restart();
-        currentTrack->refresh();
-    }
-    return 0;
+        sizeof(lh_class),
+        "3rdParty/Music",
+        "NowPlayingBar",
+        "Now Playing (Progress Bar)",
+        -1, -1,
+        lh_instance_calltable_NULL
+    };
+
+    return &classInfo;
 }
+
+void LH_NowPlayingBar::refresh_pos()
+{
+    if (currentTrack->playerFound())
+    {
+        if( setValue(currentTrack->info().currentSecs, currentTrack->info().totalSecs) )  callback(lh_cb_render,NULL);
+    } else {
+        // No player found
+        if( setValue( 0,1 ) )  callback(lh_cb_render,NULL);
+    }
+}
+
+bool LH_NowPlayingBar::setValue(int val,int max)
+{
+    setMax(max);
+    if(value_ != val)
+    {
+        value_ = val;
+        return true;
+    } else
+        return false;
+}
+
+QImage *LH_NowPlayingBar::render_qimage( int w, int h )
+{
+    if( LH_Bar::render_qimage(w,h) == NULL ) return NULL;
+    drawSingle( value_ );
+    return image_;
+}
+

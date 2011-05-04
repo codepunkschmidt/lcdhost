@@ -42,6 +42,8 @@
 
 #include "LH_Bar.h"
 
+/* no op change - testing updates */
+
 static inline uint PREMUL(uint x) {
     uint a = x >> 24;
     uint t = (x & 0xff00ff) * a;

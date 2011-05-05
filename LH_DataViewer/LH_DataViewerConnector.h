@@ -64,6 +64,7 @@ class LH_DataViewerConnector : public LH_Text
 
     int sourceType_;
     bool isDelimited_;
+    int updateLength_;
     char delimiter_;
     int columnWidth_;
     bool isSingleWrite_;

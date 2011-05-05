@@ -93,6 +93,7 @@ LH_DataViewerConnector::LH_DataViewerConnector(const char* name) : LH_Text(name)
     rootNode = new dataNode();
     sharedData = new sharedCollection();
 
+    dataExpiry_ = 0;
     repolled_ = false;
 }
 
@@ -270,12 +271,12 @@ void LH_DataViewerConnector::sourceFileChanged()
     if( !setup_data_file_->value().isFile() )
     {
         watchPath_ = "";
-        setup_text_->setValue(tr("No such source file."));
+        if(setText("No such source file.")) requestRender();;
         setup_text_->setFlag(LH_FLAG_HIDDEN,false);
     }
     else
     {
-        setup_text_->setValue(tr("Connected to Data"));
+        if(setText("Connected to Data")) requestRender();;
         setup_text_->setFlag(LH_FLAG_HIDDEN,true);
         watchPath_ = setup_data_file_->value().absoluteFilePath();
         //qDebug() << "watching source file: " << watchPath_;
@@ -289,13 +290,13 @@ void LH_DataViewerConnector::mapFileChanged()
     setup_map_file_->value().refresh();
     if( !setup_map_file_->value().isFile() )
     {
-        setup_text_->setValue(tr("No such map file."));
+        if(setText("No such map file.")) requestRender();;
         setup_text_->setFlag(LH_FLAG_HIDDEN,false);
         return;
     }
     else
     {
-        setup_text_->setValue(tr("Connected to Data"));
+        if(setText("Connected to Data")) requestRender();;
         setup_text_->setFlag(LH_FLAG_HIDDEN,true);
         QFile file( setup_map_file_->value().filePath() );
 
@@ -313,6 +314,17 @@ void LH_DataViewerConnector::mapFileChanged()
             QString segmentName="";
             QString segment = "";
             parsingList.clear();
+
+            sourceType_ = source_type_TXT;
+            isDelimited_ = true;
+            delimiter_ = ':';
+            columnWidth_ = 0;
+            isSingleWrite_ = true;
+            completeCount_ = 1;
+            dataExpiry_ = 0;
+            setup_language_->list().clear();
+            updateLength_ = 0;
+
             foreach (QString item, items)
             {
                 QString removedPart = item.right(item.length() - item.indexOf(rx)).trimmed();
@@ -371,6 +383,8 @@ void LH_DataViewerConnector::mapFileChanged()
                             dataExpiry_ = value.toInt();
                         if(property=="language")
                             {setup_language_->list()[0] = QString("%1 (Default)").arg(value); setup_language_->refreshList();}
+                        if(property=="updatelength")
+                            updateLength_ = value.toInt();
                     } else
                     if(segment.startsWith("[list:"))
                     {
@@ -437,7 +451,7 @@ void LH_DataViewerConnector::mapFileChanged()
             }
             languageFileChanged();
         } else {
-            setup_text_->setValue(tr("Unable to open file."));
+            if(setText("Unable to open file.")) requestRender();;
             setup_text_->setFlag(LH_FLAG_HIDDEN,false);
             return;
         }
@@ -451,7 +465,7 @@ void LH_DataViewerConnector::sourceFileUpdated(const QString &path)
 
     if( watchPath_ != "" )
     {
-        setup_text_->setValue(tr("Connected to Data"));
+        if(setText("Connected to Data")) requestRender();;
         setup_text_->setFlag(LH_FLAG_HIDDEN,true);
 
         QFile file( watchPath_ );
@@ -478,7 +492,18 @@ void LH_DataViewerConnector::sourceFileUpdated(const QString &path)
                     // set expiry
                     if(dataExpiry_!=0)
                         sharedData->expiresAt =  QFileInfo(file).lastModified().addSecs(dataExpiry_).toString("yyyyMMddHHmmss.zzz");
+                    else
+                        sharedData->expiresAt = "N/A";
                     sharedData->lastUpdated = QDateTime::currentDateTime().toString("yyyyMMddHHmmss.zzz");
+
+                    if(updateLength_!=0)
+                        while(sourceLines.count()>abs(updateLength_))
+                        {
+                            if(updateLength_>0)
+                                sourceLines.removeFirst();
+                            else
+                                sourceLines.removeLast();
+                        }
 
                     // load defined data
                     switch(sourceType_){
@@ -501,7 +526,7 @@ void LH_DataViewerConnector::sourceFileUpdated(const QString &path)
             break;
         default:
             {
-                setup_text_->setValue("Data file type not yet supported");
+                if(setText("Data file type not yet supported")) requestRender();
                 setup_text_->setFlag(LH_FLAG_HIDDEN,false);
             }
         }

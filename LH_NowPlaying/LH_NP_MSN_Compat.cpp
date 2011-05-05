@@ -42,6 +42,7 @@
  *
  */
 
+#include <QDebug>
 #include <QRegExp>
 #include <windows.h>
 #include "LH_QtPlugin_NowPlaying.h"

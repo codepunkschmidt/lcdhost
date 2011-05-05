@@ -59,7 +59,7 @@ static
 bool winamp_get_w(const wchar_t *filename, const wchar_t *key, QString &dest)
 {
     // Allocate memory inside Winamp's address space to exchange data with it
-    void *winamp_info = VirtualAllocEx(hProcess, NULL, 4096, MEM_COMMIT, PAGE_READWRITE);
+    char *winamp_info = (char*) VirtualAllocEx(hProcess, NULL, 4096, MEM_COMMIT, PAGE_READWRITE);
     if (!winamp_info)
       {
 #ifndef QT_NO_DEBUG
@@ -104,7 +104,7 @@ static
 bool winamp_get(const char *filename, const char *key, QString &dest)
 {
     // Allocate memory inside Winamp's address space to exchange data with it
-    void *winamp_info = VirtualAllocEx(hProcess, NULL, 4096, MEM_COMMIT, PAGE_READWRITE);
+    char *winamp_info = (char*) VirtualAllocEx(hProcess, NULL, 4096, MEM_COMMIT, PAGE_READWRITE);
     if (!winamp_info)
       {
 #ifndef QT_NO_DEBUG
@@ -217,7 +217,7 @@ get_winamp_info(TrackInfo& ti)
     // XXX: really should try to work out how to get winamp to resolve it's tag %streamtitle% for us...
     if ((ti.album.length() == 0) && (ti.artist.length() == 0) && (ti.track.length() == 0))
     {
-        QString title = GetWindowTitle(hWnd);
+        QString title = LH_GetWindowTitle(hWnd);
         QRegExp re("^\\d*\\. (.*)$");
         re.setMinimal(true);
 #ifndef QT_NO_DEBUG

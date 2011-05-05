@@ -41,39 +41,10 @@
  *
  */
 
-#ifndef UTILS
-#define UTILS
+#include "utils.h"
 
-#define PLAYER_STATUS_INVALID INT_MIN
-#define PLAYER_STATUS_CLOSED -1
-#define PLAYER_STATUS_STOPPED 0
-#define PLAYER_STATUS_PAUSED 1
-#define PLAYER_STATUS_PLAYING 2
-
-#define STRLEN 100
-
-#include <QTime>
-
-struct TrackInfo
-{
-        QString track;
-        QString artist;
-        QString album;
-        QString player;
-        int status;
-        int totalSecs;
-        int currentSecs;
-        QDateTime updatedAt;
-};
-
-
-#ifdef WIN32
-#include <QString>
-#include <QDebug>
-# include <windows.h>
-
-
-static QString GetWindowTitle(HWND hWnd)
+#ifdef Q_WS_WIN
+QString LH_GetWindowTitle(HWND hWnd)
 {
   int title_length = GetWindowTextLengthW(hWnd)+1;
   wchar_t wtitle[title_length];
@@ -82,6 +53,4 @@ static QString GetWindowTitle(HWND hWnd)
   //qDebug() << "Got window title: " << title;
   return title;
 }
-
-#endif
 #endif

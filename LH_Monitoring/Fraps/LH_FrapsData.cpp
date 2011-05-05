@@ -50,7 +50,7 @@ bool LH_FrapsData::getData(float& value, QString& text, QString& units)
         pingFraps();
         resultVal = false;
     } else {
-        (FARPROC &) FrapsSharedData = GetProcAddress(frapsDLL, "FrapsSharedData");
+        FrapsSharedData = (FRAPS_SHARED_DATA *(WINAPI *)()) GetProcAddress(frapsDLL, "FrapsSharedData");
         if (!FrapsSharedData){
             setup_FPS_->setValue("Needs Fraps 1.9C or later!");
             resultVal = false;

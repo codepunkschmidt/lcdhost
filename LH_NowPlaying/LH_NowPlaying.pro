@@ -1,7 +1,6 @@
 TARGET = LH_NowPlaying
 TEMPLATE = lib
 win32: CONFIG  += qaxcontainer
-# qaxserver
 QT += network xml
 DEFINES += LH_NOWPLAYING_LIBRARY
 

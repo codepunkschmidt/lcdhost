@@ -17,7 +17,6 @@ SOURCES += ../lh_plugin.c \
     LH_QtPlugin_NowPlaying.cpp \
     ../LH_Text/LH_Text.cpp \
     ../LH_QtInstance.cpp \
-    LH_NP_Winamp.cpp \
     LH_NP_iTunes.cpp \
     utils.cpp \
     disphelper.c \
@@ -27,7 +26,7 @@ SOURCES += ../lh_plugin.c \
     LH_NowPlayingBar.cpp \
     LH_NowPlayingEmulator.cpp
 
-win32: SOURCES += iTunesCOMInterface_i.c
+win32: SOURCES += iTunesCOMInterface_i.c LH_NP_Winamp.cpp
 
 HEADERS += ../lh_plugin.h \
     ../LH_QtPlugin.h \

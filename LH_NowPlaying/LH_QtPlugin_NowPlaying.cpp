@@ -48,10 +48,10 @@ void LH_NowPlaying_Reader::refresh()
     playerFound_ = false;
     TrackInfo newInfo;
 
-#ifdef QT_NO_DEBUG
+//ifdef QT_NO_DEBUG
     //itunes doesn't like debug mode
     playerFound_ = playerFound_ || get_itunes_info(newInfo);
-#endif
+//endif
     playerFound_ = playerFound_ || get_winamp_info(newInfo);
     playerFound_ = playerFound_ || get_msn_compat_info(newInfo);
 

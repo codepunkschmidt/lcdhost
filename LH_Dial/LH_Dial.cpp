@@ -89,10 +89,10 @@ LH_Dial::LH_Dial( const char *name, LH_QtPlugin *parent ) : LH_QtInstance( name,
     setup_needles_smooth_ = new LH_Qt_bool(this, "Smooth Needles", true, LH_FLAG_AUTORENDER);
     setup_needles_smooth_->setHelp( "<p>This setting makes needles move more slowly by rendering needle movement in 8 gradual steps instead of a single step. This looks much nicer but causes a small increase in CPU usage.</p>");
 
-    setup_needle_selection_ = new LH_Qt_QStringList(this,"Selected Needle",QStringList());
+    setup_needle_selection_ = new LH_Qt_QStringList(this,"Selected Needle",QStringList(),LH_FLAG_NOSAVE);
     setup_needle_selection_->setHelp( "<p>Select a needle here and configure it below. Seperate settings are stored for each needle.</p>");
 
-    setup_needle_style_ = new LH_Qt_QStringList(this, "Needle Style",QStringList()<<"Line"<<"Image [Needle Only]"<<"Image [Full Face] (Full Circle Only)", LH_FLAG_AUTORENDER);
+    setup_needle_style_ = new LH_Qt_QStringList(this, "Needle Style",QStringList()<<"Line"<<"Image [Needle Only]"<<"Image [Full Face] (Full Circle Only)", LH_FLAG_AUTORENDER|LH_FLAG_NOSAVE);
     setup_needle_style_->setHelp( "<p>How the selected needle should be drawn.</p>"
                                   "<p>Needle images can be created in one of two ways:<ul>"
                                   "<li>\"Needle Only\": "
@@ -103,19 +103,19 @@ LH_Dial::LH_Dial( const char *name, LH_QtPlugin *parent ) : LH_QtInstance( name,
                                   "<br/>The needle is assumed to be in the vertical position and will be rotated around the image's <i>center point</i> as required.</li>"
                                   "</ul></p>");
 
-    setup_needle_color_ = new LH_Qt_QColor(this,"Needle Color",Qt::red,LH_FLAG_AUTORENDER);
+    setup_needle_color_ = new LH_Qt_QColor(this,"Needle Color",Qt::red,LH_FLAG_AUTORENDER|LH_FLAG_NOSAVE);
     setup_needle_color_->setHelp( "<p>The colour used do draw \"Line\" needles.</p>");
 
-    setup_needle_thickness_ = new LH_Qt_int(this,"Needle Thickness",3,1,20,LH_FLAG_AUTORENDER);
+    setup_needle_thickness_ = new LH_Qt_int(this,"Needle Thickness",3,1,20,LH_FLAG_AUTORENDER|LH_FLAG_NOSAVE|LH_FLAG_NOSAVE);
     setup_needle_thickness_->setHelp( "<p>The colour used do draw \"Line\" needles.</p>");
 
-    setup_needle_length_ = new LH_Qt_int(this,"Needle Length (%)",90,0,100,LH_FLAG_AUTORENDER);
+    setup_needle_length_ = new LH_Qt_int(this,"Needle Length (%)",90,0,100,LH_FLAG_AUTORENDER|LH_FLAG_NOSAVE|LH_FLAG_NOSAVE);
     setup_needle_length_->setHelp( "<p>The needle's length as a percentage of the dial's radius.</p>");
 
-    setup_needle_gap_ = new LH_Qt_int(this,"Needle Gap (%)",0,0,100,LH_FLAG_AUTORENDER);
+    setup_needle_gap_ = new LH_Qt_int(this,"Needle Gap (%)",0,0,100,LH_FLAG_AUTORENDER|LH_FLAG_NOSAVE);
     setup_needle_gap_->setHelp( "<p>The gap between the center of the dial and the needle's start as a percentage of the dial's radius.</p>");
 
-    setup_needle_image_ = new LH_Qt_QFileInfo( this, tr("Needle Image"), QFileInfo(), LH_FLAG_AUTORENDER | LH_FLAG_HIDDEN );
+    setup_needle_image_ = new LH_Qt_QFileInfo( this, tr("Needle Image"), QFileInfo(), LH_FLAG_AUTORENDER | LH_FLAG_HIDDEN |LH_FLAG_NOSAVE);
     setup_needle_image_->setHelp( "<p>Image file to load and use for this needle (see \"Needle Style\" for more information about how the image will be used).</p>");
     connect( setup_needle_style_, SIGNAL(changed()), this, SLOT(changeNeedleStyle()));
 

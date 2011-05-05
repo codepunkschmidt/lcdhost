@@ -50,7 +50,7 @@ public:
             LH_API_MAJOR,
             LH_API_MINOR,
             "1.30",
-            "http://codeleap.co.uk/lcdhost/lh_graph/ver.xml"
+            "http://www.linkdata.se/lcdhost/version.php?arch=$ARCH"
         };
         Q_ASSERT( amaj == LH_API_MAJOR );
         Q_ASSERT( amin >= LH_API_MINOR );

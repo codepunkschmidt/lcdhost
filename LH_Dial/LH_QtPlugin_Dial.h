@@ -38,7 +38,7 @@ public:
     const char * lh_name() { return "Dial (v1.03)"; }
     const char * lh_shortdesc() { return "Displays dials"; }
     const char * lh_author() { return "Andy \"Triscopic\" Bridges"; }
-    const char * lh_homepage() { return "<a href=\"http://www.codeleap.co.uk\">CodeLeap</a> / <a href=\"http://www.linkdata.se/forum/lcdhost-plugins/(release)-lh_dial/\">LCDHost: LH_Dial Thread</a>"; }
+    const char * lh_homepage() { return "<a href=\"http://www.codeleap.co.uk\">CodeLeap</a>"; }
     const char * lh_longdesc()
     {
         return  "<p>Displays data items such as CPU, memory and network load in the form of dials. </p>";
@@ -56,7 +56,7 @@ public:
             LH_API_MAJOR,
             LH_API_MINOR,
             "1.03",
-            "http://codeleap.co.uk/lcdhost/lh_dial/ver.xml"
+            "http://www.linkdata.se/lcdhost/version.php?arch=$ARCH"
         };
         Q_UNUSED( amaj );
         Q_UNUSED( amin );

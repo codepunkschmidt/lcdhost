@@ -69,7 +69,7 @@ LH_CursorRectangle::LH_CursorRectangle( const char *name ) : LH_CursorInstance(n
                           "ON	#9ca0bc	255	#d4d9ff	255 horiz<br/>"
                           "</p>");
     connect( setup_file_, SIGNAL(changed()), this, SLOT(fileChanged()) );
-    setup_text_ = new LH_Qt_QString( this, tr("~"), QString(), LH_FLAG_READONLY|LH_FLAG_HIDDEN|LH_FLAG_AUTORENDER );
+    setup_text_ = new LH_Qt_QString( this, tr("~"), QString(), LH_FLAG_READONLY|LH_FLAG_NOSAVE|LH_FLAG_HIDDEN|LH_FLAG_AUTORENDER );
 
     setup_coordinate_ = new LH_Qt_QString(this, "Coordinate", "1,1", LH_FLAG_AUTORENDER);
     setup_coordinate_->setHelp("This is the coordinate of this object, i.e. when the cursor is at the point specified here this object is selected. <br/>"

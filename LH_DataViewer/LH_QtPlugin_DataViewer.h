@@ -34,7 +34,7 @@ public:
     const char * lh_name() { return "DataViewer (v1.02)"; }
     const char * lh_shortdesc() { return "Extracts data from a source file and reformats it for display."; }
     const char * lh_author() { return "Andy \"Triscopic\" Bridges"; }
-    const char * lh_homepage() { return "<a href=\"http://www.codeleap.co.uk\">CodeLeap</a> / <a href=\"http://www.linkdata.se/forum/lcdhost-plugins/(release)-lh_dataviewer/\">LCDHost: LH_DataViewer Thread</a>"; }
+    const char * lh_homepage() { return "<a href=\"http://www.codeleap.co.uk\">CodeLeap</a>"; }
     const char * lh_longdesc()
     {
         return "This plugin provides classes that acquire and display information from a source file.\n\n"
@@ -52,7 +52,7 @@ public:
             LH_API_MAJOR,
             LH_API_MINOR,
             "1.02",
-            "http://codeleap.co.uk/lcdhost/lh_dataviewer/ver.xml"
+            "http://www.linkdata.se/lcdhost/version.php?arch=$ARCH"
         };
         Q_UNUSED( amaj );
         Q_UNUSED( amin );

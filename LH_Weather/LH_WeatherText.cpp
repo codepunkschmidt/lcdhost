@@ -61,6 +61,7 @@ LH_WeatherText::LH_WeatherText(const char *name) : LH_Text( name )
 {
     //setup_text_->setName( "Text" );
     setup_text_->setFlag( LH_FLAG_READONLY, true );
+    setup_text_->setFlag( LH_FLAG_NOSAVE, true );
     setText("...");
 
     valueTypes = QStringList();

@@ -87,7 +87,7 @@ LH_CursorImage::LH_CursorImage(const char *name, LH_QtPlugin *parent ) : LH_Curs
                                "e.g.: 1,1"
                                );
 
-    setup_text_ = new LH_Qt_QString( this, tr("~"), QString(), LH_FLAG_READONLY|LH_FLAG_HIDDEN|LH_FLAG_AUTORENDER );
+    setup_text_ = new LH_Qt_QString( this, tr("~"), QString(), LH_FLAG_READONLY|LH_FLAG_NOSAVE|LH_FLAG_HIDDEN|LH_FLAG_AUTORENDER );
     setup_text_->setOrder(-1);
 
     statusCode_ = "OFF";

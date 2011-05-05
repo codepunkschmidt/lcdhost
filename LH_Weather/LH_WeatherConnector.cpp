@@ -66,6 +66,7 @@ LH_WeatherConnector::LH_WeatherConnector(const char *name) : LH_Text (name)
     // Hide inherited attributes we don't use
     setup_text_->setFlag( LH_FLAG_HIDDEN, true );
     setup_text_->setFlag( LH_FLAG_READONLY, true );
+    setup_text_->setFlag( LH_FLAG_NOSAVE, true );
     setText(" ");
     setup_horizontal_->setFlag( LH_FLAG_HIDDEN, true );
     setup_vertical_->setFlag( LH_FLAG_HIDDEN, true );

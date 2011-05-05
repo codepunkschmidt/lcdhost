@@ -96,7 +96,7 @@ LH_Graph::LH_Graph( const char *name, LH_QtPlugin *parent, float defaultMin, flo
     setup_sample_rate_ = new LH_Qt_int(this,"Sample Rate",1,1,12,LH_FLAG_AUTORENDER);
     setup_sample_rate_->setHelp( "<p>How frequently to log data.</p>");
 
-    setup_description_ = new LH_Qt_QString(this,"~","...",LH_FLAG_READONLY);
+    setup_description_ = new LH_Qt_QString(this,"~","...",LH_FLAG_READONLY|LH_FLAG_NOSAVE);
     setup_description_->setHelp( "<p>Combining the \"Max Samples\" and the \"Sample Rate\" this field displays that total timespan of the graph.</p>");
 
     setup_line_selection_ = new LH_Qt_QStringList(this,"Selected Line",QStringList());
@@ -153,13 +153,13 @@ LH_Graph::LH_Graph( const char *name, LH_QtPlugin *parent, float defaultMin, flo
     setup_line_configs_->setHelp( "<p>This text field stores the configuration data for each individual line and should not be edited manually.</p>");
     setup_line_configs_->setOrder(1);
 
-    setup_label_font_ = new LH_Qt_QFont(this, "Axis Label Font", QFont("Arial",8),LH_FLAG_AUTORENDER|LH_FLAG_HIDDEN);
+    setup_label_font_ = new LH_Qt_QFont(this, "Axis Label Font", QFont("Arial",8),LH_FLAG_AUTORENDER|LH_FLAG_HIDDEN|LH_FLAG_NOSAVE);
     setup_label_font_->setHelp( "<p>The font used for Axis labels.</p>");
 
-    setup_label_color_ = new LH_Qt_QColor(this,"Axis Label Color","white",LH_FLAG_AUTORENDER|LH_FLAG_HIDDEN);
+    setup_label_color_ = new LH_Qt_QColor(this,"Axis Label Color","white",LH_FLAG_AUTORENDER|LH_FLAG_HIDDEN|LH_FLAG_NOSAVE);
     setup_label_color_->setHelp( "<p>The color used for Axis labels.</p>");
 
-    setup_label_shadow_ = new LH_Qt_QColor(this,"Axis Label Glow",QColor(0,0,0,92),LH_FLAG_AUTORENDER|LH_FLAG_HIDDEN);
+    setup_label_shadow_ = new LH_Qt_QColor(this,"Axis Label Glow",QColor(0,0,0,92),LH_FLAG_AUTORENDER|LH_FLAG_HIDDEN|LH_FLAG_NOSAVE);
     setup_label_shadow_->setHelp( "<p>The color used for for the \"Glow/Shadow\" effect around Axis labels (designed to improve legibility).</p>"
                                   "<p>Set the transparency to 0 to remove the effect.</p>");
 

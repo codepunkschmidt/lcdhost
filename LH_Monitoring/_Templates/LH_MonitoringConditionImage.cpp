@@ -66,7 +66,7 @@ LH_MonitoringConditionImage::LH_MonitoringConditionImage(const char *name, LH_Qt
     setup_conditions_list_->setOrder(100);
     connect( setup_conditions_list_, SIGNAL(changed()), this, SLOT(updateConditions()) );
 
-    setup_text_ = new LH_Qt_QString( this, tr("~"), QString(), LH_FLAG_READONLY|LH_FLAG_HIDDEN|LH_FLAG_AUTORENDER );
+    setup_text_ = new LH_Qt_QString( this, tr("~"), QString(), LH_FLAG_READONLY|LH_FLAG_NOSAVE|LH_FLAG_HIDDEN|LH_FLAG_AUTORENDER );
     setup_text_->setOrder(-1);
     conditionsListBusy_ = "";
 }

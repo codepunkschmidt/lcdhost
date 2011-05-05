@@ -34,7 +34,7 @@ public:
     const char * lh_name() { return "Weather (v1.23)"; }
     const char * lh_shortdesc() { return "Connects to Yahoo's weather service and displays the results."; }
     const char * lh_author() { return "Andy \"Triscopic\" Bridges"; }
-    const char * lh_homepage() { return "<a href=\"http://www.codeleap.co.uk\">CodeLeap</a> / <a href=\"http://www.linkdata.se/forum/lcdhost-plugins/(release)-lh_weather/\">LCDHost: LH_Weather Thread</a>"; }
+    const char * lh_homepage() { return "<a href=\"http://www.codeleap.co.uk\">CodeLeap</a>"; }
     const char * lh_longdesc()
     {
         return "This plugin provides classes that acquire and display weather information.\n\n"
@@ -52,7 +52,7 @@ public:
             LH_API_MAJOR,
             LH_API_MINOR,
             "1.23",
-            "http://codeleap.co.uk/lcdhost/lh_weather/ver.xml"
+            "http://www.linkdata.se/lcdhost/version.php?arch=$ARCH"
         };
         Q_ASSERT( amaj == LH_API_MAJOR );
         Q_ASSERT( amin >= LH_API_MINOR );

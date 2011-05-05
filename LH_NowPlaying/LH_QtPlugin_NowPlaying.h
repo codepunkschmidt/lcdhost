@@ -69,13 +69,25 @@ class LH_QtPlugin_NowPlaying : public LH_QtPlugin
 
 public:
     const char * lh_name() { return "Now Playing (v2.00)"; }
-    const char * lh_shortdesc() { return "Displays the currently playing track from Spotify, iTunes or Winamp."; }
+    const char * lh_shortdesc() { return "Displays the currently playing track from various music players."; }
     const char * lh_author() { return "Andy \"Triscopic\" Bridges"; }
-    const char * lh_homepage() { return "<a href=\"http://www.codeleap.co.uk\">CodeLeap</a> / <a href=\"http://www.linkdata.se/forum/lcdhost-plugins/(release)-lh_nowplaying/\">LCDHost: LH_NowPlaying Thread</a>"; }
+    const char * lh_homepage() { return "<a href=\"http://www.codeleap.co.uk\">CodeLeap</a>"; }
     const char * lh_longdesc()
     {
         return "This plugin provides a text item that can display the currently playing track in one of several popular "
-               "3rd-party music players, namely <a href=\"http://www.spotify.com/\">Spotify</a>, <a href=\"http://www.apple.com/itunes/\">iTunes</a> or <a href=\"http://www.winamp.com/\">Winamp</a>.";
+               "3rd-party music players: "
+               "<ul>"
+               "<li><a href=\"http://www.winamp.com/\">Winamp</a>: Full, native support.<br/></li>"
+               "<li><a href=\"http://www.apple.com/itunes/\">iTunes</a>: Full, native support.<br/></li>"
+               "<li><a href=\"http://www.foobar2000.org/\">foobar2000</a>: Partial support via the Foobar_Winamp_Spam plugin (no specific home page but v0.98 is located <a href=\"http://home.comcast.net/~selyb/\">here</a>)."
+               "<br/><br/>N.B. Currently Foobar supports the progress bar but not seperate album/artist/track fields.<br/></li>"
+               "<li>Windows Media Player: Partial support via the \"Windows Live Messenger Music Plugin\", found under Plugins &gt; Background.<br/></li>"
+               "<li><a href=\"http://www.videolan.org/vlc/\">VLC</a>: Partial support via the \"MSN Now Playing\" interface, found under Preferences &gt; All &gt; Interface &gt; Control Interfaces.<br/></li>"
+               "<li><a href=\"http://www.spotify.com/\">Spotify</a>: Partial, native support (still via the \"MSN Now Playing\" api, but Spotify does this by default).<br/></li>"
+               "<li>...and any other player that supports the MSN Now Playing interface, such as <a href=\"http://www.last.fm/download/\">Last.fm</a>, <a href=\"http://getopenpandora.appspot.com/\">OpenPandora</a>, <a href=\"http://getsongbird.com/\">Songbird</a>(+<a href=\"http://addons.songbirdnest.com/addon/1204\">LiveTweeter</a>), <a href=\"http://www.zune.net\">Zune</a> and others."
+               "<br/><br/>Note #1: WMP, VLC, Spotify and any other player using the MSN interface will not support the progress bar but should support seperate Artist, Album & Track details due to limitations in the MSN protocol."
+               "<br/><br/>Note #2: Also, please be aware the MSN method may not function correctly if another application is seeking to receive music details in this way, e.g. MSN / Windows Live Messenger. Whilst *most* music players check for multiple receivers some do not. In this case one application should receive the now playing details, whilst others will not. If this does affect your music player it is a problem with the player, not this plugin.</li>"
+               "</ul>";
     }
     const lh_buildinfo * lh_version( int amaj, int amin )
     {
@@ -87,7 +99,7 @@ public:
             LH_API_MAJOR,
             LH_API_MINOR,
             "2.00",
-            "http://codeleap.co.uk/lcdhost/lh_nowplaying/ver.xml"
+            "http://www.linkdata.se/lcdhost/version.php?arch=$ARCH"
         };
         Q_ASSERT( amaj == LH_API_MAJOR );
         Q_ASSERT( amin >= LH_API_MINOR );

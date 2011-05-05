@@ -22,19 +22,19 @@ LH_DataViewerDial::LH_DataViewerDial(const char* name) : LH_Dial(name), data_(th
     setup_lookup_code_ = new LH_Qt_QString( this, "Data Template", "");
     setup_lookup_code_->setOrder(-3);
 
-    setup_item_name_ = new LH_Qt_QString( this, "Item" , "", LH_FLAG_READONLY);
+    setup_item_name_ = new LH_Qt_QString( this, "Item" , "", LH_FLAG_READONLY|LH_FLAG_NOSAVE);
     setup_item_name_->setOrder(-3);
 
     setup_value_min_ = new LH_Qt_QString(this,"Min Value/Index","0");
     setup_value_min_->setOrder(-3);
 
-    setup_item_name_min_ = new LH_Qt_QString( this, "Min" , "", LH_FLAG_READONLY);
+    setup_item_name_min_ = new LH_Qt_QString( this, "Min" , "", LH_FLAG_READONLY|LH_FLAG_NOSAVE);
     setup_item_name_min_->setOrder(-3);
 
     setup_value_max_ = new LH_Qt_QString(this,"Max Value/Index","100");
     setup_value_max_->setOrder(-3);
 
-    setup_item_name_max_ = new LH_Qt_QString( this, "Max" , "", LH_FLAG_READONLY);
+    setup_item_name_max_ = new LH_Qt_QString( this, "Max" , "", LH_FLAG_READONLY|LH_FLAG_NOSAVE);
     setup_item_name_max_->setOrder(-3);
 
     connect( setup_lookup_code_, SIGNAL(changed()), this, SLOT(updateDial()) );

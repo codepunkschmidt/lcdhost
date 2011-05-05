@@ -33,7 +33,7 @@ public:
     const char * lh_name() { return "Cursor (v0.31)"; }
     const char * lh_shortdesc() { return "Allows some complex cursor-like and tab-like behaviours"; }
     const char * lh_author() { return "Andy \"Triscopic\" Bridges"; }
-    const char * lh_homepage() { return "<a href=\"http://www.codeleap.co.uk\">CodeLeap</a> / <a href=\"http://www.linkdata.se/forum/lcdhost-plugins/(release)-lh_cursor/\">LCDHost: LH_Cursor Thread</a>"; }
+    const char * lh_homepage() { return "<a href=\"http://www.codeleap.co.uk\">CodeLeap</a>"; }
     const lh_buildinfo * lh_version( int amaj, int amin )
     {
         static lh_buildinfo buildinfo =
@@ -44,7 +44,7 @@ public:
             LH_API_MAJOR,
             LH_API_MINOR,
             "0.3",
-            "http://codeleap.co.uk/lcdhost/lh_cursor/ver.xml"
+            "http://www.linkdata.se/lcdhost/version.php?arch=$ARCH"
         };
         Q_ASSERT( amaj == LH_API_MAJOR );
         Q_ASSERT( amin >= LH_API_MINOR );

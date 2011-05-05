@@ -250,9 +250,6 @@ get_msn_compat_info(struct TrackInfo &ti)
     // did we receive a message with something useful in it?
     if (msnti.status == PLAYER_STATUS_PLAYING)
     {
-        if(msnti.updatedAt.msecsTo(QDateTime::currentDateTime())>1500)
-            return false; //data hasn't been updated for 1.5 seconds
-
         //*ti = msnti;
         ti.album = msnti.album;
         ti.artist = msnti.artist;

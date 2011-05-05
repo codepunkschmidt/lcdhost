@@ -45,7 +45,7 @@ public:
             LH_API_MAJOR,
             LH_API_MINOR,
             "1.03",
-            "http://codeleap.co.uk/lcdhost/lh_monitoring/ver.xml"
+            "http://www.linkdata.se/lcdhost/version.php?arch=$ARCH"
         };
         Q_UNUSED( amaj );
         Q_UNUSED( amin );

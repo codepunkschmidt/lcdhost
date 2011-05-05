@@ -53,7 +53,7 @@ LH_MonitoringImage::LH_MonitoringImage(const char *name, LH_QtPlugin *parent ) :
     createThresholdSet("High",      setup_thresh_hi_float_,  setup_thresh_hi_int_,  false );
     createThresholdSet("Very High", setup_thresh_vhi_float_, setup_thresh_vhi_int_, false );
 
-    setup_text_ = new LH_Qt_QString( this, tr("~"), QString(), LH_FLAG_READONLY|LH_FLAG_HIDDEN|LH_FLAG_AUTORENDER );
+    setup_text_ = new LH_Qt_QString( this, tr("~"), QString(), LH_FLAG_READONLY|LH_FLAG_NOSAVE|LH_FLAG_HIDDEN|LH_FLAG_AUTORENDER );
     setup_text_->setOrder(-1);
 
     statusCode_ = "NA";

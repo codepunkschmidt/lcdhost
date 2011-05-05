@@ -1,6 +1,6 @@
 TARGET = LH_NowPlaying
 TEMPLATE = lib
-win32: CONFIG  += qaxcontainer
+CONFIG  += qaxcontainer
 QT += network xml
 DEFINES += LH_NOWPLAYING_LIBRARY
 
@@ -13,19 +13,19 @@ SOURCES += ../lh_plugin.c \
     ../LH_QtPlugin.cpp \
     ../LH_QtObject.cpp \
     ../LH_QtSetupItem.cpp \
-    LH_QtPlugin_NowPlaying.cpp \
     ../LH_Text/LH_Text.cpp \
     ../LH_QtInstance.cpp \
+    ../LH_Bar/LH_Bar.cpp \
+    LH_QtPlugin_NowPlaying.cpp \
     LH_NP_iTunes.cpp \
-    utils.cpp \
-    disphelper.c \
+    LH_NP_Winamp.cpp  \
     LH_NP_MSN_Compat.cpp \
     LH_NowPlayingText.cpp \
-    ../LH_Bar/LH_Bar.cpp \
     LH_NowPlayingBar.cpp \
-    LH_NowPlayingEmulator.cpp
-
-win32: SOURCES += iTunesCOMInterface_i.c LH_NP_Winamp.cpp
+    LH_NowPlayingEmulator.cpp \
+    iTunesCOMInterface_i.c  \
+    utils.cpp \
+    disphelper.c
 
 HEADERS += ../lh_plugin.h \
     ../LH_QtPlugin.h \
@@ -38,6 +38,7 @@ HEADERS += ../lh_plugin.h \
     LH_NowPlayingText.h \
     ../LH_Bar/LH_Bar.h \
     LH_NowPlayingBar.h \
-    LH_NowPlayingEmulator.h
-
-win32: HEADERS += wa_ipc.h iTunesCOMInterface.h
+    wa_ipc.h \
+    iTunesCOMInterface.h \
+    LH_NowPlayingEmulator.h \
+    utils.h

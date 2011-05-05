@@ -1,6 +1,5 @@
 TARGET = LH_Text
 TEMPLATE = lib
-QT += network xml
 DEFINES += LH_TEXT_LIBRARY
 
 include(../Plugins.pri)
@@ -16,7 +15,6 @@ SOURCES += \
     LH_TextTime.cpp \
     LH_TextDate.cpp \
     LH_TextCPULoad.cpp \
-    LH_TextRSS.cpp \
     LH_TextFile.cpp \
     LH_TextNumber.cpp \
     LH_TextNetInbound.cpp \
@@ -37,6 +35,10 @@ HEADERS += \
     ../LH_QtSetupItem.h \
     LH_QtPlugin_Text.h \
     LH_Text.h \
-    LH_TextRSS.h \
     LH_TextFile.h \
     LH_TextNumber.h
+
+# RSS moved to WebKit
+# QT += network xml
+#    LH_TextRSS.cpp \
+#    LH_TextRSS.h \

@@ -48,37 +48,75 @@
 
 #include "LH_QtPlugin_NowPlaying.h"
 
-#define iTunes_debug
+//#define iTunes_debug
+
+static IiTunes *itunes=0;
+
+bool open_itunes()
+{
+    if(itunes==NULL)
+    {
+    #ifdef iTunes_debug
+        qDebug() << "iTunes: Preparing to connect";
+    #endif
+    CoInitializeEx(NULL, COINIT_MULTITHREADED);
+    #ifdef iTunes_debug
+        qDebug() << "iTunes: COM Initialized";
+    #endif
+
+    if (FindWindowA("iTunes", NULL))
+    {
+        if (CoCreateInstance(CLSID_iTunesApp, NULL, CLSCTX_LOCAL_SERVER, IID_IiTunes, (PVOID *) &itunes) != S_OK) {
+            #ifdef iTunes_debug
+                qDebug() << "iTunes: Failed to get interface";
+            #endif
+            CoUninitialize();
+            return false;
+        }
+    } else {
+        #ifdef iTunes_debug
+            qDebug() << "iTunes: Window not found?!";
+        #endif
+        CoUninitialize();
+        return false;
+    }
+
+    #ifdef iTunes_debug
+        qDebug() << "iTunes: Connected OK";
+    #endif
+    }
+    return true;
+}
+
+void close_itunes()
+{
+    if(itunes!=NULL)
+    {
+        #ifdef iTunes_debug
+            qDebug() << "iTunes: Preparing to disconnect";
+        #endif
+        itunes->Release();
+        CoUninitialize();
+        #ifdef iTunes_debug
+            qDebug() << "iTunes: Disconnected Cleanly";
+        #endif
+        itunes=NULL;
+    }
+}
 
 bool
 get_itunes_info(TrackInfo &ti)
 {
     ti.status = PLAYER_STATUS_CLOSED;
 
-    if (!FindWindowA("iTunes", NULL)) {
+    if (!FindWindowA("iTunes", NULL))
+    {
+        close_itunes();
         return false;
     }
 
-#ifdef iTunes_debug
-        qDebug() << "iTunes: Preparing to connect";
-#endif
-    CoInitializeEx(NULL, COINIT_MULTITHREADED);
-#ifdef iTunes_debug
-        qDebug() << "iTunes: COM Initialized";
-#endif
-    IiTunes *itunes;
-
-    if (CoCreateInstance(CLSID_iTunesApp, NULL, CLSCTX_LOCAL_SERVER, IID_IiTunes, (PVOID *) &itunes) != S_OK) {
-#ifdef iTunes_debug
-        qDebug() << "iTunes: Failed to get interface";
-#endif
-        CoUninitialize();
+    if(!open_itunes())
         return false;
-    }
-
-#ifdef iTunes_debug
-        qDebug() << "iTunes: Connected";
-#endif
 
     bool success = false;
 
@@ -98,15 +136,15 @@ get_itunes_info(TrackInfo &ti)
         IITTrack *track;
         HRESULT res = itunes->get_CurrentTrack(&track);
         if (res == S_FALSE) {
-#ifdef iTunes_debug
-        qDebug() << "iTunes: Not playing anything";
-#endif
+            #ifdef iTunes_debug
+                qDebug() << "iTunes: Not playing anything";
+            #endif
             ti.status = PLAYER_STATUS_STOPPED;
         } else
             if (res == S_OK) {
-#ifdef iTunes_debug
-        qDebug() << "iTunes: Now Playing data acquired!";
-#endif
+                #ifdef iTunes_debug
+                    qDebug() << "iTunes: Now Playing data acquired!";
+                #endif
                 ti.player = "iTunes";
                 success = true;
 
@@ -128,14 +166,13 @@ get_itunes_info(TrackInfo &ti)
 
                 ti.updatedAt = QDateTime::currentDateTime();
             }
+    } else {
+        #ifdef iTunes_debug
+            qDebug() << "iTunes: unable to pull playerstate";
+        #endif
+        if (!FindWindowA("iTunes", NULL))
+            close_itunes();
     }
-#ifdef iTunes_debug
-        qDebug() << "iTunes: Preparing to disconnect";
-#endif
-    itunes->Release();
-    CoUninitialize();
-#ifdef iTunes_debug
-        qDebug() << "iTunes: Disconnected";
-#endif
+
     return success;
 }

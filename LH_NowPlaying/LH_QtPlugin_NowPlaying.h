@@ -49,6 +49,7 @@ class LH_NowPlaying_Reader: public QObject
     bool storeInfo(TrackInfo newInfo);
 public:
     LH_NowPlaying_Reader(LH_QtPlugin *parent): QObject(parent) { return; }
+    ~LH_NowPlaying_Reader();
 
     TrackInfo info() { return info_; }
     bool playerFound() { return playerFound_; }

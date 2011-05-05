@@ -39,8 +39,7 @@
 #define LH_QTPLUGIN_NOWPLAYING_H
 
 #include "../LH_QtPlugin.h"
-#include "utils.cpp"
-
+#include "utils.h"
 
 class LH_NowPlaying_Reader: public QObject
 {

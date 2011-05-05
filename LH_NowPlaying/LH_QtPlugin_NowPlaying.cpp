@@ -37,16 +37,11 @@
 #include "LH_QtPlugin_NowPlaying.h"
 
 LH_QtPlugin_NowPlaying thePlugin;
-
 LH_NowPlaying_Reader* currentTrack;
 
-#include "utils.cpp"
-
-#include "LH_NP_Winamp.cpp"
-#include "LH_NP_MSN_Compat.cpp"
-#ifdef QT_NO_DEBUG
-#include "LH_NP_iTunes.cpp"
-#endif
+bool get_itunes_info(TrackInfo &ti);
+bool get_winamp_info(TrackInfo& ti);
+bool get_msn_compat_info(struct TrackInfo &ti);
 
 void LH_NowPlaying_Reader::refresh()
 {
@@ -64,7 +59,6 @@ void LH_NowPlaying_Reader::refresh()
     {
         emit changed();
     }
-
 }
 
 bool LH_NowPlaying_Reader::storeInfo(TrackInfo newInfo)

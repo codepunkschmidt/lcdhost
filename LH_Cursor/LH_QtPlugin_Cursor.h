@@ -43,7 +43,7 @@ public:
             REVISION,
             LH_API_MAJOR,
             LH_API_MINOR,
-            "0.3",
+            "0.31",
             "http://www.linkdata.se/lcdhost/version.php?arch=$ARCH"
         };
         Q_ASSERT( amaj == LH_API_MAJOR );

@@ -48,6 +48,8 @@
 
 #include "LH_QtPlugin_NowPlaying.h"
 
+#define iTunes_debug
+
 bool
 get_itunes_info(TrackInfo &ti)
 {
@@ -57,67 +59,83 @@ get_itunes_info(TrackInfo &ti)
         return false;
     }
 
+#ifdef iTunes_debug
+        qDebug() << "iTunes: Preparing to connect";
+#endif
     CoInitializeEx(NULL, COINIT_MULTITHREADED);
+#ifdef iTunes_debug
+        qDebug() << "iTunes: COM Initialized";
+#endif
     IiTunes *itunes;
 
     if (CoCreateInstance(CLSID_iTunesApp, NULL, CLSCTX_LOCAL_SERVER, IID_IiTunes, (PVOID *) &itunes) != S_OK) {
-#ifndef QT_NO_DEBUG
-        qDebug() << "Failed to get iTunes COM interface";
+#ifdef iTunes_debug
+        qDebug() << "iTunes: Failed to get interface";
 #endif
         CoUninitialize();
         return false;
     }
 
+#ifdef iTunes_debug
+        qDebug() << "iTunes: Connected";
+#endif
+
+    bool success = false;
+
     ITPlayerState state;
-    if (itunes->get_PlayerState(&state) != S_OK)
+    if (itunes->get_PlayerState(&state) == S_OK)
     {
-        itunes->Release();
-        CoUninitialize();
-        return false;
+        if (state == ITPlayerStatePlaying)
+            ti.status = PLAYER_STATUS_PLAYING;
+        else if (state == ITPlayerStateStopped)
+            ti.status = PLAYER_STATUS_PAUSED;
+        else
+            ti.status = PLAYER_STATUS_STOPPED;
+
+        // state ITPlayerStateStopped && get_CurrentTrack() succeeds -> PLAYER_STATUS_PAUSED
+        // state ITPlayerStateStopped && get_CurrentTrack() fails -> PLAYER_STATUS_STOPPED
+
+        IITTrack *track;
+        HRESULT res = itunes->get_CurrentTrack(&track);
+        if (res == S_FALSE) {
+#ifdef iTunes_debug
+        qDebug() << "iTunes: Not playing anything";
+#endif
+            ti.status = PLAYER_STATUS_STOPPED;
+        } else
+            if (res == S_OK) {
+#ifdef iTunes_debug
+        qDebug() << "iTunes: Now Playing data acquired!";
+#endif
+                ti.player = "iTunes";
+                success = true;
+
+                BSTR bstr;
+                track->get_Artist(&bstr);
+                ti.artist = QString::fromWCharArray(bstr);
+                track->get_Album(&bstr);
+                ti.artist = QString::fromWCharArray(bstr);
+                track->get_Name(&bstr);
+                ti.track = QString::fromWCharArray(bstr);
+
+                long duration = 0;
+                track->get_Duration(&duration);
+                ti.totalSecs = duration;
+
+                long position = 0;
+                itunes->get_PlayerPosition(&position);
+                ti.currentSecs = position;
+
+                ti.updatedAt = QDateTime::currentDateTime();
+            }
     }
-    if (state == ITPlayerStatePlaying)
-        ti.status = PLAYER_STATUS_PLAYING;
-    else if (state == ITPlayerStateStopped)
-        ti.status = PLAYER_STATUS_PAUSED;
-    else
-        ti.status = PLAYER_STATUS_STOPPED;
-
-    // state ITPlayerStateStopped && get_CurrentTrack() succeeds -> PLAYER_STATUS_PAUSED
-    // state ITPlayerStateStopped && get_CurrentTrack() fails -> PLAYER_STATUS_STOPPED
-
-    IITTrack *track;
-    HRESULT res = itunes->get_CurrentTrack(&track);
-    if (res == S_FALSE) {
-        ti.status = PLAYER_STATUS_STOPPED;
-        itunes->Release();
-        CoUninitialize();
-        return false;
-    } else if (res != S_OK) {
-        itunes->Release();
-        CoUninitialize();
-        return false;
-    }
-    ti.player = "iTunes";
-
-
-    BSTR bstr;
-    track->get_Artist(&bstr);
-    ti.artist = QString::fromWCharArray(bstr);
-    track->get_Album(&bstr);
-    ti.artist = QString::fromWCharArray(bstr);
-    track->get_Name(&bstr);
-    ti.track = QString::fromWCharArray(bstr);
-
-    long duration = 0;
-    track->get_Duration(&duration);
-    ti.totalSecs = duration;
-
-    long position = 0;
-    itunes->get_PlayerPosition(&position);
-    ti.currentSecs = position;
-
+#ifdef iTunes_debug
+        qDebug() << "iTunes: Preparing to disconnect";
+#endif
     itunes->Release();
     CoUninitialize();
-    ti.updatedAt = QDateTime::currentDateTime();
-    return true;
+#ifdef iTunes_debug
+        qDebug() << "iTunes: Disconnected";
+#endif
+    return success;
 }

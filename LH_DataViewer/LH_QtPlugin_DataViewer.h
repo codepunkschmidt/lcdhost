@@ -31,7 +31,7 @@
 class LH_QtPlugin_DataViewer : public LH_QtPlugin
 {
 public:
-    const char * lh_name() { return "DataViewer (v1.02)"; }
+    const char * lh_name() { return "DataViewer (v1.03)"; }
     const char * lh_shortdesc() { return "Extracts data from a source file and reformats it for display."; }
     const char * lh_author() { return "Andy \"Triscopic\" Bridges"; }
     const char * lh_homepage() { return "<a href=\"http://www.codeleap.co.uk\">CodeLeap</a>"; }
@@ -51,7 +51,7 @@ public:
             REVISION,
             LH_API_MAJOR,
             LH_API_MINOR,
-            "1.02",
+            "1.03",
             "http://www.linkdata.se/lcdhost/version.php?arch=$ARCH"
         };
         Q_UNUSED( amaj );

@@ -1,7 +1,6 @@
 TARGET = LH_Cursor
 TEMPLATE = lib
-CONFIG  += qaxserver \
-    QAxContainer
+CONFIG  += QAxContainer
 QT += network \
     xml
 DEFINES += LH_CURSOR_LIBRARY

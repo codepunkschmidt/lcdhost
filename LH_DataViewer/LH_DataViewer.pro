@@ -1,7 +1,6 @@
 TARGET = LH_DataViewer
 TEMPLATE = lib
-CONFIG  += qaxserver \
-    QAxContainer
+CONFIG  += QAxContainer
 QT += network \
     xml
 DEFINES += LH_DATAVIEWER_LIBRARY

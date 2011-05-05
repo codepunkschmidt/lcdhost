@@ -1,7 +1,6 @@
 TARGET = LH_Weather
 TEMPLATE = lib
-CONFIG  += qaxserver \
-    QAxContainer
+CONFIG  += QAxContainer
 QT += network \
     xml
 DEFINES += LH_WEATHER_LIBRARY

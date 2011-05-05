@@ -43,15 +43,19 @@ bool get_itunes_info(TrackInfo &ti);
 bool get_winamp_info(TrackInfo& ti);
 bool get_msn_compat_info(struct TrackInfo &ti);
 
+void close_itunes();
+
+LH_NowPlaying_Reader::~LH_NowPlaying_Reader()
+{
+    close_itunes();
+}
+
 void LH_NowPlaying_Reader::refresh()
 {
     playerFound_ = false;
     TrackInfo newInfo;
 
-//ifdef QT_NO_DEBUG
-    //itunes doesn't like debug mode
     playerFound_ = playerFound_ || get_itunes_info(newInfo);
-//endif
     playerFound_ = playerFound_ || get_winamp_info(newInfo);
     playerFound_ = playerFound_ || get_msn_compat_info(newInfo);
 

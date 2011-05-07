@@ -111,8 +111,8 @@ void LH_LgLcdMan::lh_unload()
     if( thread_ )
     {
         thread_->timeToDie();
-        if( !thread_->wait(1000) ) thread_->terminate();
-        else delete thread_;
+        if( !thread_->wait(4000) )
+            qDebug() << "LH_LgLcdMan: Logitech drivers not responding, expect problems";
         thread_ = NULL;
     }
     return;

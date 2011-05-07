@@ -81,7 +81,7 @@ public:
             if( setText( now.toString( setup_format_->value() ) ) )
                 callback(lh_cb_render,NULL);
         }
-        return LH_NOTE_SECOND;
+        return LH_NOTE_SECOND | LH_Text::notify(n,p);
     }
 
     static lh_class *classInfo()

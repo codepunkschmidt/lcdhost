@@ -92,7 +92,16 @@ QImage *LH_Rectangle::render_qimage( int w, int h )
     {
         QRectF rect = image_->rect();
 
-        painter.setRenderHint( QPainter::Antialiasing, true );
+        if( state()->dev_depth == 1 )
+        {
+            painter.setRenderHint( QPainter::Antialiasing, false );
+            painter.setRenderHint( QPainter::TextAntialiasing, false );
+        }
+        else
+        {
+            painter.setRenderHint( QPainter::Antialiasing, true );
+            painter.setRenderHint( QPainter::TextAntialiasing, true );
+        }
 
         if( penwidth() )
         {
@@ -147,4 +156,10 @@ QImage *LH_Rectangle::render_qimage( int w, int h )
     }
 
     return image_;
+}
+
+int LH_Rectangle::notify( int n, void* )
+{
+    if( !n || n&LH_NOTE_DEVICE ) requestRender();
+    return LH_NOTE_DEVICE;
 }

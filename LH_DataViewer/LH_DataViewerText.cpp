@@ -68,13 +68,24 @@ LH_DataViewerText::LH_DataViewerText(const char* name): LH_Text(name), data_(thi
 
     connect( setup_lookup_code_, SIGNAL(changed()), this, SLOT(updateText()) );
 
+    updateTimer_.start();
+    scrollTimer_.start();
     return;
 }
 
 int LH_DataViewerText::polling()
 {
-    updateText();
-    return polling_rate;
+    if(updateTimer_.elapsed()>=polling_rate)
+    {
+        updateText();
+        updateTimer_.restart();
+    }
+    if(scrollTimer_.elapsed()>=scroll_poll_)
+    {
+        scroll_poll_ = LH_Text::polling();
+        scrollTimer_.restart();
+    }
+    return (scroll_poll_<polling_rate && scroll_poll_!=0? scroll_poll_ : polling_rate);
 };
 
 void LH_DataViewerText::updateText()

@@ -215,6 +215,7 @@ void LH_LgLcdCallbackThread::run()
                     lgLcdClose( bw_cxt.device );
                     bw_cxt.device = LGLCD_INVALID_DEVICE;
                 }
+
                 if( qvga_cxt.device != LGLCD_INVALID_DEVICE )
                 {
                     lgLcdClose( qvga_cxt.device );

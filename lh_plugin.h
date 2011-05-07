@@ -121,6 +121,7 @@
 #define LH_NOTE_CPU         0x00000002 /* CPU load data updated */
 #define LH_NOTE_MEM         0x00000004 /* memory load data updated */
 #define LH_NOTE_NET         0x00000008 /* network load data updated */
+#define LH_NOTE_DEVICE      0x00000010 /* output device has changed */
 
 #define LH_ALIGN_LEFT       0
 #define LH_ALIGN_CENTER     1

@@ -6,6 +6,7 @@
 
 Lg320x240Device::Lg320x240Device( libusb_device *dev, libusb_device_descriptor *dd, LH_QtPlugin *drv ) : LH_QtDevice(NULL,drv)
 {
+    Q_UNUSED( dd );
     Q_ASSERT( dev != NULL );
     Q_ASSERT( dd != NULL );
 

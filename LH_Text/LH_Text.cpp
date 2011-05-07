@@ -168,7 +168,7 @@ void LH_Text::makeTextImage( int forheight )
     {
         int targetsize;
         if( state()->dev_depth > 1 ) targetsize = qMax(forheight,20);
-        else targetsize = forheight;
+        else targetsize = qMax(forheight,7);
         font_.setPixelSize( targetsize );
         QFontMetrics fm( font_, &textimage_ );
         font_.setPixelSize( targetsize - fm.descent() );

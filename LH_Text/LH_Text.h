@@ -76,6 +76,8 @@ protected:
     LH_Qt_QSlider *setup_scrollrate_;
     LH_Qt_QSlider *setup_scrollstep_;
 
+    void setRenderHints( QPainter& p );
+
 public:
     typedef enum
     {
@@ -117,20 +119,17 @@ public:
     QImage& textimage() { return textimage_; }
     bool prepareForRender(int w, int h);
 
-    static QImage makeImage( QSize size )
-    {
-        QImage img(size,QImage::Format_ARGB32_Premultiplied);
-        img.setDotsPerMeterX(3780);
-        img.setDotsPerMeterY(3780);
-        return img;
-    }
-
     static QImage makeImage(int w = 1, int h = 1)
     {
         QImage img(w,h,QImage::Format_ARGB32_Premultiplied);
         img.setDotsPerMeterX(3780);
         img.setDotsPerMeterY(3780);
         return img;
+    }
+
+    static QImage makeImage( QSize size )
+    {
+        return makeImage( size.width(), size.height() );
     }
 
 public slots:

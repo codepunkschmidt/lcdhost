@@ -127,6 +127,20 @@ LH_Text::~LH_Text()
     return;
 }
 
+void LH_Text::setRenderHints( QPainter& p )
+{
+    if( state()->dev_depth == 1 )
+    {
+        p.setRenderHint( QPainter::Antialiasing, false );
+        p.setRenderHint( QPainter::TextAntialiasing, false );
+    }
+    else
+    {
+        p.setRenderHint( QPainter::Antialiasing, true );
+        p.setRenderHint( QPainter::TextAntialiasing, true );
+    }
+}
+
 /**
   Create the QImage that contains the text. This may be larger or smaller than the
   target rendering area, and the \c setup_horizontal_ and \c setup_vertical_ values
@@ -141,10 +155,6 @@ void LH_Text::makeTextImage( int forheight )
     QPainter painter;
     int flags = Qt::AlignTop|Qt::AlignLeft|Qt::TextSingleLine|Qt::TextIncludeTrailingSpaces;
 
-    // Set antialiasing strategy
-    QFont::StyleStrategy wanted_strategy = ( state()->dev_depth == 1 ) ? QFont::NoAntialias : QFont::PreferAntialias;
-    if( !(font_.styleStrategy() & wanted_strategy) ) font_.setStyleStrategy( wanted_strategy );
-
     // make sure forheight is reasonable if given
     if( forheight < 0 ) forheight = 0;
     if( forheight && forheight < 4 )
@@ -156,11 +166,27 @@ void LH_Text::makeTextImage( int forheight )
     // select a reasonable font size based on pixel height
     if( fontresize() )
     {
-        int targetsize = qMax(forheight,20);
+        int targetsize;
+        if( state()->dev_depth > 1 ) targetsize = qMax(forheight,20);
+        else targetsize = qMax(forheight,7);
         font_.setPixelSize( targetsize );
         QFontMetrics fm( font_, &textimage_ );
         font_.setPixelSize( targetsize - fm.descent() );
     }
+
+    // Set font antialiasing strategy
+    int strat = font_.styleStrategy();
+    if( state()->dev_depth == 1 )
+    {
+        strat &= ~QFont::PreferAntialias;
+        strat |= QFont::NoAntialias;
+    }
+    else
+    {
+        strat &= ~QFont::NoAntialias;
+        strat |= QFont::PreferAntialias;
+    }
+    font_.setStyleStrategy( (QFont::StyleStrategy) strat );
 
     if( richtext_ )
     {
@@ -178,6 +204,7 @@ void LH_Text::makeTextImage( int forheight )
 
     if( painter.begin( &textimage_ ) )
     {
+        setRenderHints( painter );
         painter.setFont( font_ );
         if( richtext_ ) textsize_ = doc_.size();
         else
@@ -210,10 +237,14 @@ void LH_Text::makeTextImage( int forheight )
             // Opaque pen, take a shortcut
             if( painter.begin( &textimage_ ) )
             {
+                setRenderHints( painter );
                 painter.setFont( font() );
                 painter.setPen( pencolor() );
                 painter.setCompositionMode( QPainter::CompositionMode_SourceOver );
-                if( richtext_ ) doc_.drawContents( &painter );
+                if( richtext_ )
+                {
+                    doc_.drawContents( &painter );
+                }
                 else painter.drawText( textimage_.rect(), flags, text() );
                 painter.end();
             }
@@ -227,6 +258,7 @@ void LH_Text::makeTextImage( int forheight )
             mask.fill( qRgba(0,0,0,0) );
             if( painter.begin( &mask ) )
             {
+                setRenderHints( painter );
                 painter.setFont( font() );
                 painter.setPen( Qt::black );
                 painter.setCompositionMode( QPainter::CompositionMode_SourceOver );
@@ -260,7 +292,7 @@ void LH_Text::makeTextImage( int forheight )
     // If forheight was given, ensure that height
     if( forheight && forheight != textimage_.height() )
     {
-        if( forheight < (textimage_.height()-3) )
+        if( forheight < (textimage_.height()-3) && state()->dev_depth > 1 )
         {
             // scale the text image if higher by more than 3 pixels
             textimage_ = textimage_.scaledToHeight( forheight, Qt::SmoothTransformation );
@@ -449,9 +481,13 @@ int LH_Text::polling()
   */
 int LH_Text::notify(int code,void* param)
 {
-    Q_UNUSED(code);
     Q_UNUSED(param);
-    return 0;
+    if( code & LH_NOTE_DEVICE )
+    {
+        makeTextImage();
+        requestRender();
+    }
+    return LH_NOTE_DEVICE;
 }
 
 /**

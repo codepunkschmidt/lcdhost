@@ -52,6 +52,8 @@ public:
             "1.30",
             "http://www.linkdata.se/lcdhost/version.php?arch=$ARCH"
         };
+        Q_UNUSED( amaj );
+        Q_UNUSED( amin );
         Q_ASSERT( amaj == LH_API_MAJOR );
         Q_ASSERT( amin >= LH_API_MINOR );
         return &buildinfo;

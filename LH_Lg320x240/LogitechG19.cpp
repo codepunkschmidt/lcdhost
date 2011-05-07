@@ -48,10 +48,10 @@ LogitechG19::LogitechG19( const char *name, libusb_device *usbdev, libusb_device
         if( conf_desc ) libusb_free_config_descriptor( conf_desc );
     }
     setId("G19");
-    setName("Logitech G19 LCD");
+    setName("Logitech G19 LCD (USB)");
     setSize(320,240);
     setDepth(16);
-    setAutoselect(true);
+    setAutoselect(false);
 
     setButtonName( 0x01, QObject::tr("App") );
     setButtonName( 0x02, QObject::tr("Cancel") );

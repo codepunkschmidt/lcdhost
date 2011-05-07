@@ -27,3 +27,5 @@ HEADERS += \
     Lg320x240Device.h \
     LogitechG19Thread.h \
     LogitechG19.h
+
+win32: LIBS += -lpsapi

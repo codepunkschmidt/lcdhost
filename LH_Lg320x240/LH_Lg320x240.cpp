@@ -37,6 +37,10 @@
 
 #include <stdarg.h>
 
+#ifdef Q_WS_WIN
+#include <windows.h>
+#endif
+
 #include "../LH_QtDevice.h"
 #include "LH_Lg320x240.h"
 #include "Lg320x240Device.h"
@@ -56,16 +60,21 @@ extern "C"
 
 int LH_Lg320x240::lh_notify(int note, void*param)
 {
+    Q_UNUSED(note);
     Q_UNUSED(param);
-    if( !note || (note&LH_NOTE_SECOND) )
-    {
-    }
-    return LH_NOTE_SECOND;
+    return 0;
 }
 
 const char *LH_Lg320x240::lh_load()
 {
     Q_ASSERT( g19thread_ == 0 );
+
+#ifdef Q_WS_WIN
+    // make sure neither LCDMon.exe nor LCORE.EXE is running on Windows
+    if( FindWindowA( "Logitech LCD Monitor Window", "LCDMon" ) ) return "LCDMon.exe is running";
+    if( FindWindowA( "QWidget", "LCore" ) ) return "LCore.exe is running";
+#endif
+
     g19thread_ = new LogitechG19Thread(this);
     g19thread_->start();
     return NULL;

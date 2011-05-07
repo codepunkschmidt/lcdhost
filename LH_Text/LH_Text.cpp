@@ -155,7 +155,26 @@ void LH_Text::makeTextImage( int forheight )
     QPainter painter;
     int flags = Qt::AlignTop|Qt::AlignLeft|Qt::TextSingleLine|Qt::TextIncludeTrailingSpaces;
 
-    // Set antialiasing strategy
+    // make sure forheight is reasonable if given
+    if( forheight < 0 ) forheight = 0;
+    if( forheight && forheight < 4 )
+    {
+        if( image_ ) forheight = image_->height();
+        else forheight = textimage_.height();
+    }
+
+    // select a reasonable font size based on pixel height
+    if( fontresize() )
+    {
+        int targetsize;
+        if( state()->dev_depth > 1 ) targetsize = qMax(forheight,20);
+        else targetsize = forheight;
+        font_.setPixelSize( targetsize );
+        QFontMetrics fm( font_, &textimage_ );
+        font_.setPixelSize( targetsize - fm.descent() );
+    }
+
+    // Set font antialiasing strategy
     int strat = font_.styleStrategy();
     if( state()->dev_depth == 1 )
     {
@@ -168,23 +187,6 @@ void LH_Text::makeTextImage( int forheight )
         strat |= QFont::PreferAntialias;
     }
     font_.setStyleStrategy( (QFont::StyleStrategy) strat );
-
-    // make sure forheight is reasonable if given
-    if( forheight < 0 ) forheight = 0;
-    if( forheight && forheight < 4 )
-    {
-        if( image_ ) forheight = image_->height();
-        else forheight = textimage_.height();
-    }
-
-    // select a reasonable font size based on pixel height
-    if( fontresize() )
-    {
-        int targetsize = qMax(forheight,20);
-        font_.setPixelSize( targetsize );
-        QFontMetrics fm( font_, &textimage_ );
-        font_.setPixelSize( targetsize - fm.descent() );
-    }
 
     if( richtext_ )
     {
@@ -290,7 +292,7 @@ void LH_Text::makeTextImage( int forheight )
     // If forheight was given, ensure that height
     if( forheight && forheight != textimage_.height() )
     {
-        if( forheight < (textimage_.height()-3) )
+        if( forheight < (textimage_.height()-3) && state()->dev_depth > 1 )
         {
             // scale the text image if higher by more than 3 pixels
             textimage_ = textimage_.scaledToHeight( forheight, Qt::SmoothTransformation );
@@ -479,7 +481,6 @@ int LH_Text::polling()
   */
 int LH_Text::notify(int code,void* param)
 {
-    Q_UNUSED(code);
     Q_UNUSED(param);
     if( code & LH_NOTE_DEVICE )
     {

@@ -608,7 +608,7 @@ bool LH_WeatherConnector::openWeatherMemory()
 
     weather = (weatherData*)weatherMap.data();
     memset(weather, 0, sizeof(weatherData));
-    return false;
+    return true;
 }
 void LH_WeatherConnector::closeWeatherMemory()
 {

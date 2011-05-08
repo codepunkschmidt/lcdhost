@@ -9,7 +9,7 @@ class LH_RSSBody : public LH_WebKit
 {
     Q_OBJECT
 
-    LH_RSSInterface* rss_;
+    LH_RSSInterface rss_;
 
 protected:
     QHash<QString, QString> getTokens();

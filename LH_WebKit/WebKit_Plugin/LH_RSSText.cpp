@@ -27,11 +27,11 @@ lh_class *LH_RSSText::classInfo()
     return &classInfo;
 }
 
-LH_RSSText::LH_RSSText(const char *name) : LH_Text(name)
+LH_RSSText::LH_RSSText(const char *name) : LH_Text(name), rss_(this)
 {
-    rss_ = new LH_RSSInterface(this);
-    connect( rss_, SIGNAL(changed()), this, SLOT(setRssItem()) );
-    connect( rss_, SIGNAL(begin()), this, SLOT(beginFetch()) );
+
+    connect( &rss_, SIGNAL(changed()), this, SLOT(setRssItem()) );
+    connect( &rss_, SIGNAL(begin()), this, SLOT(beginFetch()) );
 
     setup_horizontal_->setFlag( LH_FLAG_HIDDEN, true );
     setup_vertical_->setFlag( LH_FLAG_HIDDEN, true );
@@ -46,12 +46,12 @@ LH_RSSText::LH_RSSText(const char *name) : LH_Text(name)
 
 int LH_RSSText::notify(int code,void* param)
 {
-    return rss_->notify(code,param) | LH_Text::notify(code,param);
+    return rss_.notify(code,param) | LH_Text::notify(code,param);
 }
 
 void LH_RSSText::setRssItem()
 {
-    if( setText(rss_->item().title) ) requestRender();
+    if( setText(rss_.item().title) ) requestRender();
 }
 
 

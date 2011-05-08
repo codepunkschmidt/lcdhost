@@ -95,14 +95,14 @@ void LH_RSSInterface::releaseRSS()
 
     if(feed->release(this))
     {
+        disconnect( getFeed(), SIGNAL(delayChanged()), this, SLOT(updateDelay()) );
+        disconnect( getFeed(), SIGNAL(refreshChanged()), this, SLOT(updateRefresh()) );
+        disconnect( getFeed(), SIGNAL(begin()), this, SLOT(reemitBegin()) );
+        disconnect( getFeed(), SIGNAL(finished()), this, SLOT(reemitFinished()) );
+        disconnect( getFeed(), SIGNAL(changed()), this, SLOT(reemitChanged()) );
         if(feed->connections()==0)
         {
             rssFeeds->remove(url_);
-            disconnect( getFeed(), SIGNAL(delayChanged()), this, SLOT(updateDelay()) );
-            disconnect( getFeed(), SIGNAL(refreshChanged()), this, SLOT(updateRefresh()) );
-            disconnect( getFeed(), SIGNAL(begin()), this, SLOT(reemitBegin()) );
-            disconnect( getFeed(), SIGNAL(finished()), this, SLOT(reemitFinished()) );
-            disconnect( getFeed(), SIGNAL(changed()), this, SLOT(reemitChanged()) );
 
             delete feed;
             if(rssFeeds->count() == 0)
@@ -168,7 +168,7 @@ void LH_RSSInterface::changeRefresh()
 
 void LH_RSSInterface::updateDelay()
 {
-    setup_delay_->setValue(getFeed()->delay());
+    //setup_delay_->setValue(getFeed()->delay());
 }
 
 void LH_RSSInterface::updateRefresh()

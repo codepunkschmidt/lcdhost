@@ -13,6 +13,13 @@
 #include <QDateTime>
 #include <QString>
 
+struct artworkDescription
+{
+    QString artist;
+    QString album;
+    QString fileName;
+};
+
 struct TrackInfo
 {
         QString track;

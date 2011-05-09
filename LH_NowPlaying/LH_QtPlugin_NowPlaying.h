@@ -40,23 +40,38 @@
 
 #include "../LH_QtPlugin.h"
 #include "utils.h"
+#include <QFile>
 
 class LH_NowPlaying_Reader: public QObject
 {
     Q_OBJECT
     bool playerFound_;
+    QString artworkCachePath_;
     TrackInfo info_;
+    artworkDescription cachedArtwork_;
     bool storeInfo(TrackInfo newInfo);
 public:
-    LH_NowPlaying_Reader(LH_QtPlugin *parent): QObject(parent) { return; }
+    LH_NowPlaying_Reader(LH_QtPlugin *parent): QObject(parent) { artworkCachePath_ = parent->state()->dir_plugins; return; }
     ~LH_NowPlaying_Reader();
 
     TrackInfo info() { return info_; }
     bool playerFound() { return playerFound_; }
+    QString artworkFileName()
+    {
+        return cachedArtwork_.fileName;
+    }
+    void clearArtwork()
+    {
+        if(QFile::exists(cachedArtwork_.fileName))
+            QFile::remove(cachedArtwork_.fileName);
+        cachedArtwork_ = (artworkDescription){"","",""};
+    }
+
     void refresh();
 
 signals:
     void changed();
+    void artworkChanged();
 };
 
 

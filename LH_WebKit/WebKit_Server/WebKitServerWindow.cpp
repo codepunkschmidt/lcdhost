@@ -28,6 +28,8 @@ WebKitServerWindow::WebKitServerWindow(QWidget *parent) :
 
     ui->setupUi(this);
 
+    setWindowTitle("WebKitServer");
+
     manager_ = new QNetworkAccessManager();
     connect( manager_, SIGNAL(finished(QNetworkReply*)), this, SLOT(finished(QNetworkReply*)) );
     server_ = new QLocalServer();

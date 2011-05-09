@@ -2,9 +2,14 @@
 
 #include <QApplication>
 #include <QThread>
+#include <QDesktopServices>
+#include <QSettings>
+
 #include "WebKitServerWindow.h"
 #include "EventWebKitHeartbeat.h"
 #include "../WebKitCommand.h"
+
+QString datadir;
 
 const char *get_log_filename()
 {
@@ -12,18 +17,21 @@ const char *get_log_filename()
 
     if( !*log_filename )
     {
-        QString installPath;
         QString name;
         int len;
 
+        if( datadir.isEmpty() )
+        {
+            QSettings settings("linkdata.se","LCDHost");
+            QString defaultdata = QDesktopServices::storageLocation(QDesktopServices::DocumentsLocation) + "/LCDHost/";
+            datadir = settings.value( "installPath", defaultdata ).toString();
+        }
+
         // Create log dir
-#ifdef Q_WS_MAC
-        installPath = ".";
-#else
-        installPath = QCoreApplication::applicationDirPath();
-#endif
-        QDir dir( installPath+"/logs/" );
+        if( !datadir.endsWith('/') ) datadir.append('/');
+        QDir dir( datadir+"logs/" );
         dir.mkpath( dir.absolutePath() );
+
         // Clean up old logs
         foreach( QFileInfo info, dir.entryInfoList( QDir::Files | QDir::Writable ) )
         {
@@ -37,7 +45,7 @@ const char *get_log_filename()
 
         // Make our filename
         name =
-            installPath+"/logs/WebKitServer-" +
+            datadir+"/logs/WebKitServer-" +
             QDateTime::currentDateTime().toString("yyyyMMdd-HHmmss-") +
             QString::number( (quintptr) QThread::currentThreadId() ) + ".log";
         QByteArray ary = name.toAscii();
@@ -112,11 +120,14 @@ void newMessageHandler( QtMsgType type, const char *msg )
 
     return;
 }
+
 int main(int argc, char *argv[])
 {
     WebKitServerWindow *w;
     QApplication app(argc,argv);
-    QStringList args = app.arguments();
+    QString plugindir;
+    bool hidden = false;
+    bool verbose = false;
 
     QCoreApplication::setOrganizationName("Link Data");
     QCoreApplication::setOrganizationDomain("linkdata.se");
@@ -124,18 +135,57 @@ int main(int argc, char *argv[])
 
     oldMessageHandler = qInstallMsgHandler( newMessageHandler );
 
+    // parse command line
+    QStringList args = QCoreApplication::arguments();
+    while( args.size()>1 && args[1].startsWith('-') )
+    {
+        QString theArg = args[1];
+        args.removeAt(1);
+
+        if( theArg=="--hidden" )
+        {
+            hidden = true;
+        }
+
+        if( theArg=="--verbose" )
+        {
+            verbose = true;
+        }
+
+        if( theArg=="--datadir" )
+        {
+            datadir = args[1];
+            args.removeAt(1);
+        }
+
+        if( theArg=="--plugindir" )
+        {
+            plugindir = args[1];
+            args.removeAt(1);
+        }
+    }
+
+    if( !plugindir.isEmpty() )
+        QCoreApplication::setLibraryPaths( QStringList(plugindir) );
+
     // If existing instance is running, show that rather than starting
     QLocalSocket *sock = new QLocalSocket();
     sock->connectToServer("LCDHost_WebKitServer");
     if( sock->waitForConnected(100) )
     {
+        if( verbose ) qDebug() << "Asking running instance to show itself";
         WebKitCommand( 'S' ).write(sock);
         return 0;
     }
     delete sock;
 
     w = new WebKitServerWindow();
-    if( !args.contains("--hidden") ) w->show();
+    if( verbose )
+    {
+        qDebug() << "Starting WebKitServer";
+        qDebug() << "Library paths:" << QCoreApplication::libraryPaths();
+    }
+    if( !hidden ) w->show();
     app.exec();
     delete w;
 

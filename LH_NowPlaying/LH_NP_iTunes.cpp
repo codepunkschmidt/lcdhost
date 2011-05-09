@@ -274,6 +274,14 @@ get_itunes_info(TrackInfo &ti, QString artworkPath, artworkDescription &cachedAr
             track->get_Name(&bstr);
             ti.track = QString::fromWCharArray(bstr);
 
+            IITFileOrCDTrack* trackFile;
+            if(track->QueryInterface(IID_IITFileOrCDTrack, (void**)&trackFile)==S_OK)
+            {
+                trackFile->get_Location(&bstr);
+                ti.file = QString::fromWCharArray(bstr);
+            }
+
+
             long duration = 0;
             track->get_Duration(&duration);
             ti.totalSecs = duration;

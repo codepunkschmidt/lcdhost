@@ -52,7 +52,8 @@ LH_NowPlayingText::LH_NowPlayingText(const char* name) : LH_Text(name)
                                         <<"Time Remaining"
                                         <<"Status"
                                         <<"Player"
-                                        <<"Custom",
+                                        <<"Custom"
+                                        <<"File Name",
                                         LH_FLAG_FIRST
                                         );
     setup_item_->setValue(8);
@@ -151,6 +152,9 @@ void LH_NowPlayingText::refresh_text()
         case 7:     //Player
             template_value = "{player}";
             break;
+        case 9:     //File
+            template_value = "{file}";
+            break;
         //case 8:     //Custom
         default:
             template_value = setup_custom_->value();
@@ -181,6 +185,7 @@ void LH_NowPlayingText::refresh_text()
         replace_token(template_value,"remaining",currentTrack->info().totalSecs - currentTrack->info().currentSecs,currentTrack->info().totalSecs);
         replace_token(template_value,"status",status_text);
         replace_token(template_value,"player",currentTrack->info().player);
+        replace_token(template_value,"file",currentTrack->info().file);
 
         if( setText( template_value ) )  callback(lh_cb_render,NULL);
     } else {

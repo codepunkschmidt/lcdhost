@@ -191,6 +191,7 @@ get_winamp_info(TrackInfo& ti)
 #ifndef QT_NO_DEBUG
         qDebug() << "Filename(widechar): " << QString::fromWCharArray(wfilename);
 #endif
+        ti.file = QString::fromWCharArray(wfilename);
         winamp_get_w(wfilename, L"ALBUM", ti.album);
         winamp_get_w(wfilename, L"ARTIST", ti.artist);
         winamp_get_w(wfilename, L"TITLE", ti.track);

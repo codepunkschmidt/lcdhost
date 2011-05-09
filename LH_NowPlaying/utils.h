@@ -29,6 +29,7 @@ struct TrackInfo
         int status;
         int totalSecs;
         int currentSecs;
+        QString file;
         QDateTime updatedAt;
 };
 

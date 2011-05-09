@@ -25,7 +25,8 @@ SOURCES += ../lh_plugin.c \
     LH_NowPlayingEmulator.cpp \
     iTunesCOMInterface_i.c  \
     utils.cpp \
-    disphelper.c
+    disphelper.c \
+    LH_NowPlayingAlbumArt.cpp
 
 HEADERS += ../lh_plugin.h \
     ../LH_QtPlugin.h \
@@ -41,4 +42,5 @@ HEADERS += ../lh_plugin.h \
     wa_ipc.h \
     iTunesCOMInterface.h \
     LH_NowPlayingEmulator.h \
-    utils.h
+    utils.h \
+    LH_NowPlayingAlbumArt.h

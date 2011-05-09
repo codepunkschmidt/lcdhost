@@ -43,6 +43,7 @@
  */
 
 #include <QDebug>
+#include <QFile>
 #include <windows.h>
 #include "iTunesCOMInterface.h"
 
@@ -50,7 +51,7 @@
 
 //#define iTunes_debug
 
-static IiTunes *itunes=0;
+static IiTunes *itunes = NULL;
 
 bool open_itunes()
 {
@@ -104,8 +105,124 @@ void close_itunes()
     }
 }
 
+bool save_itunes_artwork(IITTrack *track, QString artworkPath, artworkDescription &cachedArtwork, artworkDescription &trackArtwork)
+{
+    bool success = false;
+
+    if(cachedArtwork.album == trackArtwork.album && cachedArtwork.artist == trackArtwork.artist)
+        return false;
+
+    #ifdef iTunes_debug
+        qDebug() << "iTunes: artwork: Get Artwork";
+    #endif
+
+    IITArtworkCollection *artColl;
+    switch (track->get_Artwork(&artColl))
+    {
+    case S_FALSE:
+        #ifdef iTunes_debug
+            qDebug() << "iTunes: artwork: Artwork unvailable (1)";
+        #endif
+        break;
+    case S_OK:
+        #ifdef iTunes_debug
+            qDebug() << "iTunes: artwork: Artwork list acquired";
+        #endif
+        long artCount = 0;
+        switch (artColl->get_Count(&artCount))
+        {
+        case S_FALSE:
+            #ifdef iTunes_debug
+                qDebug() << "iTunes: artwork: No count unvailable";
+            #endif
+            break;
+        case S_OK:
+            #ifdef iTunes_debug
+                qDebug() << "iTunes: artwork: Count = " << artCount;
+            #endif
+            break;
+        }
+        if(artCount>=1)
+        {
+            IITArtwork *artItem;
+            switch (artColl->get_Item(1, &artItem))
+            {
+            case S_FALSE:
+                #ifdef iTunes_debug
+                    qDebug() << "iTunes: artwork: Artwork unvailable (2)";
+                #endif
+                break;
+            case S_OK:
+                #ifdef iTunes_debug
+                    qDebug() << "iTunes: artwork: Artwork item acquired";
+                #endif
+                ITArtworkFormat fmt;
+                QString extension = "png";
+
+                switch(artItem->get_Format(&fmt))
+                {
+                case S_FALSE:
+                    #ifdef iTunes_debug
+                        qDebug() << "iTunes: artwork: format unavailable";
+                    #endif
+                    break;
+                case S_OK:
+                    switch(fmt)
+                    {
+                    case ITArtworkFormatJPEG:
+                        extension = "jpg";
+                        break;
+                    case ITArtworkFormatPNG:
+                        extension = "png";
+                        break;
+                    case ITArtworkFormatBMP:
+                        extension = "png";
+                        break;
+                    case ITArtworkFormatUnknown:
+                    default:
+                        extension = "unknown";
+                        break;
+                    }
+                    #ifdef iTunes_debug
+                        qDebug() << "iTunes: artwork: format is " << extension;
+                    #endif
+                    if (extension=="unknown") extension = "jpg";
+                    break;
+                }
+
+                if(QFile::exists(cachedArtwork.fileName))
+                    QFile::remove(cachedArtwork.fileName);
+
+                trackArtwork.fileName = QString("%0%1art.%2").arg(artworkPath).arg(artworkPath.endsWith("/")? "" : "/").arg(extension);
+                switch (artItem->SaveArtworkToFile(::SysAllocString((const OLECHAR*)(trackArtwork.fileName.replace("/","\\")).utf16())))
+                {
+                case S_FALSE:
+                    #ifdef iTunes_debug
+                        qDebug() << "iTunes: artwork: saving failed";
+                    #endif
+                    break;
+                case S_OK:
+                    #ifdef iTunes_debug
+                        qDebug() << "iTunes: artwork: saving completed";
+                    #endif
+                    cachedArtwork = trackArtwork;
+                    success = true;
+                    break;
+                }
+                break;
+            }
+        }
+        break;
+    }
+
+    return success;
+}
+
+
+
+
 bool
-get_itunes_info(TrackInfo &ti)
+get_itunes_info(TrackInfo &ti, QString artworkPath, artworkDescription &cachedArtwork, bool &updatedArtwork)
 {
     ti.status = PLAYER_STATUS_CLOSED;
 
@@ -134,38 +251,48 @@ get_itunes_info(TrackInfo &ti)
         // state ITPlayerStateStopped && get_CurrentTrack() fails -> PLAYER_STATUS_STOPPED
 
         IITTrack *track;
-        HRESULT res = itunes->get_CurrentTrack(&track);
-        if (res == S_FALSE) {
+        switch (itunes->get_CurrentTrack(&track))
+        {
+        case S_FALSE:
             #ifdef iTunes_debug
                 qDebug() << "iTunes: Not playing anything";
             #endif
             ti.status = PLAYER_STATUS_STOPPED;
-        } else
-            if (res == S_OK) {
-                #ifdef iTunes_debug
-                    qDebug() << "iTunes: Now Playing data acquired!";
-                #endif
-                ti.player = "iTunes";
-                success = true;
+            break;
+         case S_OK:
+            #ifdef iTunes_debug
+                qDebug() << "iTunes: Now Playing data acquired!";
+            #endif
+            ti.player = "iTunes";
+            success = true;
 
-                BSTR bstr;
-                track->get_Artist(&bstr);
-                ti.artist = QString::fromWCharArray(bstr);
-                track->get_Album(&bstr);
-                ti.artist = QString::fromWCharArray(bstr);
-                track->get_Name(&bstr);
-                ti.track = QString::fromWCharArray(bstr);
+            BSTR bstr;
+            track->get_Artist(&bstr);
+            ti.artist = QString::fromWCharArray(bstr);
+            track->get_Album(&bstr);
+            ti.album = QString::fromWCharArray(bstr);
+            track->get_Name(&bstr);
+            ti.track = QString::fromWCharArray(bstr);
 
-                long duration = 0;
-                track->get_Duration(&duration);
-                ti.totalSecs = duration;
+            long duration = 0;
+            track->get_Duration(&duration);
+            ti.totalSecs = duration;
 
-                long position = 0;
-                itunes->get_PlayerPosition(&position);
-                ti.currentSecs = position;
+            long position = 0;
+            itunes->get_PlayerPosition(&position);
+            ti.currentSecs = position;
 
-                ti.updatedAt = QDateTime::currentDateTime();
+            ti.updatedAt = QDateTime::currentDateTime();
+
+            if(artworkPath != "")
+            {
+                artworkDescription trackArtwork = (artworkDescription){ti.artist, ti.album};
+                updatedArtwork = save_itunes_artwork(track, artworkPath, cachedArtwork, trackArtwork);
             }
+
+            track->Release();
+            break;
+        }
     } else {
         #ifdef iTunes_debug
             qDebug() << "iTunes: unable to pull playerstate";

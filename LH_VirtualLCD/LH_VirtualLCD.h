@@ -52,7 +52,6 @@ public:
     virtual const lh_blob *lh_logo();
     virtual const char *lh_load();
     virtual void lh_unload() {}
-    virtual int lh_notify(int,void*) { return 0; }
     const lh_buildinfo * lh_version( int amaj, int amin )
     {
         static lh_buildinfo buildinfo = LH_STD_BUILDINFO;

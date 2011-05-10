@@ -57,22 +57,40 @@ lh_systemstate *lcdhost_state()
     return lh_systemstate_;
 }
 
+
+
+
 /**
   Exported from all LCDHost shared libraries.
 */
-EXPORT const lh_buildinfo* lh_version(int amaj, int amin )
-{
-    Q_ASSERT( LH_QtPlugin::instance() != NULL );
-    return LH_QtPlugin::instance()->lh_version( amaj, amin );
-}
 EXPORT const char * lh_name(void) { return LH_QtPlugin::instance()->lh_name(); }
 EXPORT const char * lh_shortdesc(void) { return LH_QtPlugin::instance()->lh_shortdesc(); }
 EXPORT const char * lh_author(void) { return LH_QtPlugin::instance()->lh_author(); }
 EXPORT const char * lh_homepage(void) { return LH_QtPlugin::instance()->lh_homepage(); }
 EXPORT const char * lh_longdesc(void) { return LH_QtPlugin::instance()->lh_longdesc(); }
 EXPORT const lh_blob *lh_logo(void) { return LH_QtPlugin::instance()->lh_logo(); }
-EXPORT int lh_polling(void) { return LH_QtPlugin::instance()->lh_polling(); }
-EXPORT int lh_notify(int code, void *param) { return LH_QtPlugin::instance()->lh_notify(code,param); }
+
+static lh_setup_item ** lh_obj_setup_data(void*) { return 0; }
+static void lh_obj_setup_resize(void*, lh_setup_item*, size_t) { return; }
+static void lh_obj_setup_change(void*, lh_setup_item*) { return; }
+static void lh_obj_setup_input(void*, lh_setup_item*, int, int) { return; }
+static int lh_obj_polling(void*)  { return LH_QtPlugin::instance()->lh_polling(); }
+static int lh_obj_notify(void*,int code,void*param) { return LH_QtPlugin::instance()->lh_notify(code,param); }
+
+EXPORT const lh_object_calltable* lh_calltable()
+{
+    static lh_object_calltable objtable =
+    {
+        sizeof(lh_object_calltable),
+        lh_obj_setup_data,
+        lh_obj_setup_resize,
+        lh_obj_setup_change,
+        lh_obj_setup_input,
+        lh_obj_polling,
+        lh_obj_notify
+    };
+    return &objtable;
+}
 
 EXPORT const char * lh_load( void *id, lh_callback_t p_callback, lh_systemstate *p_state )
 {

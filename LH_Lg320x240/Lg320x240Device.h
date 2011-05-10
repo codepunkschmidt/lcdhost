@@ -34,7 +34,6 @@ public:
 
     const char* close();
 
-    virtual int lh_notify(int,void*) { return 0; }
     const char* render_qimage(QImage *img);
 };
 

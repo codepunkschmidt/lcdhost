@@ -33,69 +33,68 @@
   */
 
 /**
-  These are the entry points for LCDHost libraries. As of LCDHost alpha 8, we don't
+  These are the entry points for LCDHost plugins. As of LCDHost alpha 8, we don't
   separate plugins (which provide layout classes) from drivers (which provide
-  output devices). They're both just libraries. For historical and portability
+  output devices). They're both just plugins. For historical and portability
   reasons, they still reside in the 'plugins/' directory though.
 
   NOTE: All strings must be UTF-8 encoded unless explicitly stated otherwise.
 
   const char *lh_name()
-    Return the name of the library.
+    Return the name of the plugin.
+    This export is required.
 
   const char *lh_shortdesc()
-    Return a short description of the library.
-
-  const lh_buildinfo* lh_version( int api_major, int api_minor )
-    api_minor and api_major is the value of LCDHost's LH_API_MAJOR and LH_API_MINOR.
-    Return the librarys build information, or NULL if none is provided.
+    Return a short description of the plugin.
+    This export is required.
 
   const char *lh_author()
     Return the author. You can use hyperlinks here, if you like.
+    This export is optional.
 
   const char *lh_homepage()
-    Return a hyperlink to the library's homepage, for example:
+    Return a hyperlink to the plugin's homepage, for example:
     "<a href=\"http://www.linkdata.se/software/lcdhost/\">Link Data Stockholm</a>"
+    This export is optional.
 
   const char *lh_longdesc()
-    Return a longer description of the library. Basic HTML and hyperlinks are OK.
-    If you want an easy way to include rudimentary documentation about the library,
+    Return a longer description of the plugin. Basic HTML and hyperlinks are OK.
+    If you want an easy way to include rudimentary documentation about the plugin,
     this is the place to do it.
+    This export is optional.
 
   const lh_blob *lh_logo()
     Return a lh_blob structure containing a JPG or PNG, in their respective file formats.
     You can use the lh_blob_to_headerfile() function to embed file data in a headerfile if you like.
+    This export is optional.
 
   const char *lh_load( void *id, lh_callback_t, lh_systemstate* )
-    Called when the user loads the library.
-    The first parameter is the internal ID of the library. This must
+    Called when the user loads the plugin.
+    The first parameter is the internal ID of the plugin. This must
     be given as the first parameter on every call of the callback
-    function, or LCDHost won't recognize which library is doing the request.
+    function, or LCDHost won't recognize which plugin is doing the request.
     The second parameter is the address of the callback function. Save this.
     The third parameter points to information about the current LCDHost system state.
     The information in this structure will change all the time, so don't cache it.
     Return NULL for success, else an error message.
+    This export is optional.
 
-  void lh_unload(void)
-    Called when the library is being unloaded.
+  void lh_unload()
+    Called when the plugin is being unloaded.
+    This export is optional.
 
-  int lh_polling()
-    Allows you to be called back after a given number of milliseconds.
-    Return zero to disable polling. If you just need a regular callback,
-    use lh_notify(LH_NOTE_SECOND) instead, as that is more efficient.
-
-  int lh_notify(int code, void* param)
-    A library can get the same notifications as an instance can.
-    Usually, not many of them are useful to libraries, but if you need
-    to poll for devices (when the OS or underlying architecture doesn't
-    support event-driven notifications to your driver), you might use
-    LH_NOTE_SECOND.
+  const lh_object_calltable* lh_calltable()
+    Returns a standard object calltable. This may be NULL if none of
+    the functions available in that calltable are used by the plugin
+    and you don't expose any setup items from the plugin itself.
+    This export is optional.
 
   const lh_class **lh_class_list()
-    If your library supplies layout classes, this is how to expose
+    If your plugin supplies layout classes, this is how to expose
     them. Return array of pointers to class info, end with NULL pointer.
     If you add or remove classes dynamically, use lh_callback() with
     lh_cb_class_refresh to have LCDHost call lh_class_list() again.
+    This export is optional.
 
   */
 
@@ -142,7 +141,8 @@
 typedef struct lh_class_t lh_class;
 
 /**
-  Contains the library version information.
+  Contains the plugin version information. This structure must be
+  embedded into every plugin.
 
   'sig' is a magic cookie so that external application can find
   the structure within a plugin without having to load it.
@@ -151,7 +151,7 @@ typedef struct lh_class_t lh_class;
   structure in the future.
 
   'revision' is an increasing sequence number used to determine if
-  there is a newer version of the library available.
+  there is a newer version of the plugin available.
 
   'api_major' is the LH_API_MAJOR value. LCDHost will use this
   to determine if it can safely use a plugin or not. The major
@@ -241,7 +241,7 @@ typedef struct lh_device_backlight_t
   */
 typedef enum lh_callbackcode_t
 {
-    lh_cb_unload, /* ask that the library be unloaded, param: NULL or const char *message */
+    lh_cb_unload, /* ask that the plugin be unloaded, param: NULL or const char *message */
 
     lh_cb_setup_refresh, /* LCDHost will re-read your setup item, param: lh_setup_item* */
     lh_cb_setup_rebuild, /* use this if you add or remove setup items, LCDHost will call setup_data() again */
@@ -268,25 +268,28 @@ typedef enum lh_callbackcode_t
 } lh_callbackcode;
 
 /**
-  The library-to-LCDHost callback.
+  The plugin-to-LCDHost callback.
   */
 typedef void (*lh_callback_t)( void *id, const void *obj, lh_callbackcode code, void *param );
 
-/* Definition of signature area */
+/**
+    Definition of signature area
+    The signature area is optional by highly recommended.
+*/
 typedef struct lh_signature_t
 {
     char marker[16]; /* unique series to allow finding the sig */
-    char sign[256]; /* 2048-bit RSA signature of the shared library's SHA-1 digest, PKCS1 padded */
+    char sign[256]; /* 2048-bit RSA signature of the shared plugin's SHA-1 digest, PKCS1 padded */
     char url[128]; /* URL to the public key */
-    char md5[16]; /* MD5 digest of the shared library except this structure */
+    char md5[16]; /* MD5 digest of the shared plugin except this structure */
     int size; /* sizeof(lh_signature) */
 } lh_signature;
 
 #define LH_SIGNATURE_MARKER {7,98,120,242,114,174,176,97,178,246,229,116,243,34,2,92}
 
 /* Declare a signature area - don't mess with the constants, */
-/* they're there so that SignLibrary can find the right spot. */
-#define LH_SIGNATURE() lh_signature _lh_library_signature = { LH_SIGNATURE_MARKER, {0}, {0}, {0}, sizeof(lh_signature) }
+/* they're there so that SignPlugin can find the right spot. */
+#define LH_SIGNATURE() lh_signature _lh_plugin_signature = { LH_SIGNATURE_MARKER, {0}, {0}, {0}, sizeof(lh_signature) }
 
 typedef enum lh_setup_type_t
 {
@@ -358,7 +361,7 @@ typedef struct lh_setup_item_t
     lh_setup_data data;
 } lh_setup_item;
 
-/* Common methods to all objects created in libraries */
+/* Common methods to all objects created in plugins, and also available to the plugin themselves */
 typedef struct lh_object_calltable_t
 {
     int size; // sizeof(lh_object_calltable)
@@ -480,24 +483,18 @@ struct lh_class_t
 
 
 #ifdef __cplusplus
-class lh_library_calltable
+class lh_plugin_calltable
 {
 public:
     const char * (*lh_name) (void); /* Required */
     const char * (*lh_shortdesc) (void); /* Required */
-    const lh_buildinfo* (*lh_version) (int,int); /* Required */
     const char * (*lh_author) (void);
     const char * (*lh_homepage) (void);
     const char * (*lh_longdesc) (void);
     const lh_blob * (*lh_logo) (void); /* return blob containing JPG or PNG */
     const char * (*lh_load)(void *id, lh_callback_t, lh_systemstate*); /* return NULL for success, else error message */
     void (*lh_unload)(void);
-
-    /* Optional, but might be useful */
-    int (*lh_polling)();
-    int (*lh_notify)(int,void*);
-
-    /* Meaningful only for libraries supplying layout classes */
+    const lh_object_calltable *(*lh_calltable)(void);
     const lh_class ** (*lh_class_list)(void); /* return array of pointers to class info, end with NULL pointer */
 };
 #endif

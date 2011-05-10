@@ -61,7 +61,6 @@ public:
     }
     virtual const char *lh_load();
     virtual void lh_unload();
-    virtual int lh_notify(int,void*);
 
     const lh_buildinfo * lh_version( int amaj, int amin )
     {

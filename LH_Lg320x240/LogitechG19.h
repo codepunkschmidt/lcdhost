@@ -27,7 +27,6 @@ public:
     int buttons();
     const char* get_backlight(lh_device_backlight*) { return NULL; }
     const char* set_backlight(lh_device_backlight*) { return NULL; }
-    int lh_notify(int,void*) { return 0; }
 
     bool offline() const { return offline_; }
 

@@ -32,7 +32,6 @@ public:
     const char* set_backlight(lh_device_backlight*) { return NULL; }
     const char* close();
 
-    virtual int lh_notify(int,void*) { return 0; }
     const char* render_qimage(QImage *img);
 };
 

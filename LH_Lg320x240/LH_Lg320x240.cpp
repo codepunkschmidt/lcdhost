@@ -58,13 +58,6 @@ extern "C"
     }
 }
 
-int LH_Lg320x240::lh_notify(int note, void*param)
-{
-    Q_UNUSED(note);
-    Q_UNUSED(param);
-    return 0;
-}
-
 const char *LH_Lg320x240::lh_load()
 {
     Q_ASSERT( g19thread_ == 0 );

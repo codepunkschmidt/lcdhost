@@ -36,7 +36,7 @@ class LH_QtPlugin_Graph : public LH_QtPlugin
 public:
     LH_QtPlugin_Graph() : LH_QtPlugin() {}
 
-    const char * lh_name() { return "Graph (v1.30)"; }
+    const char * lh_name() { return "Graph"; }
     const char * lh_shortdesc() { return "Plots graphs of data items over time"; }
     const char * lh_author() { return "Andy \"Triscopic\" Bridges"; }
     const char * lh_homepage() { return "<a href=\"http://www.codeleap.co.uk\">CodeLeap</a>"; }
@@ -49,7 +49,7 @@ public:
             REVISION,
             LH_API_MAJOR,
             LH_API_MINOR,
-            "1.30",
+            "v1.31",
             "http://www.linkdata.se/lcdhost/version.php?arch=$ARCH"
         };
         Q_UNUSED( amaj );

@@ -62,6 +62,14 @@ void LH_NowPlaying_Reader::refresh()
 
     if(storeInfo(newInfo))
         emit changed();
+
+    if(playerFound_ && !updatedArtwork &&
+            (cachedArtwork_.album != newInfo.album || cachedArtwork_.artist != newInfo.artist)
+            )
+    {
+        updatedArtwork = get_folder_artwork(newInfo, artworkCachePath_, cachedArtwork_);
+    }
+
     if(!playerFound_ && currentTrack->artworkFileName()!="")
     {
         currentTrack->clearArtwork();

@@ -75,6 +75,7 @@ protected:
     LH_Qt_QStringList *setup_vertical_;
     LH_Qt_QSlider *setup_scrollrate_;
     LH_Qt_QSlider *setup_scrollstep_;
+    LH_Qt_QSlider *setup_scrollgap_;
 
     void setRenderHints( QPainter& p );
 
@@ -110,6 +111,7 @@ public:
     bool fontresize() const { return setup_fontresize_->value(); }
     int scrollrate() const { return setup_scrollrate_->value(); }
     int scrollstep() const { return setup_scrollstep_->value(); }
+    int scrollgap() const { return setup_scrollgap_->value(); }
 
     void setPixelHeight( int height );
     bool setText( QString newText ); // return true if text changed

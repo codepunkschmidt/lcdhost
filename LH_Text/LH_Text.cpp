@@ -652,48 +652,50 @@ QImage *LH_Text::render_qimage(int w, int h)
 
         painter.drawImage( target, textimage_, source );
 
-        if(horizontal()>=5)
+        if(horizontal()>=3)
         {
-            int pos;
-            int mod =  textimage_.width() + scrollgap();
-
-            pos = ( horizontal()==5? image_->width() - scrollposx_ : scrollposx_ - textimage_.width());
-            while(pos < image_->width())
+            if(horizontal()>=5)
             {
-                pos += mod;
-                target.moveLeft( pos );
-                painter.drawImage( target, textimage_, source );
-            }
+                int pos;
+                int mod =  textimage_.width() + scrollgap();
 
-            pos = ( horizontal()==5? image_->width() - scrollposx_ : scrollposx_ - textimage_.width() );
-            while(pos > 0)
-            {
-                pos -= mod;
-                target.moveLeft( pos );
-                painter.drawImage( target, textimage_, source );
-            }
-        }
+                pos = ( horizontal()==5? image_->width() - scrollposx_ : scrollposx_ - textimage_.width());
+                while(pos < image_->width())
+                {
+                    pos += mod;
+                    target.moveLeft( pos );
+                    painter.drawImage( target, textimage_, source );
+                }
 
-        if(vertical()>=5)
-        {
-            int pos;
-            int mod =  textimage_.height() + scrollgap();
-            pos = ( vertical()==5? image_->height() - scrollposy_ : scrollposy_ - textimage_.height() );
-            while(pos < image_->height())
-            {
-                pos += mod;
-                target.moveTop( pos );
-                painter.drawImage( target, textimage_, source );
+                pos = ( horizontal()==5? image_->width() - scrollposx_ : scrollposx_ - textimage_.width() );
+                while(pos > 0)
+                {
+                    pos -= mod;
+                    target.moveLeft( pos );
+                    painter.drawImage( target, textimage_, source );
+                }
             }
+        } else
+            if(vertical()>=5)
+            {
+                int pos;
+                int mod =  textimage_.height() + scrollgap();
+                pos = ( vertical()==5? image_->height() - scrollposy_ : scrollposy_ - textimage_.height() );
+                while(pos < image_->height())
+                {
+                    pos += mod;
+                    target.moveTop( pos );
+                    painter.drawImage( target, textimage_, source );
+                }
 
-            pos = ( vertical()==5? image_->height() - scrollposy_ : scrollposy_ - textimage_.height() );
-            while(pos > 0)
-            {
-                pos -= mod;
-                target.moveTop( pos );
-                painter.drawImage( target, textimage_, source );
+                pos = ( vertical()==5? image_->height() - scrollposy_ : scrollposy_ - textimage_.height() );
+                while(pos > 0)
+                {
+                    pos -= mod;
+                    target.moveTop( pos );
+                    painter.drawImage( target, textimage_, source );
+                }
             }
-        }
 
         painter.end();
     }

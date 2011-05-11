@@ -173,15 +173,19 @@ void LH_WeatherConnector::fetchWeather(bool is5Day, QXmlStreamReader& xml_, QHtt
     QString unitValue = "c";
     if(setup_units_type_->value()==1) unitValue = "f";
 
-    QUrl url;
+    QString host;
+    QString path;
     QString params = "";
     if(is5Day)
     {
-        url = QUrl::fromUserInput(QString("http://xml.weather.yahoo.com/forecastrss/%1_%2.xml").arg(setup_yahoo_5dayid_->value(),unitValue));
+        host = "xml.weather.yahoo.com";
+        path = QString("/forecastrss/%1_%2.xml").arg(setup_yahoo_5dayid_->value(),unitValue);
     } else {
-        url = QUrl::fromUserInput(QString("http://weather.yahooapis.com/forecastrss"));
-        params = QString("?w=%1&u=%2").arg(setup_yahoo_woeid_->value(),unitValue);
+        host = "weather.yahooapis.com";
+        path = QString("/forecastrss");
+        params = QString("w=%1&u=%2").arg(setup_yahoo_woeid_->value(),unitValue);
     }
+    QUrl url = QUrl::fromUserInput(QString("http://%1%2").arg(host,path));
 
     QNetworkProxyQuery npq(url);
     QList<QNetworkProxy> listOfProxies = QNetworkProxyFactory::systemProxyForQuery(npq);
@@ -191,9 +195,19 @@ void LH_WeatherConnector::fetchWeather(bool is5Day, QXmlStreamReader& xml_, QHtt
             http.setProxy(listOfProxies.at(0));
         }
 
-    if(debugHTTP) qDebug() << "LH_WeatherConnector: Fetch " << (is5Day? "5Day": "2Day") << " via " << url.toString() + params;
+    QString fullUrl = QString("http://%1%2?%3").arg(host,path,params);
+    if(debugHTTP) qDebug() << "LH_WeatherConnector: Fetch " << (is5Day? "5Day": "2Day") << " via " << fullUrl;
     http.setHost(url.host());
-    connectionId = http.get(url.path()+params);
+    connectionId = http.get(fullUrl);
+
+    /*
+    QHttpRequestHeader header("POST", QString("http://%1%2?%3").arg(host,path,params));
+    header.setValue( "Host", host );
+    header.setContentType("application/x-www-form-urlencoded");
+    header.setValue( "Accept-Language" , "fr-CA" );
+    http.setHost(host);
+    connectionId = http.request(header, params.toUtf8());
+    */
 }
 
 void LH_WeatherConnector::fetchWOEID()
@@ -312,7 +326,7 @@ void LH_WeatherConnector::openBrowser(QString key,int flags,int value)
 void LH_WeatherConnector::saveXMLResponse(QByteArray data, QString docType)
 {
     QDateTime now = QDateTime::currentDateTime();
-    QFile file(QString("c:\\lcdhost.weather.%1.%2.xml").arg(docType, now.toString("yyMMddhhmmsszzz")));
+    QFile file(QString("%3\\lcdhost.weather.%1.%2.xml").arg(docType, now.toString("yyMMddhhmmsszzz"), state()->dir_binaries));
     if (!file.open(QIODevice::WriteOnly | QIODevice::Text))
     {
         qWarning() << "LH_WeatherConnector: Unable to save XML data";

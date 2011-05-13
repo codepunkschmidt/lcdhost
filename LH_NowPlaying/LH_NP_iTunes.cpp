@@ -26,6 +26,7 @@
 
 #include "LH_QtPlugin_NowPlaying.h"
 
+#define Enable_iTunes_Events
 //#define iTunes_debug
 
 enum iTunesAppState
@@ -39,6 +40,7 @@ enum iTunesAppState
 static IiTunes *itunes = NULL;
 static iTunesAppState itunesState = closed;
 
+#ifdef Enable_iTunes_Events
 class CiTunesEventHandler : public _IiTunesEvents
 {
 private:
@@ -133,6 +135,7 @@ void detach_iTunesEventHandler()
     icp->Release();
     iTunesEventHandler = NULL;
 }
+#endif
 
 /*
  * musictracker
@@ -157,7 +160,6 @@ void detach_iTunesEventHandler()
  * 02111-1301, USA.
  *
  */
-
 
 void close_itunes_connection();
 
@@ -192,7 +194,9 @@ bool open_itunes_connection()
 
     itunesState=open;
     qDebug() << "iTunes says hello";
-    attach_iTunesEventHandler();
+    #ifdef Enable_iTunes_Events
+        attach_iTunesEventHandler();
+    #endif
 
     #ifdef iTunes_debug
         qDebug() << "iTunes: Connected OK";
@@ -201,12 +205,15 @@ bool open_itunes_connection()
     return true;
 }
 
+
 void close_itunes_connection()
 {
     if(itunes!=NULL)
     {
-        if(iTunesEventHandler!=NULL)
-            detach_iTunesEventHandler();
+        #ifdef Enable_iTunes_Events
+            if(iTunesEventHandler!=NULL)
+                detach_iTunesEventHandler();
+        #endif
         #ifdef iTunes_debug
             qDebug() << "iTunes: Preparing to disconnect";
         #endif
@@ -334,9 +341,6 @@ bool save_itunes_artwork(IITTrack *track, QString artworkPath, artworkDescriptio
     return success;
 }
 
-
-
-
 bool
 get_itunes_info(TrackInfo &ti, QString artworkPath, artworkDescription &cachedArtwork, bool &updatedArtwork)
 {
@@ -448,3 +452,4 @@ get_itunes_info(TrackInfo &ti, QString artworkPath, artworkDescription &cachedAr
 
     return success;
 }
+

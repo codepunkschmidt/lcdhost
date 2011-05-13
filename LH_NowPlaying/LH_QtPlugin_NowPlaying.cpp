@@ -62,11 +62,11 @@ bool get_folder_artwork(TrackInfo newInfo, QString artworkCachePath, artworkDesc
     return false;
 }
 
-void close_itunes();
+void close_itunes_connection();
 
 LH_NowPlaying_Reader::~LH_NowPlaying_Reader() {
     clearArtwork();
-    close_itunes();
+    close_itunes_connection();
 }
 
 void LH_NowPlaying_Reader::refresh()
@@ -122,21 +122,24 @@ bool LH_NowPlaying_Reader::storeInfo(TrackInfo newInfo)
 
 const char *LH_QtPlugin_NowPlaying::lh_load() {
     t.start();
+    allowRefreshing_ = true;
     currentTrack = new LH_NowPlaying_Reader(this);
     return NULL;
 }
 
 void LH_QtPlugin_NowPlaying::lh_unload() {
+    allowRefreshing_ = false;
     currentTrack->deleteLater();
 }
 
 int LH_QtPlugin_NowPlaying::lh_notify(int code, void *param) {
     Q_UNUSED(code);
     Q_UNUSED(param);
-    if (t.elapsed()>=500)
+    if (t.elapsed()>=500 && allowRefreshing_)
     {
         t.restart();
-        currentTrack->refresh();
+        if(!currentTrack->isRunning())
+                currentTrack->run();
     }
     return 0;
 }

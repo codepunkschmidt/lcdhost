@@ -464,7 +464,7 @@ typedef struct lh_instance_calltable_t
     void (*obj_delete)(void*); /**< delete this instance of the class */
 } lh_instance_calltable;
 
-#define lh_instance_calltable_NULL { sizeof(lh_instance_calltable), lh_object_calltable_NULL, 0,0,0,0,0,0,0 }
+#define lh_instance_calltable_NULL { sizeof(lh_instance_calltable), lh_object_calltable_NULL, 0,0,0,0,0,0,0,0,0 }
 
 /**
   This structure gives basic information about the class.

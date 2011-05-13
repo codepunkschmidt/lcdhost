@@ -35,6 +35,8 @@
   **/
 
 #include "LH_QtPlugin_NowPlaying.h"
+#include <QFileInfo>
+#include <QDebug>
 
 LH_PLUGIN(LH_QtPlugin_NowPlaying);
 lh_buildinfo buildinfo =
@@ -55,6 +57,23 @@ bool get_itunes_info(TrackInfo &ti, QString artworkPath, artworkDescription &cac
 bool get_winamp_info(TrackInfo& ti);
 bool get_msn_compat_info(struct TrackInfo &ti);
 
+bool get_folder_artwork(TrackInfo newInfo, QString artworkCachePath, artworkDescription &cachedArtwork)
+{
+    if(newInfo.album == cachedArtwork.album || newInfo.artist == cachedArtwork.artist)
+        return false;
+
+    QString folderImage = QFileInfo(newInfo.file).absolutePath()+"/folder.jpg";
+    if(QFile::exists(folderImage))
+        if(QFile::copy(folderImage, artworkCachePath+"/art.jpg"))
+        {
+            cachedArtwork.album = newInfo.album;
+            cachedArtwork.artist = newInfo.artist;
+            cachedArtwork.fileName = artworkCachePath+"/art.jpg";
+            return true;
+        }
+    return false;
+}
+
 void close_itunes();
 
 LH_NowPlaying_Reader::~LH_NowPlaying_Reader() {
@@ -74,6 +93,21 @@ void LH_NowPlaying_Reader::refresh()
 
     if(storeInfo(newInfo))
         emit changed();
+
+    if(playerFound_ && !updatedArtwork &&
+            (cachedArtwork_.album != newInfo.album || cachedArtwork_.artist != newInfo.artist)
+            )
+    {
+        currentTrack->clearArtwork();
+        updatedArtwork = get_folder_artwork(newInfo, artworkCachePath_, cachedArtwork_);
+        if(!updatedArtwork)
+        {
+            cachedArtwork_.album = newInfo.album;
+            cachedArtwork_.artist != newInfo.artist;
+            updatedArtwork = true;
+        }
+    }
+
     if(!playerFound_ && currentTrack->artworkFileName()!="")
     {
         currentTrack->clearArtwork();

@@ -89,7 +89,9 @@ LH_Text::LH_Text() : LH_QtInstance()
     connect( setup_bgcolor_, SIGNAL(changed()), this, SLOT(makeTextImage()) );
 
     setup_horizontal_ = new LH_Qt_QStringList( this, tr("Horizontal"), QStringList() << tr("Center") << tr("Left")
-                                               << tr("Right") << tr("Scroll") << tr("Reverse scroll"), LH_FLAG_AUTORENDER );
+                                               << tr("Right") << tr("Scroll (Marquee)") << tr("Reverse scroll (Marquee)")
+                                               << tr("Scroll (Loop)") << tr("Reverse scroll (Loop)")
+                                              , LH_FLAG_AUTORENDER );
     setup_horizontal_->setHelp( "<p>How to handle the text if it is wider than "
                                 "the available horizontal area. You can either adjust "
                                 "the text to the left, center or right, or you can "
@@ -98,7 +100,8 @@ LH_Text::LH_Text() : LH_QtInstance()
     connect( setup_horizontal_, SIGNAL(changed()), this, SLOT(requestPolling()) );
 
     setup_vertical_ = new LH_Qt_QStringList( this, tr("Vertical"), QStringList() << tr("Center") << tr("Top")
-                                             << tr("Bottom") << tr("Scroll") << tr("Reverse scroll"), LH_FLAG_AUTORENDER );
+                                             << tr("Bottom") << tr("Scroll (Marquee)") << tr("Reverse scroll (Marquee)")
+                                            << tr("Scroll (Loop)") << tr("Reverse scroll (Loop)"), LH_FLAG_AUTORENDER );
     setup_vertical_->setHelp( "<p>How to handle the text if it is taller than "
                                 "the available vertical area. You can either adjust "
                                 "the text to the top, center or bottom, or you can "
@@ -112,6 +115,9 @@ LH_Text::LH_Text() : LH_QtInstance()
 
     setup_scrollstep_ = new LH_Qt_QSlider( this, tr("Scroll step"), 2, 1, 20, LH_FLAG_AUTORENDER );
     setup_scrollstep_->setHelp( "<p>How large each scroll step is.</p>");
+
+    setup_scrollgap_ = new LH_Qt_QSlider( this, tr("Scroll gap"), 10, 0, 340, LH_FLAG_AUTORENDER );
+    setup_scrollgap_->setHelp( "<p>How large a gap between \"loop\" scrolling text.</p>");
 
     textimage_ = makeImage();
 
@@ -436,10 +442,20 @@ int LH_Text::polling()
 
     if( image_ )
     {
+        int mody =  textimage_.height() + scrollgap();
+        int ymax = (mody + image_->height() );
+        if( vertical() >= 5 )
+            ymax = ( (image_->height() / mody)+1 ) * mody;
+
+        int modx =  textimage_.width() + scrollgap();
+        int xmax = (modx + image_->width());
+        if( horizontal() >= 5 )
+            xmax = ( (image_->width()  / modx)+1 ) * modx;
+
         if( horizontal() >= 3 )
         {
             scrollposx_ += scrollstep();
-            if( scrollposx_ > (textimage_.width() + image_->width() ) )
+            if( scrollposx_ > xmax )
             {
                 scrollposx_ = 0;
                 if( vertical() >= 3 )
@@ -453,7 +469,7 @@ int LH_Text::polling()
             scrollposy_ += scrollstep();
         }
 
-        if( scrollposy_ > (textimage_.height() + image_->height() ))
+        if( scrollposy_ > ymax)
         {
             scrollposy_ = 0;
         }
@@ -608,9 +624,11 @@ QImage *LH_Text::render_qimage(int w, int h)
             target.moveLeft( image_->width() - textimage_.width() );
             break;
         case 3: // scroll
+        case 5: // scroll
             target.moveLeft( image_->width() - scrollposx_ );
             break;
         case 4: // reverse scroll
+        case 6: // reverse scroll
             target.moveLeft( scrollposx_ - textimage_.width() );
             break;
         }
@@ -627,14 +645,62 @@ QImage *LH_Text::render_qimage(int w, int h)
             target.moveTop( image_->height() - textimage_.height() );
             break;
         case 3: // scroll
+        case 5: // scroll
             target.moveTop( image_->height() - scrollposy_ );
             break;
         case 4: // reverse scroll
+        case 6: // reverse scroll
             target.moveTop( scrollposy_ - textimage_.height() );
             break;
         }
 
         painter.drawImage( target, textimage_, source );
+
+        if(horizontal()>=3)
+        {
+            if(horizontal()>=5)
+            {
+                int pos;
+                int mod =  textimage_.width() + scrollgap();
+
+                pos = ( horizontal()==5? image_->width() - scrollposx_ : scrollposx_ - textimage_.width());
+                while(pos < image_->width())
+                {
+                    pos += mod;
+                    target.moveLeft( pos );
+                    painter.drawImage( target, textimage_, source );
+                }
+
+                pos = ( horizontal()==5? image_->width() - scrollposx_ : scrollposx_ - textimage_.width() );
+                while(pos > 0)
+                {
+                    pos -= mod;
+                    target.moveLeft( pos );
+                    painter.drawImage( target, textimage_, source );
+                }
+            }
+        } else
+            if(vertical()>=5)
+            {
+                int pos;
+                int mod =  textimage_.height() + scrollgap();
+                pos = ( vertical()==5? image_->height() - scrollposy_ : scrollposy_ - textimage_.height() );
+                while(pos < image_->height())
+                {
+                    pos += mod;
+                    target.moveTop( pos );
+                    painter.drawImage( target, textimage_, source );
+                }
+
+                pos = ( vertical()==5? image_->height() - scrollposy_ : scrollposy_ - textimage_.height() );
+                while(pos > 0)
+                {
+                    pos -= mod;
+                    target.moveTop( pos );
+                    painter.drawImage( target, textimage_, source );
+                }
+            }
+
         painter.end();
     }
 

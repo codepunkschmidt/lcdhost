@@ -75,6 +75,7 @@ class LH_WebKit : public LH_QtInstance
     QLocalSocket *sock_;
     QTime lastpong_;
     bool sent_html_;
+    bool parsingEnabled_;
     WebKitData kitdata_;
 
     LH_ParseThread *parseThread;

@@ -41,7 +41,7 @@
 
 LH_WebKit::LH_WebKit(const bool enableParsing)
 {
-
+    parsingEnabled_ = enableParsing;
     int parseFlags = (!enableParsing? LH_FLAG_HIDDEN | LH_FLAG_READONLY | LH_FLAG_NOSAVE : 0);
 
     zoom_ = new LH_Qt_QSlider(this,"Zoom",10,1,20,LH_FLAG_FOCUS);
@@ -218,22 +218,28 @@ void LH_WebKit::sendData( bool resize )
                 WebKitCommand('R', scaled_size()).write(sock_);
             }
             else
-            {
-                if(parseThread->isRunning())
+                if(parsingEnabled_)
                 {
-                    WebKitCommand(0, scaled_size(),url_,"Aborting...").write(sock_);
-                    parseThread->terminate();
-                }
-                WebKitCommand(0, scaled_size(),url_,"Parsing...").write(sock_);
-                parseThread->parsedHtml = setup_template_->value();
-                parseThread->sourceHtml = html_;
-                parseThread->regex = setup_regexp_->value();
-                parseThread->isLazy = setup_regexp_lazy_->value();
-                parseThread->doParse = setup_parse_->value();
-                parseThread->tokensList = getTokens();
+                    if(parseThread->isRunning())
+                    {
+                        WebKitCommand(0, scaled_size(),url_,"Aborting...").write(sock_);
+                        parseThread->terminate();
+                    }
+                    WebKitCommand(0, scaled_size(),url_,"Parsing...").write(sock_);
+                    parseThread->parsedHtml = setup_template_->value();
+                    parseThread->sourceHtml = html_;
+                    parseThread->regex = setup_regexp_->value();
+                    parseThread->isLazy = setup_regexp_lazy_->value();
+                    parseThread->doParse = setup_parse_->value();
+                    parseThread->tokensList = getTokens();
 
-                parseThread->start();
-            }
+                    parseThread->start();
+                }
+                else
+                {
+                    WebKitCommand(0, scaled_size(),url_,html_).write(sock_);
+                    sent_html_ = true;
+                }
         }
     }
 }

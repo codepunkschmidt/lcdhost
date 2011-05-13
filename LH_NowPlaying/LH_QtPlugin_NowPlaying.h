@@ -93,7 +93,7 @@ class LH_QtPlugin_NowPlaying : public LH_QtPlugin
     QTime t;
 
 public:
-    const char * lh_name() { return "Now Playing (v2.00)"; }
+    const char * lh_name() { return "Now Playing"; }
     const char * lh_shortdesc() { return "Displays the currently playing track from various music players."; }
     const char * lh_author() { return "Andy \"Triscopic\" Bridges"; }
     const char * lh_homepage() { return "<a href=\"http://www.codeleap.co.uk\">CodeLeap</a>"; }

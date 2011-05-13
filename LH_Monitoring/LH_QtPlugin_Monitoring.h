@@ -31,7 +31,7 @@
 class LH_QtPlugin_Monitoring : public LH_QtPlugin
 {
 public:
-    const char * lh_name() { return "Monitoring (v1.03)"; }
+    const char * lh_name() { return "Monitoring"; }
     const char * lh_shortdesc() { return "Connects to a variety of 3rd party applications and reports statistics such as Temperatures, Fan Speeds, Voltages, etc."; }
     const char * lh_author() { return "Andy \"Triscopic\" Bridges"; }
     const char * lh_homepage() { return "<a href=\"http://www.codeleap.co.uk\">CodeLeap</a>"; }

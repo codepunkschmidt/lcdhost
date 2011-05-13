@@ -41,8 +41,9 @@
 #include "../LH_QtPlugin.h"
 #include "utils.h"
 #include <QFile>
+#include <QThread>
 
-class LH_NowPlaying_Reader: public QObject
+class LH_NowPlaying_Reader: public QThread //QObject
 {
     Q_OBJECT
     bool playerFound_;
@@ -51,7 +52,7 @@ class LH_NowPlaying_Reader: public QObject
     artworkDescription cachedArtwork_;
     bool storeInfo(TrackInfo newInfo);
 public:
-    LH_NowPlaying_Reader(LH_QtPlugin *parent): QObject(parent) { artworkCachePath_ = parent->state()->dir_plugins; return; }
+    LH_NowPlaying_Reader(LH_QtPlugin *parent): QThread((QObject*)parent) { artworkCachePath_ = parent->state()->dir_plugins; return; }
     ~LH_NowPlaying_Reader();
 
     TrackInfo info() { return info_; }
@@ -68,6 +69,7 @@ public:
     }
 
     void refresh();
+    virtual void run() { refresh(); }
 
 signals:
     void changed();
@@ -81,6 +83,7 @@ extern LH_NowPlaying_Reader* currentTrack;
 class LH_QtPlugin_NowPlaying : public LH_QtPlugin
 {
     QTime t;
+    bool allowRefreshing_;
 
 public:
     const char * lh_name() { return "Now Playing"; }
@@ -89,20 +92,98 @@ public:
     const char * lh_homepage() { return "<a href=\"http://www.codeleap.co.uk\">CodeLeap</a>"; }
     const char * lh_longdesc()
     {
-        return "This plugin provides a text item that can display the currently playing track in one of several popular "
-               "3rd-party music players: "
-               "<ul>"
-               "<li><a href=\"http://www.winamp.com/\">Winamp</a>: Full, native support.<br/></li>"
-               "<li><a href=\"http://www.apple.com/itunes/\">iTunes</a>: Full, native support.<br/></li>"
-               "<li><a href=\"http://www.foobar2000.org/\">foobar2000</a>: Partial support via the Foobar_Winamp_Spam plugin (no specific home page but v0.98 is located <a href=\"http://home.comcast.net/~selyb/\">here</a>)."
-               "<br/><br/>N.B. Currently Foobar supports the progress bar but not seperate album/artist/track fields.<br/></li>"
-               "<li>Windows Media Player: Partial support via the \"Windows Live Messenger Music Plugin\", found under Plugins &gt; Background.<br/></li>"
-               "<li><a href=\"http://www.videolan.org/vlc/\">VLC</a>: Partial support via the \"MSN Now Playing\" interface, found under Preferences &gt; All &gt; Interface &gt; Control Interfaces.<br/></li>"
-               "<li><a href=\"http://www.spotify.com/\">Spotify</a>: Partial, native support (still via the \"MSN Now Playing\" api, but Spotify does this by default).<br/></li>"
-               "<li>...and any other player that supports the MSN Now Playing interface, such as <a href=\"http://www.last.fm/download/\">Last.fm</a>, <a href=\"http://getopenpandora.appspot.com/\">OpenPandora</a>, <a href=\"http://getsongbird.com/\">Songbird</a>(+<a href=\"http://addons.songbirdnest.com/addon/1204\">LiveTweeter</a>), <a href=\"http://www.zune.net\">Zune</a> and others."
-               "<br/><br/>Note #1: WMP, VLC, Spotify and any other player using the MSN interface will not support the progress bar but should support seperate Artist, Album & Track details due to limitations in the MSN protocol."
-               "<br/><br/>Note #2: Also, please be aware the MSN method may not function correctly if another application is seeking to receive music details in this way, e.g. MSN / Windows Live Messenger. Whilst *most* music players check for multiple receivers some do not. In this case one application should receive the now playing details, whilst others will not. If this does affect your music player it is a problem with the player, not this plugin.</li>"
-               "</ul>";
+        return  "This plugin provides displays information about the currently playing track in one of several popular "
+                "3rd-party music players: "
+                "<style type='text/css'>"
+                "  .yes  {background-color:#E0FFE0; padding: 2px 4px 2px 4px; color: darkgreen}"
+                "  .no   {background-color:#FFE0E0; padding: 2px 4px 2px 4px; color: red}"
+                "  .part {background-color:#F8F8D0; padding: 2px 4px 2px 4px; color: darkorange}"
+                "  .api  {background-color:#E0E0FF; padding: 2px 4px 2px 4px}"
+                "  .info {background-color:#EBEBEB; padding: 2px 4px 2px 4px}"
+                "  .head {background-color:#707070; padding: 2px 4px 2px 4px; color: white;}"
+                "</style>"
+                "<br/><table>"
+                "<tr>"
+                "<th class='head'>Player</th>"
+                "<th class='head'>API</th>"
+                "<th class='head'>Separate Album, <br/>Artist & Track</th>"
+                "<th class='head'>Progress Bar & <br/>Played Times</th>"
+                "<th class='head'>Album<br/>Artwork</th>"
+                "</tr>"
+
+                "<tr>"
+                "<td class='info' rowspan='2'><a href=\"http://www.apple.com/itunes/\">iTunes</a></td>"
+                "<td align='center' class='api'>iTunes</td>"
+                "<td align='center' class='yes'>Yes</td>"
+                "<td align='center' class='yes'>Yes</td>"
+                "<td align='center' class='yes'>Yes</td>"
+                "</tr>"
+                "<tr>"
+                "<td class='info' colspan='4'>Full, native support. Just run iTunes and it should work immediately.</td>"
+                "</tr>"
+
+                "<tr>"
+                "<td class='info' rowspan='2'><a href=\"http://www.winamp.com/\">Winamp</a></td>"
+                "<td align='center' class='api'>Winamp</td>"
+                "<td align='center' class='yes'>Yes</td>"
+                "<td align='center' class='yes'>Yes</td>"
+                "<td align='center' class='part'>Partial<sup>1</sup></td>"
+                "</tr>"
+                "<tr>"
+                "<td class='info' colspan='4'>Full, native support. Just run Winamp and it should work immediately.</td>"
+                "</tr>"
+
+                "<tr>"
+                "<td class='info' rowspan='2'><a href=\"http://www.foobar2000.org/\">foobar2000</a></td>"
+                "<td align='center' class='api'>Winamp</td>"
+                "<td align='center' class='no'>No</td>"
+                "<td align='center' class='yes'>Yes</td>"
+                "<td align='center' class='no'>No</td>"
+                "</tr>"
+                "<tr>"
+                "<td class='info' colspan='4'>Requires the Foobar_Winamp_Spam plugin (no specific home page but v0.98 is located <a href=\"http://home.comcast.net/~selyb/\">here</a>)</td>"
+                "</tr>"
+
+                "<tr>"
+                "<td class='info' rowspan='2'><a href='http://windows.microsoft.com/en-US/windows/products/windows-media-player'>Windows Media <br/>Player</a></td>"
+                "<td align='center' class='api'>MSN<sup>2</sup></td>"
+                "<td align='center' class='yes'>Yes</td>"
+                "<td align='center' class='no'>No<sup>3</sup></td>"
+                "<td align='center' class='no'>No<sup>3</sup></td>"
+                "</tr>"
+                "<tr>"
+                "<td class='info' colspan='4'>Requires the \"Windows Live Messenger Music Plugin\", found under Plugins &gt; Background.</td>"
+                "</tr>"
+
+                "<tr>"
+                "<td class='info' rowspan='2'><a href=\"http://www.videolan.org/vlc/\">VLC Player</a></td>"
+                "<td align='center' class='api'>MSN<sup>2</sup></td>"
+                "<td align='center' class='yes'>Yes</td>"
+                "<td align='center' class='no'>No<sup>3</sup></td>"
+                "<td align='center' class='no'>No<sup>3</sup></td>"
+                "</tr>"
+                "<tr>"
+                "<td class='info' colspan='4'>Requires the \"MSN Now Playing\" interface to be enabled, found under Preferences &gt; All &gt; Interface &gt; Control Interfaces.</td>"
+                "</tr>"
+
+                "<tr>"
+                "<td class='info' rowspan='2'><a href=\"http://www.spotify.com/\">Spotify</a></td>"
+                "<td align='center' class='api'>MSN<sup>2</sup></td>"
+                "<td align='center' class='yes'>Yes</td>"
+                "<td align='center' class='no'>No<sup>3</sup></td>"
+                "<td align='center' class='no'>No<sup>3</sup></td>"
+                "</tr>"
+                "<tr>"
+                "<td class='info' colspan='4'>Partial, native support. Just run Spotify and it should work immediately.</td>"
+                "</tr>"
+
+                "</table>"
+                "<br/><br/>"
+                "...and any other player that supports the MSN Now Playing interface, such as <a href=\"http://www.last.fm/download/\">Last.fm</a>, <a href=\"http://getopenpandora.appspot.com/\">OpenPandora</a>, <a href=\"http://getsongbird.com/\">Songbird</a>(+<a href=\"http://addons.songbirdnest.com/addon/1204\">LiveTweeter</a>), <a href=\"http://www.zune.net\">Zune</a> and others."
+                "<br/><br/><sup>1</sup> Album artwork is only available from Winamp if the music's folder contains &quot;folder.jpg&quot;."
+                "<br/><br/><sup>2</sup> Tests suggest the MSN interface does not function under 64-bit Windows."
+                "<br/><br/><sup>3</sup> The MSN interface only supports the seperate Artist, Album & Track details, hence players using this system cannot display the progress bar or album art."
+                ;
     }
     const lh_buildinfo * lh_version( int amaj, int amin )
     {

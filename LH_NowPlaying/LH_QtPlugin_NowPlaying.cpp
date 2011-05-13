@@ -42,7 +42,7 @@ LH_QtPlugin_NowPlaying thePlugin;
 LH_NowPlaying_Reader* currentTrack;
 
 bool get_itunes_info(TrackInfo &ti, QString artworkPath, artworkDescription &cachedArtwork, bool &updatedArtwork);
-bool get_winamp_info(TrackInfo& ti);
+bool get_winamp_info(TrackInfo &ti);
 bool get_msn_compat_info(struct TrackInfo &ti);
 
 bool get_folder_artwork(TrackInfo newInfo, QString artworkCachePath, artworkDescription &cachedArtwork)
@@ -65,8 +65,8 @@ bool get_folder_artwork(TrackInfo newInfo, QString artworkCachePath, artworkDesc
 void close_itunes_connection();
 
 LH_NowPlaying_Reader::~LH_NowPlaying_Reader() {
-    clearArtwork();
     close_itunes_connection();
+    //clearArtwork();
 }
 
 void LH_NowPlaying_Reader::refresh()
@@ -122,24 +122,23 @@ bool LH_NowPlaying_Reader::storeInfo(TrackInfo newInfo)
 
 const char *LH_QtPlugin_NowPlaying::lh_load() {
     t.start();
-    allowRefreshing_ = true;
     currentTrack = new LH_NowPlaying_Reader(this);
     return NULL;
 }
 
 void LH_QtPlugin_NowPlaying::lh_unload() {
-    allowRefreshing_ = false;
+    //currentTrack->clearArtwork();
     currentTrack->deleteLater();
 }
 
 int LH_QtPlugin_NowPlaying::lh_notify(int code, void *param) {
     Q_UNUSED(code);
     Q_UNUSED(param);
-    if (t.elapsed()>=500 && allowRefreshing_)
+    if (t.elapsed()>=500)
     {
         t.restart();
         if(!currentTrack->isRunning())
-                currentTrack->run();
+             currentTrack->run();
     }
     return 0;
 }

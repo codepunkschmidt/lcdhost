@@ -73,7 +73,7 @@ protected:
     LH_Qt_int *setup_discrete_count_;
 
 public:
-    LH_Bar( const char *name, LH_QtPlugin *parent = 0 );
+    LH_Bar();
 
     QImage *render_qimage( int w, int h );
 

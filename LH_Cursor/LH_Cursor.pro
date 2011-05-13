@@ -21,7 +21,8 @@ HEADERS += \
     LH_CursorImage.h \
     LH_CursorAction.h \
     LH_QuickAction.h \
-    LH_CursorInstance.h
+    LH_CursorInstance.h \
+    actionType.h
 
 SOURCES += \
     LH_CursorController.cpp \
@@ -36,4 +37,5 @@ SOURCES += \
     LH_CursorImage.cpp \
     LH_CursorAction.cpp \
     LH_QuickAction.cpp \
-    LH_CursorInstance.cpp
+    LH_CursorInstance.cpp \
+    actionType.cpp

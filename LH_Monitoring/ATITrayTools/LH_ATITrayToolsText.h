@@ -8,7 +8,7 @@ class LH_ATITrayToolsText : public LH_MonitoringText
 {
     Q_OBJECT
 public:
-    LH_ATITrayToolsText( const char *name );
+    LH_ATITrayToolsText();
     static lh_class *classInfo();
 };
 

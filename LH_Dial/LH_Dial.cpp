@@ -45,11 +45,16 @@ static inline uint PREMUL(uint x)
     return x;
 }
 
-LH_Dial::LH_Dial( const char *name, LH_QtPlugin *parent ) : LH_QtInstance( name, 0, parent )
+LH_Dial::LH_Dial()
 {
     min_ = max_ = 0.0;
     polling_on_ = false;
     isClock = false;
+}
+
+const char *LH_Dial::init(const lh_systemstate *state, const char *name, const lh_class *cls)
+{
+    LH_QtInstance::init( state, name, cls );
 
     faceImage_ = new QImage();
 
@@ -144,6 +149,7 @@ LH_Dial::LH_Dial( const char *name, LH_QtPlugin *parent ) : LH_QtInstance( name,
     changeSelectedNeedle();
     changeFaceStyle();
     changeNeedleStyle();
+    return 0;
 }
 
 LH_Dial::~LH_Dial()

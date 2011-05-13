@@ -47,7 +47,7 @@ protected:
     LH_Qt_QString *setup_format_;
 
 public:
-    LH_TextDate( const char *name ) : LH_Text(name)
+    LH_TextDate() : LH_Text()
     {
         setup_format_ = new LH_Qt_QString(this,"<a href=\"http://doc.trolltech.com/4.6/qdate.html#toString\">Format</a>","yyyy-MM-dd dddd");
         setup_format_->setHelp("<p>Format to use. Common formats include:</p>"

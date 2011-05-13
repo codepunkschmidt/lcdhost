@@ -58,7 +58,7 @@ lh_class *LH_TextFile::classInfo()
     return &classinfo;
 }
 
-LH_TextFile::LH_TextFile( const char *name ) : LH_Text(name)
+LH_TextFile::LH_TextFile() : LH_Text()
 {
     setup_file_ = new LH_Qt_QFileInfo( this, tr("File"), QFileInfo(), LH_FLAG_AUTORENDER );
     setup_file_->setOrder(-1);

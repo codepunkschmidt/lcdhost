@@ -53,7 +53,7 @@ protected:
                             QString title, QColor pen_color, QColor bg_color, bool low_value,
                             LH_Qt_float **thresh_flt = 0, LH_Qt_int **thresh_int = 0 );
 public:
-    LH_MonitoringText(const char *name);
+    LH_MonitoringText();
     ~LH_MonitoringText();
 
     QColor pencolor();

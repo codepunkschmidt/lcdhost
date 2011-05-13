@@ -42,7 +42,7 @@
 #include "utils.h"
 #include <QFile>
 
-class LH_NowPlaying_Reader: public QObject
+class LH_NowPlaying_Reader : public QObject
 {
     Q_OBJECT
     bool playerFound_;
@@ -50,8 +50,18 @@ class LH_NowPlaying_Reader: public QObject
     TrackInfo info_;
     artworkDescription cachedArtwork_;
     bool storeInfo(TrackInfo newInfo);
+
 public:
-    LH_NowPlaying_Reader(LH_QtPlugin *parent): QObject(parent) { artworkCachePath_ = parent->state()->dir_plugins; return; }
+    LH_NowPlaying_Reader(LH_QtPlugin *parent): QObject(parent)
+    {
+        const char *dir_data_p = 0;
+        parent->callback( lh_cb_dir_data, &dir_data_p );
+        if( dir_data_p ) artworkCachePath_ = dir_data_p;
+        Q_ASSERT( artworkCachePath_.endsWith('/') );
+        artworkCachePath_.append("artworkcache/");
+        return;
+    }
+
     ~LH_NowPlaying_Reader();
 
     TrackInfo info() { return info_; }
@@ -104,28 +114,9 @@ public:
                "<br/><br/>Note #2: Also, please be aware the MSN method may not function correctly if another application is seeking to receive music details in this way, e.g. MSN / Windows Live Messenger. Whilst *most* music players check for multiple receivers some do not. In this case one application should receive the now playing details, whilst others will not. If this does affect your music player it is a problem with the player, not this plugin.</li>"
                "</ul>";
     }
-    const lh_buildinfo * lh_version( int amaj, int amin )
-    {
-        static lh_buildinfo buildinfo =
-        {
-            LH_BUILDINFO_SIG,
-            sizeof(lh_buildinfo),
-            REVISION,
-            LH_API_MAJOR,
-            LH_API_MINOR,
-            "2.10",
-            "http://www.linkdata.se/lcdhost/version.php?arch=$ARCH"
-        };
-        Q_ASSERT( amaj == LH_API_MAJOR );
-        Q_ASSERT( amin >= LH_API_MINOR );
-        return &buildinfo;
-    }
-
     const char *lh_load();
     void lh_unload();
     int lh_notify(int, void *);
 };
-
-extern LH_QtPlugin_NowPlaying thePlugin;
 
 #endif // LH_QTPLUGIN_NOWPLAYING_H

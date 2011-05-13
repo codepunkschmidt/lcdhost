@@ -23,5 +23,15 @@
  **/
 
 #include "LH_QtPlugin_Cursor.h"
+LH_PLUGIN(LH_QtPlugin_Cursor)
 
-LH_QtPlugin_Cursor thePlugin;
+lh_buildinfo buildinfo =
+{
+    LH_BUILDINFO_SIG,
+    sizeof(lh_buildinfo),
+    REVISION,
+    LH_API_MAJOR,
+    LH_API_MINOR,
+    "0.31",
+    "http://www.linkdata.se/lcdhost/version.php?arch=$ARCH"
+};

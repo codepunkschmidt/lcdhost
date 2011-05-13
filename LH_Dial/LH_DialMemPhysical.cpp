@@ -29,7 +29,7 @@
 class LH_DialMemPhysical : public LH_Dial
 {
 public:
-    LH_DialMemPhysical( const char *name, LH_QtPlugin *parent = 0 ) : LH_Dial( name, parent )
+    LH_DialMemPhysical()
     {
         setMin(0.0);
         setMax(1000.0);

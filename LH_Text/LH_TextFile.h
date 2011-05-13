@@ -51,7 +51,7 @@ protected:
     LH_Qt_QFileInfo *setup_file_;
 
 public:
-    LH_TextFile( const char *name );
+    LH_TextFile();
 
     int notify( int, void* );
     void checkFile();

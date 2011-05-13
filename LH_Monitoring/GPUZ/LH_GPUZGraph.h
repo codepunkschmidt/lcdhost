@@ -8,7 +8,7 @@ class LH_GPUZGraph : public LH_MonitoringGraph
 {
     Q_OBJECT
 public:
-    LH_GPUZGraph( const char *name, LH_QtPlugin *parent );
+    LH_GPUZGraph();
     static lh_class *classInfo();
 };
 

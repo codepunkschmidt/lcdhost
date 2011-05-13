@@ -56,10 +56,10 @@ inline void qUnused(T &x) { (void)x; }
 #endif
 
 LH_SIGNATURE();
+static lh_buildinfo bi = LH_STD_BUILDINFO;
 
 void *lh_id;
 lh_callback_t lh_callback;
-lh_systemstate *lh_sysinfo;
 
 /**************************************************************************
 ** Object Image
@@ -72,6 +72,7 @@ typedef struct _lh_image_s
 {
     char filename[256];
     lh_blob *blob;
+    const lh_systemstate *state;
     lh_setup_item setup_filename;
     lh_setup_item *setup_array[2];
 } lh_image;
@@ -79,10 +80,8 @@ typedef struct _lh_image_s
 /**
   image_new() allocates a new instance of this class and returns it.
   */
-static void * image_new( const char *name, const lh_class *cls )
+static void * image_new()
 {
-    Q_UNUSED(name);
-    Q_UNUSED(cls);
     lh_image *img;
 
     img = malloc( sizeof(lh_image) );
@@ -90,6 +89,7 @@ static void * image_new( const char *name, const lh_class *cls )
     {
         memset( img, 0, sizeof(img) );
         img->blob = NULL;
+        img->state = 0;
         img->setup_filename.name = "Filename";
         img->setup_filename.help = NULL;
         img->setup_filename.type = lh_type_string_filename;
@@ -103,6 +103,16 @@ static void * image_new( const char *name, const lh_class *cls )
 
     return NULL;
 }
+
+static const char *image_init( void *obj, const lh_systemstate *state, const char *name, const lh_class *cls )
+{
+    lh_image *img = obj;
+    Q_UNUSED(name);
+    Q_UNUSED(cls);
+    img->state = state;
+    return 0;
+}
+
 
 /**
   Since we store the setup array inside our struct, and do
@@ -237,13 +247,13 @@ static const lh_blob * image_render_blob(void*obj,int w,int h)
 
     if( img->blob == NULL )
     {
-        if( !is_absolute(img->filename) && lh_sysinfo->dir_layout )
+        if( !is_absolute(img->filename) && img->state->dir_layout )
         {
-            n = strlen( lh_sysinfo->dir_layout ) + strlen( img->filename ) + 1;
+            n = strlen( img->state->dir_layout ) + strlen( img->filename ) + 1;
             fullname = malloc( n );
             if( fullname )
             {
-                strcpy( fullname, lh_sysinfo->dir_layout );
+                strcpy( fullname, img->state->dir_layout );
                 strcat( fullname, img->filename );
                 /* convert it from UTF-8 to local 8 bit */
                 lh_callback( lh_id, img, lh_cb_utf8_to_local8bit, fullname );
@@ -293,12 +303,13 @@ static lh_class class_image =
             image_notify
         },
         image_new,
-        0,
+        image_init,
         image_prerender,
         image_width,
         image_height,
         image_render_blob,
         0, /* not using render_qimage */
+        0, /* not using term */
         image_delete
     }
 };
@@ -323,13 +334,28 @@ static lh_class class_image =
 # define EXPORT
 #endif
 
-EXPORT const char * lh_name(void)
+EXPORT void *lh_create( lh_callback_t callback, void *id )
 {
+    lh_id = id;
+    lh_callback = callback;
+    return &bi;
+}
+
+EXPORT void lh_destroy( void *ref )
+{
+    Q_UNUSED(ref);
+    return;
+}
+
+EXPORT const char * lh_name(void *ref)
+{
+    Q_UNUSED(ref);
     return "Image";
 }
 
-EXPORT const char * lh_shortdesc(void)
+EXPORT const char * lh_shortdesc(void*ref)
 {
+    Q_UNUSED(ref);
     return "Display images files";
 }
 
@@ -338,38 +364,35 @@ EXPORT const char * lh_shortdesc(void)
 # define STRINGIZE(x) STRINGIZE_(x)
 #endif
 
-EXPORT const lh_buildinfo* lh_version(int api_major, int api_minor )
+EXPORT const char * lh_author(void*ref)
 {
-    static lh_buildinfo bi = LH_STD_BUILDINFO;
-    assert( api_major == LH_API_MAJOR );
-    assert( api_minor >= LH_API_MINOR );
-    return &bi;
-}
-
-EXPORT const char * lh_author(void)
-{
+    Q_UNUSED(ref);
     return "Johan \"SirReal\" Lindh";
 }
 
-EXPORT const char * lh_homepage(void)
+EXPORT const char * lh_homepage(void*ref)
 {
+    Q_UNUSED(ref);
     return "<a href=\"http://www.linkdata.se/software/lcdhost\">Link Data Stockholm</a>";
 }
 
-EXPORT const char * lh_longdesc(void)
+EXPORT const char * lh_longdesc(void*ref)
 {
+    Q_UNUSED(ref);
     return
     	"Show the contents of image files on screen. This plugin comes with "
     	"source code illustrating how a plugin written in C might look.";
 }
 
-EXPORT const lh_blob *lh_logo(void)
+EXPORT const lh_blob *lh_logo(void*ref)
 {
+    Q_UNUSED(ref);
     return logo_blob;
 }
 
-EXPORT const lh_class ** lh_class_list(void)
+EXPORT const lh_class ** lh_class_list(void*ref)
 {
+    Q_UNUSED(ref);
     static const lh_class *lh_classes[] =
     {
         & class_image,
@@ -378,16 +401,15 @@ EXPORT const lh_class ** lh_class_list(void)
     return lh_classes;
 }
 
-EXPORT const char * lh_load(void *id, lh_callback_t callback, lh_systemstate *p_info )
+EXPORT const char * lh_load(void *ref )
 {
-    lh_id = id;
-    lh_callback = callback;
-    lh_sysinfo = p_info;
+    Q_UNUSED(ref);
     return NULL; /* indicate success */
 }
 
-EXPORT void lh_unload(void)
+EXPORT void lh_unload(void*ref)
 {
+    Q_UNUSED(ref);
     return;
 }
 

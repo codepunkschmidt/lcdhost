@@ -52,7 +52,7 @@ lh_class *LH_FrapsText::classInfo()
     return &classInfo;
 }
 
-LH_FrapsText::LH_FrapsText( const char *name ) : LH_MonitoringText( name )
+LH_FrapsText::LH_FrapsText()
 {
     data_ = new LH_FrapsData(this, mdmAll);
     connect_changeType( static_cast<LH_FrapsData*>(data_)->setup_value_type_ );

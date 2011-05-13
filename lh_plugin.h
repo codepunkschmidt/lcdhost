@@ -33,68 +33,72 @@
   */
 
 /**
-  These are the entry points for LCDHost plugins. As of LCDHost alpha 8, we don't
-  separate plugins (which provide layout classes) from drivers (which provide
-  output devices). They're both just plugins. For historical and portability
-  reasons, they still reside in the 'plugins/' directory though.
+  These are the entry points for LCDHost plugins. Normal sequence is:
+  - LCDHost examines the plugin file for lh_buildinfo and signature.
+  - Either the user decides to load the plugin or it's set to auto load
+  - LCDHost has the operating system load the shared library
+  - lh_create() is called, requires non-NULL return
+  - lh_name() and lh_shortdesc() are called
+  - lh_calltable(), lh_author(), lh_homepage(), lh_longdesc() and lh_logo() are called
+  - lh_load() is called, requires NULL return
+  - * at this point, barring errors, the plugin is considered loaded
+  - Either the user decides to unload the plugin or LCDHost shuts down
+  - lh_unload() is called
+  - lh_destroy() is called
 
   NOTE: All strings must be UTF-8 encoded unless explicitly stated otherwise.
 
-  const char *lh_name()
-    Return the name of the plugin.
-    This export is required.
-
-  const char *lh_shortdesc()
-    Return a short description of the plugin.
-    This export is required.
-
-  const char *lh_author()
-    Return the author. You can use hyperlinks here, if you like.
-    This export is optional.
-
-  const char *lh_homepage()
-    Return a hyperlink to the plugin's homepage, for example:
-    "<a href=\"http://www.linkdata.se/software/lcdhost/\">Link Data Stockholm</a>"
-    This export is optional.
-
-  const char *lh_longdesc()
-    Return a longer description of the plugin. Basic HTML and hyperlinks are OK.
-    If you want an easy way to include rudimentary documentation about the plugin,
-    this is the place to do it.
-    This export is optional.
-
-  const lh_blob *lh_logo()
-    Return a lh_blob structure containing a JPG or PNG, in their respective file formats.
-    You can use the lh_blob_to_headerfile() function to embed file data in a headerfile if you like.
-    This export is optional.
-
-  const char *lh_load( void *id, lh_callback_t, lh_systemstate* )
-    Called when the user loads the plugin.
-    The first parameter is the internal ID of the plugin. This must
+  void *lh_create( lh_callback_t cb, void *cb_id )
+    Create the plugin object and return an opaque reference to it.
+    LCDHost will provide this reference when calling other functions
+    as the 'ref' parameter. Return NULL on error.
+    The first parameter is the address of the callback function. Save this.
+    The second parameter is the internal ID of the plugin. This must
     be given as the first parameter on every call of the callback
     function, or LCDHost won't recognize which plugin is doing the request.
-    The second parameter is the address of the callback function. Save this.
-    The third parameter points to information about the current LCDHost system state.
-    The information in this structure will change all the time, so don't cache it.
-    Return NULL for success, else an error message.
-    This export is optional.
 
-  void lh_unload()
-    Called when the plugin is being unloaded.
-    This export is optional.
-
-  const lh_object_calltable* lh_calltable()
+  const lh_object_calltable* lh_calltable( void *ref )
     Returns a standard object calltable. This may be NULL if none of
     the functions available in that calltable are used by the plugin
     and you don't expose any setup items from the plugin itself.
-    This export is optional.
 
-  const lh_class **lh_class_list()
+  const char *lh_name( void *ref )
+    Return the name of the plugin.
+
+  const char *lh_shortdesc( void *ref  )
+    Return a short description of the plugin.
+
+  const char *lh_author( void *ref  )
+    Return the author. You can use hyperlinks here, if you like.
+
+  const char *lh_homepage( void *ref )
+    Return a hyperlink to the plugin's homepage, for example:
+    "<a href=\"http://www.linkdata.se/software/lcdhost/\">Link Data Stockholm</a>"
+
+  const char *lh_longdesc( void *ref )
+    Return a longer description of the plugin. Basic HTML and hyperlinks are OK.
+    If you want an easy way to include rudimentary documentation about the plugin,
+    this is the place to do it.
+
+  const lh_blob *lh_logo( void *ref )
+    Return a lh_blob structure containing a JPG or PNG, in their respective file formats.
+    You can use the lh_blob_to_headerfile() function to embed file data in a headerfile if you like.
+
+  const char *lh_load( void *ref )
+    Called when the plugin is being loaded in LCDHost.
+
+  const lh_class **lh_class_list( void *ref )
     If your plugin supplies layout classes, this is how to expose
     them. Return array of pointers to class info, end with NULL pointer.
     If you add or remove classes dynamically, use lh_callback() with
     lh_cb_class_refresh to have LCDHost call lh_class_list() again.
-    This export is optional.
+
+  const char *lh_unload( void *ref )
+    Called when the plugin is being unloaded in LCDHost.
+
+  void lh_destroy( void *ref )
+    Free resources associated with 'ref'. The shared library is about to be
+    removed from memory.
 
   */
 
@@ -106,7 +110,7 @@
 
 #include "lh_systemstate.h"
 
-#define LH_API_MAJOR 4
+#define LH_API_MAJOR 5
 #define LH_API_MINOR 0
 #define LH_DEVICE_MAXBUTTONS 32
 
@@ -264,6 +268,14 @@ typedef enum lh_callbackcode_t
 
     /* Support calls */
     lh_cb_utf8_to_local8bit, /* request UTF-8 to local 8-bit conversion, param: char *string */
+    lh_cb_state, /* Request state refresh, param: lh_systemstate* */
+
+    /* directory query calls, param: const char ** */
+    lh_cb_dir_binaries,     /**< where the LCDHost executables are stored, may not be writable */
+    lh_cb_dir_plugins,      /**< where the LCDHost plugins are stored, may not be writable */
+    lh_cb_dir_data,         /**< where layouts, logs and other data are stored, will be writable */
+    lh_cb_dir_layout,       /**< directory where the current layout is stored (or dir_data if no layout) */
+
     lh_cb_unused
 } lh_callbackcode;
 
@@ -361,7 +373,9 @@ typedef struct lh_setup_item_t
     lh_setup_data data;
 } lh_setup_item;
 
-/* Common methods to all objects created in plugins, and also available to the plugin themselves */
+/**
+    Common methods to all objects created in plugins, and also available to the plugin themselves.
+*/
 typedef struct lh_object_calltable_t
 {
     int size; // sizeof(lh_object_calltable)
@@ -439,17 +453,18 @@ typedef struct lh_instance_calltable_t
 {
     int size; // sizeof(lh_instance_calltable)
     lh_object_calltable o;
-    void * (*obj_new)(const char*,const lh_class*); /**< return a new instance of the class (name,class) */
-    void (*unused_1)(); /** unused, left in for binary compatibility (was: obj_sizepos) */
+    void * (*obj_new)(void); /**< return a new instance of the class */
+    const char *(*obj_init)(void*,const lh_systemstate*,const char*,const lh_class*); /**< called after obj_new */
     void (*obj_prerender)(void*); /**< called right before width/height/render_xxx as a notification */
     int (*obj_width)(void*,int); /**< return suggested width given a height (or -1 for default width) */
     int (*obj_height)(void*,int); /**< return suggested height given a width (or -1 for default height) */
     const lh_blob * (*obj_render_blob)(void*,int,int); /**< render object to any image format using width x height */
     void * (*obj_render_qimage)(void*,int,int); /**< render object to QImage using width x height */
+    void (*obj_term)(void*); /**< called right before obj_delete */
     void (*obj_delete)(void*); /**< delete this instance of the class */
 } lh_instance_calltable;
 
-#define lh_instance_calltable_NULL { sizeof(lh_instance_calltable), lh_object_calltable_NULL, 0,0,0,0,0,0,0,0 }
+#define lh_instance_calltable_NULL { sizeof(lh_instance_calltable), lh_object_calltable_NULL, 0,0,0,0,0,0,0 }
 
 /**
   This structure gives basic information about the class.
@@ -486,16 +501,18 @@ struct lh_class_t
 class lh_plugin_calltable
 {
 public:
-    const char * (*lh_name) (void); /* Required */
-    const char * (*lh_shortdesc) (void); /* Required */
-    const char * (*lh_author) (void);
-    const char * (*lh_homepage) (void);
-    const char * (*lh_longdesc) (void);
-    const lh_blob * (*lh_logo) (void); /* return blob containing JPG or PNG */
-    const char * (*lh_load)(void *id, lh_callback_t, lh_systemstate*); /* return NULL for success, else error message */
-    void (*lh_unload)(void);
-    const lh_object_calltable *(*lh_calltable)(void);
-    const lh_class ** (*lh_class_list)(void); /* return array of pointers to class info, end with NULL pointer */
+    void * (*lh_create) (lh_callback_t, void *); /* Required */
+    const char * (*lh_name) (void*); /* Required */
+    const char * (*lh_shortdesc) (void*); /* Required */
+    const char * (*lh_author) (void*);
+    const char * (*lh_homepage) (void*);
+    const char * (*lh_longdesc) (void*);
+    const lh_blob * (*lh_logo) (void*); /* return blob containing JPG or PNG */
+    const char * (*lh_load)(void *); /* return NULL for success, else error message */
+    void (*lh_unload)(void*);
+    const lh_object_calltable *(*lh_calltable)(void*);
+    const lh_class ** (*lh_class_list)(void*); /* return array of pointers to class info, end with NULL pointer */
+    void (*lh_destroy) (void*); /* Required */
 };
 #endif
 

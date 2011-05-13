@@ -45,7 +45,7 @@ static inline uint PREMUL(uint x) {
     return x;
 }
 
-LH_Graph::LH_Graph( const char *name, LH_QtPlugin *parent, float defaultMin, float defaultMax ) : LH_QtInstance( name, 0, parent )
+LH_Graph::LH_Graph( float defaultMin, float defaultMax )
 {
     if (isDebug) qDebug() << "graph: init: begin";
     userDefinableLimits_ = false;

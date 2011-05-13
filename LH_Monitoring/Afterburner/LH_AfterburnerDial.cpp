@@ -41,7 +41,7 @@ lh_class *LH_AfterburnerDial::classInfo()
     return &classInfo;
 }
 
-LH_AfterburnerDial::LH_AfterburnerDial( const char *name, LH_QtPlugin *parent = 0 ) : LH_MonitoringDial( name, parent )
+LH_AfterburnerDial::LH_AfterburnerDial()
 {
     data_ = new LH_AfterburnerData( this, true );
     connect_refresh( static_cast<LH_AfterburnerData*>(data_)->setup_value_type_ );

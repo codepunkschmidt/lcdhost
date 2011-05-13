@@ -36,6 +36,7 @@
 #define LH_LUAINSTANCE_H
 
 #include <QImage>
+#include <QStack>
 
 #include "../LH_QtPlugin.h"
 #include "../LH_QtInstance.h"
@@ -85,16 +86,20 @@ class LH_LuaInstance : public LH_QtInstance
 {
     Q_OBJECT
 
+    static QStack<LH_LuaInstance*> *stack_;
+
     lua_State *L;
     LH_LuaClass *alc_;
     lh_blob *blob_;
+    int ref_; // reference to 'self' in the registry
     QList<lua_setup_item*> items_;
     QVector<lh_setup_item*> setup_item_vector_;
-    int ref_; // reference to 'self' in the registry
 
 public:
-    LH_LuaInstance( const char *name, LH_LuaClass *luaclass );
-    ~LH_LuaInstance();
+    LH_LuaInstance(QObject *parent = 0) : LH_QtInstance( parent ), L(0), alc_(0), blob_(0), ref_(LUA_NOREF) {}
+
+    virtual const char *init(const lh_systemstate *state, const char *name, const lh_class *cls);
+    virtual void term();
 
     void lua_pushself() { lua_rawgeti(L, LUA_REGISTRYINDEX, ref_); }
     bool lua_pushfunction(const char *funcname);
@@ -115,6 +120,9 @@ public:
 
     void update_setup_item_vector();
 
+    static void push( LH_LuaInstance *inst ) { if( stack_ == 0 ) stack_ = new QStack<LH_LuaInstance*>(); stack_->push(inst); }
+    static LH_LuaInstance *top() { return ( stack_ ? stack_->top() : 0); }
+    static void pop() { if( stack_ ) stack_->pop(); }
 };
 
 #endif // LH_LUAINSTANCE_H

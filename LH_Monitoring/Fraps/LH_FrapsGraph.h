@@ -8,7 +8,7 @@ class LH_FrapsGraph : public LH_MonitoringGraph
 {
     Q_OBJECT
 public:
-    LH_FrapsGraph( const char *name, LH_QtPlugin *parent );
+    LH_FrapsGraph();
     static lh_class *classInfo();
 };
 

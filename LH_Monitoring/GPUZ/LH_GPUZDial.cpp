@@ -41,7 +41,7 @@ lh_class *LH_GPUZDial::classInfo()
     return &classInfo;
 }
 
-LH_GPUZDial::LH_GPUZDial( const char *name, LH_QtPlugin *parent = 0 ) : LH_MonitoringDial( name, parent )
+LH_GPUZDial::LH_GPUZDial()
 {
     data_ = new LH_GPUZData( this );
     connect_refresh( static_cast<LH_GPUZData*>(data_)->setup_value_type_ );

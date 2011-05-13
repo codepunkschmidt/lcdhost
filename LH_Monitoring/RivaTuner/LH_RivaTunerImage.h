@@ -32,7 +32,7 @@ class LH_RivaTunerImage:public LH_MonitoringImage
 {
     Q_OBJECT
 public:
-    LH_RivaTunerImage( const char *name, LH_QtPlugin *parent = 0 );
+    LH_RivaTunerImage();
     static lh_class *classInfo();
 };
 

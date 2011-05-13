@@ -55,7 +55,7 @@ lh_class *LH_LogitechText::classInfo()
     return &classInfo;
 }
 
-LH_LogitechText::LH_LogitechText( const char *name ) : LH_MonitoringText( name )
+LH_LogitechText::LH_LogitechText()
 {
     data_ = new LH_LogitechData(this, mdmAll);
     connect_changeType( static_cast<LH_LogitechData*>(data_)->setup_value_type_ );

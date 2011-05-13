@@ -27,7 +27,7 @@ lh_class *LH_RSSText::classInfo()
     return &classInfo;
 }
 
-LH_RSSText::LH_RSSText(const char *name) : LH_Text(name), rss_(this)
+LH_RSSText::LH_RSSText() : LH_Text(), rss_(this)
 {
 
     connect( &rss_, SIGNAL(changed()), this, SLOT(setRssItem()) );

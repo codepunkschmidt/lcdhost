@@ -52,7 +52,7 @@ lh_class *LH_Aida64Text::classInfo()
     return &classInfo;
 }
 
-LH_Aida64Text::LH_Aida64Text( const char *name ) : LH_MonitoringText( name )
+LH_Aida64Text::LH_Aida64Text()
 {
     data_ = new LH_Aida64Data(this, mdmAll);
     connect_changeType( static_cast<LH_Aida64Data*>(data_)->setup_value_type_ );

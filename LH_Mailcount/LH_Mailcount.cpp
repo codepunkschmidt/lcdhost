@@ -67,7 +67,8 @@ static SHGetUnreadMailCountW_t SHGetUnreadMailCountW = NULL;
 ** LH_QtPlugin_Mailcount
 **************************************************************************/
 
-LH_QtPlugin_Mailcount thePlugin;
+LH_PLUGIN(LH_QtPlugin_Mailcount);
+lh_buildinfo buildinfo = LH_STD_BUILDINFO;
 
 const lh_blob *LH_QtPlugin_Mailcount::lh_logo()
 {
@@ -134,7 +135,7 @@ lh_class *LH_Mailcount::classInfo()
     return &classinfo;
 }
 
-LH_Mailcount::LH_Mailcount( const char *name ) : LH_QtInstance(name)
+LH_Mailcount::LH_Mailcount() : LH_QtInstance()
 {
     count_ = 0;
     envelope_count_ = -1;
@@ -400,7 +401,7 @@ lh_class *LH_MailcountText::classInfo()
     return &classinfo;
 }
 
-LH_MailcountText::LH_MailcountText( const char *name, LH_QtPlugin *parent ) : LH_Text( name, parent )
+LH_MailcountText::LH_MailcountText() : LH_Text()
 {
     count_ = 0;
     setup_text_->setName( "Unread Mail Count" );

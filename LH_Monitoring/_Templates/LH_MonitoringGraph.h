@@ -13,7 +13,7 @@ protected:
 
     LH_Qt_bool *setup_append_units_;
 public:
-    LH_MonitoringGraph(const char *name, LH_QtPlugin *parent);
+    LH_MonitoringGraph();
     ~LH_MonitoringGraph();
 
     int notify( int, void* );

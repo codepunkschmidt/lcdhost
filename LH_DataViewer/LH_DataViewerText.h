@@ -43,7 +43,7 @@ protected:
     LH_Qt_QString *setup_item_name_;
 
 public:
-    LH_DataViewerText(const char* name);
+    LH_DataViewerText();
 
     int polling();
 

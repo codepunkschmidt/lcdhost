@@ -29,7 +29,7 @@ protected:
     LH_Qt_QString *setup_item_name_max_;
 
 public:
-    LH_DataViewerDial(const char* name);
+    LH_DataViewerDial();
     QImage *render_qimage( int w, int h );
 
     int polling();

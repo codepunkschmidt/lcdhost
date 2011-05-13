@@ -33,7 +33,7 @@
 
 #include "LH_MonitoringText.h"
 
-LH_MonitoringText::LH_MonitoringText(const char *name) : LH_Text(name)
+LH_MonitoringText::LH_MonitoringText()
 {
     setup_value_round_ = new LH_Qt_bool(this,"Round",false, LH_FLAG_AUTORENDER);
     setup_value_round_->setHelp( "<p>Round non integer values.</p>");

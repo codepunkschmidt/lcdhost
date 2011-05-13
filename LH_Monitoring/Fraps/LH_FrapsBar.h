@@ -8,7 +8,7 @@ class LH_FrapsBar : public LH_MonitoringBar
 {
     Q_OBJECT
 public:
-    LH_FrapsBar( const char *name, LH_QtPlugin *parent );
+    LH_FrapsBar();
     static lh_class *classInfo();
 };
 

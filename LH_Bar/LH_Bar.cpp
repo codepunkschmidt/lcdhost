@@ -55,7 +55,7 @@ static inline uint PREMUL(uint x) {
     return x;
 }
 
-LH_Bar::LH_Bar( const char *name, LH_QtPlugin *parent ) : LH_QtInstance( name, 0, parent )
+LH_Bar::LH_Bar()
 {
     uchar *data = (uchar[4]){255,0,0,0};
     bar_img_emptyMask_ = QImage(data,1,1,QImage::Format_ARGB32);
@@ -104,7 +104,6 @@ LH_Bar::LH_Bar( const char *name, LH_QtPlugin *parent ) : LH_QtInstance( name, 0
     min_ = max_ = 0.0;
 
     changeType();
-    return;
 }
 
 void LH_Bar::drawSingle( qreal value, int pos, int total )

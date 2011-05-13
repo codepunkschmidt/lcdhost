@@ -41,7 +41,7 @@ lh_class *LH_ATITrayToolsDial::classInfo()
     return &classInfo;
 }
 
-LH_ATITrayToolsDial::LH_ATITrayToolsDial( const char *name, LH_QtPlugin *parent = 0 ) : LH_MonitoringDial( name, parent )
+LH_ATITrayToolsDial::LH_ATITrayToolsDial()
 {
     data_ = new LH_ATITrayToolsData( this );
     connect_refresh( static_cast<LH_ATITrayToolsData*>(data_)->setup_value_type_ );

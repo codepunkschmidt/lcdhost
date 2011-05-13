@@ -83,8 +83,7 @@ protected:
     LH_Qt_QFileInfo *setup_persistent_file_;
 
 public:
-    LH_CursorController(const char * name);
-    // ~LH_CursorController();
+    LH_CursorController();
 
     int polling();
 

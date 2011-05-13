@@ -41,7 +41,7 @@ lh_class *LH_SpeedFanImage::classInfo()
     return &classinfo;
 }
 
-LH_SpeedFanImage::LH_SpeedFanImage( const char *name, LH_QtPlugin *parent ) : LH_MonitoringImage( name, parent)
+LH_SpeedFanImage::LH_SpeedFanImage()
 {
     data_ = new LH_SpeedFanData(this);
     connect_changeType( static_cast<LH_SpeedFanData*>(data_)->setup_value_type_ );

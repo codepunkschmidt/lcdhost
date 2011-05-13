@@ -8,7 +8,7 @@ class LH_LogitechDial : public LH_MonitoringDial
 {
     Q_OBJECT
 public:
-    LH_LogitechDial( const char *name, LH_QtPlugin *parent );
+    LH_LogitechDial();
     static lh_class *classInfo();
 };
 

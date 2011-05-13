@@ -39,7 +39,7 @@
 
 LH_PLUGIN_CLASS(LH_NowPlayingBar)
 
-LH_NowPlayingBar::LH_NowPlayingBar(const char* name, LH_QtPlugin* parent) : LH_Bar(name, parent)
+LH_NowPlayingBar::LH_NowPlayingBar()
 {
     connect( currentTrack, SIGNAL(changed()), this, SLOT(refresh_pos()) );
     setMin(0);

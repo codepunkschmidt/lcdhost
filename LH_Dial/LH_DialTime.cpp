@@ -26,11 +26,16 @@
 
 #include "LH_DialTime.h"
 
-LH_DialTime::LH_DialTime( const char *name, LH_QtPlugin *parent ) : LH_Dial( name, parent )
+LH_DialTime::LH_DialTime()
 {
     setMin(0.0);
     setMax(60.0);
     isClock = true;
+}
+
+const char *LH_DialTime::init(const lh_systemstate *state, const char *name, const lh_class *cls)
+{
+    LH_Dial::init( state, name, cls );
 
     setup_manual_adjust_ = new LH_Qt_bool(this, "Manual Adjust", false);
     setup_manual_adjust_->setHelp( "<p>Manually tweak the time displayed (e.g. to display time from a different time zone).</p>");
@@ -65,6 +70,8 @@ LH_DialTime::LH_DialTime( const char *name, LH_QtPlugin *parent ) : LH_Dial( nam
     ticks.fullCircle.clear();
     ticks.fullCircle.append(tickObject(60, 1, 0.05, 0.90));
     ticks.fullCircle.append(tickObject(12, 2, 0.15, 0.80));
+
+    return 0;
 }
 
 lh_class *LH_DialTime::classInfo()

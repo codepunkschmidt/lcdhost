@@ -41,7 +41,7 @@ lh_class *LH_FrapsConditionImage::classInfo()
     return &classinfo;
 }
 
-LH_FrapsConditionImage::LH_FrapsConditionImage( const char *name, LH_QtPlugin *parent ) : LH_MonitoringConditionImage( name, parent )
+LH_FrapsConditionImage::LH_FrapsConditionImage()
 {
     data_ = new LH_FrapsData(this, mdmText);
     connect_changeType( static_cast<LH_FrapsData*>(data_)->setup_value_type_ );

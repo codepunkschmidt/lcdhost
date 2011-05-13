@@ -35,9 +35,36 @@
 #include "LH_QtObject.h"
 #include "LH_QtSetupItem.h"
 
+lh_callback_t LH_QtObject::cb_ = 0;
+void *LH_QtObject::cb_id_ = 0;
+LH_QtPlugin *LH_QtObject::plugin_ = 0;
+
 static int compareSetupItems( const LH_QtSetupItem *a, const LH_QtSetupItem *b )
 {
     return a->order() < b->order();
+}
+
+#define RECAST(obj) reinterpret_cast<LH_QtObject*>(obj)
+static lh_setup_item **obj_setup_data( void *obj ) { return RECAST(obj)->setup_data(); }
+static void obj_setup_resize( void *obj, lh_setup_item *item, size_t needed ) { RECAST(obj)->setup_resize(item,needed); }
+static void obj_setup_change( void *obj, lh_setup_item *item ) { return RECAST(obj)->setup_change(item); }
+static void obj_setup_input( void *obj, lh_setup_item *item, int flags, int value ) { return RECAST(obj)->setup_input(item,flags,value); }
+static int obj_notify( void *obj, int code, void *param ) { return RECAST(obj)->notify(code,param); }
+static int obj_polling( void *obj ) { return RECAST(obj)->polling(); }
+
+void LH_QtObject::build_calltable( lh_object_calltable *ct )
+{
+    if( ct )
+    {
+        ct->size = sizeof(lh_object_calltable);
+        ct->obj_setup_data = obj_setup_data;
+        ct->obj_setup_resize = obj_setup_resize;
+        ct->obj_setup_change = obj_setup_change;
+        ct->obj_setup_input = obj_setup_input;
+        ct->obj_notify = obj_notify;
+        ct->obj_polling = obj_polling;
+    }
+    return;
 }
 
 lh_setup_item **LH_QtObject::setup_data()
@@ -100,4 +127,16 @@ void LH_QtObject::setup_input(lh_setup_item *item, int flags, int value)
     }
     Q_ASSERT(0);
     return;
+}
+
+int LH_QtObject::notify( int code, void *param )
+{
+    Q_UNUSED(code);
+    Q_UNUSED(param);
+    return 0;
+}
+
+int LH_QtObject::polling()
+{
+    return 0;
 }

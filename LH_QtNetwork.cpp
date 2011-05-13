@@ -34,7 +34,7 @@
 
 #include "LH_QtNetwork.h"
 
-LH_QtNetwork::LH_QtNetwork( LH_QtObject *parent )
+LH_QtNetwork::LH_QtNetwork( LH_QtInstance *parent )
 {
     parent_ = parent;
     setup_smoothing_ = new LH_Qt_QSlider(parent,"Smoothing",3,1,10,LH_FLAG_AUTORENDER);
@@ -52,6 +52,7 @@ LH_QtNetwork::~LH_QtNetwork()
 int LH_QtNetwork::notify(int n, void *p)
 {
     Q_UNUSED(p);
+    Q_ASSERT( parent_ != NULL );
 
     if( n & LH_NOTE_NET )
     {

@@ -26,7 +26,7 @@
 
 #include "LH_MonitoringDial.h"
 
-LH_MonitoringDial::LH_MonitoringDial( const char *name, LH_QtPlugin *parent = 0 ) : LH_Dial( name, parent )
+LH_MonitoringDial::LH_MonitoringDial()
 {
     setup_max_ = new LH_Qt_int(this, "Maximum", 100, 0, 99999);
     setup_max_->setHelp( "<p>The dial's maximum value.</p>");

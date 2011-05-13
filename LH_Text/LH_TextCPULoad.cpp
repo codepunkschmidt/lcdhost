@@ -43,7 +43,7 @@
 class LH_TextCPULoad : public LH_Text
 {
 public:
-    LH_TextCPULoad(const char *name) : LH_Text(name)
+    LH_TextCPULoad() : LH_Text()
     {
         setup_text_->setName( "Average CPU load" );
         setup_text_->setFlag( LH_FLAG_READONLY, true );

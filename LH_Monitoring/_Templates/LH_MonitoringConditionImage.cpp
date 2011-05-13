@@ -37,7 +37,7 @@
 
 #include "../LH_Qt_QStringList.h"
 
-LH_MonitoringConditionImage::LH_MonitoringConditionImage(const char *name, LH_QtPlugin *parent ) : LH_QtInstance( name, 0,  parent )
+LH_MonitoringConditionImage::LH_MonitoringConditionImage( )
 {
     conditionsListBusy_ = "init";
 

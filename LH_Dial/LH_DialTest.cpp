@@ -35,7 +35,7 @@ protected:
     LH_Qt_float *setup_val_;
 
 public:
-    LH_DialTest( const char *name, LH_QtPlugin *parent = 0 ) : LH_Dial( name, parent )
+    LH_DialTest()
     {
         setup_min_ = new LH_Qt_float(this,"Minimum",000,0,1000,LH_FLAG_AUTORENDER);
         setup_max_ = new LH_Qt_float(this,"Maximum",100,0,1000,LH_FLAG_AUTORENDER);

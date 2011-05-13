@@ -35,10 +35,6 @@ class LH_CursorInstance : public LH_QtInstance
 protected:
     void getCursorData( cursorData& ) const;
     void setCursorData( const cursorData& ) const;
-
-public:
-    LH_CursorInstance(const char * name = NULL, LH_QtPlugin *parent = NULL )
-        : LH_QtInstance(name,0,parent) {}
 };
 
 #endif // LH_CURSORINSTANCE_H

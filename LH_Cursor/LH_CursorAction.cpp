@@ -42,7 +42,7 @@ lh_class *LH_CursorAction::classInfo()
     return &classInfo;
 }
 
-LH_CursorAction::LH_CursorAction(const char *name, LH_QtPlugin *parent ) : LH_CursorInstance( name, parent )
+LH_CursorAction::LH_CursorAction() : actionTypes_(this)
 {
     waiting = false;
     selected = false;
@@ -189,7 +189,7 @@ void LH_CursorAction::fire(int startAt)
             {
                 QString layout = action.getParameter(e,0);
                 if (!layout.contains(":"))
-                    layout = QString("%1\%2").arg(lcdhost_state()->dir_layout).arg(layout);
+                    layout = QString("%1\%2").arg(state()->dir_layout).arg(layout);
                 static QByteArray ary;
                 ary = layout.toUtf8();
                 callback(lh_cb_load_layout, ary.data() );
@@ -208,7 +208,7 @@ void LH_CursorAction::fire(int startAt)
                     for(int i=1; i<=rx.captureCount(); i++)
                         if(rx.cap(i)!="")
                             argsList.append(rx.cap(i));
-                process.startDetached(exe.absoluteFilePath(),argsList,lcdhost_state()->dir_layout);
+                process.startDetached(exe.absoluteFilePath(),argsList,state()->dir_layout);
             }else
             if(typeCode=="url")
             {

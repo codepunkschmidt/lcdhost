@@ -42,7 +42,7 @@ class LH_BarNetIn : public LH_Bar
     LH_QtNetwork net_;
 
 public:
-    LH_BarNetIn( const char *name, LH_QtPlugin *parent = 0 ) : LH_Bar( name, parent ), net_(this)
+    LH_BarNetIn() : LH_Bar(), net_(this)
     {
         setMin(0.0);
         setMax(1000.0);

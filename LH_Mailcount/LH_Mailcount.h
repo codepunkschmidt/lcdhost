@@ -59,15 +59,6 @@ public:
     const lh_blob *lh_logo();
     const char *lh_load();
     void lh_unload();
-    const lh_buildinfo * lh_version( int amaj, int amin )
-    {
-        static lh_buildinfo buildinfo = LH_STD_BUILDINFO;
-        Q_UNUSED( amaj );
-        Q_UNUSED( amin );
-        Q_ASSERT( amaj == LH_API_MAJOR );
-        Q_ASSERT( amin >= LH_API_MINOR );
-        return &buildinfo;
-    }
 };
 
 class LH_Mailcount : public LH_QtInstance
@@ -88,7 +79,7 @@ class LH_Mailcount : public LH_QtInstance
     bool flash_on_;
 
 public:
-    LH_Mailcount( const char *name );
+    LH_Mailcount();
 
     void input(lh_setup_item *, int, int);
 
@@ -122,7 +113,7 @@ class LH_MailcountText: public LH_Text
     QTime last_check_;
 
 public:
-    LH_MailcountText( const char *name, LH_QtPlugin *parent = 0 );
+    LH_MailcountText();
 
     void input(lh_setup_item *, int, int);
 

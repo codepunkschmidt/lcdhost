@@ -40,15 +40,20 @@ class LH_GraphMemPhysical : public LH_Graph
 
 
 public:
-    LH_GraphMemPhysical( const char *name, LH_QtPlugin *parent = 0 ) : LH_Graph( name, parent )
+    LH_GraphMemPhysical()
     {
         unitBase = 1024 * 1024 * 1024;
         setMin(0.0);
         setMax(1000.0);
         setYUnit("GB");
-
         initialized = false;
+    }
+
+    virtual const char *init(const lh_systemstate *state, const char *name, const lh_class *cls)
+    {
+        LH_Graph::init( state, name, cls );
         initialize();
+        return 0;
     }
 
     static lh_class *classInfo()

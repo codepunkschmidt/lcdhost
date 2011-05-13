@@ -41,7 +41,7 @@ lh_class *LH_ATITrayToolsBar::classInfo()
     return &classInfo;
 }
 
-LH_ATITrayToolsBar::LH_ATITrayToolsBar( const char *name, LH_QtPlugin *parent = 0 ) : LH_MonitoringBar( name, parent )
+LH_ATITrayToolsBar::LH_ATITrayToolsBar()
 {
     data_ = new LH_ATITrayToolsData( this );
     connect_refresh( static_cast<LH_ATITrayToolsData*>(data_)->setup_value_type_ );

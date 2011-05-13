@@ -41,7 +41,9 @@ protected:
     LH_Qt_int *setup_adjust_hours_;
 
 public:
-    LH_DialTime( const char *name, LH_QtPlugin *parent = 0 );
+    LH_DialTime();
+
+    virtual const char *init(const lh_systemstate *state, const char *name, const lh_class *cls);
 
     static lh_class *classInfo();
 

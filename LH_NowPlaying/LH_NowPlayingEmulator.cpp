@@ -71,7 +71,7 @@ lh_class *LH_NowPlayingEmulator::classInfo()
 #endif
 }
 
-LH_NowPlayingEmulator::LH_NowPlayingEmulator(const char* name) : LH_Text(name)
+LH_NowPlayingEmulator::LH_NowPlayingEmulator()
 {
     setup_text_->setFlag(LH_FLAG_HIDDEN, true);
     setup_text_->setFlag(LH_FLAG_NOSAVE, true);

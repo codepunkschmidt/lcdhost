@@ -8,7 +8,7 @@ class LH_Aida64Graph : public LH_MonitoringGraph
 {
     Q_OBJECT
 public:
-    LH_Aida64Graph( const char *name, LH_QtPlugin *parent );
+    LH_Aida64Graph();
     static lh_class *classInfo();
 };
 

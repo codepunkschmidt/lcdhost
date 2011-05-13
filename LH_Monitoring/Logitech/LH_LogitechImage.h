@@ -32,7 +32,7 @@ class LH_LogitechImage:public LH_MonitoringImage
 {
     Q_OBJECT
 public:
-    LH_LogitechImage( const char *name, LH_QtPlugin *parent = 0 );
+    LH_LogitechImage();
     static lh_class *classInfo();
 };
 

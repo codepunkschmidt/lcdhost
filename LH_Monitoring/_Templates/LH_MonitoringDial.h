@@ -12,7 +12,7 @@ protected:
     LH_Qt_int *setup_max_;
     LH_Qt_int *setup_min_;
 public:
-    LH_MonitoringDial(const char *name, LH_QtPlugin *parent);
+    LH_MonitoringDial();
     ~LH_MonitoringDial();
 
     int polling();

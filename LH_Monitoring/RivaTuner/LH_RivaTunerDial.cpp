@@ -41,7 +41,7 @@ lh_class *LH_RivaTunerDial::classInfo()
     return &classInfo;
 }
 
-LH_RivaTunerDial::LH_RivaTunerDial( const char *name, LH_QtPlugin *parent = 0 ) : LH_MonitoringDial( name, parent )
+LH_RivaTunerDial::LH_RivaTunerDial()
 {
     data_ = new LH_RivaTunerData( this, true );
     connect_refresh( static_cast<LH_RivaTunerData*>(data_)->setup_value_type_ );

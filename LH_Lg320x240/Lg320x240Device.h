@@ -14,7 +14,7 @@ class Lg320x240Device : public LH_QtDevice
     libusb_device_handle *dh_;
 
 public:
-    Lg320x240Device( libusb_device *dev, libusb_device_descriptor *dd, LH_QtPlugin *drv = 0 );
+    Lg320x240Device( libusb_device *dev, libusb_device_descriptor *dd, LH_QtPlugin *drv );
     ~Lg320x240Device();
 
     void setRemoval( bool b ) { to_remove_ = b; }

@@ -112,7 +112,7 @@ protected:
     LH_Qt_int *setup_fg_alpha_;
 
 public:
-    LH_Graph( const char *name, LH_QtPlugin *parent = 0, float defaultMin = 0, float defaultMax = 0 );
+    LH_Graph( float defaultMin = 0, float defaultMax = 0 );
     ~LH_Graph();
 
     int notify(int code,void* param);

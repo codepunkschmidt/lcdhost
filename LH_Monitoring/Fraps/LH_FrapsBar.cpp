@@ -41,7 +41,7 @@ lh_class *LH_FrapsBar::classInfo()
     return &classInfo;
 }
 
-LH_FrapsBar::LH_FrapsBar( const char *name, LH_QtPlugin *parent = 0 ) : LH_MonitoringBar( name, parent )
+LH_FrapsBar::LH_FrapsBar()
 {
     data_ = new LH_FrapsData( this );
     connect_refresh( static_cast<LH_FrapsData*>(data_)->setup_value_type_ );

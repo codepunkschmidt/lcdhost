@@ -37,35 +37,44 @@
 
 #include <QObject>
 #include <QVector>
+#include "lh_plugin.h"
 
-#include "LH_QtPlugin.h"
+class LH_QtPlugin;
 
 /**
-  Base class for Qt-based LCDHost shared library created objects,
-  such as class instances or devices.
+  Base class for Qt-based LCDHost plugin objects,
+  such as plugins, layout class instances or devices.
   */
 class LH_QtObject : public QObject
 {
     Q_OBJECT
+
+    static lh_callback_t cb_;
+    static void *cb_id_;
+    static LH_QtPlugin *plugin_;
+
     QVector<lh_setup_item*> setup_item_vector_;
 
 public:
-    LH_QtObject( const char *name, QObject *parent = 0 ) : QObject(parent) // , LH_QtPlugin *parent = 0 ) : QObject(parent)
-    {
-        if( name ) setObjectName( QString::fromUtf8(name) );
-    }
-
+    LH_QtObject( QObject *parent = 0 ) : QObject(parent) {}
     virtual ~LH_QtObject() {}
 
-    // LH_QtPlugin *parent() const { return static_cast<LH_QtPlugin *>(QObject::parent()); }
-
-    void callback( lh_callbackcode_t code, void *param ) const { LH_QtPlugin::callback( this, code, param ); }
-    const lh_systemstate *state() const { return LH_QtPlugin::state(); }
+    void callback( lh_callbackcode_t code, void *param ) const { if( cb_ ) cb_( cb_id_, this, code, param ); }
 
     virtual lh_setup_item **setup_data();
     virtual void setup_resize( lh_setup_item *item, size_t needed );
     virtual void setup_change( lh_setup_item *item );
     virtual void setup_input( lh_setup_item *item, int flags, int value );
+    virtual int notify( int code, void *param );
+    virtual int polling();
+
+    static void set_lh_callback( lh_callback_t cb, void *cb_id  ) { cb_ = cb; cb_id_ = cb_id; }
+    static void lh_callback(const void *obj, lh_callbackcode_t code, void *param) { if( cb_ ) cb_( cb_id_, obj, code, param ); }
+
+    static void set_plugin( LH_QtPlugin *p ) { plugin_ = p; }
+    static LH_QtPlugin *plugin() { return plugin_; }
+
+    static void build_calltable( lh_object_calltable *ct );
 
 public slots:
     void requestRebuild() const { callback( lh_cb_setup_rebuild, NULL ); } // call after adding or removing setup items!

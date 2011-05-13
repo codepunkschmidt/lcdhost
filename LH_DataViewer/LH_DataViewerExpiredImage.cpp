@@ -51,7 +51,7 @@ lh_class *LH_DataViewerExpiredImage::classInfo()
     return &classinfo;
 }
 
-LH_DataViewerExpiredImage::LH_DataViewerExpiredImage(const char* name, LH_QtPlugin *parent ) : LH_QtInstance( name, 0, parent ), data_(this)
+LH_DataViewerExpiredImage::LH_DataViewerExpiredImage() : data_(this)
 {
     setup_file_ = new LH_Qt_QFileInfo( this, tr("File"), QFileInfo(), LH_FLAG_AUTORENDER );
     setup_file_->setOrder(-1);

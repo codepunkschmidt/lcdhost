@@ -60,7 +60,7 @@ class LH_GraphCPUHistogram : public LH_Graph
     }
 
 public:
-    explicit LH_GraphCPUHistogram( const char *name, LH_QtPlugin *parent = 0 ) : LH_Graph( name, parent ), cpu_(this)
+    explicit LH_GraphCPUHistogram() : cpu_(this)
     {
         initialized = false;
         initialize(cpu_.count());

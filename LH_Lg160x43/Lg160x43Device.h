@@ -15,7 +15,7 @@ class Lg160x43Device : public LH_QtDevice
     bool offline_;
 
 public:
-    Lg160x43Device( const struct hid_device_info *di, LH_QtPlugin *drv = 0 );
+    Lg160x43Device( const struct hid_device_info *di, LH_QtPlugin *drv );
     ~Lg160x43Device();
 
     void setRemoval( bool b ) { to_remove_ = b; }

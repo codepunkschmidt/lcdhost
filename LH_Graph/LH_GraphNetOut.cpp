@@ -38,7 +38,7 @@ protected:
     LH_Qt_QStringList *setup_units_;
 
 public:
-    LH_GraphNetOut( const char *name, LH_QtPlugin *parent = 0 ) : LH_Graph( name, parent ), net_(this)
+    LH_GraphNetOut() : net_(this)
     {
         QStringList valuesList;
         valuesList.append("kb/s (kilobits per second)");

@@ -18,7 +18,7 @@ lh_class *LH_DataViewerBar::classInfo()
     return &classInfo;
 }
 
-LH_DataViewerBar::LH_DataViewerBar(const char* name) : LH_Bar(name), data_(this)
+LH_DataViewerBar::LH_DataViewerBar() : data_(this)
 {
     setup_lookup_code_ = new LH_Qt_QString( this, "Data Template", "");
     setup_lookup_code_->setOrder(-3);

@@ -60,7 +60,7 @@ class LH_WebKitURL : public LH_WebKit
 
 
 public:
-    LH_WebKitURL(const char *name);
+    LH_WebKitURL();
 
     static lh_class *classInfo();
 

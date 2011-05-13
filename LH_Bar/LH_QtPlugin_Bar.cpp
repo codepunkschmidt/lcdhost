@@ -35,8 +35,8 @@
   */
 
 #include "LH_QtPlugin_Bar.h"
-
-LH_QtPlugin_Bar thePlugin;
+LH_PLUGIN(LH_QtPlugin_Bar)
+lh_buildinfo buildinfo = LH_STD_BUILDINFO;
 
 const char *LH_QtPlugin_Bar::lh_load()
 {

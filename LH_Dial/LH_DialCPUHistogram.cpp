@@ -32,7 +32,7 @@ class LH_DialCPUHistogram : public LH_Dial
     LH_QtCPU cpu_;
 
 public:
-    explicit LH_DialCPUHistogram( const char *name, LH_QtPlugin *parent = 0 ) : LH_Dial( name, parent ), cpu_(this)
+    explicit LH_DialCPUHistogram() : cpu_(this)
     {
         setMin(0.0);
         setMax(10000.0);

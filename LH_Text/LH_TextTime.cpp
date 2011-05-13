@@ -48,7 +48,7 @@ protected:
     LH_Qt_QString *setup_format_;
 
 public:
-    LH_TextTime( const char *name ) : LH_Text(name)
+    LH_TextTime() : LH_Text()
     {
         setup_format_ = new LH_Qt_QString(this,"<a href=\"http://doc.trolltech.com/4.6/qtime.html#toString\">Format</a>","HH:mm:ss");
         setup_text_->setName("Current time");

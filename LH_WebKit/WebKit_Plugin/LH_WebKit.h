@@ -50,8 +50,6 @@
 #include "../../LH_Qt_QTextEdit.h"
 #include "../WebKitCommand.h"
 
-extern LH_QtPlugin_WebKit thePlugin;
-
 class LH_ParseThread : public QThread {
     Q_OBJECT
 protected:
@@ -99,7 +97,7 @@ protected:
 
     QHash<QString, QString> virtual getTokens();
 public:
-    LH_WebKit( const char *name, const bool enableParsing = false);
+    LH_WebKit( const bool enableParsing = false);
     ~LH_WebKit();
 
     int notify(int, void *);

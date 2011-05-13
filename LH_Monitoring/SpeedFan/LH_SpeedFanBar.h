@@ -8,7 +8,7 @@ class LH_SpeedFanBar : public LH_MonitoringBar
 {
     Q_OBJECT
 public:
-    LH_SpeedFanBar( const char *name, LH_QtPlugin *parent );
+    LH_SpeedFanBar();
     static lh_class *classInfo();
 };
 

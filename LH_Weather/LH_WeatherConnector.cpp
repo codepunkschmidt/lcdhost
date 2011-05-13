@@ -58,7 +58,7 @@ lh_class *LH_WeatherConnector::classInfo()
     return &classInfo;
 }
 
-LH_WeatherConnector::LH_WeatherConnector(const char *name) : LH_Text (name)
+LH_WeatherConnector::LH_WeatherConnector()
 {
     weatherMap.setKey("LHWeatherSharedMemory");
     lastrefresh_ = QDateTime::currentDateTime();

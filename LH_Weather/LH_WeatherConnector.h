@@ -98,7 +98,7 @@ protected:
     LH_Qt_QString *setup_current_url_;
 
 public:
-    LH_WeatherConnector(const char *name);
+    LH_WeatherConnector();
     ~LH_WeatherConnector();
 
     int notify(int code,void* param);

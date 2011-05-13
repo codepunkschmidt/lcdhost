@@ -91,7 +91,7 @@ public:
         Tera
     } NumberMode;
 
-    LH_Text( const char *name, LH_QtPlugin *parent = 0 );
+    LH_Text();
     ~LH_Text();
 
     int polling();
@@ -120,6 +120,7 @@ public:
     bool richtext() const { return richtext_; }
     QImage& textimage() { return textimage_; }
     bool prepareForRender(int w, int h);
+    bool monochrome() const { return state() ? state()->dev_depth < 2 : false; }
 
     static QImage makeImage(int w = 1, int h = 1)
     {

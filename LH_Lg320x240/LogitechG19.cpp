@@ -2,7 +2,7 @@
 #include <QDebug>
 #include "LogitechG19.h"
 
-LogitechG19::LogitechG19( const char *name, libusb_device *usbdev, libusb_device_descriptor *dd, QObject *parent ) : LH_QtDevice(name,parent)
+LogitechG19::LogitechG19( libusb_device *usbdev, libusb_device_descriptor *dd, QObject *drv ) : LH_QtDevice(drv)
 {
     usbdev_ = usbdev;
     lcdhandle_ = 0;

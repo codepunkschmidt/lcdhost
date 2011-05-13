@@ -38,100 +38,50 @@
 #include <QtGlobal>
 #include <QObject>
 
-#include "lh_plugin.h"
+#include "LH_QtObject.h"
 
 #ifndef EXPORT
 # define EXPORT extern "C" Q_DECL_EXPORT
 #endif
 
-extern lh_systemstate *lcdhost_state();
-extern void lh_callback( const void *obj, lh_callbackcode_t code, void *param );
-
-class LH_QtInstance;
-
-/**
-  Automatic registration of LCDHost layout classes written using this
-  framework. You can also manually register/deregister classes using
-  the addClass() and removeClass() methods of LH_QtPlugin.
-  */
-typedef lh_class *(*lh_class_info_t)();
-typedef LH_QtInstance *(*lh_class_factory_t)(const char *, const lh_class *);
-class LH_QtClassLoader
-{
-public:
-    static LH_QtClassLoader *first_;
-    LH_QtClassLoader *next_;
-    lh_class_info_t info_;
-    lh_class_factory_t factory_;
-    LH_QtClassLoader( lh_class_info_t info, lh_class_factory_t factory ) : info_(info), factory_(factory)
-    {
-        next_ = first_;
-        first_ = this;
-    }
-};
-
-/*
- Support class, keeps info for classes added with lh_add_class()
- (as opposed to automatically added using LH_PLUGIN_CLASS)
- */
-class lh_layout_class
-{
-    lh_class *info_;
-    lh_class_factory_t factory_;
-public:
-    lh_layout_class(lh_class *p,lh_class_factory_t f) : info_(p), factory_(f) {}
-    lh_class *info() const { return info_; }
-    lh_class_factory_t factory() const { return factory_; }
-};
-
 /**
   Base class for Qt-based LCDHost shared libraries.
+  As of alpha 17, the LH_QtPlugin object is no longer a global
+  C++ object, rather it is created dynamically in lh_create()
+  and destroyed in lh_destroy(). These two functions are
+  defined when you use the LH_PLUGIN(classname) macro.
   */
-class LH_QtPlugin : public QObject
+class LH_QtPlugin : public LH_QtObject
 {
     Q_OBJECT
-    static LH_QtPlugin *instance_;
 
 public:
-    LH_QtPlugin() { Q_ASSERT(instance_ == NULL); instance_ = this; }
-    virtual ~LH_QtPlugin() { instance_ = NULL; }
-
+    // plugin methods, override them in your descendant class
     virtual const char *lh_name() { return NULL; }
     virtual const char *lh_shortdesc() { return NULL; }
     virtual const char *lh_author() { return NULL; }
     virtual const char *lh_homepage() { return NULL; }
     virtual const char *lh_longdesc() { return NULL; }
     virtual const lh_blob *lh_logo() { return NULL; }
-    virtual const char *lh_load() { return NULL; }
-    virtual void lh_unload() {}
-    virtual int lh_polling() { return 0; }
-    virtual int lh_notify(int, void *) { return 0; }
-    virtual const lh_buildinfo *lh_version( int amaj, int amin )
-    {
-        Q_UNUSED( amaj );
-        Q_UNUSED( amin );
-        Q_ASSERT( amaj == LH_API_MAJOR );
-        Q_ASSERT( amin >= LH_API_MINOR );
-        return NULL;
-    }
 
-    static const lh_systemstate *state() { return lcdhost_state(); }
-    static void callback( const void *obj, lh_callbackcode_t code, void *param ) { lh_callback( obj, code, param ); }
-    static LH_QtPlugin *instance() { return instance_; }
+    virtual const char *lh_load() { return NULL; }
+    virtual void lh_unload() { return; }
 };
 
-extern void lh_add_class( lh_class *p, lh_class_factory_t f );
-extern void lh_remove_class( lh_class *p );
 
 /**
-  This macro creates the required functions and object to allow
-  automatic registration of layout classes. Note that using this
-  macro requires a static classInfo() method that returns a
-  statically allocated lh_class structure pointer.
+  This macro creates the required lh_create() and lh_destroy() functions
+  for your LH_QtPlugin descendant.
   */
-#define LH_PLUGIN_CLASS(classname)  \
-    classname *_lh_##classname##_factory(const char *name, const lh_class *cls) { Q_UNUSED(cls); return new classname(name); } \
-    lh_class *_lh_##classname##_info() { return classname::classInfo(); } \
-    LH_QtClassLoader _lh_##classname##_loader( _lh_##classname##_info, reinterpret_cast<lh_class_factory_t>(_lh_##classname##_factory) );
+#define LH_PLUGIN(classname) \
+    EXPORT void *lh_create( lh_callback_t cb, void *cb_id ) \
+    { \
+        classname *the_plugin = 0; \
+        LH_QtObject::set_lh_callback(cb,cb_id); \
+        the_plugin = new classname; \
+        LH_QtObject::set_plugin( the_plugin ); \
+        return reinterpret_cast<void*>(the_plugin); \
+    } \
+    EXPORT void lh_destroy( void *ref ) { delete reinterpret_cast<classname*>(ref); }
 
 #endif // LH_QTPLUGIN_H

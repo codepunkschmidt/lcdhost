@@ -3,7 +3,7 @@
 
 LH_PLUGIN_CLASS(LH_NowPlayingAlbumArt)
 
-LH_NowPlayingAlbumArt::LH_NowPlayingAlbumArt(const char* name, LH_QtPlugin *parent) : LH_QtInstance( name, 0, parent )
+LH_NowPlayingAlbumArt::LH_NowPlayingAlbumArt()
 {
     connect( currentTrack, SIGNAL(artworkChanged()), this, SLOT(refresh_image()) );
 

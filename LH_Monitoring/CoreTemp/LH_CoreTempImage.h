@@ -32,7 +32,7 @@ class LH_CoreTempImage:public LH_MonitoringImage
 {
     Q_OBJECT
 public:
-    LH_CoreTempImage( const char *name, LH_QtPlugin *parent = 0 );
+    LH_CoreTempImage();
     static lh_class *classInfo();
 };
 

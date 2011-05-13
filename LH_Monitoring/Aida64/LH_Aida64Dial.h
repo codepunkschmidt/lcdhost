@@ -8,7 +8,7 @@ class LH_Aida64Dial : public LH_MonitoringDial
 {
     Q_OBJECT
 public:
-    LH_Aida64Dial( const char *name, LH_QtPlugin *parent );
+    LH_Aida64Dial();
     static lh_class *classInfo();
 };
 

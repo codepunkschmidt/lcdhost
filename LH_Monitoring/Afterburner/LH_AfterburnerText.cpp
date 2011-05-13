@@ -50,7 +50,7 @@ lh_class *LH_AfterburnerText::classInfo()
     return &classInfo;
 }
 
-LH_AfterburnerText::LH_AfterburnerText( const char *name ) : LH_MonitoringText( name )
+LH_AfterburnerText::LH_AfterburnerText()
 {
     data_ = new LH_AfterburnerData(this);
     connect_changeType( static_cast<LH_AfterburnerData*>(data_)->setup_value_type_ );

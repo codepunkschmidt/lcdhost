@@ -35,7 +35,7 @@ class LH_GraphCPUAverage : public LH_Graph
     qreal lastVal;
 
 public:
-    LH_GraphCPUAverage( const char *name, LH_QtPlugin *parent = 0 ) : LH_Graph( name, parent ), cpu_( this )
+    LH_GraphCPUAverage() : cpu_( this )
     {
         valCount = 0;
         valCache = 0;

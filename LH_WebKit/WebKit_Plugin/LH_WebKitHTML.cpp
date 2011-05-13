@@ -53,7 +53,7 @@ lh_class *LH_WebKitHTML::classInfo()
     return &classinfo;
 }
 
-LH_WebKitHTML::LH_WebKitHTML(const char *name) : LH_WebKit(name)
+LH_WebKitHTML::LH_WebKitHTML()
 {
     html_ = new LH_Qt_QTextEdit(this,"~WebKitHTMLScript",QString(),LH_FLAG_FOCUS);
     connect( html_, SIGNAL(changed()), this, SLOT(htmlChanged()) );

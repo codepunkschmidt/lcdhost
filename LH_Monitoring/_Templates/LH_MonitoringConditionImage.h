@@ -66,7 +66,7 @@ protected:
     LH_Qt_QTextEdit *setup_conditions_list_;
 
 public:
-    LH_MonitoringConditionImage( const char *name, LH_QtPlugin *parent = 0 );
+    LH_MonitoringConditionImage();
     ~LH_MonitoringConditionImage();
 
     int polling();

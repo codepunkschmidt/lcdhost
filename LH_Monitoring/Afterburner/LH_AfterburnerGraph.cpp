@@ -41,7 +41,7 @@ lh_class *LH_AfterburnerGraph::classInfo()
     return &classInfo;
 }
 
-LH_AfterburnerGraph::LH_AfterburnerGraph( const char *name, LH_QtPlugin *parent = 0 ) : LH_MonitoringGraph( name, parent )
+LH_AfterburnerGraph::LH_AfterburnerGraph()
 {
     data_ = new LH_AfterburnerData( this, true );
     connect_clearData( static_cast<LH_AfterburnerData*>(data_)->setup_value_type_ );

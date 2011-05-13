@@ -41,7 +41,7 @@ lh_class *LH_AfterburnerImage::classInfo()
     return &classinfo;
 }
 
-LH_AfterburnerImage::LH_AfterburnerImage( const char *name, LH_QtPlugin *parent ) : LH_MonitoringImage( name, parent )
+LH_AfterburnerImage::LH_AfterburnerImage()
 {
     data_ = new LH_AfterburnerData(this);
     connect_changeType( static_cast<LH_AfterburnerData*>(data_)->setup_value_type_ );

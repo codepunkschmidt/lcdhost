@@ -64,7 +64,10 @@ public:
 
     virtual void setup_change()
     {
-        fi_ = QFileInfo( QString::fromUtf8(parent()->state()->dir_layout), QString::fromUtf8(item_.data.s) );
+        const char *path = 0;
+        parent()->callback( lh_cb_dir_layout, &path );
+        QString fromwhere( path ? path : "" );
+        fi_ = QFileInfo( fromwhere, QString::fromUtf8(item_.data.s) );
         LH_QtSetupItem::setup_change();
         return;
     }

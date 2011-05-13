@@ -53,17 +53,6 @@ public:
                "Additionally, this plugin's source code is provided as a "
                "sample of a plugin written in C++ with <a href=\"http://qt.nokia.com/\">Qt</a>.";
     }
-    const lh_buildinfo * lh_version( int amaj, int amin )
-    {
-        static lh_buildinfo buildinfo = LH_STD_BUILDINFO;
-        Q_UNUSED( amaj );
-        Q_UNUSED( amin );
-        Q_ASSERT( amaj == LH_API_MAJOR );
-        Q_ASSERT( amin >= LH_API_MINOR );
-        return &buildinfo;
-    }
 };
-
-extern LH_QtPlugin_Text thePlugin;
 
 #endif // LH_QTPLUGIN_TEXT_H

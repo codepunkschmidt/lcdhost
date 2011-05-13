@@ -55,7 +55,7 @@ lh_class *LH_DataViewerText::classInfo()
     return &classInfo;
 }
 
-LH_DataViewerText::LH_DataViewerText(const char* name): LH_Text(name), data_(this)
+LH_DataViewerText::LH_DataViewerText() : data_(this)
 {
     setup_text_->setValue(" ");
     setup_text_->setFlags(LH_FLAG_READONLY | LH_FLAG_NOSAVE);

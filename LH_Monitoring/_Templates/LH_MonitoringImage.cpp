@@ -35,7 +35,7 @@
 
 #include "../LH_Qt_QStringList.h"
 
-LH_MonitoringImage::LH_MonitoringImage(const char *name, LH_QtPlugin *parent ) : LH_QtInstance( name, 0, parent )//, data_(this)
+LH_MonitoringImage::LH_MonitoringImage()
 {
     setup_file_ = new LH_Qt_QFileInfo( this, tr("File"), QFileInfo(), LH_FLAG_AUTORENDER );
     setup_file_->setHelp( "<p>The image map file instructs the status image on how to match up "

@@ -39,7 +39,7 @@
 
 #include "LH_WebKit.h"
 
-LH_WebKit::LH_WebKit( const char *name, const bool enableParsing) : LH_QtInstance(name)
+LH_WebKit::LH_WebKit(const bool enableParsing)
 {
     parsingEnabled_ = enableParsing;
     int parseFlags = (!enableParsing? LH_FLAG_HIDDEN | LH_FLAG_READONLY | LH_FLAG_NOSAVE : 0);
@@ -182,7 +182,7 @@ void LH_WebKit::error(QLocalSocket::LocalSocketError err)
 {
     if( err == QLocalSocket::ServerNotFoundError  )
     {
-        thePlugin.startServer();
+        static_cast<LH_QtPlugin_WebKit*>(plugin())->startServer();
         return;
     }
 

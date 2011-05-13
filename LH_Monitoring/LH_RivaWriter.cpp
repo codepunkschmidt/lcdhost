@@ -6,7 +6,7 @@
 
 LH_PLUGIN_CLASS(LH_RivaWriter)
 
-LH_RivaWriter::LH_RivaWriter(const char *name) : LH_Text(name)
+LH_RivaWriter::LH_RivaWriter()
 {
     setText("Afterburner >> RivaTuner");
     setup_text_->setFlags(LH_FLAG_HIDDEN);

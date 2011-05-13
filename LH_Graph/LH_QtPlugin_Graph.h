@@ -40,24 +40,6 @@ public:
     const char * lh_shortdesc() { return "Plots graphs of data items over time"; }
     const char * lh_author() { return "Andy \"Triscopic\" Bridges"; }
     const char * lh_homepage() { return "<a href=\"http://www.codeleap.co.uk\">CodeLeap</a>"; }
-    const lh_buildinfo * lh_version( int amaj, int amin )
-    {
-        static lh_buildinfo buildinfo =
-        {
-            LH_BUILDINFO_SIG,
-            sizeof(lh_buildinfo),
-            REVISION,
-            LH_API_MAJOR,
-            LH_API_MINOR,
-            "v1.31",
-            "http://www.linkdata.se/lcdhost/version.php?arch=$ARCH"
-        };
-        Q_UNUSED( amaj );
-        Q_UNUSED( amin );
-        Q_ASSERT( amaj == LH_API_MAJOR );
-        Q_ASSERT( amin >= LH_API_MINOR );
-        return &buildinfo;
-    }
     const char * lh_longdesc()
     {
         return  "<p>Plots graphs of data items such as CPU, memory and network load. "
@@ -66,7 +48,5 @@ public:
     const char *lh_load();
     void lh_unload();
 };
-
-extern LH_QtPlugin_Graph thePlugin;
 
 #endif // LH_QTPLUGIN_GRAPH_H

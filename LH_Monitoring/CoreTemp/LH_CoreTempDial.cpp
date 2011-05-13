@@ -41,7 +41,7 @@ lh_class *LH_CoreTempDial::classInfo()
     return &classInfo;
 }
 
-LH_CoreTempDial::LH_CoreTempDial( const char *name, LH_QtPlugin *parent = 0 ) : LH_MonitoringDial( name, parent )
+LH_CoreTempDial::LH_CoreTempDial()
 {
     data_ = new LH_CoreTempData( this, mdmNumbers, true );
     connect_refresh( static_cast<LH_CoreTempData*>(data_)->setup_value_type_ );

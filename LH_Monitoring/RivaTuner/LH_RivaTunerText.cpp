@@ -52,7 +52,7 @@ lh_class *LH_RivaTunerText::classInfo()
     return &classInfo;
 }
 
-LH_RivaTunerText::LH_RivaTunerText( const char *name ) : LH_MonitoringText( name )
+LH_RivaTunerText::LH_RivaTunerText()
 {
     data_ = new LH_RivaTunerData(this);
     connect_changeType( static_cast<LH_RivaTunerData*>(data_)->setup_value_type_ );

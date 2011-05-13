@@ -32,7 +32,7 @@ class LH_SpeedFanImage:public LH_MonitoringImage
 {
     Q_OBJECT
 public:
-    LH_SpeedFanImage( const char *name, LH_QtPlugin *parent = 0 );
+    LH_SpeedFanImage();
     static lh_class *classInfo();
 };
 

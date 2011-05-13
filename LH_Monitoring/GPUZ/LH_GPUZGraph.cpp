@@ -41,7 +41,7 @@ lh_class *LH_GPUZGraph::classInfo()
     return &classInfo;
 }
 
-LH_GPUZGraph::LH_GPUZGraph( const char *name, LH_QtPlugin *parent = 0 ) : LH_MonitoringGraph( name, parent )
+LH_GPUZGraph::LH_GPUZGraph()
 {
     data_ = new LH_GPUZData( this );
     connect_clearData( static_cast<LH_GPUZData*>(data_)->setup_value_type_ );

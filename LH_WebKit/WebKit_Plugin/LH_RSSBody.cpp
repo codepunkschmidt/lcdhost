@@ -17,7 +17,7 @@ lh_class *LH_RSSBody::classInfo()
     return &classInfo;
 }
 
-LH_RSSBody::LH_RSSBody(const char *name) : LH_WebKit(name, true), rss_(this)
+LH_RSSBody::LH_RSSBody() : LH_WebKit(true), rss_(this)
 {
     connect( &rss_, SIGNAL(changed()), this, SLOT(setRssItem()) );
     connect( &rss_, SIGNAL(begin()), this, SLOT(beginFetch()) );

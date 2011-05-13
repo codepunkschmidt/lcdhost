@@ -39,7 +39,7 @@
 class LH_TextMemVirtualUsed : public LH_TextNumber
 {
 public:
-    explicit LH_TextMemVirtualUsed( const char *name, LH_QtPlugin *parent = 0 ) : LH_TextNumber(name,parent)
+    LH_TextMemVirtualUsed()
     {
         setBytes(true);
     }

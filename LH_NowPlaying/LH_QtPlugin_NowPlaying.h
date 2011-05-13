@@ -42,8 +42,9 @@
 #include "utils.h"
 #include <QFile>
 #include <QThread>
+#include <QDebug>
 
-class LH_NowPlaying_Reader: public QThread //QObject
+class LH_NowPlaying_Reader: public QThread
 {
     Q_OBJECT
     bool playerFound_;
@@ -63,8 +64,11 @@ public:
     }
     void clearArtwork()
     {
-        if(QFile::exists(cachedArtwork_.fileName))
-            QFile::remove(cachedArtwork_.fileName);
+        qDebug() << "Clean up requested: " << cachedArtwork_.fileName;
+        if(cachedArtwork_.fileName!="" && QFile::exists(cachedArtwork_.fileName))
+            qDebug() << "Clean up suceeded: " << QFile::remove(cachedArtwork_.fileName);
+        else
+            qDebug() << "Clean up skipped";
         cachedArtwork_ = (artworkDescription){"","",""};
     }
 
@@ -83,7 +87,6 @@ extern LH_NowPlaying_Reader* currentTrack;
 class LH_QtPlugin_NowPlaying : public LH_QtPlugin
 {
     QTime t;
-    bool allowRefreshing_;
 
 public:
     const char * lh_name() { return "Now Playing"; }

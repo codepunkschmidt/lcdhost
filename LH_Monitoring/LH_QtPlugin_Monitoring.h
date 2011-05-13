@@ -35,24 +35,6 @@ public:
     const char * lh_shortdesc() { return "Connects to a variety of 3rd party applications and reports statistics such as Temperatures, Fan Speeds, Voltages, etc."; }
     const char * lh_author() { return "Andy \"Triscopic\" Bridges"; }
     const char * lh_homepage() { return "<a href=\"http://www.codeleap.co.uk\">CodeLeap</a>"; }
-    const lh_buildinfo * lh_version( int amaj, int amin )
-    {
-        static lh_buildinfo buildinfo =
-        {
-            LH_BUILDINFO_SIG,
-            sizeof(lh_buildinfo),
-            REVISION,
-            LH_API_MAJOR,
-            LH_API_MINOR,
-            "1.03",
-            "http://www.linkdata.se/lcdhost/version.php?arch=$ARCH"
-        };
-        Q_UNUSED( amaj );
-        Q_UNUSED( amin );
-        Q_ASSERT( amaj == LH_API_MAJOR );
-        Q_ASSERT( amin >= LH_API_MINOR );
-        return &buildinfo;
-    }
     const char * lh_longdesc()
     {
         return "This plugin provides connections through to several 3rd Party applications, from which it can then extract information whenever they are running: "
@@ -104,7 +86,5 @@ public:
                ;
     }
 };
-
-extern LH_QtPlugin_Monitoring thePlugin;
 
 #endif // LH_QTPLUGIN_MONITORING_H

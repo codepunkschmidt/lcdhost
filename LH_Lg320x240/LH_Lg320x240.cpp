@@ -46,7 +46,8 @@
 #include "Lg320x240Device.h"
 #include "../LH_Qt_QImage.h"
 
-LH_Lg320x240 theDriver;
+LH_PLUGIN(LH_Lg320x240);
+lh_buildinfo buildinfo = LH_STD_BUILDINFO;
 
 extern "C"
 {

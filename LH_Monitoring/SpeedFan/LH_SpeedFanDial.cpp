@@ -41,7 +41,7 @@ lh_class *LH_SpeedFanDial::classInfo()
     return &classInfo;
 }
 
-LH_SpeedFanDial::LH_SpeedFanDial( const char *name, LH_QtPlugin *parent = 0 ) : LH_MonitoringDial( name, parent )
+LH_SpeedFanDial::LH_SpeedFanDial()
 {
     data_ = new LH_SpeedFanData( this, true );
     connect_refresh( static_cast<LH_SpeedFanData*>(data_)->setup_value_type_ );

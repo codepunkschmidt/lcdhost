@@ -41,7 +41,7 @@ lh_class *LH_Aida64Dial::classInfo()
     return &classInfo;
 }
 
-LH_Aida64Dial::LH_Aida64Dial( const char *name, LH_QtPlugin *parent = 0 ) : LH_MonitoringDial( name, parent )
+LH_Aida64Dial::LH_Aida64Dial()
 {
     data_ = new LH_Aida64Data( this, mdmNumbers, true );
     connect_refresh( static_cast<LH_Aida64Data*>(data_)->setup_value_type_ );

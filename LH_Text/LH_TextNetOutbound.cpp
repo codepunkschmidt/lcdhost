@@ -39,7 +39,7 @@
 class LH_TextNetOutbound : public LH_TextNumber
 {
 public:
-    LH_TextNetOutbound( const char *name, LH_QtPlugin * parent = 0 ): LH_TextNumber(name,parent)
+    LH_TextNetOutbound(): LH_TextNumber()
     {
         setup_bits_->setFlag( LH_FLAG_HIDDEN, false );
     }

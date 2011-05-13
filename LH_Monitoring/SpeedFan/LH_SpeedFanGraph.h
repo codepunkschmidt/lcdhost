@@ -8,7 +8,7 @@ class LH_SpeedFanGraph : public LH_MonitoringGraph
 {
     Q_OBJECT
 public:
-    LH_SpeedFanGraph( const char *name, LH_QtPlugin *parent );
+    LH_SpeedFanGraph();
     static lh_class *classInfo();
 };
 

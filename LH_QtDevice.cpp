@@ -55,7 +55,7 @@ static const char* obj_set_backlight(void*obj,lh_device_backlight*p) { return RE
 static const char* obj_close(void*obj) { return RECAST(obj)->close(); }
 
 
-LH_QtDevice::LH_QtDevice( const char *name, QObject *parent ) : LH_QtObject( name, parent )
+LH_QtDevice::LH_QtDevice( QObject *parent ) : LH_QtObject( parent )
 {
     memset( &lh_dev_, 0, sizeof(lh_dev_) );
     lh_dev_.size = sizeof(lh_dev_);

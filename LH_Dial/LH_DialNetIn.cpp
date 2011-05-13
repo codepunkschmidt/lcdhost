@@ -32,7 +32,7 @@ class LH_DialNetIn : public LH_Dial
     LH_QtNetwork net_;
 
 public:
-    LH_DialNetIn( const char *name, LH_QtPlugin *parent = 0 ) : LH_Dial( name, parent ), net_(this)
+    LH_DialNetIn() : net_(this)
     {
         setMin(0.0);
         setMax(1000.0);

@@ -43,7 +43,7 @@ lh_class *LH_CursorController::classInfo()
     return &classInfo;
 }
 
-LH_CursorController::LH_CursorController(const char * name) : LH_Text(name), shmem_(NULL), cursor_location_(NULL)
+LH_CursorController::LH_CursorController() : LH_Text(), shmem_(NULL), cursor_location_(NULL)
 {
     cursorModes.append((cursorMode){smSelectDeselect, true , "Activate, Move & Select / Deselect"});
     cursorModes.append((cursorMode){smSelect        , true , "Activate, Move & Select Only (one is always selected)"});

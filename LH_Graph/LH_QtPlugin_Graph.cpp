@@ -26,7 +26,18 @@
 
 #include "LH_QtPlugin_Graph.h"
 
-LH_QtPlugin_Graph thePlugin;
+LH_PLUGIN(LH_QtPlugin_Graph);
+
+lh_buildinfo buildinfo =
+{
+    LH_BUILDINFO_SIG,
+    sizeof(lh_buildinfo),
+    REVISION,
+    LH_API_MAJOR,
+    LH_API_MINOR,
+    "v1.31",
+    "http://www.linkdata.se/lcdhost/version.php?arch=$ARCH"
+};
 
 const char *LH_QtPlugin_Graph::lh_load()
 {

@@ -53,7 +53,7 @@ lh_class *LH_CursorImage::classInfo()
     return &classInfo;
 }
 
-LH_CursorImage::LH_CursorImage(const char *name, LH_QtPlugin *parent ) : LH_CursorInstance( name, parent )
+LH_CursorImage::LH_CursorImage()
 {
     setup_file_ = new LH_Qt_QFileInfo( this, tr("File"), QFileInfo(), LH_FLAG_AUTORENDER );
     setup_file_->setHelp( "<p>The image map file instructs the status image on how to match up "

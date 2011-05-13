@@ -53,9 +53,9 @@ lh_class *LH_WebKitURL::classInfo()
 }
 
 #ifdef USE_NAM
-LH_WebKitURL::LH_WebKitURL(const char *name) : LH_WebKit(name,true)
+LH_WebKitURL::LH_WebKitURL() : LH_WebKit(true)
 #else
-LH_WebKitURL::LH_WebKitURL(const char *name) : LH_WebKit(name)
+LH_WebKitURL::LH_WebKitURL() : LH_WebKit()
 #endif
 {
     setup_url_ = new LH_Qt_QString(this,"URL",QString(),LH_FLAG_FOCUS);

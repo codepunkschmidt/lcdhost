@@ -37,19 +37,19 @@
 
 #include <QQueue>
 #include "lh_plugin.h"
-#include "LH_QtObject.h"
+#include "LH_QtInstance.h"
 #include "LH_Qt_QSlider.h"
 
 class LH_QtNetwork
 {
-    LH_QtObject *parent_;
+    LH_QtInstance *parent_;
     QQueue<lh_netdata*> data_;
 
 protected:
     LH_Qt_QSlider *setup_smoothing_;
 
 public:
-    LH_QtNetwork( LH_QtObject *parent );
+    explicit LH_QtNetwork( LH_QtInstance *parent );
     ~LH_QtNetwork();
 
     int notify(int n, void *p);

@@ -41,7 +41,7 @@ lh_class *LH_SpeedFanBar::classInfo()
     return &classInfo;
 }
 
-LH_SpeedFanBar::LH_SpeedFanBar( const char *name, LH_QtPlugin *parent = 0 ) : LH_MonitoringBar( name, parent )
+LH_SpeedFanBar::LH_SpeedFanBar()
 {
     data_ = new LH_SpeedFanData( this, true );
     connect_refresh( static_cast<LH_SpeedFanData*>(data_)->setup_value_type_ );

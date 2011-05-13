@@ -12,7 +12,7 @@ protected:
     LH_Qt_int *setup_max_;
     LH_Qt_int *setup_min_;
 public:
-    LH_MonitoringBar(const char *name, LH_QtPlugin *parent);
+    LH_MonitoringBar();
     ~LH_MonitoringBar();
 
     int notify( int, void* );

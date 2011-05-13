@@ -51,7 +51,7 @@ lh_class *LH_RivaTunerImage::classInfo()
     return &classinfo;
 }
 
-LH_RivaTunerImage::LH_RivaTunerImage( const char *name, LH_QtPlugin *parent ) : LH_MonitoringImage( name, parent )
+LH_RivaTunerImage::LH_RivaTunerImage()
 {
     data_ = new LH_RivaTunerData(this);
     connect_changeType( static_cast<LH_RivaTunerData*>(data_)->setup_value_type_ );

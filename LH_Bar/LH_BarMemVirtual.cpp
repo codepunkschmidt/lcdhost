@@ -41,10 +41,11 @@
 class LH_BarMemVirtual : public LH_Bar
 {
 public:
-    LH_BarMemVirtual( const char *name, LH_QtPlugin *parent = 0 ) : LH_Bar( name, parent )
+    const char *init()
     {
         setMin(0.0);
         setMax(1000.0);
+        return 0;
     }
 
     static lh_class *classInfo()

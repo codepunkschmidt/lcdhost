@@ -44,8 +44,6 @@ class LH_QtPlugin_Bar : public LH_QtPlugin
     Q_OBJECT
 
 public:
-    LH_QtPlugin_Bar() : LH_QtPlugin() {}
-
     const char * lh_name() { return "Bar"; }
     const char * lh_shortdesc() { return "Bar and histogram graphs"; }
     const char * lh_author() { return "Johan \"SirReal\" Lindh"; }
@@ -58,17 +56,6 @@ public:
 
     const char *lh_load();
     void lh_unload();
-    const lh_buildinfo *lh_version( int amaj, int amin )
-    {
-        static lh_buildinfo buildinfo = LH_STD_BUILDINFO;
-        Q_UNUSED( amaj );
-        Q_UNUSED( amin );
-        Q_ASSERT( amaj == LH_API_MAJOR );
-        Q_ASSERT( amin >= LH_API_MINOR );
-        return &buildinfo;
-    }
 };
-
-extern LH_QtPlugin_Bar thePlugin;
 
 #endif // LH_QTPLUGIN_BAR_H

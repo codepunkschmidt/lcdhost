@@ -8,7 +8,7 @@ class LH_LogitechText : public LH_MonitoringText
 {
     Q_OBJECT
 public:
-    LH_LogitechText( const char *name );
+    LH_LogitechText();
     static lh_class *classInfo();
 };
 

@@ -36,7 +36,19 @@
 
 #include "LH_QtPlugin_NowPlaying.h"
 
-LH_QtPlugin_NowPlaying thePlugin;
+LH_PLUGIN(LH_QtPlugin_NowPlaying);
+lh_buildinfo buildinfo =
+{
+    LH_BUILDINFO_SIG,
+    sizeof(lh_buildinfo),
+    REVISION,
+    LH_API_MAJOR,
+    LH_API_MINOR,
+    "2.00",
+    "http://www.linkdata.se/lcdhost/version.php?arch=$ARCH"
+};
+
+
 LH_NowPlaying_Reader* currentTrack;
 
 bool get_itunes_info(TrackInfo &ti, QString artworkPath, artworkDescription &cachedArtwork, bool &updatedArtwork);

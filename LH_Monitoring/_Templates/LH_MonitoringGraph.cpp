@@ -26,7 +26,7 @@
 
 #include "LH_MonitoringGraph.h"
 
-LH_MonitoringGraph::LH_MonitoringGraph( const char *name, LH_QtPlugin *parent = 0 ) : LH_Graph( name, parent, 0, 2 )
+LH_MonitoringGraph::LH_MonitoringGraph() : LH_Graph( 0, 2 )
 {
     setUserDefinableLimits(true);
     canGrow(true);

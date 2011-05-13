@@ -41,7 +41,7 @@ lh_class *LH_RivaTunerGraph::classInfo()
     return &classInfo;
 }
 
-LH_RivaTunerGraph::LH_RivaTunerGraph( const char *name, LH_QtPlugin *parent = 0 ) : LH_MonitoringGraph( name, parent )
+LH_RivaTunerGraph::LH_RivaTunerGraph()
 {
     data_ = new LH_RivaTunerData( this, true );
     connect_clearData( static_cast<LH_RivaTunerData*>(data_)->setup_value_type_ );

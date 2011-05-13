@@ -44,7 +44,7 @@ lh_class *LH_LogitechConditionImage::classInfo()
     return &classinfo;
 }
 
-LH_LogitechConditionImage::LH_LogitechConditionImage( const char *name, LH_QtPlugin *parent ) : LH_MonitoringConditionImage( name, parent )
+LH_LogitechConditionImage::LH_LogitechConditionImage()
 {
     data_ = new LH_LogitechData(this, mdmText);
     connect_changeType( static_cast<LH_LogitechData*>(data_)->setup_value_type_ );

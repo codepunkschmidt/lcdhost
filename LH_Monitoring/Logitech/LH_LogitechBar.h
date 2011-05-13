@@ -8,7 +8,7 @@ class LH_LogitechBar : public LH_MonitoringBar
 {
     Q_OBJECT
 public:
-    LH_LogitechBar( const char *name, LH_QtPlugin *parent );
+    LH_LogitechBar();
     static lh_class *classInfo();
 };
 

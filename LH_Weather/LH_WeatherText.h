@@ -40,7 +40,7 @@ protected:
     LH_Qt_QString *setup_post_text_;
 
 public:
-    LH_WeatherText(const char *name);
+    LH_WeatherText();
 
     int notify( int, void* );
     QString getSelectedValueText(weatherData* weather);

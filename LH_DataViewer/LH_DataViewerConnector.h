@@ -90,7 +90,7 @@ protected:
     LH_Qt_QStringList *setup_language_;
 
 public:
-    LH_DataViewerConnector(const char* name);
+    LH_DataViewerConnector();
     ~LH_DataViewerConnector();
 
     int polling();

@@ -41,7 +41,7 @@ lh_class *LH_Aida64Image::classInfo()
     return &classinfo;
 }
 
-LH_Aida64Image::LH_Aida64Image( const char *name, LH_QtPlugin *parent ) : LH_MonitoringImage(name, parent)
+LH_Aida64Image::LH_Aida64Image()
 {
     data_ = new LH_Aida64Data(this);
     connect_changeType( static_cast<LH_Aida64Data*>(data_)->setup_value_type_ );

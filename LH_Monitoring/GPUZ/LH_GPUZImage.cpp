@@ -41,7 +41,7 @@ lh_class *LH_GPUZImage::classInfo()
     return &classinfo;
 }
 
-LH_GPUZImage::LH_GPUZImage( const char *name, LH_QtPlugin *parent ) : LH_MonitoringImage( name, parent )
+LH_GPUZImage::LH_GPUZImage()
 {
     data_ = new LH_GPUZData(this);
     connect_changeType( static_cast<LH_GPUZData*>(data_)->setup_value_type_ );

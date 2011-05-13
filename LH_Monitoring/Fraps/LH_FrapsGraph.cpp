@@ -41,7 +41,7 @@ lh_class *LH_FrapsGraph::classInfo()
     return &classInfo;
 }
 
-LH_FrapsGraph::LH_FrapsGraph( const char *name, LH_QtPlugin *parent = 0 ) : LH_MonitoringGraph( name, parent )
+LH_FrapsGraph::LH_FrapsGraph()
 {
     data_ = new LH_FrapsData( this );
     connect_clearData( static_cast<LH_FrapsData*>(data_)->setup_value_type_ );

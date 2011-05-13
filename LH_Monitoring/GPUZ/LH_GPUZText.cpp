@@ -52,7 +52,7 @@ lh_class *LH_GPUZText::classInfo()
     return &classInfo;
 }
 
-LH_GPUZText::LH_GPUZText( const char *name ) : LH_MonitoringText( name )
+LH_GPUZText::LH_GPUZText()
 {
     data_ = new LH_GPUZData(this);
 

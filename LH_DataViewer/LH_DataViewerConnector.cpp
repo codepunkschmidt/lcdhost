@@ -58,7 +58,7 @@ lh_class *LH_DataViewerConnector::classInfo()
 #define source_type_INI 3
 
 
-LH_DataViewerConnector::LH_DataViewerConnector(const char* name) : LH_Text(name)
+LH_DataViewerConnector::LH_DataViewerConnector()
 {
     // Hide inherited attributes we don't use
     setup_text_->setFlags( LH_FLAG_HIDDEN | LH_FLAG_READONLY | LH_FLAG_NOSAVE);

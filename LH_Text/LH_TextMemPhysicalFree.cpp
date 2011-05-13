@@ -39,7 +39,7 @@
 class LH_TextMemPhysicalFree : public LH_TextNumber
 {
 public:
-    explicit LH_TextMemPhysicalFree( const char *name, LH_QtPlugin *parent = 0 ) : LH_TextNumber(name,parent)
+    LH_TextMemPhysicalFree() : LH_TextNumber()
     {
         setBytes(true);
     }

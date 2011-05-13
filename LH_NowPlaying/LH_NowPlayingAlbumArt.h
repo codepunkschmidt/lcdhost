@@ -13,7 +13,7 @@ protected:
     LH_Qt_QFileInfo *setup_file_;
 
 public:
-    LH_NowPlayingAlbumArt(const char* name, LH_QtPlugin *parent = 0);
+    LH_NowPlayingAlbumArt();
 
     int polling() { return 0; }
     int notify(int n,void* p)  { Q_UNUSED(n); Q_UNUSED(p); return 0; }

@@ -30,7 +30,7 @@
 class LH_DialMemVirtual : public LH_Dial
 {
 public:
-    LH_DialMemVirtual( const char *name, LH_QtPlugin *parent = 0 ) : LH_Dial( name, parent )
+    LH_DialMemVirtual()
     {
         setMin(0.0);
         setMax(1000.0);

@@ -55,7 +55,7 @@ protected:
     LH_Qt_QStringList *setup_scale_;
 
 public:
-    LH_TextNumber( const char *name, LH_QtPlugin *parent = 0 );
+    LH_TextNumber();
     void prerender() { makeText(); }
 
     bool showUnits() const { return setup_showunits_->value() && (setup_scale_->value() != 1); }

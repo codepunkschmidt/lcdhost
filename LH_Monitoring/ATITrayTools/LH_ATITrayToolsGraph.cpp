@@ -41,7 +41,7 @@ lh_class *LH_ATITrayToolsGraph::classInfo()
     return &classInfo;
 }
 
-LH_ATITrayToolsGraph::LH_ATITrayToolsGraph( const char *name, LH_QtPlugin *parent = 0 ) : LH_MonitoringGraph( name, parent )
+LH_ATITrayToolsGraph::LH_ATITrayToolsGraph()
 {
     data_ = new LH_ATITrayToolsData( this );
     connect_clearData( static_cast<LH_ATITrayToolsData*>(data_)->setup_value_type_ );

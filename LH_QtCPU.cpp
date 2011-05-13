@@ -35,7 +35,7 @@
 #include "LH_QtCPU.h"
 #include "../lh_plugin.h"
 
-LH_QtCPU::LH_QtCPU( LH_QtObject *parent )
+LH_QtCPU::LH_QtCPU( LH_QtInstance *parent )
 {
     parent_ = parent;
     setup_smoothing_ = new LH_Qt_QSlider(parent,"Smoothing",3,1,10);

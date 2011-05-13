@@ -132,7 +132,7 @@ class LH_RivaWriter : public LH_Text
     HANDLE filemap_riva;
     RTHM_SHARED_MEMORY_HEADER* RTHMHeader;
 public:
-    LH_RivaWriter(const char *name);
+    LH_RivaWriter();
     ~LH_RivaWriter();
 
     static lh_class *classInfo();

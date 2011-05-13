@@ -44,7 +44,7 @@ lh_class *LH_CursorRectangle::classInfo()
     return &classInfo;
 }
 
-LH_CursorRectangle::LH_CursorRectangle( const char *name ) : LH_CursorInstance(name)
+LH_CursorRectangle::LH_CursorRectangle()
 {
     setup_penwidth_ = new LH_Qt_QSlider(this,tr("Pen width"),0,0,1000,LH_FLAG_AUTORENDER);
     setup_rounding_ = new LH_Qt_QSlider(this,tr("Corner rounding"),20,0,100,LH_FLAG_AUTORENDER);

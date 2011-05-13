@@ -42,26 +42,6 @@ public:
                "There are two other classes that display weather data, one for text the other for images.\n\n"
                "Images are should be placed in a subfolder along with a text file that defines what images to use for each status code for day and night. See the documentation for more details.";
     }
-    const lh_buildinfo * lh_version( int amaj, int amin )
-    {
-        static lh_buildinfo buildinfo =
-        {
-            LH_BUILDINFO_SIG,
-            sizeof(lh_buildinfo),
-            REVISION,
-            LH_API_MAJOR,
-            LH_API_MINOR,
-            "1.23",
-            "http://www.linkdata.se/lcdhost/version.php?arch=$ARCH"
-        };
-        Q_UNUSED( amaj );
-        Q_UNUSED( amin );
-        Q_ASSERT( amaj == LH_API_MAJOR );
-        Q_ASSERT( amin >= LH_API_MINOR );
-        return &buildinfo;
-    }
 };
-
-extern LH_QtPlugin_Weather thePlugin;
 
 #endif // LH_QTPLUGIN_WEATHER_H

@@ -41,7 +41,8 @@
 #include "Lg160x43Device.h"
 #include "../LH_Qt_QImage.h"
 
-LH_Lg160x43 theDriver;
+LH_PLUGIN(LH_Lg160x43);
+lh_buildinfo buildinfo = LH_STD_BUILDINFO;
 
 int LH_Lg160x43::lh_notify(int note, void*param)
 {

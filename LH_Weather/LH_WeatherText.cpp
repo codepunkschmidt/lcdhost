@@ -57,7 +57,7 @@ lh_class *LH_WeatherText::classInfo()
     return &classInfo;
 }
 
-LH_WeatherText::LH_WeatherText(const char *name) : LH_Text( name )
+LH_WeatherText::LH_WeatherText()
 {
     //setup_text_->setName( "Text" );
     setup_text_->setFlag( LH_FLAG_READONLY, true );

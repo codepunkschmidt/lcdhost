@@ -8,7 +8,7 @@ class LH_ATITrayToolsDial : public LH_MonitoringDial
 {
     Q_OBJECT
 public:
-    LH_ATITrayToolsDial( const char *name, LH_QtPlugin *parent );
+    LH_ATITrayToolsDial();
     static lh_class *classInfo();
 };
 

@@ -41,7 +41,8 @@
 #include "LH_QtPlugin_WebKit.h"
 #include "../WebKitCommand.h"
 
-LH_QtPlugin_WebKit thePlugin;
+LH_PLUGIN(LH_QtPlugin_WebKit);
+lh_buildinfo buildinfo = LH_STD_BUILDINFO;
 
 const char *LH_QtPlugin_WebKit::lh_load()
 {
@@ -52,14 +53,18 @@ bool LH_QtPlugin_WebKit::startServer()
 {
     if( last_start_.isNull() || last_start_.elapsed() > 10000 )
     {
+        const char *dir_data_p = 0;
+        const char *dir_plugins_p = 0;
+        callback( lh_cb_dir_data, &dir_data_p );
+        callback( lh_cb_dir_plugins, &dir_plugins_p );
         last_start_ = QTime::currentTime();
         QString wksname = QFileInfo(QCoreApplication::applicationFilePath()).canonicalPath() + "/WebKitServer";
         qDebug() << "LH_WebKit: attempting to start" << wksname;
         QProcess::startDetached( wksname, QStringList("--hidden")
                                 << "--datadir"
-                                << QString( state()->dir_data )
+                                << QString( dir_data_p )
                                 << "--plugindir"
-                                << QString( state()->dir_plugins )
+                                << QString( dir_plugins_p )
                                 << "--verbose"
                                 );
     }

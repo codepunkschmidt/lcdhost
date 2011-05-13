@@ -55,7 +55,7 @@ class LH_NowPlayingBar : public LH_Bar
 protected:
 
 public:
-    LH_NowPlayingBar(const char* name, LH_QtPlugin* parent = 0);
+    LH_NowPlayingBar();
 
     static lh_class *classInfo();
 

@@ -8,7 +8,7 @@ class LH_RivaTunerText : public LH_MonitoringText
 {
     Q_OBJECT
 public:
-    LH_RivaTunerText( const char *name );
+    LH_RivaTunerText();
     static lh_class *classInfo();
 };
 

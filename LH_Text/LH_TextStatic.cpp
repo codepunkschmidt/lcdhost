@@ -8,8 +8,6 @@
 class LH_TextStatic : public LH_Text
 {
 public:
-    LH_TextStatic(const char *name) : LH_Text(name) {}
-
     static lh_class *classInfo()
     {
         static lh_class classinfo =

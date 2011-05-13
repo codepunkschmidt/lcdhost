@@ -36,7 +36,7 @@
 
 #include "LH_TextNumber.h"
 
-LH_TextNumber::LH_TextNumber( const char *name, LH_QtPlugin *parent ) : LH_Text( name, parent )
+LH_TextNumber::LH_TextNumber() : LH_Text()
 {
     value_ = max_ = 0.0;
     bytes_ = false;

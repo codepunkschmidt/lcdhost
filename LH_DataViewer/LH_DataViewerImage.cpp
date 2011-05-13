@@ -52,7 +52,7 @@ lh_class *LH_DataViewerImage::classInfo()
     return &classinfo;
 }
 
-LH_DataViewerImage::LH_DataViewerImage(const char* name, LH_QtPlugin *parent ) : LH_QtInstance( name, 0, parent ), data_(this)
+LH_DataViewerImage::LH_DataViewerImage() : data_(this)
 {
     setup_lookup_code_ = new LH_Qt_QString(this, "Lookup Code", "");
     connect( setup_lookup_code_, SIGNAL(changed()), this, SLOT(updateImage()) );

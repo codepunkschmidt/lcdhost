@@ -41,7 +41,7 @@ lh_class *LH_GPUZBar::classInfo()
     return &classInfo;
 }
 
-LH_GPUZBar::LH_GPUZBar( const char *name, LH_QtPlugin *parent = 0 ) : LH_MonitoringBar( name, parent )
+LH_GPUZBar::LH_GPUZBar()
 {
     data_ = new LH_GPUZData( this );
     connect_refresh( static_cast<LH_GPUZData*>(data_)->setup_value_type_ );

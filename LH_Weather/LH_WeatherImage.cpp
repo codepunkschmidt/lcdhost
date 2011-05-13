@@ -52,7 +52,7 @@ lh_class *LH_WeatherImage::classInfo()
     return &classinfo;
 }
 
-LH_WeatherImage::LH_WeatherImage(const char *name, LH_QtPlugin *parent ) : LH_QtInstance( name, 0, parent )
+LH_WeatherImage::LH_WeatherImage()
 {
     QStringList valueTypes = QStringList();
     valueTypes.append("Current Conditions");

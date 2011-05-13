@@ -41,7 +41,7 @@ lh_class *LH_CoreTempBar::classInfo()
     return &classInfo;
 }
 
-LH_CoreTempBar::LH_CoreTempBar( const char *name, LH_QtPlugin *parent = 0 ) : LH_MonitoringBar( name, parent )
+LH_CoreTempBar::LH_CoreTempBar()
 {
     data_ = new LH_CoreTempData( this, mdmNumbers, true );
     connect_refresh( static_cast<LH_CoreTempData*>(data_)->setup_value_type_ );

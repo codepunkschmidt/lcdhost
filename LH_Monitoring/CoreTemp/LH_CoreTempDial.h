@@ -8,7 +8,7 @@ class LH_CoreTempDial : public LH_MonitoringDial
 {
     Q_OBJECT
 public:
-    LH_CoreTempDial( const char *name, LH_QtPlugin *parent );
+    LH_CoreTempDial();
     static lh_class *classInfo();
 };
 

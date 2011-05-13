@@ -47,6 +47,41 @@
 #endif
 
 /**
+  Automatic registration of LCDHost layout classes written using this
+  framework. You can also manually register/deregister classes using
+  the addClass() and removeClass() methods of LH_QtPlugin.
+  */
+typedef lh_class *(*lh_class_info_t)();
+typedef void *(*lh_class_factory_t)();
+class LH_QtClassLoader
+{
+public:
+    static LH_QtClassLoader *first_;
+    LH_QtClassLoader *next_;
+    lh_class_info_t info_;
+    lh_class_factory_t factory_;
+    LH_QtClassLoader( lh_class_info_t info, lh_class_factory_t factory ) : info_(info), factory_(factory)
+    {
+        next_ = first_;
+        first_ = this;
+    }
+};
+
+/*
+ Support class, keeps info for classes added with lh_add_class()
+ (as opposed to automatically added using LH_PLUGIN_CLASS)
+ */
+class lh_layout_class
+{
+    lh_class *info_;
+    lh_class_factory_t factory_;
+public:
+    lh_layout_class(lh_class *p,lh_class_factory_t f) : info_(p), factory_(f) {}
+    lh_class *info() const { return info_; }
+    lh_class_factory_t factory() const { return factory_; }
+};
+
+/**
   Base class for LCDHost plugin classes using Qt. For normal use, the macro
   LH_PLUGIN_CLASS(classname) will export the class from the implementation
   file (not from the header file!).
@@ -58,12 +93,19 @@ class LH_QtInstance : public LH_QtObject
 {
     Q_OBJECT
 
+protected:
+    QImage *image_;
+    const lh_systemstate *state_;
+
 public:
-    LH_QtInstance( const char *name = 0, const lh_class *cls = 0, LH_QtPlugin *parent = 0 );
-    virtual ~LH_QtInstance();
+    LH_QtInstance( QObject *parent = 0 ) : LH_QtObject(parent), image_(0), state_(0) {}
+
+    virtual const char *init( const lh_systemstate *state, const char *name, const lh_class *cls );
+    virtual void term();
 
     QImage *image() const { return image_; }
     QImage *initImage(int w, int h);
+    const lh_systemstate *state() const { return state_; }
 
     virtual int polling() { return 0; }
     virtual int notify( int, void* ) { return 0; }
@@ -73,11 +115,24 @@ public:
     virtual lh_blob *render_blob( int, int ) { return NULL; }
     virtual QImage *render_qimage( int, int ) { return NULL; }
 
+    static void build_calltable( lh_instance_calltable *ct, lh_class_factory_t cf );
+
     /** You MUST reimplement this in your classes if you use the class loader and macros below */
     static lh_class *classInfo() { Q_ASSERT(!"classInfo() not reimplemented"); return NULL; }
-
-protected:
-    QImage *image_;
 };
+
+extern void lh_add_class( lh_class *p, lh_class_factory_t f );
+extern void lh_remove_class( lh_class *p );
+
+/**
+  This macro creates the required functions and object to allow
+  automatic registration of layout classes. Note that using this
+  macro requires a static classInfo() method that returns a
+  statically allocated lh_class structure pointer.
+  */
+#define LH_PLUGIN_CLASS(classname)  \
+    classname *_lh_##classname##_factory() { return new classname; } \
+    lh_class *_lh_##classname##_info() { return classname::classInfo(); } \
+    LH_QtClassLoader _lh_##classname##_loader( _lh_##classname##_info, reinterpret_cast<lh_class_factory_t>(_lh_##classname##_factory) );
 
 #endif // LH_QTINSTANCE_H

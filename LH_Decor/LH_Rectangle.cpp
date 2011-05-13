@@ -56,7 +56,7 @@ lh_class *LH_Rectangle::classInfo()
     return &classInfo;
 }
 
-LH_Rectangle::LH_Rectangle( const char *name ) : LH_QtInstance(name)
+LH_Rectangle::LH_Rectangle()
 {
     setup_penwidth_ = new LH_Qt_QSlider(this,tr("Pen width"),0,0,1000,LH_FLAG_AUTORENDER);
     setup_rounding_ = new LH_Qt_QSlider(this,tr("Corner rounding"),20,0,100,LH_FLAG_AUTORENDER);

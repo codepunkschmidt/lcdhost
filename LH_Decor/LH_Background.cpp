@@ -55,7 +55,7 @@ lh_class *LH_Background::classInfo()
     return &classInfo;
 }
 
-LH_Background::LH_Background( const char *name ) : LH_QtInstance(name)
+LH_Background::LH_Background()
 {
     setup_startcolor_ = new LH_Qt_QColor(this,tr("First color"),Qt::white,LH_FLAG_AUTORENDER);
     setup_gradient_ = new LH_Qt_bool(this,tr("^Background is a gradient"),false);

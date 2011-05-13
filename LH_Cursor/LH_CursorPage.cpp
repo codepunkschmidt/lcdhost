@@ -45,7 +45,7 @@ lh_class *LH_CursorPage::classInfo()
 }
 
 
-LH_CursorPage::LH_CursorPage(const char * name, LH_QtPlugin *parent ) : LH_CursorInstance( name, parent )
+LH_CursorPage::LH_CursorPage()
 {
     setup_coordinate_ = new LH_Qt_QString(this, "Coordinate", "1,1", LH_FLAG_AUTORENDER);
     setup_coordinate_->setHelp("This is the coordinate of this object, i.e. when the cursor is at the point specified here this object is selected. <br/>"

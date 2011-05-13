@@ -8,7 +8,7 @@ class LH_RivaTunerDial : public LH_MonitoringDial
 {
     Q_OBJECT
 public:
-    LH_RivaTunerDial( const char *name, LH_QtPlugin *parent );
+    LH_RivaTunerDial();
     static lh_class *classInfo();
 };
 

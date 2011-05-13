@@ -37,13 +37,13 @@
 
 #include <QQueue>
 #include "lh_plugin.h"
-#include "LH_QtObject.h"
+#include "LH_QtInstance.h"
 #include "LH_Qt_QSlider.h"
 
 class LH_QtCPU
 {
     QQueue<lh_cpudata*> load_;
-    LH_QtObject *parent_;
+    LH_QtInstance *parent_;
 
     int load( lh_cpudata *from, lh_cpudata *to );
 
@@ -51,14 +51,14 @@ protected:
     LH_Qt_QSlider *setup_smoothing_;
 
 public:
-    explicit LH_QtCPU(LH_QtObject *parent);
+    explicit LH_QtCPU(LH_QtInstance *parent);
     ~LH_QtCPU();
 
     int notify(int n, void *p);
-    const lh_systemstate *state() const { return parent_->state(); }
 
     int count();
     int samples() { return setup_smoothing_->value() + 1; }
+    const lh_systemstate *state() const { return parent_->state(); }
 
     int coreload(int n); // 0...10000
     int averageload(); // 0...10000

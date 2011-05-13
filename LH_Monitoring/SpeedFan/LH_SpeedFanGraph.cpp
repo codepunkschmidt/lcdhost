@@ -42,7 +42,7 @@ lh_class *LH_SpeedFanGraph::classInfo()
     return &classInfo;
 }
 
-LH_SpeedFanGraph::LH_SpeedFanGraph( const char *name, LH_QtPlugin *parent = 0 ) : LH_MonitoringGraph( name, parent )
+LH_SpeedFanGraph::LH_SpeedFanGraph()
 {
 qDebug() << this->objectName() << "Create2...";
     data_ = new LH_SpeedFanData( this, true );

@@ -41,7 +41,7 @@ lh_class *LH_Aida64Graph::classInfo()
     return &classInfo;
 }
 
-LH_Aida64Graph::LH_Aida64Graph( const char *name, LH_QtPlugin *parent = 0 ) : LH_MonitoringGraph( name, parent )
+LH_Aida64Graph::LH_Aida64Graph()
 {
     data_ = new LH_Aida64Data( this, mdmNumbers, true );
     connect_clearData( static_cast<LH_Aida64Data*>(data_)->setup_value_type_ );

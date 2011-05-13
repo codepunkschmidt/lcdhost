@@ -41,7 +41,7 @@ lh_class *LH_FrapsImage::classInfo()
     return &classinfo;
 }
 
-LH_FrapsImage::LH_FrapsImage( const char *name, LH_QtPlugin *parent ) : LH_MonitoringImage( name, parent )
+LH_FrapsImage::LH_FrapsImage()
 {
     data_ = new LH_FrapsData(this);
     connect_changeType( static_cast<LH_FrapsData*>(data_)->setup_value_type_ );

@@ -52,7 +52,7 @@ protected:
     LH_Qt_QString *setup_text_;
 
 public:
-    LH_DataViewerImage( const char* name, LH_QtPlugin *parent = 0 );
+    LH_DataViewerImage();
     ~LH_DataViewerImage();
 
     int polling();

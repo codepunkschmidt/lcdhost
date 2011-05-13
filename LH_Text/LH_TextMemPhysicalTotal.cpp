@@ -39,7 +39,7 @@
 class LH_TextMemPhysicalTotal : public LH_TextNumber
 {
 public:
-    explicit LH_TextMemPhysicalTotal( const char *name, LH_QtPlugin *parent = 0 ) : LH_TextNumber(name,parent)
+    LH_TextMemPhysicalTotal() : LH_TextNumber()
     {
         setBytes(true);
     }

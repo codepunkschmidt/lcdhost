@@ -8,7 +8,7 @@ class LH_Aida64Text : public LH_MonitoringText
 {
     Q_OBJECT
 public:
-    LH_Aida64Text( const char *name );
+    LH_Aida64Text();
     static lh_class *classInfo();
 };
 

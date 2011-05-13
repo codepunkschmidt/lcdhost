@@ -42,7 +42,7 @@ class LH_BarCPUAverage : public LH_Bar
     LH_QtCPU cpu_;
 
 public:
-    LH_BarCPUAverage( const char *name, LH_QtPlugin *parent = 0 ) : LH_Bar( name, parent ), cpu_( this )
+    LH_BarCPUAverage() : LH_Bar(), cpu_(this)
     {
         setMin(0.0);
         setMax(10000.0);

@@ -54,11 +54,9 @@ class LH_QtDevice : public LH_QtObject
     lh_device lh_dev_;
 
 public:
-    LH_QtDevice( const char *name, QObject *parent = 0); //LH_QtPlugin *drv );
+    LH_QtDevice( QObject *parent );
     virtual ~LH_QtDevice();
 
-    void callback( lh_callbackcode code, void *param ) const { LH_QtPlugin::callback(this,code,param); }
-    // LH_QtPlugin *drv() const { return static_cast<LH_QtPlugin*>(parent()); }
     lh_device *lh_dev() { return &lh_dev_; }
 
     /**

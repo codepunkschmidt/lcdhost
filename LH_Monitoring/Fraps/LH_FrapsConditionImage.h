@@ -32,7 +32,7 @@ class LH_FrapsConditionImage : public LH_MonitoringConditionImage
 {
     Q_OBJECT
 public:
-    LH_FrapsConditionImage( const char *name, LH_QtPlugin *parent = 0 );
+    LH_FrapsConditionImage();
     static lh_class *classInfo();
 };
 

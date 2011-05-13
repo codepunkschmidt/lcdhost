@@ -44,7 +44,7 @@ lh_class *LH_LogitechBar::classInfo()
     return &classInfo;
 }
 
-LH_LogitechBar::LH_LogitechBar( const char *name, LH_QtPlugin *parent = 0 ) : LH_MonitoringBar( name, parent )
+LH_LogitechBar::LH_LogitechBar()
 {
     data_ = new LH_LogitechData( this );
     connect_refresh( static_cast<LH_LogitechData*>(data_)->setup_value_type_ );

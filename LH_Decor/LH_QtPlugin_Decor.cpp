@@ -36,4 +36,5 @@
   
 #include "LH_QtPlugin_Decor.h"
 
-LH_QtPlugin_Decor thePlugin;
+LH_PLUGIN(LH_QtPlugin_Decor);
+lh_buildinfo buildinfo = LH_STD_BUILDINFO;

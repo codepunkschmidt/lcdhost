@@ -52,7 +52,7 @@ lh_class *LH_ATITrayToolsText::classInfo()
     return &classInfo;
 }
 
-LH_ATITrayToolsText::LH_ATITrayToolsText( const char *name ) : LH_MonitoringText( name )
+LH_ATITrayToolsText::LH_ATITrayToolsText()
 {
     data_ = new LH_ATITrayToolsData(this, mdmAll);
     connect_changeType( static_cast<LH_ATITrayToolsData*>(data_)->setup_value_type_ );

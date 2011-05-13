@@ -60,7 +60,7 @@ protected:
     LH_Qt_QString *setup_text_;
 
 public:
-    LH_CursorImage( const char *name, LH_QtPlugin *parent = 0 );
+    LH_CursorImage();
 
     QImage *render_qimage( int w, int h );
     int polling();

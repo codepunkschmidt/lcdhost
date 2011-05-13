@@ -8,7 +8,7 @@ class LH_CoreTempText : public LH_MonitoringText
 {
     Q_OBJECT
 public:
-    LH_CoreTempText( const char *name );
+    LH_CoreTempText();
     static lh_class *classInfo();
 };
 

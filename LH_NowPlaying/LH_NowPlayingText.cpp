@@ -38,7 +38,7 @@
 
 LH_PLUGIN_CLASS(LH_NowPlayingText)
 
-LH_NowPlayingText::LH_NowPlayingText(const char* name) : LH_Text(name)
+LH_NowPlayingText::LH_NowPlayingText()
 {
     connect( currentTrack, SIGNAL(changed()), this, SLOT(refresh_text()) );
 

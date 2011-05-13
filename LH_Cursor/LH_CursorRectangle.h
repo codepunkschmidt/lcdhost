@@ -95,7 +95,7 @@ protected:
 
     LH_Qt_QString *setup_text_;
 public:
-    LH_CursorRectangle(const char * name);
+    LH_CursorRectangle();
 
     QImage *render_qimage( int w, int h );
 

@@ -41,7 +41,7 @@ lh_class *LH_CoreTempGraph::classInfo()
     return &classInfo;
 }
 
-LH_CoreTempGraph::LH_CoreTempGraph( const char *name, LH_QtPlugin *parent = 0 ) : LH_MonitoringGraph( name, parent )
+LH_CoreTempGraph::LH_CoreTempGraph()
 {
     data_ = new LH_CoreTempData( this, mdmNumbers, true );
     connect_clearData( static_cast<LH_CoreTempData*>(data_)->setup_value_type_ );

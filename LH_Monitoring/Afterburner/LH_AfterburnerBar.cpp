@@ -41,7 +41,7 @@ lh_class *LH_AfterburnerBar::classInfo()
     return &classInfo;
 }
 
-LH_AfterburnerBar::LH_AfterburnerBar( const char *name, LH_QtPlugin *parent = 0 ) : LH_MonitoringBar( name, parent )
+LH_AfterburnerBar::LH_AfterburnerBar()
 {
     data_ = new LH_AfterburnerData( this, true );
     connect_refresh( static_cast<LH_AfterburnerData*>(data_)->setup_value_type_ );

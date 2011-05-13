@@ -15,7 +15,7 @@ protected:
     QHash<QString, QString> getTokens();
 
 public:
-    LH_RSSBody(const char *name);
+    LH_RSSBody();
 
     int notify(int code,void* param);
 

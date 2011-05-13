@@ -73,7 +73,7 @@ protected:
 
     void createThresholdSet(QString title, LH_Qt_float *&thresh_flt, LH_Qt_int *&thresh_int, bool low_value);
 public:
-    LH_MonitoringImage( const char *name, LH_QtPlugin *parent = 0 );
+    LH_MonitoringImage();
     ~LH_MonitoringImage();
 
     int polling();

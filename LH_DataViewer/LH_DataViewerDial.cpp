@@ -17,7 +17,7 @@ lh_class *LH_DataViewerDial::classInfo()
     return &classInfo;
 }
 
-LH_DataViewerDial::LH_DataViewerDial(const char* name) : LH_Dial(name), data_(this)
+LH_DataViewerDial::LH_DataViewerDial() : data_(this)
 {
     setup_lookup_code_ = new LH_Qt_QString( this, "Data Template", "");
     setup_lookup_code_->setOrder(-3);

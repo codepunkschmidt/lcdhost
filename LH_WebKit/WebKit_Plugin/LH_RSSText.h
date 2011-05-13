@@ -11,7 +11,7 @@ class LH_RSSText : public LH_Text
     LH_RSSInterface rss_;
 
 public:
-    LH_RSSText(const char *name);
+    LH_RSSText();
 
     int notify(int code,void* param);
     QImage *render_qimage( int w, int h );

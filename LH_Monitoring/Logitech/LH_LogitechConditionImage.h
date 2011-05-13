@@ -32,7 +32,7 @@ class LH_LogitechConditionImage : public LH_MonitoringConditionImage
 {
     Q_OBJECT
 public:
-    LH_LogitechConditionImage( const char *name, LH_QtPlugin *parent = 0 );
+    LH_LogitechConditionImage();
     static lh_class *classInfo();
 };
 

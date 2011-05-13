@@ -47,15 +47,6 @@ public:
     const char * lh_author(void) { return "Johan \"SirReal\" Lindh"; }
     const char * lh_homepage(void) { return "<a href=\"http://www.linkdata.se/software/lcdhost\">Link Data Stockholm</a>"; }
     const char * lh_longdesc(void) {  return "Backgrounds, rectangles, lines, circles."; }
-    const lh_buildinfo *lh_version( int amaj, int amin )
-    {
-        static lh_buildinfo buildinfo = LH_STD_BUILDINFO;
-        Q_UNUSED( amaj );
-        Q_UNUSED( amin );
-        Q_ASSERT( amaj == LH_API_MAJOR );
-        Q_ASSERT( amin >= LH_API_MINOR );
-        return &buildinfo;
-    }
 };
 
 #endif // LH_QTPLUGIN_DECOR_H

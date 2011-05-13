@@ -52,7 +52,7 @@ lh_class *LH_WebKitFile::classInfo()
     return &classinfo;
 }
 
-LH_WebKitFile::LH_WebKitFile(const char *name) : LH_WebKit(name)
+LH_WebKitFile::LH_WebKitFile()
 {
     setup_file_ = new LH_Qt_QFileInfo(this,"File",QFileInfo(),LH_FLAG_FOCUS);
     connect( setup_file_, SIGNAL(changed()), this, SLOT(fileChanged()) );

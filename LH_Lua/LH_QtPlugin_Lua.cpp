@@ -78,7 +78,8 @@
 int luaopen_xt(lua_State *L); // from luaXT.cpp
 extern "C" int luaopen_lcairo(lua_State* L);
 
-LH_QtPlugin_Lua thePlugin;
+LH_PLUGIN(LH_QtPlugin_Lua);
+lh_buildinfo buildinfo = LH_STD_BUILDINFO;
 
 #ifndef LUA_STATIC
 # include "lua_dyn.c"
@@ -90,6 +91,10 @@ lua_All_functions LuaFunctions;
 #include <cairo-win32.h>
 #endif
 
+static const lh_systemstate *lcdhost_state()
+{
+    return LH_LuaInstance::top()->state();
+}
 
 static void my_setenv(const char *name, const char *value )
 {
@@ -504,8 +509,14 @@ const char *LH_QtPlugin_Lua::lh_load()
     const char *env_lua_cpath;
     const char *env_lua_path;
     const char *env_path;
-    QString dir_data = QString::fromUtf8( state()->dir_data );
-    QString dir_plugins = QString::fromUtf8( state()->dir_plugins );
+    const char *dir_data_p = 0;
+    const char *dir_plugins_p = 0;
+
+    callback( lh_cb_dir_data, &dir_data_p );
+    callback( lh_cb_dir_plugins, &dir_plugins_p );
+
+    QString dir_data = QString::fromUtf8( dir_data_p ? dir_data_p : "" );
+    QString dir_plugins = QString::fromUtf8( dir_plugins_p ? dir_plugins_p : "" );
 
     // Create DATADIR/lua/clibs if it doesn't exist
     {
@@ -701,7 +712,7 @@ const char *LH_QtPlugin_Lua::lh_load()
     // make the font -> filename map
     // lh_make_fontmap();
 
-    luadir_ = QString::fromUtf8( state()->dir_data ).append("lua");
+    luadir_ = dir_data.append("lua");
     // watcher_ = NULL;
     // watcher_ = new QFileSystemWatcher();
     // connect( watcher_, SIGNAL(directoryChanged(QString)), this, SLOT(directoryChanged(QString))  );
@@ -733,7 +744,9 @@ int LH_QtPlugin_Lua::lh_notify( int code, void *)
 
 void LH_QtPlugin_Lua::loadLuaFile( QFileInfo fi )
 {
-    QString err = LH_LuaClass::load(L,fi,state()->dir_data);
+    const char *dir_data_p = 0;
+    callback( lh_cb_dir_data, &dir_data_p );
+    QString err = LH_LuaClass::load(L,fi,dir_data_p ? dir_data_p : "");
     if( !err.isEmpty() ) qWarning() << "LH_Lua:" << err;
     return;
 }

@@ -36,4 +36,5 @@
 
 #include "LH_QtPlugin_Text.h"
 
-LH_QtPlugin_Text thePlugin;
+LH_PLUGIN(LH_QtPlugin_Text);
+lh_buildinfo buildinfo = LH_STD_BUILDINFO;

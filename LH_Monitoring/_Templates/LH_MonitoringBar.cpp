@@ -26,7 +26,7 @@
 
 #include "LH_MonitoringBar.h"
 
-LH_MonitoringBar::LH_MonitoringBar( const char *name, LH_QtPlugin *parent = 0 ) : LH_Bar( name, parent )
+LH_MonitoringBar::LH_MonitoringBar()
 {
     setup_max_ = new LH_Qt_int(this, "Maximum", 100, 0, 99999);
     setup_max_->setHelp( "<p>The bar's maximum value.</p>");

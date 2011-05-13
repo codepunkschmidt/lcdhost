@@ -41,7 +41,7 @@ lh_class *LH_FrapsDial::classInfo()
     return &classInfo;
 }
 
-LH_FrapsDial::LH_FrapsDial( const char *name, LH_QtPlugin *parent = 0 ) : LH_MonitoringDial( name, parent )
+LH_FrapsDial::LH_FrapsDial()
 {
     data_ = new LH_FrapsData( this );
     connect_refresh( static_cast<LH_FrapsData*>(data_)->setup_value_type_ );

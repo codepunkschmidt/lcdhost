@@ -73,13 +73,7 @@ public:
     virtual const char *lh_load();
     virtual void lh_unload();
     virtual int lh_notify(int code,void *param);
-    const lh_buildinfo * lh_version( int amaj, int amin )
-    {
-        static lh_buildinfo buildinfo = LH_STD_BUILDINFO;
-        Q_ASSERT( amaj == LH_API_MAJOR );
-        Q_ASSERT( amin >= LH_API_MINOR );
-        return &buildinfo;
-    }
+
     bool event( QEvent * e );
 
     void setBW( QImage img ) { if( thread_ ) thread_->setBW(img); }

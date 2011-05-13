@@ -38,7 +38,7 @@ protected:
     LH_Qt_QFileInfo *setup_layout_;
 
 public:
-    LH_QuickAction(const char * name, LH_QtPlugin *parent = 0);
+    LH_QuickAction();
 
     static lh_class *classInfo();
 

@@ -41,7 +41,7 @@ lh_class *LH_CoreTempImage::classInfo()
     return &classinfo;
 }
 
-LH_CoreTempImage::LH_CoreTempImage( const char *name, LH_QtPlugin *parent ) : LH_MonitoringImage( name, parent )
+LH_CoreTempImage::LH_CoreTempImage()
 {
     data_ = new LH_CoreTempData(this);
     connect_changeType( static_cast<LH_CoreTempData*>(data_)->setup_value_type_ );

@@ -42,7 +42,7 @@ protected:
     LH_Qt_QFileInfo *setup_file_;
 
 public:
-    LH_DataViewerExpiredImage( const char* name, LH_QtPlugin *parent = 0 );
+    LH_DataViewerExpiredImage();
     ~LH_DataViewerExpiredImage();
 
     int polling();

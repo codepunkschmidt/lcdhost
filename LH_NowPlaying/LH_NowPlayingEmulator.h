@@ -57,7 +57,7 @@ protected:
     void sendMessage(bool enabled);
 
 public:
-    LH_NowPlayingEmulator(const char* name);
+    LH_NowPlayingEmulator();
     ~LH_NowPlayingEmulator();
 
     int notify(int code, void *param);

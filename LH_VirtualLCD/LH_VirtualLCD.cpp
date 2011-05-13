@@ -39,7 +39,8 @@
 #include "LH_VirtualLCD.h"
 #include "../LH_Qt_QImage.h"
 
-LH_VirtualLCD theDriver;
+LH_PLUGIN(LH_VirtualLCD);
+lh_buildinfo buildinfo = LH_STD_BUILDINFO;
 
 class VirtualLCD : public LH_QtDevice
 {
@@ -47,7 +48,7 @@ protected:
     LH_Qt_QImage *setup_output_;
 
 public:
-    VirtualLCD( LH_QtPlugin *drv = 0 ) : LH_QtDevice("Virtual LCD",drv)
+    VirtualLCD( LH_QtPlugin *drv ) : LH_QtDevice(drv)
     {
         setup_output_ = new LH_Qt_QImage(this,"Output",QImage(),LH_FLAG_HIDDEN);
     }
@@ -99,7 +100,7 @@ public:
 class VirtualQVGA : public VirtualLCD
 {
 public:
-    VirtualQVGA( LH_QtPlugin *drv = 0 ) : VirtualLCD(drv)
+    VirtualQVGA( LH_QtPlugin *drv ) : VirtualLCD( drv )
     {
         setId("320x240x32");
         setName("Virtual 320x240x32 device");
@@ -110,11 +111,10 @@ public:
     }
 };
 
-
 class VirtualBW : public VirtualLCD
 {
 public:
-    VirtualBW( LH_QtPlugin *drv = 0 ) : VirtualLCD(drv)
+    VirtualBW( LH_QtPlugin *drv ) : VirtualLCD( drv )
     {
         setId("160x43x1");
         setName("Virtual 160x43x1 device");

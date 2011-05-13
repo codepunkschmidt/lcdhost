@@ -32,7 +32,7 @@ class LH_AfterburnerImage:public LH_MonitoringImage
 {
     Q_OBJECT
 public:
-    LH_AfterburnerImage( const char *name, LH_QtPlugin *parent = 0 );
+    LH_AfterburnerImage();
     static lh_class *classInfo();
 };
 

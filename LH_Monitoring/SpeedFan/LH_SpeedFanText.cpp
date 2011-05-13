@@ -53,7 +53,7 @@ lh_class *LH_SpeedFanText::classInfo()
     return &classInfo;
 }
 
-LH_SpeedFanText::LH_SpeedFanText( const char *name ) : LH_MonitoringText( name )
+LH_SpeedFanText::LH_SpeedFanText()
 {
     data_ = new LH_SpeedFanData(this);
     connect_changeType( static_cast<LH_SpeedFanData*>(data_)->setup_value_type_ );

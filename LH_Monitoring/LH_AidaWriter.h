@@ -26,7 +26,7 @@ protected:
     LH_Qt_QTextEdit* setup_xml_;
 
 public:
-    LH_AidaWriter(const char *name);
+    LH_AidaWriter();
     ~LH_AidaWriter();
 
     static lh_class *classInfo();

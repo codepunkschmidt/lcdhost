@@ -41,7 +41,7 @@ lh_class *LH_ATITrayToolsImage::classInfo()
     return &classinfo;
 }
 
-LH_ATITrayToolsImage::LH_ATITrayToolsImage( const char *name, LH_QtPlugin *parent ) : LH_MonitoringImage( name, parent )
+LH_ATITrayToolsImage::LH_ATITrayToolsImage()
 {
     data_ = new LH_ATITrayToolsData(this);
     connect_changeType( static_cast<LH_ATITrayToolsData*>(data_)->setup_value_type_ );

@@ -39,7 +39,7 @@
 class LH_TextMemVirtualFree : public LH_TextNumber
 {
 public:
-    explicit LH_TextMemVirtualFree( const char *name, LH_QtPlugin *parent = 0 ) : LH_TextNumber(name, parent)
+    LH_TextMemVirtualFree()
     {
         setBytes(true);
     }

@@ -25,7 +25,7 @@
 
 #include "LH_QtPlugin_Dial.h"
 
-LH_QtPlugin_Dial thePlugin;
+LH_PLUGIN(LH_QtPlugin_Dial);
 
 const char *LH_QtPlugin_Dial::lh_load()
 {
@@ -35,3 +35,14 @@ const char *LH_QtPlugin_Dial::lh_load()
 void LH_QtPlugin_Dial::lh_unload()
 {
 }
+
+lh_buildinfo buildinfo =
+{
+    LH_BUILDINFO_SIG,
+    sizeof(lh_buildinfo),
+    REVISION,
+    LH_API_MAJOR,
+    LH_API_MINOR,
+    "1.03",
+    "http://www.linkdata.se/lcdhost/version.php?arch=$ARCH"
+};

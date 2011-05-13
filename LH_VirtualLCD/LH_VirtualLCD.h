@@ -52,15 +52,6 @@ public:
     virtual const lh_blob *lh_logo();
     virtual const char *lh_load();
     virtual void lh_unload() {}
-    const lh_buildinfo * lh_version( int amaj, int amin )
-    {
-        static lh_buildinfo buildinfo = LH_STD_BUILDINFO;
-        Q_UNUSED( amaj );
-        Q_UNUSED( amin );
-        Q_ASSERT( amaj == LH_API_MAJOR );
-        Q_ASSERT( amin >= LH_API_MINOR );
-        return &buildinfo;
-    }
 };
 
 #endif // LH_VIRTUALLCD_H

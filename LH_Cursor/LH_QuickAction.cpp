@@ -41,7 +41,7 @@ lh_class *LH_QuickAction::classInfo()
     return &classInfo;
 }
 
-LH_QuickAction::LH_QuickAction(const char * name, LH_QtPlugin *parent) : LH_QtInstance(name, 0, parent)
+LH_QuickAction::LH_QuickAction()
 {
     setup_fire_ = new LH_Qt_InputState(this,"Trigger key","",0);
     setup_fire_ ->setHelp("Binding a key to this object will allow LCDHost to load a specified layout when the key is pressed, e.g. binding the G19's \"Menu\" key and configuring it to load a menu layout.");

@@ -51,7 +51,7 @@ protected:
     LH_Qt_bool *setup_showing_;
 
 public:
-    LH_CursorPage( const char * name, LH_QtPlugin *parent = 0 );
+    LH_CursorPage();
 
     int polling();
     int width( int forHeight = -1 );

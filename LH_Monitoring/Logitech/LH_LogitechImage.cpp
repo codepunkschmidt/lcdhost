@@ -44,7 +44,7 @@ lh_class *LH_LogitechImage::classInfo()
     return &classinfo;
 }
 
-LH_LogitechImage::LH_LogitechImage( const char *name, LH_QtPlugin *parent ) : LH_MonitoringImage( name, parent )
+LH_LogitechImage::LH_LogitechImage()
 {
     data_ = new LH_LogitechData(this);
     connect_changeType( static_cast<LH_LogitechData*>(data_)->setup_value_type_ );

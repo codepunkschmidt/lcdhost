@@ -8,7 +8,7 @@ class LH_CoreTempBar : public LH_MonitoringBar
 {
     Q_OBJECT
 public:
-    LH_CoreTempBar( const char *name, LH_QtPlugin *parent );
+    LH_CoreTempBar();
     static lh_class *classInfo();
 };
 

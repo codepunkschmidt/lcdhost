@@ -44,7 +44,7 @@ lh_class *LH_LogitechDial::classInfo()
     return &classInfo;
 }
 
-LH_LogitechDial::LH_LogitechDial( const char *name, LH_QtPlugin *parent = 0 ) : LH_MonitoringDial( name, parent )
+LH_LogitechDial::LH_LogitechDial()
 {
     data_ = new LH_LogitechData( this );
     connect_refresh( static_cast<LH_LogitechData*>(data_)->setup_value_type_ );

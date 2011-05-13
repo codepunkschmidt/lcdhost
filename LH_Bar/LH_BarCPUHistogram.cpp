@@ -42,7 +42,7 @@ class LH_BarCPUHistogram : public LH_Bar
     LH_QtCPU cpu_;
 
 public:
-    explicit LH_BarCPUHistogram( const char *name, LH_QtPlugin *parent = 0 ) : LH_Bar( name, parent ), cpu_(this)
+    LH_BarCPUHistogram() : LH_Bar(), cpu_(this)
     {
         setMin(0.0);
         setMax(10000.0);

@@ -42,26 +42,6 @@ public:
                "language to export text. This plugin can then be used to read in that data and display it on screen "
                "in various formats to create a layout that displays useful in-game stats.";
     }
-    const lh_buildinfo * lh_version( int amaj, int amin )
-    {
-        static lh_buildinfo buildinfo =
-        {
-            LH_BUILDINFO_SIG,
-            sizeof(lh_buildinfo),
-            REVISION,
-            LH_API_MAJOR,
-            LH_API_MINOR,
-            "1.03",
-            "http://www.linkdata.se/lcdhost/version.php?arch=$ARCH"
-        };
-        Q_UNUSED( amaj );
-        Q_UNUSED( amin );
-        Q_ASSERT( amaj == LH_API_MAJOR );
-        Q_ASSERT( amin >= LH_API_MINOR );
-        return &buildinfo;
-    }
 };
-
-extern LH_QtPlugin_DataViewer thePlugin;
 
 #endif // LH_QTPLUGIN_DATAVIEWER_H

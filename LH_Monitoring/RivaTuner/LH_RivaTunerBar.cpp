@@ -41,7 +41,7 @@ lh_class *LH_RivaTunerBar::classInfo()
     return &classInfo;
 }
 
-LH_RivaTunerBar::LH_RivaTunerBar( const char *name, LH_QtPlugin *parent = 0 ) : LH_MonitoringBar( name, parent )
+LH_RivaTunerBar::LH_RivaTunerBar()
 {
     data_ = new LH_RivaTunerData( this, true );
     connect_refresh( static_cast<LH_RivaTunerData*>(data_)->setup_value_type_ );

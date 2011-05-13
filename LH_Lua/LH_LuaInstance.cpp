@@ -42,6 +42,8 @@
 
 extern "C" int lh_lua_print(lua_State *L);
 
+QStack<LH_LuaInstance*> *LH_LuaInstance::stack_ = 0;
+
 static const char *lh_self_item_data_key[] =
 {
     NULL,
@@ -886,13 +888,14 @@ extern "C" int lh_self_item_pairs(lua_State *L)
     return 0;
 }
 
-LH_LuaInstance::LH_LuaInstance( const char *name, LH_LuaClass *luaclass )
-    : LH_QtInstance( name, luaclass->classInfo(), LH_QtPlugin::instance() ),
-      L(luaclass->luaState()), alc_(luaclass), blob_(NULL), ref_(LUA_NOREF)
+const char *LH_LuaInstance::init( const lh_systemstate *state, const char *name, const lh_class *cls )
 {
 #ifndef QT_NO_DEBUG
     int old_top = lua_gettop(L);
 #endif
+    LH_QtInstance::init(state,name,cls);
+    alc_ = LH_LuaClass::from_lh_class(cls);
+    if( alc_ == 0 ) return "can't find associated Lua class";
 
     // Create the 'self' table
     lua_newtable(L); // 1 self
@@ -903,7 +906,7 @@ LH_LuaInstance::LH_LuaInstance( const char *name, LH_LuaClass *luaclass )
     lua_newtable(L); // 3
     lua_rawset(L,-3); // 1
     lua_pushliteral(L,"module"); // 2
-    luaclass->lua_pushmodule(); // 3
+    alc_->lua_pushmodule(); // 3
     lua_rawset(L,-3); // 1
     lua_pushliteral(L,"callback"); // 2
     lua_pushvalue(L,-2); // 3 copy of self
@@ -963,9 +966,10 @@ LH_LuaInstance::LH_LuaInstance( const char *name, LH_LuaClass *luaclass )
     }
 
     Q_ASSERT( lua_gettop(L) == old_top );
+    return 0;
 }
 
-LH_LuaInstance::~LH_LuaInstance()
+void LH_LuaInstance::term()
 {
 #ifndef QT_NO_DEBUG
     int old_top = lua_gettop(L);
@@ -1010,12 +1014,14 @@ int LH_LuaInstance::polling()
 
     if( lua_pushfunction("obj_polling") )
     {
+        push(this);
         lua_pushself();
         if( lua_pcall(L,1,1,0) )
             qDebug() << "LH_Lua:" << lua_tostring(L,-1);
         else
             retv = lua_tointeger(L,-1);
         lua_pop(L,1); // return value
+        pop();
     }
     Q_ASSERT( lua_gettop(L) == old_top );
     return retv;
@@ -1030,6 +1036,7 @@ int LH_LuaInstance::notify( int code, void* )
     int retv = 0;
     if( lua_pushfunction("obj_notify") )
     {
+        push(this);
         lua_pushself();
         if( code & LH_NOTE_SECOND ) codestr.append('s');
         if( code & LH_NOTE_CPU ) codestr.append('c');
@@ -1057,6 +1064,7 @@ int LH_LuaInstance::notify( int code, void* )
             }
         }
         lua_pop(L,1); // return value
+        pop();
     }
     Q_ASSERT( lua_gettop(L) == old_top );
     return retv;
@@ -1069,12 +1077,14 @@ void LH_LuaInstance::prerender()
 #endif
     if( lua_pushfunction("obj_prerender") )
     {
+        push(this);
         lua_pushself();
         if( lua_pcall(L,1,0,0) )
         {
             qDebug() << "LH_Lua:" << lua_tostring(L,-1);
             lua_pop(L,1);
         }
+        pop();
     }
     Q_ASSERT( lua_gettop(L) == old_top );
     return;
@@ -1088,6 +1098,7 @@ int LH_LuaInstance::width( int forheight )
     int retv = alc_->classInfo()->width;
     if( lua_pushfunction("obj_width") )
     {
+        push(this);
         lua_pushself();
         lua_pushinteger(L,forheight);
         if( lua_pcall(L,2,1,0) )
@@ -1099,6 +1110,7 @@ int LH_LuaInstance::width( int forheight )
         {
             if( lua_isnumber(L,-1) ) retv = lua_tointeger(L,-1);
         }
+        pop();
     }
     Q_ASSERT( lua_gettop(L) == old_top );
     return retv;
@@ -1112,6 +1124,7 @@ int LH_LuaInstance::height( int forwidth )
     int retv = alc_->classInfo()->height;
     if( lua_pushfunction("obj_height") )
     {
+        push(this);
         lua_pushself();
         lua_pushinteger(L,forwidth);
         if( !lua_pcall(L,2,1,0) )
@@ -1123,6 +1136,7 @@ int LH_LuaInstance::height( int forwidth )
             qDebug() << "LH_Lua:" << lua_tostring(L,-1);
             lua_pop(L,1);
         }
+        pop();
     }
     Q_ASSERT( lua_gettop(L) == old_top );
     return retv;
@@ -1142,10 +1156,12 @@ QImage *LH_LuaInstance::render_qimage( int w, int h )
             Q_ASSERT( stride == image_->bytesPerLine() );
             cairo_surface_t *s = cairo_image_surface_create_for_data(
                     image_->bits(), CAIRO_FORMAT_ARGB32, w, h, stride );
+            push(this);
             lua_pushself();
             lua_pushlightuserdata(L,s);
             if( !lua_pcall(L,2,0,0) )
             {
+                pop();
                 cairo_surface_destroy(s);
                 Q_ASSERT( lua_gettop(L) == old_top );
                 return image_;
@@ -1157,6 +1173,7 @@ QImage *LH_LuaInstance::render_qimage( int w, int h )
 
     if( lua_pushfunction("obj_render_argb32") )
     {
+        push(this);
         lua_pushself();
         lua_pushinteger(L,w);
         lua_pushinteger(L,h);
@@ -1179,6 +1196,7 @@ QImage *LH_LuaInstance::render_qimage( int w, int h )
                             {
                                 memcpy( image_->bits(), data, len );
                                 lua_pop(L,3);
+                                pop();
                                 Q_ASSERT( lua_gettop(L) == old_top );
                                 return image_;
                             }
@@ -1192,12 +1210,14 @@ QImage *LH_LuaInstance::render_qimage( int w, int h )
                 if( !lua_isnil(L,-3) )
                     qDebug() << "LH_Lua:" << alc_->filename() << "obj_render_argb32() returned a" << lua_typename(L,lua_type(L,-3) ) << lua_objlen(L,-3);
                 lua_pop(L,3);
+                pop();
             }
         }
         else
         {
             qDebug() << "LH_Lua:" << lua_tostring(L,-1);
             lua_pop(L,1);
+            pop();
         }
     }
     Q_ASSERT( lua_gettop(L) == old_top );
@@ -1314,6 +1334,7 @@ void LH_LuaInstance::setup_input( lh_setup_item *item, int flags, int value )
         {
             if( lua_pushfunction("obj_setup_input") )
             {
+                push(this);
                 lua_pushself();
                 lua_pushstring(L,si->name().constData());
                 lua_pushnumber(L,flags);
@@ -1323,6 +1344,7 @@ void LH_LuaInstance::setup_input( lh_setup_item *item, int flags, int value )
                     qDebug() << "LH_Lua:" << lua_tostring(L,-1);
                     lua_pop(L,1);
                 }
+                pop();
             }
             Q_ASSERT( lua_gettop(L) == old_top );
             return;

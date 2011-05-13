@@ -58,7 +58,7 @@ protected:
     LH_Qt_QTextEdit *setup_usage_;
 
 public:
-    LH_WeatherImage( const char *name, LH_QtPlugin *parent = 0 );
+    LH_WeatherImage();
     ~LH_WeatherImage();
 
     int polling();

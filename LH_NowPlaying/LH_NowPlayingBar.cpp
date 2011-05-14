@@ -43,7 +43,7 @@ LH_NowPlayingBar::LH_NowPlayingBar(const char* name, LH_QtPlugin* parent) : LH_B
 {
     connect( currentTrack, SIGNAL(changed()), this, SLOT(refresh_pos()) );
     setMin(0);
-    setMax(1);
+    setValue(0,1);
 
     return;
 }

@@ -44,6 +44,8 @@
 #include <QThread>
 #include <QDebug>
 
+#define VERSION 2.10
+
 class LH_NowPlaying_Reader: public QThread
 {
     Q_OBJECT
@@ -190,16 +192,7 @@ public:
     }
     const lh_buildinfo * lh_version( int amaj, int amin )
     {
-        static lh_buildinfo buildinfo =
-        {
-            LH_BUILDINFO_SIG,
-            sizeof(lh_buildinfo),
-            REVISION,
-            LH_API_MAJOR,
-            LH_API_MINOR,
-            "2.10",
-            "http://www.linkdata.se/lcdhost/version.php?arch=$ARCH"
-        };
+        static lh_buildinfo buildinfo = LH_STD_BUILDINFO_WITH_VERSION(VERSION);
         Q_ASSERT( amaj == LH_API_MAJOR );
         Q_ASSERT( amin >= LH_API_MINOR );
         return &buildinfo;

@@ -28,6 +28,8 @@
 
 #include "../LH_QtPlugin.h"
 
+#define VERSION "1.03"
+
 class LH_QtPlugin_Dial : public LH_QtPlugin
 {
     Q_OBJECT
@@ -35,7 +37,7 @@ class LH_QtPlugin_Dial : public LH_QtPlugin
 public:
     LH_QtPlugin_Dial() : LH_QtPlugin() {}
 
-    const char * lh_name() { return "Dial (v1.03)"; }
+    const char * lh_name() { return "Dial"; }
     const char * lh_shortdesc() { return "Displays dials"; }
     const char * lh_author() { return "Andy \"Triscopic\" Bridges"; }
     const char * lh_homepage() { return "<a href=\"http://www.codeleap.co.uk\">CodeLeap</a>"; }
@@ -48,16 +50,7 @@ public:
     void lh_unload();
     const lh_buildinfo * lh_version( int amaj, int amin )
     {
-        static lh_buildinfo buildinfo =
-        {
-            LH_BUILDINFO_SIG,
-            sizeof(lh_buildinfo),
-            REVISION,
-            LH_API_MAJOR,
-            LH_API_MINOR,
-            "1.03",
-            "http://www.linkdata.se/lcdhost/version.php?arch=$ARCH"
-        };
+        static lh_buildinfo buildinfo = LH_STD_BUILDINFO_WITH_VERSION(VERSION);
         Q_UNUSED( amaj );
         Q_UNUSED( amin );
         Q_ASSERT( amaj == LH_API_MAJOR );

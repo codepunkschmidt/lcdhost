@@ -27,25 +27,18 @@
 
 #include "../LH_QtPlugin.h"
 
+#define VERSION 0.40
+
 class LH_QtPlugin_Cursor: public LH_QtPlugin
 {
 public:
-    const char * lh_name() { return "Cursor (v0.31)"; }
+    const char * lh_name() { return "Cursor"; }
     const char * lh_shortdesc() { return "Allows some complex cursor-like and tab-like behaviours"; }
     const char * lh_author() { return "Andy \"Triscopic\" Bridges"; }
     const char * lh_homepage() { return "<a href=\"http://www.codeleap.co.uk\">CodeLeap</a>"; }
     const lh_buildinfo * lh_version( int amaj, int amin )
     {
-        static lh_buildinfo buildinfo =
-        {
-            LH_BUILDINFO_SIG,
-            sizeof(lh_buildinfo),
-            REVISION,
-            LH_API_MAJOR,
-            LH_API_MINOR,
-            "0.31",
-            "http://www.linkdata.se/lcdhost/version.php?arch=$ARCH"
-        };
+        static lh_buildinfo buildinfo = LH_STD_BUILDINFO_WITH_VERSION(VERSION);
         Q_UNUSED( amaj );
         Q_UNUSED( amin );
         Q_ASSERT( amaj == LH_API_MAJOR );
@@ -60,6 +53,7 @@ public:
                "<li>Create tabs or pages in a layout that a user can navigate through.</li>"
                "<li>Create layouts which have \"drill down\" effects, in which panels can be selected to reveal "
                "(or hide) another panel.</li>"
+               "<li>Have one layout load another after a certina number of seconds.</li>"
                "</ul>"
                "Note that creating pages and drill downs works by exploiting some behavioural quirks of LCDHost, and is not "
                "as easy to do as other things are; to begin making \"cursor-based\" layouts of any type, it is strongly "

@@ -12,16 +12,15 @@ HEADERS += \
     ../LH_QtObject.h \
     ../LH_QtPlugin.h \
     LH_QtPlugin_Cursor.h \
-    LH_CursorStructs.h \
-    LH_CursorPage.h \
     LH_CursorRectangle.h \
     ../LH_Text/LH_Text.h \
     ../LH_QtInstance.h \
     ../LH_Qt_QFileInfo.h \
+    LH_CursorData.h \
+    LH_CursorPage.h \
     LH_CursorImage.h \
-    LH_CursorAction.h \
     LH_QuickAction.h \
-    LH_CursorInstance.h
+    LH_CursorAction.h
 
 SOURCES += \
     LH_CursorController.cpp \
@@ -29,11 +28,11 @@ SOURCES += \
     ../LH_QtObject.cpp \
     ../LH_QtPlugin.cpp \
     LH_QtPlugin_Cursor.cpp \
-    LH_CursorPage.cpp \
     LH_CursorRectangle.cpp \
     ../LH_Text/LH_Text.cpp \
     ../LH_QtInstance.cpp \
+    LH_CursorData.cpp \
+    LH_CursorPage.cpp \
     LH_CursorImage.cpp \
-    LH_CursorAction.cpp \
     LH_QuickAction.cpp \
-    LH_CursorInstance.cpp
+    LH_CursorAction.cpp

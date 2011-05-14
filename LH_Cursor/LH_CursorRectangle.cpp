@@ -44,7 +44,7 @@ lh_class *LH_CursorRectangle::classInfo()
     return &classInfo;
 }
 
-LH_CursorRectangle::LH_CursorRectangle( const char *name ) : LH_CursorInstance(name)
+LH_CursorRectangle::LH_CursorRectangle( const char *name ) : LH_QtInstance(name,0, 0)
 {
     setup_penwidth_ = new LH_Qt_QSlider(this,tr("Pen width"),0,0,1000,LH_FLAG_AUTORENDER);
     setup_rounding_ = new LH_Qt_QSlider(this,tr("Corner rounding"),20,0,100,LH_FLAG_AUTORENDER);
@@ -219,8 +219,6 @@ int LH_CursorRectangle::polling()
 
 bool LH_CursorRectangle::updateState()
 {
-    cursorData cd;
-    getCursorData(cd);
     QStringList mycoords = setup_coordinate_->value().split(';');
 
     bool newSelected = false;
@@ -233,8 +231,8 @@ bool LH_CursorRectangle::updateState()
             int myX = mycoord.at(0).toInt();
             int myY = mycoord.at(1).toInt();
 
-            newSelected = newSelected || ( cd.selState && cd.selX==myX && cd.selY==myY );
-            newActive = newActive ||  ( cd.active && cd.x==myX && cd.y==myY );
+            newSelected = newSelected || ( cursor_data.selState && cursor_data.selX==myX && cursor_data.selY==myY );
+            newActive = newActive ||  ( cursor_data.active && cursor_data.x==myX && cursor_data.y==myY );
         }
     }
 

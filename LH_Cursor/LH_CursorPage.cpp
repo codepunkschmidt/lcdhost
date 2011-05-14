@@ -45,7 +45,7 @@ lh_class *LH_CursorPage::classInfo()
 }
 
 
-LH_CursorPage::LH_CursorPage(const char * name, LH_QtPlugin *parent ) : LH_CursorInstance( name, parent )
+LH_CursorPage::LH_CursorPage(const char * name, LH_QtPlugin *parent ) : LH_QtInstance( name, 0, parent )
 {
     setup_coordinate_ = new LH_Qt_QString(this, "Coordinate", "1,1", LH_FLAG_AUTORENDER);
     setup_coordinate_->setHelp("This is the coordinate of this object, i.e. when the cursor is at the point specified here this object is selected. <br/>"
@@ -94,10 +94,8 @@ QImage *LH_CursorPage::render_qimage( int w, int h )
 
 bool LH_CursorPage::updateState()
 {
-    cursorData cd;
     QStringList mycoords = setup_coordinate_->value().split(';');
 
-    getCursorData(cd);
     bool newSelected = false;
     bool newActive = false;
     foreach (QString mycoord_str, mycoords)
@@ -108,8 +106,8 @@ bool LH_CursorPage::updateState()
             int myX = mycoord.at(0).toInt();
             int myY = mycoord.at(1).toInt();
 
-            newSelected = newSelected || ( cd.selState && cd.selX==myX && cd.selY==myY );
-            newActive = newActive ||  ( cd.active && cd.x==myX && cd.y==myY );
+            newSelected = newSelected || ( cursor_data.selState && cursor_data.selX==myX && cursor_data.selY==myY );
+            newActive = newActive ||  ( cursor_data.active && cursor_data.x==myX && cursor_data.y==myY );
         }
     }
     if(selected!=newSelected || active != newActive)

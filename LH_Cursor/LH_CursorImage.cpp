@@ -53,7 +53,7 @@ lh_class *LH_CursorImage::classInfo()
     return &classInfo;
 }
 
-LH_CursorImage::LH_CursorImage(const char *name, LH_QtPlugin *parent ) : LH_CursorInstance( name, parent )
+LH_CursorImage::LH_CursorImage(const char *name, LH_QtPlugin *parent ) : LH_QtInstance( name, 0, parent )
 {
     setup_file_ = new LH_Qt_QFileInfo( this, tr("File"), QFileInfo(), LH_FLAG_AUTORENDER );
     setup_file_->setHelp( "<p>The image map file instructs the status image on how to match up "
@@ -192,8 +192,6 @@ void LH_CursorImage::fileChanged()
 
 bool LH_CursorImage::updateState()
 {
-    cursorData cd;
-    getCursorData(cd);
     QStringList mycoords = setup_coordinate_->value().split(';');
 
     bool newSelected = false;
@@ -206,8 +204,8 @@ bool LH_CursorImage::updateState()
             int myX = mycoord.at(0).toInt();
             int myY = mycoord.at(1).toInt();
 
-            newSelected = newSelected || ( cd.selState && cd.selX==myX && cd.selY==myY );
-            newActive = newActive ||  ( cd.active && cd.x==myX && cd.y==myY );
+            newSelected = newSelected || ( cursor_data.selState && cursor_data.selX==myX && cursor_data.selY==myY );
+            newActive = newActive ||  ( cursor_data.active && cursor_data.x==myX && cursor_data.y==myY );
         }
     }
     QString newStatusCode = QString("%1%2").arg(newActive? "ON" : "OFF").arg(newSelected? "_SEL" : "");

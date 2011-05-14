@@ -33,9 +33,8 @@
 #include "../LH_Qt_QFileInfo.h"
 #include "../LH_Qt_int.h"
 #include "../LH_Qt_bool.h"
-#include "LH_CursorInstance.h"
 
-// #include <LH_CursorStructs.h>
+#include "LH_CursorData.h"
 
 #include <QHash>
 #include <QList>
@@ -257,7 +256,7 @@ public:
     }
 };
 
-class LH_CursorAction : public LH_CursorInstance
+class LH_CursorAction : public LH_QtInstance
 {
     Q_OBJECT
     actionTypes actionTypes_;

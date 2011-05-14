@@ -28,10 +28,12 @@
 
 #include "../LH_QtPlugin.h"
 
+#define VERSION 1.23
+
 class LH_QtPlugin_Weather : public LH_QtPlugin
 {
 public:
-    const char * lh_name() { return "Weather (v1.23)"; }
+    const char * lh_name() { return "Weather"; }
     const char * lh_shortdesc() { return "Connects to Yahoo's weather service and displays the results."; }
     const char * lh_author() { return "Andy \"Triscopic\" Bridges"; }
     const char * lh_homepage() { return "<a href=\"http://www.codeleap.co.uk\">CodeLeap</a>"; }
@@ -44,16 +46,7 @@ public:
     }
     const lh_buildinfo * lh_version( int amaj, int amin )
     {
-        static lh_buildinfo buildinfo =
-        {
-            LH_BUILDINFO_SIG,
-            sizeof(lh_buildinfo),
-            REVISION,
-            LH_API_MAJOR,
-            LH_API_MINOR,
-            "1.23",
-            "http://www.linkdata.se/lcdhost/version.php?arch=$ARCH"
-        };
+        static lh_buildinfo buildinfo = LH_STD_BUILDINFO_WITH_VERSION(VERSION);
         Q_UNUSED( amaj );
         Q_UNUSED( amin );
         Q_ASSERT( amaj == LH_API_MAJOR );

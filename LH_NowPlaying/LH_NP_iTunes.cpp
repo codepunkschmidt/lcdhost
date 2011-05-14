@@ -97,7 +97,9 @@ public:
                 {
                 case 9:
                         itunesState = releasing;
-                        qDebug() << "iTunes wants to say goodbye...";
+                        #ifdef iTunes_debug
+                            qDebug() << "iTunes: iTunes wants to say goodbye...";
+                        #endif
                         break;
                 default:
                         break;
@@ -193,7 +195,7 @@ bool open_itunes_connection()
     }
 
     itunesState=open;
-    qDebug() << "iTunes says hello";
+    qDebug() << "iTunes: iTunes says hello";
     #ifdef Enable_iTunes_Events
         attach_iTunesEventHandler();
     #endif
@@ -224,7 +226,9 @@ void close_itunes_connection()
         #endif
         itunes=NULL;
         itunesState = closing;
-        qDebug() << "iTunes says goodbye";
+        #ifdef iTunes_debug
+            qDebug() << "iTunes: iTunes says goodbye";
+        #endif
     }
 }
 
@@ -359,7 +363,9 @@ get_itunes_info(TrackInfo &ti, QString artworkPath, artworkDescription &cachedAr
         if (!FindWindowA("iTunes", NULL))
         {
             itunesState = closed;
-            qDebug() << "iTunes says has left.";
+            #ifdef iTunes_debug
+                qDebug() << "iTunes: iTunes has closed.";
+            #endif
         }
         return false;
     case closed:
@@ -402,26 +408,40 @@ get_itunes_info(TrackInfo &ti, QString artworkPath, artworkDescription &cachedAr
             break;
          case S_OK:
             #ifdef iTunes_debug
-                qDebug() << "iTunes: Now Playing data acquired!";
+                qDebug() << "iTunes: Now Playing data acquired.";
             #endif
             ti.player = "iTunes";
             success = true;
 
-            BSTR bstr;
-            track->get_Artist(&bstr);
-            ti.artist = QString::fromWCharArray(bstr);
-            track->get_Album(&bstr);
-            ti.album = QString::fromWCharArray(bstr);
-            track->get_Name(&bstr);
-            ti.track = QString::fromWCharArray(bstr);
+
+            BSTR bstrArtist;
+            track->get_Artist(&bstrArtist);
+            ti.artist = QString::fromWCharArray(bstrArtist);
+            #ifdef iTunes_debug
+                qDebug() << "iTunes: iTunes reports artist as " << ti.artist;
+            #endif
+
+            BSTR bstrAlbum;
+            track->get_Album(&bstrAlbum);
+            ti.album = QString::fromWCharArray(bstrAlbum);
+            #ifdef iTunes_debug
+                qDebug() << "iTunes: iTunes reports album as " << ti.album;
+            #endif
+
+            BSTR bstrTrack;
+            track->get_Name(&bstrTrack);
+            ti.track = QString::fromWCharArray(bstrTrack);
+            #ifdef iTunes_debug
+                qDebug() << "iTunes: iTunes reports track as " << ti.track;
+            #endif
 
             IITFileOrCDTrack* trackFile;
             if(track->QueryInterface(IID_IITFileOrCDTrack, (void**)&trackFile)==S_OK)
             {
-                trackFile->get_Location(&bstr);
-                ti.file = QString::fromWCharArray(bstr);
+                BSTR bstrFile;
+                trackFile->get_Location(&bstrFile);
+                ti.file = QString::fromWCharArray(bstrFile);
             }
-
 
             long duration = 0;
             track->get_Duration(&duration);

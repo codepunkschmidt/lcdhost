@@ -25,25 +25,36 @@
 #ifndef LH_QUICKACTION_H
 #define LH_QUICKACTION_H
 
+#include <QTimer>
+
 #include "../LH_QtInstance.h"
 #include "../LH_Qt_InputState.h"
 #include "../LH_Qt_QFileInfo.h"
+#include "../LH_Qt_bool.h"
+#include "../LH_Qt_int.h"
 
 class LH_QuickAction: public LH_QtInstance
 {
     Q_OBJECT
-
+    int counter_;
+    QTimer *timer_;
 protected:
     LH_Qt_InputState *setup_fire_;
+    LH_Qt_bool *setup_enable_timeout_;
+    LH_Qt_int *setup_timeout_;
+    LH_Qt_QString *setup_countdown_;
     LH_Qt_QFileInfo *setup_layout_;
 
+    void updateCountdown();
 public:
     LH_QuickAction(const char * name, LH_QtPlugin *parent = 0);
 
     static lh_class *classInfo();
 
 public slots:
-    void doFire(QString key,int flags,int value);
+    void doFire(QString key="",int flags=0,int value=0);
+    void changeTimeout();
+    void doCountdown();
 };
 
 #endif // LH_QUICKACTION_H

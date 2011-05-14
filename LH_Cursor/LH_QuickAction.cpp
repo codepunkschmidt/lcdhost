@@ -43,14 +43,49 @@ lh_class *LH_QuickAction::classInfo()
 
 LH_QuickAction::LH_QuickAction(const char * name, LH_QtPlugin *parent) : LH_QtInstance(name, 0, parent)
 {
+    timer_ = new QTimer(this);
+    timer_->setInterval(1000);
+
     setup_fire_ = new LH_Qt_InputState(this,"Trigger key","",0);
     setup_fire_ ->setHelp("Binding a key to this object will allow LCDHost to load a specified layout when the key is pressed, e.g. binding the G19's \"Menu\" key and configuring it to load a menu layout.");
+
+    setup_enable_timeout_ = new LH_Qt_bool(this,"Enable Auto Trigger",false,0);
+    setup_enable_timeout_ ->setHelp("Enabling this will cause the specified to automatically load after the specified delay.<br/></br><span style='color:red'>WARNING: Once enabled the selected layout WILL BE LOADED after the delay WHETHER THIS LAYOUT HAS BEEN SAVED OR NOT!");
+
+    setup_timeout_ = new LH_Qt_int(this,"Auto Trigger Timeout", 30, 5, 600);
+    setup_timeout_->setHelp("Number of seconds after which to load the specified layout.");
+
+    setup_countdown_ = new LH_Qt_QString(this,"^CountDown","", LH_FLAG_NOSAVE | LH_FLAG_READONLY | LH_FLAG_HIDDEN);
+
     setup_layout_ = new LH_Qt_QFileInfo(this, "Layout", QFileInfo(), 0);
     setup_layout_->setHelp("The layout to load when the associated key is pressed.<br/>"
                            "<br/>"
                            "<b>Layout Designers Beware!</b> firing off a \"load layout\" command will not give you the option of saving any changes you may have made to the current layout! Make sure you haved saved your layout before testing layout loading!");
 
     connect( setup_fire_, SIGNAL(input(QString,int,int)), this, SLOT(doFire(QString,int,int)) );
+    connect( setup_timeout_, SIGNAL(changed()), this, SLOT(changeTimeout()) );
+    connect( setup_enable_timeout_, SIGNAL(changed()), this, SLOT(changeTimeout()) );
+    connect( timer_, SIGNAL(timeout()), this, SLOT(doCountdown()) );
+}
+
+void LH_QuickAction::updateCountdown()
+{
+    if(!setup_layout_->value().isFile())
+        setup_countdown_->setValue("Cannot count down trigger: target layout is not valid.");
+    else
+        setup_countdown_->setValue(QString("Auto-triggering in %1 second%2. MAKE SURE LAYOUT IS SAVED!").arg(counter_).arg(counter_==1?"":"s"));
+}
+
+void LH_QuickAction::doCountdown()
+{
+    if(setup_enable_timeout_->value())
+    {
+        if(setup_layout_->value().isFile())
+            counter_ --;
+        updateCountdown();
+    }
+    if(counter_<=0)
+        doFire();
 }
 
 void LH_QuickAction::doFire(QString key,int flags,int value)
@@ -65,4 +100,17 @@ void LH_QuickAction::doFire(QString key,int flags,int value)
         ary = setup_layout_->value().absoluteFilePath().toUtf8();
         callback(lh_cb_load_layout, ary.data() );
     }
+}
+
+void LH_QuickAction::changeTimeout()
+{
+    setup_countdown_->setFlag(LH_FLAG_HIDDEN, !setup_enable_timeout_->value());
+    counter_ = setup_timeout_->value();
+
+    if(setup_enable_timeout_->value()) {
+        updateCountdown();
+        timer_->start();
+    }
+    else
+        timer_->stop();
 }

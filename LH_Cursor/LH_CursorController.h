@@ -29,12 +29,11 @@
 // #include <tchar.h>
 // #include <stdio.h>
 
-#include <QSharedMemory>
-
 #include "../LH_Text/LH_Text.h"
 #include "../LH_Qt_InputState.h"
 #include "../LH_Qt_QFileInfo.h"
-#include "LH_CursorStructs.h"
+
+#include "LH_CursorData.h"
 
 enum selectMode
 {
@@ -52,13 +51,6 @@ struct cursorMode{
 class LH_CursorController : public LH_Text
 {
     Q_OBJECT
-
-    QSharedMemory *shmem_;
-    cursorData *cursor_location_;
-
-    static const bool debugMemory = false;
-    // bool openMemory();
-    // void closeMemory();
 
     QList<cursorMode> cursorModes;
 
@@ -84,7 +76,7 @@ protected:
 
 public:
     LH_CursorController(const char * name);
-    // ~LH_CursorController();
+    ~LH_CursorController();
 
     int polling();
 

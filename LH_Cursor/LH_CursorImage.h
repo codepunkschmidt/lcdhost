@@ -35,9 +35,8 @@
 #include "../LH_Qt_QTextEdit.h"
 #include "../LH_Qt_int.h"
 #include "../LH_Qt_float.h"
-#include "LH_CursorInstance.h"
 
-// #include <LH_CursorStructs.h>
+#include "LH_CursorData.h"
 
 /*struct imageMapData
 {
@@ -45,7 +44,7 @@
     QString Image;
 };*/
 
-class LH_CursorImage : public LH_CursorInstance
+class LH_CursorImage : public LH_QtInstance
 {
     Q_OBJECT
 

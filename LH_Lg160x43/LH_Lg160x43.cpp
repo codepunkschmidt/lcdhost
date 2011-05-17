@@ -44,71 +44,60 @@
 LH_PLUGIN(LH_Lg160x43);
 lh_buildinfo buildinfo = LH_STD_BUILDINFO;
 
-int LH_Lg160x43::lh_notify(int note, void*param)
+void LH_Lg160x43::scan()
 {
-    Q_UNUSED(param);
-    if( !note || note&LH_NOTE_SECOND )
+    // Maintain list of available devices
+    struct hid_device_info *hdi_head = hid_enumerate( 0x0, 0x0 );
+    if( hdi_head )
     {
-        // Maintain list of available devices
-        struct hid_device_info *hdi_head = hid_enumerate( 0x0, 0x0 );
-        if( hdi_head )
+        struct hid_device_info *hdi = 0;
+
+        foreach( QObject *kid, children() )
         {
-            struct hid_device_info *hdi = 0;
+            Lg160x43Device *d = qobject_cast<Lg160x43Device*>(kid);
+            if( d ) d->setRemoval( true );
+        }
 
-            foreach( QObject *kid, children() )
+        for( hdi = hdi_head; hdi; hdi = hdi->next )
+        {
+            if( hdi->vendor_id == 0x046d && (
+                hdi->product_id == 0xC222 /* G15 */ ||
+                hdi->product_id == 0x0A07 /* Z10 */ ||
+                hdi->product_id == 0xC227 /* G15v2 */ ||
+                hdi->product_id == 0xC21C /* G13 */ ||
+                hdi->product_id == 0xC22D /* G510 without audio */ ||
+                hdi->product_id == 0xC22E /* G510 with audio */
+                ) )
             {
-                Lg160x43Device *d = qobject_cast<Lg160x43Device*>(kid);
-                if( d ) d->setRemoval( true );
-            }
-
-            for( hdi = hdi_head; hdi; hdi = hdi->next )
-            {
-                if( hdi->vendor_id == 0x046d && (
-                    hdi->product_id == 0xC222 /* G15 */ ||
-                    hdi->product_id == 0x0A07 /* Z10 */ ||
-                    hdi->product_id == 0xC227 /* G15v2 */ ||
-                    hdi->product_id == 0xC21C /* G13 */ ||
-                    hdi->product_id == 0xC22D /* G510 without audio */ ||
-                    hdi->product_id == 0xC22E /* G510 with audio */
-                    ) )
+                bool found = false;
+                foreach( QObject *kid, children() )
                 {
-                    bool found = false;
-                    foreach( QObject *kid, children() )
+                    Lg160x43Device *d = qobject_cast<Lg160x43Device*>(kid);
+                    if( d && d->path() == hdi->path )
                     {
-                        Lg160x43Device *d = qobject_cast<Lg160x43Device*>(kid);
-                        if( d && d->path() == hdi->path )
-                        {
-                            Q_ASSERT( hdi->product_id == d->productId() );
-                            Q_ASSERT( d->removal() == true );
-                            d->setRemoval( false );
-                            found = true;
-                        }
-                    }
-                    if( !found )
-                    {
-                        new Lg160x43Device( hdi, this );
+                        Q_ASSERT( hdi->product_id == d->productId() );
+                        Q_ASSERT( d->removal() == true );
+                        d->setRemoval( false );
+                        found = true;
                     }
                 }
-            }
-
-            hid_free_enumeration( hdi_head );
-
-            foreach( QObject *kid, children() )
-            {
-                Lg160x43Device *d = qobject_cast<Lg160x43Device*>(kid);
-                if( d && d->removal() )
+                if( !found )
                 {
-                    delete d;
+                    new Lg160x43Device( hdi, this );
                 }
             }
         }
-    }
-    return LH_NOTE_SECOND;
-}
 
-#if 0
-const char *LH_Lg160x43::lh_load()
-{
-    return NULL;
+        hid_free_enumeration( hdi_head );
+
+        foreach( QObject *kid, children() )
+        {
+            Lg160x43Device *d = qobject_cast<Lg160x43Device*>(kid);
+            if( d && d->removal() )
+            {
+                delete d;
+            }
+        }
+    }
+    return;
 }
-#endif

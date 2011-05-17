@@ -41,6 +41,7 @@ class LH_Lg160x43 : public LH_QtPlugin
 {
     Q_OBJECT
 
+    void scan();
 public:
     LH_Lg160x43() : LH_QtPlugin() {}
 
@@ -54,9 +55,9 @@ public:
                 "Note that to use this driver you may need to uninstall existing drivers for these devices."
                 ;
     }
-    // virtual const char *lh_load();
+    virtual const char *lh_load() { scan(); return NULL; }
     // virtual void lh_unload() {}
-    virtual int lh_notify(int,void*);
+    // virtual int lh_notify(int,void*);
 };
 
 #endif // LH_LG160X43_H

@@ -1,7 +1,6 @@
 
 #include <QSettings>
 #include <QNetworkProxy>
-#ic
 
 #include "WebKitServerWindow.h"
 #include "ui_WebKitServerWindow.h"

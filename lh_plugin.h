@@ -258,6 +258,7 @@ typedef enum lh_callbackcode_t
 
     /* These requests are meaningful only if you supply layout classes and have active instances */
     lh_cb_render, /* ask for a rendering sequence (prerender/width/height/render), param: NULL */
+    lh_cb_sethidden, /* set visibility state for self and children, param int* */
 
     /* These requests are meaningful only for device drivers */
     lh_cb_arrive, /* a new device have been detected, param is lh_device pointer */

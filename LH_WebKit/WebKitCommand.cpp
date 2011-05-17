@@ -25,13 +25,14 @@ QByteArray WebKitCommand::encode()
     dat << command_;
     switch( command_ )
     {
-    case 'H': dat << html_; // fall through
-    case 'U': dat << url_; // fall through
-    case 'R': dat << size_; // fall through
-    case 'P': // fall through
-    case 'S':
-    case 's':
-    case 'Q': dat << '\n'; // fall through
+    case 'F': // Form. fall through
+    case 'H': dat << html_; // HTML. fall through
+    case 'U': dat << url_; // URL. fall through
+    case 'R': dat << size_; // Resize. fall through
+    case 'P': // Ping. fall through
+    case 'S': // Show window.
+    case 's': // Hide window.
+    case 'Q': dat << '\n'; // Quit. fall through
         break;
     default:
         Q_ASSERT(!"WebKitCommand::encode() internal error");
@@ -52,6 +53,7 @@ bool WebKitCommand::decode( const QByteArray& array )
 
     switch(type)
     {
+    case 'F': // fall through
     case 'H': dat >> h; // fall through
     case 'U': dat >> u; // fall through
     case 'R': dat >> s; // fall through

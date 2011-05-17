@@ -1,5 +1,7 @@
 
 #include <QSettings>
+#include <QNetworkProxy>
+#ic
 
 #include "WebKitServerWindow.h"
 #include "ui_WebKitServerWindow.h"
@@ -31,6 +33,17 @@ WebKitServerWindow::WebKitServerWindow(QWidget *parent) :
     setWindowTitle("WebKitServer");
 
     manager_ = new QNetworkAccessManager();
+
+    QNetworkProxy proxy = QNetworkProxyFactory::systemProxyForQuery().first();
+    if( proxy.type() != QNetworkProxy::NoProxy )
+    {
+        QNetworkProxy::setApplicationProxy( proxy );
+        manager_->setProxy( proxy );
+        qDebug() << "HTTP proxy" << proxy.hostName() << ":" << proxy.port();
+    }
+    else
+        qDebug() << "HTTP proxy not detected";
+
     connect( manager_, SIGNAL(finished(QNetworkReply*)), this, SLOT(finished(QNetworkReply*)) );
     server_ = new QLocalServer();
     connect( server_, SIGNAL(newConnection()), this, SLOT(newConnection()) );

@@ -185,23 +185,24 @@ void WebKitRequest::readyRead()
 
         switch( cmd.command() )
         {
-        case 'H':
+        case 'F': // Form functionality
+        case 'H': // static HTML
             size_ = cmd.size();
             url_ = cmd.url();
             html_ = cmd.html();
             setPage();
             break;
-        case 'U':
+        case 'U': // URL
             size_ = cmd.size();
             url_ = cmd.url();
             html_.clear();
             setPage();
             break;
-        case 'R':
+        case 'R': // Resize
             size_ = cmd.size();
             checkSize();
             break;
-        case 'P':
+        case 'P': // Ping
             WebKitData data;
             memset( &data, 0, sizeof(data) );
             sock_->write( (const char*)(void*)&data, sizeof(data) );
@@ -210,15 +211,15 @@ void WebKitRequest::readyRead()
                 qWarning() << "WebKitServer: timed out writing P reply";
             }
             break;
-        case 'S':
+        case 'S': // Show window
             server()->show();
             server()->raise();
             server()->activateWindow();
             break;
-        case 's':
+        case 's': // Hide window
             server()->hide();
             break;
-        case 'Q':
+        case 'Q': // Quit
             server()->close();
             break;
         default:

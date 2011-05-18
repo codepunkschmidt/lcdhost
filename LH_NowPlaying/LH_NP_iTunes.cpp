@@ -27,7 +27,9 @@
 #include "LH_QtPlugin_NowPlaying.h"
 
 #define Enable_iTunes_Events
-//#define iTunes_debug
+#ifndef QT_NO_DEBUG
+#define iTunes_debug
+#endif
 
 enum iTunesAppState
 {
@@ -130,11 +132,20 @@ void detach_iTunesEventHandler()
     if(itunes==NULL) return;
     IConnectionPointContainer* icpc;
     itunes->QueryInterface(IID_IConnectionPointContainer, (void **)&icpc);
-    IConnectionPoint* icp;
-    icpc->FindConnectionPoint(DIID__IiTunesEvents, &icp);
-    icpc->Release();
-    icp->Unadvise(iTunesEventHandler_attachmentID);
-    icp->Release();
+    if(icpc!=NULL)
+    {
+        IConnectionPoint* icp;
+        icpc->FindConnectionPoint(DIID__IiTunesEvents, &icp);
+        icpc->Release();
+        if(icpc!=NULL)
+        {
+            icp->Unadvise(iTunesEventHandler_attachmentID);
+            icp->Release();
+        } else
+            qWarning() << "iTunes: Unable to detatch the event listener (could not find connection point). :\\";
+    } else
+        qWarning() << "iTunes: Unable to detatch the event listener (could not query interface). :\\";
+
     iTunesEventHandler = NULL;
 }
 #endif
@@ -320,6 +331,7 @@ bool save_itunes_artwork(IITTrack *track, QString artworkPath, artworkDescriptio
                 if(QFile::exists(cachedArtwork.fileName))
                     QFile::remove(cachedArtwork.fileName);
 
+                trackArtwork.cacheMode = amArtistAndAlbumName;
                 trackArtwork.fileName = QString("%0%1art.%2").arg(artworkPath).arg(artworkPath.endsWith("/")? "" : "/").arg(extension);
                 switch (artItem->SaveArtworkToFile(::SysAllocString((const OLECHAR*)(trackArtwork.fileName.replace("/","\\")).utf16())))
                 {
@@ -455,7 +467,7 @@ get_itunes_info(TrackInfo &ti, QString artworkPath, artworkDescription &cachedAr
 
             if(artworkPath != "")
             {
-                artworkDescription trackArtwork = (artworkDescription){ti.artist, ti.album};
+                artworkDescription trackArtwork = (artworkDescription){amArtistAndAlbumName, ti.artist, ti.album, "", "", ""};
                 updatedArtwork = save_itunes_artwork(track, artworkPath, cachedArtwork, trackArtwork);
             }
 

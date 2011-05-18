@@ -8,6 +8,8 @@ LH_NowPlayingAlbumArt::LH_NowPlayingAlbumArt(const char* name, LH_QtPlugin *pare
     connect( currentTrack, SIGNAL(artworkChanged()), this, SLOT(refresh_image()) );
 
     setup_file_ = new LH_Qt_QFileInfo( this, tr("Image"), QFileInfo(), LH_FLAG_AUTORENDER | LH_FLAG_READONLY | LH_FLAG_NOSAVE);
+    if(currentTrack!=NULL)
+        refresh_image();
     //setup_file_->setFlag( LH_FLAG_HIDDEN, true );
     return;
 }

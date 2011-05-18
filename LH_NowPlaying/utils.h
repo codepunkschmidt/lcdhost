@@ -13,10 +13,21 @@
 #include <QDateTime>
 #include <QString>
 
+enum artworkCacheMode
+{
+    amNone,
+    amArtistAndAlbumName,
+    amFileFolder,
+    amTrack
+};
+
 struct artworkDescription
 {
+    artworkCacheMode cacheMode;
     QString artist;
     QString album;
+    QString track;
+    QString sourcefolder;
     QString fileName;
 };
 

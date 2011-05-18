@@ -66,12 +66,21 @@ public:
     }
     void clearArtwork()
     {
+        /*
         qDebug() << "Clean up requested: " << cachedArtwork_.fileName;
         if(cachedArtwork_.fileName!="" && QFile::exists(cachedArtwork_.fileName))
             qDebug() << "Clean up suceeded: " << QFile::remove(cachedArtwork_.fileName);
         else
             qDebug() << "Clean up skipped";
-        cachedArtwork_ = (artworkDescription){"","",""};
+        */
+        if(cachedArtwork_.fileName!="" && QFile::exists(cachedArtwork_.fileName))
+        {
+            #ifdef Q_OS_WIN
+                SetFileAttributes((LPCTSTR)cachedArtwork_.fileName.utf16(), 0);
+            #endif
+            QFile::remove(cachedArtwork_.fileName);
+        }
+        cachedArtwork_ = (artworkDescription){amNone, "","","",""};
     }
 
     void refresh();

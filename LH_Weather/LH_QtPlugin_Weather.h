@@ -28,7 +28,7 @@
 
 #include "../LH_QtPlugin.h"
 
-#define VERSION 1.23
+#define VERSION 1.30
 
 class LH_QtPlugin_Weather : public LH_QtPlugin
 {

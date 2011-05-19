@@ -78,41 +78,25 @@ LH_WeatherText::LH_WeatherText(const char *name) : LH_Text( name )
     valueTypes.append("Atmosphere: Humidity");
     valueTypes.append("Atmosphere: Visibility");
     valueTypes.append("Atmosphere: Pressure");
-    valueTypes.append("Atmosphere: Rising");
+    valueTypes.append("Atmosphere: Barometric Reading");
     valueTypes.append("Astronomy: Sunrise");
     valueTypes.append("Astronomy: Sunset");
-    valueTypes.append("Forecast Day 1 (Today): Day");
-    valueTypes.append("Forecast Day 1 (Today): \"Today\"/\"Tonight\"");
-    valueTypes.append("Forecast Day 1 (Today): Date");
-    valueTypes.append("Forecast Day 1 (Today): Low");
-    valueTypes.append("Forecast Day 1 (Today): High");
-    valueTypes.append("Forecast Day 1 (Today): Description");
-    //valueTypes.append("Forecast Day 1 (Today): Image Code");
-    valueTypes.append("Forecast Day 2 (Tomorrow): Day");
-    valueTypes.append("Forecast Day 2 (Tomorrow): \"Tomorrow\"");
-    valueTypes.append("Forecast Day 2 (Tomorrow): Date");
-    valueTypes.append("Forecast Day 2 (Tomorrow): Low");
-    valueTypes.append("Forecast Day 2 (Tomorrow): High");
-    valueTypes.append("Forecast Day 2 (Tomorrow): Description");
-    //valueTypes.append("Forecast Day 2 (Tomorrow): Image Code");
-    valueTypes.append("Forecast Day 3: Day");
-    valueTypes.append("Forecast Day 3: Date");
-    valueTypes.append("Forecast Day 3: Low");
-    valueTypes.append("Forecast Day 3: High");
-    valueTypes.append("Forecast Day 3: Description");
-    //valueTypes.append("Forecast Day 3: Image Code");
-    valueTypes.append("Forecast Day 4: Day");
-    valueTypes.append("Forecast Day 4: Date");
-    valueTypes.append("Forecast Day 4: Low");
-    valueTypes.append("Forecast Day 4: High");
-    valueTypes.append("Forecast Day 4: Description");
-    //valueTypes.append("Forecast Day 4: Image Code");
-    valueTypes.append("Forecast Day 5: Day");
-    valueTypes.append("Forecast Day 5: Date");
-    valueTypes.append("Forecast Day 5: Low");
-    valueTypes.append("Forecast Day 5: High");
-    valueTypes.append("Forecast Day 5: Description");
-    //valueTypes.append("Forecast Day 5: Image Code");
+
+    for(int i=1; i<=5; i++)
+    {
+        QString caption = QString("Forecast Day %1%2: %3").arg(i).arg(i==1? " (Today)" : (i==2? " (Tomorrow)" : ""));
+
+        valueTypes.append(caption.arg("Day"));
+        if(i==1)
+            valueTypes.append(caption.arg("\"Today\"/\"Tonight\""));
+        if(i==2)
+            valueTypes.append(caption.arg("\"Tomorrow\""));
+        valueTypes.append(caption.arg("Date"));
+        valueTypes.append(caption.arg("Low"));
+        valueTypes.append(caption.arg("High"));
+        valueTypes.append(caption.arg("Description"));
+        //valueTypes.append(caption.arg("Image Code"));
+    }
 
     setup_value_type_ = new LH_Qt_QStringList(this, "Value Type", valueTypes, 0);
     setup_value_type_->setHelp( "<p>The type of value to display.</p>");
@@ -140,34 +124,21 @@ LH_WeatherText::LH_WeatherText(const char *name) : LH_Text( name )
 int LH_WeatherText::notify(int n,void* p)
 {
     if( !n || n&LH_NOTE_SECOND )
-    {
         updateText();
-    }
     return LH_Text::notify(n,p) | LH_NOTE_SECOND;
 };
 
 void LH_WeatherText::updateText()
 {
-    QSharedMemory shmem("LHWeatherSharedMemory");
-
-    if( shmem.attach() )
-    {
-        if( shmem.lock() )
-        {
-            weatherData* weather = (weatherData*)shmem.data();
-            if( weather && setText( getSelectedValueText(weather)  ) )
-                callback(lh_cb_render,NULL); // only render if the text changed
-            shmem.unlock();
-        }
-        shmem.detach();
-    }
+    if( setText( getSelectedValueText()  ) )
+        callback(lh_cb_render,NULL); // only render if the text changed
 }
 
-QString LH_WeatherText::getSelectedValueText(weatherData* weather)
+QString LH_WeatherText::getSelectedValueText()
 {
-    //return QString("%1:\r\n%2%5\r\n%3 (%4)").arg(weather->location.city, weather->condition.temp, weather->condition.text, weather->condition.code, weather->units.temperature);
+    //return QString("%1:\r\n%2%5\r\n%3 (%4)").arg(weather_data.location.city, weather_data.condition.temp, weather_data.condition.text, weather_data.condition.code, weather_data.units.temperature);
     QString selValue = valueTypes.at( setup_value_type_->value() );
-    const char* valueText;
+    QString valueText;
 
     const int unit_none = 0;
     const int unit_dist = 1;
@@ -179,79 +150,51 @@ QString LH_WeatherText::getSelectedValueText(weatherData* weather)
 
     valueText = "<not implimented>";
 
-    if(selValue == "Location: City")                    {valueText = weather->location.city; units = unit_none;}
-    if(selValue == "Location: Region")                  {valueText = weather->location.region; units = unit_none;}
-    if(selValue == "Location: Country")                 {valueText = weather->location.country; units = unit_none;}
+    if(selValue == "Location: City")                    {valueText = weather_data.location.city; units = unit_none;}
+    if(selValue == "Location: Region")                  {valueText = weather_data.location.region; units = unit_none;}
+    if(selValue == "Location: Country")                 {valueText = weather_data.location.country; units = unit_none;}
 
-    if(selValue == "Current Conditions: Description")   {valueText = weather->condition.text; units = unit_none;}
-    if(selValue == "Current Conditions: Image Code")    {valueText = weather->condition.code; units = unit_none;}
-    if(selValue == "Current Conditions: Temperature")   {valueText = weather->condition.temp; units = unit_temp;}
-    if(selValue == "Current Conditions: Last Updated")  {valueText = weather->condition.date; units = unit_none;}
+    if(selValue == "Current Conditions: Description")   {valueText = weather_data.condition.text; units = unit_none;}
+    if(selValue == "Current Conditions: Image Code")    {valueText = weather_data.condition.code; units = unit_none;}
+    if(selValue == "Current Conditions: Temperature")   {valueText = weather_data.condition.temp; units = unit_temp;}
+    if(selValue == "Current Conditions: Last Updated")  {valueText = weather_data.condition.date; units = unit_none;}
 
-    if(selValue == "Wind: Chill")                       {valueText = weather->wind.chill; units = unit_temp;}
-    if(selValue == "Wind: Direction")                   {valueText = weather->wind.direction; units = unit_none;}
-    if(selValue == "Wind: Speed")                       {valueText = weather->wind.speed; units = unit_speed;}
+    if(selValue == "Wind: Chill")                       {valueText = weather_data.wind.chill; units = unit_temp;}
+    if(selValue == "Wind: Direction")                   {valueText = weather_data.wind.direction; units = unit_none;}
+    if(selValue == "Wind: Speed")                       {valueText = weather_data.wind.speed; units = unit_speed;}
 
-    if(selValue == "Atmosphere: Humidity")              {valueText = weather->atmosphere.humidity; units = unit_perc;}
-    if(selValue == "Atmosphere: Visibility")            {valueText = weather->atmosphere.visibility; units = unit_dist;}
-    if(selValue == "Atmosphere: Pressure")              {valueText = weather->atmosphere.pressure; units = unit_press;}
-    if(selValue == "Atmosphere: Rising")                {
-        int risingState = QString(weather->atmosphere.rising).toInt();
-        switch(risingState)
-        {
-        case 0:
-            valueText = "steady";
-            break;
-        case 1:
-            valueText = "rising";
-            break;
-        case 2:
-            valueText = "falling";
-            break;
-        }
+    if(selValue == "Atmosphere: Humidity")              {valueText = weather_data.atmosphere.humidity; units = unit_perc;}
+    if(selValue == "Atmosphere: Visibility")            {valueText = weather_data.atmosphere.visibility; units = unit_dist;}
+    if(selValue == "Atmosphere: Pressure")              {valueText = weather_data.atmosphere.pressure; units = unit_press;}
+    if(selValue == "Atmosphere: Barometric Reading")    {valueText = weather_data.atmosphere.barometricReading; units = unit_none;}
+
+    if(selValue == "Astronomy: Sunrise")                {valueText = weather_data.astronomy.sunrise; units = unit_none;}
+    if(selValue == "Astronomy: Sunset")                 {valueText = weather_data.astronomy.sunset; units = unit_none;}
+
+    QRegExp rx("Forecast Day ([1-5])[^:]*: (.*)");
+    if(rx.indexIn(selValue) != -1)
+    {
+        int i = rx.cap(1).toInt()-1;
         units = unit_none;
+        if(rx.cap(2) == "Day")
+            valueText = weather_data.forecast[i].day;
+        if(rx.cap(2) == "\"Today\"/\"Tonight\"" || rx.cap(2) == "\"Tomorrow\"")
+            valueText = weather_data.forecast[i].relativeDay;
+        if(rx.cap(2) == "Date")
+            valueText = weather_data.forecast[i].date;
+        if(rx.cap(2) == "Low") {
+            valueText = weather_data.forecast[i].low;
+            units = unit_temp;
+        }
+        if(rx.cap(2) == "High") {
+            valueText = weather_data.forecast[i].high;
+            units = unit_temp;
+        }
+        if(rx.cap(2) == "Description")
+            valueText = weather_data.forecast[i].text;
+        if(rx.cap(2) == "Image Code")
+            valueText = weather_data.forecast[i].code;
     }
-
-    if(selValue == "Astronomy: Sunrise")                {valueText = weather->astronomy.sunrise; units = unit_none;}
-    if(selValue == "Astronomy: Sunset")                 {valueText = weather->astronomy.sunset; units = unit_none;}
-
-    if(selValue == "Forecast Day 1 (Today): Day")              {valueText = weather->forecastToday.day; units = unit_none;}
-    if(selValue == "Forecast Day 1 (Today): \"Today\"/\"Tonight\"") {valueText = weather->forecastToday.relativeDay; units = unit_none;}
-    if(selValue == "Forecast Day 1 (Today): Date")             {valueText = weather->forecastToday.date; units = unit_none;}
-    if(selValue == "Forecast Day 1 (Today): Low")              {valueText = weather->forecastToday.low; units = unit_temp;}
-    if(selValue == "Forecast Day 1 (Today): High")             {valueText = weather->forecastToday.high; units = unit_temp;}
-    if(selValue == "Forecast Day 1 (Today): Description")      {valueText = weather->forecastToday.text; units = unit_none;}
-    if(selValue == "Forecast Day 1 (Today): Image Code")       {valueText = weather->forecastToday.code; units = unit_none;}
-
-    if(selValue == "Forecast Day 2 (Tomorrow): Day")           {valueText = weather->forecastTomorrow.day; units = unit_none;}
-    if(selValue == "Forecast Day 2 (Tomorrow): \"Tomorrow\"")  {valueText = weather->forecastTomorrow.relativeDay; units = unit_none;}
-    if(selValue == "Forecast Day 2 (Tomorrow): Date")          {valueText = weather->forecastTomorrow.date; units = unit_none;}
-    if(selValue == "Forecast Day 2 (Tomorrow): Low")           {valueText = weather->forecastTomorrow.low; units = unit_temp;}
-    if(selValue == "Forecast Day 2 (Tomorrow): High")          {valueText = weather->forecastTomorrow.high; units = unit_temp;}
-    if(selValue == "Forecast Day 2 (Tomorrow): Description")   {valueText = weather->forecastTomorrow.text; units = unit_none;}
-    if(selValue == "Forecast Day 2 (Tomorrow): Image Code")    {valueText = weather->forecastTomorrow.code; units = unit_none;}
-
-    if(selValue == "Forecast Day 3: Day")           {valueText = weather->forecastDay3.day; units = unit_none;}
-    if(selValue == "Forecast Day 3: Date")          {valueText = weather->forecastDay3.date; units = unit_none;}
-    if(selValue == "Forecast Day 3: Low")           {valueText = weather->forecastDay3.low; units = unit_temp;}
-    if(selValue == "Forecast Day 3: High")          {valueText = weather->forecastDay3.high; units = unit_temp;}
-    if(selValue == "Forecast Day 3: Description")   {valueText = weather->forecastDay3.text; units = unit_none;}
-    if(selValue == "Forecast Day 3: Image Code")    {valueText = weather->forecastDay3.code; units = unit_none;}
-
-    if(selValue == "Forecast Day 4: Day")           {valueText = weather->forecastDay4.day; units = unit_none;}
-    if(selValue == "Forecast Day 4: Date")          {valueText = weather->forecastDay4.date; units = unit_none;}
-    if(selValue == "Forecast Day 4: Low")           {valueText = weather->forecastDay4.low; units = unit_temp;}
-    if(selValue == "Forecast Day 4: High")          {valueText = weather->forecastDay4.high; units = unit_temp;}
-    if(selValue == "Forecast Day 4: Description")   {valueText = weather->forecastDay4.text; units = unit_none;}
-    if(selValue == "Forecast Day 4: Image Code")    {valueText = weather->forecastDay4.code; units = unit_none;}
-
-    if(selValue == "Forecast Day 5: Day")           {valueText = weather->forecastDay5.day; units = unit_none;}
-    if(selValue == "Forecast Day 5: Date")          {valueText = weather->forecastDay5.date; units = unit_none;}
-    if(selValue == "Forecast Day 5: Low")           {valueText = weather->forecastDay5.low; units = unit_temp;}
-    if(selValue == "Forecast Day 5: High")          {valueText = weather->forecastDay5.high; units = unit_temp;}
-    if(selValue == "Forecast Day 5: Description")   {valueText = weather->forecastDay5.text; units = unit_none;}
-    if(selValue == "Forecast Day 5: Image Code")    {valueText = weather->forecastDay5.code; units = unit_none;}
-
 
     QString resultText = QString(valueText);
     if (resultText=="") {
@@ -261,16 +204,16 @@ QString LH_WeatherText::getSelectedValueText(weatherData* weather)
             switch(units)
             {
             case unit_dist:
-                resultText = resultText + QString(weather->units.distance);
+                resultText = resultText + QString(weather_data.units.distance);
                 break;
             case unit_press:
-                resultText = resultText + QString(weather->units.pressure);
+                resultText = resultText + QString(weather_data.units.pressure);
                 break;
             case unit_speed:
-                resultText = resultText + QString(weather->units.speed);
+                resultText = resultText + QString(weather_data.units.speed);
                 break;
             case unit_temp:
-                resultText = resultText + QString(weather->units.temperature);
+                resultText = resultText + QString(weather_data.units.temperature);
                 break;
             case unit_perc:
                 resultText = resultText + "%";

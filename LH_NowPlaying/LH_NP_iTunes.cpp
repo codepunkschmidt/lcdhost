@@ -18,6 +18,138 @@
   whose ownership, copyright and limitiations remain unaltered.
 
   **/
+
+#include <QDebug>
+#include <QFile>
+#include <windows.h>
+#include "iTunesCOMInterface.h"
+
+#include "LH_QtPlugin_NowPlaying.h"
+
+#define Enable_iTunes_Events
+#ifndef QT_NO_DEBUG
+#define iTunes_debug
+#endif
+
+enum iTunesAppState
+{
+    closed,
+    open,
+    releasing,
+    closing
+};
+
+static IiTunes *itunes = NULL;
+static iTunesAppState itunesState = closed;
+
+#ifdef Enable_iTunes_Events
+class CiTunesEventHandler : public _IiTunesEvents
+{
+private:
+        long m_dwRefCount;
+        ITypeInfo* m_pITypeInfo; // Pointer to type information.
+
+public:
+        CiTunesEventHandler()
+        {
+                m_dwRefCount=0;
+                ITypeLib* pITypeLib = NULL ;
+                HRESULT hr = ::LoadRegTypeLib(LIBID_iTunesLib, 1, 5, 0x00, &pITypeLib) ;
+                // Get type information for the interface of the object.
+                hr = pITypeLib->GetTypeInfoOfGuid(DIID__IiTunesEvents, &m_pITypeInfo) ;
+                pITypeLib->Release() ;
+        }
+        ~CiTunesEventHandler()
+        {}
+
+        virtual HRESULT STDMETHODCALLTYPE QueryInterface(REFIID iid, void **ppvObject)
+        {
+                if ((iid == IID_IDispatch)||(iid == DIID__IiTunesEvents)) {
+                        m_dwRefCount++;
+                        *ppvObject = this;//(_IiTunesEvents *)this;
+                        return S_OK;
+                }
+                if (iid == IID_IUnknown) {
+                        m_dwRefCount++;
+                        *ppvObject = this;//(IUnknown *)this;
+                        return S_OK;
+                }
+                return E_NOINTERFACE;
+        }
+        virtual ULONG STDMETHODCALLTYPE AddRef()
+        {
+                InterlockedIncrement(&m_dwRefCount);
+                return m_dwRefCount;
+        }
+        virtual ULONG STDMETHODCALLTYPE Release()
+        {
+                InterlockedDecrement(&m_dwRefCount);
+                if (m_dwRefCount == 0) {
+                        delete this;
+                        return 0;
+                }
+                return m_dwRefCount;
+        }
+        virtual HRESULT STDMETHODCALLTYPE GetTypeInfoCount(UINT *){return E_NOTIMPL;};
+        virtual HRESULT STDMETHODCALLTYPE GetTypeInfo(UINT,LCID,ITypeInfo ** ){return E_NOTIMPL;};
+        virtual HRESULT STDMETHODCALLTYPE GetIDsOfNames(const IID &,LPOLESTR * ,UINT,LCID,DISPID *){return E_NOTIMPL;};
+        virtual HRESULT STDMETHODCALLTYPE Invoke(DISPID dispidMember, REFIID, LCID,WORD, DISPPARAMS* pdispparams, VARIANT*,EXCEPINFO*, UINT*)
+        {
+                switch (dispidMember) //look in the documentation for "enum ITEvent" to get the numbers for the functions you want to implement
+                {
+                case 9:
+                        itunesState = releasing;
+                        #ifdef iTunes_debug
+                            qDebug() << "iTunes: iTunes wants to say goodbye...";
+                        #endif
+                        break;
+                default:
+                        break;
+                }
+                return S_OK;
+        }
+};
+
+static CiTunesEventHandler* iTunesEventHandler = NULL;
+
+static DWORD iTunesEventHandler_attachmentID;
+
+void attach_iTunesEventHandler()
+{
+    if(itunes==NULL) return;
+    IConnectionPointContainer* icpc;
+    itunes->QueryInterface(IID_IConnectionPointContainer, (void **)&icpc);
+    IConnectionPoint* icp;
+    icpc->FindConnectionPoint(DIID__IiTunesEvents, &icp);
+    icpc->Release();
+    iTunesEventHandler = new CiTunesEventHandler();
+    icp->Advise(iTunesEventHandler, &iTunesEventHandler_attachmentID);
+    icp->Release();
+}
+
+void detach_iTunesEventHandler()
+{
+    if(itunes==NULL) return;
+    IConnectionPointContainer* icpc;
+    itunes->QueryInterface(IID_IConnectionPointContainer, (void **)&icpc);
+    if(icpc!=NULL)
+    {
+        IConnectionPoint* icp;
+        icpc->FindConnectionPoint(DIID__IiTunesEvents, &icp);
+        icpc->Release();
+        if(icpc!=NULL)
+        {
+            icp->Unadvise(iTunesEventHandler_attachmentID);
+            icp->Release();
+        } else
+            qWarning() << "iTunes: Unable to detatch the event listener (could not find connection point). :\\";
+    } else
+        qWarning() << "iTunes: Unable to detatch the event listener (could not query interface). :\\";
+
+    iTunesEventHandler = NULL;
+}
+#endif
+
 /*
  * musictracker
  * itunes.c
@@ -42,18 +174,9 @@
  *
  */
 
-#include <QDebug>
-#include <QFile>
-#include <windows.h>
-#include "iTunesCOMInterface.h"
+void close_itunes_connection();
 
-#include "LH_QtPlugin_NowPlaying.h"
-
-//#define iTunes_debug
-
-static IiTunes *itunes = NULL;
-
-bool open_itunes()
+bool open_itunes_connection()
 {
     if(itunes==NULL)
     {
@@ -82,6 +205,12 @@ bool open_itunes()
         return false;
     }
 
+    itunesState=open;
+    qDebug() << "iTunes: iTunes says hello";
+    #ifdef Enable_iTunes_Events
+        attach_iTunesEventHandler();
+    #endif
+
     #ifdef iTunes_debug
         qDebug() << "iTunes: Connected OK";
     #endif
@@ -89,10 +218,15 @@ bool open_itunes()
     return true;
 }
 
-void close_itunes()
+
+void close_itunes_connection()
 {
     if(itunes!=NULL)
     {
+        #ifdef Enable_iTunes_Events
+            if(iTunesEventHandler!=NULL)
+                detach_iTunesEventHandler();
+        #endif
         #ifdef iTunes_debug
             qDebug() << "iTunes: Preparing to disconnect";
         #endif
@@ -102,6 +236,10 @@ void close_itunes()
             qDebug() << "iTunes: Disconnected Cleanly";
         #endif
         itunes=NULL;
+        itunesState = closing;
+        #ifdef iTunes_debug
+            qDebug() << "iTunes: iTunes says goodbye";
+        #endif
     }
 }
 
@@ -193,6 +331,7 @@ bool save_itunes_artwork(IITTrack *track, QString artworkPath, artworkDescriptio
                 if(QFile::exists(cachedArtwork.fileName))
                     QFile::remove(cachedArtwork.fileName);
 
+                trackArtwork.cacheMode = amArtistAndAlbumName;
                 trackArtwork.fileName = QString("%0%1art.%2").arg(artworkPath).arg(artworkPath.endsWith("/")? "" : "/").arg(extension);
                 switch (artItem->SaveArtworkToFile(::SysAllocString((const OLECHAR*)(trackArtwork.fileName.replace("/","\\")).utf16())))
                 {
@@ -218,22 +357,42 @@ bool save_itunes_artwork(IITTrack *track, QString artworkPath, artworkDescriptio
     return success;
 }
 
-
-
-
 bool
 get_itunes_info(TrackInfo &ti, QString artworkPath, artworkDescription &cachedArtwork, bool &updatedArtwork)
 {
     ti.status = PLAYER_STATUS_CLOSED;
 
-    if (!FindWindowA("iTunes", NULL))
+    switch(itunesState)
     {
-        close_itunes();
+    case releasing:
+        if (FindWindowA("iTunes", NULL))
+        {
+            if(itunes != NULL)
+                close_itunes_connection();
+        }
         return false;
+    case closing:
+        if (!FindWindowA("iTunes", NULL))
+        {
+            itunesState = closed;
+            #ifdef iTunes_debug
+                qDebug() << "iTunes: iTunes has closed.";
+            #endif
+        }
+        return false;
+    case closed:
+        if (!FindWindowA("iTunes", NULL))
+        {
+            close_itunes_connection();
+            return false;
+        }else
+        if(!open_itunes_connection())
+            return false;
+        break;
+    case open:
+        break;
     }
 
-    if(!open_itunes())
-        return false;
 
     bool success = false;
 
@@ -261,26 +420,40 @@ get_itunes_info(TrackInfo &ti, QString artworkPath, artworkDescription &cachedAr
             break;
          case S_OK:
             #ifdef iTunes_debug
-                qDebug() << "iTunes: Now Playing data acquired!";
+                qDebug() << "iTunes: Now Playing data acquired.";
             #endif
             ti.player = "iTunes";
             success = true;
 
-            BSTR bstr;
-            track->get_Artist(&bstr);
-            ti.artist = QString::fromWCharArray(bstr);
-            track->get_Album(&bstr);
-            ti.album = QString::fromWCharArray(bstr);
-            track->get_Name(&bstr);
-            ti.track = QString::fromWCharArray(bstr);
+
+            BSTR bstrArtist;
+            track->get_Artist(&bstrArtist);
+            ti.artist = QString::fromWCharArray(bstrArtist);
+            #ifdef iTunes_debug
+                qDebug() << "iTunes: iTunes reports artist as " << ti.artist;
+            #endif
+
+            BSTR bstrAlbum;
+            track->get_Album(&bstrAlbum);
+            ti.album = QString::fromWCharArray(bstrAlbum);
+            #ifdef iTunes_debug
+                qDebug() << "iTunes: iTunes reports album as " << ti.album;
+            #endif
+
+            BSTR bstrTrack;
+            track->get_Name(&bstrTrack);
+            ti.track = QString::fromWCharArray(bstrTrack);
+            #ifdef iTunes_debug
+                qDebug() << "iTunes: iTunes reports track as " << ti.track;
+            #endif
 
             IITFileOrCDTrack* trackFile;
             if(track->QueryInterface(IID_IITFileOrCDTrack, (void**)&trackFile)==S_OK)
             {
-                trackFile->get_Location(&bstr);
-                ti.file = QString::fromWCharArray(bstr);
+                BSTR bstrFile;
+                trackFile->get_Location(&bstrFile);
+                ti.file = QString::fromWCharArray(bstrFile);
             }
-
 
             long duration = 0;
             track->get_Duration(&duration);
@@ -294,7 +467,7 @@ get_itunes_info(TrackInfo &ti, QString artworkPath, artworkDescription &cachedAr
 
             if(artworkPath != "")
             {
-                artworkDescription trackArtwork = (artworkDescription){ti.artist, ti.album};
+                artworkDescription trackArtwork = (artworkDescription){amArtistAndAlbumName, ti.artist, ti.album, "", "", ""};
                 updatedArtwork = save_itunes_artwork(track, artworkPath, cachedArtwork, trackArtwork);
             }
 
@@ -306,8 +479,9 @@ get_itunes_info(TrackInfo &ti, QString artworkPath, artworkDescription &cachedAr
             qDebug() << "iTunes: unable to pull playerstate";
         #endif
         if (!FindWindowA("iTunes", NULL))
-            close_itunes();
+            close_itunes_connection();
     }
 
     return success;
 }
+

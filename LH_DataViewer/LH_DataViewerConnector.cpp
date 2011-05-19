@@ -97,12 +97,19 @@ LH_DataViewerConnector::LH_DataViewerConnector()
     repolled_ = false;
 }
 
+QString LH_DataViewerConnector::get_dir_layout()
+{
+    const char *dir_p = 0;
+    callback( lh_cb_dir_layout, &dir_p );
+    return QString(dir_p);
+}
+
 QStringList LH_DataViewerConnector::listLanguages()
 {
     QStringList languages = QStringList();
     languages.append("Default");
-qDebug() << state()->dir_layout;
-    QDir layoutDir = QDir(state()->dir_layout);
+qDebug() << get_dir_layout();
+    QDir layoutDir = QDir(get_dir_layout());
     QStringList filters;
     filters << "lists.*.txt";
     layoutDir.setNameFilters(filters);
@@ -322,7 +329,6 @@ void LH_DataViewerConnector::mapFileChanged()
             isSingleWrite_ = true;
             completeCount_ = 1;
             dataExpiry_ = 0;
-            setup_language_->list().clear();
             updateLength_ = 0;
 
             foreach (QString item, items)
@@ -382,7 +388,10 @@ void LH_DataViewerConnector::mapFileChanged()
                         if(property=="dataexpiry")
                             dataExpiry_ = value.toInt();
                         if(property=="language")
-                            {setup_language_->list()[0] = QString("%1 (Default)").arg(value); setup_language_->refreshList();}
+                        {
+                            setup_language_->list()[0] = QString("%1 (Default)").arg(value);
+                            setup_language_->refreshList();
+                        }
                         if(property=="updatelength")
                             updateLength_ = value.toInt();
                     } else
@@ -415,6 +424,7 @@ void LH_DataViewerConnector::mapFileChanged()
                     } else
                     if(segment.startsWith("[/definition:"))
                     {
+                        qWarning() << "Block cannot being with \"[/definition:\"";
                         Q_ASSERT(false);
                     } else
                     if(segment=="[definitions]")
@@ -564,7 +574,6 @@ void LH_DataViewerConnector::updateNodes(QStringList sourceLines)
     {
         parseAddress(rootNode, parsingList[i][0].trimmed().split('.',QString::SkipEmptyParts), parsingList[i], QHash<QString,int>() );
     }
-    //Q_Assert(false); //need to apply parsing rules
 }
 
 void LH_DataViewerConnector::parseAddress(dataNode* currentNode, QStringList addresses, QStringList parseData, QHash<QString,int> indexes)
@@ -584,7 +593,11 @@ void LH_DataViewerConnector::parseAddress(dataNode* currentNode, QStringList add
         }
 
         //You can only create one new layer of nodes here
-        Q_ASSERT(currentNode->contains(nodeName));
+        if(!currentNode->contains(nodeName))
+        {
+            qWarning() << "There was a problem parsing the data. Check the map file's format definition and the data file.";
+            Q_ASSERT(currentNode->contains(nodeName));
+        }
 
         QList<dataNode*> nodesList = currentNode->child(nodeName);
         if(nodeIndex==-1 && nodesList.count()==1) nodeIndex = 0;
@@ -673,7 +686,7 @@ void LH_DataViewerConnector::languageFileChanged()
 {
     QString fileName;
     if(setup_language_->value()>0 && setup_language_->value() < setup_language_->list().count())
-        fileName = QString("%1lists.%2.txt").arg(state()->dir_layout).arg(setup_language_->list().at(setup_language_->value()));
+        fileName = QString("%1lists.%2.txt").arg(get_dir_layout()).arg(setup_language_->list().at(setup_language_->value()));
     else
         fileName = setup_map_file_->value().absoluteFilePath();
 

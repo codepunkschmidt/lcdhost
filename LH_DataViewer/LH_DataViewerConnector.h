@@ -89,6 +89,7 @@ protected:
     LH_Qt_QTextEdit *setup_usage_;
     LH_Qt_QStringList *setup_language_;
 
+    QString get_dir_layout();
 public:
     LH_DataViewerConnector();
     ~LH_DataViewerConnector();

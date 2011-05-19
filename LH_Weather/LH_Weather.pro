@@ -16,7 +16,9 @@ SOURCES += ../lh_plugin.c \
     LH_WeatherStructs.cpp \
     LH_WeatherImage.cpp \
     LH_WeatherConnector.cpp \
-    ../LH_QtInstance.cpp
+    ../LH_QtInstance.cpp \
+    LH_WeatherData.cpp \
+    ../GoogleTranslator.cpp
 HEADERS += ../lh_plugin.h \
     ../LH_QtPlugin.h \
     ../LH_QtObject.h \
@@ -26,4 +28,7 @@ HEADERS += ../lh_plugin.h \
     LH_WeatherText.h \
     LH_WeatherImage.h \
     LH_WeatherConnector.h \
-    ../LH_QtInstance.h
+    ../LH_QtInstance.h \
+    LH_WeatherData.h \
+    ../TranslationAPIKey.h \
+    ../GoogleTranslator.h

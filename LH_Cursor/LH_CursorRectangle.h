@@ -32,9 +32,8 @@
 #include "../LH_Qt_QColor.h"
 #include "../LH_Qt_QString.h"
 #include "../LH_Qt_QFileInfo.h"
-#include "LH_CursorInstance.h"
 
-// #include <LH_CursorStructs.h>
+#include "LH_CursorData.h"
 
 #include <QHash>
 
@@ -48,7 +47,7 @@ struct colorMapData
 };
 
 
-class LH_CursorRectangle : public LH_CursorInstance
+class LH_CursorRectangle : public LH_QtInstance
 {
     Q_OBJECT
 

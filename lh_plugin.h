@@ -218,6 +218,18 @@ typedef struct lh_buildinfo_t
         "http://www.linkdata.se/lcdhost/version.php?arch=$ARCH" \
     }
 
+
+#define LH_STD_BUILDINFO_WITH_VERSION(ver) \
+    { \
+        LH_BUILDINFO_SIG, \
+        sizeof(lh_buildinfo), \
+        REVISION, \
+        LH_API_MAJOR, \
+        LH_API_MINOR, \
+        "v" STRINGIZE(ver) "\nR" STRINGIZE(REVISION), \
+        "http://www.linkdata.se/lcdhost/version.php?arch=$ARCH" \
+    }
+
 /**
   The lh_blob type is used to embed binary data, usually a JPG or PNG image file.
   */

@@ -43,7 +43,7 @@ lh_class *LH_CursorController::classInfo()
     return &classInfo;
 }
 
-LH_CursorController::LH_CursorController() : LH_Text(), shmem_(NULL), cursor_location_(NULL)
+LH_CursorController::LH_CursorController() : LH_Text()
 {
     cursorModes.append((cursorMode){smSelectDeselect, true , "Activate, Move & Select / Deselect"});
     cursorModes.append((cursorMode){smSelect        , true , "Activate, Move & Select Only (one is always selected)"});
@@ -52,27 +52,7 @@ LH_CursorController::LH_CursorController() : LH_Text(), shmem_(NULL), cursor_loc
     cursorModes.append((cursorMode){smSelectDeselect, false, "Move & Select / Deselect Only (Always activated)"});
     cursorModes.append((cursorMode){smSelect        , false, "Move & Select Only (Always activated)"});
 
-    shmem_ = new QSharedMemory( "LHCursorSharedMemory", this );
-    if( shmem_->create(sizeof(cursorData)) )
-    {
-        if( shmem_->lock() )
-        {
-            cursor_location_ = static_cast<cursorData*>( shmem_->data() );
-            if( cursor_location_ )
-            {
-                memset(cursor_location_, '\0', sizeof(cursorData));
-                cursor_location_->active = false;
-                cursor_location_->x=1;
-                cursor_location_->y=1;
-                cursor_location_->selX = 0;
-                cursor_location_->selY = 0;
-                cursor_location_->selState = false;
-            }
-            shmem_->unlock();
-        }
-        else qWarning() << "LH_CursorController: failed to lock shared memory";
-    }
-    else qWarning() << "LH_CursorController: failed to create shared memory";
+    cursor_data = (cursorData){1,1,false,0,0,false,0,0,false,false,0,0,(bounds){(minmax){0,0},(minmax){0,0}}};
 
     setup_text_->setFlag(LH_FLAG_HIDDEN,true);
     setup_font_->setFlag(LH_FLAG_HIDDEN,true);
@@ -161,7 +141,7 @@ void LH_CursorController::doMoveUp(QString key,int flags,int value)
     Q_UNUSED(key);
     Q_UNUSED(flags);
     Q_UNUSED(value);
-    if( cursor_location_->active )
+    if( cursor_data.active )
     {
         updateLocation(0,-1);
     }
@@ -172,7 +152,7 @@ void LH_CursorController::doMoveDown(QString key,int flags,int value)
     Q_UNUSED(key);
     Q_UNUSED(flags);
     Q_UNUSED(value);
-    if( cursor_location_->active )
+    if( cursor_data.active )
     {
         updateLocation(0,1);
     }
@@ -183,7 +163,7 @@ void LH_CursorController::doMoveLeft(QString key,int flags,int value)
     Q_UNUSED(key);
     Q_UNUSED(flags);
     Q_UNUSED(value);
-    if( cursor_location_->active )
+    if( cursor_data.active )
     {
         updateLocation(-1,0);
     }
@@ -194,7 +174,7 @@ void LH_CursorController::doMoveRight(QString key,int flags,int value)
     Q_UNUSED(key);
     Q_UNUSED(flags);
     Q_UNUSED(value);
-    if( cursor_location_->active )
+    if( cursor_data.active )
     {
         updateLocation(1,0);
     }
@@ -206,34 +186,34 @@ void LH_CursorController::doSelect(QString key,int flags,int value)
     Q_UNUSED(flags);
     Q_UNUSED(value);
 
-    if( cursor_location_->active )
+    if( cursor_data.active )
     {
-        cursor_location_->sendSelect = false;
+        cursor_data.sendSelect = false;
         if(cursorModes[setup_mode_->value()].select==smSelectDeselect &&
-           cursor_location_->selState &&
-           cursor_location_->selX == cursor_location_->x &&
-           cursor_location_->selY == cursor_location_->y)
+           cursor_data.selState &&
+           cursor_data.selX == cursor_data.x &&
+           cursor_data.selY == cursor_data.y)
         {
-            cursor_location_->selState = false;
+            cursor_data.selState = false;
         }
         else
         {
-            cursor_location_->selX = cursor_location_->x;
-            cursor_location_->selY = cursor_location_->y;
-            cursor_location_->selState = true;
+            cursor_data.selX = cursor_data.x;
+            cursor_data.selY = cursor_data.y;
+            cursor_data.selState = true;
 
-            if(cursor_location_->lastSelSet)
+            if(cursor_data.lastSelSet)
             {
-                cursor_location_->lastSelX2 = cursor_location_->lastSelX;
-                cursor_location_->lastSelY2 = cursor_location_->lastSelY;
+                cursor_data.lastSelX2 = cursor_data.lastSelX;
+                cursor_data.lastSelY2 = cursor_data.lastSelY;
             } else {
-                cursor_location_->lastSelX2 = cursor_location_->selX;
-                cursor_location_->lastSelY2 = cursor_location_->selY;
+                cursor_data.lastSelX2 = cursor_data.selX;
+                cursor_data.lastSelY2 = cursor_data.selY;
             }
 
-            cursor_location_->lastSelSet = true;
-            cursor_location_->lastSelX = cursor_location_->selX;
-            cursor_location_->lastSelY = cursor_location_->selY;
+            cursor_data.lastSelSet = true;
+            cursor_data.lastSelX = cursor_data.selX;
+            cursor_data.lastSelY = cursor_data.selY;
         }
         persistSelection();
     }
@@ -241,9 +221,9 @@ void LH_CursorController::doSelect(QString key,int flags,int value)
 
 void LH_CursorController::doReselect(QString key,int flags,int value)
 {
-    if( cursor_location_->active )
+    if( cursor_data.active )
     {
-        updateLocation(cursor_location_->lastSelX, cursor_location_->lastSelY, true);
+        updateLocation(cursor_data.lastSelX, cursor_data.lastSelY, true);
         doSelect(key,flags,value);
     }
 }
@@ -253,7 +233,7 @@ void LH_CursorController::persistSelection()
     if (!setup_persistent_->value()) return;
     if (setup_persistent_file_->value().isFile())
     {
-        QString selString = QString("%1,%2,%3,%4,%5").arg(cursor_location_->x).arg(cursor_location_->y).arg(cursor_location_->selState).arg(cursor_location_->selX).arg(cursor_location_->selY);
+        QString selString = QString("%1,%2,%3,%4,%5").arg(cursor_data.x).arg(cursor_data.y).arg(cursor_data.selState).arg(cursor_data.selX).arg(cursor_data.selY);
         QFile persistFile ( setup_persistent_file_->value().absoluteFilePath() );
         persistFile.open(QIODevice::WriteOnly|QFile::Truncate);
         persistFile.write(selString.toUtf8());
@@ -276,17 +256,17 @@ void LH_CursorController::loadPersistedSelection()
         {
             updateLocation(selData[0].toInt(), selData[1].toInt(), true);
 
-            cursor_location_->lastSelSet = true;
-            cursor_location_->lastSelX = cursor_location_->x;
-            cursor_location_->lastSelY = cursor_location_->y;
-            cursor_location_->lastSelX2 = cursor_location_->x;
-            cursor_location_->lastSelY2 = cursor_location_->y;
+            cursor_data.lastSelSet = true;
+            cursor_data.lastSelX = cursor_data.x;
+            cursor_data.lastSelY = cursor_data.y;
+            cursor_data.lastSelX2 = cursor_data.x;
+            cursor_data.lastSelY2 = cursor_data.y;
 
             if(setup_persistent_autoselect_->value())
             {
-                cursor_location_->selState = (selData[2] == "1");
-                cursor_location_->selX = selData[3].toInt();
-                cursor_location_->selY = selData[4].toInt();
+                cursor_data.selState = (selData[2] == "1");
+                cursor_data.selX = selData[3].toInt();
+                cursor_data.selY = selData[4].toInt();
             }
         }
     }
@@ -300,7 +280,7 @@ void LH_CursorController::doActivate(QString key,int flags,int value)
 
     if( cursorModes[setup_mode_->value()].activate )
     {
-        cursor_location_->active = !cursor_location_->active;
+        cursor_data.active = !cursor_data.active;
         updateLocation(0,0);
     }
 }
@@ -312,20 +292,20 @@ void LH_CursorController::updateLocation(int xMod, int yMod, bool absolute)
 
     bool moved = false;
 
-    int newX = cursor_location_->x;
-    int newY = cursor_location_->y;
+    int newX = cursor_data.x;
+    int newY = cursor_data.y;
 
     if (boundsList.length()>=4)
     {
-        cursor_location_->range.x = (minmax){boundsList.at(0).toInt(), boundsList.at(2).toInt()};
-        cursor_location_->range.y = (minmax){boundsList.at(1).toInt(), boundsList.at(3).toInt()};
+        cursor_data.range.x = (minmax){boundsList.at(0).toInt(), boundsList.at(2).toInt()};
+        cursor_data.range.y = (minmax){boundsList.at(1).toInt(), boundsList.at(3).toInt()};
 
         if (absolute)
         {
-            if(xMod >= cursor_location_->range.x.min &&
-               xMod <= cursor_location_->range.x.max &&
-               yMod >= cursor_location_->range.y.min &&
-               yMod <= cursor_location_->range.y.max
+            if(xMod >= cursor_data.range.x.min &&
+               xMod <= cursor_data.range.x.max &&
+               yMod >= cursor_data.range.y.min &&
+               yMod <= cursor_data.range.y.max
                )
             {
                 newX = xMod;
@@ -341,10 +321,10 @@ void LH_CursorController::updateLocation(int xMod, int yMod, bool absolute)
             {
                 loops++;
                 while(!moved &&
-                      newX+xMod >= cursor_location_->range.x.min &&
-                      newX+xMod <= cursor_location_->range.x.max &&
-                      newY+yMod >= cursor_location_->range.y.min &&
-                      newY+yMod <= cursor_location_->range.y.max
+                      newX+xMod >= cursor_data.range.x.min &&
+                      newX+xMod <= cursor_data.range.x.max &&
+                      newY+yMod >= cursor_data.range.y.min &&
+                      newY+yMod <= cursor_data.range.y.max
                       )
                 {
                     newX += xMod;
@@ -358,24 +338,24 @@ void LH_CursorController::updateLocation(int xMod, int yMod, bool absolute)
                 if(!setup_boundry_loop_->value()) break;
                 else if(!moved)
                 {
-                    if(xMod==1)  newX = cursor_location_->range.x.min - xMod;
-                    if(xMod==-1) newX = cursor_location_->range.x.max - xMod;
-                    if(yMod==1)  newY = cursor_location_->range.y.min - yMod;
-                    if(yMod==-1) newY = cursor_location_->range.y.max - yMod;
+                    if(xMod==1)  newX = cursor_data.range.x.min - xMod;
+                    if(xMod==-1) newX = cursor_data.range.x.max - xMod;
+                    if(yMod==1)  newY = cursor_data.range.y.min - yMod;
+                    if(yMod==-1) newY = cursor_data.range.y.max - yMod;
                 }
             }
         }
     }
 
     if(moved) {
-        cursor_location_->x = newX;
-        cursor_location_->y = newY;
+        cursor_data.x = newX;
+        cursor_data.y = newY;
         if(cursorModes[setup_mode_->value()].select==smNone) doSelect("",0,0);
     }
 
     persistSelection();
 
-    setText(QString::number(cursor_location_->x) + "," + QString::number(cursor_location_->y));
+    setText(QString::number(cursor_data.x) + "," + QString::number(cursor_data.y));
     setup_fontresize_->setFlag(LH_FLAG_HIDDEN,true);
     setup_pencolor_->setFlag(LH_FLAG_HIDDEN,true);
 
@@ -386,12 +366,12 @@ void LH_CursorController::changeMode()
 {
     if(cursorModes[setup_mode_->value()].select!=smSelectDeselect)
     {
-        cursor_location_->selX = cursor_location_->x;
-        cursor_location_->selY = cursor_location_->y;
-        cursor_location_->selState = true;
+        cursor_data.selX = cursor_data.x;
+        cursor_data.selY = cursor_data.y;
+        cursor_data.selState = true;
         //qDebug() << "Selected";
     }
-    cursor_location_->active = !cursorModes[setup_mode_->value()].activate;
+    cursor_data.active = !cursorModes[setup_mode_->value()].activate;
     setup_select_->setFlag(LH_FLAG_HIDDEN, cursorModes[setup_mode_->value()].select==smNone);
     setup_reselect_->setFlag(LH_FLAG_HIDDEN, cursorModes[setup_mode_->value()].select!=smSelectDeselect);
     setup_activate_->setFlag(LH_FLAG_HIDDEN, !cursorModes[setup_mode_->value()].activate);
@@ -414,68 +394,14 @@ void LH_CursorController::changeBounds()
     }
 }
 
-#if 0
-LH_CursorController::~LH_CursorController()
-{
-    // closeMemory();
-}
-#endif
 
 int LH_CursorController::polling()
 {
-    if(cursor_location_->sendSelect) doSelect(0,0,0);
+    if(cursor_data.sendSelect) doSelect(0,0,0);
     return 200;
 }
 
-#if 0
-bool LH_CursorController::openMemory()
-{
-    const char* mapname  = "LHCursorSharedMemory";
 
-    if( shmem_ )
-
-    if(debugMemory) qDebug() << "LH_CursorController: open memory: CreateFileMapping";
-    memMap = (HANDLE)CreateFileMappingA(INVALID_HANDLE_VALUE,NULL,PAGE_READWRITE,0,sizeof(cursorData),mapname); //INVALID_HANDLE_VALUE
-
-    if(memMap)
-    {
-        if(debugMemory) qDebug() << "LH_CursorController: open memory: MapViewOfFile";
-        cursor_location_ = (cursorData*)MapViewOfFile(memMap, FILE_MAP_WRITE | FILE_MAP_READ, 0, 0, sizeof(cursorData));
-        if(cursor_location_)
-        {
-            if(debugMemory) qDebug() << "LH_CursorController: open memory: memset";
-            memset(cursor_location_, '\0', sizeof(cursorData));
-            if(debugMemory) qDebug() << "LH_CursorController: open memory: done";
-
-            cursor_location_->active = false;
-            cursor_location_->x=1;
-            cursor_location_->y=1;
-            cursor_location_->selX = 0;
-            cursor_location_->selY = 0;
-            cursor_location_->selState = false;
-
-            return true;
-        } else
-            if(debugMemory) qDebug() << "LH_CursorController: open memory: failed";
-    } else
-        if(debugMemory) qDebug() << "LH_CursorController: open memory: failed";
-    return false;
-}
-void LH_CursorController::closeMemory()
-{
-    if(cursor_location_)
-    {
-        if(debugMemory) qDebug() << "LH_CursorController: close memory: UnmapViewOfFile";
-        UnmapViewOfFile(cursor_location_);
-    }
-    if(memMap)
-    {
-        if(debugMemory) qDebug() << "LH_CursorController: close memory: CloseHandle (memMap)";
-        CloseHandle(memMap);
-    }
-    if(debugMemory) qDebug() << "LH_CursorController: close memory: Done.";
-}
-#endif
 void LH_CursorController::changePersistent()
 {
     setup_persistent_file_->setFlag(LH_FLAG_HIDDEN, !setup_persistent_->value());

@@ -134,8 +134,6 @@ int LH_CursorAction::polling()
 
 bool LH_CursorAction::updateState()
 {
-    cursorData cd;
-    getCursorData(cd);
     QStringList mycoords = setup_coordinate_->value().split(';');
 
     bool newSelected = false;
@@ -148,8 +146,8 @@ bool LH_CursorAction::updateState()
             int myX = mycoord.at(0).toInt();
             int myY = mycoord.at(1).toInt();
 
-            newSelected = newSelected || ( cd.selState && cd.selX==myX && cd.selY==myY );
-            newActive = newActive ||  ( cd.active && cd.x==myX && cd.y==myY );
+            newSelected = newSelected || ( cursor_data.selState && cursor_data.selX==myX && cursor_data.selY==myY );
+            newActive = newActive ||  ( cursor_data.active && cursor_data.x==myX && cursor_data.y==myY );
         }
     }
     QString newStatusCode = QString("%1%2").arg(newActive? "ON" : "OFF").arg(newSelected? "_SEL" : "");
@@ -222,43 +220,28 @@ void LH_CursorAction::fire(int startAt)
             }else
             if(typeCode=="move")
             {
-                cursorData cd;
-                getCursorData(cd);
-                cd.x = action.getParameter(e,0).toInt();
-                cd.y = action.getParameter(e,1).toInt();
-                setCursorData(cd);
+                cursor_data.x = action.getParameter(e,0).toInt();
+                cursor_data.y = action.getParameter(e,1).toInt();
             }else
             if(typeCode=="select")
             {
-                cursorData cd;
-                getCursorData(cd);
-                cd.x = action.getParameter(e,0).toInt();
-                cd.y = action.getParameter(e,1).toInt();
-                cd.sendSelect = true;
-                setCursorData(cd);
+                cursor_data.x = action.getParameter(e,0).toInt();
+                cursor_data.y = action.getParameter(e,1).toInt();
+                cursor_data.sendSelect = true;
             }else
             if(typeCode=="deselect")
             {
-                cursorData cd;
-                getCursorData(cd);
-                cd.selState = false;
-                setCursorData(cd);
+                cursor_data.selState = false;
             }else
             if(typeCode=="deactivate")
             {
-                cursorData cd;
-                getCursorData(cd);
-                cd.active = false;
-                setCursorData(cd);
+                cursor_data.active = false;
             }else
             if(typeCode=="reselect")
             {
-                cursorData cd;
-                getCursorData(cd);
-                cd.x = cd.lastSelX2;
-                cd.y = cd.lastSelY2;
-                cd.sendSelect = true;
-                setCursorData(cd);
+                cursor_data.x = cursor_data.lastSelX2;
+                cursor_data.y = cursor_data.lastSelY2;
+                cursor_data.sendSelect = true;
             } else
                 Q_ASSERT(false);
         }
@@ -271,12 +254,9 @@ void LH_CursorAction::doJumpTo(QString key, int flags, int value)
     Q_UNUSED(flags);
     Q_UNUSED(value);
     QString coord = setup_coordinate_->value().split(';')[0];
-    cursorData cd;
-    getCursorData(cd);
-    cd.x = coord.split(',')[0].toInt();
-    cd.y = coord.split(',')[1].toInt();
-    cd.sendSelect = true;
-    setCursorData(cd);
+    cursor_data.x = coord.split(',')[0].toInt();
+    cursor_data.y = coord.split(',')[1].toInt();
+    cursor_data.sendSelect = true;
 }
 
 void LH_CursorAction::xmlChanged()
@@ -328,8 +308,6 @@ void LH_CursorAction::actionSelected()
     QDomDocument actionsXML("actionsXML");
     if(actionsXML.setContent(setup_actions_xml_->value()) && actionsXML.firstChild().childNodes().count()!=0 && setup_actions_->value()!=-1)
     {
-        cursorData cd;
-        getCursorData(cd);
         QDomElement e = actionsXML.firstChild().childNodes().at(setup_actions_->value()).toElement();
         QString typeCode = e.attribute("type");
 
@@ -337,8 +315,8 @@ void LH_CursorAction::actionSelected()
         setup_action_desc_->setValue( e.attribute("desc") );
         setup_action_index_->setValue( setup_actions_->value() );
 
-        actionTypes_.at(typeCode).displayParameter(0,setup_action_parameter1_desc_,setup_action_parameter1_str_,setup_action_parameter1_int_,setup_action_parameter1_file_, cd, e);
-        actionTypes_.at(typeCode).displayParameter(1,setup_action_parameter2_desc_,setup_action_parameter2_str_,setup_action_parameter2_int_,setup_action_parameter2_file_, cd, e);
+        actionTypes_.at(typeCode).displayParameter(0,setup_action_parameter1_desc_,setup_action_parameter1_str_,setup_action_parameter1_int_,setup_action_parameter1_file_, cursor_data, e);
+        actionTypes_.at(typeCode).displayParameter(1,setup_action_parameter2_desc_,setup_action_parameter2_str_,setup_action_parameter2_int_,setup_action_parameter2_file_, cursor_data, e);
 
         setup_action_enabled_->setValue( e.attribute("enabled")!="false" );
     }
@@ -346,8 +324,6 @@ void LH_CursorAction::actionSelected()
 
 void LH_CursorAction::actionEdited()
 {
-    cursorData cd;
-    getCursorData(cd);
     if(setup_actions_->list().count()==0) return;
     actionType at = actionTypes_.at(setup_action_type_->value());
 
@@ -357,8 +333,8 @@ void LH_CursorAction::actionEdited()
     paramValues.append( at.getParameterValue(1,setup_action_parameter2_str_,setup_action_parameter2_int_,setup_action_parameter2_file_));
 
     //in case the type has changed, update the parameter visibility
-    at.displayParameter(0,setup_action_parameter1_desc_,setup_action_parameter1_str_,setup_action_parameter1_int_,setup_action_parameter1_file_, cd);
-    at.displayParameter(1,setup_action_parameter2_desc_,setup_action_parameter2_str_,setup_action_parameter2_int_,setup_action_parameter2_file_, cd);
+    at.displayParameter(0,setup_action_parameter1_desc_,setup_action_parameter1_str_,setup_action_parameter1_int_,setup_action_parameter1_file_, cursor_data);
+    at.displayParameter(1,setup_action_parameter2_desc_,setup_action_parameter2_str_,setup_action_parameter2_int_,setup_action_parameter2_file_, cursor_data);
 
     //Update the caption in case the description or enabled state has changed
     QString desc = (setup_action_desc_->value()==""? at.description : setup_action_desc_->value());

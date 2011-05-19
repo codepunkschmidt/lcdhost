@@ -29,6 +29,7 @@
 
 #include "../LH_QtPlugin.h"
 
+#define VERSION 1.31
 class LH_QtPlugin_Graph : public LH_QtPlugin
 {
     Q_OBJECT

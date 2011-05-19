@@ -39,46 +39,52 @@
 #include <QDebug>
 
 LH_PLUGIN(LH_QtPlugin_NowPlaying);
-lh_buildinfo buildinfo =
-{
-    LH_BUILDINFO_SIG,
-    sizeof(lh_buildinfo),
-    REVISION,
-    LH_API_MAJOR,
-    LH_API_MINOR,
-    "2.00",
-    "http://www.linkdata.se/lcdhost/version.php?arch=$ARCH"
-};
+lh_buildinfo buildinfo = LH_STD_BUILDINFO_WITH_VERSION(VERSION);
 
 
 LH_NowPlaying_Reader* currentTrack;
 
 bool get_itunes_info(TrackInfo &ti, QString artworkPath, artworkDescription &cachedArtwork, bool &updatedArtwork);
-bool get_winamp_info(TrackInfo& ti);
+bool get_winamp_info(TrackInfo &ti);
 bool get_msn_compat_info(struct TrackInfo &ti);
 
 bool get_folder_artwork(TrackInfo newInfo, QString artworkCachePath, artworkDescription &cachedArtwork)
 {
-    if(newInfo.album == cachedArtwork.album || newInfo.artist == cachedArtwork.artist)
-        return false;
-
-    QString folderImage = QFileInfo(newInfo.file).absolutePath()+"/folder.jpg";
+    QFileInfo newItemFile(newInfo.file);
+    QString newItemFilePath = newItemFile.absolutePath();
+    QString folderImage = newItemFilePath+"/folder.jpg";
+    QString artworkCacheFileName = QString("%0%1art.%2").arg(artworkCachePath).arg(artworkCachePath.endsWith("/")? "" : "/").arg("jpg");
     if(QFile::exists(folderImage))
-        if(QFile::copy(folderImage, artworkCachePath+"/art.jpg"))
+    {
+        if(QFile::exists(artworkCacheFileName))
         {
+            #ifdef Q_OS_WIN
+                SetFileAttributes((LPCTSTR)artworkCacheFileName.utf16(), 0);
+            #endif
+            QFile::remove(artworkCacheFileName);
+        }
+        if(QFile::copy(folderImage, artworkCacheFileName))
+        {
+            #ifdef Q_OS_WIN
+                SetFileAttributes((LPCTSTR)artworkCacheFileName.utf16(), 0);
+            #endif
+            cachedArtwork.cacheMode = amFileFolder;
             cachedArtwork.album = newInfo.album;
             cachedArtwork.artist = newInfo.artist;
-            cachedArtwork.fileName = artworkCachePath+"/art.jpg";
+            cachedArtwork.sourcefolder = newItemFilePath;
+            cachedArtwork.fileName = artworkCacheFileName;
             return true;
+        } else {
+            qWarning() << "NowPlaying: Unable to copy album artwork from " << folderImage;
         }
+    }
     return false;
 }
 
-void close_itunes();
+void close_itunes_connection();
 
 LH_NowPlaying_Reader::~LH_NowPlaying_Reader() {
-    clearArtwork();
-    close_itunes();
+    close_itunes_connection();
 }
 
 void LH_NowPlaying_Reader::refresh()
@@ -94,17 +100,40 @@ void LH_NowPlaying_Reader::refresh()
     if(storeInfo(newInfo))
         emit changed();
 
-    if(playerFound_ && !updatedArtwork &&
-            (cachedArtwork_.album != newInfo.album || cachedArtwork_.artist != newInfo.artist)
-            )
+    if(playerFound_ && !updatedArtwork)
     {
-        currentTrack->clearArtwork();
-        updatedArtwork = get_folder_artwork(newInfo, artworkCachePath_, cachedArtwork_);
-        if(!updatedArtwork)
+        QFileInfo newItemFile(newInfo.file);
+        QString newItemFilePath = newItemFile.absolutePath();
+        bool validArtwork = false;
+        switch(cachedArtwork_.cacheMode)
         {
+        case amArtistAndAlbumName:
+            validArtwork = (cachedArtwork_.album == newInfo.album && cachedArtwork_.artist == newInfo.artist);
+            break;
+        case amFileFolder:
+            validArtwork = (cachedArtwork_.sourcefolder == newItemFilePath);
+            break;
+        case amTrack:
+            validArtwork = (cachedArtwork_.track == newInfo.track && cachedArtwork_.album == newInfo.album && cachedArtwork_.artist == newInfo.artist);
+            break;
+        case amNone:
+            validArtwork = false;
+            break;
+        }
+        if(!validArtwork)
+        {
+            currentTrack->clearArtwork();
+            updatedArtwork = get_folder_artwork(newInfo, artworkCachePath_, cachedArtwork_);
             cachedArtwork_.album = newInfo.album;
-            cachedArtwork_.artist != newInfo.artist;
-            updatedArtwork = true;
+            cachedArtwork_.artist = newInfo.artist;
+            if(!updatedArtwork)
+            {
+                cachedArtwork_.sourcefolder = newItemFilePath;
+                updatedArtwork = true;
+            } else {
+                cachedArtwork_.track == newInfo.track;
+                cachedArtwork_.cacheMode = amTrack;
+            }
         }
     }
 
@@ -133,22 +162,20 @@ bool LH_NowPlaying_Reader::storeInfo(TrackInfo newInfo)
 }
 
 const char *LH_QtPlugin_NowPlaying::lh_load() {
-    t.start();
     currentTrack = new LH_NowPlaying_Reader(this);
+    timer_.setInterval(500);
+    timer_.start();
+    connect(&timer_, SIGNAL(timeout()), this, SLOT(refresh_data()));
     return NULL;
 }
 
 void LH_QtPlugin_NowPlaying::lh_unload() {
+    //currentTrack->clearArtwork();
+    timer_.stop();
     currentTrack->deleteLater();
 }
 
-int LH_QtPlugin_NowPlaying::lh_notify(int code, void *param) {
-    Q_UNUSED(code);
-    Q_UNUSED(param);
-    if (t.elapsed()>=500)
-    {
-        t.restart();
-        currentTrack->refresh();
-    }
-    return 0;
+void LH_QtPlugin_NowPlaying::refresh_data() {
+    if(!currentTrack->isRunning())
+         currentTrack->run();
 }

@@ -4,6 +4,8 @@
 #include <QRegExp>
 #include <QFile>
 #include <QTextStream>
+#include <QNetworkProxyQuery>
+#include <QUrl>
 
 GoogleTranslator::GoogleTranslator(QString name, LH_QtObject *parent) : QObject(parent)
 {
@@ -32,17 +34,40 @@ void GoogleTranslator::request()
     if(translateRequestValues_.length()==0)
         return;
 
+    const QString host = "www.googleapis.com";
+    const QString path = "/language/translate/v2";
+
     QString params = translateRequestValues_.join("&q=");
 
-    httpTranslate.setHost("www.googleapis.com", QHttp::ConnectionModeHttps);
+    QNetworkProxyQuery npq(QUrl(QString("https://%1%2").arg(host).arg(path)));
+    QList<QNetworkProxy> listOfProxies = QNetworkProxyFactory::systemProxyForQuery(npq);
+    if(listOfProxies.count()!=0)
+    {
+        if(listOfProxies.at(0).type() != QNetworkProxy::NoProxy) {
+            #ifdef debug_translator
+                qDebug() << "GoogleTranslator: Using Proxy: " << listOfProxies.at(0).hostName()<< ":" << QString::number(listOfProxies.at(0).port());
+            #endif
+            httpTranslate.setProxy(listOfProxies.at(0));
+        } else {
+           #ifdef debug_translator
+               qDebug() << "GoogleTranslator: No proxy required.";
+           #endif
+        }
+    } else {
+        #ifdef debug_translator
+            qDebug() << "GoogleTranslator: No proxy listed.";
+        #endif
+    }
 
-    QString url = QString("/language/translate/v2?source=%1&target=%2&key=%3").arg(sourceLanguage_).arg(targetLanguage_).arg(TRANSLATION_API_KEY);
+    httpTranslate.setHost(host, QHttp::ConnectionModeHttps);
+
+    QString url = QString("%1?source=%2&target=%3&key=%4").arg(path).arg(sourceLanguage_).arg(targetLanguage_).arg(TRANSLATION_API_KEY);
     QByteArray textByteArray("q=");
     textByteArray.append( params.toUtf8() );
 
     QHttpRequestHeader header = QHttpRequestHeader("POST", url, 1, 1);
     header.setContentType("application/x-www-form-urlencoded");
-    header.setValue("Host", "www.googleapis.com");
+    header.setValue("Host", host);
     header.setValue("User-Agent", "Mozilla/5.0");
     header.setValue("Accept-Encoding", "deflate");
     header.setValue("X-HTTP-Method-Override", "GET");
@@ -264,21 +289,47 @@ void GoogleTranslator::loadCache()
 
 void GoogleTranslator::requestLanguages(QString code)
 {
+    const QString host = "www.googleapis.com";
+    const QString path = "/language/translate/v2/languages";
+
     httpLanguages.abort();
-    httpLanguages.setHost("www.googleapis.com", QHttp::ConnectionModeHttps);
+    httpLanguages.setHost(host, QHttp::ConnectionModeHttps);
+
+    QNetworkProxyQuery npq(QUrl(QString("https://%1%2").arg(host).arg(path)));
+    QList<QNetworkProxy> listOfProxies = QNetworkProxyFactory::systemProxyForQuery(npq);
+    if(listOfProxies.count()!=0)
+    {
+        if(listOfProxies.at(0).type() != QNetworkProxy::NoProxy) {
+            #ifdef debug_translator
+                qDebug() << "GoogleTranslator: Using Proxy: " << listOfProxies.at(0).hostName()<< ":" << QString::number(listOfProxies.at(0).port());
+            #endif
+            httpLanguages.setProxy(listOfProxies.at(0));
+        } else {
+           #ifdef debug_translator
+               qDebug() << "GoogleTranslator: No proxy required.";
+           #endif
+        }
+    } else {
+        #ifdef debug_translator
+            qDebug() << "GoogleTranslator: No proxy listed.";
+        #endif
+    }
 
     if(code=="")
         code = targetLanguage_;
-    QString url = QString("/language/translate/v2/languages?target=%1&key=%2").arg(code).arg(TRANSLATION_API_KEY);
+    QString url = QString("%1?target=%2&key=%3").arg(path).arg(code).arg(TRANSLATION_API_KEY);
 
     QHttpRequestHeader header = QHttpRequestHeader("POST", url, 1, 1);
     header.setContentType("application/x-www-form-urlencoded");
-    header.setValue("Host", "www.googleapis.com");
+    header.setValue("Host", host);
     header.setContentLength(0);
     header.setValue("User-Agent", "Mozilla/5.0");
     header.setValue("Accept-Encoding", "deflate");
     header.setValue("X-HTTP-Method-Override", "GET");
     header.setValue("Connection", "Close");
+    #ifdef debug_translator
+        qDebug() << "GoogleTranslator: Requesting Languages from: " << QString("https://%1%2").arg(host).arg(path);
+    #endif
     httpLanguages.request(header);
 }
 

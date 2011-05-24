@@ -25,13 +25,6 @@
 #include "LH_QtPlugin_Weather.h"
 
 LH_PLUGIN(LH_QtPlugin_Weather);
-lh_buildinfo buildinfo =
-{
-    LH_BUILDINFO_SIG,
-    sizeof(lh_buildinfo),
-    REVISION,
-    LH_API_MAJOR,
-    LH_API_MINOR,
-    "1.23",
-    "http://www.linkdata.se/lcdhost/version.php?arch=$ARCH"
-};
+
+lh_buildinfo buildinfo = LH_STD_BUILDINFO_WITH_VERSION(VERSION);
+

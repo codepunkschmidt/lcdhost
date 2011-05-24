@@ -198,58 +198,33 @@ void LH_WeatherImage::fileChanged()
 
 void LH_WeatherImage::updateImage(bool rerender)
 {
-    QSharedMemory shmem("LHWeatherSharedMemory");
+    bool newIsNight = (setup_value_type_->value()<=1) && weather_data.isNight;
+    if (isNight!=newIsNight) rerender = true;
+    isNight = newIsNight;
 
-    setup_text_->setFlag(LH_FLAG_HIDDEN,false);
-    setup_text_->setValue("Accessing memory..." );
-
-    if( shmem.attach() )
+    QString newWeatherCode = weather_data.condition.code;
+    switch(setup_value_type_->value())
     {
-        if( shmem.lock() )
-        {
-            weatherData* weather = (weatherData*)shmem.data();
-
-            if (weather) {
-                bool newIsNight = (setup_value_type_->value()<=1) && weather->isNight;
-                if (isNight!=newIsNight) rerender = true;
-                isNight = newIsNight;
-
-                QString newWeatherCode = weather->condition.code;
-                switch(setup_value_type_->value())
-                {
-                case 1:
-                    newWeatherCode = weather->forecastToday.code;
-                    break;
-                case 2:
-                    newWeatherCode = weather->forecastTomorrow.code;
-                    break;
-                case 3:
-                    newWeatherCode = weather->forecastDay3.code;
-                    break;
-                case 4:
-                    newWeatherCode = weather->forecastDay4.code;
-                    break;
-                case 5:
-                    newWeatherCode = weather->forecastDay5.code;
-                    break;
-                }
-
-
-                if(weatherCode != newWeatherCode) rerender = true;
-                weatherCode = newWeatherCode;
-
-                QString dayNight;
-                if (isNight)
-                    dayNight = "Night";
-                else
-                    dayNight = "Day";
-
-                setup_text_->setValue(QString("Weather Code %1 received for %2; resolved to image: %3").arg(weatherCode, dayNight, getWeatherImageName()));
-            }
-            shmem.unlock();
-        }
-        shmem.detach();
+    case 1:
+    case 2:
+    case 3:
+    case 4:
+    case 5:
+        newWeatherCode = weather_data.forecast[setup_value_type_->value()-1].code;
+        break;
     }
+
+
+    if(weatherCode != newWeatherCode) rerender = true;
+    weatherCode = newWeatherCode;
+
+    QString dayNight;
+    if (isNight)
+        dayNight = "Night";
+    else
+        dayNight = "Day";
+
+    setup_text_->setValue(QString("Weather Code %1 received for %2; resolved to image: %3").arg(weatherCode, dayNight, getWeatherImageName()));
 
     if (rerender) callback(lh_cb_render,NULL);
 }

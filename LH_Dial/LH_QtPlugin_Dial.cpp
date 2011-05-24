@@ -36,13 +36,4 @@ void LH_QtPlugin_Dial::lh_unload()
 {
 }
 
-lh_buildinfo buildinfo =
-{
-    LH_BUILDINFO_SIG,
-    sizeof(lh_buildinfo),
-    REVISION,
-    LH_API_MAJOR,
-    LH_API_MINOR,
-    "1.03",
-    "http://www.linkdata.se/lcdhost/version.php?arch=$ARCH"
-};
+lh_buildinfo buildinfo = LH_STD_BUILDINFO_WITH_VERSION(VERSION);

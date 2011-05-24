@@ -26,7 +26,8 @@
 #define LH_WEATHERTEXT_H
 
 #include "../LH_Text/LH_Text.h"
-#include "LH_WeatherStructs.cpp"
+
+#include "LH_WeatherData.h"
 
 class LH_WeatherText : public LH_Text
 {
@@ -43,7 +44,7 @@ public:
     LH_WeatherText();
 
     int notify( int, void* );
-    QString getSelectedValueText(weatherData* weather);
+    QString getSelectedValueText();
 
     static lh_class *classInfo();
 

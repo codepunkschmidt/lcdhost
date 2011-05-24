@@ -43,16 +43,20 @@
 
 #include <stdio.h>
 
-#include "LH_WeatherStructs.cpp"
+#include "LH_WeatherData.h"
+#include "../GoogleTranslator.h"
 
 class LH_WeatherConnector : public LH_Text
 {
     Q_OBJECT
-    int connectionId;
+
+    int connectionId_WOEID;
+    int connectionId_2Day;
+    int connectionId_5Day;
     QDateTime lastrefresh_;
     static const bool get5Day = true;
 
-    static const bool debugHTTP = false;
+    static const bool debugHTTP = true;
     static const bool debugMemory = false;
     static const bool debugForecast = false;
     static const bool debugSaveXML = false;
@@ -70,19 +74,18 @@ class LH_WeatherConnector : public LH_Text
     void parseXml5Day();
     void parseXmlWOEID();
 
-    bool openWeatherMemory();
-    void closeWeatherMemory();
     QDate toDate(QString str, bool isLong);
 
-    QByteArray getWeatherValue(QXmlStreamReader& xml_, QString attrName);
-    QByteArray getWeatherValue(QXmlStreamReader& xml_, QString attrName, QString preText);
+    QString getWeatherValue(QXmlStreamReader& xml_, QString attrName);
+    QString getWeatherValue(QXmlStreamReader& xml_, QString attrName, QString preText);
 
-    QSharedMemory weatherMap;
-    weatherData *weather;
+    void setNoForecast(forecastData &forecast);
+    void setForecast(QXmlStreamReader &xml_, forecastData& forecast, int relativeDay);
 
-    void setNoForecast(forecastData& forecast);
-    void setForecast(QXmlStreamReader& xml_, forecastData& forecast, int relativeDay);
+    void requestTranslation();
+    QString fullDateName(QString shortName);
 
+    int fetchWeather(bool is5Day, QXmlStreamReader& xml_, QHttp& http);
 protected:
     LH_Qt_QString *setup_location_name_;
     LH_Qt_QString *setup_yahoo_woeid_;
@@ -97,6 +100,10 @@ protected:
     LH_Qt_InputState *setup_browser_;
     LH_Qt_QString *setup_current_url_;
 
+    LH_Qt_QStringList *setup_languages_;
+    LH_Qt_QString *setup_language_;
+
+    GoogleTranslator translator;
 public:
     LH_WeatherConnector();
     ~LH_WeatherConnector();
@@ -106,11 +113,10 @@ public:
 
     static lh_class *classInfo();
 
-    bool checkNight(weatherData* weather);
+    bool checkNight();
     int toTime(QString time, bool isDateTime);
 
 public slots:
-    void fetchWeather(bool is5Day, QXmlStreamReader& xml_, QHttp& http);
     void fetch2Day();
     void fetch2DayU();
     void fetch5Day();
@@ -120,6 +126,9 @@ public slots:
     void finishedWOEID(int,bool);
     void openBrowser(QString,int,int);
     void saveXMLResponse(QByteArray,QString);
+    void updateLanguagesList();
+    void selectLanguage();
+    void setLanguage();
 };
 
 #endif // LH_WeatherConnector_H

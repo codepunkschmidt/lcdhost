@@ -1,3 +1,6 @@
+#ifndef LH_WEATHERDATA_H
+#define LH_WEATHERDATA_H
+
 #include <QString>
 
 struct locationData
@@ -24,7 +27,7 @@ struct atmosphereData
     QString humidity;
     QString visibility;
     QString pressure;
-    QString rising;
+    QString barometricReading;
 };
 struct astronomyData
 {
@@ -58,9 +61,10 @@ struct weatherData
     astronomyData astronomy;
     conditionData condition;
     int forecastDays;
-    forecastData forecastToday;
-    forecastData forecastTomorrow;
-    forecastData forecastDay3;
-    forecastData forecastDay4;
-    forecastData forecastDay5;
+    forecastData forecast[5];
 };
+
+extern weatherData weather_data;
+
+
+#endif // LH_WEATHERDATA_H

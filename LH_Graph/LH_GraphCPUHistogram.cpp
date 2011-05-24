@@ -60,16 +60,22 @@ class LH_GraphCPUHistogram : public LH_Graph
     }
 
 public:
-    explicit LH_GraphCPUHistogram() : cpu_(this)
+    explicit LH_GraphCPUHistogram() : LH_Graph(), cpu_(this)
     {
         initialized = false;
-        initialize(cpu_.count());
 
         setMin(0.0);
         setMax(100.0);
         setYUnit("%");
 
         cpu_.smoothingHidden(true);
+    }
+
+    virtual const char *init( const lh_systemstate *state, const char *name, const lh_class *cls )
+    {
+        const char *res = LH_Graph::init(state,name,cls);
+        initialize(cpu_.count());
+        return res;
     }
 
     ~LH_GraphCPUHistogram()

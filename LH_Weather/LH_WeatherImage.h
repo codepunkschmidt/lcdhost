@@ -33,7 +33,7 @@
 #include "../LH_Qt_QFileInfo.h"
 #include "../LH_Qt_QTextEdit.h"
 
-#include "LH_WeatherStructs.cpp"
+#include "LH_WeatherData.h"
 
 struct imageMapData
 {

@@ -49,9 +49,9 @@ public:
         initialized = false;
     }
 
-    virtual const char *init(const lh_systemstate *state, const char *name, const lh_class *cls)
+    virtual const char *init(const char *name, const lh_systemstate *state)
     {
-        LH_Graph::init( state, name, cls );
+        LH_Graph::init( name, state );
         initialize();
         return 0;
     }

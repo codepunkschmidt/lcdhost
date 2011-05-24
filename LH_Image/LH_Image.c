@@ -80,9 +80,10 @@ typedef struct _lh_image_s
 /**
   image_new() allocates a new instance of this class and returns it.
   */
-static void * image_new()
+static void * image_new( const lh_class *cls )
 {
     lh_image *img;
+    Q_UNUSED(cls);
 
     img = malloc( sizeof(lh_image) );
     if( img )
@@ -104,11 +105,10 @@ static void * image_new()
     return NULL;
 }
 
-static const char *image_init( void *obj, const lh_systemstate *state, const char *name, const lh_class *cls )
+static const char *image_init( void *obj, const char *name, const lh_systemstate *state )
 {
     lh_image *img = obj;
     Q_UNUSED(name);
-    Q_UNUSED(cls);
     img->state = state;
     return 0;
 }
@@ -295,21 +295,21 @@ static lh_class class_image =
         sizeof(lh_instance_calltable),
         {
             sizeof(lh_object_calltable),
+            image_init,
             image_setup_data,
             0, /* not using setup_resize, the filename isn't dynamically allocated */
             image_setup_change,
             image_input,
             image_polling,
-            image_notify
+            image_notify,
+            0 /* not using term */
         },
         image_new,
-        image_init,
         image_prerender,
         image_width,
         image_height,
         image_render_blob,
         0, /* not using render_qimage */
-        0, /* not using term */
         image_delete
     }
 };

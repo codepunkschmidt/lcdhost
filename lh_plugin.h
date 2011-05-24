@@ -376,19 +376,26 @@ typedef struct lh_setup_item_t
 
 /**
     Common methods to all objects created in plugins, and also available to the plugin themselves.
+    Creation and destruction order:
+      object gets created by LCDHost, a device plugin or obj_new()
+      obj_init() is called
+      obj_term() is called
+      obj_delete() is called for instances
 */
 typedef struct lh_object_calltable_t
 {
     int size; // sizeof(lh_object_calltable)
+    const char * (*obj_init)(void*,const char*,const lh_systemstate*); /**< params are name and system state, return error msg or NULL */
     lh_setup_item ** (*obj_setup_data)(void*); /**< return array of pointers to setup items, NULL terminated */
     void (*obj_setup_resize)(void*, lh_setup_item*, size_t); /**< item data storage is too small, please resize */
     void (*obj_setup_change)(void*, lh_setup_item*); /**< given item has been changed */
     void (*obj_setup_input)(void*, lh_setup_item*, int, int); /**< input item has changed, wanted flags in 'f', new state/value in 'v' */
     int (*obj_polling)(void*); /**< return ms to wait before next call, or zero to stop polling */
     int (*obj_notify)(void*,int,void*); /**< return wanted notification mask, see LH_NOTE_xxx */
+    void (*obj_term)(void*); /**< terminate */
 } lh_object_calltable;
 
-#define lh_object_calltable_NULL { sizeof(lh_object_calltable), 0, 0, 0, 0, 0, 0 }
+#define lh_object_calltable_NULL { sizeof(lh_object_calltable), 0,0,0,0,0,0,0,0 }
 
 /**
   This structure is what defines a driver device methods. It's embedded in
@@ -454,18 +461,16 @@ typedef struct lh_instance_calltable_t
 {
     int size; // sizeof(lh_instance_calltable)
     lh_object_calltable o;
-    void * (*obj_new)(void); /**< return a new instance of the class */
-    const char *(*obj_init)(void*,const lh_systemstate*,const char*,const lh_class*); /**< called after obj_new */
+    void * (*obj_new)(const lh_class*); /**< return a new instance of the class */
     void (*obj_prerender)(void*); /**< called right before width/height/render_xxx as a notification */
     int (*obj_width)(void*,int); /**< return suggested width given a height (or -1 for default width) */
     int (*obj_height)(void*,int); /**< return suggested height given a width (or -1 for default height) */
     const lh_blob * (*obj_render_blob)(void*,int,int); /**< render object to any image format using width x height */
     void * (*obj_render_qimage)(void*,int,int); /**< render object to QImage using width x height */
-    void (*obj_term)(void*); /**< called right before obj_delete */
     void (*obj_delete)(void*); /**< delete this instance of the class */
 } lh_instance_calltable;
 
-#define lh_instance_calltable_NULL { sizeof(lh_instance_calltable), lh_object_calltable_NULL, 0,0,0,0,0,0,0,0,0 }
+#define lh_instance_calltable_NULL { sizeof(lh_instance_calltable), lh_object_calltable_NULL, 0,0,0,0,0,0,0 }
 
 /**
   This structure gives basic information about the class.

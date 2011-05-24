@@ -52,7 +52,7 @@
   the addClass() and removeClass() methods of LH_QtPlugin.
   */
 typedef lh_class *(*lh_class_info_t)();
-typedef void *(*lh_class_factory_t)();
+typedef void *(*lh_class_factory_t)(const lh_class *);
 class LH_QtClassLoader
 {
 public:
@@ -95,17 +95,14 @@ class LH_QtInstance : public LH_QtObject
 
 protected:
     QImage *image_;
-    const lh_systemstate *state_;
 
 public:
-    LH_QtInstance( QObject *parent = 0 ) : LH_QtObject(parent), image_(0), state_(0) {}
+    LH_QtInstance( QObject *parent = 0 ) : LH_QtObject(parent), image_(0) {}
 
-    virtual const char *init( const lh_systemstate *state, const char *name, const lh_class *cls );
     virtual void term();
 
     QImage *image() const { return image_; }
     QImage *initImage(int w, int h);
-    const lh_systemstate *state() const { return state_; }
 
     virtual int polling() { return 0; }
     virtual int notify( int, void* ) { return 0; }
@@ -131,7 +128,7 @@ extern void lh_remove_class( lh_class *p );
   statically allocated lh_class structure pointer.
   */
 #define LH_PLUGIN_CLASS(classname)  \
-    classname *_lh_##classname##_factory() { return new classname; } \
+    classname *_lh_##classname##_factory(const lh_class *) { return new classname; } \
     lh_class *_lh_##classname##_info() { return classname::classInfo(); } \
     LH_QtClassLoader _lh_##classname##_loader( _lh_##classname##_info, reinterpret_cast<lh_class_factory_t>(_lh_##classname##_factory) );
 

@@ -52,9 +52,9 @@ LH_Dial::LH_Dial()
     isClock = false;
 }
 
-const char *LH_Dial::init(const lh_systemstate *state, const char *name, const lh_class *cls)
+const char *LH_Dial::init( const char *name, const lh_systemstate *state )
 {
-    LH_QtInstance::init( state, name, cls );
+    LH_QtInstance::init( name, state );
 
     faceImage_ = new QImage();
 

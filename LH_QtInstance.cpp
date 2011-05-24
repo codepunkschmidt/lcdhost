@@ -40,16 +40,11 @@ static QList<lh_layout_class> *manual_list_ = NULL;
 static lh_class **classlist_ = NULL;
 
 #define RECAST(obj) reinterpret_cast<LH_QtInstance*>(obj)
-static const char *obj_init(void *obj,const lh_systemstate *state,const char *name, const lh_class *cls)
-{
-    return RECAST(obj)->init(state,name,cls);
-}
 static void obj_prerender(void *obj) { RECAST(obj)->prerender(); }
 static int obj_width(void *obj,int h) { return RECAST(obj)->width(h); }
 static int obj_height(void *obj,int w) { return RECAST(obj)->height(w); }
 static const lh_blob * obj_render_blob(void *obj,int w,int h) { return RECAST(obj)->render_blob(w,h); }
 static void * obj_render_qimage(void *obj,int w,int h) { return RECAST(obj)->render_qimage(w,h); }
-static void obj_term(void *obj) { return RECAST(obj)->term(); }
 static void obj_delete(void *obj) { delete RECAST(obj); }
 
 void LH_QtInstance::build_calltable( lh_instance_calltable *ct, lh_class_factory_t cf )
@@ -59,41 +54,14 @@ void LH_QtInstance::build_calltable( lh_instance_calltable *ct, lh_class_factory
         LH_QtObject::build_calltable( & ct->o );
         ct->size = sizeof(lh_instance_calltable);
         ct->obj_new = cf;
-        ct->obj_init = obj_init;
         ct->obj_prerender = obj_prerender;
         ct->obj_width = obj_width;
         ct->obj_height = obj_height;
         ct->obj_render_blob = obj_render_blob;
         ct->obj_render_qimage = obj_render_qimage;
-        ct->obj_term = obj_term;
         ct->obj_delete = obj_delete;
     }
     return;
-}
-
-const char *LH_QtInstance::init( const lh_systemstate *state, const char *name, const lh_class *cls )
-{
-    Q_UNUSED(cls);
-    state_ = state;
-    if( name ) setObjectName(QString(name));
-
-    /**
-      Sample code to add a setup item:
-
-      \code
-        QColor pencolor_; // in header
-        lh_setup_item setup_pencolor_; // in header
-
-        pencolor_ = QColor( Qt::black );
-        setup_pencolor_.name = "Pen color";
-        setup_pencolor_.type = lh_type_integer_color;
-        setup_pencolor_.data.i = pencolor_.rgba();
-        setup_pencolor_.flags = 0;
-        setup_item_vector.append( &setup_pencolor_ );
-      \endcode
-      */
-
-    return 0;
 }
 
 void LH_QtInstance::term()
@@ -103,6 +71,7 @@ void LH_QtInstance::term()
         delete image_;
         image_ = NULL;
     }
+    LH_QtObject::term();
     return;
 }
 

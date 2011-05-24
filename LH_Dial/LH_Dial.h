@@ -134,7 +134,7 @@ public:
     LH_Dial();
     ~LH_Dial();
 
-    virtual const char *init(const lh_systemstate *state, const char *name, const lh_class *cls);
+    virtual const char *init(const char *name, const lh_systemstate *state);
 
     int polling();
     QImage *render_qimage( int w, int h );

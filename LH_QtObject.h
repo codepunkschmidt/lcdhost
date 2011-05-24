@@ -53,20 +53,25 @@ class LH_QtObject : public QObject
     static void *cb_id_;
     static LH_QtPlugin *plugin_;
 
+    const lh_systemstate *state_;
     QVector<lh_setup_item*> setup_item_vector_;
 
 public:
-    LH_QtObject( QObject *parent = 0 ) : QObject(parent) {}
+    LH_QtObject( QObject *parent = 0 ) : QObject(parent), state_(0) {}
     virtual ~LH_QtObject() {}
 
     void callback( lh_callbackcode_t code, void *param ) const { if( cb_ ) cb_( cb_id_, this, code, param ); }
 
+    virtual const char *init( const char *name, const lh_systemstate* state );
     virtual lh_setup_item **setup_data();
     virtual void setup_resize( lh_setup_item *item, size_t needed );
     virtual void setup_change( lh_setup_item *item );
     virtual void setup_input( lh_setup_item *item, int flags, int value );
     virtual int notify( int code, void *param );
     virtual int polling();
+    virtual void term();
+
+    const lh_systemstate* state() const { return state_; }
 
     static void set_lh_callback( lh_callback_t cb, void *cb_id  ) { cb_ = cb; cb_id_ = cb_id; }
     static void lh_callback(const void *obj, lh_callbackcode_t code, void *param) { if( cb_ ) cb_( cb_id_, obj, code, param ); }

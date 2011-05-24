@@ -888,13 +888,13 @@ extern "C" int lh_self_item_pairs(lua_State *L)
     return 0;
 }
 
-const char *LH_LuaInstance::init( const lh_systemstate *state, const char *name, const lh_class *cls )
+const char *LH_LuaInstance::init( const char *name, const lh_systemstate *state )
 {
 #ifndef QT_NO_DEBUG
     int old_top = lua_gettop(L);
 #endif
-    LH_QtInstance::init(state,name,cls);
-    alc_ = LH_LuaClass::from_lh_class(cls);
+    LH_QtInstance::init(name,state);
+    alc_ = LH_LuaClass::from_lh_class(cls_);
     if( alc_ == 0 ) return "can't find associated Lua class";
 
     // Create the 'self' table

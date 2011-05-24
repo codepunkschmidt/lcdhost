@@ -41,9 +41,10 @@
 
 QList<LH_LuaClass*> LH_LuaClass::list_;
 
-static void* lh_luaclass_creator()
+static void* lh_luaclass_creator( const lh_class *cls )
 {
-    return new LH_LuaInstance;
+    Q_UNUSED( cls );
+    return new LH_LuaInstance( cls );
 }
 
 LH_LuaClass::LH_LuaClass( lua_State *luastate, QFileInfo fi, QString filename ) : L(luastate), fi_(fi), filename_(filename)

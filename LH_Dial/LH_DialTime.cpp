@@ -33,9 +33,9 @@ LH_DialTime::LH_DialTime()
     isClock = true;
 }
 
-const char *LH_DialTime::init(const lh_systemstate *state, const char *name, const lh_class *cls)
+const char *LH_DialTime::init(const char *name, const lh_systemstate *state )
 {
-    LH_Dial::init( state, name, cls );
+    LH_Dial::init( name, state );
 
     setup_manual_adjust_ = new LH_Qt_bool(this, "Manual Adjust", false);
     setup_manual_adjust_->setHelp( "<p>Manually tweak the time displayed (e.g. to display time from a different time zone).</p>");

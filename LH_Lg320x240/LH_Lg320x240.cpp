@@ -79,8 +79,8 @@ void LH_Lg320x240::lh_unload()
     if( g19thread_ )
     {
         g19thread_->timeToDie();
-        g19thread_->wait(2000);
-        if( g19thread_->isRunning() ) g19thread_->deleteLater();
+        if( !g19thread_->wait(4000) )
+            qWarning() << "LH_Lg320x240: worker thread not responding";
         else delete g19thread_;
     }
     g19thread_ = 0;

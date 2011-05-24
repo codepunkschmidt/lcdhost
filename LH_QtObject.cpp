@@ -45,26 +45,54 @@ static int compareSetupItems( const LH_QtSetupItem *a, const LH_QtSetupItem *b )
 }
 
 #define RECAST(obj) reinterpret_cast<LH_QtObject*>(obj)
+static const char *obj_init( void *obj, const char *name, const lh_systemstate *state) { return RECAST(obj)->init(name,state); }
 static lh_setup_item **obj_setup_data( void *obj ) { return RECAST(obj)->setup_data(); }
 static void obj_setup_resize( void *obj, lh_setup_item *item, size_t needed ) { RECAST(obj)->setup_resize(item,needed); }
 static void obj_setup_change( void *obj, lh_setup_item *item ) { return RECAST(obj)->setup_change(item); }
 static void obj_setup_input( void *obj, lh_setup_item *item, int flags, int value ) { return RECAST(obj)->setup_input(item,flags,value); }
 static int obj_notify( void *obj, int code, void *param ) { return RECAST(obj)->notify(code,param); }
 static int obj_polling( void *obj ) { return RECAST(obj)->polling(); }
+static void obj_term( void *obj ) { RECAST(obj)->term(); }
 
 void LH_QtObject::build_calltable( lh_object_calltable *ct )
 {
     if( ct )
     {
         ct->size = sizeof(lh_object_calltable);
+        ct->obj_init = obj_init;
         ct->obj_setup_data = obj_setup_data;
         ct->obj_setup_resize = obj_setup_resize;
         ct->obj_setup_change = obj_setup_change;
         ct->obj_setup_input = obj_setup_input;
         ct->obj_notify = obj_notify;
         ct->obj_polling = obj_polling;
+        ct->obj_term = obj_term;
     }
     return;
+}
+
+const char *LH_QtObject::init( const char *name, const lh_systemstate* state )
+{
+    if( name ) setObjectName( QString::fromUtf8(name) );
+    state_ = state;
+
+    /**
+      Sample code to add a setup item:
+
+      \code
+        QColor pencolor_; // in header
+        lh_setup_item setup_pencolor_; // in header
+
+        pencolor_ = QColor( Qt::black );
+        setup_pencolor_.name = "Pen color";
+        setup_pencolor_.type = lh_type_integer_color;
+        setup_pencolor_.data.i = pencolor_.rgba();
+        setup_pencolor_.flags = 0;
+        setup_item_vector.append( &setup_pencolor_ );
+      \endcode
+      */
+
+    return NULL; /* return error message or NULL if all OK */
 }
 
 lh_setup_item **LH_QtObject::setup_data()
@@ -139,4 +167,8 @@ int LH_QtObject::notify( int code, void *param )
 int LH_QtObject::polling()
 {
     return 0;
+}
+
+void LH_QtObject::term()
+{
 }

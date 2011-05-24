@@ -6,6 +6,15 @@ DEFINES += LH_WEATHER_LIBRARY
 
 include(../Plugins.pri)
 
+
+exists(../TranslationAPIKey.h) {
+    DEFINES += GOOGLETRANSLATOR
+    SOURCES += ../GoogleTranslator.cpp
+    HEADERS += ../TranslationAPIKey.h ../GoogleTranslator.h
+} else {
+    error("Missing TranslationAPIKey.h")
+}
+
 SOURCES += ../lh_plugin.c \
     ../LH_QtPlugin.cpp \
     ../LH_QtObject.cpp \
@@ -17,8 +26,7 @@ SOURCES += ../lh_plugin.c \
     LH_WeatherImage.cpp \
     LH_WeatherConnector.cpp \
     ../LH_QtInstance.cpp \
-    LH_WeatherData.cpp \
-    ../GoogleTranslator.cpp
+    LH_WeatherData.cpp
 HEADERS += ../lh_plugin.h \
     ../LH_QtPlugin.h \
     ../LH_QtObject.h \
@@ -29,6 +37,4 @@ HEADERS += ../lh_plugin.h \
     LH_WeatherImage.h \
     LH_WeatherConnector.h \
     ../LH_QtInstance.h \
-    LH_WeatherData.h \
-    ../TranslationAPIKey.h \
-    ../GoogleTranslator.h
+    LH_WeatherData.h

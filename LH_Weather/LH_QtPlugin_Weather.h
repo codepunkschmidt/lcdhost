@@ -28,10 +28,12 @@
 
 #include "../LH_QtPlugin.h"
 
+#define VERSION 1.30
+
 class LH_QtPlugin_Weather : public LH_QtPlugin
 {
 public:
-    const char * lh_name() { return "Weather (v1.23)"; }
+    const char * lh_name() { return "Weather"; }
     const char * lh_shortdesc() { return "Connects to Yahoo's weather service and displays the results."; }
     const char * lh_author() { return "Andy \"Triscopic\" Bridges"; }
     const char * lh_homepage() { return "<a href=\"http://www.codeleap.co.uk\">CodeLeap</a>"; }

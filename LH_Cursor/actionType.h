@@ -8,7 +8,8 @@
 #include "../LH_Qt_QFileInfo.h"
 #include "../LH_Qt_int.h"
 #include "../LH_Qt_bool.h"
-#include "LH_CursorInstance.h"
+
+#include "LH_CursorData.h"
 
 #include <QDomElement>
 

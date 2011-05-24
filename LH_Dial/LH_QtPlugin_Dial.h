@@ -28,6 +28,8 @@
 
 #include "../LH_QtPlugin.h"
 
+#define VERSION 1.03
+
 class LH_QtPlugin_Dial : public LH_QtPlugin
 {
     Q_OBJECT
@@ -35,7 +37,7 @@ class LH_QtPlugin_Dial : public LH_QtPlugin
 public:
     LH_QtPlugin_Dial() : LH_QtPlugin() {}
 
-    const char * lh_name() { return "Dial (v1.03)"; }
+    const char * lh_name() { return "Dial"; }
     const char * lh_shortdesc() { return "Displays dials"; }
     const char * lh_author() { return "Andy \"Triscopic\" Bridges"; }
     const char * lh_homepage() { return "<a href=\"http://www.codeleap.co.uk\">CodeLeap</a>"; }

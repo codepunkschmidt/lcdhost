@@ -28,6 +28,8 @@
 
 #include "../LH_QtPlugin.h"
 
+#define VERSION 1.04
+
 class LH_QtPlugin_Monitoring : public LH_QtPlugin
 {
 public:

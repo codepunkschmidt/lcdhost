@@ -34,11 +34,11 @@
 #include "../LH_Qt_QString.h"
 #include "../LH_Qt_bool.h"
 #include "../LH_Qt_QStringList.h"
-#include "LH_CursorInstance.h"
 
-// #include <LH_CursorStructs.h>
+#include "LH_CursorData.h"
 
-class LH_CursorPage : public LH_CursorInstance
+
+class LH_CursorPage : public LH_QtInstance
 {
     Q_OBJECT
 

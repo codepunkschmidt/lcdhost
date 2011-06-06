@@ -1,4 +1,5 @@
-#include "time.h"
+#include <time.h>
+#include <stdarg.h>
 
 #include <QApplication>
 #include <QThread>
@@ -119,6 +120,20 @@ void newMessageHandler( QtMsgType type, const char *msg )
     }
 
     return;
+}
+
+// Work around http://bugreports.qt.nokia.com/browse/QTCREATORBUG-5082
+void qFatal(const char *msg, ...)
+{
+    va_list ap;
+    va_start(ap, msg);
+    if (msg)
+    {
+        QByteArray buf;
+        buf = QString().vsprintf(msg, ap).toLocal8Bit();
+        newMessageHandler( QtFatalMsg, buf.constData() );
+    }
+    va_end(ap);
 }
 
 int main(int argc, char *argv[])

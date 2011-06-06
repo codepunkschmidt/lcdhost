@@ -184,7 +184,6 @@ static int image_polling(void*obj)
 static int image_notify(void*obj,int note,void *param)
 {
     lh_image *img = obj;
-    Q_UNUSED(note);
     Q_UNUSED(param);
     if( !note || (note&LH_NOTE_SECOND) )
     {

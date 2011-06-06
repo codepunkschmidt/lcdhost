@@ -67,7 +67,7 @@ LH_Text::LH_Text() : LH_QtInstance()
     setup_text_->setOrder(-2);
     setup_text_->setHelp( "<p>The displayed text. Note that this supports "
                           "a limited HTML subset, including images and tables.</p>");
-    connect( setup_text_, SIGNAL(changed()), this, SLOT(makeTextImage()) );
+    connect( setup_text_, SIGNAL(changed()), this, SLOT(textChanged()) );
 
     setup_font_ = new LH_Qt_QFont( this, tr("Font"), QFont("Arial",10), LH_FLAG_AUTORENDER );
     setup_font_->setHelp( "<p>Font used to display the text.</p>");
@@ -319,15 +319,14 @@ void LH_Text::fontChanged()
     makeTextImage( fontresize() ? h : 0 );
 }
 
-bool LH_Text::setText( QString newText )
+void LH_Text::textChanged()
 {
-    if( newText == setup_text_->value() ) return false;
     if( image_ )
     {
         delete image_;
         image_ = NULL;
     }
-    richtext_ = Qt::mightBeRichText(newText);
+    richtext_ = Qt::mightBeRichText( setup_text_->value() );
     if( richtext_)
     {
         doc_.setDocumentMargin( 0 );
@@ -337,7 +336,7 @@ bool LH_Text::setText( QString newText )
                         QTextDocument::DocumentUrl,
                         QUrl::fromLocalFile(QString::fromUtf8(state()->dir_layout)).toString()
                         );
-        doc_.setHtml( newText );
+        doc_.setHtml( setup_text_->value() );
         setup_fontresize_->setValue( false );
         setup_fontresize_->setFlag( LH_FLAG_READONLY|LH_FLAG_HIDDEN, true );
         setup_pencolor_->setFlag( LH_FLAG_HIDDEN, true );
@@ -347,8 +346,14 @@ bool LH_Text::setText( QString newText )
         setup_fontresize_->setFlag( LH_FLAG_READONLY|LH_FLAG_HIDDEN, false );
         setup_pencolor_->setFlag( LH_FLAG_HIDDEN, false );
     }
-    setup_text_->setValue( newText );
     makeTextImage();
+}
+
+bool LH_Text::setText( QString newText )
+{
+    if( newText == setup_text_->value() ) return false;
+    setup_text_->setValue( newText );
+    textChanged();
     return true;
 }
 

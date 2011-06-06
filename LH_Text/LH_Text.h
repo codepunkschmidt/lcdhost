@@ -137,6 +137,7 @@ public:
 
 public slots:
     void fontChanged();
+    void textChanged();
     void makeTextImage( int forheight = 0 );
 };
 

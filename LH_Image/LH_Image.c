@@ -179,14 +179,19 @@ static int image_polling(void*obj)
 }
 
 /**
-  We don't use notifications, so we always return zero.
+  If the image loading has failed, we'll retry every second
   */
 static int image_notify(void*obj,int note,void *param)
 {
-    Q_UNUSED(obj);
+    lh_image *img = obj;
     Q_UNUSED(note);
     Q_UNUSED(param);
-    return LH_NOTE_NONE;
+    if( !note || (note&LH_NOTE_SECOND) )
+    {
+        if( img->blob == 0 )
+            lh_callback( lh_id, img, lh_cb_render, 0 );
+    }
+    return LH_NOTE_SECOND;
 }
 
 /**
@@ -247,13 +252,15 @@ static const lh_blob * image_render_blob(void*obj,int w,int h)
 
     if( img->blob == NULL )
     {
-        if( !is_absolute(img->filename) && img->state->dir_layout )
+        const char *dir_layout = 0;
+        lh_callback( lh_id, img, lh_cb_dir_layout, &dir_layout );
+        if( !is_absolute(img->filename) && dir_layout )
         {
-            n = strlen( img->state->dir_layout ) + strlen( img->filename ) + 1;
+            n = strlen( dir_layout ) + strlen( img->filename ) + 1;
             fullname = malloc( n );
             if( fullname )
             {
-                strcpy( fullname, img->state->dir_layout );
+                strcpy( fullname, dir_layout );
                 strcat( fullname, img->filename );
                 /* convert it from UTF-8 to local 8 bit */
                 lh_callback( lh_id, img, lh_cb_utf8_to_local8bit, fullname );

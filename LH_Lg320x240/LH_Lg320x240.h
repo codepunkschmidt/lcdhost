@@ -49,7 +49,7 @@ public:
     LH_Lg320x240() : LH_QtPlugin() { g19thread_ = 0; }
 
     virtual const char *lh_name() { return "Lg320x240"; }
-    virtual const char *lh_shortdesc() { return "Logitech 320x240 LCD"; }
+    virtual const char *lh_shortdesc() { return "Logitech 320x240 LCD via USB"; }
     virtual const char *lh_author() { return "Johan \"SirReal\" Lindh"; }
     virtual const char *lh_homepage() { return "<a href=\"http://www.linkdata.se/software/lcdhost\">Link Data Stockholm</a>"; }
     virtual const char *lh_longdesc()

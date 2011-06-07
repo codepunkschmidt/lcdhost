@@ -65,8 +65,9 @@ const char *LH_Lg320x240::lh_load()
 
 #ifdef Q_WS_WIN
     // make sure neither LCDMon.exe nor LCORE.EXE is running on Windows
-    if( FindWindowA( "Logitech LCD Monitor Window", "LCDMon" ) ) return "LCDMon.exe is running";
-    if( FindWindowA( "QWidget", "LCore" ) ) return "LCore.exe is running";
+    if( FindWindowA( "Logitech LCD Monitor Window", "LCDMon" ) ||
+        FindWindowA( "QWidget", "LCore" ) )
+        return "Logitech drivers are loaded";
 #endif
 
     g19thread_ = new LogitechG19Thread(this);

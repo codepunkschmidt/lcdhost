@@ -72,7 +72,8 @@ public:
     virtual const lh_blob *lh_logo();
     virtual const char *lh_load();
     virtual void lh_unload();
-    virtual int lh_notify(int code,void *param);
+
+    virtual int notify(int code,void *param);
 
     bool event( QEvent * e );
 

@@ -35,6 +35,10 @@
 #include <QFile>
 #include <QDebug>
 
+#ifdef Q_WS_WIN
+#include <windows.h>
+#endif
+
 #include "hidapi.h"
 #include "../LH_QtDevice.h"
 #include "LH_Lg160x43.h"
@@ -43,6 +47,18 @@
 
 LH_PLUGIN(LH_Lg160x43);
 lh_buildinfo buildinfo = LH_STD_BUILDINFO;
+
+const char *LH_Lg160x43::lh_load()
+{
+#ifdef Q_WS_WIN
+    // make sure neither LCDMon.exe nor LCORE.EXE is running on Windows
+    if( FindWindowA( "Logitech LCD Monitor Window", "LCDMon" ) ||
+        FindWindowA( "QWidget", "LCore" ) )
+        return "Logitech drivers are loaded";
+#endif
+    scan();
+    return NULL;
+}
 
 void LH_Lg160x43::scan()
 {

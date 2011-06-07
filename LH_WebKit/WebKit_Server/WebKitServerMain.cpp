@@ -82,7 +82,10 @@ void newMessageHandler( QtMsgType type, const char *msg )
         case QtDebugMsg: qDebug() << msg; break;
         case QtWarningMsg: qWarning() << msg; break;
         case QtCriticalMsg: qCritical() << msg; break;
-        case QtFatalMsg: qFatal( "%s", msg ); break;
+        case QtFatalMsg:
+            qCritical() << msg;
+            abort();
+            break;
         }
         qInstallMsgHandler( newMessageHandler );
     }

@@ -142,7 +142,7 @@ const lh_blob *LH_LgLcdMan::lh_logo()
     return (const lh_blob*) (const void*) logo_array.constData();
 }
 
-int LH_LgLcdMan::lh_notify(int code,void *param)
+int LH_LgLcdMan::notify(int code,void *param)
 {
     Q_UNUSED(param);
 

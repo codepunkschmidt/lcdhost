@@ -81,8 +81,9 @@ public:
     }
 
     const char *lh_load();
-    int lh_notify( int code, void *);
     void lh_unload();
+
+    int notify( int code, void *);
 
 public slots:
     void directoryChanged(QString);

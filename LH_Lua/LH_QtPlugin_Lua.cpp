@@ -730,7 +730,7 @@ void LH_QtPlugin_Lua::lh_unload()
     // if( lh_fontmap ) { delete lh_fontmap; lh_fontmap = NULL; }
 }
 
-int LH_QtPlugin_Lua::lh_notify( int code, void *)
+int LH_QtPlugin_Lua::notify( int code, void *)
 {
     if( !code || code & LH_NOTE_SECOND )
     {

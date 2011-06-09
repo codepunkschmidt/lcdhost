@@ -56,8 +56,6 @@ public:
                 ;
     }
     virtual const char *lh_load();
-    // virtual void lh_unload() {}
-    // virtual int lh_notify(int,void*);
 };
 
 #endif // LH_LG160X43_H

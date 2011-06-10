@@ -11,7 +11,9 @@ SOURCES += \
     ../LH_QtObject.cpp \
     ../LH_QtSetupItem.cpp \
     LH_Mailcount.cpp \
-    ../LH_Text/LH_Text.cpp
+    ../LH_Text/LH_Text.cpp \
+    LH_QtPlugin_Mailcount.cpp \
+    LH_MailcountText.cpp
 
 HEADERS += \
     ../lh_plugin.h \
@@ -20,6 +22,8 @@ HEADERS += \
     ../LH_QtObject.h \
     ../LH_QtSetupItem.h \
     LH_Mailcount.h \
-    ../LH_Text/LH_Text.h
+    ../LH_Text/LH_Text.h \
+    LH_QtPlugin_Mailcount.h \
+    LH_MailcountText.h
 
 RESOURCES += LH_Mailcount.qrc

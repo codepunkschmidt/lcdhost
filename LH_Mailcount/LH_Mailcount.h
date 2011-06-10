@@ -39,27 +39,11 @@
 #include <QTime>
 #include <QImage>
 
-#include "../LH_Text/LH_Text.h"
-
-#include "../LH_QtPlugin.h"
 #include "../LH_QtInstance.h"
 #include "../LH_Qt_QString.h"
 #include "../LH_Qt_int.h"
 #include "../LH_Qt_QFileInfo.h"
 #include "../LH_Qt_bool.h"
-
-class LH_QtPlugin_Mailcount : public LH_QtPlugin
-{
-public:
-    const char * lh_name() { return "Mailcount"; }
-    const char * lh_shortdesc() { return "Unread mail indicator."; }
-    const char * lh_author() { return "Johan \"SirReal\" Lindh"; }
-    const char * lh_homepage() { return "<a href=\"http://www.linkdata.se/software/lcdhost\">Link Data Stockholm</a>"; }
-    const char * lh_longdesc() { return "Show unread e-mails. Requires an e-mail client with shell support, like Mozilla Thunderbird or Microsoft Outlook."; }
-    const lh_blob *lh_logo();
-    const char *lh_load();
-    void lh_unload();
-};
 
 class LH_Mailcount : public LH_QtInstance
 {
@@ -67,8 +51,8 @@ class LH_Mailcount : public LH_QtInstance
 
     LH_Qt_QString *email_addr_;
     LH_Qt_int *email_days_;
-    LH_Qt_QFileInfo *mail_image_;
     LH_Qt_int *check_interval_;
+    LH_Qt_QFileInfo *mail_image_;
     LH_Qt_bool *flashing_;
     LH_Qt_bool *smoothflash_;
 
@@ -97,34 +81,6 @@ public:
 
 public slots:
     void makeEnvelope();
-};
-
-class LH_MailcountText: public LH_Text
-{
-    Q_OBJECT
-    LH_Qt_QString *email_addr_;
-    LH_Qt_int *email_days_;
-    LH_Qt_int *check_interval_;
-    LH_Qt_bool *hide_zero_;
-
-    int count_;
-    int envelope_count_;
-    QImage envelope_;
-    QTime last_check_;
-
-public:
-    LH_MailcountText();
-
-    void input(lh_setup_item *, int, int);
-
-    int notify(int n,void*p);
-
-    int getUnreadMailcount();
-
-    static lh_class *classInfo();
-
-public slots:
-    void update();
 };
 
 #endif // LH_MAILCOUNT_H

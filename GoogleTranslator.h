@@ -117,7 +117,7 @@ signals:
 
 protected slots:
     void finishedTranslation(bool);
-    void finishedLanguages(bool);
+    void finishedLanguages(int, bool);
 };
 
 #endif // GOOGLETRANSLATOR_H

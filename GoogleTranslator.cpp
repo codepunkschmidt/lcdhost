@@ -14,7 +14,7 @@ GoogleTranslator::GoogleTranslator(QString name, LH_QtObject *parent) : QObject(
     sourceLanguage_ = "en";
     targetLanguage_ = "en";
     connect(&httpTranslate, SIGNAL(done(bool)), this, SLOT(finishedTranslation(bool)));
-    connect(&httpLanguages, SIGNAL(done(bool)), this, SLOT(finishedLanguages(bool)));
+    connect(&httpLanguages, SIGNAL(requestFinished(int, bool)), this, SLOT(finishedLanguages(int, bool)));
 }
 
 void GoogleTranslator::clear()
@@ -333,7 +333,7 @@ void GoogleTranslator::requestLanguages(QString code)
     httpLanguages.request(header);
 }
 
-void GoogleTranslator::finishedLanguages(bool error)
+void GoogleTranslator::finishedLanguages(int id, bool error)
 {
     if (error)
     {

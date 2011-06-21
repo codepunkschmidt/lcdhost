@@ -43,7 +43,7 @@ protected:
 public:
     LH_DialTime();
 
-    virtual const char *init(const char *name, const lh_systemstate *state);
+    virtual const char *userInit();
 
     static lh_class *classInfo();
 

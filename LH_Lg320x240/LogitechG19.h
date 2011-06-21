@@ -24,10 +24,10 @@ public:
 
     const char* render_argb32(int,int,const void*) { return NULL; }
     const char* render_mono(int,int,const void*) { return NULL; }
-    int buttons();
     const char* get_backlight(lh_device_backlight*) { return NULL; }
     const char* set_backlight(lh_device_backlight*) { return NULL; }
 
+    int buttons();
     bool offline() const { return offline_; }
 
     const char* open();

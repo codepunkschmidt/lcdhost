@@ -36,8 +36,6 @@
 #include "LH_QtInstance.h"
 
 LH_QtClassLoader *LH_QtClassLoader::first_ = NULL;
-static QList<lh_layout_class> *manual_list_ = NULL;
-static lh_class **classlist_ = NULL;
 
 #define RECAST(obj) reinterpret_cast<LH_QtInstance*>(obj)
 static void obj_prerender(void *obj) { RECAST(obj)->prerender(); }
@@ -47,11 +45,10 @@ static const lh_blob * obj_render_blob(void *obj,int w,int h) { return RECAST(ob
 static void * obj_render_qimage(void *obj,int w,int h) { return RECAST(obj)->render_qimage(w,h); }
 static void obj_delete(void *obj) { delete RECAST(obj); }
 
-void LH_QtInstance::build_calltable( lh_instance_calltable *ct, lh_class_factory_t cf )
+void LH_QtInstance::build_instance_calltable( lh_instance_calltable *ct, lh_class_factory_t cf )
 {
     if( ct )
     {
-        LH_QtObject::build_calltable( & ct->o );
         ct->size = sizeof(lh_instance_calltable);
         ct->obj_new = cf;
         ct->obj_prerender = obj_prerender;
@@ -74,7 +71,6 @@ void LH_QtInstance::term()
     LH_QtObject::term();
     return;
 }
-
 
 /**
   Basic QImage handling. Call this at the start of
@@ -103,9 +99,9 @@ QImage *LH_QtInstance::initImage(int w, int h)
 }
 
 /**
-  Exported from the plugin.
+  Return the autoregistered classes.
 */
-EXPORT lh_class ** lh_class_list(void)
+const lh_class ** LH_QtInstance::auto_class_list(void)
 {
     int count = 0;
 
@@ -144,7 +140,7 @@ EXPORT lh_class ** lh_class_list(void)
     if( count > 0 )
     {
         int n = 0;
-        classlist_ = (lh_class**) malloc( sizeof(lh_class*) * (count+1) );
+        classlist_ = (const lh_class**) malloc( sizeof(lh_class*) * (count+1) );
         for( LH_QtClassLoader *load=LH_QtClassLoader::first_; load; load=load->next_)
         {
             if( n<count && load->info_() )
@@ -161,23 +157,5 @@ EXPORT lh_class ** lh_class_list(void)
     }
 
     return classlist_;
-}
-
-void lh_add_class( lh_class *p, lh_class_factory_t f )
-{
-    if( manual_list_ == NULL ) manual_list_ = new QList<lh_layout_class>();
-    for( int i=0; i<manual_list_->size(); ++i )
-        if( manual_list_->at(i).info() == p ) return;
-    manual_list_->append(lh_layout_class(p,f));
-    LH_QtObject::lh_callback( 0, lh_cb_class_refresh, 0 );
-}
-
-void lh_remove_class( lh_class *p )
-{
-    if( manual_list_ == NULL ) return;
-    for( int i=0; i<manual_list_->size(); ++i )
-        if( manual_list_->at(i).info() == p )
-            manual_list_->removeAt(i), i=0;
-    LH_QtObject::lh_callback( 0, lh_cb_class_refresh, 0 );
 }
 

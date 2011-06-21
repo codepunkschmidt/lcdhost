@@ -114,10 +114,7 @@ QString actionType::getParameterValue(int id, LH_Qt_QString *str_, LH_Qt_int *in
         return QString("%1").arg(int_->value());
     case aptFile:
         QString path = file_->value().absoluteFilePath();
-        const char *dir_layout_p = 0;
-        cursorAction_->callback( lh_cb_dir_layout, &dir_layout_p );
-        QString dir_layout = QString(dir_layout_p);
-
+        QString dir_layout = QString::fromUtf8(cursorAction_->state()->dir_layout);
         if (path.startsWith(dir_layout))
             path = path.replace(dir_layout,"",Qt::CaseInsensitive);
         return path;

@@ -37,9 +37,6 @@
 #define LH_IMAGE_H
 
 #include "../lh_plugin.h"
-
 #define VERSION "0.0.1"
-
-extern lh_callback_t lh_callback;
 
 #endif // LH_IMAGE_H

@@ -50,7 +50,6 @@ class LH_QtDevice : public LH_QtObject
     Q_OBJECT
     QByteArray id_;
     QByteArray name_;
-    QByteArray buttonNames_[LH_DEVICE_MAXBUTTONS];
     lh_device lh_dev_;
 
 public:
@@ -68,7 +67,6 @@ public:
     virtual const char* render_qimage(QImage*) { return NULL; }
     virtual const char* render_argb32(int,int,const void*) { return NULL; }
     virtual const char* render_mono(int,int,const void*) { return NULL; }
-    virtual int buttons() { return 0; }
     virtual const char* get_backlight(lh_device_backlight*) { return NULL; }
     virtual const char* set_backlight(lh_device_backlight*) { return NULL; }
     virtual const char* close() { return NULL; }
@@ -76,8 +74,8 @@ public:
     void arrive();
     void leave();
 
-    QString id() const { return QString::fromUtf8(lh_dev_.id); }
-    void setId( QString );
+    QByteArray id() const { return QByteArray(lh_dev_.devid); }
+    void setId( QByteArray );
     QString name() const { return QString::fromUtf8(lh_dev_.name); }
     void setName( QString );
     QSize size() const { return QSize( lh_dev_.width, lh_dev_.height); }
@@ -88,9 +86,6 @@ public:
     void setAutoselect(bool b) { lh_dev_.noauto = !b; }
     bool autoselect() const { return lh_dev_.noauto == 0; } /* available for autoselection by LCDHost */
     bool monochrome() const { return lh_dev_.depth == 1; }
-
-    QString buttonName( int bitmask );
-    void setButtonName( int bitmask, QString name ); /* having more than one bit set in the mask will break things */
 };
 
 #endif // LH_QTDEVICE_H

@@ -33,21 +33,6 @@
 class LH_QtPlugin_Graph : public LH_QtPlugin
 {
     Q_OBJECT
-
-public:
-    LH_QtPlugin_Graph() : LH_QtPlugin() {}
-
-    const char * lh_name() { return "Graph"; }
-    const char * lh_shortdesc() { return "Plots graphs of data items over time"; }
-    const char * lh_author() { return "Andy \"Triscopic\" Bridges"; }
-    const char * lh_homepage() { return "<a href=\"http://www.codeleap.co.uk\">CodeLeap</a>"; }
-    const char * lh_longdesc()
-    {
-        return  "<p>Plots graphs of data items such as CPU, memory and network load. "
-                "Graphs can span 5 seconds to 2 hours by taking up to 600 samples at intervals of up to 12 seconds.</p>";
-    }
-    const char *lh_load();
-    void lh_unload();
 };
 
 #endif // LH_QTPLUGIN_GRAPH_H

@@ -39,8 +39,26 @@
 #include "LH_VirtualLCD.h"
 #include "../LH_Qt_QImage.h"
 
-LH_PLUGIN(LH_VirtualLCD);
-lh_buildinfo buildinfo = LH_STD_BUILDINFO;
+LH_PLUGIN(LH_VirtualLCD)
+
+char __lcdhostplugin_xml[] =
+"<?xml version=\"1.0\"?>"
+"<lcdhostplugin>"
+  "<id>Virtual LCD</id>"
+  "<rev>" STRINGIZE(REVISION) "</rev>"
+  "<api>" STRINGIZE(LH_API_MAJOR) "." STRINGIZE(LH_API_MINOR) "</api>"
+  "<ver>" "r" STRINGIZE(REVISION) "</ver>"
+  "<versionurl>http://www.linkdata.se/lcdhost/version.php?arch=$ARCH</versionurl>"
+  "<author>Johan \"SirReal\" Lindh</author>"
+  "<homepageurl><a href=\"http://www.linkdata.se/software/lcdhost\">Link Data Stockholm</a></homepageurl>"
+  "<logourl></logourl>"
+  "<shortdesc>"
+  "Virtual LCD driver"
+  "</shortdesc>"
+  "<longdesc>"
+  "This driver provides two software emulated LCD's, one QVGA and one monochrome 160x43."
+  "</longdesc>"
+"</lcdhostplugin>";
 
 class VirtualLCD : public LH_QtDevice
 {
@@ -125,34 +143,13 @@ public:
     }
 };
 
-
-const lh_blob *LH_VirtualLCD::lh_logo()
+const char *LH_VirtualLCD::init( lh_callback_t cb, int cb_id, const char *name, const lh_systemstate* state )
 {
-    static QByteArray logo_array;
-    if( logo_array.isEmpty() )
+    const char *retv = LH_QtPlugin::init( cb, cb_id, name, state );
+    if( !retv )
     {
-        lh_blob *blob = NULL;
-        qint64 count;
-        QFile png(":/images/linkdata48.png");
-        if( png.open( QIODevice::ReadOnly ) )
-        {
-            logo_array.resize( sizeof(lh_blob) + png.size() );
-            blob = (lh_blob*) (void*) logo_array.data();
-            blob->sign = 0xDEADBEEF;
-            blob->len = png.size();
-            count = png.read( (char*) &blob->data, png.size() );
-            png.close();
-            Q_ASSERT( count == blob->len );
-        }
+        new VirtualQVGA(this);
+        new VirtualBW(this);
     }
-
-    return (const lh_blob*) (const void*) logo_array.constData();
-}
-
-const char *LH_VirtualLCD::lh_load()
-{
-    /* these will get deleted by LH_QtPlugin::unload() if we don't do it ourselves */
-    new VirtualQVGA(this);
-    new VirtualBW(this);
-    return NULL;
+    return retv;
 }

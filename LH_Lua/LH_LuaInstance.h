@@ -99,19 +99,19 @@ class LH_LuaInstance : public LH_QtInstance
 public:
     LH_LuaInstance( const lh_class *cls, QObject *parent = 0) : LH_QtInstance( parent ), cls_(cls), L(0), alc_(0), blob_(0), ref_(LUA_NOREF) {}
 
-    virtual const char *init(const char *name, const lh_systemstate *state);
-    virtual void term();
 
     void lua_pushself() { lua_rawgeti(L, LUA_REGISTRYINDEX, ref_); }
     bool lua_pushfunction(const char *funcname);
 
-    lh_setup_item **setup_data();
-    void setup_resize( lh_setup_item *item, size_t needed );
-    void setup_change( lh_setup_item *item );
-    void setup_input( lh_setup_item *item, int flags, int value );
+    virtual const char *init( lh_callback_t cb, int cb_id, const char *name, const lh_systemstate* state );
+    virtual lh_setup_item **setup_data();
+    virtual void setup_resize( lh_setup_item *item, size_t needed );
+    virtual void setup_change( lh_setup_item *item );
+    virtual void setup_input( lh_setup_item *item, int flags, int value );
+    virtual int polling();
+    virtual int notify( int, void* );
+    virtual void term();
 
-    int polling();
-    int notify( int, void* );
     void prerender();
     int width( int );
     int height( int );

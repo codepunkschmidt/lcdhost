@@ -36,5 +36,26 @@
 
 #include "LH_QtPlugin_Text.h"
 
-LH_PLUGIN(LH_QtPlugin_Text);
-lh_buildinfo buildinfo = LH_STD_BUILDINFO;
+LH_PLUGIN(LH_QtPlugin_Text)
+
+char __lcdhostplugin_xml[] =
+"<?xml version=\"1.0\"?>"
+"<lcdhostplugin>"
+  "<id>Text</id>"
+  "<rev>" STRINGIZE(REVISION) "</rev>"
+  "<api>" STRINGIZE(LH_API_MAJOR) "." STRINGIZE(LH_API_MINOR) "</api>"
+  "<ver>" "r" STRINGIZE(REVISION) "</ver>"
+  "<versionurl>http://www.linkdata.se/lcdhost/version.php?arch=$ARCH</versionurl>"
+  "<author>Johan \"SirReal\" Lindh</author>"
+  "<homepageurl><a href=\"http://www.linkdata.se/software/lcdhost\">Link Data Stockholm</a></homepageurl>"
+  "<logourl></logourl>"
+  "<shortdesc>"
+  "Displays texts. Among other things static texts, dates and time in textual formats."
+  "</shortdesc>"
+  "<longdesc>"
+"This plugin provides classes that present their information as texts. "
+               "Static (user-selected) texts, dates and times are available. "
+               "Additionally, this plugin's source code is provided as a "
+               "sample of a plugin written in C++ with <a href=\"http://qt.nokia.com/\">Qt</a>."
+"</longdesc>"
+"</lcdhostplugin>";

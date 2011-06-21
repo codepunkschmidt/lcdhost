@@ -33,20 +33,6 @@
 class LH_QtPlugin_Dial : public LH_QtPlugin
 {
     Q_OBJECT
-
-public:
-    LH_QtPlugin_Dial() : LH_QtPlugin() {}
-
-    const char * lh_name() { return "Dial"; }
-    const char * lh_shortdesc() { return "Displays dials"; }
-    const char * lh_author() { return "Andy \"Triscopic\" Bridges"; }
-    const char * lh_homepage() { return "<a href=\"http://www.codeleap.co.uk\">CodeLeap</a>"; }
-    const char * lh_longdesc()
-    {
-        return  "<p>Displays data items such as CPU, memory and network load in the form of dials. </p>";
-    }
-    const char *lh_load();
-    void lh_unload();
 };
 
 #endif // LH_QTPLUGIN_DIAL_H

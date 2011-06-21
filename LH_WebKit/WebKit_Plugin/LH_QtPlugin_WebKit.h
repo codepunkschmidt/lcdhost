@@ -47,16 +47,7 @@ class LH_QtPlugin_WebKit : public LH_QtPlugin
 public:
     LH_QtPlugin_WebKit() : LH_QtPlugin() {}
 
-    const char * lh_name(void) { return "WebKit"; }
-    const char * lh_shortdesc(void) { return "Allows HTML and JavaScript."; }
-    const char * lh_author(void) { return "Johan \"SirReal\" Lindh"; }
-    const char * lh_homepage(void) { return "<a href=\"http://www.linkdata.se/software/lcdhost\">Link Data Stockholm</a>"; }
-    const char * lh_longdesc(void)
-    {
-        return "<a href=\"http://webkit.org\">WebKit</a> integration. Add URL's or HTML instances, complete with JavaScript.";
-    }
-    const char *lh_load();
-    void lh_unload();
+    virtual void term();
 
     bool startServer();
     bool sendQuit();

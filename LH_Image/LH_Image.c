@@ -56,10 +56,31 @@ inline void qUnused(T &x) { (void)x; }
 #endif
 
 LH_SIGNATURE();
-static lh_buildinfo bi = LH_STD_BUILDINFO;
 
-void *lh_id;
-lh_callback_t lh_callback;
+#ifndef STRINGIZE
+# define STRINGIZE_(x) #x
+# define STRINGIZE(x) STRINGIZE_(x)
+#endif
+
+char __lcdhostplugin_xml[] =
+"<?xml version=\"1.0\"?>"
+"<lcdhostplugin>"
+  "<id>Image</id>"
+  "<rev>" STRINGIZE(REVISION) "</rev>"
+  "<api>" STRINGIZE(LH_API_MAJOR) "." STRINGIZE(LH_API_MINOR) "</api>"
+  "<ver>" "r" STRINGIZE(REVISION) "</ver>"
+  "<versionurl>http://www.linkdata.se/lcdhost/version.php?arch=$ARCH</versionurl>"
+  "<author>Johan \"SirReal\" Lindh</author>"
+  "<homepageurl><a href=\"http://www.linkdata.se/software/lcdhost\">Link Data Stockholm</a></homepageurl>"
+  "<logourl></logourl>"
+  "<shortdesc>"
+    "Display static images."
+  "</shortdesc>"
+  "<longdesc>"
+    "Show the contents of image files on screen. This plugin comes with "
+    "source code illustrating how a plugin written in C might look."
+  "</longdesc>"
+"</lcdhostplugin>";
 
 /**************************************************************************
 ** Object Image
@@ -72,6 +93,8 @@ typedef struct _lh_image_s
 {
     char filename[256];
     lh_blob *blob;
+    lh_callback_t cb;
+    int cb_id;
     const lh_systemstate *state;
     lh_setup_item setup_filename;
     lh_setup_item *setup_array[2];
@@ -105,14 +128,18 @@ static void * image_new( const lh_class *cls )
     return NULL;
 }
 
-static const char *image_init( void *obj, const char *name, const lh_systemstate *state )
+/**
+  */
+
+static const char *image_init(void*obj,lh_callback_t cb,int cb_id,const char*name,const lh_systemstate*state)
 {
     lh_image *img = obj;
     Q_UNUSED(name);
+    img->cb = cb;
+    img->cb_id = cb_id;
     img->state = state;
     return 0;
 }
-
 
 /**
   Since we store the setup array inside our struct, and do
@@ -136,13 +163,13 @@ static lh_setup_item ** image_setup_data(void *obj)
 static void image_setup_change(void*obj,lh_setup_item *i)
 {
     lh_image *img = obj;
-    if( lh_callback )
+    if( img && img->cb )
     {
         if( !strcmp( i->data.s, "unload" ) )
         {
             strcpy( i->data.s, "was-unloaded" );
-            lh_callback( lh_id, img, lh_cb_setup_refresh, i );
-            lh_callback( lh_id, img, lh_cb_unload, "Filename was 'unload'." );
+            img->cb( img->cb_id, img, lh_cb_setup_refresh, i );
+            img->cb( img->cb_id, img, lh_cb_unload, "Filename was 'unload'." );
         }
         else
         {
@@ -151,7 +178,7 @@ static void image_setup_change(void*obj,lh_setup_item *i)
                 free( img->blob );
                 img->blob = NULL;
             }
-            lh_callback( lh_id, img, lh_cb_render, NULL );
+            img->cb( img->cb_id, img, lh_cb_render, NULL );
         }
     }
     return;
@@ -185,10 +212,10 @@ static int image_notify(void*obj,int note,void *param)
 {
     lh_image *img = obj;
     Q_UNUSED(param);
-    if( !note || (note&LH_NOTE_SECOND) )
+    if( img && ((!note) || (note&LH_NOTE_SECOND)) )
     {
         if( img->blob == 0 )
-            lh_callback( lh_id, img, lh_cb_render, 0 );
+            img->cb( img->cb_id, img, lh_cb_render, 0 );
     }
     return LH_NOTE_SECOND;
 }
@@ -251,8 +278,7 @@ static const lh_blob * image_render_blob(void*obj,int w,int h)
 
     if( img->blob == NULL )
     {
-        const char *dir_layout = 0;
-        lh_callback( lh_id, img, lh_cb_dir_layout, &dir_layout );
+        const char *dir_layout = img->state->dir_layout;
         if( !is_absolute(img->filename) && dir_layout )
         {
             n = strlen( dir_layout ) + strlen( img->filename ) + 1;
@@ -262,7 +288,7 @@ static const lh_blob * image_render_blob(void*obj,int w,int h)
                 strcpy( fullname, dir_layout );
                 strcat( fullname, img->filename );
                 /* convert it from UTF-8 to local 8 bit */
-                lh_callback( lh_id, img, lh_cb_utf8_to_local8bit, fullname );
+                img->cb( img->cb_id, img, lh_cb_utf8_to_local8bit, fullname );
                 img->blob = lh_binaryfile_to_blob( fullname );
                 free( fullname );
             }
@@ -298,18 +324,19 @@ static lh_class class_image =
     "Image",
     -1,-1,
     {
+        sizeof(lh_object_calltable),
+        image_init,
+        image_setup_data,
+        0, /* not using setup_resize, the filename isn't dynamically allocated */
+        image_setup_change,
+        image_input,
+        image_polling,
+        image_notify,
+        0, /* not using class list */
+        0 /* not using term */
+    },
+    {
         sizeof(lh_instance_calltable),
-        {
-            sizeof(lh_object_calltable),
-            image_init,
-            image_setup_data,
-            0, /* not using setup_resize, the filename isn't dynamically allocated */
-            image_setup_change,
-            image_input,
-            image_polling,
-            image_notify,
-            0 /* not using term */
-        },
         image_new,
         image_prerender,
         image_width,
@@ -340,63 +367,17 @@ static lh_class class_image =
 # define EXPORT
 #endif
 
-EXPORT void *lh_create( lh_callback_t callback, void *id )
-{
-    lh_id = id;
-    lh_callback = callback;
-    return &bi;
-}
-
-EXPORT void lh_destroy( void *ref )
+static const char *plugin_init(void*ref,lh_callback_t cb,int cb_id,const char*name,const lh_systemstate*state)
 {
     Q_UNUSED(ref);
-    return;
+    Q_UNUSED(cb);
+    Q_UNUSED(cb_id);
+    Q_UNUSED(name);
+    Q_UNUSED(state);
+    return 0;
 }
 
-EXPORT const char * lh_name(void *ref)
-{
-    Q_UNUSED(ref);
-    return "Image";
-}
-
-EXPORT const char * lh_shortdesc(void*ref)
-{
-    Q_UNUSED(ref);
-    return "Display images files";
-}
-
-#ifndef STRINGIZE
-# define STRINGIZE_(x) #x
-# define STRINGIZE(x) STRINGIZE_(x)
-#endif
-
-EXPORT const char * lh_author(void*ref)
-{
-    Q_UNUSED(ref);
-    return "Johan \"SirReal\" Lindh";
-}
-
-EXPORT const char * lh_homepage(void*ref)
-{
-    Q_UNUSED(ref);
-    return "<a href=\"http://www.linkdata.se/software/lcdhost\">Link Data Stockholm</a>";
-}
-
-EXPORT const char * lh_longdesc(void*ref)
-{
-    Q_UNUSED(ref);
-    return
-    	"Show the contents of image files on screen. This plugin comes with "
-    	"source code illustrating how a plugin written in C might look.";
-}
-
-EXPORT const lh_blob *lh_logo(void*ref)
-{
-    Q_UNUSED(ref);
-    return logo_blob;
-}
-
-EXPORT const lh_class ** lh_class_list(void*ref)
+static const lh_class ** plugin_class_list(void*ref)
 {
     Q_UNUSED(ref);
     static const lh_class *lh_classes[] =
@@ -407,13 +388,31 @@ EXPORT const lh_class ** lh_class_list(void*ref)
     return lh_classes;
 }
 
-EXPORT const char * lh_load(void *ref )
+EXPORT void *lh_create()
 {
-    Q_UNUSED(ref);
-    return NULL; /* indicate success */
+    return & class_image;
 }
 
-EXPORT void lh_unload(void*ref)
+EXPORT const lh_object_calltable* lh_get_object_calltable( void *ref )
+{
+    Q_UNUSED(ref);
+    static lh_object_calltable objtable =
+    {
+        sizeof(lh_object_calltable),
+        plugin_init, /* init */
+        0, /* setup_data */
+        0, /* setup_resize */
+        0, /* setup_change */
+        0, /* input */
+        0, /* polling */
+        0, /* notify */
+        plugin_class_list, /* class list */
+        0 /* term */
+    };
+    return & objtable;
+}
+
+EXPORT void lh_destroy( void *ref )
 {
     Q_UNUSED(ref);
     return;

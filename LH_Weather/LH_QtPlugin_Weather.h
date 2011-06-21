@@ -32,18 +32,6 @@
 
 class LH_QtPlugin_Weather : public LH_QtPlugin
 {
-public:
-    const char * lh_name() { return "Weather"; }
-    const char * lh_shortdesc() { return "Connects to Yahoo's weather service and displays the results."; }
-    const char * lh_author() { return "Andy \"Triscopic\" Bridges"; }
-    const char * lh_homepage() { return "<a href=\"http://www.codeleap.co.uk\">CodeLeap</a>"; }
-    const char * lh_longdesc()
-    {
-        return "This plugin provides classes that acquire and display weather information.\n\n"
-               "Weather data is acquired by the Weather Connector component; a layout should only contain one connector. "
-               "There are two other classes that display weather data, one for text the other for images.\n\n"
-               "Images are should be placed in a subfolder along with a text file that defines what images to use for each status code for day and night. See the documentation for more details.";
-    }
 };
 
 #endif // LH_QTPLUGIN_WEATHER_H

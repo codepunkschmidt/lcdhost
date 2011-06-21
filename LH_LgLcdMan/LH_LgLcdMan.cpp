@@ -45,8 +45,26 @@
 #include "EventLgLcdButton.h"
 #include "LogitechDevice.h"
 
-LH_PLUGIN(LH_LgLcdMan);
-lh_buildinfo buildinfo = LH_STD_BUILDINFO;
+LH_PLUGIN(LH_LgLcdMan)
+
+char __lcdhostplugin_xml[] =
+"<?xml version=\"1.0\"?>"
+"<lcdhostplugin>"
+  "<id>LgLcdMan</id>"
+  "<rev>" STRINGIZE(REVISION) "</rev>"
+  "<api>" STRINGIZE(LH_API_MAJOR) "." STRINGIZE(LH_API_MINOR) "</api>"
+  "<ver>" "r" STRINGIZE(REVISION) "</ver>"
+  "<versionurl>http://www.linkdata.se/lcdhost/version.php?arch=$ARCH</versionurl>"
+  "<author>Johan \"SirReal\" Lindh</author>"
+  "<homepageurl><a href=\"http://www.linkdata.se/software/lcdhost\">Link Data Stockholm</a></homepageurl>"
+  "<logourl></logourl>"
+  "<shortdesc>"
+  "Logitech G-series keyboard driver using the Logitech software."
+  "</shortdesc>"
+  "<longdesc>"
+  "This driver interfaces with the Logitech LCD Manager, which is part of the Logitech G-series keyboard driver software."
+  "</longdesc>"
+"</lcdhostplugin>";
 
 ////////////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////////////

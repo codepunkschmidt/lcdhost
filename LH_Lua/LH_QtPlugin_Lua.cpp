@@ -78,8 +78,26 @@
 int luaopen_xt(lua_State *L); // from luaXT.cpp
 extern "C" int luaopen_lcairo(lua_State* L);
 
-LH_PLUGIN(LH_QtPlugin_Lua);
-lh_buildinfo buildinfo = LH_STD_BUILDINFO;
+LH_PLUGIN(LH_QtPlugin_Lua)
+
+char __lcdhostplugin_xml[] =
+"<?xml version=\"1.0\"?>"
+"<lcdhostplugin>"
+  "<id>Lua</id>"
+  "<rev>" STRINGIZE(REVISION) "</rev>"
+  "<api>" STRINGIZE(LH_API_MAJOR) "." STRINGIZE(LH_API_MINOR) "</api>"
+  "<ver>" "r" STRINGIZE(REVISION) "</ver>"
+  "<versionurl>http://www.linkdata.se/lcdhost/version.php?arch=$ARCH</versionurl>"
+  "<author>Johan \"SirReal\" Lindh</author>"
+  "<homepageurl><a href=\"http://www.linkdata.se/software/lcdhost\">Link Data Stockholm</a></homepageurl>"
+  "<logourl></logourl>"
+  "<shortdesc>"
+  "Lua scripting"
+  "</shortdesc>"
+  "<longdesc>"
+  ""
+  "</longdesc>"
+"</lcdhostplugin>";
 
 #ifndef LUA_STATIC
 # include "lua_dyn.c"
@@ -509,14 +527,8 @@ const char *LH_QtPlugin_Lua::lh_load()
     const char *env_lua_cpath;
     const char *env_lua_path;
     const char *env_path;
-    const char *dir_data_p = 0;
-    const char *dir_plugins_p = 0;
-
-    callback( lh_cb_dir_data, &dir_data_p );
-    callback( lh_cb_dir_plugins, &dir_plugins_p );
-
-    QString dir_data = QString::fromUtf8( dir_data_p ? dir_data_p : "" );
-    QString dir_plugins = QString::fromUtf8( dir_plugins_p ? dir_plugins_p : "" );
+    QString dir_data = QString::fromUtf8( state()->dir_data ? state()->dir_data : "" );
+    QString dir_plugins = QString::fromUtf8( state()->dir_plugins ? state()->dir_plugins : "" );
 
     // Create DATADIR/lua/clibs if it doesn't exist
     {
@@ -724,10 +736,8 @@ const char *LH_QtPlugin_Lua::lh_load()
 
 void LH_QtPlugin_Lua::lh_unload()
 {
-    // if( watcher_ ) { delete watcher_; watcher_ = NULL; }
     LH_LuaClass::clear();
     if( L ) { lua_close(L); L = NULL; }
-    // if( lh_fontmap ) { delete lh_fontmap; lh_fontmap = NULL; }
 }
 
 int LH_QtPlugin_Lua::notify( int code, void *)
@@ -744,10 +754,10 @@ int LH_QtPlugin_Lua::notify( int code, void *)
 
 void LH_QtPlugin_Lua::loadLuaFile( QFileInfo fi )
 {
-    const char *dir_data_p = 0;
-    callback( lh_cb_dir_data, &dir_data_p );
+    const char *dir_data_p = state()->dir_data;
     QString err = LH_LuaClass::load(L,fi,dir_data_p ? dir_data_p : "");
     if( !err.isEmpty() ) qWarning() << "LH_Lua:" << err;
+    else callback( lh_cb_class_refresh, 0 );
     return;
 }
 

@@ -46,8 +46,29 @@
 #include "Lg320x240Device.h"
 #include "../LH_Qt_QImage.h"
 
-LH_PLUGIN(LH_Lg320x240);
-lh_buildinfo buildinfo = LH_STD_BUILDINFO;
+LH_PLUGIN(LH_Lg320x240)
+
+char __lcdhostplugin_xml[] =
+"<?xml version=\"1.0\"?>"
+"<lcdhostplugin>"
+  "<id>Lg320x240</id>"
+  "<rev>" STRINGIZE(REVISION) "</rev>"
+  "<api>" STRINGIZE(LH_API_MAJOR) "." STRINGIZE(LH_API_MINOR) "</api>"
+  "<ver>" "r" STRINGIZE(REVISION) "</ver>"
+  "<versionurl>http://www.linkdata.se/lcdhost/version.php?arch=$ARCH</versionurl>"
+  "<author>Johan \"SirReal\" Lindh</author>"
+  "<homepageurl><a href=\"http://www.linkdata.se/software/lcdhost\">Link Data Stockholm</a></homepageurl>"
+  "<logourl></logourl>"
+  "<shortdesc>"
+  "Logitech 320x240 LCD via USB"
+  "</shortdesc>"
+  "<longdesc>"
+    "USB-level driver for Logitech 320x240 LCD displays, such as the G19.<br/>"
+    "On Windows, you'll need a <a href=\"http://en.wikipedia.org/wiki/WinUSB\">WinUSB</a> driver for your device.<br/>"
+    "The easiest way to do that is to download <a href=\"http://sourceforge.net/projects/libwdi/files/zadig/zadig_v1.1.1.137.7z/download\">zadig</a>"
+    "which can generate a driver for your G19."
+  "</longdesc>"
+"</lcdhostplugin>";
 
 extern "C"
 {
@@ -59,7 +80,7 @@ extern "C"
     }
 }
 
-const char *LH_Lg320x240::lh_load()
+const char *LH_Lg320x240::userInit()
 {
     Q_ASSERT( g19thread_ == 0 );
 
@@ -75,7 +96,7 @@ const char *LH_Lg320x240::lh_load()
     return NULL;
 }
 
-void LH_Lg320x240::lh_unload()
+void LH_Lg320x240::userTerm()
 {
     if( g19thread_ )
     {

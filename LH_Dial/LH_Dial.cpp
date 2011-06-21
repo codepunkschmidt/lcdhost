@@ -52,10 +52,8 @@ LH_Dial::LH_Dial()
     isClock = false;
 }
 
-const char *LH_Dial::init( const char *name, const lh_systemstate *state )
+const char *LH_Dial::userInit()
 {
-    LH_QtInstance::init( name, state );
-
     faceImage_ = new QImage();
 
     setup_type_ = new LH_Qt_QStringList(this, "Dial Type", QStringList()<<"Full Circle"<<"Semi-Circle"<<"Quarter Circle", LH_FLAG_AUTORENDER);

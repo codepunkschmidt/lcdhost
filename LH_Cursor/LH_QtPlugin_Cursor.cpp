@@ -23,7 +23,36 @@
  **/
 
 #include "LH_QtPlugin_Cursor.h"
+
 LH_PLUGIN(LH_QtPlugin_Cursor)
 
-lh_buildinfo buildinfo = LH_STD_BUILDINFO_WITH_VERSION(VERSION);
+char __lcdhostplugin_xml[] =
+"<?xml version=\"1.0\"?>"
+"<lcdhostplugin>"
+  "<id>Cursor</id>"
+  "<rev>" STRINGIZE(REVISION) "</rev>"
+  "<api>" STRINGIZE(LH_API_MAJOR) "." STRINGIZE(LH_API_MINOR) "</api>"
+  "<ver>" STRINGIZE(VERSION) "\nr" STRINGIZE(REVISION) "</ver>"
+  "<versionurl>http://www.linkdata.se/lcdhost/version.php?arch=$ARCH</versionurl>"
+  "<author>Andy \"Triscopic\" Bridges</author>"
+  "<homepageurl><a href=\"http://www.codeleap.co.uk\">CodeLeap</a></homepageurl>"
+  "<logourl></logourl>"
+  "<shortdesc>"
+  "Allows some complex cursor-like and tab-like behaviours"
+  "</shortdesc>"
+  "<longdesc>"
+    "This plugin allows the user to: <ul>"
+    "<li>Create menu layouts that can load other layouts when an item is selected by a cursor.</li>"
+    "<li>Allows non-menu layouts to load another (menu) layout at the press of a button.</li>"
+    "<li>Create tabs or pages in a layout that a user can navigate through.</li>"
+    "<li>Create layouts which have \"drill down\" effects, in which panels can be selected to reveal "
+    "(or hide) another panel.</li>"
+    "<li>Have one layout load another after a certina number of seconds.</li>"
+    "</ul>"
+    "Note that creating pages and drill downs works by exploiting some behavioural quirks of LCDHost, and is not "
+    "as easy to do as other things are; to begin making \"cursor-based\" layouts of any type, it is strongly "
+    "recommended that you start by reading the latest version of the <a href='http://forum.linkdata.se/lcdhost-plugins/(release)-lh_cursor/msg703/#msg703'>user guide</a> "
+    "and downloading the example layouts provided there."
+"</longdesc>"
+"</lcdhostplugin>";
 

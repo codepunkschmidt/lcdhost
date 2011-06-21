@@ -47,41 +47,6 @@
 #endif
 
 /**
-  Automatic registration of LCDHost layout classes written using this
-  framework. You can also manually register/deregister classes using
-  the addClass() and removeClass() methods of LH_QtPlugin.
-  */
-typedef lh_class *(*lh_class_info_t)();
-typedef void *(*lh_class_factory_t)(const lh_class *);
-class LH_QtClassLoader
-{
-public:
-    static LH_QtClassLoader *first_;
-    LH_QtClassLoader *next_;
-    lh_class_info_t info_;
-    lh_class_factory_t factory_;
-    LH_QtClassLoader( lh_class_info_t info, lh_class_factory_t factory ) : info_(info), factory_(factory)
-    {
-        next_ = first_;
-        first_ = this;
-    }
-};
-
-/*
- Support class, keeps info for classes added with lh_add_class()
- (as opposed to automatically added using LH_PLUGIN_CLASS)
- */
-class lh_layout_class
-{
-    lh_class *info_;
-    lh_class_factory_t factory_;
-public:
-    lh_layout_class(lh_class *p,lh_class_factory_t f) : info_(p), factory_(f) {}
-    lh_class *info() const { return info_; }
-    lh_class_factory_t factory() const { return factory_; }
-};
-
-/**
   Base class for LCDHost plugin classes using Qt. For normal use, the macro
   LH_PLUGIN_CLASS(classname) will export the class from the implementation
   file (not from the header file!).
@@ -112,14 +77,12 @@ public:
     virtual lh_blob *render_blob( int, int ) { return NULL; }
     virtual QImage *render_qimage( int, int ) { return NULL; }
 
-    static void build_calltable( lh_instance_calltable *ct, lh_class_factory_t cf );
+    static void build_instance_calltable( lh_instance_calltable *ct, lh_class_factory_t cf );
+    static const lh_class **auto_class_list();
 
     /** You MUST reimplement this in your classes if you use the class loader and macros below */
     static lh_class *classInfo() { Q_ASSERT(!"classInfo() not reimplemented"); return NULL; }
 };
-
-extern void lh_add_class( lh_class *p, lh_class_factory_t f );
-extern void lh_remove_class( lh_class *p );
 
 /**
   This macro creates the required functions and object to allow

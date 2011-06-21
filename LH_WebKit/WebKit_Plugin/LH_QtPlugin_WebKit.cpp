@@ -41,30 +41,39 @@
 #include "LH_QtPlugin_WebKit.h"
 #include "../WebKitCommand.h"
 
-LH_PLUGIN(LH_QtPlugin_WebKit);
-lh_buildinfo buildinfo = LH_STD_BUILDINFO;
+LH_PLUGIN(LH_QtPlugin_WebKit)
 
-const char *LH_QtPlugin_WebKit::lh_load()
-{
-    return NULL;
-}
+char __lcdhostplugin_xml[] =
+"<?xml version=\"1.0\"?>"
+"<lcdhostplugin>"
+  "<id>WebKit</id>"
+  "<rev>" STRINGIZE(REVISION) "</rev>"
+  "<api>" STRINGIZE(LH_API_MAJOR) "." STRINGIZE(LH_API_MINOR) "</api>"
+  "<ver>" "r" STRINGIZE(REVISION) "</ver>"
+  "<versionurl>http://www.linkdata.se/lcdhost/version.php?arch=$ARCH</versionurl>"
+  "<author>Johan \"SirReal\" Lindh</author>"
+  "<homepageurl><a href=\"http://www.linkdata.se/software/lcdhost\">Link Data Stockholm</a></homepageurl>"
+  "<logourl></logourl>"
+  "<shortdesc>"
+  "Allows HTML and JavaScript."
+  "</shortdesc>"
+  "<longdesc>"
+  "<a href=\"http://webkit.org\">WebKit</a> integration. Add URL's or HTML instances, complete with JavaScript."
+  "</longdesc>"
+"</lcdhostplugin>";
 
 bool LH_QtPlugin_WebKit::startServer()
 {
     if( last_start_.isNull() || last_start_.elapsed() > 10000 )
     {
-        const char *dir_data_p = 0;
-        const char *dir_plugins_p = 0;
-        callback( lh_cb_dir_data, &dir_data_p );
-        callback( lh_cb_dir_plugins, &dir_plugins_p );
         last_start_ = QTime::currentTime();
         QString wksname = QFileInfo(QCoreApplication::applicationFilePath()).canonicalPath() + "/WebKitServer";
         qDebug() << "LH_WebKit: attempting to start" << wksname;
         QProcess::startDetached( wksname, QStringList("--hidden")
                                 << "--datadir"
-                                << QString( dir_data_p )
+                                << QString::fromUtf8( state()->dir_data )
                                 << "--plugindir"
-                                << QString( dir_plugins_p )
+                                << QString::fromUtf8( state()->dir_plugins )
                                 << "--verbose"
                                 );
     }
@@ -82,7 +91,7 @@ bool LH_QtPlugin_WebKit::sendQuit()
     return true;
 }
 
-void LH_QtPlugin_WebKit::lh_unload()
+void LH_QtPlugin_WebKit::term()
 {
     sendQuit();
 
@@ -97,4 +106,6 @@ void LH_QtPlugin_WebKit::lh_unload()
         delete rssFeeds;
         rssFeeds = NULL;
     }
+
+    LH_QtPlugin::term();
 }

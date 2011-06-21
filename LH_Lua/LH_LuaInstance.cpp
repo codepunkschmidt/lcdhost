@@ -888,12 +888,12 @@ extern "C" int lh_self_item_pairs(lua_State *L)
     return 0;
 }
 
-const char *LH_LuaInstance::init( const char *name, const lh_systemstate *state )
+const char *LH_LuaInstance::init( lh_callback_t cb, int cb_id, const char *name, const lh_systemstate* state )
 {
 #ifndef QT_NO_DEBUG
     int old_top = lua_gettop(L);
 #endif
-    LH_QtInstance::init(name,state);
+    LH_QtInstance::init(cb,cb_id,name,state);
     alc_ = LH_LuaClass::from_lh_class(cls_);
     if( alc_ == 0 ) return "can't find associated Lua class";
 

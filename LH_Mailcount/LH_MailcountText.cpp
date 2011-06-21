@@ -1,5 +1,22 @@
 #include "LH_MailcountText.h"
 
+#ifdef Q_WS_WIN
+#include <windows.h>
+/* Make sure unread mail function is declared */
+typedef HRESULT (WINAPI *SHGetUnreadMailCountW_t)(
+    HKEY hKeyUser,
+    LPCTSTR pszMailAddress,
+    DWORD *pdwCount,
+    FILETIME *pFileTime,
+    LPCTSTR pszShellExecuteCommand,
+    int cchShellExecuteCommand
+);
+static HANDLE hShell32Dll = (HANDLE)0;
+static SHGetUnreadMailCountW_t SHGetUnreadMailCountW = NULL;
+#endif
+
+
+
 LH_PLUGIN_CLASS(LH_MailcountText)
 
 lh_class *LH_MailcountText::classInfo()

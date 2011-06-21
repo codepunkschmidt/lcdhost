@@ -44,14 +44,7 @@ class LH_VirtualLCD : public LH_QtPlugin
 public:
     LH_VirtualLCD() : LH_QtPlugin() {}
 
-    virtual const char *lh_name() { return "Virtual LCD"; }
-    virtual const char *lh_shortdesc() { return "Virtual LCD driver"; }
-    virtual const char *lh_author() { return "Johan \"SirReal\" Lindh"; }
-    virtual const char *lh_homepage() { return "<a href=\"http://www.linkdata.se/software/lcdhost\">Link Data Stockholm</a>"; }
-    virtual const char *lh_longdesc() { return "This driver provides two software emulated LCD's, one QVGA and one monochrome 160x43."; }
-    virtual const lh_blob *lh_logo();
-    virtual const char *lh_load();
-    virtual void lh_unload() {}
+    virtual const char *init( lh_callback_t cb, int cb_id, const char *name, const lh_systemstate* state );
 };
 
 #endif // LH_VIRTUALLCD_H

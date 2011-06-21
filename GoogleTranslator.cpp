@@ -246,10 +246,8 @@ void GoogleTranslator::addToCache(QString sourceItem, QString translatedItem)
 
 QString GoogleTranslator::getCacheFileName()
 {
-    const char *dir_data_p = 0;
-    parent_->callback( lh_cb_dir_data, &dir_data_p );
     return QString("%1translations.%2.%3.%4.cache")
-            .arg(dir_data_p)
+            .arg(QString::fromUtf8(parent_->state()->dir_data))
             .arg(name_)
             .arg(sourceLanguage_)
             .arg(targetLanguage_);

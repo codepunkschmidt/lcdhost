@@ -34,67 +34,28 @@
 
 /**
   These are the entry points for LCDHost plugins. Normal sequence is:
-  - LCDHost examines the plugin file for lh_buildinfo and signature.
-  - Either the user decides to load the plugin or it's set to auto load
-  - LCDHost has the operating system load the shared library
-  - lh_create() is called, requires non-NULL return
-  - lh_name() and lh_shortdesc() are called
-  - lh_calltable(), lh_author(), lh_homepage(), lh_longdesc() and lh_logo() are called
-  - lh_load() is called, requires NULL return
-  - * at this point, barring errors, the plugin is considered loaded
-  - Either the user decides to unload the plugin or LCDHost shuts down
-  - lh_unload() is called
-  - lh_destroy() is called
 
-  NOTE: All strings must be UTF-8 encoded unless explicitly stated otherwise.
+  1.  LCDHost examines the plugin file for build info XML and signature.
+  2.  Either the user decides to load the plugin or it's set to auto load
+  3.  LCDHost has the operating system load the shared library
+  4.  lh_create() is called, requires non-NULL return
+  5.  lh_get_object_calltable() is called, requires non-NULL return
+  6.  obj_init() is called, returns NULL or error message
+    * at this point, barring errors, the plugin is considered loaded
+  7.  if defined in calltable, obj_class_list() is called to retrieve list of classes
+    * when the user decides to unload the plugin or LCDHost shuts down:
+  8.  if defined in calltable, obj_term() is called
+  9.  lh_destroy() is called
+  10. LCDHost has the operating system unload the shared library
 
-  void *lh_create( lh_callback_t cb, void *cb_id )
+  void *lh_create()
     Create the plugin object and return an opaque reference to it.
     LCDHost will provide this reference when calling other functions
     as the 'ref' parameter. Return NULL on error.
-    The first parameter is the address of the callback function. Save this.
-    The second parameter is the internal ID of the plugin. This must
-    be given as the first parameter on every call of the callback
-    function, or LCDHost won't recognize which plugin is doing the request.
 
-  const lh_object_calltable* lh_calltable( void *ref )
-    Returns a standard object calltable. This may be NULL if none of
-    the functions available in that calltable are used by the plugin
-    and you don't expose any setup items from the plugin itself.
-
-  const char *lh_name( void *ref )
-    Return the name of the plugin.
-
-  const char *lh_shortdesc( void *ref  )
-    Return a short description of the plugin.
-
-  const char *lh_author( void *ref  )
-    Return the author. You can use hyperlinks here, if you like.
-
-  const char *lh_homepage( void *ref )
-    Return a hyperlink to the plugin's homepage, for example:
-    "<a href=\"http://www.linkdata.se/software/lcdhost/\">Link Data Stockholm</a>"
-
-  const char *lh_longdesc( void *ref )
-    Return a longer description of the plugin. Basic HTML and hyperlinks are OK.
-    If you want an easy way to include rudimentary documentation about the plugin,
-    this is the place to do it.
-
-  const lh_blob *lh_logo( void *ref )
-    Return a lh_blob structure containing a JPG or PNG, in their respective file formats.
-    You can use the lh_blob_to_headerfile() function to embed file data in a headerfile if you like.
-
-  const char *lh_load( void *ref )
-    Called when the plugin is being loaded in LCDHost.
-
-  const lh_class **lh_class_list( void *ref )
-    If your plugin supplies layout classes, this is how to expose
-    them. Return array of pointers to class info, end with NULL pointer.
-    If you add or remove classes dynamically, use lh_callback() with
-    lh_cb_class_refresh to have LCDHost call lh_class_list() again.
-
-  const char *lh_unload( void *ref )
-    Called when the plugin is being unloaded in LCDHost.
+  const lh_object_calltable* lh_get_object_calltable( void *ref )
+    Returns a standard object calltable. The function pointers in
+    the structure may be NULL except for obj_init() which is required.
 
   void lh_destroy( void *ref )
     Free resources associated with 'ref'. The shared library is about to be
@@ -145,90 +106,66 @@
 typedef struct lh_class_t lh_class;
 
 /**
-  Contains the plugin version information. This structure must be
-  embedded into every plugin.
+  All plugins must embed an XML document containing build information.
+  The document must be readable from the plugin shared library using
+  standard binary file I/O. The document must contain the maintag
+  <lcdhostplugin>. LCDHost will search the shared library for the
+  string '<lcdhostplugin>' and then check to see that it's a correctly
+  formed XML document. Encoding must be UTF-8. There must be only one
+  copy of the string '<lcdhostplugin>' in the shared library.
 
-  'sig' is a magic cookie so that external application can find
-  the structure within a plugin without having to load it.
+  Sample C code to embed the document, copy, paste and modify to suit.
+  Note that you could also embed the document using other methods.
 
-  'size' is sizeof(lh_buildinfo_t), and may be used to version this
-  structure in the future.
 
-  'revision' is an increasing sequence number used to determine if
-  there is a newer version of the plugin available.
+  char __lcdhostplugin_xml[] =
+  "<?xml version=\"1.0\"?>"
+  "<lcdhostplugin>"
+    "<id>NAME</id>"
+    "<rev>" STRINGIZE(REVISION) "</rev>"
+    "<api>" STRINGIZE(LH_API_MAJOR) "." STRINGIZE(LH_API_MINOR) "</api>"
+    "<ver>" "r" STRINGIZE(REVISION) "</ver>"
+    "<versionurl>http://www.linkdata.se/lcdhost/version.php?arch=$ARCH</versionurl>"
+    "<author>Johan \"SirReal\" Lindh</author>"
+    "<homepageurl><a href=\"http://www.linkdata.se/software/lcdhost\">Link Data Stockholm</a></homepageurl>"
+    "<logourl></logourl>"
+    "<shortdesc>"
+    "ONE_LINE_DESCRIPTION"
+    "</shortdesc>"
+    "<longdesc>"
+    "MULTI_LINE_DESCRIPTION"
+    "</longdesc>"
+  "</lcdhostplugin>";
 
-  'api_major' is the LH_API_MAJOR value. LCDHost will use this
-  to determine if it can safely use a plugin or not. The major
-  api version number must be identical in both LCDHost and plugin.
 
-  'api_minor' is the LH_API_MINOR value. LCDHost will load plugins
-  with a minor version number equal to or lower than it's own.
-
-  'version' is an UTF-8 encoded string simply shown to the user.
-
-  'url' is the version information URL. It replaces $ID to 'id',
-  $ARCH to 'arch' and $REV to 'rev'. This URL should return a text/xml
-  document like the following sample:
+  'versionurl' is the version information URL. It replaces $ID to <id>,
+  $ARCH to the current architecture and $REV to <rev>.
+  This URL should return a text/xml document like the following sample:
 
   <lhver arch="win32" url="http://lcdhost.googlecode.com/files/$ID_$ARCH_R$REV.zip">
    <f id="LH_Text" r="6" />
   </lhver>
 
-  The 'lhver' element contains default attribute values for 'file' elements.
+  The 'lhver' element contains default attribute values for 'f' elements.
   The 'url' attribute expands the same parameters as the version url.
 
-  A 'file' element may contain the following attributes:
+  A 'f' element may contain the following attributes:
   'id'        The plain filename, without system prefix or suffixes
   'arch'      The architecture (ex, 'win32', 'mac32' or 'lin64d')
   'r'         The revision number
   'url'       The download URL
   'api'       The API versions in the form 'major.minor'
 
-  There may be any number of 'file' elements.
+  There may be any number of 'f' elements.
 
   The document will be cached, so if several plugins refer to the same URL,
   the cached copy will be used. The cache is cleared intermittently.
   */
-typedef struct lh_buildinfo_t
-{
-    char sig[8];        /* LH_BUILDINFO_SIG */
-    int size;           /* sizeof(lh_buildinfo_t) */
-    int revision;       /* revision number */
-    int api_major;      /* LH_API_MAJOR */
-    int api_minor;      /* LH_API_MINOR */
-    char version[32];   /* UTF-8 encoded version string, not interpreted */
-    char url[256];      /* see above for comments */
-} lh_buildinfo;
-
-#define LH_BUILDINFO_SIG {0xde,0x42,0xab,0xca,0xe2,0x60,0x66,0x87}
 
 #ifndef STRINGIZE
 # define STRINGIZE_(x) #x
 # define STRINGIZE(x) STRINGIZE_(x)
 #endif
-
-#define LH_STD_BUILDINFO \
-    { \
-        LH_BUILDINFO_SIG, \
-        sizeof(lh_buildinfo), \
-        REVISION, \
-        LH_API_MAJOR, \
-        LH_API_MINOR, \
-        "R" STRINGIZE(REVISION), \
-        "http://www.linkdata.se/lcdhost/version.php?arch=$ARCH" \
-    }
-
-
-#define LH_STD_BUILDINFO_WITH_VERSION(ver) \
-    { \
-        LH_BUILDINFO_SIG, \
-        sizeof(lh_buildinfo), \
-        REVISION, \
-        LH_API_MAJOR, \
-        LH_API_MINOR, \
-        "v" STRINGIZE(ver) "\nR" STRINGIZE(REVISION), \
-        "http://www.linkdata.se/lcdhost/version.php?arch=$ARCH" \
-    }
 
 /**
   The lh_blob type is used to embed binary data, usually a JPG or PNG image file.
@@ -241,19 +178,8 @@ typedef struct lh_blob_t
 } lh_blob;
 
 /**
-  */
-typedef struct lh_device_backlight_t
-{
-    int r, g, b; /* backlight color setting */
-    char is_present; /* device has backlight */
-    char is_readable; /* device backlight setting is readable */
-    char is_writeable; /* device backlight setting is writable */
-} lh_device_backlight;
-
-
-/**
   Used with lh_callback().
-  Add new codes AT THE END, or existing pluins will break.
+  Add new codes AT THE END, or existing plugins will break.
   */
 typedef enum lh_callbackcode_t
 {
@@ -275,19 +201,12 @@ typedef enum lh_callbackcode_t
     /* These requests are meaningful only for device drivers */
     lh_cb_arrive, /* a new device have been detected, param is lh_device pointer */
     lh_cb_leave, /* a device has left the system */
-    lh_cb_button, /* device button state has changed, param is new bit mask cast to pointer */
+    lh_cb_input, /* a device input has changed, param is pointer to lh_device_input */
 
     lh_cb_load_layout, /* request loading of a new layout, param: UTF-8 encoded file name relative to data path */
 
     /* Support calls */
     lh_cb_utf8_to_local8bit, /* request UTF-8 to local 8-bit conversion, param: char *string */
-    lh_cb_state, /* Request state refresh, param: lh_systemstate* */
-
-    /* directory query calls, param: const char ** */
-    lh_cb_dir_binaries,     /**< where the LCDHost executables are stored, may not be writable */
-    lh_cb_dir_plugins,      /**< where the LCDHost plugins are stored, may not be writable */
-    lh_cb_dir_data,         /**< where layouts, logs and other data are stored, will be writable */
-    lh_cb_dir_layout,       /**< directory where the current layout is stored (or dir_data if no layout) */
 
     lh_cb_unused
 } lh_callbackcode;
@@ -295,7 +214,7 @@ typedef enum lh_callbackcode_t
 /**
   The plugin-to-LCDHost callback.
   */
-typedef void (*lh_callback_t)( void *id, const void *obj, lh_callbackcode code, void *param );
+typedef void (*lh_callback_t)( int cb_id, const void *obj, lh_callbackcode code, void *param );
 
 /**
     Definition of signature area
@@ -306,7 +225,6 @@ typedef struct lh_signature_t
     char marker[16]; /* unique series to allow finding the sig */
     char sign[256]; /* 2048-bit RSA signature of the shared plugin's SHA-1 digest, PKCS1 padded */
     char url[128]; /* URL to the public key */
-    char md5[16]; /* MD5 digest of the shared plugin except this structure */
     int size; /* sizeof(lh_signature) */
 } lh_signature;
 
@@ -314,7 +232,7 @@ typedef struct lh_signature_t
 
 /* Declare a signature area - don't mess with the constants, */
 /* they're there so that SignPlugin can find the right spot. */
-#define LH_SIGNATURE() lh_signature _lh_plugin_signature = { LH_SIGNATURE_MARKER, {0}, {0}, {0}, sizeof(lh_signature) }
+#define LH_SIGNATURE() lh_signature _lh_plugin_signature = { LH_SIGNATURE_MARKER, {0}, {0}, sizeof(lh_signature) }
 
 typedef enum lh_setup_type_t
 {
@@ -388,44 +306,94 @@ typedef struct lh_setup_item_t
 
 /**
     Common methods to all objects created in plugins, and also available to the plugin themselves.
-    Creation and destruction order:
-      object gets created by LCDHost, a device plugin or obj_new()
-      obj_init() is called
-      obj_term() is called
-      obj_delete() is called for instances
+    Creation is done using one of the following:
+      lh_create() is called for a plugin
+      a layout class is instantiated using obj_new() from the lh_instance_calltable
+      a device reported using the lh_cb_arrive callback have been created by the plugin
+    Initialization is always done with obj_init().
+    Termination is always done with obj_term().
+    Destruction is done with:
+      lh_destroy() for a plugin
+      an instance is deleted using obj_delete() from the lh_instance_calltable
+      a device reported using the lh_leave callback will shortly be deleted by the plugin
 */
 typedef struct lh_object_calltable_t
 {
     int size; // sizeof(lh_object_calltable)
-    const char * (*obj_init)(void*,const char*,const lh_systemstate*); /**< params are name and system state, return error msg or NULL */
+    const char * (*obj_init)(void*,lh_callback_t,int,const char*,const lh_systemstate*); /**< return error msg or NULL */
     lh_setup_item ** (*obj_setup_data)(void*); /**< return array of pointers to setup items, NULL terminated */
     void (*obj_setup_resize)(void*, lh_setup_item*, size_t); /**< item data storage is too small, please resize */
     void (*obj_setup_change)(void*, lh_setup_item*); /**< given item has been changed */
     void (*obj_setup_input)(void*, lh_setup_item*, int, int); /**< input item has changed, wanted flags in 'f', new state/value in 'v' */
     int (*obj_polling)(void*); /**< return ms to wait before next call, or zero to stop polling */
     int (*obj_notify)(void*,int,void*); /**< return wanted notification mask, see LH_NOTE_xxx */
+    const lh_class **(*obj_class_list)(void*); /**< return current list of layout classes, or NULL */
     void (*obj_term)(void*); /**< terminate */
 } lh_object_calltable;
 
-#define lh_object_calltable_NULL { sizeof(lh_object_calltable), 0,0,0,0,0,0,0,0 }
+#define lh_object_calltable_NULL { sizeof(lh_object_calltable), 0,0,0,0,0,0,0,0,0 }
+
+
+/**
+  */
+typedef struct lh_device_backlight_t
+{
+    int r, g, b; /* backlight color setting */
+    char is_present; /* device has backlight */
+    char is_readable; /* device backlight setting is readable */
+    char is_writeable; /* device backlight setting is writable */
+} lh_device_backlight;
+
+
+enum lh_device_flag
+{
+    lh_df_button      = 0x0001,
+    lh_df_value       = 0x0002,
+    lh_df_down        = 0x0004, // button down or positive values
+    lh_df_pos         = 0x0004,
+    lh_df_up          = 0x0008, // button up or negative values
+    lh_df_neg         = 0x0008,
+    lh_df_keyboard    = 0x1000,
+    lh_df_mouse       = 0x2000,
+    lh_df_joystick    = 0x4000,
+    lh_df_other       = 0x8000
+};
+
+/**
+  Used when the state of a device input (button, slider, stick, whatever) changes.
+  The devid must be set, and must be the same as the devid in the lh_device struct.
+  The 'item' is used to uniquely identify the control for that device. It may not
+  be zero. The 'control' string is the human readable name for the 'item'. If it's
+  NULL, it will be substituted by the 'item' in base-16.
+  */
+typedef struct lh_device_input_t
+{
+    const char *devid; /* device id */
+    const char *control; /* control name, human readable, unique for the device (may be NULL) */
+    int item; /* control id, unique for the device (must not be zero) */
+    int flags; /* describes kind of control, see lh_device_flag */
+    int value; /* */
+} lh_device_input;
 
 /**
   This structure is what defines a driver device methods. It's embedded in
-  the \c lh_device structure. Members in this structure may be set to
-  NULL. Return values are either NULL, to indicate success, or pointers
-  to an UTF-8 encoded error string (either in English or localized).
+  the \c lh_device structure, which is passed as a parameter when a plugin
+  reports a new device using the lh_cb_arrive callback value.
+
+  Members in this structure may be set to NULL. Return values are either NULL,
+  to indicate success, or a pointer to an UTF-8 encoded error string.
   The exception to this is the \c obj_buttons function, which returns the
   current button state.
 
-  IMPORTANT! Since the driver creates and destroys devices when it needs,
-  you MUST let LCDHost know that a device is dying before it's pointer
+  IMPORTANT! Since the plugin creates and destroys devices when it needs,
+  you MUST let LCDHost know that a device is dying before it's lh_device pointer
   goes stale, otherwise you'll crash the driver. Similarly, don't advertise
   a device until it's ready to accept calls from LCDHost.
 
   \code
     myDevice = new myDevice();
-    lh_callback(id, myDevice, lh_drv_arrive, myDevice->devtable );
-    lh_callback(id, myDevice, lh_drv_leave, myDevice->devtable );
+    callback(cb_id, myDevice, lh_cb_arrive, myDevice->devtable );
+    callback(cb_id, myDevice, lh_cb_leave, myDevice->devtable );
     delete myDevice;
   \endcode
 
@@ -433,12 +401,11 @@ typedef struct lh_object_calltable_t
 typedef struct lh_device_calltable_t
 {
     int size; // sizeof(lh_device_calltable)
-    lh_object_calltable o;
+    // lh_object_calltable o;
     const char* (*obj_open)(void*); /**< device is selected by user for output */
     const char* (*obj_render_qimage)(void*,void*); /**< render a QImage onto the device */
     const char* (*obj_render_argb32)(void*,int,int,const void*); /**< render an ARB32 bitmap onto the device */
     const char* (*obj_render_mono)(void*,int,int,const void*); /**< render a monochrome one-byte-per-pixel map */
-    int (*obj_buttons)(void*); /**< return current button state as a bitmap */
     const char* (*obj_get_backlight)(void*,lh_device_backlight*); /**< return current backlight state */
     const char* (*obj_set_backlight)(void*,lh_device_backlight*); /**< change current backlight state */
     const char* (*obj_close)(void*); /**< device is no longer selected for output */
@@ -450,11 +417,22 @@ typedef struct lh_device_calltable_t
   \c name is the text to present to the user as the
   devices name, for example 'Logitech G19'. This text should
   be localized to the users language, or be in English.
+
+  In particular, note the 'obj' member, which will be passed
+  as the first parameter to the functions in lh_object_calltable
+  and lh_device_calltable.
+
+  A pointer to an instance of this structure is supplied
+  with the lh_cb_arrive and lh_cb_leave callbacks. That pointer
+  must remain valid from lh_cb_arrive until lh_cb_leave returns.
+
+  Two devices must not share the same lh_device instance.
   */
 typedef struct lh_device_t
 {
     int size; /* sizeof(lh_device) */
-    const char *id; /* UTF-8 encoded, uniquely identifies the device with the driver across reboots */
+    const void *obj; /* driver internal object reference */
+    const char *devid; /* ASCII, uniquely identifies the device with the driver across reboots */
     const char *name; /* UTF-8 encoded, should be localized */
     int width; /* width in pixels */
     int height; /* height in pixels */
@@ -462,6 +440,7 @@ typedef struct lh_device_t
     int noauto; /* don't autoselect this device; manual selection only */
     const char *button[LH_DEVICE_MAXBUTTONS]; /* UTF-8 encoded softbutton names (may be NULL) */
     lh_blob *logo; /* device logo or image */
+    lh_object_calltable objtable;
     lh_device_calltable table;
 } lh_device;
 
@@ -472,7 +451,7 @@ typedef struct lh_device_t
 typedef struct lh_instance_calltable_t
 {
     int size; // sizeof(lh_instance_calltable)
-    lh_object_calltable o;
+    // lh_object_calltable o;
     void * (*obj_new)(const lh_class*); /**< return a new instance of the class */
     void (*obj_prerender)(void*); /**< called right before width/height/render_xxx as a notification */
     int (*obj_width)(void*,int); /**< return suggested width given a height (or -1 for default width) */
@@ -482,7 +461,7 @@ typedef struct lh_instance_calltable_t
     void (*obj_delete)(void*); /**< delete this instance of the class */
 } lh_instance_calltable;
 
-#define lh_instance_calltable_NULL { sizeof(lh_instance_calltable), lh_object_calltable_NULL, 0,0,0,0,0,0,0 }
+#define lh_instance_calltable_NULL { sizeof(lh_instance_calltable), /*lh_object_calltable_NULL,*/ 0,0,0,0,0,0,0 }
 
 /**
   This structure gives basic information about the class.
@@ -511,6 +490,7 @@ struct lh_class_t
     const char *name; /* UTF-8 encoded, should be localized */
     int width;
     int height;
+    lh_object_calltable objtable;
     lh_instance_calltable table;
 };
 
@@ -520,16 +500,7 @@ class lh_plugin_calltable
 {
 public:
     void * (*lh_create) (lh_callback_t, void *); /* Required */
-    const char * (*lh_name) (void*); /* Required */
-    const char * (*lh_shortdesc) (void*); /* Required */
-    const char * (*lh_author) (void*);
-    const char * (*lh_homepage) (void*);
-    const char * (*lh_longdesc) (void*);
-    const lh_blob * (*lh_logo) (void*); /* return blob containing JPG or PNG */
-    const char * (*lh_load)(void *); /* return NULL for success, else error message */
-    void (*lh_unload)(void*);
-    const lh_object_calltable *(*lh_calltable)(void*);
-    const lh_class ** (*lh_class_list)(void*); /* return array of pointers to class info, end with NULL pointer */
+    const lh_object_calltable *(*lh_get_object_calltable)(void*); /* Required */
     void (*lh_destroy) (void*); /* Required */
 };
 #endif

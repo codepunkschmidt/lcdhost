@@ -71,11 +71,10 @@ public:
         cpu_.smoothingHidden(true);
     }
 
-    virtual const char *init( const char *name, const lh_systemstate *state )
+    virtual const char *userInit()
     {
-        const char *res = LH_Graph::init(name,state);
         initialize(cpu_.count());
-        return res;
+        return 0;
     }
 
     ~LH_GraphCPUHistogram()

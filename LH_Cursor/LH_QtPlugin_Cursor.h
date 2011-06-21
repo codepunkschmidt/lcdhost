@@ -31,27 +31,6 @@
 
 class LH_QtPlugin_Cursor: public LH_QtPlugin
 {
-public:
-    const char * lh_name() { return "Cursor"; }
-    const char * lh_shortdesc() { return "Allows some complex cursor-like and tab-like behaviours"; }
-    const char * lh_author() { return "Andy \"Triscopic\" Bridges"; }
-    const char * lh_homepage() { return "<a href=\"http://www.codeleap.co.uk\">CodeLeap</a>"; }
-    const char * lh_longdesc()
-    {
-        return "This plugin allows the user to: <ul>"
-               "<li>Create menu layouts that can load other layouts when an item is selected by a cursor.</li>"
-               "<li>Allows non-menu layouts to load another (menu) layout at the press of a button.</li>"
-               "<li>Create tabs or pages in a layout that a user can navigate through.</li>"
-               "<li>Create layouts which have \"drill down\" effects, in which panels can be selected to reveal "
-               "(or hide) another panel.</li>"
-               "<li>Have one layout load another after a certina number of seconds.</li>"
-               "</ul>"
-               "Note that creating pages and drill downs works by exploiting some behavioural quirks of LCDHost, and is not "
-               "as easy to do as other things are; to begin making \"cursor-based\" layouts of any type, it is strongly "
-               "recommended that you start by reading the latest version of the <a href='http://forum.linkdata.se/lcdhost-plugins/(release)-lh_cursor/msg703/#msg703'>user guide</a> "
-               "and downloading the example layouts provided there."
-               ;
-    }
 };
 
 #endif // LH_QTPLUGIN_CURSOR_H

@@ -45,10 +45,29 @@
 #include "Lg160x43Device.h"
 #include "../LH_Qt_QImage.h"
 
-LH_PLUGIN(LH_Lg160x43);
-lh_buildinfo buildinfo = LH_STD_BUILDINFO;
+LH_PLUGIN(LH_Lg160x43)
 
-const char *LH_Lg160x43::lh_load()
+char __lcdhostplugin_xml[] =
+"<?xml version=\"1.0\"?>"
+"<lcdhostplugin>"
+  "<id>Lg160x43</id>"
+  "<rev>" STRINGIZE(REVISION) "</rev>"
+  "<api>" STRINGIZE(LH_API_MAJOR) "." STRINGIZE(LH_API_MINOR) "</api>"
+  "<ver>" "r" STRINGIZE(REVISION) "</ver>"
+  "<versionurl>http://www.linkdata.se/lcdhost/version.php?arch=$ARCH</versionurl>"
+  "<author>Johan \"SirReal\" Lindh</author>"
+  "<homepageurl><a href=\"http://www.linkdata.se/software/lcdhost\">Link Data Stockholm</a></homepageurl>"
+  "<logourl></logourl>"
+  "<shortdesc>"
+  "Logitech 160x43 LCD via HID"
+  "</shortdesc>"
+  "<longdesc>"
+    "HID-level driver for Logitech 160x43 LCD displays, such as G13 or G15.<br/>"
+    "Note that to use this driver you may need to uninstall existing drivers for these devices."
+  "</longdesc>"
+"</lcdhostplugin>";
+
+const char *LH_Lg160x43::userInit()
 {
 #ifdef Q_WS_WIN
     // make sure neither LCDMon.exe nor LCORE.EXE is running on Windows

@@ -25,15 +25,23 @@
 
 #include "LH_QtPlugin_Dial.h"
 
-LH_PLUGIN(LH_QtPlugin_Dial);
+LH_PLUGIN(LH_QtPlugin_Dial)
 
-const char *LH_QtPlugin_Dial::lh_load()
-{
-    return NULL;
-}
-
-void LH_QtPlugin_Dial::lh_unload()
-{
-}
-
-lh_buildinfo buildinfo = LH_STD_BUILDINFO_WITH_VERSION(VERSION);
+char __lcdhostplugin_xml[] =
+"<?xml version=\"1.0\"?>"
+"<lcdhostplugin>"
+  "<id>Dial</id>"
+  "<rev>" STRINGIZE(REVISION) "</rev>"
+  "<api>" STRINGIZE(LH_API_MAJOR) "." STRINGIZE(LH_API_MINOR) "</api>"
+  "<ver>" STRINGIZE(VERSION) "\nr" STRINGIZE(REVISION) "</ver>"
+  "<versionurl>http://www.linkdata.se/lcdhost/version.php?arch=$ARCH</versionurl>"
+  "<author>Andy \"Triscopic\" Bridges</author>"
+  "<homepageurl><a href=\"http://www.codeleap.co.uk\">CodeLeap</a></homepageurl>"
+  "<logourl></logourl>"
+  "<shortdesc>"
+  "Displays dials"
+  "</shortdesc>"
+  "<longdesc>"
+    "<p>Displays data items such as CPU, memory and network load in the form of dials. </p>"
+"</longdesc>"
+"</lcdhostplugin>";

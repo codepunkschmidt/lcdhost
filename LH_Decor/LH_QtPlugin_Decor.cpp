@@ -36,5 +36,23 @@
   
 #include "LH_QtPlugin_Decor.h"
 
-LH_PLUGIN(LH_QtPlugin_Decor);
-lh_buildinfo buildinfo = LH_STD_BUILDINFO;
+LH_PLUGIN(LH_QtPlugin_Decor)
+
+char __lcdhostplugin_xml[] =
+"<?xml version=\"1.0\"?>"
+"<lcdhostplugin>"
+  "<id>Decor</id>"
+  "<rev>" STRINGIZE(REVISION) "</rev>"
+  "<api>" STRINGIZE(LH_API_MAJOR) "." STRINGIZE(LH_API_MINOR) "</api>"
+  "<ver>" "r" STRINGIZE(REVISION) "</ver>"
+  "<versionurl>http://www.linkdata.se/lcdhost/version.php?arch=$ARCH</versionurl>"
+  "<author>Johan \"SirReal\" Lindh</author>"
+  "<homepageurl><a href=\"http://www.linkdata.se/software/lcdhost\">Link Data Stockholm</a></homepageurl>"
+  "<logourl></logourl>"
+  "<shortdesc>"
+  "Static decorations."
+  "</shortdesc>"
+  "<longdesc>"
+  "Backgrounds, rectangles, lines, circles."
+  "</longdesc>"
+"</lcdhostplugin>";

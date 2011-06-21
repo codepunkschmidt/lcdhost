@@ -56,16 +56,6 @@ LogitechG19::LogitechG19( libusb_device *usbdev, libusb_device_descriptor *dd, Q
 #else
     setAutoselect(true);
 #endif
-
-    setButtonName( 0x01, QObject::tr("App") );
-    setButtonName( 0x02, QObject::tr("Cancel") );
-    setButtonName( 0x04, QObject::tr("Menu") );
-    setButtonName( 0x08, QObject::tr("Ok") );
-    setButtonName( 0x10, QObject::tr("Right") );
-    setButtonName( 0x20, QObject::tr("Left") );
-    setButtonName( 0x40, QObject::tr("Down") );
-    setButtonName( 0x80, QObject::tr("Up") );
-
     arrive();
 }
 
@@ -100,7 +90,7 @@ int LogitechG19::buttons()
     int usberr;
     int len = 0;
     quint16 u16;
-    int but;
+    int button;
 
     if( offline_ ) return 0;
     if( !lcdhandle_ ) return 0;
@@ -113,14 +103,48 @@ int LogitechG19::buttons()
         return 0;
     }
 
-    but = (u16 & 0x7FFF);
-    if( but != last_buttons_ )
+    button = (u16 & 0x7FFF);
+    if( button != last_buttons_ )
     {
-        callback( lh_cb_button, (void*) but );
-        last_buttons_ = but;
+        // send delta
+        for( int bit=0; bit<8; ++bit )
+        {
+            int mask = 1<<bit;
+            if( (button&mask) != (last_buttons_&mask) )
+            {
+                lh_device_input di;
+                di.devid = lh_dev()->devid;
+                switch( mask )
+                {
+                case 0x01: di.control = "App"; break;
+                case 0x02: di.control = "Cancel"; break;
+                case 0x04: di.control = "Menu"; break;
+                case 0x08: di.control = "Ok"; break;
+                case 0x10: di.control = "Right"; break;
+                case 0x20: di.control = "Left"; break;
+                case 0x40: di.control = "Down"; break;
+                case 0x80: di.control = "Up"; break;
+                default: di.control = "Unknown"; break;
+                }
+                di.item = bit;
+                di.flags = lh_df_button;
+                if( button & mask )
+                {
+                    di.flags |= lh_df_down;
+                    di.value = 0xFFFF;
+                }
+                else
+                {
+                    di.flags |= lh_df_up;
+                    di.value = 0x0;
+                }
+                callback( lh_cb_input, (void*) &di );
+            }
+        }
+        last_buttons_ = button;
     }
 
-    return but;
+    return button;
 }
 
 #define G19_BUFFER_LEN ((320*240*2)+512)

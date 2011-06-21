@@ -99,9 +99,7 @@ LH_DataViewerConnector::LH_DataViewerConnector()
 
 QString LH_DataViewerConnector::get_dir_layout()
 {
-    const char *dir_p = 0;
-    callback( lh_cb_dir_layout, &dir_p );
-    return QString(dir_p);
+    return QString::fromUtf8( state()->dir_layout );
 }
 
 QStringList LH_DataViewerConnector::listLanguages()

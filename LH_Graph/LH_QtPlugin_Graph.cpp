@@ -26,15 +26,24 @@
 
 #include "LH_QtPlugin_Graph.h"
 
-LH_PLUGIN(LH_QtPlugin_Graph);
+LH_PLUGIN(LH_QtPlugin_Graph)
 
-lh_buildinfo buildinfo = LH_STD_BUILDINFO_WITH_VERSION(VERSION);
-
-const char *LH_QtPlugin_Graph::lh_load()
-{
-    return NULL;
-}
-
-void LH_QtPlugin_Graph::lh_unload()
-{
-}
+char __lcdhostplugin_xml[] =
+"<?xml version=\"1.0\"?>"
+"<lcdhostplugin>"
+  "<id>Graph</id>"
+  "<rev>" STRINGIZE(REVISION) "</rev>"
+  "<api>" STRINGIZE(LH_API_MAJOR) "." STRINGIZE(LH_API_MINOR) "</api>"
+  "<ver>" STRINGIZE(VERSION) "\nr" STRINGIZE(REVISION) "</ver>"
+  "<versionurl>http://www.linkdata.se/lcdhost/version.php?arch=$ARCH</versionurl>"
+  "<author>Andy \"Triscopic\" Bridges</author>"
+  "<homepageurl><a href=\"http://www.codeleap.co.uk\">CodeLeap</a></homepageurl>"
+  "<logourl></logourl>"
+  "<shortdesc>"
+  "Plots graphs of data items over time"
+  "</shortdesc>"
+  "<longdesc>"
+    "<p>Plots graphs of data items such as CPU, memory and network load. "
+    "Graphs can span 5 seconds to 2 hours by taking up to 600 samples at intervals of up to 12 seconds.</p>"
+"</longdesc>"
+"</lcdhostplugin>";

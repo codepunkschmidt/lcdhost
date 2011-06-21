@@ -37,23 +37,39 @@
 
 LH_SIGNATURE();
 
+static QList<lh_layout_class> *manual_list_ = NULL;
+static const lh_class **classlist_ = NULL;
+
 /**
   Exported from all LCDHost plugins.
   Note that lh_create() and lh_destroy() are defined with the LH_PLUGIN(classname) macro.
 */
-EXPORT const char * lh_name(void *ref) { return reinterpret_cast<LH_QtPlugin*>(ref)->lh_name(); }
-EXPORT const char * lh_shortdesc(void *ref) { return reinterpret_cast<LH_QtPlugin*>(ref)->lh_shortdesc(); }
-EXPORT const char * lh_author(void *ref) { return reinterpret_cast<LH_QtPlugin*>(ref)->lh_author(); }
-EXPORT const char * lh_homepage(void *ref) { return reinterpret_cast<LH_QtPlugin*>(ref)->lh_homepage(); }
-EXPORT const char * lh_longdesc(void *ref) { return reinterpret_cast<LH_QtPlugin*>(ref)->lh_longdesc(); }
-EXPORT const lh_blob *lh_logo(void *ref) { return reinterpret_cast<LH_QtPlugin*>(ref)->lh_logo(); }
-EXPORT const lh_object_calltable* lh_calltable()
+EXPORT const lh_object_calltable* lh_get_object_calltable( void *ref )
 {
     static lh_object_calltable objtable;
+    Q_UNUSED(ref);
     if( objtable.size != sizeof(lh_object_calltable) )
         LH_QtObject::build_calltable( &objtable );
     return &objtable;
 }
-EXPORT const char * lh_load(void *ref) { return reinterpret_cast<LH_QtPlugin*>(ref)->lh_load(); }
-EXPORT void lh_unload(void *ref) { reinterpret_cast<LH_QtPlugin*>(ref)->lh_unload(); }
 
+const lh_class **LH_QtPlugin::class_list()
+{
+    return LH_QtInstance::auto_class_list();
+}
+
+void lh_add_class( lh_class *p, lh_class_factory_t f )
+{
+    if( manual_list_ == NULL ) manual_list_ = new QList<lh_layout_class>();
+    for( int i=0; i<manual_list_->size(); ++i )
+        if( manual_list_->at(i).info() == p ) return;
+    manual_list_->append(lh_layout_class(p,f));
+}
+
+void lh_remove_class( lh_class *p )
+{
+    if( manual_list_ == NULL ) return;
+    for( int i=0; i<manual_list_->size(); ++i )
+        if( manual_list_->at(i).info() == p )
+            manual_list_->removeAt(i), i=0;
+}

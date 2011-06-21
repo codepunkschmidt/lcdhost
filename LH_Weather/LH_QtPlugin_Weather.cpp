@@ -24,7 +24,27 @@
 
 #include "LH_QtPlugin_Weather.h"
 
-LH_PLUGIN(LH_QtPlugin_Weather);
+LH_PLUGIN(LH_QtPlugin_Weather)
 
-lh_buildinfo buildinfo = LH_STD_BUILDINFO_WITH_VERSION(VERSION);
-
+char __lcdhostplugin_xml[] =
+"<?xml version=\"1.0\"?>"
+"<lcdhostplugin>"
+  "<id>Weather</id>"
+  "<rev>" STRINGIZE(REVISION) "</rev>"
+  "<api>" STRINGIZE(LH_API_MAJOR) "." STRINGIZE(LH_API_MINOR) "</api>"
+  "<ver>" STRINGIZE(VERSION) "\nr" STRINGIZE(REVISION) "</ver>"
+  "<versionurl>http://www.linkdata.se/lcdhost/version.php?arch=$ARCH</versionurl>"
+  "<author>Andy \"Triscopic\" Bridges</author>"
+  "<homepageurl><a href=\"http://www.codeleap.co.uk\">CodeLeap</a></homepageurl>"
+  "<logourl></logourl>"
+  "<shortdesc>"
+  "Connects to Yahoo's weather service and displays the results."
+  "</shortdesc>"
+  "<longdesc>"
+"This plugin provides classes that acquire and display weather information.\n\n"
+"Weather data is acquired by the Weather Connector component; a layout should only contain one connector. "
+"There are two other classes that display weather data, one for text the other for images.\n\n"
+"Images are should be placed in a subfolder along with a text file that defines what images to use for "
+"each status code for day and night. See the documentation for more details."
+"</longdesc>"
+"</lcdhostplugin>";

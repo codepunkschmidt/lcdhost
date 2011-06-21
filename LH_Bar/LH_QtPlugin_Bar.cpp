@@ -35,8 +35,28 @@
   */
 
 #include "LH_QtPlugin_Bar.h"
+
 LH_PLUGIN(LH_QtPlugin_Bar)
-lh_buildinfo buildinfo = LH_STD_BUILDINFO;
+
+char __lcdhostplugin_xml[] =
+"<?xml version=\"1.0\"?>"
+"<lcdhostplugin>"
+  "<id>Bar</id>"
+  "<rev>" STRINGIZE(REVISION) "</rev>"
+  "<api>" STRINGIZE(LH_API_MAJOR) "." STRINGIZE(LH_API_MINOR) "</api>"
+  "<ver>" "r" STRINGIZE(REVISION) "</ver>"
+  "<versionurl>http://www.linkdata.se/lcdhost/version.php?arch=$ARCH</versionurl>"
+  "<author>Johan \"SirReal\" Lindh</author>"
+  "<homepageurl><a href=\"http://www.linkdata.se/software/lcdhost\">Link Data Stockholm</a></homepageurl>"
+  "<logourl></logourl>"
+  "<shortdesc>"
+  "Bar and histogram graphs"
+  "</shortdesc>"
+  "<longdesc>"
+  "<p>Bar and histogram displays, for example CPU, memory and network load displayed as bars.</p>"
+  "<p>The source code for this plugin is included with the distribution.</p>"
+  "</longdesc>"
+"</lcdhostplugin>";
 
 const char *LH_QtPlugin_Bar::lh_load()
 {

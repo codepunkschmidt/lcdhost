@@ -12,6 +12,7 @@ lh_class *LH_RSSBody::classInfo()
         "DynamicRSSFeedBody",
         "RSS feed (Body)",
         -1, -1,
+        lh_object_calltable_NULL,
         lh_instance_calltable_NULL
     };
     return &classInfo;

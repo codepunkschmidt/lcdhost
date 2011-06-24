@@ -56,7 +56,7 @@ LH_QtPlugin_Mailcount::~LH_QtPlugin_Mailcount()
     instance_ = 0;
 }
 
-const char *LH_QtPlugin_Mailcount::init( lh_callback_t cb, int cb_id, const char *name, const lh_systemstate* state )
+const char *LH_QtPlugin_Mailcount::userInit()
 {
 #ifdef Q_WS_WIN
     hShell32Dll = LoadLibraryW( L"SHELL32.DLL" );
@@ -83,7 +83,7 @@ int LH_QtPlugin_Mailcount::notify( int code, void *param )
     return LH_QtPlugin::notify( code, param ) | LH_NOTE_SECOND;
 }
 
-void LH_QtPlugin_Mailcount::term()
+void LH_QtPlugin_Mailcount::userTerm()
 {
 #ifdef Q_WS_WIN
     if( hShell32Dll )

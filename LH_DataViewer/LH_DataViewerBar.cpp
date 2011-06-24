@@ -12,6 +12,7 @@ lh_class *LH_DataViewerBar::classInfo()
         "DataViewerBar",
         "Data Bar",
         48,48,
+        lh_object_calltable_NULL,
         lh_instance_calltable_NULL
     };
 

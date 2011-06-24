@@ -36,6 +36,8 @@
 #include "LH_QtInstance.h"
 
 LH_QtClassLoader *LH_QtClassLoader::first_ = NULL;
+static const lh_class **classlist_ = NULL;
+static QList<lh_layout_class> *manual_list_ = NULL;
 
 #define RECAST(obj) reinterpret_cast<LH_QtInstance*>(obj)
 static void obj_prerender(void *obj) { RECAST(obj)->prerender(); }
@@ -112,7 +114,8 @@ const lh_class ** LH_QtInstance::auto_class_list(void)
         lh_class *p = load->info_();
         if( p )
         {
-            LH_QtInstance::build_calltable( &p->table, load->factory_ );
+            LH_QtObject::build_object_calltable( &p->objtable );
+            LH_QtInstance::build_instance_calltable( &p->table, load->factory_ );
             ++ count;
         }
     }
@@ -123,7 +126,7 @@ const lh_class ** LH_QtInstance::auto_class_list(void)
             lh_class *p = manual_list_->at(i).info();
             if( p )
             {
-                LH_QtInstance::build_calltable( &p->table, manual_list_->at(i).factory() );
+                LH_QtInstance::build_instance_calltable( &p->table, manual_list_->at(i).factory() );
                 ++ count;
             }
         }
@@ -157,5 +160,21 @@ const lh_class ** LH_QtInstance::auto_class_list(void)
     }
 
     return classlist_;
+}
+
+void lh_add_class( lh_class *p, lh_class_factory_t f )
+{
+    if( manual_list_ == NULL ) manual_list_ = new QList<lh_layout_class>();
+    for( int i=0; i<manual_list_->size(); ++i )
+        if( manual_list_->at(i).info() == p ) return;
+    manual_list_->append(lh_layout_class(p,f));
+}
+
+void lh_remove_class( lh_class *p )
+{
+    if( manual_list_ == NULL ) return;
+    for( int i=0; i<manual_list_->size(); ++i )
+        if( manual_list_->at(i).info() == p )
+            manual_list_->removeAt(i), i=0;
 }
 

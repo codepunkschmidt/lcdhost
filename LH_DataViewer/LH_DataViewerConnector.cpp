@@ -39,6 +39,7 @@ lh_class *LH_DataViewerConnector::classInfo()
         "DataViewerConnector",
         "Data Connector",
         -1, -1,
+        lh_object_calltable_NULL,
         lh_instance_calltable_NULL
     };
 

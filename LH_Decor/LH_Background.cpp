@@ -49,7 +49,9 @@ lh_class *LH_Background::classInfo()
         "Static",
         "StaticBackground",
         "Background",
-        48,48, lh_instance_calltable_NULL
+        48,48,
+        lh_object_calltable_NULL,
+        lh_instance_calltable_NULL
     };
 
     return &classInfo;

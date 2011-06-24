@@ -53,6 +53,7 @@ public:
             "SystemMemoryPhysicalTotalText",
             "Physical memory total (Text)",
             20,10,
+            lh_object_calltable_NULL,
             lh_instance_calltable_NULL
         };
         return &classInfo;

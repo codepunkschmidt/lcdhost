@@ -37,6 +37,7 @@ lh_class *LH_CursorController::classInfo()
         "CursorController",
         "Cursor Controller",
         -1, -1,
+        lh_object_calltable_NULL,
         lh_instance_calltable_NULL
     };
 

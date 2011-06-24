@@ -57,10 +57,13 @@ class LH_QtObject : public QObject
     QVector<lh_setup_item*> setup_item_vector_;
 
 public:
-    LH_QtObject( QObject *parent = 0 ) : QObject(parent), cb_(0), cb_id_(0), state_(0) {}
+    LH_QtObject( LH_QtObject *parent = 0);
     virtual ~LH_QtObject() {}
 
-    void callback( lh_callbackcode_t code, void *param ) const { if( cb_ ) cb_( cb_id_, this, code, param ); }
+    void callback( lh_callbackcode_t code, void *param ) const
+    {
+        if( cb_ ) cb_( cb_id_, this, code, param );
+    }
 
     // These implement the lh_object_callback functions. If you reimplement them, make
     // sure to call the base class copy of them and preserve or modify the return value

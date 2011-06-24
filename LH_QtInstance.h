@@ -62,7 +62,7 @@ protected:
     QImage *image_;
 
 public:
-    LH_QtInstance( QObject *parent = 0 ) : LH_QtObject(parent), image_(0) {}
+    LH_QtInstance( LH_QtObject *parent = 0 ) : LH_QtObject(parent), image_(0) {}
 
     virtual void term();
 

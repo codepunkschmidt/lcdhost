@@ -97,7 +97,7 @@ class LH_LuaInstance : public LH_QtInstance
     QVector<lh_setup_item*> setup_item_vector_;
 
 public:
-    LH_LuaInstance( const lh_class *cls, QObject *parent = 0) : LH_QtInstance( parent ), cls_(cls), L(0), alc_(0), blob_(0), ref_(LUA_NOREF) {}
+    LH_LuaInstance( const lh_class *cls, LH_QtObject *parent = 0) : LH_QtInstance( parent ), cls_(cls), L(0), alc_(0), blob_(0), ref_(LUA_NOREF) {}
 
 
     void lua_pushself() { lua_rawgeti(L, LUA_REGISTRYINDEX, ref_); }

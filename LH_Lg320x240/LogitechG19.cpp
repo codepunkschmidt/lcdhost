@@ -2,7 +2,7 @@
 #include <QDebug>
 #include "LogitechG19.h"
 
-LogitechG19::LogitechG19( libusb_device *usbdev, libusb_device_descriptor *dd, QObject *drv ) : LH_QtDevice(drv)
+LogitechG19::LogitechG19( libusb_device *usbdev, libusb_device_descriptor *dd, LH_QtObject *drv ) : LH_QtDevice(drv)
 {
     usbdev_ = usbdev;
     lcdhandle_ = 0;
@@ -47,7 +47,7 @@ LogitechG19::LogitechG19( libusb_device *usbdev, libusb_device_descriptor *dd, Q
         }
         if( conf_desc ) libusb_free_config_descriptor( conf_desc );
     }
-    setId("G19");
+    setDevid("G19");
     setName("Logitech G19 LCD (USB)");
     setSize(320,240);
     setDepth(16);

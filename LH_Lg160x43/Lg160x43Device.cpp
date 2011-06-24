@@ -20,7 +20,7 @@ Lg160x43Device::Lg160x43Device( const struct hid_device_info *di, LH_QtPlugin *d
     path_ = di->path;
     offline_ = false;
 
-    setId(di->path);
+    setDevid(di->path);
     setName( QString::fromWCharArray(di->product_string) );
     setSize(160,43);
     setDepth(1);

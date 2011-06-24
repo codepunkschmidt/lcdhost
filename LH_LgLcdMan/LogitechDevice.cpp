@@ -50,14 +50,14 @@ LogitechDevice::LogitechDevice( LH_LgLcdMan *drv, bool bw ) : LH_QtDevice(drv)
 
     if( bw_ )
     {
-        setId( "BW" );
+        setDevid( "BW" );
         setName( QObject::tr("Logitech B/W device") );
         setSize( 160, 43 );
         setDepth( 1 );
     }
     else
     {
-        setId( "QVGA" );
+        setDevid( "QVGA" );
         setName( QObject::tr("Logitech QVGA device") );
         setSize( 320, 240 );
         setDepth( 32 );

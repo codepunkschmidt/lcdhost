@@ -19,7 +19,7 @@ class LogitechG19 : public LH_QtDevice
     int last_buttons_;
 
 public:
-    LogitechG19( libusb_device *usbdev, libusb_device_descriptor *dd, QObject *drv );
+    LogitechG19( libusb_device *usbdev, libusb_device_descriptor *dd, LH_QtObject *drv );
     ~LogitechG19();
 
     const char* render_argb32(int,int,const void*) { return NULL; }

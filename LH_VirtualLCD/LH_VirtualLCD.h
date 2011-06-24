@@ -44,7 +44,7 @@ class LH_VirtualLCD : public LH_QtPlugin
 public:
     LH_VirtualLCD() : LH_QtPlugin() {}
 
-    virtual const char *init( lh_callback_t cb, int cb_id, const char *name, const lh_systemstate* state );
+    virtual const char *userInit();
 };
 
 #endif // LH_VIRTUALLCD_H

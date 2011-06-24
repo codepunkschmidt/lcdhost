@@ -71,6 +71,15 @@ void LH_QtObject::build_object_calltable( lh_object_calltable *ct )
     return;
 }
 
+LH_QtObject::LH_QtObject( LH_QtObject *parent ) : QObject( parent ), cb_(0), cb_id_(0), state_(0)
+{
+    if( parent )
+    {
+        cb_ = parent->cb_;
+        state_ = parent->state_;
+    }
+}
+
 const char *LH_QtObject::init( lh_callback_t cb, int cb_id, const char *name, const lh_systemstate* state )
 {
     cb_ = cb;

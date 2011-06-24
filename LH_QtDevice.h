@@ -48,12 +48,12 @@
 class LH_QtDevice : public LH_QtObject
 {
     Q_OBJECT
-    QByteArray id_;
+    QByteArray devid_;
     QByteArray name_;
     lh_device lh_dev_;
 
 public:
-    LH_QtDevice( QObject *parent );
+    LH_QtDevice( LH_QtObject *parent );
     virtual ~LH_QtDevice();
 
     lh_device *lh_dev() { return &lh_dev_; }
@@ -74,8 +74,8 @@ public:
     void arrive();
     void leave();
 
-    QByteArray id() const { return QByteArray(lh_dev_.devid); }
-    void setId( QByteArray );
+    QByteArray devid() const { return QByteArray(lh_dev_.devid); }
+    void setDevid( QByteArray );
     QString name() const { return QString::fromUtf8(lh_dev_.name); }
     void setName( QString );
     QSize size() const { return QSize( lh_dev_.width, lh_dev_.height); }

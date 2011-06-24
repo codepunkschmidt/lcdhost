@@ -120,7 +120,7 @@ class VirtualQVGA : public VirtualLCD
 public:
     VirtualQVGA( LH_QtPlugin *drv ) : VirtualLCD( drv )
     {
-        setId("320x240x32");
+        setDevid("320x240x32");
         setName("Virtual 320x240x32 device");
         setSize(320,240);
         setDepth(32);
@@ -134,7 +134,7 @@ class VirtualBW : public VirtualLCD
 public:
     VirtualBW( LH_QtPlugin *drv ) : VirtualLCD( drv )
     {
-        setId("160x43x1");
+        setDevid("160x43x1");
         setName("Virtual 160x43x1 device");
         setSize(160,43);
         setDepth(1);
@@ -143,13 +143,9 @@ public:
     }
 };
 
-const char *LH_VirtualLCD::init( lh_callback_t cb, int cb_id, const char *name, const lh_systemstate* state )
+const char *LH_VirtualLCD::userInit()
 {
-    const char *retv = LH_QtPlugin::init( cb, cb_id, name, state );
-    if( !retv )
-    {
-        new VirtualQVGA(this);
-        new VirtualBW(this);
-    }
-    return retv;
+    new VirtualQVGA(this);
+    new VirtualBW(this);
+    return 0;
 }

@@ -49,10 +49,12 @@ static const char* obj_set_backlight(void*obj,lh_device_backlight*p) { return RE
 static const char* obj_close(void*obj) { return RECAST(obj)->close(); }
 
 
-LH_QtDevice::LH_QtDevice( QObject *parent ) : LH_QtObject( parent )
+LH_QtDevice::LH_QtDevice( LH_QtObject *parent ) : LH_QtObject( parent )
 {
     memset( &lh_dev_, 0, sizeof(lh_dev_) );
+    LH_QtObject::build_object_calltable( & lh_dev_.objtable );
     lh_dev_.size = sizeof(lh_dev_);
+    lh_dev_.obj = this;
     lh_dev_.table.size = sizeof(lh_dev_.table);
     lh_dev_.table.obj_open = obj_open;
     lh_dev_.table.obj_render_qimage = obj_render_qimage;
@@ -73,21 +75,21 @@ LH_QtDevice::~LH_QtDevice()
 
 void LH_QtDevice::arrive()
 {
-    Q_ASSERT( !id().isEmpty() );
+    Q_ASSERT( !devid().isEmpty() );
     Q_ASSERT( !size().isEmpty() );
     Q_ASSERT( depth() > 0 );
-    callback(lh_cb_arrive,lh_dev());
+    if( plugin() ) plugin()->callback(lh_cb_arrive,lh_dev());
 }
 
 void LH_QtDevice::leave()
 {
-    callback(lh_cb_leave,lh_dev());
+    if( plugin() ) plugin()->callback(lh_cb_leave,lh_dev());
 }
 
-void LH_QtDevice::setId( QByteArray a )
+void LH_QtDevice::setDevid( QByteArray a )
 {
-    id_ = a;
-    lh_dev_.devid = id_.constData();
+    devid_ = a;
+    lh_dev_.devid = devid_.constData();
     return;
 }
 

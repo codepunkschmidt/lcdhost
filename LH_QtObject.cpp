@@ -53,7 +53,7 @@ static int obj_notify( void *obj, int code, void *param ) { return RECAST(obj)->
 static const lh_class ** obj_class_list( void *obj ) { return RECAST(obj)->class_list(); }
 static void obj_term( void *obj ) { RECAST(obj)->term(); }
 
-void LH_QtObject::build_calltable( lh_object_calltable *ct )
+void LH_QtObject::build_object_calltable( lh_object_calltable *ct )
 {
     if( ct )
     {

@@ -46,6 +46,7 @@ lh_class *LH_WeatherImage::classInfo()
         "WeatherImage",
         "Weather Image",
         -1, -1,
+        lh_object_calltable_NULL,
         lh_instance_calltable_NULL
     };
 

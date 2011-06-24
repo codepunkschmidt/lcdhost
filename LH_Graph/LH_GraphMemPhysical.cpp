@@ -64,6 +64,7 @@ public:
             "SystemMemoryPhysicalGraph",
             "Physical memory used (Graph)",
             48,48,
+            lh_object_calltable_NULL,
             lh_instance_calltable_NULL
         };
         return &classInfo;

@@ -23,9 +23,9 @@ public:
     LH_QtPlugin_Mailcount();
     ~LH_QtPlugin_Mailcount();
 
-    virtual const char *init( lh_callback_t cb, int cb_id, const char *name, const lh_systemstate* state );
+    virtual const char *userInit();
     virtual int notify( int code, void *param );
-    virtual void term();
+    virtual void userTerm();
 
     int getUnreadMailcount();
 

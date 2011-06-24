@@ -47,6 +47,7 @@ lh_class *LH_WebKitHTML::classInfo()
         "DynamicWebKitHTML",
         "WebKit HTML",
         96, 32,
+        lh_object_calltable_NULL,
         lh_instance_calltable_NULL
     };
 

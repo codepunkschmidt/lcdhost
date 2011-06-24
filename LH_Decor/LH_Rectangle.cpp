@@ -50,6 +50,7 @@ lh_class *LH_Rectangle::classInfo()
         "StaticRectangle",
         "Rounded rectangle",
         48,48,
+        lh_object_calltable_NULL,
         lh_instance_calltable_NULL
     };
 

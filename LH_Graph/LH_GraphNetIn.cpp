@@ -66,6 +66,7 @@ public:
             "SystemNetworkInboundGraph",
             "Inbound Bandwidth Usage (Graph)",
             48,48,
+            lh_object_calltable_NULL,
             lh_instance_calltable_NULL
         };
 

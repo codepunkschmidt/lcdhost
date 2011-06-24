@@ -17,6 +17,7 @@ public:
             "StaticText",
             "Text",
             -1, -1,
+            lh_object_calltable_NULL,
             lh_instance_calltable_NULL
         };
 

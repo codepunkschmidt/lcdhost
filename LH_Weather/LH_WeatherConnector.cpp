@@ -44,6 +44,7 @@ lh_class *LH_WeatherConnector::classInfo()
         "WeatherConnector",
         "Weather Connector",
         -1, -1,
+        lh_object_calltable_NULL,
         lh_instance_calltable_NULL
     };
 

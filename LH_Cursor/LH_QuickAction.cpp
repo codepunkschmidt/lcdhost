@@ -35,6 +35,7 @@ lh_class *LH_QuickAction::classInfo()
         "QuickAction",
         "Quick Action",
         48,48,
+        lh_object_calltable_NULL,
         lh_instance_calltable_NULL
     };
 

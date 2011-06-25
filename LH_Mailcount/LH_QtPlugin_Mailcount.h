@@ -10,8 +10,6 @@ class LH_QtPlugin_Mailcount : public LH_QtPlugin
 {
     Q_OBJECT
 
-    static LH_QtPlugin_Mailcount *instance_;
-
     LH_Qt_int *email_count_;
     LH_Qt_QString *email_addr_;
     LH_Qt_int *email_days_;
@@ -29,7 +27,8 @@ public:
 
     int getUnreadMailcount();
 
-    static LH_QtPlugin_Mailcount *instance() { return instance_; }
+public slots:
+    void checkInterval(int n);
 };
 
 #endif // LH_QTPLUGIN_MAILCOUNT_H

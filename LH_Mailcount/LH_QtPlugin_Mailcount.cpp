@@ -1,4 +1,5 @@
 #include <QFile>
+#include <QDebug>
 
 #include "LH_QtPlugin_Mailcount.h"
 
@@ -16,8 +17,6 @@ typedef HRESULT (WINAPI *SHGetUnreadMailCountW_t)(
 static HANDLE hShell32Dll = (HANDLE)0;
 static SHGetUnreadMailCountW_t SHGetUnreadMailCountW = NULL;
 #endif
-
-LH_QtPlugin_Mailcount *LH_QtPlugin_Mailcount::instance_ = 0;
 
 LH_PLUGIN(LH_QtPlugin_Mailcount)
 
@@ -42,19 +41,22 @@ char __lcdhostplugin_xml[] =
 
 LH_QtPlugin_Mailcount::LH_QtPlugin_Mailcount()
 {
-    Q_ASSERT( instance_ == 0 );
     email_count_ = new LH_Qt_int(this,tr("Current count"),0,LH_FLAG_READONLY);
     email_addr_ = new LH_Qt_QString(this,tr("Only check address"),QString(),LH_FLAG_AUTORENDER);
     email_days_ = new LH_Qt_int(this,tr("Days back to check"),7,LH_FLAG_AUTORENDER);
     check_interval_ = new LH_Qt_int(this,tr("Check interval (seconds)"),2,LH_FLAG_AUTORENDER);
-    instance_ = this;
+    connect( check_interval_, SIGNAL(change(int)), this, SLOT(checkInterval(int)) );
 }
 
 LH_QtPlugin_Mailcount::~LH_QtPlugin_Mailcount()
 {
-    Q_ASSERT( instance_ != 0 );
-    instance_ = 0;
 }
+
+void LH_QtPlugin_Mailcount::checkInterval(int n)
+{
+    qDebug() << "checkInterval" << n;
+}
+
 
 const char *LH_QtPlugin_Mailcount::userInit()
 {

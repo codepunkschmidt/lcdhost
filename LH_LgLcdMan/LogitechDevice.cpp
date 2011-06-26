@@ -77,9 +77,9 @@ void LogitechDevice::setButtonState( unsigned long button )
 {
     if( buttonState_ != button )
     {
-        for( int bit=0; bit<8; ++bit )
+        for( unsigned long bit=0; bit<32; ++bit )
         {
-            int mask = 1<<bit;
+            unsigned long mask = 1<<bit;
             if( (button&mask) != (buttonState_&mask) )
             {
                 lh_device_input di;

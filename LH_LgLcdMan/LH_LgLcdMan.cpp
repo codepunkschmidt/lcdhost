@@ -72,7 +72,7 @@ char __lcdhostplugin_xml[] =
 ////////////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////////////
 
-const char *LH_LgLcdMan::lh_load()
+const char *LH_LgLcdMan::userInit()
 {
 #ifdef Q_WS_WIN
     thread_ = new LH_LgLcdCallbackThread(this);
@@ -125,7 +125,7 @@ const char *LH_LgLcdMan::lh_load()
     return NULL;
 }
 
-void LH_LgLcdMan::lh_unload()
+void LH_LgLcdMan::userTerm()
 {
     if( thread_ )
     {
@@ -135,29 +135,6 @@ void LH_LgLcdMan::lh_unload()
         thread_ = NULL;
     }
     return;
-}
-
-const lh_blob *LH_LgLcdMan::lh_logo()
-{
-    static QByteArray logo_array;
-    if( logo_array.isEmpty() )
-    {
-        lh_blob *blob = NULL;
-        qint64 count;
-        QFile png(":/images/linkdata48.png");
-        if( png.open( QIODevice::ReadOnly ) )
-        {
-            logo_array.resize( sizeof(lh_blob) + png.size() );
-            blob = (lh_blob*) (void*) logo_array.data();
-            blob->sign = 0xDEADBEEF;
-            blob->len = png.size();
-            count = png.read( (char*) &blob->data, png.size() );
-            png.close();
-            Q_ASSERT( count == blob->len );
-        }
-    }
-
-    return (const lh_blob*) (const void*) logo_array.constData();
 }
 
 int LH_LgLcdMan::notify(int code,void *param)

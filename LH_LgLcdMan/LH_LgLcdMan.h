@@ -64,14 +64,8 @@ class LH_LgLcdMan : public LH_QtPlugin
 public:
     LH_LgLcdMan() : LH_QtPlugin(), thread_(NULL), bw_(NULL), qvga_(NULL) {}
 
-    virtual const char *lh_name() { return "LgLcdMan"; }
-    virtual const char *lh_shortdesc() { return "Logitech G-series keyboard driver using the Logitech software"; }
-    virtual const char *lh_author() { return "Johan \"SirReal\" Lindh"; }
-    virtual const char *lh_homepage() { return "<a href=\"http://www.linkdata.se/software/lcdhost\">Link Data Stockholm</a>"; }
-    virtual const char *lh_longdesc() { return "This driver interfaces with the Logitech LCD Manager, which is part of the Logitech G-series keyboard driver software."; }
-    virtual const lh_blob *lh_logo();
-    virtual const char *lh_load();
-    virtual void lh_unload();
+    virtual const char *userInit();
+    virtual void userTerm();
 
     virtual int notify(int code,void *param);
 

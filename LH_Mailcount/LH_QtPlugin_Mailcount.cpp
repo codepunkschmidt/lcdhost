@@ -54,9 +54,8 @@ LH_QtPlugin_Mailcount::~LH_QtPlugin_Mailcount()
 
 void LH_QtPlugin_Mailcount::checkInterval(int n)
 {
-    qDebug() << "checkInterval" << n;
+    Q_UNUSED(n);
 }
-
 
 const char *LH_QtPlugin_Mailcount::userInit()
 {

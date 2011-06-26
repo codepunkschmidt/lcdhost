@@ -107,7 +107,7 @@ int LogitechG19::buttons()
     if( button != last_buttons_ )
     {
         // send delta
-        for( int bit=0; bit<8; ++bit )
+        for( int bit=0; bit<16; ++bit )
         {
             int mask = 1<<bit;
             if( (button&mask) != (last_buttons_&mask) )

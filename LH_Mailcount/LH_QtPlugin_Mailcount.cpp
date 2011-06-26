@@ -42,9 +42,9 @@ char __lcdhostplugin_xml[] =
 LH_QtPlugin_Mailcount::LH_QtPlugin_Mailcount()
 {
     email_count_ = new LH_Qt_int(this,tr("Current count"),0,LH_FLAG_READONLY);
-    email_addr_ = new LH_Qt_QString(this,tr("Only check address"),QString(),LH_FLAG_AUTORENDER);
-    email_days_ = new LH_Qt_int(this,tr("Days back to check"),7,LH_FLAG_AUTORENDER);
-    check_interval_ = new LH_Qt_int(this,tr("Check interval (seconds)"),2,LH_FLAG_AUTORENDER);
+    email_addr_ = new LH_Qt_QString(this,tr("Only check address"),QString());
+    email_days_ = new LH_Qt_int(this,tr("Days back to check"),7);
+    check_interval_ = new LH_Qt_int(this,tr("Check interval (seconds)"),2);
     connect( check_interval_, SIGNAL(change(int)), this, SLOT(checkInterval(int)) );
 }
 

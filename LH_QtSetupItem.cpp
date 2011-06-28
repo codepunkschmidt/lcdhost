@@ -89,11 +89,34 @@ void LH_QtSetupItem::setOrder( int n )
     order_ = n;
 }
 
+void LH_QtSetupItem::setLink(QString s)
+{
+    if( s.isEmpty() )
+    {
+        source_array_.clear();
+        item_.source = 0;
+    }
+    else
+    {
+        source_array_ = s.toUtf8();
+        item_.source = source_array_.constData();
+    }
+    parent()->callback(lh_cb_setup_refresh, item() );
+    return;
+}
+
+QString LH_QtSetupItem::link()
+{
+    if( item_.source ) return QString::fromUtf8( item_.source );
+    return QString();
+}
+
 void LH_QtSetupItem::setHelp(QString s)
 {
     if( s.isEmpty() ) help_.clear();
     else help_ = s.toUtf8();
     item_.help = help_.constData();
+    return;
 }
 
 QString LH_QtSetupItem::help()

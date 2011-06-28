@@ -54,7 +54,17 @@ LH_QtPlugin_Mailcount::~LH_QtPlugin_Mailcount()
 
 void LH_QtPlugin_Mailcount::checkInterval(int n)
 {
-    Q_UNUSED(n);
+    // Testing setup item links and plugin setup items
+    if( n == 1 )
+    {
+        email_addr_->setValue("Setting link");
+        check_interval_->setLink( "Days back to check" );
+    }
+    else
+    {
+        email_addr_->setValue("Reset link");
+        check_interval_->setLink( 0 );
+    }
 }
 
 const char *LH_QtPlugin_Mailcount::userInit()

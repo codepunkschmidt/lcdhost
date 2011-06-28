@@ -73,8 +73,8 @@ public:
     QString name() const { return objectName(); }
     void setHelp(QString s);
     QString help();
-    void setLink(QString s);
-    QString link();
+    void setSource(QString s);
+    QString source();
 
     lh_setup_item *item() { return &item_; }
 

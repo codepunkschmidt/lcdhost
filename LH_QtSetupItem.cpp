@@ -89,7 +89,7 @@ void LH_QtSetupItem::setOrder( int n )
     order_ = n;
 }
 
-void LH_QtSetupItem::setLink(QString s)
+void LH_QtSetupItem::setSource(QString s)
 {
     if( s.isEmpty() )
     {
@@ -105,7 +105,7 @@ void LH_QtSetupItem::setLink(QString s)
     return;
 }
 
-QString LH_QtSetupItem::link()
+QString LH_QtSetupItem::source()
 {
     if( item_.source ) return QString::fromUtf8( item_.source );
     return QString();

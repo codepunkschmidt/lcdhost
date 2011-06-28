@@ -58,12 +58,12 @@ void LH_QtPlugin_Mailcount::checkInterval(int n)
     if( n == 1 )
     {
         email_addr_->setValue("Setting link");
-        check_interval_->setLink( "Days back to check" );
+        check_interval_->setSource( "Days back to check" );
     }
     else
     {
         email_addr_->setValue("Reset link");
-        check_interval_->setLink( 0 );
+        check_interval_->setSource( 0 );
     }
 }
 

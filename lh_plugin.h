@@ -288,16 +288,21 @@ typedef union lh_setup_data_t
     int i;
 } lh_setup_data;
 
-/*
+/**
  Setup items are the main information link between LCDHost and it's plugins.
  Start a setup item name with '^' to not display the name, leaving the name column blank.
  Start a setup item name with '~' to extend the setup item into the name column.
-*/
 
+ You can have LCDHost automatically update a setup item with data from another item.
+ The 'source' member, if not NULL, specifies a setup item by name. Note that at this
+ time, there's no handling for being more specific; if there's more than one item with
+ the given name, they'll all send their data.
+*/
 typedef struct lh_setup_item_t
 {
     const char *name; /* name to identify this item uniquely, and display to the user (start with ~ to hide from display */
     const char *help; /* short HTML help text shows as tooltip, may be NULL */
+    const char *source; /* data link source, see comment above, may be NULL */
     lh_setup_type type; /* type of data, see enum above */
     int flags; /* LH_FLAG_xxx */
     lh_setup_param param;

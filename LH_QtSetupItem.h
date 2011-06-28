@@ -46,6 +46,7 @@ class LH_QtSetupItem : public QObject
 {
     Q_OBJECT
     QByteArray name_array_;
+    QByteArray source_array_;
     int order_;
     QByteArray help_;
 
@@ -68,10 +69,13 @@ public:
     void setFlag( int f, bool state ); // set individual flag(s) on or off
     bool hasFlag( int f ) const { return (item_.flags & f) ? true : false; }
 
-    QString name() const { return objectName(); }
     void setName(QString s);
+    QString name() const { return objectName(); }
     void setHelp(QString s);
     QString help();
+    void setLink(QString s);
+    QString link();
+
     lh_setup_item *item() { return &item_; }
 
     lh_setup_type type() { return item_.type; }

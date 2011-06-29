@@ -264,8 +264,8 @@ typedef enum lh_setup_type_t
 #define LH_FLAG_FIRST       0x0010 /* Used with LH_QtSetupItem's - Same as calling setOrder(-1) */
 #define LH_FLAG_LAST        0x0020 /* Used with LH_QtSetupItem's - Same as calling setOrder(1) */
 #define LH_FLAG_NOSAVE      0x0040 /* Setup item won't be saved to or loaded from layout */
-#define LH_FLAG_UNUSED      (~(LH_FLAG_READONLY|LH_FLAG_HIDDEN|LH_FLAG_FOCUS| \
-                            LH_FLAG_AUTORENDER|LH_FLAG_FIRST|LH_FLAG_LAST|LH_FLAG_NOSAVE))
+#define LH_FLAG_SOURCE      0x0080 /* Setup item may be used as a linked data source */
+#define LH_FLAG_UNUSED      0xFF00
 
 typedef union lh_setup_param_t
 {

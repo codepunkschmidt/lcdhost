@@ -114,6 +114,7 @@ static void * image_new( const lh_class *cls )
         memset( img, 0, sizeof(img) );
         img->blob = NULL;
         img->state = 0;
+        memset( &img->setup_filename, 0, sizeof(img->setup_filename) );
         img->setup_filename.name = "Filename";
         img->setup_filename.help = NULL;
         img->setup_filename.type = lh_type_string_filename;

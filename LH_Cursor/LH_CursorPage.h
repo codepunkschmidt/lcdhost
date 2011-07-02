@@ -53,9 +53,10 @@ protected:
 public:
     LH_CursorPage();
 
+    const char *userInit();
+
     int polling();
-    int width( int forHeight = -1 );
-    int height( int forWidth = -1 );
+
     QImage *render_qimage( int w, int h );
 
     static lh_class *classInfo();

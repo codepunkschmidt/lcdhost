@@ -47,12 +47,12 @@ char __lcdhostplugin_xml[] =
     "<li>Create tabs or pages in a layout that a user can navigate through.</li>"
     "<li>Create layouts which have \"drill down\" effects, in which panels can be selected to reveal "
     "(or hide) another panel.</li>"
-    "<li>Have one layout load another after a certina number of seconds.</li>"
+    "<li>Have one layout load another after a certain number of seconds.</li>"
     "</ul>"
-    "Note that creating pages and drill downs works by exploiting some behavioural quirks of LCDHost, and is not "
-    "as easy to do as other things are; to begin making \"cursor-based\" layouts of any type, it is strongly "
-    "recommended that you start by reading the latest version of the <a href='http://forum.linkdata.se/lcdhost-plugins/(release)-lh_cursor/msg703/#msg703'>user guide</a> "
-    "and downloading the example layouts provided there."
+    "Note that pages that are added will only be visible when the cursor is on them; when building your layout "
+    "make sure you have assigned the page a suitable coordinate and move the cursor to it. New pages start with "
+    "a coordintate of 1,1 so might not always be visible when first added (i.e. if the cursor is not at 1,1 "
+    "newly added pages will be hidden from view immediately)."
 "</longdesc>"
 "</lcdhostplugin>";
 

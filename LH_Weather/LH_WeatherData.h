@@ -62,6 +62,7 @@ struct weatherData
     conditionData condition;
     int forecastDays;
     forecastData forecast[5];
+    QString url;
 };
 
 extern weatherData weather_data;

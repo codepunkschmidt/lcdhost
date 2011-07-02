@@ -48,7 +48,7 @@ struct cursorMode{
     QString description;
 };
 
-class LH_CursorController : public LH_Text
+class LH_CursorController : public LH_QtInstance
 {
     Q_OBJECT
 
@@ -57,6 +57,8 @@ class LH_CursorController : public LH_Text
     void persistSelection();
 
 protected:
+
+    LH_Qt_QString *setup_coordinate_;
     LH_Qt_QStringList *setup_mode_;
     LH_Qt_QString *setup_boundry_;
     LH_Qt_bool *setup_boundry_loop_;
@@ -76,6 +78,12 @@ protected:
 
 public:
     LH_CursorController();
+
+    const char *userInit(){
+        int hidden = 1;
+        callback(lh_cb_sethidden, (void*) &hidden);
+        return NULL;
+    }
 
     int polling();
 

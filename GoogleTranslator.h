@@ -2,7 +2,10 @@
 #define GOOGLETRANSLATOR_H
 
 #include <QObject>
-#include <QHttp>
+
+#include <QNetworkAccessManager>
+#include <QNetworkReply>
+
 #include <QList>
 #include <QHash>
 #include <QStringList>
@@ -11,7 +14,7 @@
 
 #include "TranslationAPIKey.h"
 
-#define debug_translator
+//define debug_translator
 
 enum TranslationType
 {
@@ -58,12 +61,18 @@ public:
 
     QString getName(QString code)
     {
-        return names_.at(codes_.indexOf(code));
+        if(codes_.contains(code))
+            return names_.at(codes_.indexOf(code));
+        else
+            return "";
     }
 
     QString getCode(QString name)
     {
-        return codes_.at(names_.indexOf(name));
+        if(names_.contains(name))
+            return codes_.at(names_.indexOf(name));
+        else
+            return "";
     }
 };
 
@@ -78,8 +87,10 @@ class GoogleTranslator: public QObject
     QHash<QString,QString> languageCache_;
     QHash<QString,QString> newCacheItems_;
 
-    QHttp httpTranslate;
-    QHttp httpLanguages;
+    QNetworkAccessManager namTranslate;
+    QNetworkAccessManager namLanguages;
+    QNetworkReply* repTranslate;
+    QNetworkReply* repLanguages;
 
     QList<QString*> translateRequestItems_;
     QList<TranslationType> translateRequestTypes_;
@@ -116,8 +127,8 @@ signals:
     void languages_updated();
 
 protected slots:
-    void finishedTranslation(bool);
-    void finishedLanguages(int, bool);
+    void finishedTranslation(QNetworkReply*);
+    void finishedLanguages(QNetworkReply*);
 };
 
 #endif // GOOGLETRANSLATOR_H

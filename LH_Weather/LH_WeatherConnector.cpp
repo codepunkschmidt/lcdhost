@@ -133,43 +133,48 @@ LH_WeatherConnector::LH_WeatherConnector() : translator("Weather", this)
     setup_current_url_ = new LH_Qt_QString(this,"Full Weather URL",QString("N/A"),LH_FLAG_READONLY | LH_FLAG_HIDDEN);
     setup_current_url_->setHelp("Internal use only: URL to the page showing the full forecast");
 
-    connect(&http2Day,  SIGNAL(requestFinished(int,bool)), this, SLOT(finished2Day(int,bool)));
-    connect(&http5Day,  SIGNAL(requestFinished(int,bool)), this, SLOT(finished5Day(int,bool)));
-    connect(&httpWOEID, SIGNAL(requestFinished(int,bool)), this, SLOT(finishedWOEID(int,bool)));
+    connectionId_WOEID = NULL;
+    connectionId_2Day = NULL;
+    connectionId_5Day = NULL;
+
+    connect(&nam2Day,  SIGNAL(finished(QNetworkReply*)), this, SLOT(finished2Day(QNetworkReply*)));
+    connect(&nam5Day,  SIGNAL(finished(QNetworkReply*)), this, SLOT(finished5Day(QNetworkReply*)));
+    connect(&namWOEID, SIGNAL(finished(QNetworkReply*)), this, SLOT(finishedWOEID(QNetworkReply*)));
 
 }
 
 LH_WeatherConnector::~LH_WeatherConnector()
 {
-    disconnect(&http2Day, SIGNAL(requestFinished(int,bool)));
-    disconnect(&http5Day, SIGNAL(requestFinished(int,bool)));
-    disconnect(&httpWOEID, SIGNAL(requestFinished(int,bool)));
     return ;
 }
 
 
 void LH_WeatherConnector::fetch2Day()
 {
-    connectionId_2Day = fetchWeather(false, xml2Day_, http2Day);
+    connectionId_2Day = fetchWeather(false, xml2Day_, nam2Day, connectionId_2Day);
 }
 
 void LH_WeatherConnector::fetch2DayU()
 {
     if(debugHTTP) qDebug() << "LH_WeatherConnector: Units Changed: Update Weather (2Day)";
-    connectionId_2Day = fetchWeather(false, xml2Day_, http2Day);
+    connectionId_2Day = fetchWeather(false, xml2Day_, nam2Day, connectionId_2Day);
 }
 
 void LH_WeatherConnector::fetch5Day()
 {
     lastrefresh_ = QDateTime::currentDateTime();
-    connectionId_5Day = fetchWeather(true, xml5Day_, http5Day);
+    connectionId_5Day = fetchWeather(true, xml5Day_, nam5Day, connectionId_5Day);
 }
 
-int LH_WeatherConnector::fetchWeather(bool is5Day, QXmlStreamReader& xml_, QHttp& http)
+QNetworkReply* LH_WeatherConnector::fetchWeather(bool is5Day, QXmlStreamReader& xml_, QNetworkAccessManager& nam, QNetworkReply* currentReply)
 {
     if(setup_yahoo_woeid_->value()=="")
         return 0;
-    http.abort();
+    if(currentReply!=NULL && currentReply->isRunning()) {
+        currentReply->abort();
+        currentReply->deleteLater();
+        currentReply = NULL;
+    }
 
     xml_.clear();
     QString unitValue = "c";
@@ -194,20 +199,26 @@ int LH_WeatherConnector::fetchWeather(bool is5Day, QXmlStreamReader& xml_, QHttp
     if(listOfProxies.count()!=0)
         if(listOfProxies.at(0).type() != QNetworkProxy::NoProxy) {
             if(debugHTTP) qDebug() << "LH_WeatherConnector: Using Proxy: " << listOfProxies.at(0).hostName()<< ":" << QString::number(listOfProxies.at(0).port());
-            http.setProxy(listOfProxies.at(0));
+            nam.setProxy(listOfProxies.at(0));
         }
+
 
     QString fullUrl = QString("http://%1%2?%3").arg(host,path,params);
     if(debugHTTP) qDebug() << "LH_WeatherConnector: Fetch " << (is5Day? "5Day": "2Day") << " via " << fullUrl;
-    http.setHost(url.host());
 
-    return http.get(fullUrl);
+    return nam.get( QNetworkRequest(fullUrl) );
 }
 
 void LH_WeatherConnector::fetchWOEID()
 {
     if(setup_location_name_->value()=="") return;
-    httpWOEID.abort();
+
+    if(connectionId_WOEID!=NULL && connectionId_WOEID->isRunning()) {
+        connectionId_WOEID->abort();
+        connectionId_WOEID->deleteLater();
+        connectionId_WOEID = NULL;
+    }
+
     // App ID is meant to be unique to each app. If you want to build your own weather-related
     // application, Yahoo ask that sign up for your own ID (free of charge) via their developer
     // site. Alternatvely you can use the id "YahooDemo" (without the quotes) to use the service
@@ -225,82 +236,85 @@ void LH_WeatherConnector::fetchWOEID()
     if(listOfProxies.count()!=0)
         if(listOfProxies.at(0).type() != QNetworkProxy::NoProxy) {
             if(debugHTTP) qDebug() << "LH_WeatherConnector: Using Proxy: " << listOfProxies.at(0).hostName() << ":" << QString::number(listOfProxies.at(0).port());
-            httpWOEID.setProxy(listOfProxies.at(0));
+            namWOEID.setProxy(listOfProxies.at(0));
         }
 
-    httpWOEID.setHost(url.host());
     if(debugHTTP) qDebug() << "LH_WeatherConnector: Fetch WOEID for: " << setup_location_name_->value() << " via " << url.toString();
 
     for(int i = 0; i<5; i++)
         setNoForecast(weather_data.forecast[i]);
 
-    connectionId_WOEID = httpWOEID.get( url.toString() );
+    connectionId_WOEID = namWOEID.get( QNetworkRequest(url.toString()) );
 }
 
-void LH_WeatherConnector::finished2Day( int id, bool error )
+void LH_WeatherConnector::finished2Day( QNetworkReply* reply )
 {
-    if(id!=connectionId_2Day)
-        return;
-
-    if (error)
+    if( reply )
     {
-        qWarning() << "LH_WeatherConnector: Error during HTTP (2Day) fetch:" << http2Day.errorString() << http2Day.lastResponse().statusCode();
-    }
-    else
-    {
-        if (debugHTTP) qDebug() << "LH_WeatherConnector: HTTP (2Day) Request Complete" << http2Day.lastResponse().statusCode();
-        xml2Day_.clear();
-        QByteArray respData = http2Day.readAll();
-        if(respData.length()!=0)
+        if( reply->error() == QNetworkReply::NoError )
         {
-            if(debugSaveXML)saveXMLResponse(respData,"2Day");
-            xml2Day_.addData(respData);
-            parseXml2Day();
+            if( reply->attribute(QNetworkRequest::HttpStatusCodeAttribute) == 200 )
+            {
+                processResponse(reply->readAll(), "2Day", xml2Day_, &LH_WeatherConnector::parseXml2Day);
+            }
+            else
+                qWarning() << "LH_WeatherConnector: Error during HTTP (2Day) fetch:" << reply->attribute(QNetworkRequest::HttpStatusCodeAttribute) << reply->errorString() << reply->url().toString();
         }
+        reply->deleteLater();
+        reply = NULL;
     }
+    connectionId_2Day->deleteLater();
+    connectionId_2Day = NULL;
 }
 
-void LH_WeatherConnector::finished5Day( int id, bool error )
+void LH_WeatherConnector::finished5Day( QNetworkReply* reply )
 {
-    if(id!=connectionId_5Day)
-        return;
-
-    if (error)
+    if( reply )
     {
-        qWarning() << "LH_WeatherConnector: Error during HTTP (5Day) fetch:" << http5Day.errorString() << http5Day.lastResponse().statusCode();
-    }
-    else
-    {
-        if (debugHTTP) qDebug() << "LH_WeatherConnector: HTTP (5Day) Request Complete" << http5Day.lastResponse().statusCode();
-        xml5Day_.clear();
-        QByteArray respData = http5Day.readAll();
-        if(respData.length()!=0)
+        if( reply->error() == QNetworkReply::NoError )
         {
-            if(debugSaveXML)saveXMLResponse(respData,"5Day");
-            xml5Day_.addData(respData);
-            parseXml5Day();
+            if( reply->attribute(QNetworkRequest::HttpStatusCodeAttribute) == 200 )
+            {
+                processResponse(reply->readAll(), "5Day", xml5Day_, &LH_WeatherConnector::parseXml5Day);
+            }
+            else
+                qWarning() << "LH_WeatherConnector: Error during HTTP (5Day) fetch:" << reply->attribute(QNetworkRequest::HttpStatusCodeAttribute) << reply->errorString() << reply->url().toString();
         }
+        reply->deleteLater();
+        reply = NULL;
     }
+    connectionId_5Day->deleteLater();
+    connectionId_5Day = NULL;
 }
 
-void LH_WeatherConnector::finishedWOEID( int id, bool error )
+void LH_WeatherConnector::finishedWOEID( QNetworkReply* reply )
 {
-    Q_UNUSED(id);
-    if (error)
+    if( reply )
     {
-        qWarning() << "LH_WeatherConnector: Error during HTTP (WOEID) fetch:" << httpWOEID.errorString() << httpWOEID.lastResponse().statusCode();
-    }
-    else
-    {
-        if (debugHTTP) qDebug() << "LH_WeatherConnector: HTTP (WOEID) Request Complete" << httpWOEID.lastResponse().statusCode();
-        xmlWOEID_.clear();
-        QByteArray respData = httpWOEID.readAll();
-        if(respData.length()!=0)
+        if( reply->error() == QNetworkReply::NoError )
         {
-            if(debugSaveXML)saveXMLResponse(respData,"WOEID");
-            xmlWOEID_.addData(respData);
-            parseXmlWOEID();
+            if( reply->attribute(QNetworkRequest::HttpStatusCodeAttribute) == 200 )
+            {
+                processResponse(reply->readAll(), "WOEID", xmlWOEID_, &LH_WeatherConnector::parseXmlWOEID);
+            }
+            else
+                qWarning() << "LH_WeatherConnector: Error during HTTP (WOEID) fetch:" << reply->attribute(QNetworkRequest::HttpStatusCodeAttribute) << reply->errorString() << reply->url().toString();
         }
+        reply->deleteLater();
+        reply = NULL;
+    }
+    connectionId_WOEID->deleteLater();
+    connectionId_WOEID = NULL;
+}
+
+void LH_WeatherConnector::processResponse(QByteArray xmlData, QString name, QXmlStreamReader& xmlReader, xmlParserFunc xmlParser)
+{
+    xmlReader.clear();
+    if(xmlData.length()!=0)
+    {
+        if(debugSaveXML)saveXMLResponse(xmlData,name);
+        xmlReader.addData(xmlData);
+        (this->*xmlParser)();
     }
 }
 
@@ -371,14 +385,13 @@ QDate LH_WeatherConnector::toDate(QString str, bool isLong)
 }
 
 void LH_WeatherConnector::parseXml2Day()
-{ parseXmlWeather(false, xml2Day_, http2Day); }
+{ parseXmlWeather(false, xml2Day_); }
 
 void LH_WeatherConnector::parseXml5Day()
-{ parseXmlWeather(true, xml5Day_, http5Day); }
+{ parseXmlWeather(true, xml5Day_); }
 
-void LH_WeatherConnector::parseXmlWeather(bool is5Day, QXmlStreamReader& xml_, QHttp& http)
+void LH_WeatherConnector::parseXmlWeather(bool is5Day, QXmlStreamReader& xml_)
 {
-    Q_UNUSED(http);
     weather_data.forecastDays = 0;
 
     for(int i = 0; i<5; i++)
@@ -569,7 +582,13 @@ void LH_WeatherConnector::parseXmlWOEID()
     if (xmlWOEID_.error() && xmlWOEID_.error() != QXmlStreamReader::PrematureEndOfDocumentError)
     {
         qWarning() << "LH_WeatherConnector: XML ERROR (WOEID Parser):" << xmlWOEID_.lineNumber() << ": " << xmlWOEID_.errorString();
-        httpWOEID.abort();
+        if(connectionId_WOEID!=NULL && connectionId_WOEID->isRunning())
+        {
+            connectionId_WOEID->abort();
+            connectionId_WOEID->deleteLater();
+            connectionId_WOEID = NULL;
+        }
+
     }
 
     if (!foundWOEID)

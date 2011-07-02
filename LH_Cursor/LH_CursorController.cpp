@@ -44,8 +44,11 @@ lh_class *LH_CursorController::classInfo()
     return &classInfo;
 }
 
-LH_CursorController::LH_CursorController() : LH_Text()
+LH_CursorController::LH_CursorController()
 {
+    setup_coordinate_ = new LH_Qt_QString(this, "Coordinate", "1,1", LH_FLAG_NOSAVE | LH_FLAG_READONLY | LH_FLAG_FIRST);
+    setup_coordinate_->setHelp("The current cursor location.");
+
     cursorModes.append((cursorMode){smSelectDeselect, true , "Activate, Move & Select / Deselect"});
     cursorModes.append((cursorMode){smSelect        , true , "Activate, Move & Select Only (one is always selected)"});
     cursorModes.append((cursorMode){smNone          , true , "Activate & Move Only (Highlighted option is selected)"});
@@ -54,18 +57,6 @@ LH_CursorController::LH_CursorController() : LH_Text()
     cursorModes.append((cursorMode){smSelect        , false, "Move & Select Only (Always activated)"});
 
     cursor_data = (cursorData){1,1,false,0,0,false,0,0,false,false,0,0,(bounds){(minmax){0,0},(minmax){0,0}}};
-
-    setup_text_->setFlag(LH_FLAG_HIDDEN,true);
-    setup_font_->setFlag(LH_FLAG_HIDDEN,true);
-    setup_bgcolor_->setFlag(LH_FLAG_HIDDEN,true);
-    setup_horizontal_->setFlag(LH_FLAG_HIDDEN,true);
-    setup_vertical_->setFlag(LH_FLAG_HIDDEN,true);
-    setup_scrollrate_->setFlag(LH_FLAG_HIDDEN,true);
-    setup_scrollstep_->setFlag(LH_FLAG_HIDDEN,true);
-    setup_fontresize_->setFlag(LH_FLAG_HIDDEN,true);
-    setup_pencolor_->setFlag(LH_FLAG_HIDDEN,true);
-
-
 
     QStringList modeNames = QStringList();
     foreach(cursorMode cm, cursorModes) modeNames.append(cm.description);
@@ -356,11 +347,7 @@ void LH_CursorController::updateLocation(int xMod, int yMod, bool absolute)
 
     persistSelection();
 
-    setText(QString::number(cursor_data.x) + "," + QString::number(cursor_data.y));
-    setup_fontresize_->setFlag(LH_FLAG_HIDDEN,true);
-    setup_pencolor_->setFlag(LH_FLAG_HIDDEN,true);
-
-    callback(lh_cb_render,NULL);
+    setup_coordinate_->setValue(QString("%1,%2").arg(cursor_data.x).arg(cursor_data.y));
 }
 
 void LH_CursorController::changeMode()
@@ -399,6 +386,7 @@ void LH_CursorController::changeBounds()
 int LH_CursorController::polling()
 {
     if(cursor_data.sendSelect) doSelect(0,0,0);
+    setup_coordinate_->setValue(QString("%1,%2").arg(cursor_data.x).arg(cursor_data.y));
     return 200;
 }
 

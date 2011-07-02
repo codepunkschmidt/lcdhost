@@ -56,32 +56,24 @@ LH_CursorPage::LH_CursorPage()
                                "The format is [x],[y] <br/>"
                                "e.g.: 1,1<br/>"
                                "<br/>"
-                               "Note that cursor pages are not easy to work with and the guide should be consulted (see the Plugins tab for more information.<br/>"
-                               "<br/>"
-                               "In short the cursor page works by changing its width (which only works if the width is set to \"adjust\") which will then make any objects that are aligned to the right edge of the page move off & on screen creating the illusion of a page of objects being hidden/shown."
+                               "When selected a page (and all its children) is visible. When not selected it (and all its children) are hidden, although they can still be selected in the Instances tree."
                                );
     active = false;
     selected = false;
+}
+
+const char *LH_CursorPage::userInit()
+{
+    int hidden = !selected? 1: 0;
+    callback(lh_cb_sethidden, (void*) &hidden);
+
+    return NULL;
 }
 
 int LH_CursorPage::polling()
 {
     if(updateState()) callback(lh_cb_render,NULL);
     return 100;
-}
-
-
-int LH_CursorPage::width( int forHeight )
-{
-    Q_UNUSED(forHeight);
-    return selected? 320 : 800;
-}
-
-int LH_CursorPage::height( int forWidth )
-{
-    //qDebug() << "height";
-    Q_UNUSED(forWidth);
-    return -1;
 }
 
 
@@ -114,6 +106,8 @@ bool LH_CursorPage::updateState()
     if(selected!=newSelected || active != newActive)
     {
         selected = newSelected;
+        int hidden = !selected? 1: 0;
+        callback(lh_cb_sethidden, (void*) &hidden);
         active = newActive;
         return true;
     }

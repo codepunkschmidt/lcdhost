@@ -125,6 +125,7 @@ void newMessageHandler( QtMsgType type, const char *msg )
     return;
 }
 
+#if 0
 // Work around http://bugreports.qt.nokia.com/browse/QTCREATORBUG-5082
 void qFatal(const char *msg, ...)
 {
@@ -138,6 +139,7 @@ void qFatal(const char *msg, ...)
     }
     va_end(ap);
 }
+#endif
 
 int main(int argc, char *argv[])
 {

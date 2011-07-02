@@ -85,6 +85,11 @@ public:
     virtual const char *userInit() { return 0; }
     virtual void userTerm() { return; }
 
+    // Convenience wrappers
+    void show() const { int b = 0; callback( lh_cb_sethidden, &b ); }
+    void hide() const { int b = 1; callback( lh_cb_sethidden, &b ); }
+    void setVisible( bool b ) const { int notb = !b; callback( lh_cb_sethidden, &notb ); }
+
     const lh_systemstate* state() const { return state_; }
 
     static void set_plugin( LH_QtPlugin *p ) { plugin_ = p; }

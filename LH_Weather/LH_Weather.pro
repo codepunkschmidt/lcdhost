@@ -25,8 +25,8 @@ SOURCES += ../lh_plugin.c \
     LH_QtPlugin_Weather.cpp \
     LH_WeatherText.cpp \
     LH_WeatherImage.cpp \
-    LH_WeatherConnector.cpp \
-    LH_WeatherData.cpp
+    LH_WeatherData.cpp \
+    LH_WeatherBrowserOpener.cpp
 HEADERS += ../lh_plugin.h \
     ../LH_QtPlugin.h \
     ../LH_QtObject.h \
@@ -36,5 +36,5 @@ HEADERS += ../lh_plugin.h \
     LH_QtPlugin_Weather.h \
     LH_WeatherText.h \
     LH_WeatherImage.h \
-    LH_WeatherConnector.h \
-    LH_WeatherData.h
+    LH_WeatherData.h \
+    LH_WeatherBrowserOpener.h

@@ -25,7 +25,9 @@
 #ifndef LH_WeatherConnector_H
 #define LH_WeatherConnector_H
 
-#include <QHttp>
+#include <QNetworkAccessManager>
+#include <QNetworkReply>
+
 #include <QUrl>
 #include <QWidget>
 #include <QBuffer>
@@ -50,26 +52,30 @@ class LH_WeatherConnector : public LH_Text
 {
     Q_OBJECT
 
-    int connectionId_WOEID;
-    int connectionId_2Day;
-    int connectionId_5Day;
+    typedef void (LH_WeatherConnector::*xmlParserFunc)();
+
     QDateTime lastrefresh_;
     static const bool get5Day = true;
 
-    static const bool debugHTTP = true;
+    static const bool debugHTTP = false;
     static const bool debugMemory = false;
     static const bool debugForecast = false;
     static const bool debugSaveXML = false;
+
+    QNetworkReply* connectionId_WOEID;
+    QNetworkReply* connectionId_2Day;
+    QNetworkReply* connectionId_5Day;
+
+    QNetworkAccessManager nam2Day;
+    QNetworkAccessManager nam5Day;
+    QNetworkAccessManager namWOEID;
+    QNetworkReply* fetchWeather(bool is5Day, QXmlStreamReader& xml_, QNetworkAccessManager& nam, QNetworkReply* currentReply);
 
     QXmlStreamReader xml2Day_;
     QXmlStreamReader xml5Day_;
     QXmlStreamReader xmlWOEID_;
 
-    QHttp http2Day;
-    QHttp http5Day;
-    QHttp httpWOEID;
-
-    void parseXmlWeather(bool is5Day, QXmlStreamReader& xml_, QHttp& http);
+    void parseXmlWeather(bool is5Day, QXmlStreamReader& xml_);
     void parseXml2Day();
     void parseXml5Day();
     void parseXmlWOEID();
@@ -85,7 +91,7 @@ class LH_WeatherConnector : public LH_Text
     void requestTranslation();
     QString fullDateName(QString shortName);
 
-    int fetchWeather(bool is5Day, QXmlStreamReader& xml_, QHttp& http);
+    void processResponse(QByteArray xmlData, QString name, QXmlStreamReader& xmlReader, xmlParserFunc xmlParser);
 protected:
     LH_Qt_QString *setup_location_name_;
     LH_Qt_QString *setup_yahoo_woeid_;
@@ -121,9 +127,11 @@ public slots:
     void fetch2DayU();
     void fetch5Day();
     void fetchWOEID();
-    void finished2Day(int,bool);
-    void finished5Day(int,bool);
-    void finishedWOEID(int,bool);
+
+    void finished2Day(QNetworkReply*);
+    void finished5Day(QNetworkReply*);
+    void finishedWOEID(QNetworkReply*);
+
     void openBrowser(QString,int,int);
     void saveXMLResponse(QByteArray,QString);
     void updateLanguagesList();

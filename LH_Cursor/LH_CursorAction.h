@@ -135,11 +135,7 @@ protected:
 
 public:
     LH_CursorAction();
-    const char *userInit(){
-        int hidden = 1;
-        callback(lh_cb_sethidden, (void*) &hidden);
-        return NULL;
-    }
+    const char *userInit(){ hide(); return NULL; }
 
     int polling();
 

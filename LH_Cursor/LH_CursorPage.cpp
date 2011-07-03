@@ -64,9 +64,7 @@ LH_CursorPage::LH_CursorPage()
 
 const char *LH_CursorPage::userInit()
 {
-    int hidden = !selected? 1: 0;
-    callback(lh_cb_sethidden, (void*) &hidden);
-
+    setVisible(selected);
     return NULL;
 }
 
@@ -106,8 +104,7 @@ bool LH_CursorPage::updateState()
     if(selected!=newSelected || active != newActive)
     {
         selected = newSelected;
-        int hidden = !selected? 1: 0;
-        callback(lh_cb_sethidden, (void*) &hidden);
+        setVisible(selected);
         active = newActive;
         return true;
     }

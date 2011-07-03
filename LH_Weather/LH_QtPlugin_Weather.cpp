@@ -346,6 +346,7 @@ void LH_QtPlugin_Weather::saveXMLResponse(QByteArray data, QString docType)
 
 int LH_QtPlugin_Weather::notify(int code,void* param)
 {
+    Q_UNUSED(param);
     if( code & LH_NOTE_SECOND )
     {
         if( lastrefresh_.addSecs(60*setup_refresh_->value()) < QDateTime::currentDateTime() )

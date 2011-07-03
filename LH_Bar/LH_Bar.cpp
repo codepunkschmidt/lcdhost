@@ -55,7 +55,7 @@ static inline uint PREMUL(uint x) {
     return x;
 }
 
-LH_Bar::LH_Bar()
+LH_Bar::LH_Bar() : LH_QtCFInstance()
 {
     uchar *data = (uchar[4]){255,0,0,0};
     bar_img_emptyMask_ = QImage(data,1,1,QImage::Format_ARGB32);
@@ -104,9 +104,33 @@ LH_Bar::LH_Bar()
     min_ = max_ = 0.0;
 
     changeType();
+
+
+    add_cf_source("Value");
+    add_cf_target(setup_pencolor1_);
+    add_cf_target(setup_pencolor2_);
+    add_cf_target(setup_file_);
+    add_cf_target(setup_file_bg_);
+    add_cf_target(setup_bgcolor_);
 }
 
-void LH_Bar::drawSingle( qreal value, int pos, int total )
+qreal LH_Bar::boundedValue(qreal value)
+{
+    if( max_ < min_ ) { qreal tmp = max_; max_ = min_; min_ = tmp; }
+
+    if( value > max_ ) value = max_;
+    else if( value < min_ ) value = min_;
+
+    if( value <= min_ ) value = 0.0;
+    else value = ( value - min_ ) / (max_ - min_);
+
+    Q_ASSERT( value >= 0.0 );
+    Q_ASSERT( value <= 1.0 );
+
+    return value;
+}
+
+void LH_Bar::draw_bar( qreal value, int pos, int total )
 {
     qreal x, y;
     qreal image_width, image_height, tot;  // saves a bunch of casts
@@ -120,7 +144,6 @@ void LH_Bar::drawSingle( qreal value, int pos, int total )
     QRectF rect_full;
 
     if( image_ == NULL || image_->isNull() ) return;
-    if( max_ < min_ ) { qreal tmp = max_; max_ = min_; min_ = tmp; }
     if( max_ == min_ ) return;
 
     image_width = image_->width();
@@ -131,14 +154,7 @@ void LH_Bar::drawSingle( qreal value, int pos, int total )
     Q_ASSERT( pos >= 0 );
     Q_ASSERT( pos < total );
 
-    if( value > max_ ) value = max_;
-    else if( value < min_ ) value = min_;
-
-    if( value <= min_ ) value = 0.0;
-    else value = ( value - min_ ) / (max_ - min_);
-
-    Q_ASSERT( value >= 0.0 );
-    Q_ASSERT( value <= 1.0 );
+    value = boundedValue(value);
 
     direction = setup_direction_->value();
     if( direction < 1 )

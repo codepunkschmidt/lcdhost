@@ -89,9 +89,6 @@ class LH_QtCFInstance : public LH_QtInstance
 
     bool watching_non_setup_item_;
 
-    bool cf_setup_items_created_;
-
-    void create_cf_setup_items();
 protected:
     LH_Qt_bool        *setup_cf_enabled_;
 

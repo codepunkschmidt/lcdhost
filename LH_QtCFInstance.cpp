@@ -36,12 +36,6 @@
 #include "LH_QtCFInstance.h"
 #include "cf_rule.h"
 
-const int cf_pos_1_ = 1000000;
-const int cf_pos_2_ = 1000001;
-const int cf_pos_3_ = 1000002;
-const int cf_pos_4_ = 1000003;
-const int cf_pos_5_ = 1000004;
-
 
 LH_QtCFInstance::LH_QtCFInstance() : LH_QtInstance()
 {
@@ -85,51 +79,24 @@ void LH_QtCFInstance::cf_initialize()
         cf_initialized_ = true;
         cf_rule_editing_ = None;
         watching_non_setup_item_ = false;
-        cf_setup_items_created_ = false;
 
-        LH_Qt_QString* hr = new LH_Qt_QString(this,tr("~Horizontal ruler"),"<hr>",LH_FLAG_LAST | LH_FLAG_NOSAVE,lh_type_string_html );
-        hr->setOrder(cf_pos_1_);
+        new LH_Qt_QString(this,tr("~Horizontal ruler"),"<hr>",LH_FLAG_LAST | LH_FLAG_NOSAVE,lh_type_string_html );
         setup_cf_enabled_ = new LH_Qt_bool(this, "^Enable Conditional Formatting", false, LH_FLAG_LAST | LH_FLAG_AUTORENDER);
-        setup_cf_source_->setOrder(cf_pos_1_);
-        LH_Qt_QString* comment = new LH_Qt_QString(this,tr("^comment"),"<span style='font-color:grey'>(Conditional Formatting is still experimental)</span>",LH_FLAG_LAST | LH_FLAG_NOSAVE,lh_type_string_html );
-        comment->setOrder(cf_pos_1_);
-
-        setup_cf_source_ = new LH_Qt_QStringList(this, "Source", QStringList(), LH_FLAG_NOSAVE | LH_FLAG_LAST | LH_FLAG_HIDDEN);
-        setup_cf_source_->setOrder(cf_pos_2_);
-
-        setup_cf_target_ = new LH_Qt_QStringList(this, "Target", QStringList(), LH_FLAG_NOSAVE | LH_FLAG_LAST | LH_FLAG_HIDDEN);
-        setup_cf_target_->setOrder(cf_pos_4_);
-
-        setup_cf_XML_ = new LH_Qt_QTextEdit(this, "Conditions XML", "<rules/>", LH_FLAG_LAST | LH_FLAG_HIDDEN);
-        setup_cf_XML_->setOrder(cf_pos_5_);
-
-        setup_cf_state_ = new LH_Qt_QString(this, "State", "", LH_FLAG_NOSAVE | LH_FLAG_LAST | LH_FLAG_HIDDEN | LH_FLAG_READONLY);
-        setup_cf_state_->setOrder(cf_pos_5_);
-
-
-
-
+        new LH_Qt_QString(this,tr("^comment"),"<span style='font-color:grey'>(Conditional Formatting is still experimental)</span>",LH_FLAG_LAST | LH_FLAG_NOSAVE,lh_type_string_html );
 
         setup_cf_copy_ = new LH_Qt_QString(this, "^Copy Conditions", "Copy",  LH_FLAG_NOSAVE | LH_FLAG_LAST | LH_FLAG_HIDDEN, lh_type_string_button);
-        setup_cf_copy_->setOrder(cf_pos_1_);
         setup_cf_paste_ = new LH_Qt_QString(this, "^Paste Conditions", "Paste",  LH_FLAG_NOSAVE | LH_FLAG_LAST | LH_FLAG_HIDDEN, lh_type_string_button);
-        setup_cf_paste_->setOrder(cf_pos_1_);
 
         setup_cf_rules_ = new LH_Qt_QStringList(this, "Conditions", QStringList(), LH_FLAG_NOSAVE | LH_FLAG_LAST | LH_FLAG_HIDDEN, lh_type_integer_listbox);
-        setup_cf_rules_->setOrder(cf_pos_1_);
 
         setup_cf_move_up_= new LH_Qt_QString(this, "^Move Condition Up", "Move Up",  LH_FLAG_NOSAVE | LH_FLAG_LAST | LH_FLAG_HIDDEN | LH_FLAG_READONLY, lh_type_string_button);
-        setup_cf_move_up_->setOrder(cf_pos_1_);
         setup_cf_move_down_= new LH_Qt_QString(this, "^Move Condition Down", "Move Down",  LH_FLAG_NOSAVE | LH_FLAG_LAST | LH_FLAG_HIDDEN | LH_FLAG_READONLY, lh_type_string_button);
-        setup_cf_move_down_->setOrder(cf_pos_1_);
 
         setup_cf_new_ = new LH_Qt_QString(this, "^New Condition", "New",  LH_FLAG_NOSAVE | LH_FLAG_LAST | LH_FLAG_HIDDEN, lh_type_string_button);
-        setup_cf_new_->setOrder(cf_pos_1_);
         setup_cf_delete_ = new LH_Qt_QString(this, "^Delete Condition", "Delete", LH_FLAG_NOSAVE | LH_FLAG_LAST | LH_FLAG_HIDDEN | LH_FLAG_READONLY, lh_type_string_button);
-        setup_cf_delete_->setOrder(cf_pos_1_);
 
+        setup_cf_source_ = new LH_Qt_QStringList(this, "Source", QStringList(), LH_FLAG_NOSAVE | LH_FLAG_LAST | LH_FLAG_HIDDEN);
         setup_cf_source_mode_ = new LH_Qt_QStringList(this, "Value", QStringList(), LH_FLAG_NOSAVE | LH_FLAG_LAST | LH_FLAG_HIDDEN);
-        setup_cf_source_mode_->setOrder(cf_pos_2_);
         setup_cf_test_ = new LH_Qt_QStringList(this, "Condition",
                                                     QStringList()
                                                     << "Equals"       << "Does not equal"
@@ -140,33 +107,46 @@ void LH_QtCFInstance::cf_initialize()
                                                     << "Ends with"    << "Does not end with"
                                                     << "Contains"     << "Does not contain"
                                                     , LH_FLAG_NOSAVE | LH_FLAG_LAST | LH_FLAG_HIDDEN);
-        setup_cf_test_->setOrder(cf_pos_2_);
 
         setup_cf_testValue1_ = new LH_Qt_QString(this, "^Value 1", "", LH_FLAG_NOSAVE | LH_FLAG_LAST | LH_FLAG_HIDDEN);
-        setup_cf_testValue1_->setOrder(cf_pos_3_);
         setup_cf_testValue2_ = new LH_Qt_QString(this, "^Value 2", "", LH_FLAG_NOSAVE | LH_FLAG_LAST | LH_FLAG_HIDDEN);
-        setup_cf_testValue2_->setOrder(cf_pos_3_);
+        setup_cf_target_ = new LH_Qt_QStringList(this, "Target", QStringList(), LH_FLAG_NOSAVE | LH_FLAG_LAST | LH_FLAG_HIDDEN);
 
         setup_cf_newValue_Color_ = new LH_Qt_QColor(this, "^New Value - Color",QColor(0,0,0),LH_FLAG_NOSAVE | LH_FLAG_LAST | LH_FLAG_HIDDEN);
-        setup_cf_newValue_Color_->setOrder(cf_pos_4_);
         setup_cf_newValue_Font_  = new LH_Qt_QFont(this, "^New Value - Font",QFont("Arial",10),LH_FLAG_NOSAVE | LH_FLAG_LAST | LH_FLAG_HIDDEN);
-        setup_cf_newValue_Font_->setOrder(cf_pos_4_);
         setup_cf_newValue_String_= new LH_Qt_QString(this, "^New Value - String","",LH_FLAG_NOSAVE | LH_FLAG_LAST | LH_FLAG_HIDDEN);
-        setup_cf_newValue_String_->setOrder(cf_pos_4_);
         setup_cf_newValue_File_  = new LH_Qt_QFileInfo(this,"^New Value - File",QFileInfo(""),LH_FLAG_NOSAVE | LH_FLAG_LAST | LH_FLAG_HIDDEN);
-        setup_cf_newValue_File_->setOrder(cf_pos_4_);
 
         setup_cf_save_   = new LH_Qt_QString(this, "^Save Condition", "Save", LH_FLAG_NOSAVE | LH_FLAG_LAST | LH_FLAG_HIDDEN, lh_type_string_button);
-        setup_cf_save_->setOrder(cf_pos_4_);
         setup_cf_cancel_ = new LH_Qt_QString(this, "^Cancel Condition Edit", "Cancel", LH_FLAG_NOSAVE | LH_FLAG_LAST | LH_FLAG_HIDDEN, lh_type_string_button);
-        setup_cf_cancel_->setOrder(cf_pos_4_);
+
+        setup_cf_state_ = new LH_Qt_QString(this, "State", "", LH_FLAG_NOSAVE | LH_FLAG_LAST | LH_FLAG_HIDDEN | LH_FLAG_READONLY);
+        setup_cf_XML_ = new LH_Qt_QTextEdit(this, "Conditions XML", "<rules/>", LH_FLAG_LAST | LH_FLAG_HIDDEN);
 
         connect(setup_cf_enabled_, SIGNAL(changed()), this, SLOT(cf_enabled_changed()));
+        connect(setup_cf_source_, SIGNAL(changed()), this, SLOT(cf_source_changed()));
+        connect(setup_cf_source_, SIGNAL(set()), this, SLOT(cf_source_changed()));
+        connect(setup_cf_target_, SIGNAL(changed()), this, SLOT(cf_target_changed()));
+        connect(setup_cf_target_, SIGNAL(set()), this, SLOT(cf_target_changed()));
+        connect(setup_cf_test_, SIGNAL(changed()), this, SLOT(cf_condition_changed()));
+        connect(setup_cf_test_, SIGNAL(set()), this, SLOT(cf_condition_changed()));
+        connect(setup_cf_save_, SIGNAL(changed()), this, SLOT(cf_save_rule()));
+        connect(setup_cf_cancel_, SIGNAL(changed()), this, SLOT(cf_cancel_edit_rule()));
+        connect(setup_cf_XML_, SIGNAL(changed()), this, SLOT(cf_XML_changed()));
+        connect(setup_cf_rules_, SIGNAL(changed()), this, SLOT(cf_rules_changed()));
+        connect(setup_cf_delete_, SIGNAL(changed()), this, SLOT(cf_delete_rule()));
+        connect(setup_cf_new_, SIGNAL(changed()), this, SLOT(cf_new_rule()));
+
+        connect(setup_cf_copy_, SIGNAL(changed()), this, SLOT(cf_copy_rules()));
+        connect(setup_cf_paste_, SIGNAL(changed()), this, SLOT(cf_paste_rules()));
+        connect(setup_cf_move_up_, SIGNAL(changed()), this, SLOT(cf_move_rule_up()));
+        connect(setup_cf_move_down_, SIGNAL(changed()), this, SLOT(cf_move_rule_down()));
+
+        connect(setup_cf_state_, SIGNAL(changed()), this, SLOT(cf_state_value_updated()));
+        connect(setup_cf_state_, SIGNAL(set()), this, SLOT(cf_state_value_updated()));
 
         add_cf_source(setup_cf_state_);
         add_cf_target(setup_cf_state_);
-
-
 
     }
 }
@@ -222,41 +202,8 @@ void LH_QtCFInstance::add_cf_target(LH_QtSetupItem *si)
     setup_cf_target_->refreshList();
 }
 
-void LH_QtCFInstance::create_cf_setup_items()
-{
-    if(cf_setup_items_created_)
-        return;
-    cf_setup_items_created_ = true;
-
-
-    connect(setup_cf_source_, SIGNAL(changed()), this, SLOT(cf_source_changed()));
-    connect(setup_cf_source_, SIGNAL(set()), this, SLOT(cf_source_changed()));
-    connect(setup_cf_target_, SIGNAL(changed()), this, SLOT(cf_target_changed()));
-    connect(setup_cf_target_, SIGNAL(set()), this, SLOT(cf_target_changed()));
-    connect(setup_cf_test_, SIGNAL(changed()), this, SLOT(cf_condition_changed()));
-    connect(setup_cf_test_, SIGNAL(set()), this, SLOT(cf_condition_changed()));
-    connect(setup_cf_save_, SIGNAL(changed()), this, SLOT(cf_save_rule()));
-    connect(setup_cf_cancel_, SIGNAL(changed()), this, SLOT(cf_cancel_edit_rule()));
-    connect(setup_cf_XML_, SIGNAL(changed()), this, SLOT(cf_XML_changed()));
-    connect(setup_cf_rules_, SIGNAL(changed()), this, SLOT(cf_rules_changed()));
-    connect(setup_cf_delete_, SIGNAL(changed()), this, SLOT(cf_delete_rule()));
-    connect(setup_cf_new_, SIGNAL(changed()), this, SLOT(cf_new_rule()));
-
-    connect(setup_cf_copy_, SIGNAL(changed()), this, SLOT(cf_copy_rules()));
-    connect(setup_cf_paste_, SIGNAL(changed()), this, SLOT(cf_paste_rules()));
-    connect(setup_cf_move_up_, SIGNAL(changed()), this, SLOT(cf_move_rule_up()));
-    connect(setup_cf_move_down_, SIGNAL(changed()), this, SLOT(cf_move_rule_down()));
-
-    connect(setup_cf_state_, SIGNAL(changed()), this, SLOT(cf_state_value_updated()));
-    connect(setup_cf_state_, SIGNAL(set()), this, SLOT(cf_state_value_updated()));
-
-}
-
 void LH_QtCFInstance::cf_enabled_changed()
 {
-    if(!cf_setup_items_created_)
-        create_cf_setup_items();
-
     setup_cf_rules_->setFlag(LH_FLAG_HIDDEN, !setup_cf_enabled_->value());
 
     setup_cf_new_->setFlag(LH_FLAG_HIDDEN, !setup_cf_enabled_->value());

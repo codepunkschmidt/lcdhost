@@ -59,7 +59,7 @@ static inline uint PREMUL(uint x) {
     return x;
 }
 
-LH_Text::LH_Text() : LH_QtInstance()
+LH_Text::LH_Text() : LH_QtCFInstance()
 {
     richtext_ = false;
 
@@ -125,6 +125,12 @@ LH_Text::LH_Text() : LH_QtInstance()
     scrollposx_ = scrollposy_ = 0;
 
     setText("LCDHost");
+
+    add_cf_source(setup_text_);
+    add_cf_target(setup_pencolor_);
+    add_cf_target(setup_bgcolor_);
+    add_cf_target(setup_font_);
+
     return;
 }
 
@@ -512,7 +518,7 @@ int LH_Text::notify(int code,void* param)
         makeTextImage();
         requestRender();
     }
-    return LH_NOTE_DEVICE;
+    return LH_NOTE_DEVICE | LH_QtCFInstance::notify(code,param);;
 }
 
 /**

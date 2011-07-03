@@ -39,7 +39,7 @@
 #define LH_BAR_H
 
 #include "../LH_QtPlugin.h"
-#include "../LH_QtInstance.h"
+#include "../LH_QtCFInstance.h"
 #include "../LH_Qt_QColor.h"
 #include "../LH_Qt_QStringList.h"
 #include "../LH_Qt_QSlider.h"
@@ -47,7 +47,7 @@
 #include "../LH_Qt_bool.h"
 #include "../LH_Qt_int.h"
 
-class LH_Bar : public LH_QtInstance
+class LH_Bar : public LH_QtCFInstance
 {
     Q_OBJECT
 
@@ -57,6 +57,9 @@ class LH_Bar : public LH_QtInstance
     QImage bar_img_bg_;
     QImage bar_img_endMask_;
     QImage bar_img_emptyMask_;
+
+    void draw_bar( qreal value, int pos = 0, int total = 1 );
+    qreal boundedValue(qreal value);
 
 protected:
     LH_Qt_QStringList *setup_type_;
@@ -83,9 +86,26 @@ public:
     bool setMin( qreal r ); // return true if rendering needed
     bool setMax( qreal r ); // return true if rendering needed
 
-    void drawSingle( qreal value, int pos = 0, int total = 1 );
-    void drawList( qreal *values, int total ) { for( int i=0; i<total; ++i ) drawSingle( values[i], i, total ); }
-    void drawList( const QVector<qreal> &values ) { for( int i=0; i<values.size(); ++i ) drawSingle( values.at(i), i, values.size() ); }
+    void drawSingle( qreal value )
+    {
+        cf_source_notify("Value", QString::number(boundedValue(value)));
+        draw_bar(value);
+    }
+    void drawList( qreal *values, int total )
+    {
+        for( int i=0; i<total; ++i )
+            cf_source_notify("Value", QString::number(boundedValue(values[i])), i, total);
+        for( int i=0; i<total; ++i )
+            draw_bar( values[i], i, total );
+    }
+    void drawList( const QVector<qreal> &values )
+    {
+        for( int i=0; i<values.size(); ++i )
+            cf_source_notify("Value", QString::number(boundedValue(values.at(i))), i, values.size());
+        for( int i=0; i<values.size(); ++i )
+            draw_bar( values.at(i), i, values.size() );
+    }
+
 
 public slots:
     void changeType();

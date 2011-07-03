@@ -48,11 +48,7 @@ protected:
     void updateCountdown();
 public:
     LH_QuickAction();
-    const char *userInit(){
-        int hidden = 1;
-        callback(lh_cb_sethidden, (void*) &hidden);
-        return NULL;
-    }
+    const char *userInit(){ hide(); return NULL; }
 
 
     static lh_class *classInfo();

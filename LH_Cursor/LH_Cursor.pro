@@ -5,6 +5,7 @@ QT += network \
 DEFINES += LH_CURSOR_LIBRARY
 
 include(../Plugins.pri)
+include(../cf.pri)
 
 HEADERS += \
     LH_CursorController.h \

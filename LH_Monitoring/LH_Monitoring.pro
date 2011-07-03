@@ -4,6 +4,7 @@ DEFINES += LH_Monitoring_LIBRARY
 QT += xml
 
 include(../Plugins.pri)
+include(../cf.pri)
 
 HEADERS += \
     LH_QtPlugin_Monitoring.h \

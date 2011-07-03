@@ -1,10 +1,10 @@
 QT += xml
 
 SOURCES += \
-    ../LH_QtCFInstance.cpp \
-    ../cf_rule.cpp
+    $$PWD/LH_QtCFInstance.cpp \
+    $$PWD/cf_rule.cpp
 
 HEADERS += \
-    ../LH_QtCFInstance.h \
-    ../cf_sources_targets.h \
-    ../cf_rule.h
+    $$PWD/LH_QtCFInstance.h \
+    $$PWD/cf_sources_targets.h \
+    $$PWD/cf_rule.h

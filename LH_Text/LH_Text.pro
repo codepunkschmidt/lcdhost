@@ -1,9 +1,9 @@
 TARGET = LH_Text
 TEMPLATE = lib
-QT += xml
 DEFINES += LH_TEXT_LIBRARY
 
 include(../Plugins.pri)
+include(../CF.pri)
 
 SOURCES += \
     ../lh_plugin.c \
@@ -26,9 +26,7 @@ SOURCES += \
     LH_TextMemVirtualFree.cpp \
     LH_TextMemVirtualTotal.cpp \
     LH_TextMemVirtualUsed.cpp \
-    LH_TextStatic.cpp \
-    ../LH_QtCFInstance.cpp \
-    ../cf_rule.cpp
+    LH_TextStatic.cpp
 
 HEADERS += \
     ../lh_plugin.h \
@@ -39,12 +37,11 @@ HEADERS += \
     LH_QtPlugin_Text.h \
     LH_Text.h \
     LH_TextFile.h \
-    LH_TextNumber.h \
-    ../LH_QtCFInstance.h \
-    ../cf_sources_targets.h \
-    ../cf_rule.h
+    LH_TextNumber.h
+
 
 # RSS moved to WebKit
 # QT += network xml
 #    LH_TextRSS.cpp \
 #    LH_TextRSS.h \
+

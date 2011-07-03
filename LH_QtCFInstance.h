@@ -87,6 +87,8 @@ class LH_QtCFInstance : public LH_QtInstance
     cf_rule_edit_mode cf_rule_editing_;
     void cf_set_edit_controls_visibility(cf_rule_edit_mode editMode = Default);
 
+    bool watching_non_setup_item_;
+
 protected:
     LH_Qt_bool        *setup_cf_enabled_;
 
@@ -122,7 +124,7 @@ public:
     LH_Qt_QString     *setup_cf_newValue_String_;
     LH_Qt_QFileInfo   *setup_cf_newValue_File_;
 
-    LH_QtCFInstance( const char *name = 0, const lh_class *cls = 0, LH_QtPlugin *parent = 0 );
+    LH_QtCFInstance();
     int notify(int n,void* p);
 
     cf_source_list sources() { return sources_; }

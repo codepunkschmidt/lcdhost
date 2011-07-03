@@ -37,7 +37,7 @@
 #include "cf_rule.h"
 
 
-LH_QtCFInstance::LH_QtCFInstance( const char *name, const lh_class *cls, LH_QtPlugin *parent ) : LH_QtInstance(name,cls,parent)
+LH_QtCFInstance::LH_QtCFInstance() : LH_QtInstance()
 {
     cf_initialized_ = false;
     return;
@@ -67,7 +67,7 @@ int LH_QtCFInstance::notify(int n,void* p)
     Q_UNUSED(p);
     if( n&LH_NOTE_SECOND )
         cf_apply_rules();
-    return LH_NOTE_SECOND;
+    return (watching_non_setup_item_ && setup_cf_enabled_->value()? LH_NOTE_SECOND : 0) | LH_QtInstance::notify(n, p);
 }
 
 void LH_QtCFInstance::cf_initialize()
@@ -78,8 +78,11 @@ void LH_QtCFInstance::cf_initialize()
     {
         cf_initialized_ = true;
         cf_rule_editing_ = None;
+        watching_non_setup_item_ = false;
 
-        setup_cf_enabled_ = new LH_Qt_bool(this, "Conditional Formatting", false, LH_FLAG_LAST | LH_FLAG_AUTORENDER);
+        new LH_Qt_QString(this,tr("~Horizontal ruler"),"<hr>",LH_FLAG_LAST | LH_FLAG_NOSAVE,lh_type_string_html );
+        setup_cf_enabled_ = new LH_Qt_bool(this, "^Enable Conditional Formatting", false, LH_FLAG_LAST | LH_FLAG_AUTORENDER);
+        new LH_Qt_QString(this,tr("^comment"),"<span style='font-color:grey'>(Conditional Formatting is still experimental)</span>",LH_FLAG_LAST | LH_FLAG_NOSAVE,lh_type_string_html );
 
         setup_cf_copy_ = new LH_Qt_QString(this, "^Copy Conditions", "Copy",  LH_FLAG_NOSAVE | LH_FLAG_LAST | LH_FLAG_HIDDEN, lh_type_string_button);
         setup_cf_paste_ = new LH_Qt_QString(this, "^Paste Conditions", "Paste",  LH_FLAG_NOSAVE | LH_FLAG_LAST | LH_FLAG_HIDDEN, lh_type_string_button);
@@ -172,6 +175,9 @@ void LH_QtCFInstance::add_cf_source(QString name, LH_QtSetupItem* si)
     sources_.insert(new cf_source(this, name, si));
     setup_cf_source_->refreshList();
 
+    if(si==NULL)
+        watching_non_setup_item_ = true;
+    else
     if(si!=NULL && si!=setup_cf_state_)
     {
         connect(si, SIGNAL(changed()), this, SLOT(cf_apply_rules()));
@@ -211,6 +217,8 @@ void LH_QtCFInstance::cf_enabled_changed()
     //setup_cf_XML_->setFlag(LH_FLAG_HIDDEN, !setup_cf_enabled_->value());
 
     cf_set_edit_controls_visibility();
+
+    callback(lh_cb_notify, NULL);
 }
 
 void LH_QtCFInstance::cf_set_edit_controls_visibility(cf_rule_edit_mode editMode)
@@ -468,7 +476,7 @@ void LH_QtCFInstance::cf_source_notify(QString name, QString value, int index, i
 {
     sources_[name]->setValue(value, index);
     if(index==count-1)
-        cf_apply_rules(false);
+        cf_apply_rules(false);    
 }
 
 void LH_QtCFInstance::cf_save_rule()

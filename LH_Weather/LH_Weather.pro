@@ -5,7 +5,7 @@ QT += network \
 DEFINES += LH_WEATHER_LIBRARY
 
 include(../Plugins.pri)
-
+include(../cf.pri)
 
 exists(../TranslationAPIKey.h) {
     DEFINES += GOOGLETRANSLATOR

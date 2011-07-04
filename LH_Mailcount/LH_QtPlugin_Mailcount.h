@@ -14,6 +14,7 @@ class LH_QtPlugin_Mailcount : public LH_QtPlugin
     LH_Qt_QString *email_addr_;
     LH_Qt_int *email_days_;
     LH_Qt_int *check_interval_;
+    LH_Qt_int *manual_adjust_;
 
     QTime last_check_;
 
@@ -25,10 +26,8 @@ public:
     virtual int notify( int code, void *param );
     virtual void userTerm();
 
-    int getUnreadMailcount();
-
 public slots:
-    void checkInterval(int n);
+    void getUnreadMailcount();
 };
 
 #endif // LH_QTPLUGIN_MAILCOUNT_H

@@ -41,31 +41,24 @@ char __lcdhostplugin_xml[] =
 
 LH_QtPlugin_Mailcount::LH_QtPlugin_Mailcount()
 {
-    email_count_ = new LH_Qt_int(this,tr("Current count"),0,LH_FLAG_READONLY);
+    email_count_ = new LH_Qt_int(this,tr("Mail count"),0,LH_FLAG_READONLY|LH_FLAG_SOURCE);
+    email_count_->setHelp("This is the number of waiting e-mails, as reported by the "
+                          "operating system.");
     email_addr_ = new LH_Qt_QString(this,tr("Only check address"),QString());
-    new LH_Qt_QString(this,tr("~Horizontal ruler"),"<hr>",LH_FLAG_NOSAVE,lh_type_string_html );
-    email_days_ = new LH_Qt_int(this,tr("Days back to check"),7,LH_FLAG_SOURCE);
+    email_addr_->setHelp("If not blank, limits the search for waiting email to the "
+                         "given e-mail address. Leave it blank for normal use.");
+    email_days_ = new LH_Qt_int(this,tr("Days back to check"),7);
+    email_days_->setHelp("How far back to look for unread e-mails.");
     check_interval_ = new LH_Qt_int(this,tr("Check interval (seconds)"),2);
-    connect( check_interval_, SIGNAL(change(int)), this, SLOT(checkInterval(int)) );
+    check_interval_->setHelp("How often to look for new email, in seconds.");
+    manual_adjust_ = new LH_Qt_int(this,tr("Manual adjustment"),0);
+    manual_adjust_->setHelp("If the number of mails reported by the system is "
+                            "always wrong by a fixed amount, you may adjust for it here.");
+    connect( manual_adjust_, SIGNAL(changed()), this, SLOT(getUnreadMailcount()) );
 }
 
 LH_QtPlugin_Mailcount::~LH_QtPlugin_Mailcount()
 {
-}
-
-void LH_QtPlugin_Mailcount::checkInterval(int n)
-{
-    // Testing setup item links and plugin setup items
-    if( n == 1 )
-    {
-        email_addr_->setValue("Setting link");
-        check_interval_->setSource( "Days back to check" );
-    }
-    else
-    {
-        email_addr_->setValue("Reset link");
-        check_interval_->setSource( 0 );
-    }
 }
 
 const char *LH_QtPlugin_Mailcount::userInit()
@@ -108,9 +101,9 @@ void LH_QtPlugin_Mailcount::userTerm()
     return;
 }
 
-int LH_QtPlugin_Mailcount::getUnreadMailcount()
+void LH_QtPlugin_Mailcount::getUnreadMailcount()
 {
-    int total = 0;
+    int total = manual_adjust_->value();
 
 #ifdef Q_WS_WIN
     if( SHGetUnreadMailCountW )
@@ -141,5 +134,5 @@ int LH_QtPlugin_Mailcount::getUnreadMailcount()
 #endif
 
     email_count_->setValue(total);
-    return total;
+    return;
 }

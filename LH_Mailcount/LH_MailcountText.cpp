@@ -20,7 +20,7 @@ lh_class *LH_MailcountText::classInfo()
 
 LH_MailcountText::LH_MailcountText() : LH_Text()
 {
-    setup_text_->setName( "Unread Mail Count" );
+    setup_text_->setName( "Unread mail count" );
     setup_text_->setValue(" ");
     setup_text_->setFlag( LH_FLAG_READONLY, true );
     setup_text_->setFlag( LH_FLAG_NOSAVE, true );
@@ -35,7 +35,9 @@ LH_MailcountText::LH_MailcountText() : LH_Text()
 
 void LH_MailcountText::update()
 {
+    QString wanttext = " ";
     int count = email_count_->value();
-    if(setText(((count<hide_limit_->value())? " " : QString::number(count))))
-        this->requestRender();
+    if( count >= hide_limit_->value() ) wanttext = QString::number(count);
+    if( setText( wanttext ) )
+        requestRender();
 }

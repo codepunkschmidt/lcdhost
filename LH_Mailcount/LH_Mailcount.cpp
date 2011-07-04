@@ -35,21 +35,6 @@
 #include <stdlib.h>
 #include <QtGlobal>
 
-#ifdef Q_WS_WIN
-#include <windows.h>
-/* Make sure unread mail function is declared */
-typedef HRESULT (WINAPI *SHGetUnreadMailCountW_t)(
-    HKEY hKeyUser,
-    LPCTSTR pszMailAddress,
-    DWORD *pdwCount,
-    FILETIME *pFileTime,
-    LPCTSTR pszShellExecuteCommand,
-    int cchShellExecuteCommand
-);
-static HANDLE hShell32Dll = (HANDLE)0;
-static SHGetUnreadMailCountW_t SHGetUnreadMailCountW = NULL;
-#endif
-
 #include <QCoreApplication>
 #include <QtDebug>
 #include <QLabel>
@@ -83,12 +68,11 @@ lh_class *LH_Mailcount::classInfo()
 
 LH_Mailcount::LH_Mailcount() : LH_QtInstance()
 {
-    count_ = 0;
     envelope_count_ = -1;
 
-    email_addr_ = new LH_Qt_QString(this,tr("Only check address"),QString(),LH_FLAG_AUTORENDER);
-    email_days_ = new LH_Qt_int(this,tr("Days back to check"),7,LH_FLAG_AUTORENDER);
-    check_interval_ = new LH_Qt_int(this,tr("Check interval (seconds)"),2,LH_FLAG_AUTORENDER);
+    email_count_ = new LH_Qt_int(this,tr("Unread mail count"),0,LH_FLAG_READONLY|LH_FLAG_NOSAVE|LH_FLAG_NOSOURCE|LH_FLAG_AUTORENDER);
+    email_count_->setSource("Mail count");
+
     mail_image_ = new LH_Qt_QFileInfo(this,tr("Mail envelope image"),QFileInfo(),LH_FLAG_AUTORENDER);
     connect( mail_image_, SIGNAL(changed()), this, SLOT(makeEnvelope()) );
 
@@ -98,13 +82,6 @@ LH_Mailcount::LH_Mailcount() : LH_QtInstance()
     connect( smoothflash_, SIGNAL(changed()), this, SLOT(requestPolling()) );
 
     flash_on_ = true;
-}
-
-void LH_Mailcount::input(lh_setup_item *item, int flags, int value)
-{
-    Q_UNUSED(item);
-    Q_UNUSED(flags);
-    Q_UNUSED(value);
 }
 
 int LH_Mailcount::polling()
@@ -119,27 +96,13 @@ int LH_Mailcount::polling()
 
 int LH_Mailcount::notify(int n,void*p)
 {
-    Q_UNUSED(p);
-
     if( n & LH_NOTE_SECOND )
     {
-        int delta = last_check_.secsTo( QTime::currentTime() );
-        if( envelope_count_ == -1 ||
-            !last_check_.isValid() ||
-            delta < 0 ||
-            delta > check_interval_->value() )
-        {
-            last_check_ = QTime::currentTime();
-            count_ = getUnreadMailcount();
-        }
-
         flash_on_ = !flash_on_;
-
-        if( count_ != envelope_count_ || (flashing_->value() && envelope_count_) )
+        if( count() != envelope_count_ || (flashing_->value() && envelope_count_) )
             requestRender();
     }
-
-    return LH_NOTE_SECOND;
+    return LH_QtInstance::notify(n,p)|LH_NOTE_SECOND;
 }
 
 void LH_Mailcount::prerender()
@@ -151,7 +114,7 @@ int LH_Mailcount::width(int h)
     if( h < 0 ) return 48;
     if( !h ) return 0;
     if( h > 48 ) return 16;;
-    return count_ ? (h/2) * (count_+1) : h;
+    return count() ? (h/2) * (count()+1) : h;
 }
 
 int LH_Mailcount::height(int w)
@@ -174,9 +137,9 @@ void LH_Mailcount::makeEnvelope()
     envelope_ = *image_;
     envelope_.fill( QColor( Qt::transparent ).rgba() );
 
-    if( count_ < 1 )
+    if( count() < 1 )
     {
-        envelope_count_ = count_;
+        envelope_count_ = count();
         return;
     }
 
@@ -185,10 +148,10 @@ void LH_Mailcount::makeEnvelope()
     {
         // left to right
         span = (image_->width() / 2) - (stamp.width() / 2);
-        dx = span / count_;
+        dx = span / count();
         if( dx > stamp.width() / 2 ) dx = stamp.width() / 2;
         if( dx < 1 ) dx = 1;
-        x = span - ((dx*(count_-1))/2);
+        x = span - ((dx*(count()-1))/2);
         if( x < 0 ) x = 0;
         y = dy = 0;
     }
@@ -196,10 +159,10 @@ void LH_Mailcount::makeEnvelope()
     {
         // top to bottom
         span = (image_->height() / 2) - (stamp.height() / 2);
-        dy = span / count_;
+        dy = span / count();
         if( dy > stamp.height() / 2 ) dy = stamp.height() / 2;
         if( dy < 1 ) dy = 1;
-        y = span - ((dy*(count_-1))/2);
+        y = span - ((dy*(count()-1))/2);
         if( y < 0 ) y = 0;
         x = dx = 0;
     }
@@ -207,13 +170,13 @@ void LH_Mailcount::makeEnvelope()
     QPainter painter;
     if( painter.begin(&envelope_) )
     {
-        for( int i=0; i<count_; i++ )
+        for( int i=0; i<count(); i++ )
         {
             painter.drawImage( x, y, stamp );
             x += dx;
             y += dy;
         }
-        envelope_count_ = count_;
+        envelope_count_ = count();
         painter.end();
     }
 
@@ -245,13 +208,13 @@ QImage *LH_Mailcount::render_qimage( int w, int h )
 
     if( image_ == NULL ) return image_;
 
-    if( count_ != envelope_count_ )
+    if( count() != envelope_count_ )
     {
         makeEnvelope();
     }
 
     image_->fill( qRgba(0,0,0,0) );
-    if( !count_ ) return image_;
+    if( !count() ) return image_;
 
     if( !flashing_->value() )
     {
@@ -289,39 +252,4 @@ QImage *LH_Mailcount::render_qimage( int w, int h )
     }
 
     return image_;
-}
-
-int LH_Mailcount::getUnreadMailcount()
-{
-    int total = 0;
-
-#ifdef Q_WS_WIN
-    if( SHGetUnreadMailCountW )
-    {
-        HRESULT retv;
-        SYSTEMTIME st;
-        FILETIME ft;
-        ULARGE_INTEGER mailtime;
-        DWORD dwMail = 0;
-
-        /* Get unread mail count */
-        GetLocalTime( &st );
-        SystemTimeToFileTime( &st, &ft );
-        Q_ASSERT( sizeof(mailtime) == sizeof(ft) );
-        memcpy( &mailtime, &ft, sizeof(mailtime) );
-        mailtime.QuadPart -= (ULONGLONG)email_days_->value()*24*60*60*10000000; /* subtract wanted number of days */
-        memcpy( &ft, &mailtime, sizeof(mailtime) );
-        if( !email_addr_->value().isEmpty() )
-        {
-            retv = SHGetUnreadMailCountW( NULL, (LPCTSTR)(void*)email_addr_->value().utf16(), &dwMail, &ft, NULL, 0 );
-        }
-        else
-            retv = SHGetUnreadMailCountW( NULL, NULL, &dwMail, &ft, NULL, 0 );
-        if( retv != S_OK ) dwMail = 0;
-
-        total += dwMail;
-    }
-#endif
-
-    return total;
 }

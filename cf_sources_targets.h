@@ -45,7 +45,10 @@ public:
         if(mode=="" || mode=="Value")
         {
             gotData = true;
-            if(values_.contains(i)) return values_[i]; else return "";
+            if(values_.contains(i))
+                return values_[i];
+            else
+                return QString("~err//##RAGE/%1").arg(values_.count()) ;
         } else
         if(mode=="Changed")
         {

@@ -84,6 +84,7 @@ bool cf_rule_condition::evaluate(cf_source_list sources, bool *ok)
     }
 
     if(ok!=NULL) *ok = false;
+
     if(test_=="Equals") {
         if(ok!=NULL) *ok = true;
         return (allNumeric? sourceValF == value1F : sourceVal == values_[0]);
@@ -355,10 +356,13 @@ QDomNode cf_rule_action_property::toXmlNode(QDomDocument doc)
 cf_rule::cf_rule( QDomNode ruleNode, QObject *parent ) : QObject(parent)
 {
     QDomNode conditionsNode = ruleNode.firstChildElement("conditions");
+    Q_ASSERT(conditionsNode.childNodes().length()>0);
     for(uint i=0; i<conditionsNode.childNodes().length(); i++)
         conditions.append(new cf_rule_condition(conditionsNode.childNodes().at(i), this));
+    Q_ASSERT(conditions.length()>0);
 
     QDomNode actionsNode = ruleNode.firstChildElement("actions");
+    Q_ASSERT(actionsNode.childNodes().length()>0);
     for(uint i=0; i<actionsNode.childNodes().length(); i++)
     {
         QDomNode actNode = actionsNode.childNodes().at(i);
@@ -367,6 +371,7 @@ cf_rule::cf_rule( QDomNode ruleNode, QObject *parent ) : QObject(parent)
         else
             qWarning() << QString("Unknown Action: \"%1").arg(actNode.toElement().attribute("type"));
     }
+    Q_ASSERT(actions.length()>0);
 }
 
 cf_rule::cf_rule( LH_QtCFInstance *sender, QObject *parent ) : QObject(parent)

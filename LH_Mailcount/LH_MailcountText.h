@@ -12,25 +12,11 @@
 class LH_MailcountText: public LH_Text
 {
     Q_OBJECT
-    LH_Qt_QString *email_addr_;
-    LH_Qt_int *email_days_;
-    LH_Qt_int *check_interval_;
-    LH_Qt_bool *hide_zero_;
-
-    int count_;
-    int envelope_count_;
-    QImage envelope_;
-    QTime last_check_;
+    LH_Qt_int *email_count_;
+    LH_Qt_int *hide_limit_;
 
 public:
     LH_MailcountText();
-
-    void input(lh_setup_item *, int, int);
-
-    int notify(int n,void*p);
-
-    int getUnreadMailcount();
-
     static lh_class *classInfo();
 
 public slots:

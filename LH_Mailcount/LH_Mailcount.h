@@ -49,24 +49,19 @@ class LH_Mailcount : public LH_QtInstance
 {
     Q_OBJECT
 
-    LH_Qt_QString *email_addr_;
-    LH_Qt_int *email_days_;
-    LH_Qt_int *check_interval_;
+    LH_Qt_int *email_count_;
     LH_Qt_QFileInfo *mail_image_;
     LH_Qt_bool *flashing_;
     LH_Qt_bool *smoothflash_;
 
-    int count_;
     int envelope_count_;
     QImage envelope_;
-    QTime last_check_;
     bool flash_on_;
 
 public:
     LH_Mailcount();
 
-    void input(lh_setup_item *, int, int);
-
+    int count() const { return email_count_->value(); }
     int polling();
     int notify(int n,void*p);
     void prerender();
@@ -74,8 +69,6 @@ public:
     int height(int w=-1);
     QImage *render_qimage( int w, int h );
     lh_blob *render_blob(int,int) { return NULL; }
-
-    int getUnreadMailcount();
 
     static lh_class *classInfo();
 

@@ -265,11 +265,11 @@ typedef enum lh_setup_type_t
 #define LH_FLAG_FIRST       0x0010 /* Used with LH_QtSetupItem's - Same as calling setOrder(-1) */
 #define LH_FLAG_LAST        0x0020 /* Used with LH_QtSetupItem's - Same as calling setOrder(1) */
 #define LH_FLAG_NOSAVE      0x0040 /* Setup item won't be saved to or loaded from layout */
-#define LH_FLAG_SOURCE      0x0080 /* Setup item is a data source */
+#define LH_FLAG_BLANKTITLE  0x0080 /* Setup item title is not shown in GUI (blank space is shown) */
 #define LH_FLAG_NOSOURCE    0x0100 /* Setup item must not be used as a data source */
 #define LH_FLAG_NOSINK      0x0200 /* Setup item must not be used as a data sink */
-#define LH_FLAG_HIDETITLE   0x0400 /* Setup item title is not shown in UI */
-#define LH_FLAG_HIDEVALUE   0x0800 /* Setup item value is not shown in UI */
+#define LH_FLAG_HIDETITLE   0x0400 /* Setup item title is not shown in GUI (all space to value) */
+#define LH_FLAG_HIDEVALUE   0x0800 /* Setup item value is not shown in GUI (all space to title) */
 
 typedef union lh_setup_param_t
 {
@@ -294,19 +294,33 @@ typedef union lh_setup_data_t
 
 /**
  Setup items are the main information link between LCDHost and it's plugins.
+
  Start a setup item name with '^' to not display the name, leaving the name column blank.
+ Obsoleted. Use LH_FLAG_BLANKTITLE.
+
  Start a setup item name with '~' to extend the setup item into the name column.
+ Obsoleted. Use LH_FLAG_HIDETITLE.
 
  You can have LCDHost automatically update a setup item with data from another item.
- The 'source' member, if not NULL, specifies a setup item by name. Note that at this
- time, there's no handling for being more specific; if there's more than one item with
- the given name, they'll all send their data.
+ The 'link' member, if not NULL, specifies how data linking is handled. The first
+ character specifies if it's a data source or a data sink. The rest is a path
+ specification separated with slashes. If the first character is an at sign '@'
+ then it's a source, with the path defining it's position in the data source tree.
+ If the first character is an equal sign '=', then it's a sink, and the path
+ specifies which source it wants.
+
+ Examples:
+    link = "@/system/Mail count"; // ok, data source providing a mail count
+    link = "=/system/Mail count"; // ok, data sink reading the above source
+    link = "/system/cpu/count"; // error, missing command character
+    link = "=system/cpu/count"; // error, missing initial path slash
+
 */
 typedef struct lh_setup_item_t
 {
     const char *name; /* name to identify this item uniquely, and display to the user (start with ~ to hide from display */
     const char *help; /* short HTML help text shows as tooltip, may be NULL */
-    const char *source; /* data link source, see comment above, may be NULL */
+    const char *link; /* data link, see comment above, may be NULL */
     lh_setup_type type; /* type of data, see enum above */
     int flags; /* LH_FLAG_xxx */
     lh_setup_param param;

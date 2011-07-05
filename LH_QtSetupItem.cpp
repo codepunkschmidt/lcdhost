@@ -89,25 +89,25 @@ void LH_QtSetupItem::setOrder( int n )
     order_ = n;
 }
 
-void LH_QtSetupItem::setSource(QString s)
+void LH_QtSetupItem::setLink(QString s)
 {
     if( s.isEmpty() )
     {
-        source_array_.clear();
-        item_.source = 0;
+        link_array_.clear();
+        item_.link = 0;
     }
     else
     {
-        source_array_ = s.toUtf8();
-        item_.source = source_array_.constData();
+        link_array_ = s.toUtf8();
+        item_.link = link_array_.constData();
     }
-    parent()->callback(lh_cb_setup_refresh, item() );
+    parent()->callback( lh_cb_setup_refresh, item() );
     return;
 }
 
-QString LH_QtSetupItem::source()
+QString LH_QtSetupItem::link()
 {
-    if( item_.source ) return QString::fromUtf8( item_.source );
+    if( item_.link ) return QString::fromUtf8( item_.link );
     return QString();
 }
 

@@ -46,7 +46,7 @@ class LH_QtSetupItem : public QObject
 {
     Q_OBJECT
     QByteArray name_array_;
-    QByteArray source_array_;
+    QByteArray link_array_;
     int order_;
     QByteArray help_;
 
@@ -73,8 +73,8 @@ public:
     QString name() const { return objectName(); }
     void setHelp(QString s);
     QString help();
-    void setSource(QString s);
-    QString source();
+    void setLink(QString s);
+    QString link();
 
     lh_setup_item *item() { return &item_; }
 

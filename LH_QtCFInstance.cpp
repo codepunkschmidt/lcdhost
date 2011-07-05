@@ -343,13 +343,14 @@ void LH_QtCFInstance::cf_delete_rule()
     doc.setContent(setup_cf_XML_->value());
 
     QDomNodeList rules = doc.firstChild().childNodes();
-    Q_ASSERT(setup_cf_rules_->value() < (int)rules.length());
-    QDomNode n = rules.at(setup_cf_rules_->value());
-    doc.firstChild().removeChild(n);
-
-    setup_cf_XML_->setValue(doc.toString());
-    cf_XML_changed();
-    cf_rules_changed();
+    if( setup_cf_rules_->value() >= 0 && setup_cf_rules_->value() < (int)rules.length() )
+    {
+        QDomNode n = rules.at(setup_cf_rules_->value());
+        doc.firstChild().removeChild(n);
+        setup_cf_XML_->setValue(doc.toString());
+        cf_XML_changed();
+        cf_rules_changed();
+    }
 }
 
 void LH_QtCFInstance::cf_new_rule()

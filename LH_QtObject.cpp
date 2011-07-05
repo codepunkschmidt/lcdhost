@@ -32,6 +32,7 @@
   POSSIBILITY OF SUCH DAMAGE.
   */
 
+#include <QDebug>
 #include "LH_QtObject.h"
 #include "LH_QtSetupItem.h"
 
@@ -43,15 +44,51 @@ static int compareSetupItems( const LH_QtSetupItem *a, const LH_QtSetupItem *b )
 }
 
 #define RECAST(obj) reinterpret_cast<LH_QtObject*>(obj)
-static const char *obj_init( void *obj, lh_callback_t cb, int cb_id, const char *name, const lh_systemstate *state) { return RECAST(obj)->init(cb,cb_id,name,state); }
-static lh_setup_item **obj_setup_data( void *obj ) { return RECAST(obj)->setup_data(); }
-static void obj_setup_resize( void *obj, lh_setup_item *item, size_t needed ) { RECAST(obj)->setup_resize(item,needed); }
-static void obj_setup_change( void *obj, lh_setup_item *item ) { return RECAST(obj)->setup_change(item); }
-static void obj_setup_input( void *obj, lh_setup_item *item, int flags, int value ) { return RECAST(obj)->setup_input(item,flags,value); }
-static int obj_polling( void *obj ) { return RECAST(obj)->polling(); }
-static int obj_notify( void *obj, int code, void *param ) { return RECAST(obj)->notify(code,param); }
-static const lh_class ** obj_class_list( void *obj ) { return RECAST(obj)->class_list(); }
-static void obj_term( void *obj ) { RECAST(obj)->term(); }
+
+static const char *obj_init( void *obj, lh_callback_t cb, int cb_id, const char *name, const lh_systemstate *state)
+{
+    return RECAST(obj)->init(cb,cb_id,name,state);
+}
+
+static lh_setup_item **obj_setup_data( void *obj )
+{
+    return RECAST(obj)->setup_data();
+}
+
+static void obj_setup_resize( void *obj, lh_setup_item *item, size_t needed )
+{
+    RECAST(obj)->setup_resize(item,needed);
+}
+
+static void obj_setup_change( void *obj, lh_setup_item *item )
+{
+    RECAST(obj)->setup_change(item);
+}
+
+static void obj_setup_input( void *obj, lh_setup_item *item, int flags, int value )
+{
+    RECAST(obj)->setup_input(item,flags,value);
+}
+
+static int obj_polling( void *obj )
+{
+    return RECAST(obj)->polling();
+}
+
+static int obj_notify( void *obj, int code, void *param )
+{
+    return RECAST(obj)->notify(code,param);
+}
+
+static const lh_class ** obj_class_list( void *obj )
+{
+    return RECAST(obj)->class_list();
+}
+
+static void obj_term( void *obj )
+{
+    RECAST(obj)->term();
+}
 
 void LH_QtObject::build_object_calltable( lh_object_calltable *ct )
 {

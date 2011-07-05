@@ -39,8 +39,10 @@
 class LH_BarMemPhysical : public LH_Bar
 {
 public:
-    const char *init()
+    const char *userInit()
     {
+        if( !state()->mem_data.tot_phys )
+            qWarning() << "LH_BarMemPhysical: no data available";
         setMin(0.0);
         setMax(1000.0);
         return 0;
@@ -76,7 +78,9 @@ public:
         if( state()->mem_data.tot_phys )
         {
             qreal used_mem = ( state()->mem_data.tot_phys - state()->mem_data.free_phys );
-            drawSingle( used_mem * 1000.0 / (qreal) (state()->mem_data.tot_phys) );
+            used_mem *= 1000.0;
+            used_mem /= (qreal) state()->mem_data.tot_phys;
+            drawSingle( used_mem );
         }
         return image_;
     }

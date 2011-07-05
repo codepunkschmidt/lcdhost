@@ -41,7 +41,7 @@
 class LH_BarMemVirtual : public LH_Bar
 {
 public:
-    const char *init()
+    const char *userInit()
     {
         setMin(0.0);
         setMax(1000.0);

@@ -61,18 +61,7 @@ lh_class *LH_DataViewerConnector::classInfo()
 
 LH_DataViewerConnector::LH_DataViewerConnector()
 {
-    // Hide inherited attributes we don't use
-    setup_text_->setFlags( LH_FLAG_HIDDEN | LH_FLAG_READONLY | LH_FLAG_NOSAVE);
-    setText(" ");
-    setup_horizontal_->setFlag( LH_FLAG_HIDDEN, true );
-    setup_vertical_->setFlag( LH_FLAG_HIDDEN, true );
-    setup_scrollrate_->setFlag( LH_FLAG_HIDDEN, true );
-    setup_scrollstep_->setFlag( LH_FLAG_HIDDEN, true );
-    setup_bgcolor_->setFlag( LH_FLAG_HIDDEN, true );
-
-    setup_font_->setFlag( LH_FLAG_HIDDEN, true );
-    setup_fontresize_->setFlag( LH_FLAG_HIDDEN, true );
-    setup_pencolor_->setFlag( LH_FLAG_HIDDEN, true );
+    setup_feedback_ = new LH_Qt_QString(this, "Feedback", "", LH_FLAG_READONLY | LH_FLAG_NOSAVE);
 
     QStringList langs = listLanguages();
     qDebug() << "languages: " << langs.count() << ": " << langs.join(",");
@@ -147,29 +136,6 @@ int LH_DataViewerConnector::polling()
         sourceFileUpdated("");
         return 0;
     }
-}
-
-QImage *LH_DataViewerConnector::render_qimage( int w, int h )
-{
-    if( !prepareForRender(w,h) ) return NULL;
-
-    QPainter painter;
-    if( painter.begin(image_) )
-    {
-        QRectF target;
-
-        target.setSize( textimage().size() );
-        target.moveLeft( image_->width()/2 - textimage().width()/2 );
-        target.moveTop( image_->height()/2 - textimage().height()/2 );
-
-        if( textimage().width() > image_->width() )
-            target.moveLeft( 0 );
-
-        painter.drawImage( target, textimage(), textimage().rect() );
-        painter.end();
-    }
-
-    return image_;
 }
 
 void LH_DataViewerConnector::populateValues(dataNode* node, QStringList sourceLines)
@@ -277,13 +243,11 @@ void LH_DataViewerConnector::sourceFileChanged()
     if( !setup_data_file_->value().isFile() )
     {
         watchPath_ = "";
-        if(setText("No such source file.")) requestRender();;
-        setup_text_->setFlag(LH_FLAG_HIDDEN,false);
+        setup_feedback_->setValue("No such source file.");
     }
     else
     {
-        if(setText("Connected to Data")) requestRender();;
-        setup_text_->setFlag(LH_FLAG_HIDDEN,true);
+        setup_feedback_->setValue("Connected to Data");
         watchPath_ = setup_data_file_->value().absoluteFilePath();
         //qDebug() << "watching source file: " << watchPath_;
         sourceWatcher_->addPath(watchPath_);
@@ -296,14 +260,12 @@ void LH_DataViewerConnector::mapFileChanged()
     setup_map_file_->value().refresh();
     if( !setup_map_file_->value().isFile() )
     {
-        if(setText("No such map file.")) requestRender();;
-        setup_text_->setFlag(LH_FLAG_HIDDEN,false);
+        setup_feedback_->setValue("No such map file.");
         return;
     }
     else
     {
-        if(setText("Connected to Data")) requestRender();;
-        setup_text_->setFlag(LH_FLAG_HIDDEN,true);
+        setup_feedback_->setValue("Connected to Data");
         QFile file( setup_map_file_->value().filePath() );
 
         if( file.open( QIODevice::ReadOnly) )
@@ -460,8 +422,7 @@ void LH_DataViewerConnector::mapFileChanged()
             }
             languageFileChanged();
         } else {
-            if(setText("Unable to open file.")) requestRender();;
-            setup_text_->setFlag(LH_FLAG_HIDDEN,false);
+            setup_feedback_->setValue("Unable to open file.");
             return;
         }
     }
@@ -474,8 +435,7 @@ void LH_DataViewerConnector::sourceFileUpdated(const QString &path)
 
     if( watchPath_ != "" )
     {
-        if(setText("Connected to Data")) requestRender();;
-        setup_text_->setFlag(LH_FLAG_HIDDEN,true);
+        setup_feedback_->setValue("Connected to Data");
 
         QFile file( watchPath_ );
         QString fileContent = "";
@@ -535,8 +495,7 @@ void LH_DataViewerConnector::sourceFileUpdated(const QString &path)
             break;
         default:
             {
-                if(setText("Data file type not yet supported")) requestRender();
-                setup_text_->setFlag(LH_FLAG_HIDDEN,false);
+                setup_feedback_->setValue("Data file type not yet supported");
             }
         }
     }

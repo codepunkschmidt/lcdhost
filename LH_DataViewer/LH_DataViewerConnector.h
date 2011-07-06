@@ -52,7 +52,7 @@ struct thresholdList
     QList<thresholdItem> levels;
 };
 
-class LH_DataViewerConnector : public LH_Text
+class LH_DataViewerConnector : public LH_QtInstance
 {
     Q_OBJECT
     QFileSystemWatcher *sourceWatcher_;
@@ -84,6 +84,7 @@ class LH_DataViewerConnector : public LH_Text
     dataNode* findNode(QString address, QHash<QString,int> indexes);
 
 protected:
+    LH_Qt_QString *setup_feedback_;
     LH_Qt_QFileInfo *setup_map_file_;
     LH_Qt_QFileInfo *setup_data_file_;
     LH_Qt_QTextEdit *setup_usage_;
@@ -93,9 +94,9 @@ protected:
 public:
     LH_DataViewerConnector();
     ~LH_DataViewerConnector();
+    const char *userInit(){ hide(); return NULL; }
 
     int polling();
-    QImage *render_qimage( int w, int h );
 
     static lh_class *classInfo();
 

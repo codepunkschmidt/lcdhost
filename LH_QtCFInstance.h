@@ -93,6 +93,7 @@ protected:
     LH_Qt_bool        *setup_cf_enabled_;
 
     LH_Qt_QString     *setup_cf_state_;
+    LH_Qt_bool        *setup_cf_visibility_;
 
     LH_Qt_QTextEdit   *setup_cf_XML_;
     LH_Qt_QStringList *setup_cf_rules_;
@@ -123,6 +124,7 @@ public:
     LH_Qt_QFont       *setup_cf_newValue_Font_;
     LH_Qt_QString     *setup_cf_newValue_String_;
     LH_Qt_QFileInfo   *setup_cf_newValue_File_;
+    LH_Qt_bool        *setup_cf_newValue_Bool_;
 
     LH_QtCFInstance();
     int notify(int n,void* p);
@@ -142,6 +144,7 @@ protected slots:
     void cf_delete_rule();
     void cf_new_rule();
     void cf_state_value_updated();
+    void cf_update_visibility();
     void cf_apply_rules(bool allowRender = true);
 
     void cf_copy_rules();

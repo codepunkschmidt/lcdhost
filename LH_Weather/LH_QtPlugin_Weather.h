@@ -110,8 +110,8 @@ protected:
     //LH_Qt_InputState *setup_browser_;
     //LH_Qt_QString *setup_current_url_;
 
-    LH_Qt_QStringList *setup_languages_;
-    LH_Qt_QString *setup_language_;
+    //LH_Qt_QStringList *setup_languages_;
+    //LH_Qt_QString *setup_language_;
 
     GoogleTranslator translator;
 public:

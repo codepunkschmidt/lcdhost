@@ -43,7 +43,7 @@ lh_class *LH_FrapsImage::classInfo()
 
 LH_FrapsImage::LH_FrapsImage()
 {
-    data_ = new LH_FrapsData(this);
+    data_ = new LH_FrapsData(this, mdmAll);
     connect_changeType( static_cast<LH_FrapsData*>(data_)->setup_value_type_ );
 }
 

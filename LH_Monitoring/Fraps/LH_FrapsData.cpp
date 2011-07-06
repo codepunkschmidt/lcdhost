@@ -1,4 +1,5 @@
 #include "LH_FrapsData.h"
+#include <QDebug>
 
 LH_FrapsData::LH_FrapsData(LH_QtObject *parent, monitoringDataMode dataMode) : LH_MonitoringData( parent )
 {
@@ -19,9 +20,6 @@ LH_FrapsData::LH_FrapsData(LH_QtObject *parent, monitoringDataMode dataMode) : L
         setup_value_type_->setValue(0);
         setup_value_type_->setFlag(LH_FLAG_HIDDEN, true);
     }
-
-    setup_FPS_ = new LH_Qt_QString(parent, "Value", "?%", LH_FLAG_READONLY);
-    setup_FPS_->setOrder(-3);
 
     parent->connect(setup_value_type_, SIGNAL(changed()), parent, SLOT(changeTypeSelection()) );
     parent->connect(setup_value_type_index_, SIGNAL(changed()), parent, SLOT(setTypeSelection()) );
@@ -46,18 +44,18 @@ bool LH_FrapsData::getData(float& value, QString& text, QString& units)
     float resultVal = false;
 
     if (!frapsDLL) {
-        setup_FPS_->setValue("Not running");
+        //setup_FPS_->setValue("Not running");
         pingFraps();
         resultVal = false;
     } else {
         FrapsSharedData = (FRAPS_SHARED_DATA *(WINAPI *)()) GetProcAddress(frapsDLL, "FrapsSharedData");
         if (!FrapsSharedData){
-            setup_FPS_->setValue("Needs Fraps 1.9C or later!");
+            //setup_FPS_->setValue("Needs Fraps 1.9C or later!");
             resultVal = false;
         } else {
             if(setup_value_type_->value() == -1)
             {
-                setup_FPS_->setValue("No option selected");
+                //setup_FPS_->setValue("No option selected");
                 resultVal = false;
             } else {
                 fsd = FrapsSharedData();
@@ -73,7 +71,7 @@ bool LH_FrapsData::getData(float& value, QString& text, QString& units)
                     value =  fsd->totalFrames;
                 if(setup_value_type_->list().at(setup_value_type_->value()) == "Time of Last Frame")
                     value =  fsd->timeOfLastFrame;
-                setup_FPS_->setValue((text==""? QString::number(value) : text)  + units);
+                //setup_FPS_->setValue((text==""? QString::number(value) : text)  + units);
                 resultVal = true;
             }
         }
@@ -124,12 +122,14 @@ monitoringDataType LH_FrapsData::getType()
 
 void LH_FrapsData::setTypeSelection()
 {
+    qDebug()<<"fraps type selected";
     if (setup_value_type_->list().length()!=0)
         setup_value_type_->setValue(setup_value_type_index_->value());
 }
 
 void LH_FrapsData::changeTypeSelection()
 {
+    qDebug()<<"fraps type changed";
     if (setup_value_type_->list().length()!=0)
         setup_value_type_index_->setValue(setup_value_type_->value());
 }

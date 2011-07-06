@@ -43,6 +43,6 @@ lh_class *LH_AfterburnerImage::classInfo()
 
 LH_AfterburnerImage::LH_AfterburnerImage()
 {
-    data_ = new LH_AfterburnerData(this);
+    data_ = new LH_AfterburnerData(this, mdmAll);
     connect_changeType( static_cast<LH_AfterburnerData*>(data_)->setup_value_type_ );
 }

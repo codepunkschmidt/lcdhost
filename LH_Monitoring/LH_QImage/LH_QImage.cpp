@@ -26,7 +26,7 @@
 #include <QDebug>
 #include "logo_blob.c"
 
-LH_PLUGIN_CLASS(LH_QImage)
+//LH_PLUGIN_CLASS(LH_QImage)
 
 /*lh_class *LH_QImage::classInfo()
 {

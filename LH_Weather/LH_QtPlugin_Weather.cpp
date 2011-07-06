@@ -84,12 +84,12 @@ LH_QtPlugin_Weather::LH_QtPlugin_Weather() : translator("Weather", this)
 
     lastrefresh_ = QDateTime::currentDateTime();
 
-    setup_languages_ = new LH_Qt_QStringList(this, "Language", QStringList(), LH_FLAG_NOSAVE);
-    setup_languages_->setHelp("<p>Yahoo's Weather API doesn't have multilingual support; the translation is instead done using Google Translate.</p>"
-                              "<p>Bad translations can be corrected by editing the translation cache located in the LCDHost directory.</p>");
-    setup_language_ = new LH_Qt_QString(this, "^Language Code", "en", LH_FLAG_HIDDEN);
-    connect(setup_languages_, SIGNAL(changed()), this, SLOT(selectLanguage()));
-    connect(setup_language_, SIGNAL(changed()), this, SLOT(setLanguage()));
+    //setup_languages_ = new LH_Qt_QStringList(this, "Language", QStringList(), LH_FLAG_NOSAVE);
+    //setup_languages_->setHelp("<p>Yahoo's Weather API doesn't have multilingual support; the translation is instead done using Google Translate.</p>"
+    //                          "<p>Bad translations can be corrected by editing the translation cache located in the LCDHost directory.</p>");
+    //setup_language_ = new LH_Qt_QString(this, "^Language Code", "en", LH_FLAG_HIDDEN);
+    //connect(setup_languages_, SIGNAL(changed()), this, SLOT(selectLanguage()));
+    //connect(setup_language_, SIGNAL(changed()), this, SLOT(setLanguage()));
 
     setup_location_name_ = new LH_Qt_QString(this,"Location",QString("London UK"));
     setup_location_name_->setHelp("The location whose weather you want to display");
@@ -674,24 +674,24 @@ void LH_QtPlugin_Weather::requestTranslation()
 
 void LH_QtPlugin_Weather::updateLanguagesList()
 {
-    setup_languages_->list().clear();
-    foreach(QString name, translator.languages.names())
-        setup_languages_->list().append(name);
-    setup_languages_->refreshList();
-    setup_languages_->setValue(translator.languages.codes().indexOf(setup_language_->value()));
+    //setup_languages_->list().clear();
+    //foreach(QString name, translator.languages.names())
+    //    setup_languages_->list().append(name);
+    //setup_languages_->refreshList();
+    //setup_languages_->setValue(translator.languages.codes().indexOf(setup_language_->value()));
 }
 
 void LH_QtPlugin_Weather::selectLanguage()
 {
-    QString code = translator.languages.getCode(setup_languages_->valueText());
-    setup_language_->setValue(code);
-    translator.setTargetLanguage(code);
-    fetch2Day();
+    //QString code = translator.languages.getCode(setup_languages_->valueText());
+    //setup_language_->setValue(code);
+    //translator.setTargetLanguage(code);
+    //fetch2Day();
 }
 
 void LH_QtPlugin_Weather::setLanguage()
 {
-    translator.setTargetLanguage(setup_language_->value());
-    setup_languages_->setValue(translator.languages.codes().indexOf(setup_language_->value()));
-    updateLanguagesList();
+    //translator.setTargetLanguage(setup_language_->value());
+    //setup_languages_->setValue(translator.languages.codes().indexOf(setup_language_->value()));
+    //updateLanguagesList();
 }

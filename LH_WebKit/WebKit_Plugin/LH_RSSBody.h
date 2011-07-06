@@ -17,6 +17,8 @@ protected:
 public:
     LH_RSSBody();
 
+    const char *userInit() { setRssItem(); return 0; }
+
     int notify(int code,void* param);
 
     static lh_class *classInfo();

@@ -217,7 +217,6 @@ void LH_QtCFInstance::add_cf_target(LH_QtSetupItem *si)
 
 void LH_QtCFInstance::cf_enabled_changed()
 {
-
     setup_cf_rules_->setFlag(LH_FLAG_HIDDEN, !setup_cf_enabled_->value());
 
     setup_cf_new_->setFlag(LH_FLAG_HIDDEN, !setup_cf_enabled_->value());

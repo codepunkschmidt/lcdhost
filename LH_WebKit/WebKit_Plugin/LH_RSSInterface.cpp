@@ -45,7 +45,6 @@ LH_RSSInterface::~LH_RSSInterface()
     releaseRSS();
 }
 
-
 QString LH_RSSInterface::getDefaultURL()
 {
     if( rssFeeds )

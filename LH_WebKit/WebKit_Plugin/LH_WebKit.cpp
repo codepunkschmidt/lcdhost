@@ -76,11 +76,8 @@ LH_WebKit::LH_WebKit(const bool enableParsing)
                              "<br>e.g. &lt;img src=\"file:///\\layout_path/Wallpaper.png\"&gt;"
                              );
     connect( setup_template_, SIGNAL(changed()), this, SLOT(reparse()) );
-
     parseThread = new LH_ParseThread(this);
-
     connect( parseThread, SIGNAL(finished()), this, SLOT(doneParsing()));
-
     return;
 }
 
@@ -93,6 +90,16 @@ LH_WebKit::~LH_WebKit()
         sock_ = NULL;
     }
 }
+
+const char *LH_WebKit::userInit()
+{
+    return 0;
+}
+
+void LH_WebKit::userTerm()
+{
+}
+
 
 void LH_WebKit::zoomChanged(int)
 {

@@ -74,7 +74,6 @@ public:
     int connections();
     bool release(QObject* intrfce);
 
-
     LH_RSSFeed(QString feedUrl, int refreshTime = 5, int delayTime = 5);
     int notify(int code,void* param);
 

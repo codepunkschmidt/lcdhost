@@ -100,6 +100,9 @@ public:
     LH_WebKit( const bool enableParsing = false);
     ~LH_WebKit();
 
+    const char *userInit();
+    void userTerm();
+
     int notify(int, void *);
     QImage *render_qimage(int w, int h);
 

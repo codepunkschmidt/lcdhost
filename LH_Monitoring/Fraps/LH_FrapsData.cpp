@@ -110,15 +110,10 @@ void LH_FrapsData::pingFraps()
 
 monitoringDataType LH_FrapsData::getType()
 {
-    if(setup_value_type_->list().at(setup_value_type_->value()) == "Current FPS")
-        return mdtInt;
-    if(setup_value_type_->list().at(setup_value_type_->value()) == "Game Name")
-        return mdtText;
-    if(setup_value_type_->list().at(setup_value_type_->value()) == "Total Frames")
-        return mdtInt;
-    if(setup_value_type_->list().at(setup_value_type_->value()) == "Time of Last Frame")
-        return mdtText; //?
-
+    if( setup_value_type_->valueText() == "Current FPS" ) return mdtInt;
+    if( setup_value_type_->valueText() == "Game Name" ) return mdtText;
+    if( setup_value_type_->valueText() == "Total Frames" ) return mdtInt;
+    if( setup_value_type_->valueText() == "Time of Last Frame" ) return mdtText; //?
     return mdtInt;
 }
 

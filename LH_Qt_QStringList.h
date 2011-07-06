@@ -77,14 +77,8 @@ public:
 
     QString valueText() const
     {
-        int i = item_.data.i;
-        if( i < -1 )
-            return "";
-        else
-            if( i >= list_.size() )
-                return "";
-            else
-                return list_.at(i);
+        if( value() < 0 || value() >= list_.size() ) return QString();
+        return list_.at( value() );
     }
 
     virtual void setup_change()

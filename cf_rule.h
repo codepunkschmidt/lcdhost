@@ -83,9 +83,11 @@ class cf_rule_action_property: public cf_rule_action
 
     bool setTargetValue(LH_QtCFInstance* sender, cf_target_list targets_, bool setPlaceholder = false);
 
-    QString getRelativePath( QString absolutePath, QString relativeTo, bool bIsFile /*= false*/ )
+    QString getRelativeFilePath(QFileInfo file, QString relativeTo)
     {
-        QStringList absoluteDirectories = absolutePath.split( '/', QString::SkipEmptyParts );
+        if(!file.isFile())
+            return "";
+        QStringList absoluteDirectories = file.absoluteFilePath().split( '/', QString::SkipEmptyParts );
         QStringList relativeDirectories = relativeTo.split( '/', QString::SkipEmptyParts );
 
         //Get the shortest of the two paths
@@ -110,7 +112,7 @@ class cf_rule_action_property: public cf_rule_action
         QString relativePath;
 
         //Add on the ..
-        for (index = lastCommonRoot + 1; index < relativeDirectories.count() - (bIsFile?1:0); index++)
+        for (index = lastCommonRoot + 1; index < relativeDirectories.count() - (true?1:0); index++)
         if (relativeDirectories[index].length() > 0)
         relativePath.append("../");
 

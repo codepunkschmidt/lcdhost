@@ -253,8 +253,11 @@ cf_rule_action_property::cf_rule_action_property(LH_QtCFInstance *sender, QObjec
     case lh_type_string:
         value_ = sender->setup_cf_newValue_String_->value();
         break;
+    case lh_type_integer_boolean:
+        value_ = (sender->setup_cf_newValue_Bool_->value()?"true":"false");
+        break;
     case lh_type_string_filename:
-        value_ = getRelativePath(sender->setup_cf_newValue_File_->value().absoluteFilePath(), sender->state()->dir_layout, true);
+        value_ = getRelativeFilePath(sender->setup_cf_newValue_File_->value(), sender->state()->dir_layout);
         break;
     default:
         qWarning() << "Unable to acquire value for target: unrecognised type (" << sender->targets()[target_]->type() << ")";
@@ -285,6 +288,7 @@ bool cf_rule_action_property::setTargetValue(LH_QtCFInstance* sender, cf_target_
 {
     QFont font;
     QColor color;
+    bool b;
     QFileInfo file;
     LH_QtSetupItem* target = targets[target_];
     switch(target->type())
@@ -315,6 +319,16 @@ bool cf_rule_action_property::setTargetValue(LH_QtCFInstance* sender, cf_target_
         if(((LH_Qt_QString*)target)->value() != value_ )
         {
             ((LH_Qt_QString*)target)->setValue(value_);
+            if(!setPlaceholder) return true;
+        }
+        break;
+    case lh_type_integer_boolean:
+        if(setPlaceholder)
+            target = sender->setup_cf_newValue_Bool_;
+        b = (value_=="true");
+        if(((LH_Qt_bool*)target)->value() != b )
+        {
+            ((LH_Qt_bool*)target)->setValue(b);
             if(!setPlaceholder) return true;
         }
         break;

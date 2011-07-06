@@ -1,9 +1,9 @@
 TARGET = LH_Bar
 TEMPLATE = lib
-QT += xml
 DEFINES += LH_BAR_LIBRARY
 
 include(../Plugins.pri)
+include(../CF.pri)
 
 SOURCES += \
     ../LH_QtPlugin.cpp \
@@ -19,9 +19,7 @@ SOURCES += \
     LH_BarMemPhysical.cpp \
     LH_BarMemVirtual.cpp \
     LH_BarCPUAverage.cpp \
-    LH_BarCPUHistogram.cpp \
-    ../LH_QtCFInstance.cpp \
-    ../cf_rule.cpp
+    LH_BarCPUHistogram.cpp
 
 HEADERS += \
     ../LH_QtPlugin.h \
@@ -31,7 +29,4 @@ HEADERS += \
     ../LH_QtCPU.h \
     ../LH_QtNetwork.h \
     LH_QtPlugin_Bar.h \
-    LH_Bar.h \
-    ../LH_QtCFInstance.h \
-    ../cf_sources_targets.h \
-    ../cf_rule.h
+    LH_Bar.h

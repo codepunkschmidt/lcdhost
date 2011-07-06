@@ -159,7 +159,20 @@ public:
     void addNeedle(QString name);
     int needleCount();
     void clearNeedles();
-    void setNeedles(QStringList names) {clearNeedles(); for(int i=0; i<names.length(); i++) addNeedle(names[i]);}
+    void setNeedles(QStringList names) {
+        bool matchingList = names.length() == setup_needle_selection_->list().length();
+        if(matchingList)
+            for(int i = 0; i<setup_needle_selection_->list().length(); i++)
+            {
+                matchingList = matchingList && (names[i]==setup_needle_selection_->list().at(i));
+                if(!matchingList) break;
+            }
+        if(!matchingList)
+        {
+            clearNeedles();
+            for(int i=0; i<names.length(); i++) addNeedle(names[i]);
+        }
+    }
 
     void drawDial();
 

@@ -1,5 +1,5 @@
 /**
-  \file     LH_RivaTunerImage.cpp
+  \file     LH_QImage.cpp
   \author   Andy Bridges <triscopic@codeleap.co.uk>
   \legalese Copyright (c) 2010 Andy Bridges
     Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -22,37 +22,51 @@
 
   */
 
-#include <QtGlobal>
+#include "LH_QImage.h"
 #include <QDebug>
-#include <QImage>
-#include <QPainter>
-#include <QStringList>
-#include <QString>
-#include <QRegExp>
-#include <QHash>
+#include "logo_blob.c"
 
-#include "LH_RivaTunerImage.h"
-#include "../LH_Qt_QStringList.h"
+LH_PLUGIN_CLASS(LH_QImage)
 
-LH_PLUGIN_CLASS(LH_RivaTunerImage)
-
-lh_class *LH_RivaTunerImage::classInfo()
+/*lh_class *LH_QImage::classInfo()
 {
-    static lh_class classinfo =
+    static lh_class classInfo =
     {
         sizeof(lh_class),
-        "3rdParty/Monitoring/RivaTuner",
-        "RivaTunerStatusImage",
-        "RivaTuner Status Image",
-        -1, -1,
+        "Static",
+        "StaticImage2",
+        "Static Image 2",
+        48,48,
+        lh_object_calltable_NULL,
         lh_instance_calltable_NULL
     };
+    return &classInfo;
+}*/
 
-    return &classinfo;
-}
-
-LH_RivaTunerImage::LH_RivaTunerImage()
+LH_QImage::LH_QImage() : LH_QtCFInstance()
 {
-    data_ = new LH_RivaTunerData(this, mdmAll);
-    connect_changeType( static_cast<LH_RivaTunerData*>(data_)->setup_value_type_ );
+    setup_image_file_ = new LH_Qt_QFileInfo( this, tr("Image"), QFileInfo(), LH_FLAG_AUTORENDER );
+    setup_show_placeholder_ = new LH_Qt_bool( this, "^Show placholder image when empty", true, LH_FLAG_AUTORENDER );
 }
+
+QImage *LH_QImage::render_qimage(int w, int h)
+{
+    delete image_;
+    if( setup_image_file_->value().isFile())
+    {
+        image_ = new QImage();
+        image_->load(setup_image_file_->value().absoluteFilePath());
+    }
+    else
+    {
+        if(setup_show_placeholder_->value())
+        {
+            image_ = new QImage();
+            image_->loadFromData(_logo_blob_d.data, _logo_blob_d.len);
+        }
+        else
+            image_ = new QImage(w,h,QImage::Format_Invalid);
+    }
+    return image_;
+}
+

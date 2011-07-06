@@ -46,7 +46,7 @@ lh_class *LH_LogitechImage::classInfo()
 
 LH_LogitechImage::LH_LogitechImage()
 {
-    data_ = new LH_LogitechData(this);
+    data_ = new LH_LogitechData(this, mdmAll);
     connect_changeType( static_cast<LH_LogitechData*>(data_)->setup_value_type_ );
 }
 

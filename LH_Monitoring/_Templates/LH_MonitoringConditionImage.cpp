@@ -44,6 +44,9 @@ LH_MonitoringConditionImage::LH_MonitoringConditionImage( )
     emptyImg_ = QImage(1,1,QImage::Format_ARGB32);
     emptyImg_.setPixel(0,0,qRgba(0,0,0,0));
 
+    LH_Qt_QString* hr = new LH_Qt_QString(this,tr("~Mon-Data-Rule"),"<hr>", LH_FLAG_NOSAVE,lh_type_string_html );
+    hr->setOrder(-5);
+
     setup_available_contitions_ = new LH_Qt_QStringList(this,"Condition",QStringList());
     setup_available_contitions_->setHelp( "<p>To define an image to display for a certain value, first select the desired value from this list (the list only contains values seen recently, if you know the value and wish to add it manually, tick the advanced editing box).</p>"
                                           "<p>Once you have selected an item you can customize the image associated with this value via the &quot;image&quot; field.</p>"
@@ -69,6 +72,9 @@ LH_MonitoringConditionImage::LH_MonitoringConditionImage( )
     setup_text_ = new LH_Qt_QString( this, tr("~"), QString(), LH_FLAG_READONLY|LH_FLAG_NOSAVE|LH_FLAG_HIDDEN|LH_FLAG_AUTORENDER );
     setup_text_->setOrder(-1);
     conditionsListBusy_ = "";
+
+    LH_Qt_QString* hr2 =new LH_Qt_QString(this,tr("~Mon-Props-Rule"),"<hr>", LH_FLAG_NOSAVE,lh_type_string_html );
+    hr2->setOrder(-1);
 }
 
 

@@ -43,7 +43,7 @@ lh_class *LH_SpeedFanImage::classInfo()
 
 LH_SpeedFanImage::LH_SpeedFanImage()
 {
-    data_ = new LH_SpeedFanData(this);
+    data_ = new LH_SpeedFanData(this, mdmAll);
     connect_changeType( static_cast<LH_SpeedFanData*>(data_)->setup_value_type_ );
     connect_updateImage( static_cast<LH_SpeedFanData*>(data_)->setup_value_index_ );
 }

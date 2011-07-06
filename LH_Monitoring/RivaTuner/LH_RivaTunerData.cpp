@@ -105,7 +105,7 @@ bool LH_RivaTunerData::getData(float& value, QString& text, QString& units, int 
         if (RTHMHeader) {
             if (RTHMHeader->dwSignature == 0xDEAD)
             {
-                qDebug() << "LH_RivaTuner: Shared memory has been terminated; try again later.";
+                //qDebug() << "LH_RivaTuner: Shared memory has been terminated; try again later.";
                 resultVal = false;
             }
             else

@@ -1,5 +1,5 @@
 /**
-  \file     LH_RivaTunerImage.cpp
+  \file     LH_QImage.cpp
   \author   Andy Bridges <triscopic@codeleap.co.uk>
   \legalese Copyright (c) 2010 Andy Bridges
     Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -22,37 +22,27 @@
 
   */
 
-#include <QtGlobal>
-#include <QDebug>
-#include <QImage>
-#include <QPainter>
-#include <QStringList>
-#include <QString>
-#include <QRegExp>
-#include <QHash>
+#ifndef LH_QIMAGE_H
+#define LH_QIMAGE_H
 
-#include "LH_RivaTunerImage.h"
-#include "../LH_Qt_QStringList.h"
+#include "../LH_QtCFInstance.h"
+#include "../LH_Qt_QFileInfo.h"
+#include "../LH_Qt_bool.h"
 
-LH_PLUGIN_CLASS(LH_RivaTunerImage)
-
-lh_class *LH_RivaTunerImage::classInfo()
+class LH_QImage: public LH_QtCFInstance
 {
-    static lh_class classinfo =
-    {
-        sizeof(lh_class),
-        "3rdParty/Monitoring/RivaTuner",
-        "RivaTunerStatusImage",
-        "RivaTuner Status Image",
-        -1, -1,
-        lh_instance_calltable_NULL
-    };
+    Q_OBJECT
 
-    return &classinfo;
-}
+protected:
+    LH_Qt_QFileInfo *setup_image_file_;
+    LH_Qt_bool *setup_show_placeholder_;
 
-LH_RivaTunerImage::LH_RivaTunerImage()
-{
-    data_ = new LH_RivaTunerData(this, mdmAll);
-    connect_changeType( static_cast<LH_RivaTunerData*>(data_)->setup_value_type_ );
-}
+public:    
+    LH_QImage();
+
+    QImage *render_qimage( int w, int h );
+
+    //static lh_class *classInfo();
+};
+
+#endif // LH_QIMAGE_H

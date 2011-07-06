@@ -43,7 +43,7 @@ lh_class *LH_ATITrayToolsImage::classInfo()
 
 LH_ATITrayToolsImage::LH_ATITrayToolsImage()
 {
-    data_ = new LH_ATITrayToolsData(this);
+    data_ = new LH_ATITrayToolsData(this, mdmAll);
     connect_changeType( static_cast<LH_ATITrayToolsData*>(data_)->setup_value_type_ );
 }
 

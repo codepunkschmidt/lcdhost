@@ -15,7 +15,6 @@ HEADERS += \
     _Templates/LH_MonitoringImage.h \
     _Templates/LH_MonitoringGraph.h \
     _Templates/LH_MonitoringData.h \
-    _Templates/LH_MonitoringConditionImage.h \
     ../LH_QtPlugin.h \
     ../LH_QtSetupItem.h \
     ../LH_QtObject.h \
@@ -40,7 +39,6 @@ HEADERS += \
     Fraps/LH_FrapsText.h \
     Fraps/LH_FrapsImage.h \
     Fraps/LH_FrapsData.h \
-    Fraps/LH_FrapsConditionImage.h \
     GPUZ/LH_GPUZText.h \
     GPUZ/LH_GPUZImage.h \
     GPUZ/LH_GPUZGraph.h \
@@ -78,9 +76,9 @@ HEADERS += \
     Logitech/LH_LogitechText.h \
     Logitech/LH_LogitechData.h \
     Logitech/LH_LogitechImage.h \
-    Logitech/LH_LogitechConditionImage.h \
     Logitech/LH_LogitechBar.h \
-    Logitech/LH_LogitechDial.h
+    Logitech/LH_LogitechDial.h \
+    LH_QImage/LH_QImage.h
 
 SOURCES += \
     LH_QtPlugin_Monitoring.cpp \
@@ -91,7 +89,6 @@ SOURCES += \
     _Templates/LH_MonitoringImage.cpp \
     _Templates/LH_MonitoringGraph.cpp \
     _Templates/LH_MonitoringData.cpp \
-    _Templates/LH_MonitoringConditionImage.cpp \
     ../LH_QtPlugin.cpp \
     ../LH_QtSetupItem.cpp \
     ../LH_QtObject.cpp \
@@ -116,7 +113,6 @@ SOURCES += \
     Fraps/LH_FrapsText.cpp \
     Fraps/LH_FrapsImage.cpp \
     Fraps/LH_FrapsData.cpp \
-    Fraps/LH_FrapsConditionImage.cpp \
     GPUZ/LH_GPUZText.cpp \
     GPUZ/LH_GPUZImage.cpp \
     GPUZ/LH_GPUZGraph.cpp \
@@ -153,6 +149,7 @@ SOURCES += \
     Logitech/LH_LogitechText.cpp \
     Logitech/LH_LogitechData.cpp \
     Logitech/LH_LogitechImage.cpp \
-    Logitech/LH_LogitechConditionImage.cpp \
     Logitech/LH_LogitechBar.cpp \
-    Logitech/LH_LogitechDial.cpp
+    Logitech/LH_LogitechDial.cpp \
+    LH_QImage/LH_QImage.cpp \
+    LH_QImage/logo_blob.c

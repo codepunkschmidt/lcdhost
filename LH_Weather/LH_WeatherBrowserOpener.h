@@ -41,6 +41,8 @@ public:
     LH_WeatherBrowserOpener();
     ~LH_WeatherBrowserOpener();
 
+    const char *userInit(){ hide(); return NULL; }
+
     //QImage *render_qimage( int w, int h );
 
     static lh_class *classInfo();

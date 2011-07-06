@@ -60,16 +60,16 @@ bool LH_FrapsData::getData(float& value, QString& text, QString& units)
             } else {
                 fsd = FrapsSharedData();
                 text = "";
-                if(setup_value_type_->list().at(setup_value_type_->value()) == "Current FPS")
+                if(setup_value_type_->valueText() == "Current FPS")
                 {
                     value = fsd->currentFPS;
                     units = "FPS";
                 }
-                if(setup_value_type_->list().at(setup_value_type_->value()) == "Game Name")
+                if(setup_value_type_->valueText() == "Game Name")
                     text =  QString(fsd->gameName);
-                if(setup_value_type_->list().at(setup_value_type_->value()) == "Total Frames")
+                if(setup_value_type_->valueText() == "Total Frames")
                     value =  fsd->totalFrames;
-                if(setup_value_type_->list().at(setup_value_type_->value()) == "Time of Last Frame")
+                if(setup_value_type_->valueText() == "Time of Last Frame")
                     value =  fsd->timeOfLastFrame;
                 //setup_FPS_->setValue((text==""? QString::number(value) : text)  + units);
                 resultVal = true;
@@ -108,15 +108,10 @@ void LH_FrapsData::pingFraps()
 
 monitoringDataType LH_FrapsData::getType()
 {
-    if(setup_value_type_->list().at(setup_value_type_->value()) == "Current FPS")
-        return mdtInt;
-    if(setup_value_type_->list().at(setup_value_type_->value()) == "Game Name")
-        return mdtText;
-    if(setup_value_type_->list().at(setup_value_type_->value()) == "Total Frames")
-        return mdtInt;
-    if(setup_value_type_->list().at(setup_value_type_->value()) == "Time of Last Frame")
-        return mdtText; //?
-
+    if( setup_value_type_->valueText() == "Current FPS" ) return mdtInt;
+    if( setup_value_type_->valueText() == "Game Name" ) return mdtText;
+    if( setup_value_type_->valueText() == "Total Frames" ) return mdtInt;
+    if( setup_value_type_->valueText() == "Time of Last Frame" ) return mdtText; //?
     return mdtInt;
 }
 

@@ -91,7 +91,7 @@ void LH_QtCFInstance::cf_initialize()
         setup_cf_copy_ = new LH_Qt_QString(this, "^Copy Conditions", "Copy",  LH_FLAG_UI | LH_FLAG_LAST | LH_FLAG_HIDDEN, lh_type_string_button);
         setup_cf_paste_ = new LH_Qt_QString(this, "^Paste Conditions", "Paste",  LH_FLAG_UI | LH_FLAG_NOSOURCE | LH_FLAG_NOSINK | LH_FLAG_LAST | LH_FLAG_HIDDEN, lh_type_string_button);
 
-        setup_cf_rules_ = new LH_Qt_QStringList(this, "Conditions", QStringList(), LH_FLAG_UI | LH_FLAG_LAST | LH_FLAG_HIDDEN, lh_type_integer_listbox);
+        setup_cf_rules_ = new LH_Qt_QStringList(this, "Conditions", QStringList(), LH_FLAG_UI | LH_FLAG_LAST | LH_FLAG_HIDDEN | LH_FLAG_HIDETITLE, lh_type_integer_listbox);
 
         setup_cf_move_up_= new LH_Qt_QString(this, "^Move Condition Up", "Move Up",  LH_FLAG_UI | LH_FLAG_LAST | LH_FLAG_HIDDEN | LH_FLAG_READONLY, lh_type_string_button);
         setup_cf_move_down_= new LH_Qt_QString(this, "^Move Condition Down", "Move Down",  LH_FLAG_UI | LH_FLAG_LAST | LH_FLAG_HIDDEN | LH_FLAG_READONLY, lh_type_string_button);
@@ -124,7 +124,7 @@ void LH_QtCFInstance::cf_initialize()
         setup_cf_save_   = new LH_Qt_QString(this, "^Save Condition", "Save", LH_FLAG_UI | LH_FLAG_LAST | LH_FLAG_HIDDEN, lh_type_string_button);
         setup_cf_cancel_ = new LH_Qt_QString(this, "^Cancel Condition Edit", "Cancel", LH_FLAG_UI | LH_FLAG_LAST | LH_FLAG_HIDDEN, lh_type_string_button);
 
-        setup_cf_XML_ = new LH_Qt_QTextEdit(this, "Conditions XML", "<rules/>", LH_FLAG_LAST | LH_FLAG_HIDEVALUE);
+        setup_cf_XML_ = new LH_Qt_QTextEdit(this, "Conditions XML", "<rules/>", LH_FLAG_LAST | LH_FLAG_HIDDEN);
 
         connect(setup_cf_enabled_, SIGNAL(changed()), this, SLOT(cf_enabled_changed()));
         connect(setup_cf_source_, SIGNAL(changed()), this, SLOT(cf_source_changed()));
@@ -283,18 +283,6 @@ void LH_QtCFInstance::cf_cancel_edit_rule()
     cf_set_edit_controls_visibility(None);
 }
 
-/*
-QDomElement LH_QtCFInstance::createNode(QDomDocument doc, QString tagName, QString nodeValue, QString attributeName, QString attributeValue)
-{
-    QDomElement e = doc.createElement(tagName);
-    if(attributeName!="")
-        e.setAttribute(attributeName, attributeValue);
-    if(nodeValue!="")
-        e.appendChild(doc.createTextNode(nodeValue));
-    return e;
-}
-*/
-
 void LH_QtCFInstance::cf_XML_changed()
 {
     QDomDocument doc("");
@@ -339,6 +327,9 @@ void LH_QtCFInstance::cf_rules_changed()
 
 void LH_QtCFInstance::cf_delete_rule()
 {
+    if(setup_cf_rules_->value()==-1)
+        return;
+
     QDomDocument doc("");
     doc.setContent(setup_cf_XML_->value());
 
@@ -494,34 +485,6 @@ void LH_QtCFInstance::cf_save_rule()
     QDomDocument doc("");
     doc.setContent(setup_cf_XML_->value());
 
-    /*QDomElement ruleNode = createNode(doc, "rule");
-    QDomElement condsNode = createNode(doc, "conditions");
-    { // Condition Node
-        QDomElement condNode = createNode(doc, "condition", "", "test", setup_cf_test_->valueText());
-        QDomElement srcNode = createNode(doc, "source", setup_cf_source_->valueText());
-        if(!setup_cf_source_mode_->hasFlag(LH_FLAG_HIDDEN))
-            srcNode.setAttribute("mode",setup_cf_source_mode_->valueText());
-        condNode.appendChild(srcNode);
-
-        condNode.appendChild(createNode(doc, "value", setup_cf_testValue1_->value(), "id", "1"));
-        if(!setup_cf_testValue2_->hasFlag(LH_FLAG_HIDDEN))
-            condNode.appendChild(createNode(doc, "value", setup_cf_testValue2_->value(), "id", "2"));
-
-        condsNode.appendChild(condNode);
-    }
-    ruleNode.appendChild(condsNode);
-
-
-    QDomElement actsNode = createNode(doc, "actions");
-    { // Action Node
-        QDomElement actNode = createNode(doc, "action", "", "type", "property");
-        actNode.appendChild(createNode(doc, "target", setup_cf_target_->valueText()));
-        actNode.appendChild(createNode(doc, "value", getTargetValue(setup_cf_target_->value())));
-        actsNode.appendChild(actNode);
-    }
-    ruleNode.appendChild(actsNode);
-    */
-
     QDomNode ruleNode = cf_rule(this).toXmlNode(doc);
 
     if(setup_cf_rules_->value()==-1)
@@ -532,21 +495,3 @@ void LH_QtCFInstance::cf_save_rule()
     setup_cf_XML_->setValue(doc.toString());
     cf_XML_changed();
 }
-
-/*QString LH_QtCFInstance::getTargetValue(int targetId)
-{
-    Q_ASSERT(false);
-    switch(targets_[targetId]->type())
-    {
-    case lh_type_integer_color:
-        return QString::number(setup_cf_newValue_Color_->value().rgba(), 16).toUpper();
-    case lh_type_string_font:
-        return setup_cf_newValue_Font_->value().toString();
-    case lh_type_string:
-        return setup_cf_newValue_String_->value();
-    case lh_type_string_filename:
-        return setup_cf_newValue_File_->value().filePath();
-    default:
-        return "";
-    }
-}*/

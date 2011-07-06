@@ -83,6 +83,45 @@ class cf_rule_action_property: public cf_rule_action
 
     bool setTargetValue(LH_QtCFInstance* sender, cf_target_list targets_, bool setPlaceholder = false);
 
+    QString getRelativePath( QString absolutePath, QString relativeTo, bool bIsFile /*= false*/ )
+    {
+        QStringList absoluteDirectories = absolutePath.split( '/', QString::SkipEmptyParts );
+        QStringList relativeDirectories = relativeTo.split( '/', QString::SkipEmptyParts );
+
+        //Get the shortest of the two paths
+        int length = relativeDirectories.count() < absoluteDirectories.count() ? relativeDirectories.count() : absoluteDirectories.count();
+
+        //Use to determine where in the loop we exited
+        int lastCommonRoot = -1;
+        int index;
+
+        //Find common root
+        for (index = 0; index < length; index++)
+        if (relativeDirectories[index] == absoluteDirectories[index])
+        lastCommonRoot = index;
+        else
+        break;
+
+        //If we didn't find a common prefix then throw
+        if (lastCommonRoot == -1)
+        throw QString("Paths do not have a common base");
+
+        //Build up the relative path
+        QString relativePath;
+
+        //Add on the ..
+        for (index = lastCommonRoot + 1; index < relativeDirectories.count() - (bIsFile?1:0); index++)
+        if (relativeDirectories[index].length() > 0)
+        relativePath.append("../");
+
+        //Add on the folders
+        for (index = lastCommonRoot + 1; index < absoluteDirectories.count() - 1; index++)
+        relativePath.append( absoluteDirectories[index] ).append( "/" );
+        relativePath.append(absoluteDirectories[absoluteDirectories.count() - 1]);
+
+        return relativePath;
+    }
+
 public:
     cf_rule_action_property(QDomNode actNode, QObject* parent = 0);
     cf_rule_action_property(LH_QtCFInstance *sender, QObject* parent = 0);

@@ -58,6 +58,7 @@ QString cf_rule_condition::description()
 
 bool cf_rule_condition::evaluate(cf_source_list sources, bool *ok)
 {
+    bool verboseTesting = false;
     if(source_=="")
         return false;
 
@@ -96,7 +97,7 @@ bool cf_rule_condition::evaluate(cf_source_list sources, bool *ok)
     if(test_=="Less than") {
         if(ok!=NULL) *ok = true;
         if(!allNumeric)
-            qDebug()<<"Test requires numerical values: " << test_;
+            {if(verboseTesting) qDebug()<<"Test requires numerical values: " << test_;}
         else
             return (sourceValF < value1F);
         return false;
@@ -104,7 +105,7 @@ bool cf_rule_condition::evaluate(cf_source_list sources, bool *ok)
     if(test_=="Less than or equal") {
         if(ok!=NULL) *ok = true;
         if(!allNumeric)
-            qDebug()<<"Test requires numerical values: " << test_;
+            {if(verboseTesting) qDebug()<<"Test requires numerical values: " << test_;}
         else
             return (sourceValF <= value1F);
         return false;
@@ -112,7 +113,7 @@ bool cf_rule_condition::evaluate(cf_source_list sources, bool *ok)
     if(test_=="Greater than") {
         if(ok!=NULL) *ok = true;
         if(!allNumeric)
-            qDebug()<<"Test requires numerical values: " << test_;
+            {if(verboseTesting) qDebug()<<"Test requires numerical values: " << test_;}
         else
             return (sourceValF > value1F);
         return false;
@@ -120,7 +121,7 @@ bool cf_rule_condition::evaluate(cf_source_list sources, bool *ok)
     if(test_=="Greater than or equal") {
         if(ok!=NULL) *ok = true;
         if(!allNumeric)
-            qDebug()<<"Test requires numerical values: " << test_;
+            {if(verboseTesting) qDebug()<<"Test requires numerical values: " << test_;}
         else
             return (sourceValF >= value1F);
         return false;
@@ -134,7 +135,7 @@ bool cf_rule_condition::evaluate(cf_source_list sources, bool *ok)
                 value2F = values(1).toFloat(&allNumeric);
         }
         if(!allNumeric)
-            qDebug()<<"Test requires numerical values: " << test_;
+            {if(verboseTesting) qDebug()<<"Test requires numerical values: " << test_;}
         else
             return (sourceValF >= value1F) && (sourceValF <= value2F);
         return false;
@@ -148,7 +149,7 @@ bool cf_rule_condition::evaluate(cf_source_list sources, bool *ok)
                 value2F = values(1).toFloat(&allNumeric);
         }
         if(!allNumeric)
-            qDebug()<<"Test requires numerical values: " << test_;
+            {if(verboseTesting) qDebug()<<"Test requires numerical values: " << test_;}
         else
             return !((sourceValF >= value1F) && (sourceValF <= value2F));
         return false;
@@ -253,7 +254,7 @@ cf_rule_action_property::cf_rule_action_property(LH_QtCFInstance *sender, QObjec
         value_ = sender->setup_cf_newValue_String_->value();
         break;
     case lh_type_string_filename:
-        value_ = sender->setup_cf_newValue_File_->value().filePath();
+        value_ = getRelativePath(sender->setup_cf_newValue_File_->value().absoluteFilePath(), sender->state()->dir_layout, true);
         break;
     default:
         qWarning() << "Unable to acquire value for target: unrecognised type (" << sender->targets()[target_]->type() << ")";

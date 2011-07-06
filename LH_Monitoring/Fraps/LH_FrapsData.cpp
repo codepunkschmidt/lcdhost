@@ -117,14 +117,12 @@ monitoringDataType LH_FrapsData::getType()
 
 void LH_FrapsData::setTypeSelection()
 {
-    qDebug()<<"fraps type selected";
     if (setup_value_type_->list().length()!=0)
         setup_value_type_->setValue(setup_value_type_index_->value());
 }
 
 void LH_FrapsData::changeTypeSelection()
 {
-    qDebug()<<"fraps type changed";
     if (setup_value_type_->list().length()!=0)
         setup_value_type_index_->setValue(setup_value_type_->value());
 }

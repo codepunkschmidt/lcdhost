@@ -50,7 +50,7 @@ public:
             else
                 return QString("~err//##RAGE/%1").arg(values_.count()) ;
         } else
-        if(mode=="Changed")
+        if(mode=="Time Since Last Change (seconds)")
         {
             gotData = true;
             qreal diff = changed_.msecsTo( QDateTime::currentDateTime() ) / 1000.0;
@@ -162,7 +162,7 @@ public:
         {
             modesList.append("Value");
         }
-        modesList.append("Changed");
+        modesList.append("Time Since Last Change (seconds)");
 
         return modesList;
     }

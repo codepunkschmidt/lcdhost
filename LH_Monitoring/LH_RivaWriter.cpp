@@ -8,10 +8,15 @@ LH_PLUGIN_CLASS(LH_RivaWriter)
 
 LH_RivaWriter::LH_RivaWriter()
 {
-    setText("Afterburner >> RivaTuner");
-    setup_text_->setFlags(LH_FLAG_HIDDEN);
     createRivaMemory(0, 0xDEAD);
 }
+
+const char *LH_RivaWriter::userInit()
+{
+    hide();
+    return LH_QtInstance::userInit();
+}
+
 
 LH_RivaWriter::~LH_RivaWriter()
 {

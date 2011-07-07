@@ -63,7 +63,6 @@ LH_WeatherText::LH_WeatherText()
     //setup_text_->setName( "Text" );
     setup_text_->setFlag( LH_FLAG_READONLY, true );
     setup_text_->setFlag( LH_FLAG_NOSAVE, true );
-    setText("...");
 
     valueTypes = QStringList();
     valueTypes.append("Location: City");
@@ -120,6 +119,16 @@ LH_WeatherText::LH_WeatherText()
     connect( setup_post_text_, SIGNAL(changed()), this, SLOT(updateText()) );
 
     return;
+}
+
+const char *LH_WeatherText::userInit()
+{
+    const char *retv = LH_Text::userInit();
+    if( !retv )
+    {
+        setText("...");
+    }
+    return retv;
 }
 
 int LH_WeatherText::notify(int n,void* p)

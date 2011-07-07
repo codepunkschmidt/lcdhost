@@ -88,8 +88,17 @@ LH_NowPlayingText::LH_NowPlayingText()
     setup_text_->setFlag( LH_FLAG_READONLY, true );
     setup_text_->setFlag( LH_FLAG_HIDDEN, true );
     setup_text_->setFlag( LH_FLAG_NOSAVE, true );
-    setText( "  " );
     return;
+}
+
+const char *LH_NowPlayingText::userInit()
+{
+    const char *retv = LH_Text::userInit();
+    if( !retv )
+    {
+        setText("  ");
+    }
+    return retv;
 }
 
 lh_class *LH_NowPlayingText::classInfo()

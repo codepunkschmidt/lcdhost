@@ -57,6 +57,8 @@ protected:
 public:
     LH_NowPlayingText();
 
+    const char *userInit();
+
     static lh_class *classInfo();
 
 public slots:

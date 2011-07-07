@@ -41,11 +41,13 @@ class LH_BarMemPhysical : public LH_Bar
 public:
     const char *userInit()
     {
-        if( !state()->mem_data.tot_phys )
-            qWarning() << "LH_BarMemPhysical: no data available";
-        setMin(0.0);
-        setMax(1000.0);
-        return 0;
+        const char *retv = LH_Bar::userInit();
+        if( !retv )
+        {
+            setMin(0.0);
+            setMax(1000.0);
+        }
+        return retv;
     }
 
     static lh_class *classInfo()

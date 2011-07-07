@@ -22,6 +22,8 @@ protected:
 public:
     LH_MonitoringText();
 
+    const char *userInit();
+
     int notify( int, void* );
 
     static lh_class *classInfo() { return NULL; }

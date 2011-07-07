@@ -47,8 +47,17 @@ public:
     {
         setup_text_->setName( "Average CPU load" );
         setup_text_->setFlag( LH_FLAG_READONLY, true );
-        setText( "?%" );
         return;
+    }
+
+    const char *userInit()
+    {
+        const char *retv = LH_Text::userInit();
+        if( !retv )
+        {
+            setText("?%");
+        }
+        return retv;
     }
 
     static lh_class *classInfo()

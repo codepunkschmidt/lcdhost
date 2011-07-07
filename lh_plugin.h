@@ -204,6 +204,7 @@ typedef enum lh_callbackcode_t
     lh_cb_input, /* a device input has changed, param is pointer to lh_device_input */
 
     lh_cb_load_layout, /* request loading of a new layout, param: UTF-8 encoded file name relative to data path */
+    lh_cb_read_source, /* read a data source, flags have LH_FLAG_NOSINK on fail, param: lh_setup_item* */
 
     /* Support calls */
     lh_cb_utf8_to_local8bit, /* request UTF-8 to local 8-bit conversion, param: char *string */
@@ -320,7 +321,7 @@ typedef struct lh_setup_item_t
 {
     const char *name; /* name to identify this item uniquely, and display to the user (start with ~ to hide from display */
     const char *help; /* short HTML help text shows as tooltip, may be NULL */
-    const char *link; /* data link, see comment above, may be NULL */
+    const char *link; /* data link, ASCII only, see comment above, may be NULL */
     lh_setup_type type; /* type of data, see enum above */
     int flags; /* LH_FLAG_xxx */
     lh_setup_param param;

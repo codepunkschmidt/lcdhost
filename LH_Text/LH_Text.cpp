@@ -119,12 +119,7 @@ LH_Text::LH_Text() : LH_QtCFInstance()
     setup_scrollgap_ = new LH_Qt_QSlider( this, tr("Scroll gap"), 10, 0, 340, LH_FLAG_AUTORENDER );
     setup_scrollgap_->setHelp( "<p>How large a gap between \"loop\" scrolling text.</p>");
 
-    textimage_ = makeImage();
-
-    font_ = setup_font_->value();
     scrollposx_ = scrollposy_ = 0;
-
-    setText("LCDHost");
 
     add_cf_source(setup_text_);
     add_cf_target(setup_pencolor_);
@@ -135,6 +130,19 @@ LH_Text::LH_Text() : LH_QtCFInstance()
 }
 
 LH_Text::~LH_Text()
+{
+    return;
+}
+
+const char *LH_Text::userInit()
+{
+    font_ = setup_font_->value();
+    textimage_ = makeImage();
+    setText("LCDHost");
+    return 0;
+}
+
+void LH_Text::userTerm()
 {
     return;
 }
@@ -166,6 +174,9 @@ void LH_Text::makeTextImage( int forheight )
 {
     QPainter painter;
     int flags = Qt::AlignTop|Qt::AlignLeft|Qt::TextSingleLine|Qt::TextIncludeTrailingSpaces;
+
+    Q_ASSERT( state() );
+    Q_ASSERT( state()->layout_file && *(state()->layout_file) );
 
     // make sure forheight is reasonable if given
     if( forheight < 0 ) forheight = 0;

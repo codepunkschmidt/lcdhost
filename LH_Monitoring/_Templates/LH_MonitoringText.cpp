@@ -63,8 +63,17 @@ LH_MonitoringText::LH_MonitoringText()
 
     setup_text_->setFlag( LH_FLAG_HIDDEN, true );
 
-    setText(" ");
     return;
+}
+
+const char *LH_MonitoringText::userInit()
+{
+    const char *retv = LH_Text::userInit();
+    if( !retv )
+    {
+        setText(" ");
+    }
+    return retv;
 }
 
 int LH_MonitoringText::notify(int n,void* p)

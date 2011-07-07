@@ -1,7 +1,7 @@
 #ifndef LH_RIVAWRITER_H
 #define LH_RIVAWRITER_H
 
-#include "../LH_Text/LH_Text.h"
+#include "../LH_QtInstance.h"
 
 #ifdef Q_WS_WIN
 # include <windows.h>
@@ -125,7 +125,7 @@ struct RTHM_SHARED_MEMORY_ENTRY
 
 
 
-class LH_RivaWriter : public LH_Text
+class LH_RivaWriter : public LH_QtInstance
 {
     Q_OBJECT
 
@@ -136,6 +136,7 @@ public:
     ~LH_RivaWriter();
 
     static lh_class *classInfo();
+    const char *userInit();
 
     int notify(int code,void* param);
     QString reverse(QString str);

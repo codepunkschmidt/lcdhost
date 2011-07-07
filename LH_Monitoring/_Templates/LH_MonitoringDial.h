@@ -3,10 +3,13 @@
 
 #include "LH_MonitoringData.h"
 #include "../LH_Dial/LH_Dial.h"
+#include <QTime>
 
 class LH_MonitoringDial : public LH_Dial
 {
     Q_OBJECT
+
+    QTime pollTimer_;
 protected:
     LH_MonitoringData *data_;
     LH_Qt_int *setup_max_;

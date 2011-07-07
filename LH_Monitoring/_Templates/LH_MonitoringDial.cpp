@@ -45,6 +45,8 @@ LH_MonitoringDial::LH_MonitoringDial()
     hr2->setOrder(-3);
 
     updateBounds();
+
+    pollTimer_.start();
 }
 
 LH_MonitoringDial::~LH_MonitoringDial()
@@ -54,8 +56,9 @@ LH_MonitoringDial::~LH_MonitoringDial()
 
 int LH_MonitoringDial::polling()
 {
-    if(data_)
+    if(pollTimer_.elapsed()>=190 && data_)
     {
+        pollTimer_.restart();
         float deadVal;
         bool hasDead = (data_->getDeadValue_Transformed(deadVal));
 
@@ -84,7 +87,8 @@ int LH_MonitoringDial::polling()
             setVal(currVals);
         }
     }
-    return 200;
+    int basePoll = LH_Dial::polling();
+    return (basePoll==0? 200 : basePoll);
 }
 
 

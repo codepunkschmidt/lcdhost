@@ -315,7 +315,7 @@ int LH_RivaTunerData::getIndex()
     int typeID = setup_value_type_->value();
     int itemID = setup_value_item_->value();
     if(typeID < sensors_.length() && typeID != -1)
-        if(itemID < sensors_[typeID].indexes.length())
+        if(itemID < sensors_[typeID].indexes.length() && itemID != -1)
             return sensors_[typeID].indexes[itemID];
     return 0;
 }

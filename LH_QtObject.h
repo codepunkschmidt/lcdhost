@@ -55,11 +55,16 @@ class LH_QtObject : public QObject
     int cb_id_;
     const lh_systemstate *state_;
     QVector<lh_setup_item*> setup_item_vector_;
+#ifndef QT_NO_DEBUG
+    bool clean_init_;
+    bool clean_term_;
+#endif
 
 public:
     LH_QtObject( LH_QtObject *parent = 0);
     virtual ~LH_QtObject() {}
 
+    bool isValid() const { return cb_ && cb_id_; }
     void callback( lh_callbackcode_t code, void *param ) const
     {
         if( cb_ ) cb_( cb_id_, this, code, param );
@@ -78,12 +83,14 @@ public:
     virtual const lh_class **class_list();
     virtual void term();
 
-    // You can use these two instead of init() and term(), that way you won't need to
+    // You should use these two instead of init() and term(), that way you won't need to
     // pass on the parameters that init() takes to the ancestor. init() will call
     // userInit() when it's done and term() will call userTerm() before it does
-    // it's work.
-    virtual const char *userInit() { return 0; }
-    virtual void userTerm() { return; }
+    // it's work. Make *sure* you call the inherited userInit() and check it's
+    // return value in your overridden userInit(). Also, make sure the inherited
+    // userTerm() is called after your own.
+    virtual const char *userInit();
+    virtual void userTerm();
 
     // Convenience wrappers
     void show() const { int b = 0; callback( lh_cb_sethidden, (void*)&b ); }

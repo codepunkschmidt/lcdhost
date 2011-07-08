@@ -76,8 +76,7 @@ protected:
     LH_Qt_int *setup_discrete_count_;
 
 public:
-    LH_Bar();
-
+    const char *userInit();
     QImage *render_qimage( int w, int h );
 
     qreal min() const { return min_; }

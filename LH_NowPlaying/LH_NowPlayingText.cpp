@@ -38,8 +38,10 @@
 
 LH_PLUGIN_CLASS(LH_NowPlayingText)
 
-LH_NowPlayingText::LH_NowPlayingText()
+const char *LH_NowPlayingText::userInit()
 {
+    if( const char *err = LH_Text::userInit() ) return err;
+
     connect( currentTrack, SIGNAL(changed()), this, SLOT(refresh_text()) );
 
     setup_item_ = new LH_Qt_QStringList(this, "Item",
@@ -88,17 +90,8 @@ LH_NowPlayingText::LH_NowPlayingText()
     setup_text_->setFlag( LH_FLAG_READONLY, true );
     setup_text_->setFlag( LH_FLAG_HIDDEN, true );
     setup_text_->setFlag( LH_FLAG_NOSAVE, true );
-    return;
-}
-
-const char *LH_NowPlayingText::userInit()
-{
-    const char *retv = LH_Text::userInit();
-    if( !retv )
-    {
-        setText("  ");
-    }
-    return retv;
+    setText("  ");
+    return 0;
 }
 
 lh_class *LH_NowPlayingText::classInfo()

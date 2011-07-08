@@ -28,13 +28,16 @@
 
 class LH_DialCPUAverage : public LH_Dial
 {
-    LH_QtCPU cpu_;
+    LH_QtCPU *cpu_;
 
 public:
-    LH_DialCPUAverage() : cpu_( this )
+    const char *userInit()
     {
+        if( const char *err = LH_Dial::userInit() ) return err;
+        cpu_ = new LH_QtCPU(this);
         setMin(0.0);
         setMax(10000.0);
+        return 0;
     }
 
     static lh_class *classInfo()
@@ -55,8 +58,8 @@ public:
 
     int notify(int n, void *p)
     {
-        setVal( cpu_.averageload() );
-        return cpu_.notify(n,p);
+        setVal( cpu_->averageload() );
+        return cpu_->notify(n,p);
     }
 
 };

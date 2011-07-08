@@ -36,8 +36,9 @@
 
 #include "LH_TextNumber.h"
 
-LH_TextNumber::LH_TextNumber() : LH_Text()
+const char *LH_TextNumber::userInit()
 {
+    if( const char *err = LH_Text::userInit() ) return err;
     value_ = max_ = 0.0;
     bytes_ = false;
     setup_text_->setFlag( LH_FLAG_READONLY, true );
@@ -48,6 +49,7 @@ LH_TextNumber::LH_TextNumber() : LH_Text()
     setup_scale_ = new LH_Qt_QStringList(this,"Scale",
                         QStringList("Automatic")<<"Percentage"<<"No scaling"<<"Kilo"<<"Mega"<<"Giga"<<"Tera",
                         LH_FLAG_AUTORENDER|LH_FLAG_FIRST );
+    return 0;
 }
 
 bool LH_TextNumber::makeText()

@@ -114,9 +114,11 @@ protected:
     //LH_Qt_QString *setup_language_;
 
     GoogleTranslator translator;
+
 public:
-    LH_QtPlugin_Weather();
-    ~LH_QtPlugin_Weather();
+    LH_QtPlugin_Weather() : translator("Weather", this) {}
+
+    const char *userInit();
 
     int notify(int code,void* param);
 

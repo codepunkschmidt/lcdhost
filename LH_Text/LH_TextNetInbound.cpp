@@ -40,9 +40,11 @@
 class LH_TextNetInbound : public LH_TextNumber
 {
 public:
-    LH_TextNetInbound(): LH_TextNumber()
+    const char *userInit()
     {
+        if( const char *err = LH_TextNumber::userInit() ) return err;
         setup_bits_->setFlag( LH_FLAG_HIDDEN, false );
+        return 0;
     }
 
     static lh_class *classInfo()

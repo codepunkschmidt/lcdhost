@@ -268,7 +268,9 @@ bool LH_NowPlaying_Reader::storeInfo(TrackInfo newInfo)
     return dirty;
 }
 
-const char *LH_QtPlugin_NowPlaying::userInit() {
+const char *LH_QtPlugin_NowPlaying::userInit()
+{
+    if( const char *err = LH_QtPlugin::userInit() ) return err;
     currentTrack = new LH_NowPlaying_Reader(this);
     timer_.setInterval(500);
     timer_.start();
@@ -276,10 +278,13 @@ const char *LH_QtPlugin_NowPlaying::userInit() {
     return NULL;
 }
 
-void LH_QtPlugin_NowPlaying::userTerm() {
+void LH_QtPlugin_NowPlaying::userTerm()
+{
     //currentTrack->clearArtwork();
     timer_.stop();
     currentTrack->deleteLater();
+    LH_QtPlugin::userTerm();
+    return;
 }
 
 void LH_QtPlugin_NowPlaying::refresh_data() {

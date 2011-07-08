@@ -43,7 +43,6 @@ class LH_Lg160x43 : public LH_QtPlugin
 
     void scan();
 public:
-    LH_Lg160x43() : LH_QtPlugin() {}
     virtual const char *userInit();
 };
 

@@ -108,7 +108,11 @@ void LH_QtObject::build_object_calltable( lh_object_calltable *ct )
     return;
 }
 
-LH_QtObject::LH_QtObject( LH_QtObject *parent ) : QObject( parent ), cb_(0), cb_id_(0), state_(0)
+LH_QtObject::LH_QtObject( LH_QtObject *parent )
+    : QObject( parent ), cb_(0), cb_id_(0), state_(0)
+#ifndef QT_NO_DEBUG
+    ,clean_init_(false), clean_term_(false)
+#endif
 {
     if( parent )
     {
@@ -119,11 +123,35 @@ LH_QtObject::LH_QtObject( LH_QtObject *parent ) : QObject( parent ), cb_(0), cb_
 
 const char *LH_QtObject::init( lh_callback_t cb, int cb_id, const char *name, const lh_systemstate* state )
 {
+    const char *retv = 0;
     cb_ = cb;
     cb_id_ = cb_id;
     if( name ) setObjectName( QString::fromUtf8(name) );
     state_ = state;
-    return userInit();
+
+#ifndef QT_NO_DEBUG
+    // Make sure there's no children yet, as constructor must be 'clean'
+    if( children().count() )
+        qWarning() << metaObject()->className() << name << "has children before init()";
+#endif
+
+    retv = userInit();
+
+#ifndef QT_NO_DEBUG
+    if( !clean_init_ )
+        qWarning() << metaObject()->className() << name << "did not complete userInit() chain";
+    Q_ASSERT( clean_init_ );
+#endif
+
+    return retv;
+}
+
+const char *LH_QtObject::userInit()
+{
+#ifndef QT_NO_DEBUG
+    clean_init_ = true;
+#endif
+    return 0;
 }
 
 lh_setup_item **LH_QtObject::setup_data()
@@ -205,9 +233,25 @@ const lh_class ** LH_QtObject::class_list()
     return 0;
 }
 
+void LH_QtObject::userTerm()
+{
+#ifndef QT_NO_DEBUG
+    clean_term_ = true;
+#endif
+    return;
+}
+
+
 void LH_QtObject::term()
 {
     userTerm();
+
+#ifndef QT_NO_DEBUG
+    if( !clean_term_ )
+        qWarning() << metaObject()->className() << objectName() << "did not complete userTerm() chain";
+    Q_ASSERT( clean_term_ );
+#endif
+
     cb_ = 0;
     cb_id_ = 0;
     state_ = 0;

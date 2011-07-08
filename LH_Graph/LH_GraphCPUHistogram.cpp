@@ -30,19 +30,20 @@
 
 class LH_GraphCPUHistogram : public LH_Graph
 {
-    LH_QtCPU cpu_;
+    LH_QtCPU *cpu_;
     int *valCount;
     qreal *valCache;
     qreal *lastVal;
     bool initialized;
 
-    void initialize(int cpuCount){
+    void initialize(int cpuCount)
+    {
         if (cpuCount != 0) {
             initialized = true;
             if(lineCount() != cpuCount)
             {
                 clearLines();
-                for( int i=0; i<cpu_.count(); i++ )
+                for( int i=0; i<cpu_->count(); i++ )
                     addLine("CPU/Core #"+QString::number(i));
             }
 
@@ -60,20 +61,16 @@ class LH_GraphCPUHistogram : public LH_Graph
     }
 
 public:
-    explicit LH_GraphCPUHistogram() : LH_Graph(), cpu_(this)
+    const char *userInit()
     {
+        if( const char *err = LH_Graph::userInit() ) return err;
         initialized = false;
-
+        cpu_ = new LH_QtCPU(this);
         setMin(0.0);
         setMax(100.0);
         setYUnit("%");
-
-        cpu_.smoothingHidden(true);
-    }
-
-    virtual const char *userInit()
-    {
-        initialize(cpu_.count());
+        cpu_->smoothingHidden(true);
+        initialize(cpu_->count());
         return 0;
     }
 
@@ -102,11 +99,11 @@ public:
 
     int notify(int n, void *p)
     {
-        if (cpu_.count()!=0)
+        if (cpu_->count()!=0)
         {
-            if (!initialized) initialize(cpu_.count());
+            if (!initialized) initialize(cpu_->count());
 
-            for(int i =0; i<cpu_.count(); i++ )
+            for(int i =0; i<cpu_->count(); i++ )
             {
                 if(!n || n&LH_NOTE_SECOND)
                 {
@@ -118,12 +115,12 @@ public:
                     valCache[i] = 0;
                     valCount[i] = 0;
                 } else {
-                    valCache[i]+=cpu_.coreload(i)/100;
+                    valCache[i]+=cpu_->coreload(i)/100;
                     valCount[i]+=1;
                 }
             }
         }
-        return LH_Graph::notify(n,p) | cpu_.notify(n,p) | LH_NOTE_SECOND;
+        return LH_Graph::notify(n,p) | cpu_->notify(n,p) | LH_NOTE_SECOND;
     }
 
     QImage *render_qimage( int w, int h )

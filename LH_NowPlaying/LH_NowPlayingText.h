@@ -55,10 +55,7 @@ protected:
     LH_Qt_bool* setup_hide_playing_state_;
 
 public:
-    LH_NowPlayingText();
-
     const char *userInit();
-
     static lh_class *classInfo();
 
 public slots:

@@ -10,6 +10,7 @@ class LH_Aida64Text : public LH_MonitoringText
 public:
     LH_Aida64Text();
     static lh_class *classInfo();
+    const char *userInit();
 };
 
 #endif // LH_AIDA64TEXT_H

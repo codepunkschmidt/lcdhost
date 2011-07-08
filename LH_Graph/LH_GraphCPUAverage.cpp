@@ -29,14 +29,16 @@
 
 class LH_GraphCPUAverage : public LH_Graph
 {
-    LH_QtCPU cpu_;
+    LH_QtCPU *cpu_;
     int valCount;
     qreal valCache;
     qreal lastVal;
 
 public:
-    LH_GraphCPUAverage() : cpu_( this )
+    const char *userInit()
     {
+        if( const char *err = LH_Graph::userInit() ) return err;
+        cpu_ = new LH_QtCPU(this);
         valCount = 0;
         valCache = 0;
         lastVal = 0;
@@ -45,7 +47,8 @@ public:
         setMax(100);
         setYUnit("%");
 
-        cpu_.smoothingHidden(true);
+        cpu_->smoothingHidden(true);
+        return 0;
     }
 
     static lh_class *classInfo()
@@ -75,10 +78,10 @@ public:
             valCache = 0;
             valCount = 0;
         } else {
-            valCache+=cpu_.averageload()/100;
+            valCache+=cpu_->averageload()/100;
             valCount+=1;
         }
-        return LH_Graph::notify(n,p) | cpu_.notify(n,p) | LH_NOTE_SECOND;
+        return LH_Graph::notify(n,p) | cpu_->notify(n,p) | LH_NOTE_SECOND;
     }
 
     QImage *render_qimage( int w, int h )

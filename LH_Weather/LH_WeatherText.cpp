@@ -58,8 +58,9 @@ lh_class *LH_WeatherText::classInfo()
     return &classInfo;
 }
 
-LH_WeatherText::LH_WeatherText()
+const char *LH_WeatherText::userInit()
 {
+    if( const char *err = LH_Text::userInit() ) return err;
     //setup_text_->setName( "Text" );
     setup_text_->setFlag( LH_FLAG_READONLY, true );
     setup_text_->setFlag( LH_FLAG_NOSAVE, true );
@@ -117,18 +118,8 @@ LH_WeatherText::LH_WeatherText()
     setup_post_text_->setHelp( "<p>Text to be displayed after the sensor value.</p>");
     setup_post_text_->setOrder(-3);
     connect( setup_post_text_, SIGNAL(changed()), this, SLOT(updateText()) );
-
-    return;
-}
-
-const char *LH_WeatherText::userInit()
-{
-    const char *retv = LH_Text::userInit();
-    if( !retv )
-    {
-        setText("...");
-    }
-    return retv;
+    setText("...");
+    return 0;
 }
 
 int LH_WeatherText::notify(int n,void* p)

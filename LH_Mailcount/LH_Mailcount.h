@@ -59,7 +59,7 @@ class LH_Mailcount : public LH_QtInstance
     bool flash_on_;
 
 public:
-    LH_Mailcount();
+    const char *userInit();
 
     int count() const { return email_count_->value(); }
     int polling();

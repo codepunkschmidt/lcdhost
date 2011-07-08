@@ -59,8 +59,10 @@ static inline uint PREMUL(uint x) {
     return x;
 }
 
-LH_Text::LH_Text() : LH_QtCFInstance()
+const char *LH_Text::userInit()
 {
+    if( const char *err = LH_QtCFInstance::userInit() ) return err;
+
     richtext_ = false;
 
     setup_text_ = new LH_Qt_QString( this, tr("Text"), QString(), LH_FLAG_FOCUS|LH_FLAG_AUTORENDER );
@@ -126,25 +128,10 @@ LH_Text::LH_Text() : LH_QtCFInstance()
     add_cf_target(setup_bgcolor_);
     add_cf_target(setup_font_);
 
-    return;
-}
-
-LH_Text::~LH_Text()
-{
-    return;
-}
-
-const char *LH_Text::userInit()
-{
     font_ = setup_font_->value();
     textimage_ = makeImage();
     setText("LCDHost");
     return 0;
-}
-
-void LH_Text::userTerm()
-{
-    return;
 }
 
 void LH_Text::setRenderHints( QPainter& p )

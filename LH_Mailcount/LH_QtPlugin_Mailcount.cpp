@@ -40,8 +40,10 @@ char __lcdhostplugin_xml[] =
   "</longdesc>"
 "</lcdhostplugin>";
 
-LH_QtPlugin_Mailcount::LH_QtPlugin_Mailcount()
+const char *LH_QtPlugin_Mailcount::userInit()
 {
+    if( const char *err = LH_QtPlugin::userInit() ) return err;
+
     email_count_ = new LH_Qt_int(this,tr("Mail count"),0,LH_FLAG_READONLY|LH_FLAG_NOSAVE|LH_FLAG_NOSINK);
     email_count_->setHelp("This is the number of waiting e-mails, as reported by the "
                           "operating system.");
@@ -57,14 +59,7 @@ LH_QtPlugin_Mailcount::LH_QtPlugin_Mailcount()
     manual_adjust_->setHelp("If the number of mails reported by the system is "
                             "always wrong by a fixed amount, you may adjust for it here.");
     connect( manual_adjust_, SIGNAL(changed()), this, SLOT(getUnreadMailcount()) );
-}
 
-LH_QtPlugin_Mailcount::~LH_QtPlugin_Mailcount()
-{
-}
-
-const char *LH_QtPlugin_Mailcount::userInit()
-{
 #ifdef Q_WS_WIN
     hShell32Dll = LoadLibraryW( L"SHELL32.DLL" );
     if( hShell32Dll != NULL )
@@ -100,6 +95,7 @@ void LH_QtPlugin_Mailcount::userTerm()
             SHGetUnreadMailCountW = 0;
     }
 #endif
+    LH_QtPlugin::userTerm();
     return;
 }
 

@@ -39,13 +39,18 @@
 
 class LH_BarCPUAverage : public LH_Bar
 {
-    LH_QtCPU cpu_;
+    LH_QtCPU *cpu_;
 
 public:
-    LH_BarCPUAverage() : LH_Bar(), cpu_(this)
+    LH_BarCPUAverage() : LH_Bar(), cpu_(0) {}
+
+    const char *userInit()
     {
+        if( const char *err = LH_Bar::userInit() ) return err;
+        cpu_ = new LH_QtCPU(this);
         setMin(0.0);
         setMax(10000.0);
+        return 0;
     }
 
     static lh_class *classInfo()
@@ -66,13 +71,13 @@ public:
 
     int notify(int n, void *p)
     {
-        return cpu_.notify(n,p);
+        return cpu_->notify(n,p);
     }
 
     QImage *render_qimage( int w, int h )
     {
         if( LH_Bar::render_qimage(w,h) == NULL ) return NULL;
-        drawSingle( cpu_.averageload() );
+        drawSingle( cpu_->averageload() );
         return image_;
     }
 };

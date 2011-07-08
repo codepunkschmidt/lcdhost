@@ -77,8 +77,10 @@ char __lcdhostplugin_xml[] =
 //------------------------------------------------------------------------------------------------------------------
 
 
-LH_QtPlugin_Weather::LH_QtPlugin_Weather() : translator("Weather", this)
+const char *LH_QtPlugin_Weather::userInit()
 {
+    if( const char *err = LH_QtPlugin::userInit() ) return err;
+
     translator.requestLanguages("en");
     connect(&translator, SIGNAL(languages_updated()), this, SLOT(updateLanguagesList()));
 
@@ -143,13 +145,8 @@ LH_QtPlugin_Weather::LH_QtPlugin_Weather() : translator("Weather", this)
     connect(&nam5Day,  SIGNAL(finished(QNetworkReply*)), this, SLOT(finished5Day(QNetworkReply*)));
     connect(&namWOEID, SIGNAL(finished(QNetworkReply*)), this, SLOT(finishedWOEID(QNetworkReply*)));
 
+    return 0;
 }
-
-LH_QtPlugin_Weather::~LH_QtPlugin_Weather()
-{
-    return ;
-}
-
 
 void LH_QtPlugin_Weather::fetch2Day()
 {

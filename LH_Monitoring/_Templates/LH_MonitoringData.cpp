@@ -4,6 +4,7 @@
 LH_MonitoringData::LH_MonitoringData(LH_QtObject *parent, bool includeGroups) : QObject(parent)
 {
     includeGroups_ = includeGroups;
+    is_group_ = false;
 }
 
 LH_MonitoringData::~LH_MonitoringData()

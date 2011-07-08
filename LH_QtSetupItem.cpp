@@ -37,6 +37,7 @@
 LH_QtSetupItem::LH_QtSetupItem( LH_QtObject *parent, QString name, lh_setup_type type, int flags ) : QObject( parent )
 {
     Q_ASSERT( parent != NULL );
+    Q_ASSERT( parent->isValid() );
     memset( &item_, 0, sizeof(item_) );
     setName(name);
     order_ = 0;

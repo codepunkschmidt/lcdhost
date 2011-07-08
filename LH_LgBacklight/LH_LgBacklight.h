@@ -1,7 +1,7 @@
 /**
-  \file     LH_BarCPUHistogram.cpp
+  \file     LH_Lg160x43.h
   \author   Johan Lindh <johan@linkdata.se>
-  \legalese Copyright (c) 2009-2010 Johan Lindh
+  \legalese Copyright (c) 2009-2011, Johan Lindh
 
   All rights reserved.
 
@@ -30,61 +30,27 @@
   CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
   ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
   POSSIBILITY OF SUCH DAMAGE.
-
-
   */
 
-#include "LH_Bar.h"
-#include "../LH_QtCPU.h"
+#ifndef LH_LGBACKLIGHT_H
+#define LH_LGBACKLIGHT_H
 
-class LH_BarCPUHistogram : public LH_Bar
+#include "LgBacklightDevice.h"
+#include "../LH_QtPlugin.h"
+#include "../LH_Qt_QString.h"
+
+class LH_LgBacklight : public LH_QtPlugin
 {
-    LH_QtCPU *cpu_;
+    Q_OBJECT
+
+    LH_Qt_QString *rescanbutton_;
+    QList<LgBacklightDevice*> devs_;
 
 public:
-    const char *userInit()
-    {
-        if( const char *err = LH_Bar::userInit() ) return err;
-        cpu_ = new LH_QtCPU(this);
-        setMin(0.0);
-        setMax(10000.0);
-        return 0;
-    }
+    virtual const char *userInit();
 
-    static lh_class *classInfo()
-    {
-        static lh_class classInfo =
-        {
-            sizeof(lh_class),
-            "System/CPU",
-            "SystemCPUHistogram",
-            "Core Load (Bar)",
-            48,48,
-            lh_object_calltable_NULL,
-            lh_instance_calltable_NULL
-        };
-
-        return &classInfo;
-    }
-
-    int notify(int n, void *p)
-    {
-        return cpu_->notify(n,p);
-    }
-
-    QImage *render_qimage( int w, int h )
-    {
-        if( LH_Bar::render_qimage(w,h) == NULL ) return NULL;
-        qreal *loads = new qreal[ cpu_->count() ];
-        if( loads )
-        {
-            for( int i=0; i<cpu_->count(); i++ )
-                loads[i] = cpu_->coreload(i);
-            drawList( loads, cpu_->count() );
-            delete[] loads;
-        }
-        return image_;
-    }
+public slots:
+    void scan();
 };
 
-LH_PLUGIN_CLASS(LH_BarCPUHistogram)
+#endif // LH_LGBACKLIGHT_H

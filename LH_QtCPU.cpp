@@ -35,10 +35,9 @@
 #include "LH_QtCPU.h"
 #include "../lh_plugin.h"
 
-LH_QtCPU::LH_QtCPU( LH_QtInstance *parent )
+LH_QtCPU::LH_QtCPU( LH_QtInstance *parent ) : QObject( parent )
 {
-    parent_ = parent;
-    setup_smoothing_ = new LH_Qt_QSlider(parent,"Smoothing",3,1,10);
+    setup_smoothing_ = new LH_Qt_QSlider( parent,"Smoothing",3,1,10);
     load_.clear();
     return;
 }
@@ -77,7 +76,7 @@ int LH_QtCPU::notify(int n, void *p)
                 if( olddata ) delete[] olddata;
             }
             load_.enqueue( data );
-            parent_->requestRender();
+            parent()->requestRender();
         }
     }
     return LH_NOTE_CPU;

@@ -33,8 +33,9 @@
 
 #include "LH_MonitoringText.h"
 
-LH_MonitoringText::LH_MonitoringText()
+const char *LH_MonitoringText::userInit()
 {
+    if( const char *err = LH_Text::userInit() ) return err;
     LH_Qt_QString* hr = new LH_Qt_QString(this,tr("~Mon-Data-Rule"),"<hr>", LH_FLAG_NOSAVE | LH_FLAG_NOSOURCE | LH_FLAG_NOSINK,lh_type_string_html );
     hr->setOrder(-3);
 
@@ -62,18 +63,8 @@ LH_MonitoringText::LH_MonitoringText()
     hr2->setOrder(-3);
 
     setup_text_->setFlag( LH_FLAG_HIDDEN, true );
-
-    return;
-}
-
-const char *LH_MonitoringText::userInit()
-{
-    const char *retv = LH_Text::userInit();
-    if( !retv )
-    {
-        setText(" ");
-    }
-    return retv;
+    setText(" ");
+    return 0;
 }
 
 int LH_MonitoringText::notify(int n,void* p)

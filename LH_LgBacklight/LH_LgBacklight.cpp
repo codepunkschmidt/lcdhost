@@ -1,5 +1,5 @@
 /**
-  \file     LH_Lg320x240.cpp
+  \file     LH_Lg160x43.cpp
   \author   Johan Lindh <johan@linkdata.se>
   \legalese Copyright (c) 2009-2011, Johan Lindh
 
@@ -35,23 +35,18 @@
 #include <QFile>
 #include <QDebug>
 
-#include <stdarg.h>
-
 #ifdef Q_WS_WIN
 #include <windows.h>
 #endif
 
-#include "../LH_QtDevice.h"
-#include "LH_Lg320x240.h"
-#include "Lg320x240Device.h"
-#include "../LH_Qt_QImage.h"
+#include "LH_LgBacklight.h"
 
-LH_PLUGIN(LH_Lg320x240)
+LH_PLUGIN(LH_LgBacklight)
 
 char __lcdhostplugin_xml[] =
 "<?xml version=\"1.0\"?>"
 "<lcdhostplugin>"
-  "<id>Lg320x240</id>"
+  "<id>Backlight</id>"
   "<rev>" STRINGIZE(REVISION) "</rev>"
   "<api>" STRINGIZE(LH_API_MAJOR) "." STRINGIZE(LH_API_MINOR) "</api>"
   "<ver>" "r" STRINGIZE(REVISION) "</ver>"
@@ -60,55 +55,72 @@ char __lcdhostplugin_xml[] =
   "<homepageurl><a href=\"http://www.linkdata.se/software/lcdhost\">Link Data Stockholm</a></homepageurl>"
   "<logourl></logourl>"
   "<shortdesc>"
-  "Logitech 320x240 LCD via USB"
+  "Logitech device backlight control via HID"
   "</shortdesc>"
   "<longdesc>"
-    "USB-level driver for Logitech 320x240 LCD displays, such as the G19.<br/>"
-    "On Windows, you'll need a <a href=\"http://en.wikipedia.org/wiki/WinUSB\">WinUSB</a> driver for your device.<br/>"
-    "The easiest way to do that is to download <a href=\"http://sourceforge.net/projects/libwdi/files/zadig/zadig_v1.1.1.137.7z/download\">zadig</a>"
-    "which can generate a driver for your G19."
+    "HID-level driver for Logitech backlit devices, such as G13, G15 or G19.<br/>"
+    "Note that to use this driver you may need to uninstall existing drivers for these devices."
   "</longdesc>"
 "</lcdhostplugin>";
 
-extern "C"
+const char *LH_LgBacklight::userInit()
 {
-    void libusb_log( const char *fmt, va_list args )
-    {
-        char buf[1024];
-        vsprintf( buf, fmt, args );
-        qDebug() << buf;
-    }
-}
-
-const char *LH_Lg320x240::userInit()
-{
-    Q_ASSERT( g19thread_ == 0 );
     if( const char *err = LH_QtPlugin::userInit() ) return err;
-
-#ifdef Q_WS_WIN
-    // make sure neither LCDMon.exe nor LCORE.EXE is running on Windows
-    if( FindWindowA( "Logitech LCD Monitor Window", "LCDMon" ) ||
-        FindWindowA( "QWidget", "LCore" ) )
-        return "Logitech drivers are loaded";
-#endif
-
-    g19thread_ = new LogitechG19Thread(this);
-    g19thread_->start();
+    rescanbutton_ = new LH_Qt_QString( this, "Rescan","Rescan",LH_FLAG_NOSAVE|LH_FLAG_NOSOURCE,lh_type_string_button );
+    connect( rescanbutton_, SIGNAL(changed()), this, SLOT(scan()) );
+    scan();
     return NULL;
 }
 
-void LH_Lg320x240::userTerm()
+void LH_LgBacklight::scan()
 {
-    if( g19thread_ )
+    // Maintain list of available devices
+    foreach( LgBacklightDevice *d, devs_ ) d->setRemoval( true );
+
+    if( struct hid_device_info *hdi_head = hid_enumerate( 0x0, 0x0 ) )
     {
-        g19thread_->timeToDie();
-        if( !g19thread_->wait(4000) )
+        for( struct hid_device_info *hdi = hdi_head; hdi; hdi = hdi->next )
         {
-            qWarning() << "LH_Lg320x240: worker thread not responding";
-            g19thread_->terminate();
+            if( hdi->vendor_id == 0x046d )
+            {
+                switch( hdi->product_id )
+                {
+                case 0xC222: /* G15 */
+                case 0xC227: /* G15v2 */
+                case 0xC21C: /* G13 */
+                case 0xC22D: /* G510 without audio */
+                case 0xC22E: /* G510 with audio */
+                    {
+                        bool found = false;
+                        foreach( LgBacklightDevice *d, devs_ )
+                        {
+                            if( d->path() == hdi->path )
+                            {
+                                d->setRemoval( false );
+                                found = true;
+                                break;
+                            }
+                        }
+                        if( !found ) new LgBacklightDevice(hdi,this);
+                    }
+                    break;
+                case 0x0A07: /* Z10 */
+                default:
+                    break;
+                }
+            }
         }
-        else delete g19thread_;
+        hid_free_enumeration( hdi_head );
     }
-    g19thread_ = 0;
-    LH_QtPlugin::userTerm();
+
+    foreach( LgBacklightDevice *d, devs_ )
+    {
+        if( d->removal() )
+        {
+            devs_.removeAll(d);
+            delete d;
+        }
+    }
+
+    return;
 }

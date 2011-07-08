@@ -35,16 +35,15 @@
 #ifndef LH_QTCPU_H
 #define LH_QTCPU_H
 
+#include <QObject>
 #include <QQueue>
 #include "lh_plugin.h"
 #include "LH_QtInstance.h"
 #include "LH_Qt_QSlider.h"
 
-class LH_QtCPU
+class LH_QtCPU : public QObject
 {
     QQueue<lh_cpudata*> load_;
-    LH_QtInstance *parent_;
-
     int load( lh_cpudata *from, lh_cpudata *to );
 
 protected:
@@ -58,7 +57,8 @@ public:
 
     int count();
     int samples() { return setup_smoothing_->value() + 1; }
-    const lh_systemstate *state() const { return parent_->state(); }
+    LH_QtInstance *parent() const { return static_cast<LH_QtInstance *>(QObject::parent()); }
+    const lh_systemstate *state() const { return parent()->state(); }
 
     int coreload(int n); // 0...10000
     int averageload(); // 0...10000

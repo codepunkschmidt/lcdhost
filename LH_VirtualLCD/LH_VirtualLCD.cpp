@@ -66,14 +66,18 @@ protected:
     LH_Qt_QImage *setup_output_;
 
 public:
-    VirtualLCD( LH_QtPlugin *drv ) : LH_QtDevice(drv)
-    {
-        setup_output_ = new LH_Qt_QImage(this,"Output",QImage(),LH_FLAG_HIDDEN);
-    }
+    VirtualLCD( LH_QtPlugin *drv ) : LH_QtDevice(drv) {}
 
     ~VirtualLCD()
     {
         leave();
+    }
+
+    const char *userInit()
+    {
+        if( const char *err = LH_QtDevice::userInit() ) return err;
+        setup_output_ = new LH_Qt_QImage(this,"Output",QImage(),LH_FLAG_HIDDEN);
+        return 0;
     }
 
     const char* open()
@@ -145,6 +149,7 @@ public:
 
 const char *LH_VirtualLCD::userInit()
 {
+    if( const char *err = LH_QtPlugin::userInit() ) return err;
     new VirtualQVGA(this);
     new VirtualBW(this);
     return 0;

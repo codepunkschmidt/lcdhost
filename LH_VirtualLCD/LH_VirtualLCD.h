@@ -40,10 +40,7 @@
 class LH_VirtualLCD : public LH_QtPlugin
 {
     Q_OBJECT
-
 public:
-    LH_VirtualLCD() : LH_QtPlugin() {}
-
     virtual const char *userInit();
 };
 

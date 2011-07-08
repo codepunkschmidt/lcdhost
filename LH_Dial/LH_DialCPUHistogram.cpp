@@ -29,13 +29,16 @@
 
 class LH_DialCPUHistogram : public LH_Dial
 {
-    LH_QtCPU cpu_;
+    LH_QtCPU *cpu_;
 
 public:
-    explicit LH_DialCPUHistogram() : cpu_(this)
+    const char *userInit()
     {
+        if( const char *err = LH_Dial::userInit() ) return err;
+        cpu_ = new LH_QtCPU(this);
         setMin(0.0);
         setMax(10000.0);
+        return 0;
     }
 
     static lh_class *classInfo()
@@ -56,23 +59,23 @@ public:
 
     int notify(int n, void *p)
     {
-        qreal *loads = new qreal[ cpu_.count() ];
+        qreal *loads = new qreal[ cpu_->count() ];
         if( loads )
         {
-            if(needleCount() != cpu_.count())
+            if(needleCount() != cpu_->count())
             {
                 clearNeedles();
-                for( int i=0; i<cpu_.count(); i++ )
+                for( int i=0; i<cpu_->count(); i++ )
                     addNeedle("CPU/Core #"+QString::number(i));
             }
 
-            for( int i=0; i<cpu_.count(); i++ )
-                loads[i] = cpu_.coreload(i);
-            setVal( loads, cpu_.count() );
+            for( int i=0; i<cpu_->count(); i++ )
+                loads[i] = cpu_->coreload(i);
+            setVal( loads, cpu_->count() );
             delete[] loads;
         }
 
-        return cpu_.notify(n,p);
+        return cpu_->notify(n,p);
     }
 };
 

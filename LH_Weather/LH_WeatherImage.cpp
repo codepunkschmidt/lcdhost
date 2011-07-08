@@ -53,8 +53,9 @@ lh_class *LH_WeatherImage::classInfo()
     return &classinfo;
 }
 
-LH_WeatherImage::LH_WeatherImage()
+const char *LH_WeatherImage::userInit()
 {
+    if( const char *err = LH_QtInstance::userInit() ) return err;
     QStringList valueTypes = QStringList();
     valueTypes.append("Current Conditions");
     valueTypes.append("Forecast Day 1 (Today)");
@@ -85,11 +86,7 @@ LH_WeatherImage::LH_WeatherImage()
 
     weatherCode = "3200";
     isNight = false;
-}
-
-LH_WeatherImage::~LH_WeatherImage()
-{
-    return;
+    return 0;
 }
 
 int LH_WeatherImage::polling()

@@ -58,9 +58,7 @@ protected:
     LH_Qt_QTextEdit *setup_usage_;
 
 public:
-    LH_WeatherImage();
-    ~LH_WeatherImage();
-
+    const char *userInit();
     int polling();
     int notify(int n,void* p);
     int width( void*obj,int h );

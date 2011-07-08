@@ -74,6 +74,7 @@ char __lcdhostplugin_xml[] =
 
 const char *LH_LgLcdMan::userInit()
 {
+    if( const char *err = LH_QtPlugin::userInit() ) return err;
 #ifdef Q_WS_WIN
     thread_ = new LH_LgLcdCallbackThread(this);
 
@@ -134,6 +135,7 @@ void LH_LgLcdMan::userTerm()
             qDebug() << "LH_LgLcdMan: Logitech drivers not responding, expect problems";
         thread_ = NULL;
     }
+    LH_QtPlugin::userTerm();
     return;
 }
 

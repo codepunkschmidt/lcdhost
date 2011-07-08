@@ -66,10 +66,11 @@ lh_class *LH_Mailcount::classInfo()
     return &classinfo;
 }
 
-LH_Mailcount::LH_Mailcount() : LH_QtInstance()
+const char *LH_Mailcount::userInit()
 {
-    envelope_count_ = -1;
+    if( const char *err = LH_QtInstance::userInit() ) return err;
 
+    envelope_count_ = -1;
     email_count_ = new LH_Qt_int(this,tr("Unread mail count"),0,
                                  LH_FLAG_READONLY|LH_FLAG_NOSAVE|LH_FLAG_NOSOURCE|LH_FLAG_AUTORENDER);
     email_count_->setLink("=/system/Mail count");
@@ -85,6 +86,8 @@ LH_Mailcount::LH_Mailcount() : LH_QtInstance()
     connect( smoothflash_, SIGNAL(changed()), this, SLOT(requestPolling()) );
 
     flash_on_ = true;
+
+    return 0;
 }
 
 int LH_Mailcount::polling()

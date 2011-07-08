@@ -91,11 +91,7 @@ public:
         Tera
     } NumberMode;
 
-    LH_Text();
-    ~LH_Text();
-
     const char *userInit();
-    void userTerm();
 
     int polling();
     int notify(int code,void* param);

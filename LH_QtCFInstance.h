@@ -126,7 +126,23 @@ public:
     LH_Qt_QFileInfo   *setup_cf_newValue_File_;
     LH_Qt_bool        *setup_cf_newValue_Bool_;
 
-    LH_QtCFInstance();
+    LH_QtCFInstance() : LH_QtInstance(0),
+        cf_initialized_(false),
+        cf_rule_editing_(Default),
+        watching_non_setup_item_(false),
+        setup_cf_source_(0),
+        setup_cf_source_mode_(0),
+        setup_cf_test_(0),
+        setup_cf_testValue1_(0),
+        setup_cf_testValue2_(0),
+        setup_cf_target_(0),
+        setup_cf_newValue_Color_(0),
+        setup_cf_newValue_Font_(0),
+        setup_cf_newValue_String_(0),
+        setup_cf_newValue_File_(0),
+        setup_cf_newValue_Bool_(0)
+    {}
+
     int notify(int n,void* p);
 
     cf_source_list sources() { return sources_; }

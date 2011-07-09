@@ -37,12 +37,6 @@
 #include "cf_rule.h"
 
 
-LH_QtCFInstance::LH_QtCFInstance() : LH_QtInstance()
-{
-    cf_initialized_ = false;
-    return;
-}
-
 /**
   Conditional Formatting Routines
 

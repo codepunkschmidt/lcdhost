@@ -8,7 +8,7 @@ class LH_SpeedFanText : public LH_MonitoringText
 {
     Q_OBJECT
 public:
-    LH_SpeedFanText();
+    const char *userInit();
     static lh_class *classInfo();
 };
 

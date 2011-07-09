@@ -45,8 +45,9 @@ lh_class *LH_CursorRectangle::classInfo()
     return &classInfo;
 }
 
-LH_CursorRectangle::LH_CursorRectangle()
+const char *LH_CursorRectangle::userInit()
 {
+    if( const char *err = LH_QtInstance::userInit() ) return err;
     setup_penwidth_ = new LH_Qt_QSlider(this,tr("Pen width"),0,0,1000,LH_FLAG_AUTORENDER);
     setup_rounding_ = new LH_Qt_QSlider(this,tr("Corner rounding"),20,0,100,LH_FLAG_AUTORENDER);
     setup_pencolor_ = new LH_Qt_QColor(this,tr("Pen color"),Qt::black,LH_FLAG_AUTORENDER);
@@ -136,6 +137,7 @@ LH_CursorRectangle::LH_CursorRectangle()
         connect(setup_bgcolor2_on_sel_, SIGNAL(changed()), this, SLOT(overridesChanged()));
     }
 
+    return 0;
 }
 
 QImage *LH_CursorRectangle::render_qimage( int w, int h )

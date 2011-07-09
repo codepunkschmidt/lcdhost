@@ -88,16 +88,13 @@ protected:
     //LH_Qt_bool *setup_horizontal_;
 
     LH_Qt_QString *setup_coordinate_;
-
     LH_Qt_bool *setup_layout_trigger_;
     LH_Qt_QFileInfo *setup_layout_;
-
     LH_Qt_QString *setup_text_;
+
 public:
-    LH_CursorRectangle();
-
+    const char *userInit();
     QImage *render_qimage( int w, int h );
-
     QColor pencolor() const { return setup_pencolor_->value(); }
     int penwidth() const { return setup_penwidth_->value(); }
     int rounding() const { return setup_rounding_->value(); }

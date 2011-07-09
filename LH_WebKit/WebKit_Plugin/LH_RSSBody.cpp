@@ -18,10 +18,13 @@ lh_class *LH_RSSBody::classInfo()
     return &classInfo;
 }
 
-LH_RSSBody::LH_RSSBody() : LH_WebKit(true), rss_(this)
+const char *LH_RSSBody::userInit()
 {
-    connect( &rss_, SIGNAL(changed()), this, SLOT(setRssItem()) );
-    connect( &rss_, SIGNAL(begin()), this, SLOT(beginFetch()) );
+    if( const char *err = LH_WebKit::userInit() ) return err;
+
+    rss_ = new LH_RSSInterface(this);
+    connect( rss_, SIGNAL(changed()), this, SLOT(setRssItem()) );
+    connect( rss_, SIGNAL(begin()), this, SLOT(beginFetch()) );
 
     setup_template_->setHelp(setup_template_->help() + ""
                              "<br><b>\\title</b> : RSS item title "
@@ -32,29 +35,31 @@ LH_RSSBody::LH_RSSBody() : LH_WebKit(true), rss_(this)
                              "<br><b>\\thumbnail_height</b> : RSS item thumbnail height "
                              "<br><b>\\thumbnail_width</b> : RSS item thumbnail width "
                              );
+    setRssItem();
+    return 0;
 }
 
 int LH_RSSBody::notify(int code,void* param)
 {
-    return rss_.notify(code,param) | LH_WebKit::notify(code,param);
+    return rss_->notify(code,param) | LH_WebKit::notify(code,param);
 }
 
 void LH_RSSBody::setRssItem()
 {
-    sendRequest( QUrl::fromLocalFile( QString::fromUtf8( state()->dir_layout ) + "/" ), rss_.item().description );
+    sendRequest( QUrl::fromLocalFile( QString::fromUtf8( state()->dir_layout ) + "/" ), rss_->item().description );
 }
 
 QHash<QString, QString> LH_RSSBody::getTokens()
 {
     QHash<QString, QString> tokens = LH_WebKit::getTokens();
 
-    tokens.insert( "title",            rss_.item().title );
-    tokens.insert( "author",           rss_.item().author );
-    tokens.insert( "link",             rss_.item().link );
-    tokens.insert( "pubDate",          rss_.item().pubDate );
-    tokens.insert( "thumbnail_url",    rss_.item().thumbnail.url );
-    tokens.insert( "thumbnail_height", QString::number(rss_.item().thumbnail.height) );
-    tokens.insert( "thumbnail_width",  QString::number(rss_.item().thumbnail.width) );
+    tokens.insert( "title",            rss_->item().title );
+    tokens.insert( "author",           rss_->item().author );
+    tokens.insert( "link",             rss_->item().link );
+    tokens.insert( "pubDate",          rss_->item().pubDate );
+    tokens.insert( "thumbnail_url",    rss_->item().thumbnail.url );
+    tokens.insert( "thumbnail_height", QString::number(rss_->item().thumbnail.height) );
+    tokens.insert( "thumbnail_width",  QString::number(rss_->item().thumbnail.width) );
     return tokens;
 }
 

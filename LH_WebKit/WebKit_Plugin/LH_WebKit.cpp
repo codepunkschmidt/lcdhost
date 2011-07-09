@@ -39,10 +39,10 @@
 
 #include "LH_WebKit.h"
 
-LH_WebKit::LH_WebKit(const bool enableParsing)
+const char *LH_WebKit::userInit()
 {
-    parsingEnabled_ = enableParsing;
-    int parseFlags = (!enableParsing? LH_FLAG_HIDDEN | LH_FLAG_READONLY | LH_FLAG_NOSAVE : 0);
+    if( const char *err = LH_QtInstance::userInit() ) return err;
+    int parseFlags = (!parsingEnabled_? LH_FLAG_HIDDEN | LH_FLAG_READONLY | LH_FLAG_NOSAVE : 0);
 
     zoom_ = new LH_Qt_QSlider(this,"Zoom",10,1,20,LH_FLAG_FOCUS);
     zoom_->setOrder(1);
@@ -78,10 +78,10 @@ LH_WebKit::LH_WebKit(const bool enableParsing)
     connect( setup_template_, SIGNAL(changed()), this, SLOT(reparse()) );
     parseThread = new LH_ParseThread(this);
     connect( parseThread, SIGNAL(finished()), this, SLOT(doneParsing()));
-    return;
+    return 0;
 }
 
-LH_WebKit::~LH_WebKit()
+void LH_WebKit::userTerm()
 {
     if( sock_ )
     {
@@ -89,15 +89,7 @@ LH_WebKit::~LH_WebKit()
         delete sock_;
         sock_ = NULL;
     }
-}
-
-const char *LH_WebKit::userInit()
-{
-    return 0;
-}
-
-void LH_WebKit::userTerm()
-{
+    LH_QtInstance::userTerm();
 }
 
 

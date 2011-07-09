@@ -41,8 +41,10 @@ lh_class *LH_AfterburnerImage::classInfo()
     return &classinfo;
 }
 
-LH_AfterburnerImage::LH_AfterburnerImage()
+const char *LH_AfterburnerImage::userInit()
 {
+    if( const char *err = LH_MonitoringImage::userInit() ) return err;
     data_ = new LH_AfterburnerData(this, mdmAll);
     connect_changeType( static_cast<LH_AfterburnerData*>(data_)->setup_value_type_ );
+    return 0;
 }

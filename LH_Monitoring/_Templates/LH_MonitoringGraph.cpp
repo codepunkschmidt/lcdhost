@@ -26,8 +26,9 @@
 
 #include "LH_MonitoringGraph.h"
 
-LH_MonitoringGraph::LH_MonitoringGraph() : LH_Graph( 0, 2 )
+const char *LH_MonitoringGraph::userInit()
 {
+    if( const char *err = LH_Graph::userInit() ) return err;
     setUserDefinableLimits(true);
     canGrow(true);
 
@@ -48,11 +49,8 @@ LH_MonitoringGraph::LH_MonitoringGraph() : LH_Graph( 0, 2 )
     hr2->setOrder(-3);
 
     was_empty_ = true;
-}
 
-LH_MonitoringGraph::~LH_MonitoringGraph()
-{
-
+    return 0;
 }
 
 int LH_MonitoringGraph::notify(int n, void *p)

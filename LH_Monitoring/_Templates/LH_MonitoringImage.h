@@ -44,21 +44,19 @@ struct imageMapData
     QString Image;
 };
 
-class LH_MonitoringImage:public LH_QImage
+class LH_MonitoringImage : public LH_QImage
 {
     Q_OBJECT
 
 protected:
     LH_MonitoringData *data_;
-
     LH_Qt_QString *setup_value_;
+
 public:
-    LH_MonitoringImage();
-
+    LH_MonitoringImage() : LH_QImage(), data_(0), setup_value_(0) {}
+    const char *userInit();
     int notify(int n,void* p);
-
     static lh_class *classInfo() { return NULL; }
-
     void connect_changeType(QObject* obj);
     void connect_updateImage(QObject* obj);
 

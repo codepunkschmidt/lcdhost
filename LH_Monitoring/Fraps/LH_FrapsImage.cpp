@@ -41,10 +41,10 @@ lh_class *LH_FrapsImage::classInfo()
     return &classinfo;
 }
 
-LH_FrapsImage::LH_FrapsImage()
+const char *LH_FrapsImage::userInit()
 {
+    if( const char *err = LH_MonitoringImage::userInit() ) return err;
     data_ = new LH_FrapsData(this, mdmAll);
     connect_changeType( static_cast<LH_FrapsData*>(data_)->setup_value_type_ );
+    return 0;
 }
-
-

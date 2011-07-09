@@ -35,8 +35,9 @@
 
 #include "../LH_Qt_QStringList.h"
 
-LH_MonitoringImage::LH_MonitoringImage()
+const char *LH_MonitoringImage::userInit()
 {
+    if( const char *err = LH_QImage::userInit() ) return err;
     setup_image_file_->setFlags( LH_FLAG_AUTORENDER | LH_FLAG_READONLY | LH_FLAG_NOSAVE );
 
     LH_Qt_QString* hr = new LH_Qt_QString(this,tr("~Mon-Data-Rule"),"<hr>", LH_FLAG_NOSAVE | LH_FLAG_NOSOURCE | LH_FLAG_NOSINK,lh_type_string_html );
@@ -52,6 +53,7 @@ LH_MonitoringImage::LH_MonitoringImage()
     add_cf_source(setup_value_);
 
     setup_cf_state_->setFlag(LH_FLAG_HIDDEN, false);
+    return 0;
 }
 
 int LH_MonitoringImage::notify(int n,void* p)

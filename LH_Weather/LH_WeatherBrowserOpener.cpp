@@ -54,19 +54,16 @@ lh_class *LH_WeatherBrowserOpener::classInfo()
     return &classInfo;
 }
 
-LH_WeatherBrowserOpener::LH_WeatherBrowserOpener()
+const char *LH_WeatherBrowserOpener::userInit()
 {
+    if( const char *err = LH_QtInstance::userInit() ) return err;
     setup_browser_ = new LH_Qt_InputState(this,tr("Open in browser"),QString(),LH_FLAG_AUTORENDER);
     setup_browser_->setHelp("Defining a key here will allow you to open the forecast in your browser for more details");
     setup_browser_->setOrder(-4);
     connect( setup_browser_, SIGNAL(input(QString,int,int)), this, SLOT(openBrowser(QString,int,int)) );
+    hide();
+    return NULL;
 }
-
-LH_WeatherBrowserOpener::~LH_WeatherBrowserOpener()
-{
-    return ;
-}
-
 
 void LH_WeatherBrowserOpener::openBrowser(QString key,int flags,int value)
 {

@@ -8,11 +8,11 @@ class LH_RSSText : public LH_Text
 {
     Q_OBJECT
 
-    LH_RSSInterface rss_;
+    LH_RSSInterface *rss_;
 
 public:
-    LH_RSSText();
-
+    LH_RSSText() : LH_Text(), rss_(0) {}
+    const char *userInit();
     int notify(int code,void* param);
     QImage *render_qimage( int w, int h );
 

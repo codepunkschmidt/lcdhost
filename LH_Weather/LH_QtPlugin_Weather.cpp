@@ -81,8 +81,9 @@ const char *LH_QtPlugin_Weather::userInit()
 {
     if( const char *err = LH_QtPlugin::userInit() ) return err;
 
-    translator.requestLanguages("en");
-    connect(&translator, SIGNAL(languages_updated()), this, SLOT(updateLanguagesList()));
+    translator = new GoogleTranslator("Weather",this);
+    translator->requestLanguages("en");
+    connect(translator, SIGNAL(languages_updated()), this, SLOT(updateLanguagesList()));
 
     lastrefresh_ = QDateTime::currentDateTime();
 
@@ -544,7 +545,7 @@ void LH_QtPlugin_Weather::setForecast(QXmlStreamReader& xml_, forecastData& fore
         forecast.relativeDay = "Tomorrow";
         break;
     default:
-        forecast.relativeDay = translator.fullDateName(forecast.day);
+        forecast.relativeDay = translator->fullDateName(forecast.day);
         break;
     }
     forecast.date = getWeatherValue(xml_, "date");
@@ -645,50 +646,50 @@ bool LH_QtPlugin_Weather::checkNight()
 
 void LH_QtPlugin_Weather::requestTranslation()
 {
-    translator.clear();
+    translator->clear();
 
-    translator.addItem(&weather_data.atmosphere.barometricReading);
+    translator->addItem(&weather_data.atmosphere.barometricReading);
 
-    translator.addItem(&weather_data.location.city, ttNoun);
-    translator.addItem(&weather_data.location.region, ttNoun);
-    translator.addItem(&weather_data.location.country, ttNoun);
+    translator->addItem(&weather_data.location.city, ttNoun);
+    translator->addItem(&weather_data.location.region, ttNoun);
+    translator->addItem(&weather_data.location.country, ttNoun);
 
-    translator.addItem(&weather_data.condition.text);
-    translator.addItem(&weather_data.condition.date, ttMonthName);
-    translator.addItem(&weather_data.condition.date, ttDayName);
+    translator->addItem(&weather_data.condition.text);
+    translator->addItem(&weather_data.condition.date, ttMonthName);
+    translator->addItem(&weather_data.condition.date, ttDayName);
 
     for(int i=0; i<5; i++)
     {
-        translator.addItem(&weather_data.forecast[i].day, ttDayName);
-        translator.addItem(&weather_data.forecast[i].relativeDay);
-        translator.addItem(&weather_data.forecast[i].date, ttMonthName);
-        translator.addItem(&weather_data.forecast[i].date, ttDayName);
-        translator.addItem(&weather_data.forecast[i].text);
+        translator->addItem(&weather_data.forecast[i].day, ttDayName);
+        translator->addItem(&weather_data.forecast[i].relativeDay);
+        translator->addItem(&weather_data.forecast[i].date, ttMonthName);
+        translator->addItem(&weather_data.forecast[i].date, ttDayName);
+        translator->addItem(&weather_data.forecast[i].text);
     }
 
-    translator.request();
+    translator->request();
 }
 
 void LH_QtPlugin_Weather::updateLanguagesList()
 {
     //setup_languages_->list().clear();
-    //foreach(QString name, translator.languages.names())
+    //foreach(QString name, translator->languages.names())
     //    setup_languages_->list().append(name);
     //setup_languages_->refreshList();
-    //setup_languages_->setValue(translator.languages.codes().indexOf(setup_language_->value()));
+    //setup_languages_->setValue(translator->languages.codes().indexOf(setup_language_->value()));
 }
 
 void LH_QtPlugin_Weather::selectLanguage()
 {
-    //QString code = translator.languages.getCode(setup_languages_->valueText());
+    //QString code = translator->languages.getCode(setup_languages_->valueText());
     //setup_language_->setValue(code);
-    //translator.setTargetLanguage(code);
+    //translator->setTargetLanguage(code);
     //fetch2Day();
 }
 
 void LH_QtPlugin_Weather::setLanguage()
 {
-    //translator.setTargetLanguage(setup_language_->value());
-    //setup_languages_->setValue(translator.languages.codes().indexOf(setup_language_->value()));
+    //translator->setTargetLanguage(setup_language_->value());
+    //setup_languages_->setValue(translator->languages.codes().indexOf(setup_language_->value()));
     //updateLanguagesList();
 }

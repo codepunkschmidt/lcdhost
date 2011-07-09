@@ -13,7 +13,6 @@ class LH_MonitoringText : public LH_Text
 
 protected:
     LH_MonitoringData *data_;
-
     LH_Qt_bool *setup_value_round_;
     LH_Qt_bool *setup_append_units_;
     LH_Qt_QString *setup_pre_text_;
@@ -21,13 +20,12 @@ protected:
 
 public:
     const char *userInit();
-
     int notify( int, void* );
+    void connect_updateText(QObject* obj);
+    void connect_changeType(QObject* obj);
 
     static lh_class *classInfo() { return NULL; }
 
-    void connect_updateText(QObject* obj);
-    void connect_changeType(QObject* obj);
 public slots:
     void updateText(bool rerender = false);
     void changeType();

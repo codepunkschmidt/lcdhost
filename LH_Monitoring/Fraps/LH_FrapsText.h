@@ -8,7 +8,7 @@ class LH_FrapsText : public LH_MonitoringText
 {
     Q_OBJECT
 public:
-    LH_FrapsText();
+    const char *userInit();
     static lh_class *classInfo();
 };
 

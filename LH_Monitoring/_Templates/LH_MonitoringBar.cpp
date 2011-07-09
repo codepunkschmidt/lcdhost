@@ -26,8 +26,9 @@
 
 #include "LH_MonitoringBar.h"
 
-LH_MonitoringBar::LH_MonitoringBar()
+const char *LH_MonitoringBar::userInit()
 {
+    if( const char *err = LH_Bar::userInit() ) return err;
     LH_Qt_QString* hr = new LH_Qt_QString(this,tr("~Mon-Data-Rule"),"<hr>", LH_FLAG_NOSAVE | LH_FLAG_NOSOURCE | LH_FLAG_NOSINK,lh_type_string_html );
     hr->setOrder(-3);
 
@@ -45,12 +46,9 @@ LH_MonitoringBar::LH_MonitoringBar()
     hr2->setOrder(-3);
 
     updateBounds();
+    return 0;
 }
 
-LH_MonitoringBar::~LH_MonitoringBar()
-{
-
-}
 
 int LH_MonitoringBar::notify(int n, void *p)
 {

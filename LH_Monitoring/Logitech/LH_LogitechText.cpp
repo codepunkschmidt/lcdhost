@@ -55,9 +55,10 @@ lh_class *LH_LogitechText::classInfo()
     return &classInfo;
 }
 
-LH_LogitechText::LH_LogitechText()
+const char *LH_LogitechText::userInit()
 {
+    if( const char *err = LH_MonitoringText::userInit() ) return err;
     data_ = new LH_LogitechData(this, mdmAll);
     connect_changeType( static_cast<LH_LogitechData*>(data_)->setup_value_type_ );
-    //connect_updateText( static_cast<LH_LogitechData*>(data_)->setup_value_format_ );
+    return 0;
 }

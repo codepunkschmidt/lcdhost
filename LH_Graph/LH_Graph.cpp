@@ -47,7 +47,8 @@ static inline uint PREMUL(uint x) {
 
 LH_Graph::LH_Graph( float defaultMin, float defaultMax )
 {
-    if (isDebug) qDebug() << "graph: init: begin";
+    defaultMin_ = defaultMin;
+    defaultMax_ = defaultMax;
     userDefinableLimits_ = false;
     graphMinY_ = graphMaxY_ = 0.0;
     values_.clear();
@@ -56,6 +57,14 @@ LH_Graph::LH_Graph( float defaultMin, float defaultMax )
     len_ = 30;
     divisorY_ = 1;
     unitText_ = "";
+    return;
+}
+
+const char *LH_Graph::userInit()
+{
+    if( const char *err = LH_QtInstance::userInit() ) return err;
+
+    if (isDebug) qDebug() << "graph: init: begin";
 
     QStringList fgTypes = QStringList();
     fgTypes.append("Line Only");
@@ -115,7 +124,7 @@ LH_Graph::LH_Graph( float defaultMin, float defaultMax )
     setup_fg_alpha_ = new LH_Qt_int(this,"Fill Image Opacity", 255, 0, 255, LH_FLAG_AUTORENDER | LH_FLAG_HIDDEN);
     setup_fg_alpha_->setHelp( "<p>This value affects the opacity of the fill image.</p>");
 
-    setup_max_ = new LH_Qt_float(this, "Graph Ymax",defaultMax,-99999999,99999999, LH_FLAG_AUTORENDER | LH_FLAG_HIDDEN);
+    setup_max_ = new LH_Qt_float(this, "Graph Ymax",defaultMax_,-99999999,99999999, LH_FLAG_AUTORENDER | LH_FLAG_HIDDEN);
     setup_max_->setHelp( "<p>The maximum value displayed on the graph.</p>"
                          "<p>This value can only be set when \"Ymax Can Grow\" is disabled (see below).</p>");
 
@@ -125,7 +134,7 @@ LH_Graph::LH_Graph( float defaultMin, float defaultMax )
     setup_auto_scale_y_max_ = new LH_Qt_bool(this,"Auto Scale Ymax", false, LH_FLAG_AUTORENDER);
     setup_auto_scale_y_max_->setHelp( "<p>When enabled, the plotted area's highest point will shift with the visible data to create a \"zooming\" effect. The less variation in the data the tighter the zoom. (Best used with \"Auto Scale Ymin\".)</p>");
 
-    setup_min_ = new LH_Qt_float(this, "Graph Ymin",defaultMin,-99999999,99999999, LH_FLAG_AUTORENDER | LH_FLAG_READONLY | LH_FLAG_HIDDEN);
+    setup_min_ = new LH_Qt_float(this, "Graph Ymin",defaultMin_,-99999999,99999999, LH_FLAG_AUTORENDER | LH_FLAG_READONLY | LH_FLAG_HIDDEN);
     setup_min_->setHelp( "<p>The minimum value displayed on the graph.</p>");
 
     setup_auto_scale_y_min_ = new LH_Qt_bool(this,"Auto Scale Ymin", false, LH_FLAG_AUTORENDER);
@@ -182,10 +191,11 @@ LH_Graph::LH_Graph( float defaultMin, float defaultMax )
     connect( setup_max_grow_, SIGNAL(changed()), this, SLOT(updateLimitControls()) );
 
     if (isDebug) qDebug() << "graph: init: done";
-    return;
+
+    return 0;
 }
 
-LH_Graph::~LH_Graph()
+void LH_Graph::userTerm()
 {
     if (isDebug) qDebug() << "graph: destroy: begin";
 
@@ -203,6 +213,7 @@ LH_Graph::~LH_Graph()
     disconnect( setup_show_real_limits_, SIGNAL(changed()) );
     disconnect( setup_max_grow_, SIGNAL(changed()) );
     if (isDebug) qDebug() << "graph: destroy: done";
+    LH_QtInstance::userTerm();
 }
 
 qreal LH_Graph::max()

@@ -8,14 +8,15 @@ class LH_MonitoringGraph : public LH_Graph
 {
     Q_OBJECT
     bool was_empty_;
+
 protected:
     LH_MonitoringData *data_;
-
     LH_Qt_bool *setup_append_units_;
-public:
-    LH_MonitoringGraph();
-    ~LH_MonitoringGraph();
 
+public:
+    LH_MonitoringGraph() : LH_Graph(0,2), was_empty_(true), data_(0), setup_append_units_(0) {}
+
+    const char *userInit();
     int notify( int, void* );
 
     static lh_class *classInfo() { return NULL; }

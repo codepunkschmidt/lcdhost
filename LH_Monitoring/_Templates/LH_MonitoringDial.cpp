@@ -26,8 +26,10 @@
 
 #include "LH_MonitoringDial.h"
 
-LH_MonitoringDial::LH_MonitoringDial()
+
+const char *LH_MonitoringDial::userInit()
 {
+    if( const char *err = LH_Dial::userInit() ) return err;
     LH_Qt_QString* hr = new LH_Qt_QString(this,tr("~Mon-Data-Rule"),"<hr>", LH_FLAG_NOSAVE | LH_FLAG_NOSOURCE | LH_FLAG_NOSINK,lh_type_string_html );
     hr->setOrder(-3);
 
@@ -47,11 +49,7 @@ LH_MonitoringDial::LH_MonitoringDial()
     updateBounds();
 
     pollTimer_.start();
-}
-
-LH_MonitoringDial::~LH_MonitoringDial()
-{
-
+    return 0;
 }
 
 int LH_MonitoringDial::polling()

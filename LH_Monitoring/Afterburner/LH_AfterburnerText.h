@@ -8,7 +8,7 @@ class LH_AfterburnerText : public LH_MonitoringText
 {
     Q_OBJECT
 public:
-    LH_AfterburnerText();
+    const char *userInit();
     static lh_class *classInfo();
 };
 

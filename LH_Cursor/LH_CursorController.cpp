@@ -368,6 +368,10 @@ void LH_CursorController::changeMode()
 void LH_CursorController::changeBounds()
 {
     QStringList bounds = setup_boundry_->value().split(',');
+
+    cursor_data.range.x = (minmax){bounds.at(0).toInt(), bounds.at(2).toInt()};
+    cursor_data.range.y = (minmax){bounds.at(1).toInt(), bounds.at(3).toInt()};
+
     bool showHorz = false;
     bool showVert = false;
     if(bounds.length()>=4)

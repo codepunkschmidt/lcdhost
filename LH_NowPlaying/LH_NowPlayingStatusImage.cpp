@@ -43,6 +43,7 @@ const char *LH_NowPlayingStatusImage::userInit()
     if( const char *err = LH_QImage::userInit() ) return err;
 
     setup_image_file_->setFlags( LH_FLAG_AUTORENDER | LH_FLAG_READONLY | LH_FLAG_NOSAVE );
+    setup_image_file_->setHelp("To set image shown, enable conditional formatting and create rules based on the Playing State.");
 
     connect( currentTrack, SIGNAL(changed()), this, SLOT(refresh_status()) );
 

@@ -75,12 +75,15 @@ class LH_QtCFInstance : public LH_QtInstance
     cf_source_list sources_;
     cf_target_list targets_;
 
+    int cf_source_list_pos;
+    int cf_target_list_pos;
+
     //QDomElement createNode(QDomDocument doc, QString tagName, QString nodeValue = "", QString attributeName = "", QString attributeValue = "");
 
     bool cf_initialized_;
     void cf_initialize();
 
-    void add_cf_source(QString name, LH_QtSetupItem *si);
+    void add_cf_source(QString name, LH_QtSetupItem *si, bool atEnd = false);
 
     //QString getTargetValue(int targetId);
 
@@ -109,9 +112,9 @@ protected:
 
     void cf_source_notify(QString name, QString value, int index = 0, int count = 1);
 
-    void add_cf_source(LH_QtSetupItem *si);
-    void add_cf_source(QString name);
-    void add_cf_target(LH_QtSetupItem *si);
+    void add_cf_source(LH_QtSetupItem *si, bool atEnd = false);
+    void add_cf_source(QString name, bool atEnd = false);
+    void add_cf_target(LH_QtSetupItem *si, bool atEnd = false);
 
 public:
     LH_Qt_QStringList *setup_cf_source_;

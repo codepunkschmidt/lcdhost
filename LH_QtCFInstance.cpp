@@ -155,32 +155,38 @@ void LH_QtCFInstance::cf_initialize()
         connect(setup_cf_visibility_, SIGNAL(changed()), this, SLOT(cf_update_visibility()));
         connect(setup_cf_visibility_, SIGNAL(set()), this, SLOT(cf_update_visibility()));
 
-        add_cf_source(setup_cf_state_);
-        add_cf_target(setup_cf_state_);
-        add_cf_target(setup_cf_visibility_);
+        cf_source_list_pos = 0;
+        cf_target_list_pos = 0;
+
+        add_cf_source(setup_cf_state_, true);
+        add_cf_target(setup_cf_state_, true);
+        add_cf_target(setup_cf_visibility_, true);
     }
 }
 
-void LH_QtCFInstance::add_cf_source(LH_QtSetupItem *si)
+void LH_QtCFInstance::add_cf_source(LH_QtSetupItem *si, bool atEnd)
 {
-    add_cf_source(si->name(), si);
+    add_cf_source(si->name(), si, atEnd);
 }
 
-void LH_QtCFInstance::add_cf_source(QString name)
+void LH_QtCFInstance::add_cf_source(QString name, bool atEnd)
 {
-    add_cf_source(name, NULL);
+    add_cf_source(name, NULL, atEnd);
 }
 
-void LH_QtCFInstance::add_cf_source(QString name, LH_QtSetupItem* si)
+void LH_QtCFInstance::add_cf_source(QString name, LH_QtSetupItem* si, bool atEnd)
 {
     cf_initialize();
     if(sources_.contains(name))
         return;
 
-    if(sources_.count()==0)
+    if(atEnd || sources_.count() == 0)
         setup_cf_source_->list().append(name);
     else
-        setup_cf_source_->list().insert(sources_.count()-1, name);
+    {
+        setup_cf_source_->list().insert(cf_source_list_pos, name);
+        cf_source_list_pos++;
+    }
 
     sources_.insert(new cf_source(this, name, si));
     setup_cf_source_->refreshList();
@@ -198,19 +204,19 @@ void LH_QtCFInstance::add_cf_source(QString name, LH_QtSetupItem* si)
     }
 }
 
-void LH_QtCFInstance::add_cf_target(LH_QtSetupItem *si)
+void LH_QtCFInstance::add_cf_target(LH_QtSetupItem *si, bool atEnd)
 {
     cf_initialize();
-    if(targets_.length()==0)
+    if(atEnd || targets_.length()==0)
     {
         targets_.append(si);
         setup_cf_target_->list().append(si->name());
     }
     else
     {
-        int i = targets_.length()-1;
-        targets_.insert(i, si);
-        setup_cf_target_->list().insert(i, si->name());
+        targets_.insert(cf_target_list_pos, si);
+        setup_cf_target_->list().insert(cf_target_list_pos, si->name());
+        cf_target_list_pos++;
     }
     setup_cf_target_->refreshList();
 }

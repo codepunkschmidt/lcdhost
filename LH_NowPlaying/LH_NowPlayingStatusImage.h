@@ -1,5 +1,5 @@
 /**
-  \file     LH_QtPlugin_NowPlaying.h
+  \file     LH_NowPlayingText.h
   \author   Johan Lindh <johan@linkdata.se>
   \author   Andy Bridges <andy@bridgesuk.com>
   \legalese Copyright (c) 2010 Johan Lindh, Andy Bridges
@@ -34,28 +34,26 @@
 
   **/
 
+#include <QFont>
+#include <QFontMetrics>
+#include <QTime>
+#include <QRegExp>
 
-#ifndef LH_QTPLUGIN_NOWPLAYING_H
-#define LH_QTPLUGIN_NOWPLAYING_H
+#include "../LH_Monitoring/LH_QImage/LH_QImage.h"
 
-#include "../LH_QtPlugin.h"
-#include "LH_NowPlayingReader.h"
-#include <QDebug>
-#include <QTimer>
+#include "LH_QtPlugin_NowPlaying.h"
 
-#define VERSION 2.10
-
-class LH_QtPlugin_NowPlaying : public LH_QtPlugin
+class LH_NowPlayingStatusImage : public LH_QImage
 {
     Q_OBJECT
-    QTimer timer_;
+
+protected:
+    LH_Qt_QString* setup_playing_state_;
 
 public:
     const char *userInit();
-    void userTerm();
+    static lh_class *classInfo();
 
 public slots:
-    void refresh_data();
+    void refresh_status();
 };
-
-#endif // LH_QTPLUGIN_NOWPLAYING_H

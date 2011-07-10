@@ -36,7 +36,6 @@
 
 #include "LH_QtPlugin_NowPlaying.h"
 #include <QFileInfo>
-#include <QDebug>
 
 LH_PLUGIN(LH_QtPlugin_NowPlaying)
 
@@ -149,129 +148,10 @@ char __lcdhostplugin_xml[] =
 "</longdesc>"
 "</lcdhostplugin>";
 
-LH_NowPlaying_Reader* currentTrack;
-
-bool get_itunes_info(TrackInfo &ti, QString artworkPath, artworkDescription &cachedArtwork, bool &updatedArtwork);
-bool get_winamp_info(TrackInfo &ti);
-bool get_msn_compat_info(struct TrackInfo &ti);
-
-bool get_folder_artwork(TrackInfo newInfo, QString artworkCachePath, artworkDescription &cachedArtwork)
-{
-    QFileInfo newItemFile(newInfo.file);
-    QString newItemFilePath = newItemFile.absolutePath();
-    QString folderImage = newItemFilePath+"/folder.jpg";
-    QString artworkCacheFileName = QString("%0%1art.%2").arg(artworkCachePath).arg(artworkCachePath.endsWith("/")? "" : "/").arg("jpg");
-    if(QFile::exists(folderImage))
-    {
-        if(QFile::exists(artworkCacheFileName))
-        {
-            #ifdef Q_OS_WIN
-                SetFileAttributes((LPCTSTR)artworkCacheFileName.utf16(), 0);
-            #endif
-            QFile::remove(artworkCacheFileName);
-        }
-        if(QFile::copy(folderImage, artworkCacheFileName))
-        {
-            #ifdef Q_OS_WIN
-                SetFileAttributes((LPCTSTR)artworkCacheFileName.utf16(), 0);
-            #endif
-            cachedArtwork.cacheMode = amFileFolder;
-            cachedArtwork.album = newInfo.album;
-            cachedArtwork.artist = newInfo.artist;
-            cachedArtwork.sourcefolder = newItemFilePath;
-            cachedArtwork.fileName = artworkCacheFileName;
-            return true;
-        } else {
-            qWarning() << "NowPlaying: Unable to copy album artwork from " << folderImage;
-        }
-    }
-    return false;
-}
-
-void close_itunes_connection();
-
-LH_NowPlaying_Reader::~LH_NowPlaying_Reader() {
-    close_itunes_connection();
-}
-
-void LH_NowPlaying_Reader::refresh()
-{
-    playerFound_ = false;
-    TrackInfo newInfo;
-    bool updatedArtwork = false;
-
-    playerFound_ = playerFound_ || get_itunes_info(newInfo, artworkCachePath_, cachedArtwork_, updatedArtwork);
-    playerFound_ = playerFound_ || get_winamp_info(newInfo);
-    playerFound_ = playerFound_ || get_msn_compat_info(newInfo);
-
-    if(storeInfo(newInfo))
-        emit changed();
-
-    if(playerFound_ && !updatedArtwork)
-    {
-        QFileInfo newItemFile(newInfo.file);
-        QString newItemFilePath = newItemFile.absolutePath();
-        bool validArtwork = false;
-        switch(cachedArtwork_.cacheMode)
-        {
-        case amArtistAndAlbumName:
-            validArtwork = (cachedArtwork_.album == newInfo.album && cachedArtwork_.artist == newInfo.artist);
-            break;
-        case amFileFolder:
-            validArtwork = (cachedArtwork_.sourcefolder == newItemFilePath);
-            break;
-        case amTrack:
-            validArtwork = (cachedArtwork_.track == newInfo.track && cachedArtwork_.album == newInfo.album && cachedArtwork_.artist == newInfo.artist);
-            break;
-        case amNone:
-            validArtwork = false;
-            break;
-        }
-        if(!validArtwork)
-        {
-            currentTrack->clearArtwork();
-            updatedArtwork = get_folder_artwork(newInfo, artworkCachePath_, cachedArtwork_);
-            cachedArtwork_.album = newInfo.album;
-            cachedArtwork_.artist = newInfo.artist;
-            if(!updatedArtwork)
-            {
-                cachedArtwork_.sourcefolder = newItemFilePath;
-                updatedArtwork = true;
-            } else {
-                cachedArtwork_.track == newInfo.track;
-                cachedArtwork_.cacheMode = amTrack;
-            }
-        }
-    }
-
-    if(!playerFound_ && currentTrack->artworkFileName()!="")
-    {
-        currentTrack->clearArtwork();
-        updatedArtwork = true;
-    }
-    if(updatedArtwork)
-        emit artworkChanged();
-}
-
-bool LH_NowPlaying_Reader::storeInfo(TrackInfo newInfo)
-{
-    bool dirty = false;
-    dirty = dirty || (info_.album != newInfo.album);
-    dirty = dirty || (info_.artist != newInfo.artist);
-    dirty = dirty || (info_.currentSecs != newInfo.currentSecs);
-    dirty = dirty || (info_.player != newInfo.player);
-    dirty = dirty || (info_.status != newInfo.status);
-    dirty = dirty || (info_.totalSecs!= newInfo.totalSecs);
-    dirty = dirty || (info_.track!= newInfo.track);
-
-    info_ = newInfo;
-    return dirty;
-}
-
 const char *LH_QtPlugin_NowPlaying::userInit()
 {
     if( const char *err = LH_QtPlugin::userInit() ) return err;
-    currentTrack = new LH_NowPlaying_Reader(this);
+    currentTrack = new LH_NowPlayingReader(this);
     timer_.setInterval(500);
     timer_.start();
     connect(&timer_, SIGNAL(timeout()), this, SLOT(refresh_data()));

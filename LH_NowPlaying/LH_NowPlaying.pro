@@ -27,7 +27,11 @@ SOURCES += ../lh_plugin.c \
     iTunesCOMInterface_i.c  \
     utils.cpp \
     disphelper.c \
-    LH_NowPlayingAlbumArt.cpp
+    LH_NowPlayingAlbumArt.cpp \
+    ../LH_Monitoring/LH_QImage/logo_blob.c \
+    ../LH_Monitoring/LH_QImage/LH_QImage.cpp \
+    LH_NowPlayingStatusImage.cpp \
+    LH_NowPlayingReader.cpp
 
 HEADERS += ../lh_plugin.h \
     ../LH_QtPlugin.h \
@@ -44,4 +48,7 @@ HEADERS += ../lh_plugin.h \
     iTunesCOMInterface.h \
     LH_NowPlayingEmulator.h \
     utils.h \
-    LH_NowPlayingAlbumArt.h
+    LH_NowPlayingAlbumArt.h \
+    ../LH_Monitoring/LH_QImage/LH_QImage.h \
+    LH_NowPlayingStatusImage.h \
+    LH_NowPlayingReader.h

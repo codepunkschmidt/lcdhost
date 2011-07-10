@@ -43,7 +43,7 @@
 #include <QDebug>
 #include <QTimer>
 
-#define VERSION 2.20
+#define VERSION 2.21
 
 class LH_QtPlugin_NowPlaying : public LH_QtPlugin
 {

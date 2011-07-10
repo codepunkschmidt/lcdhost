@@ -48,12 +48,19 @@ class LH_NowPlayingStatusImage : public LH_QImage
     Q_OBJECT
 
 protected:
-    LH_Qt_QString* setup_playing_state_;
+    LH_Qt_QString* setup_value_;
+
+    void replace_token(QString &str, QString token, QString val);
+    void replace_token(QString &str, QString token, int seconds, int totalSeconds);
+protected:
+    LH_Qt_QStringList* setup_item_;
+    LH_Qt_QString* setup_custom_;
 
 public:
     const char *userInit();
     static lh_class *classInfo();
 
 public slots:
-    void refresh_status();
+    void setup_item_changed();
+    void refresh_value();
 };

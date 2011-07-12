@@ -104,38 +104,43 @@ class LH_CursorAction : public LH_QtInstance
 
     int cludgeLock;
 
+    void enableEditUI(bool);
 protected:
     QString statusCode_;
 
     LH_Qt_QString *setup_coordinate_;
     LH_Qt_InputState *setup_jump_to_;
 
-    LH_Qt_QStringList *setup_actions_;
-    LH_Qt_QString *setup_action_desc_;
-    LH_Qt_QStringList *setup_action_type_;
 
-    LH_Qt_QString *setup_action_parameter1_desc_;
-    LH_Qt_QString *setup_action_parameter1_str_;
-    LH_Qt_int *setup_action_parameter1_int_;
+    LH_Qt_QString     *setup_action_desc_;
+    LH_Qt_QStringList *setup_action_type_;
+    LH_Qt_bool        *setup_action_enabled_;
+
+    LH_Qt_QString   *setup_action_parameter1_desc_;
+    LH_Qt_QString   *setup_action_parameter1_str_;
+    LH_Qt_int       *setup_action_parameter1_int_;
     LH_Qt_QFileInfo *setup_action_parameter1_file_;
 
-    LH_Qt_QString *setup_action_parameter2_desc_;
-    LH_Qt_QString *setup_action_parameter2_str_;
-    LH_Qt_int *setup_action_parameter2_int_;
+    LH_Qt_QString   *setup_action_parameter2_desc_;
+    LH_Qt_QString   *setup_action_parameter2_str_;
+    LH_Qt_int       *setup_action_parameter2_int_;
     LH_Qt_QFileInfo *setup_action_parameter2_file_;
 
-    LH_Qt_int *setup_action_index_;
-    LH_Qt_bool *setup_action_enabled_;
+    LH_Qt_QStringList *setup_act_rules_;
+    LH_Qt_QString     *setup_act_new_;
+    LH_Qt_QString     *setup_act_save_;
+    LH_Qt_QString     *setup_act_cancel_;
+    LH_Qt_QString     *setup_act_delete_;
+    LH_Qt_QString     *setup_act_move_up_;
+    LH_Qt_QString     *setup_act_move_down_;
+    LH_Qt_QString     *setup_act_copy_;
+    LH_Qt_QString     *setup_act_paste_;
 
-    LH_Qt_QString *setup_action_add_;
-    LH_Qt_QString *setup_action_delete_;
-    LH_Qt_QString *setup_action_delete_confirm_;
-
-    LH_Qt_QTextEdit *setup_actions_xml_;
+    LH_Qt_QTextEdit   *setup_act_XML_;
 
 public:
     LH_CursorAction();
-    const char *userInit(){ hide(); return NULL; }
+    const char *userInit();
 
     int polling();
 
@@ -146,12 +151,16 @@ public:
 public slots:
     void doJumpTo(QString key,int flags,int value);
     void xmlChanged();
-    void actionSelected();
-    void actionEdited();
-    void actionMoved();
+    void reloadAction();
+    void saveAction();
+    void moveAction_up();
+    void moveAction_down();
     void newAction();
     void deleteAction();
-    void deleteActionCheck();
+    void actionTypeChanged();
+    void copyActions();
+    void pasteActions();
+    void uneditAction();
 };
 
 #endif // LH_CURSORACTION_H

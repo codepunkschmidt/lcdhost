@@ -79,7 +79,7 @@ protected:
 public:
     LH_CursorController();
 
-    const char *userInit(){ hide(); return NULL; }
+    const char *userInit();
 
     int polling();
 

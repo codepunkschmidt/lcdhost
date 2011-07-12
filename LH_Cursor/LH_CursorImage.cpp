@@ -56,6 +56,13 @@ lh_class *LH_CursorImage::classInfo()
 
 LH_CursorImage::LH_CursorImage()
 {
+    statusCode_ = "OFF";
+}
+
+const char *LH_CursorImage::userInit()
+{
+    if( const char *err = LH_QtInstance::userInit() ) return err;
+
     setup_file_ = new LH_Qt_QFileInfo( this, tr("File"), QFileInfo(), LH_FLAG_AUTORENDER );
     setup_file_->setHelp( "<p>The image map file instructs the status image on how to match up "
                           "a state with the appropriate images in the same folder.</p>"
@@ -91,8 +98,9 @@ LH_CursorImage::LH_CursorImage()
     setup_text_ = new LH_Qt_QString( this, tr("~"), QString(), LH_FLAG_READONLY|LH_FLAG_NOSAVE|LH_FLAG_HIDDEN|LH_FLAG_AUTORENDER );
     setup_text_->setOrder(-1);
 
-    statusCode_ = "OFF";
     imageDefinitions = new QHash<QString, QStringList>();
+
+    return 0;
 }
 
 int LH_CursorImage::polling()

@@ -26,16 +26,13 @@
 
 #include "LH_DialTime.h"
 
-LH_DialTime::LH_DialTime()
+const char *LH_DialTime::userInit()
 {
+    if( const char *err = LH_Dial::userInit() ) return err;
+
     setMin(0.0);
     setMax(60.0);
     isClock = true;
-}
-
-const char *LH_DialTime::userInit()
-{
-    LH_Dial::userInit();
 
     setup_manual_adjust_ = new LH_Qt_bool(this, "Manual Adjust", false);
     setup_manual_adjust_->setHelp( "<p>Manually tweak the time displayed (e.g. to display time from a different time zone).</p>");

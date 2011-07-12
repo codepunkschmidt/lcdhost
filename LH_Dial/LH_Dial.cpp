@@ -54,6 +54,8 @@ LH_Dial::LH_Dial()
 
 const char *LH_Dial::userInit()
 {
+    if( const char *err = LH_QtInstance::userInit() ) return err;
+
     faceImage_ = new QImage();
 
     setup_type_ = new LH_Qt_QStringList(this, "Dial Type", QStringList()<<"Full Circle"<<"Semi-Circle"<<"Quarter Circle", LH_FLAG_AUTORENDER);

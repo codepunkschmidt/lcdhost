@@ -21,3 +21,6 @@ HEADERS += \
     ../LH_QtSetupItem.h \
     LH_LgBacklight.h\
     LgBacklightDevice.h
+
+RESOURCES += \
+    resources.qrc

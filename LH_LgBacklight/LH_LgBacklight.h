@@ -48,9 +48,8 @@ class LH_LgBacklight : public LH_QtPlugin
 
     LH_Qt_QStringList *devselect_;
     LH_Qt_QColor *devcolor_;
-    LH_Qt_bool *devisdefault_;
     LH_Qt_QString *rescanbutton_;
-    LH_Qt_QString *defaultdev_;
+    LH_Qt_QColor *allcolor_;
 
     QList<LgBacklightDevice*> devs_;
 
@@ -60,7 +59,7 @@ public:
 public slots:
     void changeDev();
     void changeColor();
-    void defaultCheckbox();
+    void setAllColor();
     void scan();
 };
 

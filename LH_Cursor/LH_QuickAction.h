@@ -47,8 +47,7 @@ protected:
 
     void updateCountdown();
 public:
-    LH_QuickAction();
-    const char *userInit(){ hide(); return NULL; }
+    const char *userInit();
 
 
     static lh_class *classInfo();

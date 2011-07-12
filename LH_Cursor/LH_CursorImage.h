@@ -50,6 +50,7 @@ protected:
 
 public:
     LH_CursorImage();
+    const char *userInit();
 
     QImage *render_qimage( int w, int h );
     int polling();

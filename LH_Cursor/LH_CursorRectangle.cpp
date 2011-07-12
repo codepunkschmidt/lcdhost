@@ -47,6 +47,13 @@ lh_class *LH_CursorRectangle::classInfo()
 
 LH_CursorRectangle::LH_CursorRectangle()
 {
+    statusCode_ = "OFF";
+}
+
+const char *LH_CursorRectangle::userInit()
+{
+    if( const char *err = LH_QtInstance::userInit() ) return err;
+
     setup_penwidth_ = new LH_Qt_QSlider(this,tr("Pen width"),0,0,1000,LH_FLAG_AUTORENDER);
     setup_rounding_ = new LH_Qt_QSlider(this,tr("Corner rounding"),20,0,100,LH_FLAG_AUTORENDER);
     setup_pencolor_ = new LH_Qt_QColor(this,tr("Pen color"),Qt::black,LH_FLAG_AUTORENDER);
@@ -90,7 +97,6 @@ LH_CursorRectangle::LH_CursorRectangle()
 
     connect(setup_layout_trigger_, SIGNAL(changed()), this, SLOT(changeLayoutTrigger()));
 
-    statusCode_ = "OFF";
     colorDefinitions.insert("OFF",     (colorMapData){"OFF",     QColor("white"),  false, QColor(0,0,0,0), false});
     colorDefinitions.insert("ON",      (colorMapData){"ON",      QColor("red"),    false, QColor(0,0,0,0), false});
     colorDefinitions.insert("OFF_SEL", (colorMapData){"OFF_SEL", QColor("blue"),   false, QColor(0,0,0,0), false});
@@ -135,7 +141,7 @@ LH_CursorRectangle::LH_CursorRectangle()
         connect(setup_bgcolor1_on_sel_, SIGNAL(changed()), this, SLOT(overridesChanged()));
         connect(setup_bgcolor2_on_sel_, SIGNAL(changed()), this, SLOT(overridesChanged()));
     }
-
+    return 0;
 }
 
 QImage *LH_CursorRectangle::render_qimage( int w, int h )

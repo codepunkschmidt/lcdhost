@@ -46,6 +46,15 @@ lh_class *LH_CursorController::classInfo()
 
 LH_CursorController::LH_CursorController()
 {
+
+}
+
+const char *LH_CursorController::userInit()
+{
+    if( const char *err = LH_QtInstance::userInit() ) return err;
+
+    hide();
+
     setup_coordinate_ = new LH_Qt_QString(this, "Coordinate", "1,1", LH_FLAG_NOSAVE | LH_FLAG_READONLY | LH_FLAG_FIRST);
     setup_coordinate_->setHelp("The current cursor location.");
 
@@ -126,6 +135,7 @@ LH_CursorController::LH_CursorController()
 
     updateLocation(0,0);
 
+    return 0;
 }
 
 void LH_CursorController::doMoveUp(QString key,int flags,int value)

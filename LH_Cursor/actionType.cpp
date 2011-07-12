@@ -99,7 +99,6 @@ void actionType::displayParameter(int id, LH_Qt_QString *desc_, LH_Qt_QString *s
             file_->setValue(parameters[id].type != aptFile? QFileInfo() : (QFileInfo(val2).exists()? QFileInfo(val2) : QFileInfo(val)));
         }
     }
-
 }
 
 QString actionType::getParameterValue(int id, LH_Qt_QString *str_, LH_Qt_int *int_, LH_Qt_QFileInfo *file_)

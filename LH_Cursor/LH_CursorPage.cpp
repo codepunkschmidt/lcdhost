@@ -48,6 +48,16 @@ lh_class *LH_CursorPage::classInfo()
 
 LH_CursorPage::LH_CursorPage()
 {
+    active = false;
+    selected = false;
+}
+
+const char *LH_CursorPage::userInit()
+{
+    if( const char *err = LH_QtInstance::userInit() ) return err;
+
+    setVisible(selected);
+
     setup_coordinate_ = new LH_Qt_QString(this, "Coordinate", "1,1", LH_FLAG_AUTORENDER);
     setup_coordinate_->setHelp("This is the coordinate of this object, i.e. when the cursor is at the point specified here this object is selected. <br/>"
                                "<br/>"
@@ -58,14 +68,8 @@ LH_CursorPage::LH_CursorPage()
                                "<br/>"
                                "When selected a page (and all its children) is visible. When not selected it (and all its children) are hidden, although they can still be selected in the Instances tree."
                                );
-    active = false;
-    selected = false;
-}
 
-const char *LH_CursorPage::userInit()
-{
-    setVisible(selected);
-    return NULL;
+    return 0;
 }
 
 int LH_CursorPage::polling()

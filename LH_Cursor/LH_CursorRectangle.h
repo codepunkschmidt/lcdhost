@@ -96,6 +96,8 @@ protected:
 public:
     LH_CursorRectangle();
 
+    const char *userInit();
+
     QImage *render_qimage( int w, int h );
 
     QColor pencolor() const { return setup_pencolor_->value(); }

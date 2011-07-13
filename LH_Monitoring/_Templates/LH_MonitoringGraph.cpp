@@ -32,7 +32,8 @@ const char *LH_MonitoringGraph::userInit()
     setUserDefinableLimits(true);
     canGrow(true);
 
-    LH_Qt_QString* hr = new LH_Qt_QString(this,tr("~Mon-Data-Rule"),"<hr>", LH_FLAG_NOSAVE | LH_FLAG_NOSOURCE | LH_FLAG_NOSINK,lh_type_string_html );
+    LH_Qt_QString* hr = new LH_Qt_QString(this,tr("~Mon-Data-Rule"), QString(), LH_FLAG_NOSAVE | LH_FLAG_NOSOURCE | LH_FLAG_NOSINK,lh_type_string_htmlhelp );
+    hr->setHelp("<hr>");
     hr->setOrder(-3);
 
     setup_auto_scale_y_max_->setValue(true);
@@ -45,7 +46,8 @@ const char *LH_MonitoringGraph::userInit()
     setup_append_units_->setOrder(-3);
     connect( setup_append_units_, SIGNAL(changed()), this, SLOT(updateUnits()) );
 
-    LH_Qt_QString* hr2 =new LH_Qt_QString(this,tr("~Mon-Props-Rule"),"<hr>", LH_FLAG_NOSAVE | LH_FLAG_NOSOURCE | LH_FLAG_NOSINK,lh_type_string_html );
+    LH_Qt_QString* hr2 =new LH_Qt_QString(this,tr("~Mon-Props-Rule"), QString(), LH_FLAG_NOSAVE | LH_FLAG_NOSOURCE | LH_FLAG_NOSINK,lh_type_string_htmlhelp );
+    hr2->setHelp("<hr>");
     hr2->setOrder(-3);
 
     was_empty_ = true;

@@ -118,9 +118,13 @@ QString LH_QtSetupItem::link()
 
 void LH_QtSetupItem::setHelp(QString s)
 {
-    if( s.isEmpty() ) help_.clear();
-    else help_ = s.toUtf8();
-    item_.help = help_.constData();
+    if( help_ != s )
+    {
+        if( s.isEmpty() ) help_.clear();
+        else help_ = s.toUtf8();
+        item_.help = help_.constData();
+        parent()->callback( lh_cb_setup_refresh, item() );
+    }
     return;
 }
 

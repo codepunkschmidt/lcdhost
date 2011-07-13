@@ -32,12 +32,16 @@
   POSSIBILITY OF SUCH DAMAGE.
   */
 
+#include <QDebug>
 #include "LH_QtSetupItem.h"
 
 LH_QtSetupItem::LH_QtSetupItem( LH_QtObject *parent, QString name, lh_setup_type type, int flags ) : QObject( parent )
 {
     Q_ASSERT( parent != NULL );
-    Q_ASSERT( parent->isValid() );
+#ifndef QT_NO_DEBUG
+    if( !parent->isValid() )
+        qWarning() << parent->metaObject()->className() << parent->objectName() << "creates setup items before init()";
+#endif
     memset( &item_, 0, sizeof(item_) );
     setName(name);
     order_ = 0;
@@ -114,9 +118,13 @@ QString LH_QtSetupItem::link()
 
 void LH_QtSetupItem::setHelp(QString s)
 {
-    if( s.isEmpty() ) help_.clear();
-    else help_ = s.toUtf8();
-    item_.help = help_.constData();
+    if( help_ != s )
+    {
+        if( s.isEmpty() ) help_.clear();
+        else help_ = s.toUtf8();
+        item_.help = help_.constData();
+        parent()->callback( lh_cb_setup_refresh, item() );
+    }
     return;
 }
 

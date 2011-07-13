@@ -49,6 +49,8 @@ class LH_Graph : public LH_QtInstance
 
     const static bool isDebug = false;
 
+    float defaultMax_, defaultMin_;
+
     qreal dataMaxY_;
     qreal dataMinY_;
     qreal dataDeltaY_;
@@ -113,7 +115,9 @@ protected:
 
 public:
     LH_Graph( float defaultMin = 0, float defaultMax = 0 );
-    ~LH_Graph();
+
+    const char *userInit();
+    void userTerm();
 
     int notify(int code,void* param);
     QImage *render_qimage( int w, int h );

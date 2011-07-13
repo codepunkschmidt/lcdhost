@@ -40,14 +40,27 @@
 
 class LH_BarNetOut : public LH_Bar
 {
-    LH_QtNetwork net_;
+    LH_QtNetwork *net_;
 
 public:
-    LH_BarNetOut() : LH_Bar(), net_(this)
+    LH_BarNetOut() : LH_Bar(), net_(0) { }
+
+    const char *userInit()
     {
+        if( const char *err = LH_Bar::userInit() ) return err;
+        net_ = new LH_QtNetwork(this);
         setMin(0.0);
         setMax(1000.0);
+        return 0;
     }
+
+    void userTerm()
+    {
+        if( net_ ) delete net_;
+        net_ = 0;
+        LH_Bar::userTerm();
+    }
+
 
     static lh_class *classInfo()
     {
@@ -67,13 +80,13 @@ public:
 
     int notify(int n, void *p)
     {
-        return net_.notify(n,p);
+        return net_->notify(n,p);
     }
 
     QImage *render_qimage( int w, int h )
     {
         if( LH_Bar::render_qimage(w,h) == NULL ) return NULL;
-        drawSingle( net_.outPermille() );
+        drawSingle( net_->outPermille() );
         return image_;
     }
 };

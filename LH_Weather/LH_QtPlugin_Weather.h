@@ -107,16 +107,27 @@ protected:
     LH_Qt_QStringList *setup_method_;
     LH_Qt_int *setup_refresh_;
     LH_Qt_QStringList *setup_units_type_;
+
     //LH_Qt_InputState *setup_browser_;
     //LH_Qt_QString *setup_current_url_;
-
     //LH_Qt_QStringList *setup_languages_;
     //LH_Qt_QString *setup_language_;
 
-    GoogleTranslator translator;
+    GoogleTranslator *translator;
 
 public:
-    LH_QtPlugin_Weather() : translator("Weather", this) {}
+    LH_QtPlugin_Weather() : LH_QtPlugin(),
+        setup_location_name_(0),
+        setup_yahoo_woeid_(0),
+        setup_longlat_(0),
+        setup_yahoo_5dayid_(0),
+        setup_city_(0),
+        setup_delay_(0),
+        setup_method_(0),
+        setup_refresh_(0),
+        setup_units_type_(0),
+        translator(0)
+    {}
 
     const char *userInit();
 

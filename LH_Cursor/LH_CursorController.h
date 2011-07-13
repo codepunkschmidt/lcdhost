@@ -77,10 +77,7 @@ protected:
     LH_Qt_QFileInfo *setup_persistent_file_;
 
 public:
-    LH_CursorController();
-
     const char *userInit();
-
     int polling();
 
     static lh_class *classInfo();

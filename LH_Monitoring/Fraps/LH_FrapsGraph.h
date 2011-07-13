@@ -8,7 +8,7 @@ class LH_FrapsGraph : public LH_MonitoringGraph
 {
     Q_OBJECT
 public:
-    LH_FrapsGraph();
+    const char *userInit();
     static lh_class *classInfo();
 };
 

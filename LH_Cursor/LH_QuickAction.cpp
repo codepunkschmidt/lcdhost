@@ -46,8 +46,6 @@ const char *LH_QuickAction::userInit()
 {
     if( const char *err = LH_QtInstance::userInit() ) return err;
 
-    hide();
-
     timer_ = new QTimer(this);
     timer_->setInterval(1000);
 
@@ -71,8 +69,8 @@ const char *LH_QuickAction::userInit()
     connect( setup_timeout_, SIGNAL(changed()), this, SLOT(changeTimeout()) );
     connect( setup_enable_timeout_, SIGNAL(changed()), this, SLOT(changeTimeout()) );
     connect( timer_, SIGNAL(timeout()), this, SLOT(doCountdown()) );
-
-    return 0;
+    hide();
+    return NULL;
 }
 
 void LH_QuickAction::updateCountdown()

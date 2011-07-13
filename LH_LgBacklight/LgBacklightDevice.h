@@ -3,11 +3,19 @@
 
 #include <QString>
 #include <QByteArray>
-
-#include "../LH_Qt_QColor.h"
+#include <QColor>
 #include "hidapi.h"
 
 class LH_LgBacklight;
+
+typedef struct LgBacklightReport_
+{
+    uchar hidprefix;
+    uchar bReportId;
+    uchar Red;
+    uchar Green;
+    uchar Blue;
+} LgBacklightReport;
 
 class LgBacklightDevice
 {
@@ -16,13 +24,16 @@ class LgBacklightDevice
     unsigned product_id_;
     hid_device *hiddev_;
     QByteArray path_;
-    LH_Qt_QColor *color_;
     QString name_;
+    QColor color_;
+    int backlightid_;
 
 public:
     LgBacklightDevice( const struct hid_device_info *di, LH_LgBacklight *parent );
-    ~LgBacklightDevice();
 
+    QString name() const { return name_; }
+    QColor color() const { return color_; }
+    void setColor( QColor c );
     void setRemoval( bool b ) { to_remove_ = b; }
     bool removal() const { return to_remove_; }
     QByteArray path() const { return path_; }

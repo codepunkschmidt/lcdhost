@@ -48,8 +48,6 @@ protected:
     void updateCountdown();
 public:
     const char *userInit();
-
-
     static lh_class *classInfo();
 
 public slots:

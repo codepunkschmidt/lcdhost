@@ -36,7 +36,8 @@
 const char *LH_MonitoringText::userInit()
 {
     if( const char *err = LH_Text::userInit() ) return err;
-    LH_Qt_QString* hr = new LH_Qt_QString(this,tr("~Mon-Data-Rule"),"<hr>", LH_FLAG_NOSAVE | LH_FLAG_NOSOURCE | LH_FLAG_NOSINK,lh_type_string_html );
+    LH_Qt_QString* hr = new LH_Qt_QString(this,tr("~Mon-Data-Rule"), QString(), LH_FLAG_NOSAVE | LH_FLAG_NOSOURCE | LH_FLAG_NOSINK,lh_type_string_htmlhelp );
+    hr->setHelp("<hr>");
     hr->setOrder(-3);
 
     setup_value_round_ = new LH_Qt_bool(this,"Round",false, LH_FLAG_AUTORENDER);
@@ -59,7 +60,8 @@ const char *LH_MonitoringText::userInit()
     setup_post_text_->setOrder(-3);
     connect( setup_post_text_, SIGNAL(changed()), this, SLOT(updateText()) );
 
-    LH_Qt_QString* hr2 =new LH_Qt_QString(this,tr("~Mon-Props-Rule"),"<hr>", LH_FLAG_NOSAVE | LH_FLAG_NOSOURCE | LH_FLAG_NOSINK,lh_type_string_html );
+    LH_Qt_QString* hr2 =new LH_Qt_QString(this,tr("~Mon-Props-Rule"), QString(), LH_FLAG_NOSAVE | LH_FLAG_NOSOURCE | LH_FLAG_NOSINK,lh_type_string_htmlhelp );
+    hr2->setHelp("<hr>");
     hr2->setOrder(-3);
 
     setup_text_->setFlag( LH_FLAG_HIDDEN, true );

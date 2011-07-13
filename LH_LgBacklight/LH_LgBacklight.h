@@ -38,18 +38,28 @@
 #include "LgBacklightDevice.h"
 #include "../LH_QtPlugin.h"
 #include "../LH_Qt_QString.h"
+#include "../LH_Qt_QStringList.h"
+#include "../LH_Qt_QColor.h"
+#include "../LH_Qt_bool.h"
 
 class LH_LgBacklight : public LH_QtPlugin
 {
     Q_OBJECT
 
+    LH_Qt_QStringList *devselect_;
+    LH_Qt_QColor *devcolor_;
     LH_Qt_QString *rescanbutton_;
+    LH_Qt_QColor *allcolor_;
+
     QList<LgBacklightDevice*> devs_;
 
 public:
     virtual const char *userInit();
 
 public slots:
+    void changeDev();
+    void changeColor();
+    void setAllColor();
     void scan();
 };
 

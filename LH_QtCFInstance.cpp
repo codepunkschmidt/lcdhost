@@ -90,6 +90,18 @@ void LH_QtCFInstance::cf_initialize()
 
         setup_cf_visibility_ = new LH_Qt_bool(this, "Visibility", true, LH_FLAG_NOSAVE | LH_FLAG_LAST | LH_FLAG_HIDDEN);
 
+        // Triscopic: Sample of using HTML as a menu
+        setup_cf_menu_ = new LH_Qt_QString(this, "~CFMenu", QString(),  LH_FLAG_UI | LH_FLAG_LAST | LH_FLAG_HIDDEN, lh_type_string_htmlhelp);
+        setup_cf_menu_->setHelp(
+                    "<a href=\"copy\">Copy</a> "
+                    "<a href=\"paste\">Paste</a> "
+                    "<a href=\"moveup\">Move up</a> "
+                    "<a href=\"movedown\">Move down</a> "
+                    "<a href=\"new\">New</a> "
+                    "<a href=\"delete\">Delete</a>"
+                    );
+        connect( setup_cf_menu_, SIGNAL(change(QString)), this, SLOT(cf_menu(QString)) );
+
         setup_cf_copy_ = new LH_Qt_QString(this, "^Copy Conditions", "Copy",  LH_FLAG_UI | LH_FLAG_LAST | LH_FLAG_HIDDEN, lh_type_string_button);
         setup_cf_paste_ = new LH_Qt_QString(this, "^Paste Conditions", "Paste",  LH_FLAG_UI | LH_FLAG_NOSOURCE | LH_FLAG_NOSINK | LH_FLAG_LAST | LH_FLAG_HIDDEN, lh_type_string_button);
 
@@ -217,6 +229,7 @@ void LH_QtCFInstance::cf_enabled_changed()
 {
     setup_cf_rules_->setFlag(LH_FLAG_HIDDEN, !setup_cf_enabled_->value());
 
+    // setup_cf_menu_->setFlag(LH_FLAG_HIDDEN, !setup_cf_enabled_->value());
     setup_cf_new_->setFlag(LH_FLAG_HIDDEN, !setup_cf_enabled_->value());
     setup_cf_delete_->setFlag(LH_FLAG_HIDDEN, !setup_cf_enabled_->value());
     setup_cf_move_up_->setFlag(LH_FLAG_HIDDEN, !setup_cf_enabled_->value());
@@ -512,4 +525,15 @@ void LH_QtCFInstance::cf_save_rule()
 
     setup_cf_XML_->setValue(doc.toString());
     cf_XML_changed();
+}
+
+void LH_QtCFInstance::cf_menu(QString s)
+{
+    if( s == "copy" ) cf_copy_rules();
+    else if( s == "paste" ) cf_paste_rules();
+    else if( s == "moveup" ) cf_move_rule_up();
+    else if( s == "movedown" ) cf_move_rule_down();
+    else if( s == "new" ) cf_new_rule();
+    else if( s == "delete" ) cf_delete_rule();
+    return;
 }

@@ -98,6 +98,7 @@ protected:
     LH_Qt_QTextEdit   *setup_cf_XML_;
     LH_Qt_QStringList *setup_cf_rules_;
 
+    LH_Qt_QString     *setup_cf_menu_;
     LH_Qt_QString     *setup_cf_new_;
     LH_Qt_QString     *setup_cf_save_;
     LH_Qt_QString     *setup_cf_cancel_;
@@ -167,6 +168,7 @@ protected slots:
     void cf_paste_rules();
     void cf_move_rule_up();
     void cf_move_rule_down();
+    void cf_menu(QString);
 };
 
 #endif // LH_QTCFINSTANCE_H

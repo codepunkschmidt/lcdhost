@@ -78,10 +78,18 @@ const char *LH_LgBacklight::userInit()
     allcolor_->setLink("=/plugin/Backlight/all/set");
     connect( allcolor_, SIGNAL(changed()), this, SLOT(setAllColor()) );
 
+#ifdef Q_WS_MAC
+    new LH_Qt_QString( this, "OSXHint",
+                       tr("On OS/X you need to reload this plugin to discover new devices."),
+                       LH_FLAG_LAST|LH_FLAG_HIDETITLE|LH_FLAG_NOSAVE|LH_FLAG_NOSOURCE|LH_FLAG_NOSINK,
+                       lh_type_string_html
+                       );
+#else
     rescanbutton_ = new LH_Qt_QString( this, "Rescan",tr("Scan for available devices"),
                                        LH_FLAG_LAST|LH_FLAG_HIDETITLE|LH_FLAG_NOSAVE|LH_FLAG_NOSOURCE|LH_FLAG_NOSINK,
                                        lh_type_string_button );
     connect( rescanbutton_, SIGNAL(changed()), this, SLOT(scan()) );
+#endif
 
     scan();
     return NULL;
@@ -129,6 +137,8 @@ void LH_LgBacklight::scan()
         }
         hid_free_enumeration( hdi_head );
     }
+    else
+        qDebug() << "LH_LgBacklight: hid_enumerate() failed";
 
     QString current = devselect_->valueText();
     devselect_->list().clear();
@@ -146,13 +156,14 @@ void LH_LgBacklight::scan()
         }
     }
 
-    devselect_->setVisible( devselect_->list().size() > 0 );
-    devcolor_->setVisible( !devselect_->valueText().isEmpty() );
+    devselect_->setVisible( devs_.size() > 0 );
+    devcolor_->setVisible( devs_.size() > 0 );
+
+    devselect_->refreshList();
 
     if( devselect_->value() < 0 && devselect_->list().size() > 0 )
         devselect_->setValue(0);
 
-    devselect_->refreshList();
     changeDev(); // make sure color value is up-to-date
 
     return;

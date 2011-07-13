@@ -40,13 +40,15 @@ const char *LH_MonitoringImage::userInit()
     if( const char *err = LH_QImage::userInit() ) return err;
     setup_image_file_->setFlags( LH_FLAG_AUTORENDER | LH_FLAG_READONLY | LH_FLAG_NOSAVE );
 
-    LH_Qt_QString* hr = new LH_Qt_QString(this,tr("~Mon-Data-Rule"),"<hr>", LH_FLAG_NOSAVE | LH_FLAG_NOSOURCE | LH_FLAG_NOSINK,lh_type_string_html );
+    LH_Qt_QString* hr = new LH_Qt_QString(this,tr("~Mon-Data-Rule"), QString(), LH_FLAG_NOSAVE | LH_FLAG_NOSOURCE | LH_FLAG_NOSINK,lh_type_string_htmlhelp );
+    hr->setHelp("<hr>");
     hr->setOrder(-1);
 
     setup_value_ = new LH_Qt_QString( this, tr("Current Value"), "N/A", LH_FLAG_READONLY|LH_FLAG_NOSAVE );
     setup_value_->setOrder(-1);
 
-    LH_Qt_QString* hr2 =new LH_Qt_QString(this,tr("~Mon-Props-Rule"),"<hr>", LH_FLAG_NOSAVE | LH_FLAG_NOSOURCE | LH_FLAG_NOSINK,lh_type_string_html );
+    LH_Qt_QString* hr2 =new LH_Qt_QString(this,tr("~Mon-Props-Rule"), QString(), LH_FLAG_NOSAVE | LH_FLAG_NOSOURCE | LH_FLAG_NOSINK,lh_type_string_htmlhelp );
+    hr2->setHelp("<hr>");
     hr2->setOrder(-1);
 
     add_cf_target(setup_image_file_);

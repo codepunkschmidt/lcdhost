@@ -140,7 +140,6 @@ const char *LH_QtObject::init( lh_callback_t cb, int cb_id, const char *name, co
 #ifndef QT_NO_DEBUG
     if( !clean_init_ )
         qWarning() << metaObject()->className() << name << "did not complete userInit() chain";
-    Q_ASSERT( clean_init_ );
 #endif
 
     return retv;

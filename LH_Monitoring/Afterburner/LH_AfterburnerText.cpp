@@ -50,11 +50,13 @@ lh_class *LH_AfterburnerText::classInfo()
     return &classInfo;
 }
 
-LH_AfterburnerText::LH_AfterburnerText()
+const char *LH_AfterburnerText::userInit()
 {
+    if( const char *err = LH_MonitoringText::userInit() ) return err;
     data_ = new LH_AfterburnerData(this);
     connect_changeType( static_cast<LH_AfterburnerData*>(data_)->setup_value_type_ );
     connect_updateText( static_cast<LH_AfterburnerData*>(data_)->setup_value_format_ );
+    return 0;
 }
 
 LH_PLUGIN_CLASS(LH_AfterburnerText)

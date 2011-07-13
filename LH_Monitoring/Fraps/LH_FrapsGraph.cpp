@@ -41,10 +41,12 @@ lh_class *LH_FrapsGraph::classInfo()
     return &classInfo;
 }
 
-LH_FrapsGraph::LH_FrapsGraph()
+const char *LH_FrapsGraph::userInit()
 {
+    if( const char *err = LH_MonitoringGraph::userInit() ) return err;
     data_ = new LH_FrapsData( this );
     connect_clearData( static_cast<LH_FrapsData*>(data_)->setup_value_type_ );
+    return 0;
 }
 
 LH_PLUGIN_CLASS(LH_FrapsGraph)

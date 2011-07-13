@@ -43,21 +43,13 @@
 class LH_TextCPULoad : public LH_Text
 {
 public:
-    LH_TextCPULoad() : LH_Text()
-    {
-        setup_text_->setName( "Average CPU load" );
-        setup_text_->setFlag( LH_FLAG_READONLY, true );
-        return;
-    }
-
     const char *userInit()
     {
-        const char *retv = LH_Text::userInit();
-        if( !retv )
-        {
-            setText("?%");
-        }
-        return retv;
+        if( const char *err = LH_Text::userInit() ) return err;
+        setup_text_->setName( "Average CPU load" );
+        setup_text_->setFlag( LH_FLAG_READONLY, true );
+        setText("?%");
+        return 0;
     }
 
     static lh_class *classInfo()

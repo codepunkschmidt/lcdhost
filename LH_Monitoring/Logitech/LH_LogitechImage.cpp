@@ -44,10 +44,10 @@ lh_class *LH_LogitechImage::classInfo()
     return &classinfo;
 }
 
-LH_LogitechImage::LH_LogitechImage()
+const char *LH_LogitechImage::userInit()
 {
+    if( const char *err = LH_MonitoringImage::userInit() ) return err;
     data_ = new LH_LogitechData(this, mdmAll);
     connect_changeType( static_cast<LH_LogitechData*>(data_)->setup_value_type_ );
+    return 0;
 }
-
-

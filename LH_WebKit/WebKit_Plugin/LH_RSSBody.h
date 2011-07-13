@@ -9,18 +9,15 @@ class LH_RSSBody : public LH_WebKit
 {
     Q_OBJECT
 
-    LH_RSSInterface rss_;
+    LH_RSSInterface *rss_;
 
 protected:
     QHash<QString, QString> getTokens();
 
 public:
-    LH_RSSBody();
-
-    const char *userInit() { setRssItem(); return 0; }
-
+    LH_RSSBody() : LH_WebKit(true), rss_(0) {}
+    const char *userInit();
     int notify(int code,void* param);
-
     static lh_class *classInfo();
 
 public slots:

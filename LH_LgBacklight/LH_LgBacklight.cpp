@@ -34,11 +34,6 @@
 
 #include <QFile>
 #include <QDebug>
-
-#ifdef Q_WS_WIN
-#include <windows.h>
-#endif
-
 #include "LH_LgBacklight.h"
 
 LH_PLUGIN(LH_LgBacklight)
@@ -58,16 +53,44 @@ char __lcdhostplugin_xml[] =
   "Logitech device backlight control via HID"
   "</shortdesc>"
   "<longdesc>"
-    "HID-level driver for Logitech backlit devices, such as G13, G15 or G19.<br/>"
-    "Note that to use this driver you may need to uninstall existing drivers for these devices."
+"<p>HID-level driver for Logitech backlit devices, such as G13, G15 or G19. "
+"Note that to use this driver you may need to uninstall existing drivers for these devices.</p>"
+"<p>If there are no recognized devices connected, all you'll see is the 'Scan for available devices' "
+"button. If you connect or disconnect backlit Logitech devices while this plugin is running, click "
+"that button have them discovered.</p>"
+"<p>To set the backlight for all connected devices from a layout, create a <i>data source</i> named "
+"<tt>/plugin/Backlight/all/set</tt> using the link button <img src=\":/LH_Backlight/source.png\"></img> at any color item.</p>"
   "</longdesc>"
 "</lcdhostplugin>";
 
 const char *LH_LgBacklight::userInit()
 {
     if( const char *err = LH_QtPlugin::userInit() ) return err;
-    rescanbutton_ = new LH_Qt_QString( this, "Rescan","Rescan",LH_FLAG_NOSAVE|LH_FLAG_NOSOURCE,lh_type_string_button );
+    devselect_ = new LH_Qt_QStringList( this, "Device", QStringList(), LH_FLAG_NOSAVE|LH_FLAG_NOSOURCE|LH_FLAG_NOSINK|LH_FLAG_HIDDEN );
+    devselect_->setHelp( "The device which backlight you want to control." );
+    connect( devselect_, SIGNAL(changed()), this, SLOT(changeDev()) );
+
+    devcolor_ = new LH_Qt_QColor( this, "Color", Qt::white, LH_FLAG_NOSAVE|LH_FLAG_HIDDEN );
+    devcolor_->setHelp("The color you want to see used as backlight.");
+    connect( devcolor_, SIGNAL(changed()), this, SLOT(changeColor()) );
+
+    allcolor_ = new LH_Qt_QColor( this, "SetAllColor", Qt::white, LH_FLAG_NOSAVE|LH_FLAG_HIDDEN|LH_FLAG_NOSOURCE );
+    allcolor_->setLink("=/plugin/Backlight/all/set");
+    connect( allcolor_, SIGNAL(changed()), this, SLOT(setAllColor()) );
+
+#ifdef Q_WS_MAC
+    new LH_Qt_QString( this, "OSXHint",
+                       tr("On OS/X you need to reload this plugin to discover new devices."),
+                       LH_FLAG_LAST|LH_FLAG_HIDETITLE|LH_FLAG_NOSAVE|LH_FLAG_NOSOURCE|LH_FLAG_NOSINK,
+                       lh_type_string_html
+                       );
+#else
+    rescanbutton_ = new LH_Qt_QString( this, "Rescan",tr("Scan for available devices"),
+                                       LH_FLAG_LAST|LH_FLAG_HIDETITLE|LH_FLAG_NOSAVE|LH_FLAG_NOSOURCE|LH_FLAG_NOSINK,
+                                       lh_type_string_button );
     connect( rescanbutton_, SIGNAL(changed()), this, SLOT(scan()) );
+#endif
+
     scan();
     return NULL;
 }
@@ -86,10 +109,12 @@ void LH_LgBacklight::scan()
                 switch( hdi->product_id )
                 {
                 case 0xC222: /* G15 */
+                case 0xC225: /* G11 */
                 case 0xC227: /* G15v2 */
                 case 0xC21C: /* G13 */
                 case 0xC22D: /* G510 without audio */
                 case 0xC22E: /* G510 with audio */
+                case 0xC229: /* G19 */
                     {
                         bool found = false;
                         foreach( LgBacklightDevice *d, devs_ )
@@ -101,7 +126,7 @@ void LH_LgBacklight::scan()
                                 break;
                             }
                         }
-                        if( !found ) new LgBacklightDevice(hdi,this);
+                        if( !found ) devs_.append( new LgBacklightDevice(hdi,this) );
                     }
                     break;
                 case 0x0A07: /* Z10 */
@@ -112,7 +137,11 @@ void LH_LgBacklight::scan()
         }
         hid_free_enumeration( hdi_head );
     }
+    else
+        qDebug() << "LH_LgBacklight: hid_enumerate() failed";
 
+    QString current = devselect_->valueText();
+    devselect_->list().clear();
     foreach( LgBacklightDevice *d, devs_ )
     {
         if( d->removal() )
@@ -120,7 +149,55 @@ void LH_LgBacklight::scan()
             devs_.removeAll(d);
             delete d;
         }
+        else
+        {
+            devselect_->list().append( d->name() );
+            if( d->name() == current ) devselect_->setValue( current );
+        }
     }
 
+    devselect_->setVisible( devs_.size() > 0 );
+    devcolor_->setVisible( devs_.size() > 0 );
+
+    devselect_->refreshList();
+
+    if( devselect_->value() < 0 && devselect_->list().size() > 0 )
+        devselect_->setValue(0);
+
+    changeDev(); // make sure color value is up-to-date
+
     return;
+}
+
+void LH_LgBacklight::changeDev()
+{
+    foreach( LgBacklightDevice *d, devs_ )
+    {
+        if( d->name() == devselect_->valueText() )
+        {
+            devcolor_->setValue( d->color() );
+            break;
+        }
+    }
+}
+
+void LH_LgBacklight::changeColor()
+{
+    foreach( LgBacklightDevice *d, devs_ )
+    {
+        if( d->name() == devselect_->valueText() )
+        {
+            d->setColor( devcolor_->value() );
+            break;
+        }
+    }
+}
+
+void LH_LgBacklight::setAllColor()
+{
+    qDebug() << "LH_LgBacklight::setAllColor()" << allcolor_->value();
+    foreach( LgBacklightDevice *d, devs_ )
+    {
+        d->setColor( allcolor_->value() );
+    }
 }

@@ -7,20 +7,19 @@
 class LH_MonitoringBar : public LH_Bar
 {
     Q_OBJECT
+
 protected:
     LH_MonitoringData *data_;
     LH_Qt_int *setup_max_;
     LH_Qt_int *setup_min_;
+
 public:
-    LH_MonitoringBar();
-    ~LH_MonitoringBar();
-
+    const char *userInit();
     int notify( int, void* );
-
-    static lh_class *classInfo() { return NULL; }
     QImage *render_qimage( int w, int h );
-
     void connect_refresh(QObject* obj);
+    static lh_class *classInfo() { return NULL; }
+
 public slots:
     void refresh();
     void updateBounds();

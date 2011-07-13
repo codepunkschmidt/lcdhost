@@ -8,7 +8,7 @@ class LH_CoreTempGraph : public LH_MonitoringGraph
 {
     Q_OBJECT
 public:
-    LH_CoreTempGraph();
+    const char *userInit();
     static lh_class *classInfo();
 };
 

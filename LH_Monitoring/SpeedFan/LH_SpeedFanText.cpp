@@ -56,6 +56,7 @@ lh_class *LH_SpeedFanText::classInfo()
 const char *LH_SpeedFanText::userInit()
 {
     if( const char *err = LH_MonitoringText::userInit() ) return err;
+
     data_ = new LH_SpeedFanData(this);
     connect_changeType( static_cast<LH_SpeedFanData*>(data_)->setup_value_type_ );
     connect_updateText( static_cast<LH_SpeedFanData*>(data_)->setup_value_index_ );

@@ -8,7 +8,7 @@ class LH_ATITrayToolsBar : public LH_MonitoringBar
 {
     Q_OBJECT
 public:
-    LH_ATITrayToolsBar();
+    const char *userInit();
     static lh_class *classInfo();
 };
 

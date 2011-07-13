@@ -52,9 +52,11 @@ lh_class *LH_CoreTempText::classInfo()
     return &classInfo;
 }
 
-LH_CoreTempText::LH_CoreTempText()
+const char *LH_CoreTempText::userInit()
 {
+    if( const char *err = LH_MonitoringText::userInit() ) return err;
     data_ = new LH_CoreTempData(this, mdmAll);
     connect_changeType( static_cast<LH_CoreTempData*>(data_)->setup_value_type_ );
     connect_updateText( static_cast<LH_CoreTempData*>(data_)->setup_value_index_ );
+    return 0;
 }

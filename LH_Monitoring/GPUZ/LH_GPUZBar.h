@@ -8,7 +8,7 @@ class LH_GPUZBar : public LH_MonitoringBar
 {
     Q_OBJECT
 public:
-    LH_GPUZBar();
+    const char *userInit();
     static lh_class *classInfo();
 };
 

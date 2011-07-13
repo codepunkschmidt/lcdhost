@@ -8,7 +8,7 @@ class LH_RivaTunerBar : public LH_MonitoringBar
 {
     Q_OBJECT
 public:
-    LH_RivaTunerBar();
+    const char *userInit();
     static lh_class *classInfo();
 };
 

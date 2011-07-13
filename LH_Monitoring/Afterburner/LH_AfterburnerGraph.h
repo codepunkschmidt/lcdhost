@@ -8,7 +8,7 @@ class LH_AfterburnerGraph : public LH_MonitoringGraph
 {
     Q_OBJECT
 public:
-    LH_AfterburnerGraph();
+    const char *userInit();
     static lh_class *classInfo();
 };
 

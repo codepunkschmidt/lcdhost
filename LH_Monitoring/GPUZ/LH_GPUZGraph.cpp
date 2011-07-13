@@ -41,10 +41,12 @@ lh_class *LH_GPUZGraph::classInfo()
     return &classInfo;
 }
 
-LH_GPUZGraph::LH_GPUZGraph()
+const char *LH_GPUZGraph::userInit()
 {
+    if( const char *err = LH_MonitoringGraph::userInit() ) return err;
     data_ = new LH_GPUZData( this );
     connect_clearData( static_cast<LH_GPUZData*>(data_)->setup_value_type_ );
+    return 0;
 }
 
 LH_PLUGIN_CLASS(LH_GPUZGraph)

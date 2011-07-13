@@ -41,11 +41,13 @@ lh_class *LH_SpeedFanDial::classInfo()
     return &classInfo;
 }
 
-LH_SpeedFanDial::LH_SpeedFanDial()
+const char *LH_SpeedFanDial::userInit()
 {
+    if( const char *err = LH_MonitoringDial::userInit() ) return err;
     data_ = new LH_SpeedFanData( this, true );
     connect_refresh( static_cast<LH_SpeedFanData*>(data_)->setup_value_type_ );
     connect_refresh( static_cast<LH_SpeedFanData*>(data_)->setup_value_index_ );
+    return 0;
 }
 
 LH_PLUGIN_CLASS(LH_SpeedFanDial)

@@ -41,10 +41,12 @@ lh_class *LH_ATITrayToolsGraph::classInfo()
     return &classInfo;
 }
 
-LH_ATITrayToolsGraph::LH_ATITrayToolsGraph()
+const char *LH_ATITrayToolsGraph::userInit()
 {
+    if( const char *err = LH_MonitoringGraph::userInit() ) return err;
     data_ = new LH_ATITrayToolsData( this );
     connect_clearData( static_cast<LH_ATITrayToolsData*>(data_)->setup_value_type_ );
+    return 0;
 }
 
 LH_PLUGIN_CLASS(LH_ATITrayToolsGraph)

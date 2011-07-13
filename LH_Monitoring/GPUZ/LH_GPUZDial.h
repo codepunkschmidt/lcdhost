@@ -8,7 +8,7 @@ class LH_GPUZDial : public LH_MonitoringDial
 {
     Q_OBJECT
 public:
-    LH_GPUZDial();
+    const char *userInit();
     static lh_class *classInfo();
 };
 

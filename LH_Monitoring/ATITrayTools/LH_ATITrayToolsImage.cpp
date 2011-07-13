@@ -41,10 +41,12 @@ lh_class *LH_ATITrayToolsImage::classInfo()
     return &classinfo;
 }
 
-LH_ATITrayToolsImage::LH_ATITrayToolsImage()
+const char *LH_ATITrayToolsImage::userInit()
 {
+    if( const char *err = LH_MonitoringImage::userInit() ) return err;
     data_ = new LH_ATITrayToolsData(this, mdmAll);
     connect_changeType( static_cast<LH_ATITrayToolsData*>(data_)->setup_value_type_ );
+    return 0;
 }
 
 

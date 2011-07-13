@@ -54,7 +54,6 @@ const char *LH_MonitoringImage::userInit()
     add_cf_target(setup_image_file_);
     add_cf_source(setup_value_);
 
-    setup_cf_state_->setFlag(LH_FLAG_HIDDEN, false);
     return 0;
 }
 

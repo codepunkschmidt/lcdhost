@@ -41,11 +41,13 @@ lh_class *LH_SpeedFanBar::classInfo()
     return &classInfo;
 }
 
-LH_SpeedFanBar::LH_SpeedFanBar()
+const char *LH_SpeedFanBar::userInit()
 {
+    if( const char *err = LH_MonitoringBar::userInit() ) return err;
     data_ = new LH_SpeedFanData( this, true );
     connect_refresh( static_cast<LH_SpeedFanData*>(data_)->setup_value_type_ );
     connect_refresh( static_cast<LH_SpeedFanData*>(data_)->setup_value_index_ );
+    return 0;
 }
 
 LH_PLUGIN_CLASS(LH_SpeedFanBar)

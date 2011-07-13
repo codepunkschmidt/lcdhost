@@ -41,10 +41,12 @@ lh_class *LH_FrapsBar::classInfo()
     return &classInfo;
 }
 
-LH_FrapsBar::LH_FrapsBar()
+const char *LH_FrapsBar::userInit()
 {
+    if( const char *err = LH_MonitoringBar::userInit() ) return err;
     data_ = new LH_FrapsData( this );
     connect_refresh( static_cast<LH_FrapsData*>(data_)->setup_value_type_ );
+    return 0;
 }
 
 LH_PLUGIN_CLASS(LH_FrapsBar)

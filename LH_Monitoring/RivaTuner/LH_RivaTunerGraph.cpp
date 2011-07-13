@@ -41,8 +41,9 @@ lh_class *LH_RivaTunerGraph::classInfo()
     return &classInfo;
 }
 
-LH_RivaTunerGraph::LH_RivaTunerGraph()
+const char *LH_RivaTunerGraph::userInit()
 {
+    if( const char *err = LH_MonitoringGraph::userInit() ) return err;
     data_ = new LH_RivaTunerData( this, true );
     connect_clearData( static_cast<LH_RivaTunerData*>(data_)->setup_value_type_ );
 
@@ -50,6 +51,7 @@ LH_RivaTunerGraph::LH_RivaTunerGraph()
     if (data_->getGraphMin(graphMin)) setMin(graphMin);
     float graphMax=0;
     if (data_->getGraphMax(graphMax)) setMax(graphMax);
+    return 0;
 }
 
 LH_PLUGIN_CLASS(LH_RivaTunerGraph)

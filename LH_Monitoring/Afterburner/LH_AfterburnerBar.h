@@ -8,7 +8,7 @@ class LH_AfterburnerBar : public LH_MonitoringBar
 {
     Q_OBJECT
 public:
-    LH_AfterburnerBar();
+    const char *userInit();
     static lh_class *classInfo();
 };
 

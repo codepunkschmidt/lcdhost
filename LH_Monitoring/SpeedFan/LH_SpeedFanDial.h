@@ -8,7 +8,7 @@ class LH_SpeedFanDial : public LH_MonitoringDial
 {
     Q_OBJECT
 public:
-    LH_SpeedFanDial();
+    const char *userInit();
     static lh_class *classInfo();
 };
 

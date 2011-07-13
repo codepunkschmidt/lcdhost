@@ -8,7 +8,7 @@ class LH_LogitechBar : public LH_MonitoringBar
 {
     Q_OBJECT
 public:
-    LH_LogitechBar();
+    const char *userInit();
     static lh_class *classInfo();
 };
 

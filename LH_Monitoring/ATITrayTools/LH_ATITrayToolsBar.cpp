@@ -41,10 +41,12 @@ lh_class *LH_ATITrayToolsBar::classInfo()
     return &classInfo;
 }
 
-LH_ATITrayToolsBar::LH_ATITrayToolsBar()
+const char *LH_ATITrayToolsBar::userInit()
 {
+    if( const char *err = LH_MonitoringBar::userInit() ) return err;
     data_ = new LH_ATITrayToolsData( this );
     connect_refresh( static_cast<LH_ATITrayToolsData*>(data_)->setup_value_type_ );
+    return 0;
 }
 
 LH_PLUGIN_CLASS(LH_ATITrayToolsBar)

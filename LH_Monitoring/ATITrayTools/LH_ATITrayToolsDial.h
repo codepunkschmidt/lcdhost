@@ -8,7 +8,7 @@ class LH_ATITrayToolsDial : public LH_MonitoringDial
 {
     Q_OBJECT
 public:
-    LH_ATITrayToolsDial();
+    const char *userInit();
     static lh_class *classInfo();
 };
 

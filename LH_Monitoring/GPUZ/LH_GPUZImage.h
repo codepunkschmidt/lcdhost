@@ -32,7 +32,7 @@ class LH_GPUZImage:public LH_MonitoringImage
 {
     Q_OBJECT
 public:
-    LH_GPUZImage();
+    const char *userInit();
     static lh_class *classInfo();
 };
 

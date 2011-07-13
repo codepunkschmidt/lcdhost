@@ -32,7 +32,7 @@ class LH_Aida64Image:public LH_MonitoringImage
 {
     Q_OBJECT
 public:
-    LH_Aida64Image();
+    const char *userInit();
     static lh_class *classInfo();
 };
 

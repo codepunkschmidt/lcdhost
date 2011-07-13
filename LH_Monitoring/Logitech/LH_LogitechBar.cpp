@@ -44,10 +44,12 @@ lh_class *LH_LogitechBar::classInfo()
     return &classInfo;
 }
 
-LH_LogitechBar::LH_LogitechBar()
+const char *LH_LogitechBar::userInit()
 {
+    if( const char *err = LH_MonitoringBar::userInit() ) return err;
     data_ = new LH_LogitechData( this );
     connect_refresh( static_cast<LH_LogitechData*>(data_)->setup_value_type_ );
+    return 0;
 }
 
 LH_PLUGIN_CLASS(LH_LogitechBar)

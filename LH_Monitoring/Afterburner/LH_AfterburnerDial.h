@@ -8,7 +8,7 @@ class LH_AfterburnerDial : public LH_MonitoringDial
 {
     Q_OBJECT
 public:
-    LH_AfterburnerDial();
+    const char *userInit();
     static lh_class *classInfo();
 };
 

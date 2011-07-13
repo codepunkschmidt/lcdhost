@@ -41,11 +41,13 @@ lh_class *LH_CoreTempDial::classInfo()
     return &classInfo;
 }
 
-LH_CoreTempDial::LH_CoreTempDial()
+const char *LH_CoreTempDial::userInit()
 {
+    if( const char *err = LH_MonitoringDial::userInit() ) return err;
     data_ = new LH_CoreTempData( this, mdmNumbers, true );
     connect_refresh( static_cast<LH_CoreTempData*>(data_)->setup_value_type_ );
     connect_refresh( static_cast<LH_CoreTempData*>(data_)->setup_value_index_ );
+    return 0;
 }
 
 LH_PLUGIN_CLASS(LH_CoreTempDial)

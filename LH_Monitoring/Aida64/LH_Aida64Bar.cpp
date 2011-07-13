@@ -41,12 +41,14 @@ lh_class *LH_Aida64Bar::classInfo()
     return &classInfo;
 }
 
-LH_Aida64Bar::LH_Aida64Bar()
+const char *LH_Aida64Bar::userInit()
 {
+    if( const char *err = LH_MonitoringBar::userInit() ) return err;
     data_ = new LH_Aida64Data( this, mdmNumbers, true );
     connect_refresh( static_cast<LH_Aida64Data*>(data_)->setup_value_type_ );
     connect_refresh( static_cast<LH_Aida64Data*>(data_)->setup_value_group_ );
     connect_refresh( static_cast<LH_Aida64Data*>(data_)->setup_value_sensor_ );
+    return 0;
 }
 
 LH_PLUGIN_CLASS(LH_Aida64Bar)

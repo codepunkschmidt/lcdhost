@@ -151,5 +151,5 @@ SOURCES += \
     Logitech/LH_LogitechImage.cpp \
     Logitech/LH_LogitechBar.cpp \
     Logitech/LH_LogitechDial.cpp \
-    LH_QImage/LH_QImage.cpp \
-    LH_QImage/logo_blob.c
+    LH_QImage/logo_blob.c \
+    LH_QImage/LH_QImage.cpp

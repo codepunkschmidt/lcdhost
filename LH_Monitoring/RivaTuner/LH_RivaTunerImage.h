@@ -32,7 +32,7 @@ class LH_RivaTunerImage:public LH_MonitoringImage
 {
     Q_OBJECT
 public:
-    LH_RivaTunerImage();
+    const char *userInit();
     static lh_class *classInfo();
 };
 

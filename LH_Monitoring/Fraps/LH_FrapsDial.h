@@ -8,7 +8,7 @@ class LH_FrapsDial : public LH_MonitoringDial
 {
     Q_OBJECT
 public:
-    LH_FrapsDial();
+    const char *userInit();
     static lh_class *classInfo();
 };
 

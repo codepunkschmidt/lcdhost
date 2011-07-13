@@ -41,8 +41,9 @@ lh_class *LH_AfterburnerGraph::classInfo()
     return &classInfo;
 }
 
-LH_AfterburnerGraph::LH_AfterburnerGraph()
+const char *LH_AfterburnerGraph::userInit()
 {
+    if( const char *err = LH_MonitoringGraph::userInit() ) return err;
     data_ = new LH_AfterburnerData( this, true );
     connect_clearData( static_cast<LH_AfterburnerData*>(data_)->setup_value_type_ );
     connect_clearData( static_cast<LH_AfterburnerData*>(data_)->setup_value_item_ );
@@ -51,6 +52,7 @@ LH_AfterburnerGraph::LH_AfterburnerGraph()
     if (data_->getGraphMin(graphMin)) setMin(graphMin);
     float graphMax=0;
     if (data_->getGraphMax(graphMax)) setMax(graphMax);
+    return 0;
 }
 
 LH_PLUGIN_CLASS(LH_AfterburnerGraph)

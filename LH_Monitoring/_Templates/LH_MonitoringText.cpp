@@ -33,6 +33,10 @@
 
 #include "LH_MonitoringText.h"
 
+LH_MonitoringText::LH_MonitoringText(){
+    data_ = NULL;
+}
+
 const char *LH_MonitoringText::userInit()
 {
     if( const char *err = LH_Text::userInit() ) return err;

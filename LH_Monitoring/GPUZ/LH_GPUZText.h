@@ -8,7 +8,7 @@ class LH_GPUZText : public LH_MonitoringText
 {
     Q_OBJECT
 public:
-    LH_GPUZText();
+    const char *userInit();
     static lh_class *classInfo();
 };
 

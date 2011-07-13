@@ -51,8 +51,10 @@ lh_class *LH_RivaTunerImage::classInfo()
     return &classinfo;
 }
 
-LH_RivaTunerImage::LH_RivaTunerImage()
+const char *LH_RivaTunerImage::userInit()
 {
+    if( const char *err = LH_MonitoringImage::userInit() ) return err;
     data_ = new LH_RivaTunerData(this, mdmAll);
     connect_changeType( static_cast<LH_RivaTunerData*>(data_)->setup_value_type_ );
+    return 0;
 }

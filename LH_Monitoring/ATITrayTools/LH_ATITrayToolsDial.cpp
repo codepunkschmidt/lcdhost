@@ -41,10 +41,12 @@ lh_class *LH_ATITrayToolsDial::classInfo()
     return &classInfo;
 }
 
-LH_ATITrayToolsDial::LH_ATITrayToolsDial()
+const char *LH_ATITrayToolsDial::userInit()
 {
+    if( const char *err = LH_MonitoringDial::userInit() ) return err;
     data_ = new LH_ATITrayToolsData( this );
     connect_refresh( static_cast<LH_ATITrayToolsData*>(data_)->setup_value_type_ );
+    return 0;
 }
 
 LH_PLUGIN_CLASS(LH_ATITrayToolsDial)

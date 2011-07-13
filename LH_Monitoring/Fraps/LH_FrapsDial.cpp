@@ -41,10 +41,12 @@ lh_class *LH_FrapsDial::classInfo()
     return &classInfo;
 }
 
-LH_FrapsDial::LH_FrapsDial()
+const char *LH_FrapsDial::userInit()
 {
+    if( const char *err = LH_MonitoringDial::userInit() ) return err;
     data_ = new LH_FrapsData( this );
     connect_refresh( static_cast<LH_FrapsData*>(data_)->setup_value_type_ );
+    return 0;
 }
 
 LH_PLUGIN_CLASS(LH_FrapsDial)

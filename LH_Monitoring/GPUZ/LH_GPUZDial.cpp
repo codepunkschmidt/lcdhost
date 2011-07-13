@@ -41,10 +41,12 @@ lh_class *LH_GPUZDial::classInfo()
     return &classInfo;
 }
 
-LH_GPUZDial::LH_GPUZDial()
+const char *LH_GPUZDial::userInit()
 {
+    if( const char *err = LH_MonitoringDial::userInit() ) return err;
     data_ = new LH_GPUZData( this );
     connect_refresh( static_cast<LH_GPUZData*>(data_)->setup_value_type_ );
+    return 0;
 }
 
 LH_PLUGIN_CLASS(LH_GPUZDial)

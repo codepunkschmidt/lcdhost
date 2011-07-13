@@ -41,10 +41,12 @@ lh_class *LH_GPUZBar::classInfo()
     return &classInfo;
 }
 
-LH_GPUZBar::LH_GPUZBar()
+const char *LH_GPUZBar::userInit()
 {
+    if( const char *err = LH_MonitoringBar::userInit() ) return err;
     data_ = new LH_GPUZData( this );
     connect_refresh( static_cast<LH_GPUZData*>(data_)->setup_value_type_ );
+    return 0;
 }
 
 LH_PLUGIN_CLASS(LH_GPUZBar)

@@ -42,13 +42,13 @@ lh_class *LH_SpeedFanGraph::classInfo()
     return &classInfo;
 }
 
-LH_SpeedFanGraph::LH_SpeedFanGraph()
+const char *LH_SpeedFanGraph::userInit()
 {
-qDebug() << this->objectName() << "Create2...";
+    if( const char *err = LH_MonitoringGraph::userInit() ) return err;
     data_ = new LH_SpeedFanData( this, true );
     connect_clearData( static_cast<LH_SpeedFanData*>(data_)->setup_value_type_ );
     connect_clearData( static_cast<LH_SpeedFanData*>(data_)->setup_value_index_ );
-qDebug() << this->objectName() << "Create2 OK";
+    return 0;
 }
 
 LH_PLUGIN_CLASS(LH_SpeedFanGraph)

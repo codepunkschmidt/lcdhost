@@ -26,9 +26,10 @@
 #include <QDebug>
 #include "logo_blob.c"
 
-//LH_PLUGIN_CLASS(LH_QImage)
+/*
+LH_PLUGIN_CLASS(LH_QImage)
 
-/*lh_class *LH_QImage::classInfo()
+lh_class *LH_QImage::classInfo()
 {
     static lh_class classInfo =
     {
@@ -41,7 +42,8 @@
         lh_instance_calltable_NULL
     };
     return &classInfo;
-}*/
+}
+*/
 
 const char *LH_QImage::userInit()
 {

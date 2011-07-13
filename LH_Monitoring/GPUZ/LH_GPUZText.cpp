@@ -52,10 +52,10 @@ lh_class *LH_GPUZText::classInfo()
     return &classInfo;
 }
 
-LH_GPUZText::LH_GPUZText()
+const char *LH_GPUZText::userInit()
 {
+    if( const char *err = LH_MonitoringText::userInit() ) return err;
     data_ = new LH_GPUZData(this);
-
-
     connect_changeType( static_cast<LH_GPUZData*>(data_)->setup_value_type_ );
+    return 0;
 }

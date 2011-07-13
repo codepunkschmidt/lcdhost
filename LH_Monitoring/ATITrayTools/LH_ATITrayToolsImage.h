@@ -32,7 +32,7 @@ class LH_ATITrayToolsImage:public LH_MonitoringImage
 {
     Q_OBJECT
 public:
-    LH_ATITrayToolsImage();
+    const char *userInit();
     static lh_class *classInfo();
 };
 

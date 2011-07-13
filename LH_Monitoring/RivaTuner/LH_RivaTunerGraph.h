@@ -8,7 +8,7 @@ class LH_RivaTunerGraph : public LH_MonitoringGraph
 {
     Q_OBJECT
 public:
-    LH_RivaTunerGraph();
+    const char *userInit();
     static lh_class *classInfo();
 };
 

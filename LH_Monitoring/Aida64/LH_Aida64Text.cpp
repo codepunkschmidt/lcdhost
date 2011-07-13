@@ -52,11 +52,6 @@ lh_class *LH_Aida64Text::classInfo()
     return &classInfo;
 }
 
-LH_Aida64Text::LH_Aida64Text()
-{
-    data_ = 0;
-}
-
 const char *LH_Aida64Text::userInit()
 {
     if( const char *err = LH_MonitoringText::userInit() ) return err;

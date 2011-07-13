@@ -41,8 +41,10 @@ lh_class *LH_GPUZImage::classInfo()
     return &classinfo;
 }
 
-LH_GPUZImage::LH_GPUZImage()
+const char *LH_GPUZImage::userInit()
 {
+    if( const char *err = LH_MonitoringImage::userInit() ) return err;
     data_ = new LH_GPUZData(this);
     connect_changeType( static_cast<LH_GPUZData*>(data_)->setup_value_type_ );
+    return 0;
 }

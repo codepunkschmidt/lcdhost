@@ -41,10 +41,12 @@ lh_class *LH_RivaTunerBar::classInfo()
     return &classInfo;
 }
 
-LH_RivaTunerBar::LH_RivaTunerBar()
+const char *LH_RivaTunerBar::userInit()
 {
+    if( const char *err = LH_MonitoringBar::userInit() ) return err;
     data_ = new LH_RivaTunerData( this, true );
     connect_refresh( static_cast<LH_RivaTunerData*>(data_)->setup_value_type_ );
+    return 0;
 }
 
 LH_PLUGIN_CLASS(LH_RivaTunerBar)

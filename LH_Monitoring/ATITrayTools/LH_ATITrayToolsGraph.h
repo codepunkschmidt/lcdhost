@@ -8,7 +8,7 @@ class LH_ATITrayToolsGraph : public LH_MonitoringGraph
 {
     Q_OBJECT
 public:
-    LH_ATITrayToolsGraph();
+    const char *userInit();
     static lh_class *classInfo();
 };
 

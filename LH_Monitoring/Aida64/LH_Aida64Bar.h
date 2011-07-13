@@ -8,7 +8,7 @@ class LH_Aida64Bar : public LH_MonitoringBar
 {
     Q_OBJECT
 public:
-    LH_Aida64Bar();
+    const char *userInit();
     static lh_class *classInfo();
 };
 

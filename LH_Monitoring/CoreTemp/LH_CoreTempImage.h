@@ -32,7 +32,7 @@ class LH_CoreTempImage:public LH_MonitoringImage
 {
     Q_OBJECT
 public:
-    LH_CoreTempImage();
+    const char *userInit();
     static lh_class *classInfo();
 };
 

@@ -5,7 +5,7 @@ QT += network \
 DEFINES += LH_DATAVIEWER_LIBRARY
 
 include(../Plugins.pri)
-include(../cf.pri)
+include(../CF/cf.pri)
 
 SOURCES += ../lh_plugin.c \
     ../LH_QtPlugin.cpp \

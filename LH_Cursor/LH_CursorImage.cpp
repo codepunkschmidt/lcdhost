@@ -54,14 +54,9 @@ lh_class *LH_CursorImage::classInfo()
     return &classInfo;
 }
 
-LH_CursorImage::LH_CursorImage()
-{
-    setup_cursor_state_->setValue("OFF");
-}
-
 const char *LH_CursorImage::userInit()
 {
-    if( const char *err = LH_QtInstance::userInit() ) return err;
+    if( const char *err = LH_QImage::userInit() ) return err;
 
     setup_coordinate_ = new LH_Qt_QString(this, "Coordinate", "1,1", LH_FLAG_AUTORENDER);
     setup_coordinate_->setHelp("This is the coordinate of this object, i.e. when the cursor is at the point specified here this object is selected. <br/>"
@@ -72,7 +67,7 @@ const char *LH_CursorImage::userInit()
                                "e.g.: 1,1"
                                );
 
-    setup_cursor_state_ = new LH_Qt_QString( this, tr("Cursor State"), QString(), LH_FLAG_NOSAVE|LH_FLAG_NOSINK|LH_FLAG_NOSOURCE|LH_FLAG_HIDDEN );
+    setup_cursor_state_ = new LH_Qt_QString( this, tr("Cursor State"), "OFF", LH_FLAG_NOSAVE|LH_FLAG_NOSINK|LH_FLAG_NOSOURCE|LH_FLAG_READONLY );
 
     imageDefinitions = new QHash<QString, QStringList>();
 

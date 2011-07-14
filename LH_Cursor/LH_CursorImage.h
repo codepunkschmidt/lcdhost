@@ -47,7 +47,6 @@ protected:
     LH_Qt_QString *setup_cursor_state_;
 
 public:
-    LH_CursorImage();
     const char *userInit();
 
     int polling();

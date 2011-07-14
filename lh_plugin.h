@@ -209,6 +209,11 @@ typedef enum lh_callbackcode_t
     /* Support calls */
     lh_cb_utf8_to_local8bit, /* request UTF-8 to local 8-bit conversion, param: char *string */
 
+    /* NOT YET IN USE */
+    lh_cb_reload, /* request the plugin reloaded, param: NULL or const char *message */
+    lh_cb_setup_add, /* add a new setup item, param: lh_setup_item* */
+    lh_cb_setup_remove, /* remove a setup item, param: lh_setup_item* */
+
     lh_cb_unused
 } lh_callbackcode;
 
@@ -256,6 +261,8 @@ typedef enum lh_setup_type_t
     lh_type_integer_listbox, /* using listbox, have user select one of the param.list strings */
     lh_type_string_button, /* a clickable button */
     lh_type_string_htmlhelp, /* show the help text in-line, receive clicked links */
+    lh_type_array_int, /* data.i contains array size param.array points to data area */
+    lh_type_array_double, /* data.i contains array size param.array points to data area */
     lh_type_last /* marks last used value */
 } lh_setup_type;
 
@@ -284,6 +291,7 @@ typedef union lh_setup_param_t
         float max;  /**< float maximum value */
     } range;
     const char *list; /**< tab-delimited list of strings */
+    void *array; /**< array data area */
 } lh_setup_param;
 
 typedef union lh_setup_data_t
@@ -319,9 +327,11 @@ typedef union lh_setup_data_t
 */
 typedef struct lh_setup_item_t
 {
+    /* int size; */ /* sizeof(lh_setup_item) */
     const char *name; /* name to identify this item uniquely, and display to the user (start with ~ to hide from display */
-    const char *help; /* short HTML help text shows as tooltip, may be NULL */
+    const char *help; /* short HTML help text shows as tooltip or as value, may be NULL */
     const char *link; /* data link, ASCII only, see comment above, may be NULL */
+    /* int order */ /* ordering of setup item in the UI, lower values first */
     lh_setup_type type; /* type of data, see enum above */
     int flags; /* LH_FLAG_xxx */
     lh_setup_param param;

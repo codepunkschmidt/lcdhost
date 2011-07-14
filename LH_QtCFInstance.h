@@ -58,7 +58,14 @@
 # define EXPORT extern "C" Q_DECL_EXPORT
 #endif
 
+#define USE_MENUS
+
 class cf_rule;
+
+static const QString menu_style = "<style type='text/css'>"
+                                    "  a {background-color:#C0C0C0; text-decoration:none; width:100px;}"
+                                    "  span {background-color:#D0D0D0; color:#606060;}"
+                                    "</style>";
 
 class LH_QtCFInstance : public LH_QtInstance
 {
@@ -92,6 +99,8 @@ class LH_QtCFInstance : public LH_QtInstance
 
     bool watching_non_setup_item_;
 
+    void setRuleItemMenu(bool, bool, bool);
+
 protected:
     LH_Qt_bool        *setup_cf_enabled_;
 
@@ -101,15 +110,20 @@ protected:
     LH_Qt_QTextEdit   *setup_cf_XML_;
     LH_Qt_QStringList *setup_cf_rules_;
 
-    LH_Qt_QString     *setup_cf_menu_;
+#ifdef USE_MENUS
+    LH_Qt_QString     *setup_cf_menu1_;
+    LH_Qt_QString     *setup_cf_menu2_;
+#else
     LH_Qt_QString     *setup_cf_new_;
-    LH_Qt_QString     *setup_cf_save_;
-    LH_Qt_QString     *setup_cf_cancel_;
     LH_Qt_QString     *setup_cf_delete_;
     LH_Qt_QString     *setup_cf_move_up_;
     LH_Qt_QString     *setup_cf_move_down_;
     LH_Qt_QString     *setup_cf_copy_;
     LH_Qt_QString     *setup_cf_paste_;
+#endif
+
+    LH_Qt_QString     *setup_cf_save_;
+    LH_Qt_QString     *setup_cf_cancel_;
 
     void cf_source_notify(QString name, QString value, int index = 0, int count = 1);
 

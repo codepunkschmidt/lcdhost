@@ -70,6 +70,8 @@ void LH_QtCFInstance::cf_initialize()
         return;
     else
     {
+        rule_dirty_ = false;
+
         int LH_FLAG_UI = LH_FLAG_NOSAVE | LH_FLAG_NOSOURCE | LH_FLAG_NOSINK ;
 
         cf_initialized_ = true;
@@ -90,32 +92,20 @@ void LH_QtCFInstance::cf_initialize()
 
         setup_cf_visibility_ = new LH_Qt_bool(this, "Visibility", true, LH_FLAG_NOSAVE | LH_FLAG_LAST | LH_FLAG_HIDDEN);
 
-        // Triscopic: Sample of using HTML as a menu
-#ifdef USE_MENUS
         setup_cf_menu1_ = new LH_Qt_QString(this, "^CFMenu1", QString(),  LH_FLAG_UI | LH_FLAG_LAST | LH_FLAG_HIDDEN, lh_type_string_htmlhelp);
-        setup_cf_menu1_->setHelp(menu_style +
-                    "<a href='copy'>&nbsp;Copy </a>&nbsp;"
-                    "<a href='paste'> Paste </a>"
-                    );
+        setup_cf_menu1_->setHelp(
+                    menu_area.arg("left").arg(
+                        menu_txt.arg("on").arg("a").arg("copy").arg("Copy Rules") +
+                        menu_txt.arg("on").arg("a").arg("paste").arg("Paste Rules")
+                    ));
         connect( setup_cf_menu1_, SIGNAL(change(QString)), this, SLOT(cf_menu(QString)) );
-#else
-        setup_cf_copy_ = new LH_Qt_QString(this, "^Copy Conditions", "Copy",  LH_FLAG_UI | LH_FLAG_LAST | LH_FLAG_HIDDEN, lh_type_string_button);
-        setup_cf_paste_ = new LH_Qt_QString(this, "^Paste Conditions", "Paste",  LH_FLAG_UI | LH_FLAG_NOSOURCE | LH_FLAG_NOSINK | LH_FLAG_LAST | LH_FLAG_HIDDEN, lh_type_string_button);
-#endif
 
         setup_cf_rules_ = new LH_Qt_QStringList(this, "^Conditions", QStringList(), LH_FLAG_UI | LH_FLAG_LAST | LH_FLAG_HIDDEN, lh_type_integer_listbox);
 
-#ifdef USE_MENUS
         setup_cf_menu2_ = new LH_Qt_QString(this, "^CFMenu2", QString(),  LH_FLAG_UI | LH_FLAG_LAST | LH_FLAG_HIDDEN, lh_type_string_htmlhelp);
         setRuleItemMenu(false,false,false);
         connect( setup_cf_menu2_, SIGNAL(change(QString)), this, SLOT(cf_menu(QString)) );
-#else
-        setup_cf_move_up_= new LH_Qt_QString(this, "^Move Condition Up", "Move Up",  LH_FLAG_UI | LH_FLAG_LAST | LH_FLAG_HIDDEN | LH_FLAG_READONLY, lh_type_string_button);
-        setup_cf_move_down_= new LH_Qt_QString(this, "^Move Condition Down", "Move Down",  LH_FLAG_UI | LH_FLAG_LAST | LH_FLAG_HIDDEN | LH_FLAG_READONLY, lh_type_string_button);
 
-        setup_cf_new_ = new LH_Qt_QString(this, "^New Condition", "New",  LH_FLAG_UI | LH_FLAG_LAST | LH_FLAG_HIDDEN, lh_type_string_button);
-        setup_cf_delete_ = new LH_Qt_QString(this, "^Delete Condition", "Delete", LH_FLAG_UI | LH_FLAG_LAST | LH_FLAG_HIDDEN | LH_FLAG_READONLY, lh_type_string_button);
-#endif
         setup_cf_source_ = new LH_Qt_QStringList(this, "Source", QStringList(), LH_FLAG_UI | LH_FLAG_LAST | LH_FLAG_HIDDEN);
         setup_cf_source_mode_ = new LH_Qt_QStringList(this, "Value", QStringList(), LH_FLAG_UI | LH_FLAG_LAST | LH_FLAG_HIDDEN);
         setup_cf_test_ = new LH_Qt_QStringList(this, "Condition",
@@ -139,8 +129,9 @@ void LH_QtCFInstance::cf_initialize()
         setup_cf_newValue_Bool_ = new LH_Qt_bool(this, "^New Value - Boolean","",LH_FLAG_UI | LH_FLAG_LAST | LH_FLAG_HIDDEN);
         setup_cf_newValue_File_  = new LH_Qt_QFileInfo(this,"^New Value - File",QFileInfo(""),LH_FLAG_UI | LH_FLAG_LAST | LH_FLAG_HIDDEN);
 
-        setup_cf_save_   = new LH_Qt_QString(this, "^Save Condition", "Save", LH_FLAG_UI | LH_FLAG_LAST | LH_FLAG_HIDDEN, lh_type_string_button);
-        setup_cf_cancel_ = new LH_Qt_QString(this, "^Cancel Condition Edit", "Cancel", LH_FLAG_UI | LH_FLAG_LAST | LH_FLAG_HIDDEN, lh_type_string_button);
+        setup_cf_menu3_ = new LH_Qt_QString(this, "^CFMenu3", QString(),  LH_FLAG_UI | LH_FLAG_LAST | LH_FLAG_HIDDEN, lh_type_string_htmlhelp);
+        setRuleEditMenu(false,false,false);
+        connect( setup_cf_menu3_, SIGNAL(change(QString)), this, SLOT(cf_menu(QString)) );
 
         setup_cf_XML_ = new LH_Qt_QTextEdit(this, "Conditions XML", "<rules/>", LH_FLAG_LAST | LH_FLAG_HIDDEN);
 
@@ -151,24 +142,25 @@ void LH_QtCFInstance::cf_initialize()
         connect(setup_cf_target_, SIGNAL(set()), this, SLOT(cf_target_changed()));
         connect(setup_cf_test_, SIGNAL(changed()), this, SLOT(cf_condition_changed()));
         connect(setup_cf_test_, SIGNAL(set()), this, SLOT(cf_condition_changed()));
-        connect(setup_cf_save_, SIGNAL(changed()), this, SLOT(cf_save_rule()));
-        connect(setup_cf_cancel_, SIGNAL(changed()), this, SLOT(cf_cancel_edit_rule()));
         connect(setup_cf_XML_, SIGNAL(changed()), this, SLOT(cf_XML_changed()));
         connect(setup_cf_rules_, SIGNAL(changed()), this, SLOT(cf_rules_changed()));
 
-#ifndef USE_MENUS
-        connect(setup_cf_delete_, SIGNAL(changed()), this, SLOT(cf_delete_rule()));
-        connect(setup_cf_new_, SIGNAL(changed()), this, SLOT(cf_new_rule()));
-
-        connect(setup_cf_copy_, SIGNAL(changed()), this, SLOT(cf_copy_rules()));
-        connect(setup_cf_paste_, SIGNAL(changed()), this, SLOT(cf_paste_rules()));
-        connect(setup_cf_move_up_, SIGNAL(changed()), this, SLOT(cf_move_rule_up()));
-        connect(setup_cf_move_down_, SIGNAL(changed()), this, SLOT(cf_move_rule_down()));
-#endif
         connect(setup_cf_state_, SIGNAL(changed()), this, SLOT(cf_state_value_updated()));
         connect(setup_cf_state_, SIGNAL(set()), this, SLOT(cf_state_value_updated()));
         connect(setup_cf_visibility_, SIGNAL(changed()), this, SLOT(cf_update_visibility()));
         connect(setup_cf_visibility_, SIGNAL(set()), this, SLOT(cf_update_visibility()));
+
+        connect(setup_cf_source_, SIGNAL(changed()), this, SLOT(cf_rule_edited()));
+        connect(setup_cf_target_, SIGNAL(changed()), this, SLOT(cf_rule_edited()));
+        connect(setup_cf_test_, SIGNAL(changed()), this, SLOT(cf_rule_edited()));
+        connect(setup_cf_testValue1_, SIGNAL(changed()), this, SLOT(cf_rule_edited()));
+        connect(setup_cf_testValue2_, SIGNAL(changed()), this, SLOT(cf_rule_edited()));
+
+        connect(setup_cf_newValue_Color_, SIGNAL(changed()), this, SLOT(cf_rule_edited()));
+        connect(setup_cf_newValue_Font_, SIGNAL(changed()), this, SLOT(cf_rule_edited()));
+        connect(setup_cf_newValue_String_, SIGNAL(changed()), this, SLOT(cf_rule_edited()));
+        connect(setup_cf_newValue_Bool_, SIGNAL(changed()), this, SLOT(cf_rule_edited()));
+        connect(setup_cf_newValue_File_, SIGNAL(changed()), this, SLOT(cf_rule_edited()));
 
         cf_source_list_pos = 0;
         cf_target_list_pos = 0;
@@ -240,17 +232,9 @@ void LH_QtCFInstance::cf_enabled_changed()
 {
     setup_cf_rules_->setFlag(LH_FLAG_HIDDEN, !setup_cf_enabled_->value());
 
-#ifdef USE_MENUS
     setup_cf_menu1_->setFlag(LH_FLAG_HIDDEN, !setup_cf_enabled_->value());
     setup_cf_menu2_->setFlag(LH_FLAG_HIDDEN, !setup_cf_enabled_->value());
-#else
-    setup_cf_new_->setFlag(LH_FLAG_HIDDEN, !setup_cf_enabled_->value());
-    setup_cf_delete_->setFlag(LH_FLAG_HIDDEN, !setup_cf_enabled_->value());
-    setup_cf_move_up_->setFlag(LH_FLAG_HIDDEN, !setup_cf_enabled_->value());
-    setup_cf_move_down_->setFlag(LH_FLAG_HIDDEN, !setup_cf_enabled_->value());
-    setup_cf_copy_->setFlag(LH_FLAG_HIDDEN, !setup_cf_enabled_->value());
-    setup_cf_paste_->setFlag(LH_FLAG_HIDDEN, !setup_cf_enabled_->value());
-#endif
+
     setup_cf_state_->setFlag(LH_FLAG_HIDDEN, !setup_cf_enabled_->value());
 
     cf_set_edit_controls_visibility();
@@ -261,22 +245,15 @@ void LH_QtCFInstance::cf_enabled_changed()
 void LH_QtCFInstance::cf_set_edit_controls_visibility(cf_rule_edit_mode editMode)
 {
     if(editMode!=Default)
-    cf_rule_editing_ = editMode;
+        cf_rule_editing_ = editMode;
 
     setup_cf_source_->setFlag(LH_FLAG_HIDDEN, !setup_cf_enabled_->value() || cf_rule_editing_==None);
     setup_cf_test_->setFlag(LH_FLAG_HIDDEN, !setup_cf_enabled_->value() || cf_rule_editing_==None);
     setup_cf_testValue1_->setFlag(LH_FLAG_HIDDEN, !setup_cf_enabled_->value() || cf_rule_editing_==None);
     setup_cf_target_->setFlag(LH_FLAG_HIDDEN, !setup_cf_enabled_->value() || cf_rule_editing_==None);
 
-#ifdef USE_MENUS
     setRuleItemMenu(cf_rule_editing_==Existing,cf_rule_editing_==Existing,cf_rule_editing_==Existing);
-#else
-    setup_cf_delete_->setFlag(LH_FLAG_READONLY, cf_rule_editing_!=Existing);
-    setup_cf_move_up_->setFlag(LH_FLAG_READONLY, cf_rule_editing_!=Existing);
-    setup_cf_move_down_->setFlag(LH_FLAG_READONLY, cf_rule_editing_!=Existing);
-#endif
-    setup_cf_save_->setFlag(LH_FLAG_HIDDEN, !setup_cf_enabled_->value() || cf_rule_editing_==None);
-    setup_cf_cancel_->setFlag(LH_FLAG_HIDDEN, !setup_cf_enabled_->value() || cf_rule_editing_==None);
+    setRuleEditMenu(setup_cf_enabled_->value() && cf_rule_editing_!=None, rule_dirty_, true);
 
     cf_source_changed();
     cf_condition_changed();
@@ -341,9 +318,6 @@ void LH_QtCFInstance::cf_XML_changed()
 
 void LH_QtCFInstance::cf_rules_changed()
 {
-    cf_source_changed();
-    cf_set_edit_controls_visibility(Existing);
-
     QDomDocument doc("");
     doc.setContent(setup_cf_XML_->value());
     QDomElement root = doc.firstChild().toElement();
@@ -351,19 +325,17 @@ void LH_QtCFInstance::cf_rules_changed()
     bool validSel = setup_cf_rules_->value()>=0 && setup_cf_rules_->value() < (int)root.childNodes().length();
     if(validSel)
     {
-        cf_rule rule(root.childNodes().at(setup_cf_rules_->value()));
+        cf_source_changed();
+        cf_set_edit_controls_visibility(Existing);
 
+        cf_rule rule(root.childNodes().at(setup_cf_rules_->value()));
+        rule_dirty_ = false;
         rule.conditions[0]->edit(this);
         rule.actions[0]->edit(this, targets_);
-    }
+    } else
+        cf_set_edit_controls_visibility(None);
 
-#ifdef USE_MENUS
     setRuleItemMenu(validSel,validSel,validSel);
-#else
-    setup_cf_delete_->setFlag(LH_FLAG_READONLY, !validSel);
-    setup_cf_move_up_->setFlag(LH_FLAG_READONLY, !validSel);
-    setup_cf_move_down_->setFlag(LH_FLAG_READONLY, !validSel);
-#endif
 }
 
 void LH_QtCFInstance::cf_delete_rule()
@@ -390,6 +362,7 @@ void LH_QtCFInstance::cf_new_rule()
     setup_cf_rules_->setValue(-1);
     cf_set_edit_controls_visibility(New);
 
+    rule_dirty_ = true;
     setup_cf_source_->setValue(0);
     setup_cf_test_->setValue(0);
     setup_cf_testValue1_->setValue("");
@@ -547,6 +520,8 @@ void LH_QtCFInstance::cf_save_rule()
         doc.firstChild().replaceChild(ruleNode, doc.firstChild().childNodes().at(setup_cf_rules_->value()));
 
     setup_cf_XML_->setValue(doc.toString());
+    rule_dirty_ = false;
+    setRuleEditMenu(true, rule_dirty_, true);
     cf_XML_changed();
 }
 
@@ -554,10 +529,12 @@ void LH_QtCFInstance::cf_menu(QString s)
 {
     if( s == "copy" ) cf_copy_rules();
     else if( s == "paste" ) cf_paste_rules();
-    else if( s == "moveup" ) cf_move_rule_up();
-    else if( s == "movedown" ) cf_move_rule_down();
+    else if( s == "up" ) cf_move_rule_up();
+    else if( s == "down" ) cf_move_rule_down();
     else if( s == "new" ) cf_new_rule();
     else if( s == "delete" ) cf_delete_rule();
+    else if( s == "save" ) cf_save_rule();
+    else if( s == "cancel" ) cf_cancel_edit_rule();
     return;
 }
 
@@ -570,9 +547,28 @@ void LH_QtCFInstance::setRuleItemMenu(bool Enable_Up, bool Enable_Down, bool Ena
     Enable_Down = Enable_Down && !atBottom;
 
     setup_cf_menu2_->setHelp(
-        menu_style +
-        "<" + (Enable_Up? "a" : "span") +" href='moveup'>&nbsp;Move Up </" + (Enable_Up? "a" : "span") +">&nbsp;"
-        "<" + (Enable_Down? "a" : "span") +" href='movedown'> Move Down </" + (Enable_Down? "a" : "span") +">&nbsp;"
-        "<" + (true? "a" : "span") +" href='new'> New </" + (true? "a" : "span") +">&nbsp;"
-        "<" + (Enable_Delete? "a" : "span") +" href='delete'> Delete </" + (Enable_Delete? "a" : "span") +">");
+                menu_area.arg("right").arg(
+                    menu_txt.arg(true?          "on" : "off").arg(true?          "a" : "span").arg("new").arg("&nbsp;New&nbsp;&nbsp;") +
+                    menu_txt.arg(Enable_Delete? "on" : "off").arg(Enable_Delete? "a" : "span").arg("delete").arg("Delete") +
+                    menu_img.arg(Enable_Up?     "on" : "off").arg(Enable_Up?     "a" : "span").arg("up") +
+                    menu_img.arg(Enable_Down?   "on" : "off").arg(Enable_Down?   "a" : "span").arg("down")
+                )
+      );
+}
+
+void LH_QtCFInstance::setRuleEditMenu(bool visible, bool Enable_Save, bool Enable_Cancel)
+{
+    setup_cf_menu3_->setFlag(LH_FLAG_HIDDEN, !visible);
+    setup_cf_menu3_->setHelp(
+                menu_area.arg("right").arg(
+                    menu_txt.arg(Enable_Save?   "on" : "off").arg(Enable_Save?   "a" : "span").arg("save").arg("&nbsp;Save&nbsp;") +
+                    menu_txt.arg(Enable_Cancel? "on" : "off").arg(Enable_Cancel? "a" : "span").arg("cancel").arg("Cancel")
+                )
+      );
+}
+
+void LH_QtCFInstance::cf_rule_edited()
+{
+    rule_dirty_ = true;
+    setRuleEditMenu(true, rule_dirty_, true);
 }

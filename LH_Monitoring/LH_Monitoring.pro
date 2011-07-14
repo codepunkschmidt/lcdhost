@@ -4,7 +4,7 @@ DEFINES += LH_Monitoring_LIBRARY
 QT += xml
 
 include(../Plugins.pri)
-include(../cf.pri)
+include(../cf/cf.pri)
 
 HEADERS += \
     LH_QtPlugin_Monitoring.h \
@@ -153,3 +153,5 @@ SOURCES += \
     Logitech/LH_LogitechDial.cpp \
     LH_QImage/logo_blob.c \
     LH_QImage/LH_QImage.cpp
+
+RESOURCES +=

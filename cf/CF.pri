@@ -8,3 +8,6 @@ HEADERS += \
     $$PWD/LH_QtCFInstance.h \
     $$PWD/cf_sources_targets.h \
     $$PWD/cf_rule.h
+
+RESOURCES += \
+    $$PWD/cf.qrc

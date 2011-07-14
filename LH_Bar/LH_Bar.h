@@ -39,7 +39,7 @@
 #define LH_BAR_H
 
 #include "../LH_QtPlugin.h"
-#include "../LH_QtCFInstance.h"
+#include "../CF/LH_QtCFInstance.h"
 #include "../LH_Qt_QColor.h"
 #include "../LH_Qt_QStringList.h"
 #include "../LH_Qt_QSlider.h"

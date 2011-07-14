@@ -25,7 +25,7 @@
 #ifndef LH_QIMAGE_H
 #define LH_QIMAGE_H
 
-#include "../LH_QtCFInstance.h"
+#include "../cf/LH_QtCFInstance.h"
 #include "../LH_Qt_QFileInfo.h"
 #include "../LH_Qt_bool.h"
 

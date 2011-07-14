@@ -28,39 +28,32 @@
 #include <QtGlobal>
 #include <QHash>
 
-#include "../LH_QtInstance.h"
+#include "../LH_Monitoring/LH_QImage/LH_QImage.h"
 #include "../LH_Qt_QString.h"
 #include "../LH_Qt_QFileInfo.h"
 
 #include "LH_CursorData.h"
 
-class LH_CursorImage : public LH_QtInstance
+class LH_CursorImage : public LH_QImage
 {
     Q_OBJECT
 
     bool updateState();
 
 protected:
-    QString statusCode_;
     QHash<QString, QStringList> *imageDefinitions;
 
-    LH_Qt_QFileInfo *setup_file_;
     LH_Qt_QString *setup_coordinate_;
-    LH_Qt_QString *setup_text_;
+    LH_Qt_QString *setup_cursor_state_;
 
 public:
     LH_CursorImage();
     const char *userInit();
 
-    QImage *render_qimage( int w, int h );
     int polling();
 
-    QString getImageName();
 
     static lh_class *classInfo();
-
-public slots:
-    void fileChanged();
 
 };
 

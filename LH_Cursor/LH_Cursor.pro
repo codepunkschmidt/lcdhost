@@ -5,7 +5,7 @@ QT += network \
 DEFINES += LH_CURSOR_LIBRARY
 
 include(../Plugins.pri)
-include(../cf.pri)
+include(../cf/cf.pri)
 
 HEADERS += \
     LH_CursorController.h \
@@ -22,7 +22,8 @@ HEADERS += \
     LH_CursorImage.h \
     LH_QuickAction.h \
     LH_CursorAction.h \
-    actionType.h
+    actionType.h \
+    ../LH_Monitoring/LH_QImage/LH_QImage.h
 
 SOURCES += \
     LH_CursorController.cpp \
@@ -38,4 +39,6 @@ SOURCES += \
     LH_CursorImage.cpp \
     LH_QuickAction.cpp \
     LH_CursorAction.cpp \
-    actionType.cpp
+    actionType.cpp \
+    ../LH_Monitoring/LH_QImage/logo_blob.c \
+    ../LH_Monitoring/LH_QImage/LH_QImage.cpp

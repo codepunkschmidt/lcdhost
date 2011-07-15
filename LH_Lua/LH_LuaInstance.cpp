@@ -229,6 +229,10 @@ static void lh_self_item_data_setvalue(lua_State *L, lua_setup_item* item, int w
                 item->item()->param.size = item->data().size();
             }
             break;
+        case lh_type_array_int:
+        case lh_type_array_double:
+            Q_ASSERT(0);
+            break;
         }
         break;
     case 4:
@@ -420,6 +424,10 @@ static void lh_self_item_data_getvalue(lua_State *L, lua_setup_item* item, int w
         case lh_type_image_qimage:
             lua_pushstring(L,"image");
             break;
+        case lh_type_array_int:
+        case lh_type_array_double:
+            lua_pushstring(L,"array");
+            break;
         }
         break;
     case 3:
@@ -460,6 +468,10 @@ static void lh_self_item_data_getvalue(lua_State *L, lua_setup_item* item, int w
         case lh_type_image_png:
         case lh_type_image_qimage:
             lua_pushlstring(L,item->item()->data.s,item->item()->param.size);
+            break;
+        case lh_type_array_int:
+        case lh_type_array_double:
+            Q_ASSERT(0);
             break;
         }
         break;

@@ -55,3 +55,7 @@ const lh_class **LH_QtPlugin::class_list()
     return LH_QtInstance::auto_class_list();
 }
 
+void LH_QtPlugin::requestReload( const char *msg )
+{
+    callback( lh_cb_reload, (void*) msg );
+}

@@ -52,15 +52,16 @@ class LH_LgBacklight : public LH_QtPlugin
     LH_Qt_QColor *allcolor_;
 
     QList<LgBacklightDevice*> devs_;
+    void scan();
 
 public:
     virtual const char *userInit();
 
 public slots:
+    void wantRescan();
     void changeDev();
     void changeColor();
     void setAllColor();
-    void scan();
 };
 
 #endif // LH_LGBACKLIGHT_H

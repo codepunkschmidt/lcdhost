@@ -78,18 +78,10 @@ const char *LH_LgBacklight::userInit()
     allcolor_->setLink("=/plugin/Backlight/all/set");
     connect( allcolor_, SIGNAL(changed()), this, SLOT(setAllColor()) );
 
-#ifdef Q_WS_MAC
-    new LH_Qt_QString( this, "OSXHint",
-                       tr("On OS/X you need to reload this plugin to discover new devices."),
-                       LH_FLAG_LAST|LH_FLAG_HIDETITLE|LH_FLAG_NOSAVE|LH_FLAG_NOSOURCE|LH_FLAG_NOSINK,
-                       lh_type_string_html
-                       );
-#else
-    rescanbutton_ = new LH_Qt_QString( this, "Rescan",tr("Scan for available devices"),
+    rescanbutton_ = new LH_Qt_QString( this, "Rescan",tr("Reload to scan for new devices"),
                                        LH_FLAG_LAST|LH_FLAG_HIDETITLE|LH_FLAG_NOSAVE|LH_FLAG_NOSOURCE|LH_FLAG_NOSINK,
                                        lh_type_string_button );
-    connect( rescanbutton_, SIGNAL(changed()), this, SLOT(scan()) );
-#endif
+    connect( rescanbutton_, SIGNAL(changed()), this, SLOT(wantRescan()) );
 
     scan();
     return NULL;
@@ -195,9 +187,13 @@ void LH_LgBacklight::changeColor()
 
 void LH_LgBacklight::setAllColor()
 {
-    qDebug() << "LH_LgBacklight::setAllColor()" << allcolor_->value();
     foreach( LgBacklightDevice *d, devs_ )
     {
         d->setColor( allcolor_->value() );
     }
+}
+
+void LH_LgBacklight::wantRescan()
+{
+    requestReload( "rescan for devices" );
 }

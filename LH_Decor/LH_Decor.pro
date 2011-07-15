@@ -3,6 +3,7 @@ TEMPLATE = lib
 DEFINES += LH_DECOR_LIBRARY
 
 include(../Plugins.pri)
+include(../CF/CF.pri)
 
 SOURCES += \
     ../lh_plugin.c \
@@ -23,3 +24,4 @@ HEADERS += \
     LH_QtPlugin_Decor.h \
     LH_Rectangle.h \
     LH_Background.h
+

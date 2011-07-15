@@ -46,7 +46,7 @@
 #include <QSize>
 
 #include "../LH_QtPlugin.h"
-#include "../LH_QtCFInstance.h"
+#include "../CF/LH_QtCFInstance.h"
 #include "../LH_Qt_bool.h"
 #include "../LH_Qt_QString.h"
 #include "../LH_Qt_QFont.h"

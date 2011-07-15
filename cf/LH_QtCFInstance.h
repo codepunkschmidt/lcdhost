@@ -40,17 +40,18 @@
 #include <QImage>
 #include <QtXml>
 
-#include "LH_QtPlugin.h"
-#include "LH_QtObject.h"
-#include "LH_QtInstance.h"
+#include "..\LH_QtPlugin.h"
+#include "..\LH_QtObject.h"
+#include "..\LH_QtInstance.h"
 
-#include "LH_Qt_bool.h"
-#include "LH_Qt_QString.h"
-#include "LH_Qt_QStringList.h"
-#include "LH_Qt_QTextEdit.h"
-#include "LH_Qt_QColor.h"
-#include "LH_Qt_QFont.h"
-#include "LH_Qt_QFileInfo.h"
+#include "..\LH_Qt_bool.h"
+#include "..\LH_Qt_QString.h"
+#include "..\LH_Qt_QStringList.h"
+#include "..\LH_Qt_QTextEdit.h"
+#include "..\LH_Qt_QColor.h"
+#include "..\LH_Qt_QFont.h"
+#include "..\LH_Qt_QFileInfo.h"
+#include "..\LH_Qt_QSlider.h"
 
 #include "cf_sources_targets.h"
 
@@ -62,10 +63,22 @@
 
 class cf_rule;
 
-static const QString menu_style = "<style type='text/css'>"
-                                    "  a {background-color:#C0C0C0; text-decoration:none; width:100px;}"
-                                    "  span {background-color:#D0D0D0; color:#606060;}"
-                                    "</style>";
+static const QString menu_area = "<style type='text/css'>"
+                                    "  a {text-decoration:none; color: #000000; }"
+                                    "  table.btn {border-color:black; border-style:solid; border-width:1px;}"
+                                    "  td.on {background-color:#E0E0E0;"
+                                    "         padding-left: 4px; padding-right: 4px; vertical-align:middle} "
+                                    "  td.off {background-color:#F0F0F0; color:#606060;"
+                                    "         padding-left: 4px; padding-right: 4px; vertical-align:middle} "
+                                    "</style>"
+                                    "<table cellspacing='4' style='float:%1'><tr>%2</tr></table>";
+static const QString menu_img = "<td><table cellspacing='1' cellpadding='4' class='btn'><tr><td class='%1'><%2 href='%3'><img src=':/cf/%3_%1.png'/></%1></td></tr></table></td>";
+static const QString menu_txt = "<td><table cellspacing='1' cellpadding='4' class='btn'><tr><td class='%1'>"
+                                    "<table cellspacing='0' cellpadding='0'><tr>"
+                                    "<td><%2 href='%3'><img src=':/cf/%3_%1.png'/></%1></td>"
+                                    "<td><%2 href='%3'>&nbsp;%4</%1></td>"
+                                    "</tr></table>"
+                                "</td></tr></table></td>";
 
 class LH_QtCFInstance : public LH_QtInstance
 {
@@ -90,6 +103,8 @@ class LH_QtCFInstance : public LH_QtInstance
     bool cf_initialized_;
     void cf_initialize();
 
+    bool rule_dirty_;
+
     void add_cf_source(QString name, LH_QtSetupItem *si, bool atEnd = false);
 
     //QString getTargetValue(int targetId);
@@ -100,7 +115,7 @@ class LH_QtCFInstance : public LH_QtInstance
     bool watching_non_setup_item_;
 
     void setRuleItemMenu(bool, bool, bool);
-
+    void setRuleEditMenu(bool, bool, bool);
 protected:
     LH_Qt_bool        *setup_cf_enabled_;
 
@@ -110,20 +125,9 @@ protected:
     LH_Qt_QTextEdit   *setup_cf_XML_;
     LH_Qt_QStringList *setup_cf_rules_;
 
-#ifdef USE_MENUS
     LH_Qt_QString     *setup_cf_menu1_;
     LH_Qt_QString     *setup_cf_menu2_;
-#else
-    LH_Qt_QString     *setup_cf_new_;
-    LH_Qt_QString     *setup_cf_delete_;
-    LH_Qt_QString     *setup_cf_move_up_;
-    LH_Qt_QString     *setup_cf_move_down_;
-    LH_Qt_QString     *setup_cf_copy_;
-    LH_Qt_QString     *setup_cf_paste_;
-#endif
-
-    LH_Qt_QString     *setup_cf_save_;
-    LH_Qt_QString     *setup_cf_cancel_;
+    LH_Qt_QString     *setup_cf_menu3_;
 
     void cf_source_notify(QString name, QString value, int index = 0, int count = 1);
 
@@ -143,6 +147,7 @@ public:
     LH_Qt_QString     *setup_cf_newValue_String_;
     LH_Qt_QFileInfo   *setup_cf_newValue_File_;
     LH_Qt_bool        *setup_cf_newValue_Bool_;
+    LH_Qt_QSlider     *setup_cf_newValue_Slider_;
 
     LH_QtCFInstance() : LH_QtInstance(0),
         cf_initialized_(false),
@@ -158,7 +163,8 @@ public:
         setup_cf_newValue_Font_(0),
         setup_cf_newValue_String_(0),
         setup_cf_newValue_File_(0),
-        setup_cf_newValue_Bool_(0)
+        setup_cf_newValue_Bool_(0),
+        setup_cf_newValue_Slider_(0)
     {}
 
     int notify(int n,void* p);
@@ -180,7 +186,7 @@ protected slots:
     void cf_state_value_updated();
     void cf_update_visibility();
     void cf_apply_rules(bool allowRender = true);
-
+    void cf_rule_edited();
     void cf_copy_rules();
     void cf_paste_rules();
     void cf_move_rule_up();

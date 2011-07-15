@@ -38,12 +38,12 @@
 #define LH_RECTANGLE_H
 
 #include "../LH_QtPlugin.h"
-#include "../LH_QtInstance.h"
+#include "../cf/LH_QtCFInstance.h"
 #include "../LH_Qt_bool.h"
 #include "../LH_Qt_QSlider.h"
 #include "../LH_Qt_QColor.h"
 
-class LH_Rectangle : public LH_QtInstance
+class LH_Rectangle : public LH_QtCFInstance
 {
     Q_OBJECT
 

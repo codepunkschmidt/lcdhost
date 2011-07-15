@@ -23,7 +23,8 @@ HEADERS += \
     LH_QuickAction.h \
     LH_CursorAction.h \
     actionType.h \
-    ../LH_Monitoring/LH_QImage/LH_QImage.h
+    ../LH_Monitoring/LH_QImage/LH_QImage.h \
+    ../LH_Decor/LH_Rectangle.h
 
 SOURCES += \
     LH_CursorController.cpp \
@@ -41,4 +42,5 @@ SOURCES += \
     LH_CursorAction.cpp \
     actionType.cpp \
     ../LH_Monitoring/LH_QImage/logo_blob.c \
-    ../LH_Monitoring/LH_QImage/LH_QImage.cpp
+    ../LH_Monitoring/LH_QImage/LH_QImage.cpp \
+    ../LH_Decor/LH_Rectangle.cpp

@@ -92,6 +92,9 @@ class LH_QtPlugin : public LH_QtObject
     Q_OBJECT
 public:
     virtual const lh_class **class_list();
+
+public slots:
+    void requestReload( const char *msg = 0 );
 };
 
 /**

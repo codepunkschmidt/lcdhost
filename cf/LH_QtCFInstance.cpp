@@ -128,6 +128,7 @@ void LH_QtCFInstance::cf_initialize()
         setup_cf_newValue_String_= new LH_Qt_QString(this, "^New Value - String","",LH_FLAG_UI | LH_FLAG_LAST | LH_FLAG_HIDDEN);
         setup_cf_newValue_Bool_ = new LH_Qt_bool(this, "^New Value - Boolean","",LH_FLAG_UI | LH_FLAG_LAST | LH_FLAG_HIDDEN);
         setup_cf_newValue_File_  = new LH_Qt_QFileInfo(this,"^New Value - File",QFileInfo(""),LH_FLAG_UI | LH_FLAG_LAST | LH_FLAG_HIDDEN);
+        setup_cf_newValue_Slider_= new LH_Qt_QSlider(this,"^New Value - Slider",0,0,0, LH_FLAG_UI | LH_FLAG_LAST | LH_FLAG_HIDDEN);
 
         setup_cf_menu3_ = new LH_Qt_QString(this, "^CFMenu3", QString(),  LH_FLAG_UI | LH_FLAG_LAST | LH_FLAG_HIDDEN, lh_type_string_htmlhelp);
         setRuleEditMenu(false,false,false);
@@ -160,6 +161,7 @@ void LH_QtCFInstance::cf_initialize()
         connect(setup_cf_newValue_Font_, SIGNAL(changed()), this, SLOT(cf_rule_edited()));
         connect(setup_cf_newValue_String_, SIGNAL(changed()), this, SLOT(cf_rule_edited()));
         connect(setup_cf_newValue_Bool_, SIGNAL(changed()), this, SLOT(cf_rule_edited()));
+        connect(setup_cf_newValue_Slider_, SIGNAL(changed()), this, SLOT(cf_rule_edited()));
         connect(setup_cf_newValue_File_, SIGNAL(changed()), this, SLOT(cf_rule_edited()));
 
         cf_source_list_pos = 0;
@@ -281,6 +283,12 @@ void LH_QtCFInstance::cf_target_changed()
         setup_cf_newValue_String_->setFlag(LH_FLAG_HIDDEN, !setup_cf_enabled_->value() || setup_cf_newValue_String_->type()!=targets_[setup_cf_target_->value()]->type()  || cf_rule_editing_==None);
         setup_cf_newValue_Bool_->setFlag(  LH_FLAG_HIDDEN, !setup_cf_enabled_->value() || setup_cf_newValue_Bool_->type()!=targets_[setup_cf_target_->value()]->type()  || cf_rule_editing_==None);
         setup_cf_newValue_File_->setFlag(  LH_FLAG_HIDDEN, !setup_cf_enabled_->value() || setup_cf_newValue_File_->type()!=targets_[setup_cf_target_->value()]->type()  || cf_rule_editing_==None);
+        setup_cf_newValue_Slider_->setFlag(  LH_FLAG_HIDDEN, !setup_cf_enabled_->value() || setup_cf_newValue_Slider_->type()!=targets_[setup_cf_target_->value()]->type()  || cf_rule_editing_==None);
+        if(setup_cf_newValue_Slider_->type()==targets_[setup_cf_target_->value()]->type())
+        {
+            setup_cf_newValue_Slider_->setMin(((LH_Qt_QSlider*)targets_[setup_cf_target_->value()])->min());
+            setup_cf_newValue_Slider_->setMax(((LH_Qt_QSlider*)targets_[setup_cf_target_->value()])->max());
+        }
     }
 }
 

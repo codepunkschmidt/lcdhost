@@ -51,6 +51,7 @@
 #include "..\LH_Qt_QColor.h"
 #include "..\LH_Qt_QFont.h"
 #include "..\LH_Qt_QFileInfo.h"
+#include "..\LH_Qt_QSlider.h"
 
 #include "cf_sources_targets.h"
 
@@ -146,6 +147,7 @@ public:
     LH_Qt_QString     *setup_cf_newValue_String_;
     LH_Qt_QFileInfo   *setup_cf_newValue_File_;
     LH_Qt_bool        *setup_cf_newValue_Bool_;
+    LH_Qt_QSlider     *setup_cf_newValue_Slider_;
 
     LH_QtCFInstance() : LH_QtInstance(0),
         cf_initialized_(false),
@@ -161,7 +163,8 @@ public:
         setup_cf_newValue_Font_(0),
         setup_cf_newValue_String_(0),
         setup_cf_newValue_File_(0),
-        setup_cf_newValue_Bool_(0)
+        setup_cf_newValue_Bool_(0),
+        setup_cf_newValue_Slider_(0)
     {}
 
     int notify(int n,void* p);

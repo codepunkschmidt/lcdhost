@@ -67,6 +67,26 @@ public:
         }
     }
 
+    int min(){
+        return item_.param.slider.min;
+    }
+
+    void setMin(int min)
+    {
+        item_.param.slider.min = min;
+        if( value() < min ) setValue(min);
+    }
+
+    int max(){
+        return item_.param.slider.max;
+    }
+
+    void setMax(int max)
+    {
+        item_.param.slider.max = max;
+        if( value() > max ) setValue(max);
+    }
+
     virtual void setup_change()
     {
         emit change( value() );

@@ -3,7 +3,7 @@ TEMPLATE = lib
 DEFINES += LH_BAR_LIBRARY
 
 include(../Plugins.pri)
-include(../CF.pri)
+include(../CF/CF.pri)
 
 SOURCES += \
     ../LH_QtPlugin.cpp \

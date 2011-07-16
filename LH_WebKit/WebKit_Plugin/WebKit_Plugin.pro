@@ -5,7 +5,7 @@ QT += network \
 DEFINES += LH_WEBKIT_LIBRARY
 
 include(../../Plugins.pri)
-include(../../cf.pri)
+include(../../CF/CF.pri)
 
 SOURCES += \
     ../../lh_plugin.c \

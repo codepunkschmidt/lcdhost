@@ -3,7 +3,7 @@ TEMPLATE = lib
 DEFINES += LH_TEXT_LIBRARY
 
 include(../Plugins.pri)
-include(../CF.pri)
+include(../CF/CF.pri)
 
 SOURCES += \
     ../lh_plugin.c \

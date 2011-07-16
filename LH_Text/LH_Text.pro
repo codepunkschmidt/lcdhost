@@ -3,7 +3,7 @@ TEMPLATE = lib
 DEFINES += LH_TEXT_LIBRARY
 
 include(../Plugins.pri)
-include(../CF.pri)
+include(../CF/CF.pri)
 
 SOURCES += \
     ../lh_plugin.c \
@@ -11,6 +11,7 @@ SOURCES += \
     ../LH_QtInstance.cpp \
     ../LH_QtObject.cpp \
     ../LH_QtSetupItem.cpp \
+    ../LH_QtCPU.cpp \
     LH_QtPlugin_Text.cpp \
     LH_Text.cpp \
     LH_TextTime.cpp \
@@ -26,7 +27,8 @@ SOURCES += \
     LH_TextMemVirtualFree.cpp \
     LH_TextMemVirtualTotal.cpp \
     LH_TextMemVirtualUsed.cpp \
-    LH_TextStatic.cpp
+    LH_TextStatic.cpp \
+    LH_TextCPUCoreLoad.cpp
 
 HEADERS += \
     ../lh_plugin.h \
@@ -34,6 +36,7 @@ HEADERS += \
     ../LH_QtInstance.h \
     ../LH_QtObject.h \
     ../LH_QtSetupItem.h \
+    ../LH_QtCPU.h \
     LH_QtPlugin_Text.h \
     LH_Text.h \
     LH_TextFile.h \
@@ -44,4 +47,3 @@ HEADERS += \
 # QT += network xml
 #    LH_TextRSS.cpp \
 #    LH_TextRSS.h \
-

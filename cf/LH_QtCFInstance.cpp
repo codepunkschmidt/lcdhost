@@ -138,36 +138,38 @@ void LH_QtCFInstance::cf_initialize()
 
         setup_cf_XML_ = new LH_Qt_QTextEdit(this, "Conditions XML", "<rules/>", LH_FLAG_LAST | LH_FLAG_HIDDEN);
 
-        connect(setup_cf_enabled_, SIGNAL(changed()), this, SLOT(cf_enabled_changed()));
-        connect(setup_cf_enabled_, SIGNAL(set()), this, SLOT(cf_enabled_changed()));
-        connect(setup_cf_source_, SIGNAL(changed()), this, SLOT(cf_source_changed()));
-        connect(setup_cf_source_, SIGNAL(set()), this, SLOT(cf_source_changed()));
-        connect(setup_cf_target_, SIGNAL(changed()), this, SLOT(cf_target_changed()));
-        connect(setup_cf_target_, SIGNAL(set()), this, SLOT(cf_target_changed()));
-        connect(setup_cf_test_, SIGNAL(changed()), this, SLOT(cf_condition_changed()));
-        connect(setup_cf_test_, SIGNAL(set()), this, SLOT(cf_condition_changed()));
-        connect(setup_cf_XML_, SIGNAL(changed()), this, SLOT(cf_XML_changed()));
-        connect(setup_cf_rules_, SIGNAL(changed()), this, SLOT(cf_rules_changed()));
+        connect(setup_cf_enabled_,         SIGNAL(changed()), this, SLOT(cf_enabled_changed()));
+        connect(setup_cf_enabled_,         SIGNAL(set()),     this, SLOT(cf_enabled_changed()));
+        connect(setup_cf_source_,          SIGNAL(changed()), this, SLOT(cf_source_changed()));
+        connect(setup_cf_source_,          SIGNAL(set()),     this, SLOT(cf_source_changed()));
+        connect(setup_cf_source_mode_,     SIGNAL(changed()), this, SLOT(cf_source_changed()));
+        connect(setup_cf_test_,            SIGNAL(changed()), this, SLOT(cf_condition_changed()));
+        connect(setup_cf_test_,            SIGNAL(set()),     this, SLOT(cf_condition_changed()));
+        connect(setup_cf_target_,          SIGNAL(changed()), this, SLOT(cf_target_changed()));
+        connect(setup_cf_target_,          SIGNAL(set()),     this, SLOT(cf_target_changed()));
+        connect(setup_cf_XML_,             SIGNAL(changed()), this, SLOT(cf_XML_changed()));
+        connect(setup_cf_rules_,           SIGNAL(changed()), this, SLOT(cf_rules_changed()));
 
-        connect(setup_cf_state_, SIGNAL(changed()), this, SLOT(cf_state_value_updated()));
-        connect(setup_cf_state_, SIGNAL(set()), this, SLOT(cf_state_value_updated()));
-        connect(setup_cf_visibility_, SIGNAL(changed()), this, SLOT(cf_update_visibility()));
-        connect(setup_cf_visibility_, SIGNAL(set()), this, SLOT(cf_update_visibility()));
+        connect(setup_cf_state_,           SIGNAL(changed()), this, SLOT(cf_state_value_updated()));
+        connect(setup_cf_state_,           SIGNAL(set()),     this, SLOT(cf_state_value_updated()));
+        connect(setup_cf_visibility_,      SIGNAL(changed()), this, SLOT(cf_update_visibility()));
+        connect(setup_cf_visibility_,      SIGNAL(set()),     this, SLOT(cf_update_visibility()));
 
-        connect(setup_cf_source_, SIGNAL(changed()), this, SLOT(cf_rule_edited()));
-        connect(setup_cf_target_, SIGNAL(changed()), this, SLOT(cf_rule_edited()));
-        connect(setup_cf_test_, SIGNAL(changed()), this, SLOT(cf_rule_edited()));
-        connect(setup_cf_testValue1_, SIGNAL(changed()), this, SLOT(cf_rule_edited()));
+        connect(setup_cf_source_,          SIGNAL(changed()), this, SLOT(cf_rule_edited()));
+        connect(setup_cf_source_mode_,     SIGNAL(changed()), this, SLOT(cf_rule_edited()));
+        connect(setup_cf_target_,          SIGNAL(changed()), this, SLOT(cf_rule_edited()));
+        connect(setup_cf_test_,            SIGNAL(changed()), this, SLOT(cf_rule_edited()));
+        connect(setup_cf_testValue1_,      SIGNAL(changed()), this, SLOT(cf_rule_edited()));
         connect(setup_cf_testValue1_List_, SIGNAL(changed()), this, SLOT(cf_rule_edited()));
-        connect(setup_cf_testValue2_, SIGNAL(changed()), this, SLOT(cf_rule_edited()));
+        connect(setup_cf_testValue2_,      SIGNAL(changed()), this, SLOT(cf_rule_edited()));
 
-        connect(setup_cf_newValue_Color_, SIGNAL(changed()), this, SLOT(cf_rule_edited()));
-        connect(setup_cf_newValue_Font_, SIGNAL(changed()), this, SLOT(cf_rule_edited()));
+        connect(setup_cf_newValue_Color_,  SIGNAL(changed()), this, SLOT(cf_rule_edited()));
+        connect(setup_cf_newValue_Font_,   SIGNAL(changed()), this, SLOT(cf_rule_edited()));
         connect(setup_cf_newValue_String_, SIGNAL(changed()), this, SLOT(cf_rule_edited()));
-        connect(setup_cf_newValue_Bool_, SIGNAL(changed()), this, SLOT(cf_rule_edited()));
+        connect(setup_cf_newValue_Bool_,   SIGNAL(changed()), this, SLOT(cf_rule_edited()));
         connect(setup_cf_newValue_Slider_, SIGNAL(changed()), this, SLOT(cf_rule_edited()));
-        connect(setup_cf_newValue_List_, SIGNAL(changed()), this, SLOT(cf_rule_edited()));
-        connect(setup_cf_newValue_File_, SIGNAL(changed()), this, SLOT(cf_rule_edited()));
+        connect(setup_cf_newValue_List_,   SIGNAL(changed()), this, SLOT(cf_rule_edited()));
+        connect(setup_cf_newValue_File_,   SIGNAL(changed()), this, SLOT(cf_rule_edited()));
 
         cf_source_list_pos = 0;
         cf_target_list_pos = 0;
@@ -182,7 +184,7 @@ void LH_QtCFInstance::cf_initialize()
 
 void LH_QtCFInstance::add_cf_source(LH_QtSetupItem *si)
 {
-    add_cf_source(si->name(), si, false);
+    add_cf_source(si, false);
 }
 
 void LH_QtCFInstance::add_cf_source(QString name)
@@ -192,7 +194,10 @@ void LH_QtCFInstance::add_cf_source(QString name)
 
 void LH_QtCFInstance::add_cf_source(LH_QtSetupItem *si, bool atEnd)
 {
-    add_cf_source(si->name(), si, atEnd);
+    QString name = si->name();
+    if (name.at(0)=='^')
+        name = name.right(name.length()-1);
+    add_cf_source(name, si, atEnd);
 }
 
 void LH_QtCFInstance::add_cf_source(QString name, bool atEnd)
@@ -241,15 +246,20 @@ void LH_QtCFInstance::add_cf_target(LH_QtSetupItem *si, bool hide, bool atEnd)
         si->setFlag(LH_FLAG_HIDDEN, true);
 
     cf_initialize();
+
+    QString name = si->name();
+    if (name.at(0)=='^')
+        name = name.right(name.length()-1);
+
     if(atEnd || targets_.length()==0)
     {
         targets_.append(si);
-        setup_cf_target_->list().append(si->name());
+        setup_cf_target_->list().append(name);
     }
     else
     {
         targets_.insert(cf_target_list_pos, si);
-        setup_cf_target_->list().insert(cf_target_list_pos, si->name());
+        setup_cf_target_->list().insert(cf_target_list_pos, name);
         cf_target_list_pos++;
     }
     setup_cf_target_->refreshList();
@@ -297,8 +307,7 @@ void LH_QtCFInstance::cf_source_changed()
     {
         setup_cf_source_mode_->setFlag(LH_FLAG_HIDDEN, !setup_cf_enabled_->value() || cf_rule_editing_==None );
 
-
-        lh_setup_type source_type = sources_[setup_cf_source_->valueText()]->type();
+        lh_setup_type source_type = (setup_cf_source_mode_->valueText()=="Value"? sources_[setup_cf_source_->valueText()]->type() : lh_type_string);
         bool v1vis = (!setup_cf_testValue1_->hasFlag(LH_FLAG_HIDDEN)) || (!setup_cf_testValue1_List_->hasFlag(LH_FLAG_HIDDEN));
         bool isList = source_type==lh_type_integer_list || source_type==lh_type_integer_listbox;
         setup_cf_testValue1_->setFlag(LH_FLAG_HIDDEN, (!isList? !v1vis : true));

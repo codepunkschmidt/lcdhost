@@ -54,7 +54,8 @@ public:
 
         bool v1vis = (!sender->setup_cf_testValue1_->hasFlag(LH_FLAG_HIDDEN)) || (!sender->setup_cf_testValue1_List_->hasFlag(LH_FLAG_HIDDEN));
         LH_Qt_QStringList* source_List;
-        switch(sources[source_]->type())
+
+        switch((mode_=="Value"? sources[source_]->type() : lh_type_string))
         {
         case lh_type_integer_list:
         case lh_type_integer_listbox:

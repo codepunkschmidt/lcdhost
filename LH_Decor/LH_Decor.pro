@@ -23,5 +23,5 @@ HEADERS += \
     ../LH_QtSetupItem.h \
     LH_QtPlugin_Decor.h \
     LH_Rectangle.h \
-    LH_Background.h
-
+    LH_Background.h \
+    LH_StaticRectangle.h

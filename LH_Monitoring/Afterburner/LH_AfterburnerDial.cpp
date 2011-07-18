@@ -44,7 +44,7 @@ lh_class *LH_AfterburnerDial::classInfo()
 const char *LH_AfterburnerDial::userInit()
 {
     if( const char *err = LH_MonitoringDial::userInit() ) return err;
-    data_ = new LH_AfterburnerData( this, true );
+    data_ = new LH_AfterburnerData( this, mdmNumbers, true );
     connect_refresh( static_cast<LH_AfterburnerData*>(data_)->setup_value_type_ );
     return 0;
 }

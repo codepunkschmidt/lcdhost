@@ -55,7 +55,6 @@ lh_class *LH_GPUZText::classInfo()
 const char *LH_GPUZText::userInit()
 {
     if( const char *err = LH_MonitoringText::userInit() ) return err;
-    data_ = new LH_GPUZData(this);
-    connect_changeType( static_cast<LH_GPUZData*>(data_)->setup_value_type_ );
+    ui_->setup_monitoring_app_->setValue("GPU-Z");
     return 0;
 }

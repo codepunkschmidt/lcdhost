@@ -55,7 +55,6 @@ lh_class *LH_ATITrayToolsText::classInfo()
 const char *LH_ATITrayToolsText::userInit()
 {
     if( const char *err = LH_MonitoringText::userInit() ) return err;
-    data_ = new LH_ATITrayToolsData(this, mdmAll);
-    connect_changeType( static_cast<LH_ATITrayToolsData*>(data_)->setup_value_type_ );
+    ui_->setup_monitoring_app_->setValue("ATI Tray Tools");
     return 0;
 }

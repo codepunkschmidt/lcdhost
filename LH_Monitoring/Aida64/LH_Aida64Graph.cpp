@@ -47,7 +47,7 @@ const char *LH_Aida64Graph::userInit()
     data_ = new LH_Aida64Data( this, mdmNumbers, true );
     connect_clearData( static_cast<LH_Aida64Data*>(data_)->setup_value_type_ );
     connect_clearData( static_cast<LH_Aida64Data*>(data_)->setup_value_group_ );
-    connect_clearData( static_cast<LH_Aida64Data*>(data_)->setup_value_sensor_ );
+    connect_clearData( static_cast<LH_Aida64Data*>(data_)->setup_value_item_ );
     return 0;
 }
 

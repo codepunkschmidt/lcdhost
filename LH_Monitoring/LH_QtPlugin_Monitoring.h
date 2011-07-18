@@ -28,7 +28,7 @@
 
 #include "../LH_QtPlugin.h"
 
-#define VERSION 1.06
+#define VERSION 2.00
 
 class LH_QtPlugin_Monitoring : public LH_QtPlugin
 {

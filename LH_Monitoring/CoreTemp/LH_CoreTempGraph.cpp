@@ -46,7 +46,7 @@ const char *LH_CoreTempGraph::userInit()
     if( const char *err = LH_MonitoringGraph::userInit() ) return err;
     data_ = new LH_CoreTempData( this, mdmNumbers, true );
     connect_clearData( static_cast<LH_CoreTempData*>(data_)->setup_value_type_ );
-    connect_clearData( static_cast<LH_CoreTempData*>(data_)->setup_value_index_ );
+    connect_clearData( static_cast<LH_CoreTempData*>(data_)->setup_value_item_ );
     return 0;
 }
 

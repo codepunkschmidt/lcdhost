@@ -44,7 +44,7 @@ lh_class *LH_RivaTunerGraph::classInfo()
 const char *LH_RivaTunerGraph::userInit()
 {
     if( const char *err = LH_MonitoringGraph::userInit() ) return err;
-    data_ = new LH_RivaTunerData( this, true );
+    data_ = new LH_RivaTunerData( this, mdmNumbers, true );
     connect_clearData( static_cast<LH_RivaTunerData*>(data_)->setup_value_type_ );
 
     float graphMin=0;

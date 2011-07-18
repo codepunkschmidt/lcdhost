@@ -44,7 +44,7 @@ lh_class *LH_RivaTunerBar::classInfo()
 const char *LH_RivaTunerBar::userInit()
 {
     if( const char *err = LH_MonitoringBar::userInit() ) return err;
-    data_ = new LH_RivaTunerData( this, true );
+    data_ = new LH_RivaTunerData( this, mdmNumbers, true );
     connect_refresh( static_cast<LH_RivaTunerData*>(data_)->setup_value_type_ );
     return 0;
 }

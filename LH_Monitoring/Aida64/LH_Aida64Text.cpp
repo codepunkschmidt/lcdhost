@@ -55,9 +55,6 @@ lh_class *LH_Aida64Text::classInfo()
 const char *LH_Aida64Text::userInit()
 {
     if( const char *err = LH_MonitoringText::userInit() ) return err;
-    data_ = new LH_Aida64Data(this, mdmAll);
-    connect_changeType( static_cast<LH_Aida64Data*>(data_)->setup_value_type_ );
-    connect_updateText( static_cast<LH_Aida64Data*>(data_)->setup_value_group_ );
-    connect_updateText( static_cast<LH_Aida64Data*>(data_)->setup_value_sensor_ );
+    ui_->setup_monitoring_app_->setValue("Aida64");
     return 0;
 }

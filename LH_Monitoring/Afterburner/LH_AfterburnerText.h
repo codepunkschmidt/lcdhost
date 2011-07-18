@@ -1,7 +1,6 @@
 #ifndef LH_AFTERBURNERTEXT_H
 #define LH_AFTERBURNERTEXT_H
 
-#include "LH_AfterburnerData.h"
 #include "../_Templates/LH_MonitoringText.h"
 
 class LH_AfterburnerText : public LH_MonitoringText

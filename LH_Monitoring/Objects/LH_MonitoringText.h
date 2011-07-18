@@ -29,14 +29,15 @@ public:
 public slots:
     void updateText(bool rerender = false);
 
-    void changeAppSelection()  { if(!ui_) return; ui_->changeAppSelection();   updateText(); }
-    void setIndexSelection()   { if(!ui_) return; ui_->setIndexSelection();    updateText(); }
-    void setTypeSelection()    { if(!ui_) return; ui_->setTypeSelection();     updateText(); }
-    void changeTypeSelection() { if(!ui_) return; ui_->changeTypeSelection();  updateText(); }
-    void setGroupSelection()   { if(!ui_) return; ui_->setGroupSelection();    updateText(); }
-    void changeGroupSelection(){ if(!ui_) return; ui_->changeGroupSelection(); updateText(); }
-    void setItemSelection()    { if(!ui_) return; ui_->setItemSelection();     updateText(); }
-    void changeItemSelection() { if(!ui_) return; ui_->changeItemSelection();  updateText(); }
+    void changeAppSelection()  { updateText(); }
+    void setAppSelection()     { updateText(); }
+    void setIndexSelection()   { updateText(); }
+    void setTypeSelection()    { updateText(); }
+    void changeTypeSelection() { updateText(); }
+    void setGroupSelection()   { updateText(); }
+    void changeGroupSelection(){ updateText(); }
+    void setItemSelection()    { updateText(); }
+    void changeItemSelection() { updateText(); }
 };
 
 #endif // LH_MONITORINGTEXT_H

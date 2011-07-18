@@ -26,14 +26,15 @@ public slots:
     void updateBounds();
     void updateNeedles();
 
-    void changeAppSelection()  { if(!ui_) return; ui_->changeAppSelection();   updateBounds(); updateNeedles();}
-    void setIndexSelection()   { if(!ui_) return; ui_->setIndexSelection();    updateBounds(); updateNeedles();}
-    void setTypeSelection()    { if(!ui_) return; ui_->setTypeSelection();     updateBounds(); updateNeedles();}
-    void changeTypeSelection() { if(!ui_) return; ui_->changeTypeSelection();  updateBounds(); updateNeedles();}
-    void setGroupSelection()   { if(!ui_) return; ui_->setGroupSelection();    updateBounds(); updateNeedles();}
-    void changeGroupSelection(){ if(!ui_) return; ui_->changeGroupSelection(); updateBounds(); updateNeedles();}
-    void setItemSelection()    { if(!ui_) return; ui_->setItemSelection();     updateBounds(); updateNeedles();}
-    void changeItemSelection() { if(!ui_) return; ui_->changeItemSelection();  updateBounds(); updateNeedles();}
+    void changeAppSelection()  { updateBounds(); updateNeedles();}
+    void setAppSelection()     { updateBounds(); updateNeedles(); }
+    void setIndexSelection()   { updateBounds(); updateNeedles();}
+    void setTypeSelection()    { updateBounds(); updateNeedles();}
+    void changeTypeSelection() { updateBounds(); updateNeedles();}
+    void setGroupSelection()   { updateBounds(); updateNeedles();}
+    void changeGroupSelection(){ updateBounds(); updateNeedles();}
+    void setItemSelection()    { updateBounds(); updateNeedles();}
+    void changeItemSelection() { updateBounds(); updateNeedles();}
 };
 
 #endif // LH_MONITORINGDIAL_H

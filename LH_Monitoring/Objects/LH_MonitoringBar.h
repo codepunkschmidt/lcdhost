@@ -26,14 +26,15 @@ public slots:
     void refresh();
     void updateBounds();
 
-    void changeAppSelection()  { if(!ui_) return; ui_->changeAppSelection();   updateBounds(); }
-    void setIndexSelection()   { if(!ui_) return; ui_->setIndexSelection();    updateBounds(); }
-    void setTypeSelection()    { if(!ui_) return; ui_->setTypeSelection();     updateBounds(); }
-    void changeTypeSelection() { if(!ui_) return; ui_->changeTypeSelection();  updateBounds(); }
-    void setGroupSelection()   { if(!ui_) return; ui_->setGroupSelection();    updateBounds(); }
-    void changeGroupSelection(){ if(!ui_) return; ui_->changeGroupSelection(); updateBounds(); }
-    void setItemSelection()    { if(!ui_) return; ui_->setItemSelection();     updateBounds(); }
-    void changeItemSelection() { if(!ui_) return; ui_->changeItemSelection();  updateBounds(); }
+    void changeAppSelection()  { updateBounds(); }
+    void setAppSelection()     { updateBounds(); }
+    void setIndexSelection()   { updateBounds(); }
+    void setTypeSelection()    { updateBounds(); }
+    void changeTypeSelection() { updateBounds(); changeType(); }
+    void setGroupSelection()   { updateBounds(); }
+    void changeGroupSelection(){ updateBounds(); }
+    void setItemSelection()    { updateBounds(); }
+    void changeItemSelection() { updateBounds(); }
 };
 
 #endif // LH_MONITORINGBAR_H

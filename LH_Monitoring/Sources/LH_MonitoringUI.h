@@ -42,13 +42,19 @@ struct sensorGroup
 
 class LH_MonitoringUI : public QObject
 {
+    Q_OBJECT
+
     ui_mode_type mode_;
     monitoringDataMode dataMode_;
     bool includeGroups_;
+
+    void acquireAppData();
+
 public:
     LH_MonitoringData *data_;
 
     LH_Qt_QStringList *setup_monitoring_app_;
+    LH_Qt_QString     *setup_monitoring_app_name_;
 
     LH_Qt_QStringList *setup_value_type_;
     LH_Qt_QStringList *setup_value_group_;
@@ -92,8 +98,22 @@ public:
     int getIndex();
     void setIndex(int index = -1);
 
-    void changeAppSelection();
+    void loadItemsList(int i);
 
+signals:
+    void appSet();
+    void appChanged();
+    void typeSet();
+    void typeChanged();
+    void groupSet();
+    void groupChanged();
+    void itemSet();
+    void itemChanged();
+    void indexSet();
+
+public slots:
+    void setAppSelection();
+    void changeAppSelection();
     void setTypeSelection();
     void changeTypeSelection();
     void setGroupSelection();
@@ -101,8 +121,6 @@ public:
     void setItemSelection();
     void changeItemSelection();
     void setIndexSelection();
-
-    void loadItemsList(int i);
 };
 
 #endif // LH_MONITORINGUI_H

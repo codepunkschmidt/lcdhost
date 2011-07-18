@@ -98,11 +98,8 @@ const char *LH_MonitoringText::userInit()
     hr2->setOrder(-3);
 
     setup_text_->setFlag( LH_FLAG_HIDDEN, true );
+    setup_text_->setFlag( LH_FLAG_NOSAVE, true );
     setText(" ");
-
-    connect( ui_->setup_value_type_, SIGNAL(changed()), this, SLOT(changeType()) );
-    connect( ui_->setup_value_group_, SIGNAL(changed()), this, SLOT(updateText()) );
-    connect( ui_->setup_value_item_, SIGNAL(changed()), this, SLOT(updateText()) );
 
     return 0;
 }

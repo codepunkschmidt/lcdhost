@@ -28,14 +28,15 @@ public slots:
     void clearData();
     void updateUnits();
 
-    void changeAppSelection()  { if(!ui_) return; ui_->changeAppSelection();   clearData(); updateUnits();}
-    void setIndexSelection()   { if(!ui_) return; ui_->setIndexSelection();    clearData(); updateUnits();}
-    void setTypeSelection()    { if(!ui_) return; ui_->setTypeSelection();     clearData(); updateUnits();}
-    void changeTypeSelection() { if(!ui_) return; ui_->changeTypeSelection();  clearData(); updateUnits();}
-    void setGroupSelection()   { if(!ui_) return; ui_->setGroupSelection();    clearData(); updateUnits();}
-    void changeGroupSelection(){ if(!ui_) return; ui_->changeGroupSelection(); clearData(); updateUnits();}
-    void setItemSelection()    { if(!ui_) return; ui_->setItemSelection();     clearData(); updateUnits();}
-    void changeItemSelection() { if(!ui_) return; ui_->changeItemSelection();  clearData(); updateUnits();}
+    void changeAppSelection()  { clearData(); updateUnits();}
+    void setAppSelection()     { clearData(); updateUnits();}
+    void setIndexSelection()   { clearData(); updateUnits();}
+    void setTypeSelection()    { clearData(); updateUnits();}
+    void changeTypeSelection() { clearData(); updateUnits();}
+    void setGroupSelection()   { clearData(); updateUnits();}
+    void changeGroupSelection(){ clearData(); updateUnits();}
+    void setItemSelection()    { clearData(); updateUnits();}
+    void changeItemSelection() { clearData(); updateUnits();}
 };
 
 #endif // LH_MONITORINGGRAPH_H

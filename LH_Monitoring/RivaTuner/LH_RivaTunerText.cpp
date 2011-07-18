@@ -55,8 +55,7 @@ lh_class *LH_RivaTunerText::classInfo()
 const char *LH_RivaTunerText::userInit()
 {
     if( const char *err = LH_MonitoringText::userInit() ) return err;
-    data_ = new LH_RivaTunerData(this);
-    connect_changeType( static_cast<LH_RivaTunerData*>(data_)->setup_value_type_ );
-    connect_updateText( static_cast<LH_RivaTunerData*>(data_)->setup_value_format_ );
+    ui_->setup_monitoring_app_->setValue("RivaTuner");
     return 0;
+
 }

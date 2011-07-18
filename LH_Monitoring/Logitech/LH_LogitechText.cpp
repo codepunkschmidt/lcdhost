@@ -31,9 +31,6 @@ LH_PLUGIN_CLASS(LH_LogitechText)
 
 lh_class *LH_LogitechText::classInfo()
 {
-    if (!LH_LogitechData::monitoringEnabled())
-        return NULL;
-
     static lh_class classInfo =
     {
         sizeof(lh_class),
@@ -58,7 +55,6 @@ lh_class *LH_LogitechText::classInfo()
 const char *LH_LogitechText::userInit()
 {
     if( const char *err = LH_MonitoringText::userInit() ) return err;
-    data_ = new LH_LogitechData(this, mdmAll);
-    connect_changeType( static_cast<LH_LogitechData*>(data_)->setup_value_type_ );
+    ui_->setup_monitoring_app_->setValue("Logitech Monitoring Gadget");
     return 0;
 }

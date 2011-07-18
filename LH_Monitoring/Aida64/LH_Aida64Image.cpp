@@ -47,6 +47,6 @@ const char *LH_Aida64Image::userInit()
     data_ = new LH_Aida64Data(this, mdmAll);
     connect_changeType( static_cast<LH_Aida64Data*>(data_)->setup_value_type_ );
     connect_updateImage( static_cast<LH_Aida64Data*>(data_)->setup_value_group_ );
-    connect_updateImage( static_cast<LH_Aida64Data*>(data_)->setup_value_sensor_ );
+    connect_updateImage( static_cast<LH_Aida64Data*>(data_)->setup_value_item_ );
     return 0;
 }

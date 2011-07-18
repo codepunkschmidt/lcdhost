@@ -47,7 +47,7 @@ const char *LH_Aida64Dial::userInit()
     data_ = new LH_Aida64Data( this, mdmNumbers, true );
     connect_refresh( static_cast<LH_Aida64Data*>(data_)->setup_value_type_ );
     connect_refresh( static_cast<LH_Aida64Data*>(data_)->setup_value_group_ );
-    connect_refresh( static_cast<LH_Aida64Data*>(data_)->setup_value_sensor_ );
+    connect_refresh( static_cast<LH_Aida64Data*>(data_)->setup_value_item_ );
     return 0;
 }
 

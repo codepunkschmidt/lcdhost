@@ -46,6 +46,6 @@ const char *LH_SpeedFanImage::userInit()
     if( const char *err = LH_MonitoringImage::userInit() ) return err;
     data_ = new LH_SpeedFanData(this, mdmAll);
     connect_changeType( static_cast<LH_SpeedFanData*>(data_)->setup_value_type_ );
-    connect_updateImage( static_cast<LH_SpeedFanData*>(data_)->setup_value_index_ );
+    connect_updateImage( static_cast<LH_SpeedFanData*>(data_)->setup_value_item_ );
     return 0;
 }

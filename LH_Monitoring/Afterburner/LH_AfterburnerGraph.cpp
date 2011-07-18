@@ -44,7 +44,7 @@ lh_class *LH_AfterburnerGraph::classInfo()
 const char *LH_AfterburnerGraph::userInit()
 {
     if( const char *err = LH_MonitoringGraph::userInit() ) return err;
-    data_ = new LH_AfterburnerData( this, true );
+    data_ = new LH_AfterburnerData( this, mdmNumbers, true );
     connect_clearData( static_cast<LH_AfterburnerData*>(data_)->setup_value_type_ );
     connect_clearData( static_cast<LH_AfterburnerData*>(data_)->setup_value_item_ );
 

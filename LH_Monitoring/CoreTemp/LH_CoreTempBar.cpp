@@ -46,7 +46,7 @@ const char *LH_CoreTempBar::userInit()
     if( const char *err = LH_MonitoringBar::userInit() ) return err;
     data_ = new LH_CoreTempData( this, mdmNumbers, true );
     connect_refresh( static_cast<LH_CoreTempData*>(data_)->setup_value_type_ );
-    connect_refresh( static_cast<LH_CoreTempData*>(data_)->setup_value_index_ );
+    connect_refresh( static_cast<LH_CoreTempData*>(data_)->setup_value_item_ );
     return 0;
 }
 

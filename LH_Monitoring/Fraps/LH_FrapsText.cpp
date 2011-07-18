@@ -55,7 +55,6 @@ lh_class *LH_FrapsText::classInfo()
 const char *LH_FrapsText::userInit()
 {
     if( const char *err = LH_MonitoringText::userInit() ) return err;
-    data_ = new LH_FrapsData(this, mdmAll);
-    connect_changeType( static_cast<LH_FrapsData*>(data_)->setup_value_type_ );
+    ui_->setup_monitoring_app_->setValue("Fraps");
     return 0;
 }

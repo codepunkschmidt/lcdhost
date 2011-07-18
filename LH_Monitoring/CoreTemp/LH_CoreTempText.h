@@ -1,7 +1,6 @@
 #ifndef LH_CORETEMPTEXT_H
 #define LH_CORETEMPTEXT_H
 
-#include "LH_CoreTempData.h"
 #include "../_Templates/LH_MonitoringText.h"
 
 class LH_CoreTempText : public LH_MonitoringText

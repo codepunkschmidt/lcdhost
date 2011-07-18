@@ -44,9 +44,9 @@ lh_class *LH_SpeedFanDial::classInfo()
 const char *LH_SpeedFanDial::userInit()
 {
     if( const char *err = LH_MonitoringDial::userInit() ) return err;
-    data_ = new LH_SpeedFanData( this, true );
+    data_ = new LH_SpeedFanData( this, mdmNumbers, true );
     connect_refresh( static_cast<LH_SpeedFanData*>(data_)->setup_value_type_ );
-    connect_refresh( static_cast<LH_SpeedFanData*>(data_)->setup_value_index_ );
+    connect_refresh( static_cast<LH_SpeedFanData*>(data_)->setup_value_item_ );
     return 0;
 }
 

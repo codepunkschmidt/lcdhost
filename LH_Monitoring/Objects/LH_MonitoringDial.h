@@ -21,20 +21,13 @@ public:
     int polling();
     static lh_class *classInfo();
 
-public slots:
     void refresh();
-    void updateBounds();
     void updateNeedles();
 
-    void changeAppSelection()  { updateBounds(); updateNeedles();}
-    void setAppSelection()     { updateBounds(); updateNeedles(); }
-    void setIndexSelection()   { updateBounds(); updateNeedles();}
-    void setTypeSelection()    { updateBounds(); updateNeedles();}
-    void changeTypeSelection() { updateBounds(); updateNeedles();}
-    void setGroupSelection()   { updateBounds(); updateNeedles();}
-    void changeGroupSelection(){ updateBounds(); updateNeedles();}
-    void setItemSelection()    { updateBounds(); updateNeedles();}
-    void changeItemSelection() { updateBounds(); updateNeedles();}
+public slots:
+    void updateBounds();
+    void configChanged()  { updateBounds(); updateNeedles();}
+
 };
 
 #endif // LH_MONITORINGDIAL_H

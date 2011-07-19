@@ -71,15 +71,11 @@ const char *LH_MonitoringGraph::userInit()
 
     was_empty_ = true;
 
-    connect(ui_, SIGNAL(appChanged()), this, SLOT(changeAppSelection()) );
-    connect(ui_, SIGNAL(appSet()), this, SLOT(setAppSelection()) );
-    connect(ui_, SIGNAL(typeChanged()), this, SLOT(changeTypeSelection()) );
-    connect(ui_, SIGNAL(typeSet()), this, SLOT(setTypeSelection()) );
-    connect(ui_, SIGNAL(groupChanged()), this, SLOT(changeGroupSelection()) );
-    connect(ui_, SIGNAL(groupSet()), this, SLOT(setGroupSelection()) );
-    connect(ui_, SIGNAL(itemChanged()), this, SLOT(changeItemSelection()) );
-    connect(ui_, SIGNAL(itemSet()), this, SLOT(setItemSelection()) );
-    connect(ui_, SIGNAL(indexSet()), this, SLOT(setIndexSelection()) );
+    connect(ui_, SIGNAL(appChanged()), this, SLOT(configChanged()) );
+    connect(ui_, SIGNAL(typeChanged()), this, SLOT(configChanged()) );
+    connect(ui_, SIGNAL(groupChanged()), this, SLOT(configChanged()) );
+    connect(ui_, SIGNAL(itemChanged()), this, SLOT(configChanged()) );
+    connect(ui_, SIGNAL(initialized()), this, SLOT(configChanged()) );
 
     return 0;
 }

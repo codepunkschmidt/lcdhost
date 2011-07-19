@@ -7,10 +7,11 @@ LH_MonitoringUI::LH_MonitoringUI(LH_QtObject *parent, monitoringDataMode dataMod
 
     data_ = NULL;
     mode_ = ui_mode_items;
+    initializationState_ = 0;
 
-    int LH_FLAG_SAVEOBJECT_VISIBILITY = LH_FLAG_READONLY; //for debugging, set this to LH_FLAG_READONLY
+    int LH_FLAG_SAVEOBJECT_VISIBILITY = LH_FLAG_HIDDEN; //for debugging, set this to LH_FLAG_READONLY
 
-    setup_monitoring_app_ = new LH_Qt_QStringList(parent, "Application", QStringList() << "(Please Select)" << "Aida64" << "ATI Tray Tools" << "Core Temp" << "Fraps" << "GPU-Z" << "Logitech Monitoring Gadget" << "MSI Afterburner" << "RivaTuner" << "SpeedFan", LH_FLAG_NOSAVE);
+    setup_monitoring_app_ = new LH_Qt_QStringList(parent, "Application", QStringList() << "(Please Select)" << "Aida64" << "ATI Tray Tools" << "Core Temp" << "Fraps" << "GPU-Z" << "HWMonitor + HWMonTray" << "Logitech Monitoring Gadget" << "MSI Afterburner" << "RivaTuner" << "SpeedFan", LH_FLAG_READONLY | LH_FLAG_NOSAVE);
     setup_monitoring_app_->setHelp( "<p>The 3rd party application you are using used to monitor your system.</p>");
     setup_monitoring_app_->setOrder(-4);
 
@@ -58,26 +59,29 @@ LH_MonitoringUI::LH_MonitoringUI(LH_QtObject *parent, monitoringDataMode dataMod
     setup_value_format_->setHelp( "<p>Relates to RivaTuner's \"raw data transforming mode\" or Afterburner's \"Formatted Data\".</p><p>(If you don't know what this is, leave it disabled and ignore it.)</p>");
     setup_value_format_->setOrder(-4);
 
+    QTimer::singleShot(1000, this, SLOT(connectChangeEvents()));
+}
+
+void LH_MonitoringUI::connectChangeEvents()
+{
+    setAppSelection();
+    if(mode_==ui_mode_index)
+        setIndexSelection();
+    else
+    {
+        setTypeSelection();
+        setGroupSelection();
+        setItemSelection();
+    }
+
+    setup_monitoring_app_->setFlag(LH_FLAG_READONLY, false);
+
     connect(setup_monitoring_app_, SIGNAL(changed()), this, SLOT(changeAppSelection()) );
-    connect(setup_monitoring_app_name_, SIGNAL(changed()), this, SLOT(setAppSelection()) );
-
     connect(setup_value_type_, SIGNAL(changed()), this, SLOT(changeTypeSelection()) );
-    connect(setup_value_type_index_, SIGNAL(changed()), this, SLOT(setTypeSelection()) );
-    connect(setup_value_type_name_, SIGNAL(changed()), this, SLOT(setTypeSelection()) );
-
     connect(setup_value_group_, SIGNAL(changed()), this, SLOT(changeGroupSelection()) );
-    connect(setup_value_group_index_, SIGNAL(changed()), this, SLOT(setGroupSelection()) );
-    connect(setup_value_group_name_, SIGNAL(changed()), this, SLOT(setGroupSelection()) );
-
     connect(setup_value_item_, SIGNAL(changed()), this, SLOT(changeItemSelection()) );
-    connect(setup_value_item_index_, SIGNAL(changed()), this, SLOT(setItemSelection()) );
-    connect(setup_value_item_name_, SIGNAL(changed()), this, SLOT(setItemSelection()) );
 
-    connect(setup_value_index_, SIGNAL(changed()), this, SLOT(setIndexSelection()) );
-
-
-
-
+    emit initialized();
 }
 
 void LH_MonitoringUI::reset(ui_mode_type mode)
@@ -131,6 +135,22 @@ void LH_MonitoringUI::append(ui_mon_entry_type et, QString text)
         break;
     case mon_item:
         setup_value_item_->list().append(text);
+        break;
+    }
+}
+
+void LH_MonitoringUI::insert(ui_mon_entry_type et, int index, QString text)
+{
+    switch(et)
+    {
+    case mon_type:
+        setup_value_type_->list().insert(index, text);
+        break;
+    case mon_group:
+        setup_value_group_->list().insert(index, text);
+        break;
+    case mon_item:
+        setup_value_item_->list().insert(index, text);
         break;
     }
 }
@@ -251,24 +271,17 @@ bool LH_MonitoringUI::applyFormat()
 
 void LH_MonitoringUI::setTypeSelection()
 {
-    qWarning() << "setTypeSelection..." ;
     switch(mode_)
     {
     case ui_mode_items:
-        if(QObject::sender() != setup_value_type_index_)
-            break;
-        qWarning() << "setTypeSelection: " << setup_value_type_index_->value();
         if (setup_value_type_->list().length()==0)
             break;
-        qWarning() << "setTypeSelection: " << setup_value_type_index_->value() << " = " << setup_value_type_->list().at(setup_value_type_index_->value());
         setup_value_type_->setValue(setup_value_type_index_->value());
         break;
     case ui_mode_index:
         setIndex();
         break;
     case ui_mode_aida64:
-        if(QObject::sender() != setup_value_type_name_)
-            break;
         if (((LH_Aida64Data*)data_)->loadXML(true))
         {
             for(int i = 0; i<setup_value_type_->list().length(); i++)
@@ -282,7 +295,6 @@ void LH_MonitoringUI::setTypeSelection()
         }
         break;
     }
-    emit typeSet();
 }
 
 void LH_MonitoringUI::changeTypeSelection()
@@ -319,8 +331,6 @@ void LH_MonitoringUI::setGroupSelection()
     switch(mode_)
     {
     case ui_mode_items:
-        if(QObject::sender() != setup_value_group_index_)
-            break;
         if (setup_value_group_->list().length()!=0)
             setup_value_group_->setValue(setup_value_group_index_->value());
         break;
@@ -328,8 +338,6 @@ void LH_MonitoringUI::setGroupSelection()
         //N/A
         break;
     case ui_mode_aida64:
-        if(QObject::sender() != setup_value_group_name_)
-            break;
         if (((LH_Aida64Data*)data_)->loadXML(true))
         {
             for(int i = 0; i<setup_value_group_->list().length(); i++)
@@ -344,8 +352,6 @@ void LH_MonitoringUI::setGroupSelection()
         }
         break;
     }
-
-    emit groupSet();
 }
 
 void LH_MonitoringUI::changeGroupSelection()
@@ -381,16 +387,12 @@ void LH_MonitoringUI::setItemSelection()
     switch(mode_)
     {
     case ui_mode_items:
-        if(QObject::sender() != setup_value_item_index_)
-            break;
         if (setup_value_item_->list().length()!=0)
             setup_value_item_->setValue(setup_value_item_index_->value());
         break;
     case ui_mode_index:
         break;
     case ui_mode_aida64:
-        if(QObject::sender() != setup_value_item_name_)
-            break;
         if (((LH_Aida64Data*)data_)->loadXML(true))
         {
             for(int i = 0; i<setup_value_item_->list().length(); i++)
@@ -405,7 +407,6 @@ void LH_MonitoringUI::setItemSelection()
         }
         break;
     }
-    emit itemSet();
 }
 
 void LH_MonitoringUI::changeItemSelection()
@@ -442,7 +443,6 @@ void LH_MonitoringUI::setIndexSelection()
     case ui_mode_aida64:
         break;
     }
-    emit indexSet();
 }
 
 int LH_MonitoringUI::getIndex()
@@ -490,7 +490,6 @@ void LH_MonitoringUI::loadItemsList(int i)
 
 void LH_MonitoringUI::changeAppSelection()
 {
-    qWarning() << "CHANGE: setup_monitoring_app_: " << setup_monitoring_app_->valueText();
     if (setup_monitoring_app_->list().length()!=0)
     {
         QString val = setup_monitoring_app_->valueText();
@@ -506,9 +505,7 @@ void LH_MonitoringUI::setAppSelection()
 {
     QString val = setup_monitoring_app_name_->value();
     if(val!="") setup_monitoring_app_->setValue(val);
-    qWarning() << "SET: setup_monitoring_app_name_: " << val << "... " << setup_monitoring_app_->valueText();
     acquireAppData();
-    emit appSet();
 }
 
 void LH_MonitoringUI::acquireAppData()
@@ -536,6 +533,8 @@ void LH_MonitoringUI::acquireAppData()
         data_ = new LH_LogitechData((LH_QtObject*)parent(), this, dataMode_, includeGroups_);
     if(setup_monitoring_app_->valueText() == "Aida64")
         data_ = new LH_Aida64Data((LH_QtObject*)parent(), this, dataMode_, includeGroups_);
+    if(setup_monitoring_app_->valueText() == "HWMonitor + HWMonTray")
+        data_ = new LH_HWMonData((LH_QtObject*)parent(), this, dataMode_, includeGroups_);
 
     if(!data_) reset();
 }

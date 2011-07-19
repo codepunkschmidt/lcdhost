@@ -19,6 +19,7 @@
 #include "LH_FrapsData.h"
 #include "LH_LogitechData.h"
 #include "LH_Aida64Data.h"
+#include "LH_HWMonData.h"
 
 enum ui_mon_entry_type
 {
@@ -48,7 +49,10 @@ class LH_MonitoringUI : public QObject
     monitoringDataMode dataMode_;
     bool includeGroups_;
 
+    int initializationState_;
+
     void acquireAppData();
+
 
 public:
     LH_MonitoringData *data_;
@@ -84,6 +88,7 @@ public:
 
     void clear(int);
     void append(ui_mon_entry_type, QString);
+    void insert(ui_mon_entry_type et, int index, QString text);
     void refresh(int);
     void setReadonly(int, bool);
     QString at(ui_mon_entry_type, int);
@@ -100,27 +105,27 @@ public:
 
     void loadItemsList(int i);
 
+    void setAppSelection();
+    void setTypeSelection();
+    void setGroupSelection();
+    void setItemSelection();
+    void setIndexSelection();
+
 signals:
-    void appSet();
     void appChanged();
-    void typeSet();
     void typeChanged();
-    void groupSet();
     void groupChanged();
-    void itemSet();
     void itemChanged();
-    void indexSet();
+    void initialized();
+
+protected slots:
+    void connectChangeEvents();
 
 public slots:
-    void setAppSelection();
     void changeAppSelection();
-    void setTypeSelection();
     void changeTypeSelection();
-    void setGroupSelection();
     void changeGroupSelection();
-    void setItemSelection();
     void changeItemSelection();
-    void setIndexSelection();
 };
 
 #endif // LH_MONITORINGUI_H

@@ -24,19 +24,12 @@ public:
 
     void updateScale();
     void updateLines();
-public slots:
     void clearData();
+
+public slots:
     void updateUnits();
 
-    void changeAppSelection()  { clearData(); updateUnits();}
-    void setAppSelection()     { clearData(); updateUnits();}
-    void setIndexSelection()   { clearData(); updateUnits();}
-    void setTypeSelection()    { clearData(); updateUnits();}
-    void changeTypeSelection() { clearData(); updateUnits();}
-    void setGroupSelection()   { clearData(); updateUnits();}
-    void changeGroupSelection(){ clearData(); updateUnits();}
-    void setItemSelection()    { clearData(); updateUnits();}
-    void changeItemSelection() { clearData(); updateUnits();}
+    void configChanged()  { clearData(); updateUnits();}
 };
 
 #endif // LH_MONITORINGGRAPH_H

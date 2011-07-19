@@ -7,9 +7,6 @@
 
 class LH_CoreTempData: public LH_MonitoringData
 {
-    float getSelectedValue(int index, int count, float valueSet[]);
-    float getSelectedValue(int index, int count, unsigned int valueSet[]);
-
     void getSelectedValue(CTMemory* ctmemory, float& value, QString& text, QString& units, int& count, int index);
     void loadSensorList(int count, QString type);
 

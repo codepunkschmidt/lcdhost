@@ -79,15 +79,11 @@ const char *LH_MonitoringImage::userInit()
     add_cf_target(setup_image_file_);
     add_cf_source(setup_value_);
 
-    connect(ui_, SIGNAL(appChanged()), this, SLOT(changeAppSelection()) );
-    connect(ui_, SIGNAL(appSet()), this, SLOT(setAppSelection()) );
-    connect(ui_, SIGNAL(typeChanged()), this, SLOT(changeTypeSelection()) );
-    connect(ui_, SIGNAL(typeSet()), this, SLOT(setTypeSelection()) );
-    connect(ui_, SIGNAL(groupChanged()), this, SLOT(changeGroupSelection()) );
-    connect(ui_, SIGNAL(groupSet()), this, SLOT(setGroupSelection()) );
-    connect(ui_, SIGNAL(itemChanged()), this, SLOT(changeItemSelection()) );
-    connect(ui_, SIGNAL(itemSet()), this, SLOT(setItemSelection()) );
-    connect(ui_, SIGNAL(indexSet()), this, SLOT(setIndexSelection()) );
+    connect(ui_, SIGNAL(appChanged()), this, SLOT(configChanged()) );
+    connect(ui_, SIGNAL(typeChanged()), this, SLOT(configChanged()) );
+    connect(ui_, SIGNAL(groupChanged()), this, SLOT(configChanged()) );
+    connect(ui_, SIGNAL(itemChanged()), this, SLOT(configChanged()) );
+    connect(ui_, SIGNAL(initialized()), this, SLOT(configChanged()) );
 
     return 0;
 }
@@ -107,9 +103,4 @@ void LH_MonitoringImage::updateValue()
     {
         setup_value_->setValue(ui_->data_->getText(false));
     }
-}
-
-void LH_MonitoringImage::changeType()
-{
-    updateValue();
 }

@@ -44,19 +44,11 @@ public:
     int notify(int n,void* p);
     static lh_class *classInfo();
 
-public slots:
     void updateValue();
-    void changeType();
 
-    void changeAppSelection()  { updateValue(); }
-    void setAppSelection()     { updateValue(); }
-    void setIndexSelection()   { updateValue(); }
-    void setTypeSelection()    { updateValue(); }
-    void changeTypeSelection() { updateValue(); changeType(); }
-    void setGroupSelection()   { updateValue(); }
-    void changeGroupSelection(){ updateValue(); }
-    void setItemSelection()    { updateValue(); }
-    void changeItemSelection() { updateValue(); }
+public slots:
+    void configChanged()  { updateValue(); }
+
 };
 
 #endif // LH_MONITORINGIMAGE_H

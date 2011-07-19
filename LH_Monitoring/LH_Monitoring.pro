@@ -43,7 +43,8 @@ HEADERS += \
     Objects/LH_MonitoringImage.h \
     Objects/LH_MonitoringGraph.h \
     Objects/LH_MonitoringDial.h \
-    Objects/LH_MonitoringBar.h
+    Objects/LH_MonitoringBar.h \
+    Sources/LH_HWMonData.h
 
 SOURCES += \
     LH_QtPlugin_Monitoring.cpp \
@@ -74,6 +75,7 @@ SOURCES += \
     Objects/LH_MonitoringImage.cpp \
     Objects/LH_MonitoringGraph.cpp \
     Objects/LH_MonitoringDial.cpp \
-    Objects/LH_MonitoringBar.cpp
+    Objects/LH_MonitoringBar.cpp \
+    Sources/LH_HWMonData.cpp
 
 RESOURCES +=

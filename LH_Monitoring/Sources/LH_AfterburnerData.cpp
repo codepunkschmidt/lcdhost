@@ -7,8 +7,6 @@
 
 LH_AfterburnerData::LH_AfterburnerData(LH_QtObject *parent, LH_MonitoringUI *ui, monitoringDataMode dataMode, bool includeGroups) : LH_MonitoringData( parent, ui, dataMode, includeGroups)
 {
-    Q_UNUSED(dataMode);
-
     ui_->reset(ui_mode_index);
     ui_->setVisible(mon_type | mon_item);
     ui_->showFormat();

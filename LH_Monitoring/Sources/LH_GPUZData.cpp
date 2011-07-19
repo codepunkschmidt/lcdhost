@@ -2,9 +2,6 @@
 
 LH_GPUZData::LH_GPUZData(LH_QtObject *parent, LH_MonitoringUI *ui, monitoringDataMode dataMode, bool includeGroups) : LH_MonitoringData( parent, ui, dataMode, includeGroups )
 {
-    Q_UNUSED(dataMode);
-    Q_UNUSED(includeGroups);
-
     ui_->reset();
     ui_->setVisible(mon_type);
     ui_->refresh(mon_type);

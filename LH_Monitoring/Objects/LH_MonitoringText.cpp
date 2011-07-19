@@ -101,6 +101,13 @@ const char *LH_MonitoringText::userInit()
     setup_text_->setFlag( LH_FLAG_NOSAVE, true );
     setText(" ");
 
+    connect(ui_, SIGNAL(appChanged()), this, SLOT(configChanged()) );
+    connect(ui_, SIGNAL(typeChanged()), this, SLOT(configChanged()) );
+    connect(ui_, SIGNAL(groupChanged()), this, SLOT(configChanged()) );
+    connect(ui_, SIGNAL(itemChanged()), this, SLOT(configChanged()) );
+    connect(ui_, SIGNAL(initialized()), this, SLOT(configChanged()) );
+
+
     return 0;
 }
 

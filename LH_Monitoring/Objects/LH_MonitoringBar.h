@@ -22,19 +22,11 @@ public:
     QImage *render_qimage( int w, int h );
     static lh_class *classInfo();
 
-public slots:
     void refresh();
-    void updateBounds();
 
-    void changeAppSelection()  { updateBounds(); }
-    void setAppSelection()     { updateBounds(); }
-    void setIndexSelection()   { updateBounds(); }
-    void setTypeSelection()    { updateBounds(); }
-    void changeTypeSelection() { updateBounds(); changeType(); }
-    void setGroupSelection()   { updateBounds(); }
-    void changeGroupSelection(){ updateBounds(); }
-    void setItemSelection()    { updateBounds(); }
-    void changeItemSelection() { updateBounds(); }
+public slots:
+    void updateBounds();
+    void configChanged()  { updateBounds(); }
 };
 
 #endif // LH_MONITORINGBAR_H

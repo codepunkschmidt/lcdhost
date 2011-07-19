@@ -26,18 +26,11 @@ public:
 
     static lh_class *classInfo();
 
-public slots:
     void updateText(bool rerender = false);
 
-    void changeAppSelection()  { updateText(); }
-    void setAppSelection()     { updateText(); }
-    void setIndexSelection()   { updateText(); }
-    void setTypeSelection()    { updateText(); }
-    void changeTypeSelection() { updateText(); }
-    void setGroupSelection()   { updateText(); }
-    void changeGroupSelection(){ updateText(); }
-    void setItemSelection()    { updateText(); }
-    void changeItemSelection() { updateText(); }
+public slots:
+    void configChanged()  { updateText(); }
+
 };
 
 #endif // LH_MONITORINGTEXT_H

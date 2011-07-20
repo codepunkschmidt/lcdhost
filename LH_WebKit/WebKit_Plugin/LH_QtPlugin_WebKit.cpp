@@ -37,6 +37,9 @@
 #include <QtNetwork>
 #include <QFileInfo>
 
+#include <QDebug>
+#include <QNetworkProxy>
+
 #include "LH_RSSInterface.h"
 #include "LH_QtPlugin_WebKit.h"
 #include "../WebKitCommand.h"
@@ -108,4 +111,88 @@ void LH_QtPlugin_WebKit::term()
     }
 
     LH_QtPlugin::term();
+}
+
+const char *LH_QtPlugin_WebKit::userInit()
+{
+    if( const char *err = LH_QtPlugin::userInit() ) return err;
+
+    setup_internal_ip_ = new LH_Qt_QString(this, "IP Address (Internal)", "N/A", LH_FLAG_NOSAVE | LH_FLAG_NOSINK | LH_FLAG_READONLY);
+    setup_internal_ip_->setLink("@/system/IP Address/IPv4/Internal");
+    setup_external_ip_ = new LH_Qt_QString(this, "IP Address (External)", "N/A", LH_FLAG_NOSAVE | LH_FLAG_NOSINK | LH_FLAG_READONLY);
+    setup_external_ip_->setLink("@/system/IP Address/IPv4/External");
+
+    nam_ = new QNetworkAccessManager(this);
+    connect(nam_, SIGNAL(finished(QNetworkReply*)), this, SLOT(finished(QNetworkReply*)));
+
+    refreshAddresses();
+    return 0;
+}
+
+void LH_QtPlugin_WebKit::refreshAddresses()
+{
+    refreshInternalAddress();
+    refreshExternalAddress();
+}
+
+void LH_QtPlugin_WebKit::refreshExternalAddress()
+{
+    QUrl url_ = QUrl::fromUserInput( "http://checkip.dyndns.org/" );
+    if( url_.isValid() )
+    {
+        QNetworkProxyQuery npq(url_);
+        QList<QNetworkProxy> listOfProxies = QNetworkProxyFactory::systemProxyForQuery(npq);
+        if(listOfProxies.count()!=0)
+            if(listOfProxies.at(0).type() != QNetworkProxy::NoProxy)
+                nam_->setProxy(listOfProxies.at(0));
+
+        nam_->get( QNetworkRequest(url_) );
+    }
+}
+
+void LH_QtPlugin_WebKit::refreshInternalAddress()
+{
+    bool found = false;
+    foreach(QNetworkInterface interface, QNetworkInterface::allInterfaces())
+    {
+        if(interface.flags().testFlag(QNetworkInterface::IsLoopBack))
+            continue; //loop back address
+        if(!interface.flags().testFlag(QNetworkInterface::IsUp))
+            continue; //inactive
+
+        foreach(QNetworkAddressEntry entry, interface.addressEntries())
+           if(entry.ip().protocol() == QAbstractSocket::IPv4Protocol)
+           {
+               found = true;
+               setup_internal_ip_->setValue(entry.ip().toString());
+           }
+    }
+    if(!found)
+        setup_internal_ip_->setValue("Not connected");
+}
+
+void LH_QtPlugin_WebKit::finished( QNetworkReply* reply )
+{
+    if( reply != NULL )
+    {
+        if( reply->error() == QNetworkReply::NoError )
+        {
+            if( reply->attribute(QNetworkRequest::HttpStatusCodeAttribute) == 200 )
+            {
+                QRegExp rx("<body>.*([0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3})</body>");
+                if(rx.indexIn(QString( reply->readAll() )))
+                    setup_external_ip_->setValue( rx.cap(1) );
+            }
+            else
+            {
+                setup_external_ip_->setValue( QString("Unavailable [%1]").arg( reply->attribute(QNetworkRequest::HttpStatusCodeAttribute).toInt() ) );
+            }
+        }
+        else
+        {
+            setup_external_ip_->setValue( QString( "Not connected" ) );
+        }
+        reply->deleteLater();
+    }
+    QTimer::singleShot(5000, this, SLOT(refreshAddresses()));
 }

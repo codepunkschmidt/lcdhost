@@ -45,22 +45,21 @@
 class LH_QtSetupItem : public QObject
 {
     Q_OBJECT
-    QByteArray name_array_;
+    QByteArray id_array_;
+    QByteArray title_array_;
     QByteArray link_array_;
-    int order_;
-    QByteArray help_;
+    QByteArray help_array_;
 
 protected:
     lh_setup_item item_;
 
 public:
-    LH_QtSetupItem( LH_QtObject *parent, QString name, lh_setup_type type, int flags );
+    LH_QtSetupItem( LH_QtObject *parent, QString id, lh_setup_type type, int flags );
 
     LH_QtObject *parent() const { return static_cast<LH_QtObject *>(QObject::parent()); }
 
     virtual void setup_resize( size_t ) {}
     virtual void setup_change();
-    virtual void setup_input( int flags, int value );
 
     void refresh() { parent()->callback( lh_cb_setup_refresh, item() ); }
 
@@ -69,25 +68,27 @@ public:
     void setFlag( int f, bool state ); // set individual flag(s) on or off
     bool hasFlag( int f ) const { return (item_.flags & f) ? true : false; }
 
-    void setName(QString s);
-    QString name() const { return objectName(); }
-    void setHelp(QString s);
-    QString help();
+    void setId( QString s );
+    QString id() const { return objectName(); }
+    void setTitle(QString s);
+    QString title() const { return QString::fromUtf8(title_array_); }
     void setLink(QString s);
-    QString link();
+    QString link() { return QString::fromAscii(link_array_); }
+    void setHelp(QString s);
+    QString help() { return QString::fromUtf8(help_array_); }
 
     lh_setup_item *item() { return &item_; }
 
     lh_setup_type type() { return item_.type; }
 
-    int order() const { return order_; }
+    int order() const { return item_.order; }
     void setOrder( int n );
 
 signals:
     void changed();
     void change( bool );
     void change( int );
-    void change( float );
+    void change( double );
     void change( QString );
     void input( QString, int, int );
     void set();
@@ -101,7 +102,7 @@ public slots:
 
     virtual void setValue( bool ) { emit set(); }
     virtual void setValue( int ) { emit set(); }
-    virtual void setValue( float ) { emit set(); }
+    virtual void setValue( double ) { emit set(); }
     virtual void setValue( QString ) { emit set(); }
 };
 

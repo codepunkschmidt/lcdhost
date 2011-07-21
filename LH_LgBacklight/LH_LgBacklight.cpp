@@ -195,5 +195,5 @@ void LH_LgBacklight::setAllColor()
 
 void LH_LgBacklight::wantRescan()
 {
-    requestReload( "rescan for devices" );
+    // requestReload( "rescan for devices" );
 }

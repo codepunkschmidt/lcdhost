@@ -67,13 +67,15 @@ public:
     LogitechDevice( LH_LgLcdMan *drv, bool bw );
     ~LogitechDevice();
 
-    LH_LgLcdMan *drv() const { return drv_; }
-    const char *open() { opened_ = true; return NULL; }
+    const char *input_name(const char *devid, int item);
+
+    LH_LgLcdMan* drv() const { return drv_; }
+    const char* open() { opened_ = true; return NULL; }
     const char* render_qimage(QImage*);
     int buttons() { return (int) buttonState_; }
     const char* get_backlight(lh_device_backlight*);
     const char* set_backlight(lh_device_backlight*);
-    const char *close();
+    const char* close();
 
     bool opened() const { return opened_; }
 

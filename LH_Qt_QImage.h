@@ -46,8 +46,7 @@ public:
     LH_Qt_QImage( LH_QtObject *parent, QString name, QImage value, int flags = 0 )
         : LH_QtSetupItem( parent, name, lh_type_image_qimage, flags ), image_(value)
     {
-        item_.param.size = sizeof(QImage);
-        item_.data.s = (char*)(void*)&image_;
+        item_.param.p = (void*)&image_;
         return;
     }
 

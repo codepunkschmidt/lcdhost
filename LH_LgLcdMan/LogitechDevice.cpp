@@ -50,15 +50,15 @@ LogitechDevice::LogitechDevice( LH_LgLcdMan *drv, bool bw ) : LH_QtDevice(drv)
 
     if( bw_ )
     {
-        setDevid( "BW" );
-        setName( QObject::tr("Logitech B/W device") );
+        setDevid( "LH_LgLcdMan:BW" );
+        setName( QObject::tr("Logitech B/W LCD") );
         setSize( 160, 43 );
         setDepth( 1 );
     }
     else
     {
-        setDevid( "QVGA" );
-        setName( QObject::tr("Logitech QVGA device") );
+        setDevid( "LH_LgLcdMan:QVGA" );
+        setName( QObject::tr("Logitech QVGA LCD") );
         setSize( 320, 240 );
         setDepth( 32 );
     }
@@ -73,6 +73,28 @@ LogitechDevice::~LogitechDevice()
     if( opened() ) close();
 }
 
+const char *LogitechDevice::input_name(const char *devid, int n)
+{
+    switch(n)
+    {
+    case 0:
+        if( bw_ ) return "Logitech B/W LCD";
+        return "Logitech QVGA LCD";
+    case 0x0001: return "Softbutton 0";
+    case 0x0002: return "Softbutton 1";
+    case 0x0004: return "Softbutton 2";
+    case 0x0008: return "Softbutton 3";
+    case 0x0100: return "Left";
+    case 0x0200: return "Right";
+    case 0x0400: return "Ok";
+    case 0x0800: return "Cancel";
+    case 0x1000: return "Up";
+    case 0x2000: return "Down";
+    case 0x4000: return "Menu";
+    }
+    return LH_QtObject::input_name(devid,n);
+}
+
 void LogitechDevice::setButtonState( unsigned long button )
 {
     if( buttonState_ != button )
@@ -82,23 +104,9 @@ void LogitechDevice::setButtonState( unsigned long button )
             unsigned long mask = 1<<bit;
             if( (button&mask) != (buttonState_&mask) )
             {
-                lh_device_input di;
-                di.devid = lh_dev()->devid;
-                switch( mask )
-                {
-                case 0x0001: di.control = "Softbutton 0"; break;
-                case 0x0002: di.control = "Softbutton 1"; break;
-                case 0x0004: di.control = "Softbutton 2"; break;
-                case 0x0008: di.control = "Softbutton 3"; break;
-                case 0x0100: di.control = "Left"; break;
-                case 0x0200: di.control = "Right"; break;
-                case 0x0400: di.control = "Ok"; break;
-                case 0x0800: di.control = "Cancel"; break;
-                case 0x1000: di.control = "Up"; break;
-                case 0x2000: di.control = "Down"; break;
-                case 0x4000: di.control = "Menu"; break;
-                default: di.control = "Unknown"; break;
-                }
+                lh_input di;
+                strncpy( di.devid, lh_dev()->devid, sizeof(di.devid) );
+                di.devid[sizeof(di.devid)-1] = 0;
                 di.item = bit;
                 di.flags = lh_df_button;
                 if( button & mask )

@@ -47,7 +47,7 @@ LogitechG19::LogitechG19( libusb_device *usbdev, libusb_device_descriptor *dd, L
         }
         if( conf_desc ) libusb_free_config_descriptor( conf_desc );
     }
-    setDevid("G19");
+    setDevid("LH_Lg320x240:G19");
     setName("Logitech G19 LCD (USB)");
     setSize(320,240);
     setDepth(16);
@@ -85,6 +85,25 @@ const char* LogitechG19::close()
     return NULL;
 }
 
+const char* LogitechG19::input_name(const char *devid, int n)
+{
+    Q_UNUSED(devid);
+
+    switch(n)
+    {
+    case 0: return "Logitech G19";
+    case 0x01: return "App";
+    case 0x02: return "Cancel";
+    case 0x04: return "Menu";
+    case 0x08: return "Ok";
+    case 0x10: return "Right";
+    case 0x20: return "Left";
+    case 0x40: return "Down";
+    case 0x80: return "Up";
+    }
+    return LH_QtObject::input_name(devid,n);
+}
+
 int LogitechG19::buttons()
 {
     int usberr;
@@ -112,20 +131,8 @@ int LogitechG19::buttons()
             int mask = 1<<bit;
             if( (button&mask) != (last_buttons_&mask) )
             {
-                lh_device_input di;
-                di.devid = lh_dev()->devid;
-                switch( mask )
-                {
-                case 0x01: di.control = "App"; break;
-                case 0x02: di.control = "Cancel"; break;
-                case 0x04: di.control = "Menu"; break;
-                case 0x08: di.control = "Ok"; break;
-                case 0x10: di.control = "Right"; break;
-                case 0x20: di.control = "Left"; break;
-                case 0x40: di.control = "Down"; break;
-                case 0x80: di.control = "Up"; break;
-                default: di.control = "Unknown"; break;
-                }
+                lh_input di;
+                strcpy( di.devid, lh_dev()->devid );
                 di.item = bit;
                 di.flags = lh_df_button;
                 if( button & mask )

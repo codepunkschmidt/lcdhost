@@ -175,7 +175,7 @@ void LH_QtCFInstance::cf_initialize()
 
 void LH_QtCFInstance::add_cf_source(LH_QtSetupItem *si, bool atEnd)
 {
-    add_cf_source(si->name(), si, atEnd);
+    add_cf_source(si->id(), si, atEnd);
 }
 
 void LH_QtCFInstance::add_cf_source(QString name, bool atEnd)
@@ -219,12 +219,12 @@ void LH_QtCFInstance::add_cf_target(LH_QtSetupItem *si, bool atEnd)
     if(atEnd || targets_.length()==0)
     {
         targets_.append(si);
-        setup_cf_target_->list().append(si->name());
+        setup_cf_target_->list().append(si->id());
     }
     else
     {
         targets_.insert(cf_target_list_pos, si);
-        setup_cf_target_->list().insert(cf_target_list_pos, si->name());
+        setup_cf_target_->list().insert(cf_target_list_pos, si->id());
         cf_target_list_pos++;
     }
     setup_cf_target_->refreshList();
@@ -382,7 +382,7 @@ void LH_QtCFInstance::cf_state_value_updated()
 {
     if (QObject::sender()!=NULL)
     {
-        QString senderName = ((LH_QtSetupItem*)QObject::sender())->name();
+        QString senderName = ((LH_QtSetupItem*)QObject::sender())->id();
         if(sources_.contains(senderName))
             sources_[senderName]->setValue();
     }
@@ -406,7 +406,7 @@ void LH_QtCFInstance::cf_apply_rules(bool allowRender)
 
     if (QObject::sender()!=NULL)
     {
-        QString senderName = ((LH_QtSetupItem*)QObject::sender())->name();
+        QString senderName = ((LH_QtSetupItem*)QObject::sender())->id();
         if(sources_.contains(senderName))
             sources_[senderName]->setValue();
     }

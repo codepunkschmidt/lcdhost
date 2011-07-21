@@ -36,34 +36,23 @@
 #define LH_QT_QFONT_H
 
 #include <QFont>
-#include "LH_QtSetupItem.h"
+#include "LH_Qt_QString.h"
 
-class LH_Qt_QFont : public LH_QtSetupItem
+class LH_Qt_QFont : public LH_Qt_QString
 {
     QFont font_;
-    QByteArray array_;
 
 public:
     LH_Qt_QFont( LH_QtObject *parent, QString name, QFont value, int flags = 0 )
-        : LH_QtSetupItem( parent, name, lh_type_string_font, flags ), font_(value), array_(value.toString().toUtf8())
+        : LH_Qt_QString( parent, name, value.toString(), flags, lh_type_string_font ), font_(value)
     {
-        item_.param.size = array_.capacity();
-        item_.data.s = array_.data();
-        return;
-    }
-
-    virtual void setup_resize( size_t needed )
-    {
-        array_.resize(needed);
-        item_.param.size = array_.capacity();
-        item_.data.s = array_.data();
         return;
     }
 
     virtual void setup_change()
     {
-        font_.fromString( QString::fromUtf8( item_.data.s ) );
-        LH_QtSetupItem::setup_change();
+        LH_Qt_QString::setup_change();
+        font_.fromString( LH_Qt_QString::value() );
         return;
     }
 
@@ -77,11 +66,7 @@ public:
         if( f != font_ )
         {
             font_ = f;
-            array_ = font_.toString().toUtf8();
-            item_.param.size = array_.capacity();
-            item_.data.s = array_.data();
-            refresh();
-            emit set();
+            LH_Qt_QString::setValue( font_.toString() );
         }
     }
 };

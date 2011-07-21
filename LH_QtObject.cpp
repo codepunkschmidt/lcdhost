@@ -65,11 +65,6 @@ static void obj_setup_change( void *obj, lh_setup_item *item )
     RECAST(obj)->setup_change(item);
 }
 
-static void obj_setup_input( void *obj, lh_setup_item *item, int flags, int value )
-{
-    RECAST(obj)->setup_input(item,flags,value);
-}
-
 static int obj_polling( void *obj )
 {
     return RECAST(obj)->polling();
@@ -78,6 +73,11 @@ static int obj_polling( void *obj )
 static int obj_notify( void *obj, int code, void *param )
 {
     return RECAST(obj)->notify(code,param);
+}
+
+static const char *obj_input_name( void *obj, const char *devid, int item )
+{
+    return RECAST(obj)->input_name(devid,item);
 }
 
 static const lh_class ** obj_class_list( void *obj )
@@ -99,9 +99,9 @@ void LH_QtObject::build_object_calltable( lh_object_calltable *ct )
         ct->obj_setup_data = obj_setup_data;
         ct->obj_setup_resize = obj_setup_resize;
         ct->obj_setup_change = obj_setup_change;
-        ct->obj_setup_input = obj_setup_input;
         ct->obj_polling = obj_polling;
         ct->obj_notify = obj_notify;
+        ct->obj_input_name = obj_input_name;
         ct->obj_class_list = obj_class_list;
         ct->obj_term = obj_term;
     }
@@ -200,21 +200,6 @@ void LH_QtObject::setup_change(lh_setup_item *item)
     return;
 }
 
-void LH_QtObject::setup_input(lh_setup_item *item, int flags, int value)
-{
-    for( QObjectList::const_iterator i = children().constBegin(); i != children().constEnd(); ++i )
-    {
-        LH_QtSetupItem *si = qobject_cast<LH_QtSetupItem *>(*i);
-        if( si && si->item() == item )
-        {
-            si->setup_input(flags,value);
-            return;
-        }
-    }
-    Q_ASSERT(0);
-    return;
-}
-
 int LH_QtObject::polling()
 {
     return 0;
@@ -224,6 +209,25 @@ int LH_QtObject::notify( int code, void *param )
 {
     Q_UNUSED(code);
     Q_UNUSED(param);
+    return 0;
+}
+
+const char *LH_QtObject::input_name( const char *devid, int item )
+{
+    static char buf[64];
+    if( devid )
+    {
+        int len = strlen( devid );
+        if( len > 48 ) len = 48;
+        memcpy( buf, devid, len+1 );
+        if( item )
+        {
+            buf[len++] = '/';
+            if( item >= 0 ) buf[len++] = '+';
+            itoa( item, buf+len, 10 );
+        }
+        return buf;
+    }
     return 0;
 }
 

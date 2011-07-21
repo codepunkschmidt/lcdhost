@@ -57,7 +57,7 @@ public:
                                "<li>MM/dd/yyyy</li>"
                                "<li>ddd MMM d yyyy</li>"
                                "</ul>");
-        setup_text_->setName("Current date");
+        setup_text_->setTitle("Current date");
         setup_text_->setFlag(LH_FLAG_READONLY,true);
         return 0;
     }

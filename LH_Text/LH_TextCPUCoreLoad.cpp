@@ -52,7 +52,7 @@ public:
     {
         if( const char *err = LH_Text::userInit() ) return err;
         cpu_ = new LH_QtCPU(this);
-        setup_text_->setName( "Average core load" );
+        setup_text_->setTitle( "Average core load" );
         setup_text_->setFlag( LH_FLAG_READONLY, true );
         setup_core_selector_ = new LH_Qt_int( this, "Select core", 1, 1, state()->cpu_count, LH_FLAG_FIRST );
         connect( setup_core_selector_, SIGNAL(changed()), this, SLOT(updateValue()) );

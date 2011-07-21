@@ -48,35 +48,44 @@ class LH_LuaInstance;
 class lua_setup_item
 {
     LH_LuaInstance *parent_;
-    int order_;
-    QByteArray key_;
-    QByteArray name_;
+    QByteArray id_;
+    QByteArray title_;
     QByteArray help_;
     QByteArray data_;
     QByteArray paramlist_;
     lh_setup_item item_;
 
 public:
-    lua_setup_item(LH_LuaInstance *parent, const char *key) : parent_(parent), order_(0), key_(key)
+    lua_setup_item(LH_LuaInstance *parent, const char *id) : parent_(parent), id_(id)
     {
         memset(&item_,0,sizeof(item_));
+        item_.size = sizeof(item_);
+        item_.id = id_.data();
     }
 
     LH_LuaInstance *parent() { return parent_; }
-    int order() const { return order_; }
-    void setOrder(int n) { order_ = n; }
-    const char* key() const { return key_.constData(); }
+    int order() const { return item_.order; }
+    void setOrder(int n) { item_.order = n; }
     lh_setup_item* item() { return &item_; }
-    QByteArray& name() { return name_; }
+    const char* id() const { return id_.constData(); }
+    QByteArray& title() { return title_; }
+    void setTitle( const QByteArray& a ) { title_ = a; item_.title = title_.data(); }
     QByteArray& help() { return help_; }
     QByteArray& data() { return data_; }
+    void setData( const char *s, size_t n )
+    {
+        data_.clear();
+        data_.append( s, n );
+        item_.data.b.p = data_.data();
+        item_.data.b.n = data_.capacity();
+    }
     QByteArray& paramlist() { return paramlist_; }
 
     void setup_resize(size_t needed)
     {
         data_.resize(needed);
-        item_.param.size = data_.capacity();
-        item_.data.s = data_.data();
+        item_.data.b.p = data_.data();
+        item_.data.b.n = data_.capacity();
         return;
     }
 };
@@ -107,7 +116,6 @@ public:
     virtual lh_setup_item **setup_data();
     virtual void setup_resize( lh_setup_item *item, size_t needed );
     virtual void setup_change( lh_setup_item *item );
-    virtual void setup_input( lh_setup_item *item, int flags, int value );
     virtual int polling();
     virtual int notify( int, void* );
     virtual void term();

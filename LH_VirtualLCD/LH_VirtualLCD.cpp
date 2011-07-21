@@ -124,8 +124,8 @@ class VirtualQVGA : public VirtualLCD
 public:
     VirtualQVGA( LH_QtPlugin *drv ) : VirtualLCD( drv )
     {
-        setDevid("320x240x32");
-        setName("Virtual 320x240x32 device");
+        setDevid("LH_VirtualLCD:320x240x32");
+        setName("Virtual 320x240x32 LCD");
         setSize(320,240);
         setDepth(32);
         setAutoselect(false);
@@ -138,8 +138,8 @@ class VirtualBW : public VirtualLCD
 public:
     VirtualBW( LH_QtPlugin *drv ) : VirtualLCD( drv )
     {
-        setDevid("160x43x1");
-        setName("Virtual 160x43x1 device");
+        setDevid("LH_VirtualLCD:160x43x1");
+        setName("Virtual 160x43x1 LCD");
         setSize(160,43);
         setDepth(1);
         setAutoselect(false);

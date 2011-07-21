@@ -51,6 +51,7 @@ class LH_QtDevice : public LH_QtObject
     QByteArray devid_;
     QByteArray name_;
     lh_device lh_dev_;
+    char item_name_[8];
 
 public:
     LH_QtDevice( LH_QtObject *parent );

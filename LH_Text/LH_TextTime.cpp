@@ -52,7 +52,7 @@ public:
     {
         if( const char *err = LH_Text::userInit() ) return err;
         setup_format_ = new LH_Qt_QString(this,"<a href=\"http://doc.trolltech.com/4.6/qtime.html#toString\">Format</a>","HH:mm:ss");
-        setup_text_->setName("Current time");
+        setup_text_->setTitle("Current time");
         setup_text_->setFlag(LH_FLAG_READONLY,true);
         return 0;
     }

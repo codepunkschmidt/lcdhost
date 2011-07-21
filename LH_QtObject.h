@@ -77,9 +77,9 @@ public:
     virtual lh_setup_item **setup_data();
     virtual void setup_resize( lh_setup_item *item, size_t needed );
     virtual void setup_change( lh_setup_item *item );
-    virtual void setup_input( lh_setup_item *item, int flags, int value );
     virtual int polling();
     virtual int notify( int code, void *param );
+    virtual const char *input_name( const char *devid, int item );
     virtual const lh_class **class_list();
     virtual void term();
 
@@ -105,7 +105,7 @@ public:
     static void build_object_calltable( lh_object_calltable *ct );
 
 public slots:
-    void requestRebuild() const { callback( lh_cb_setup_rebuild, NULL ); } // call after adding or removing setup items!
+    // void requestRebuild() const { callback( lh_cb_setup_rebuild, NULL ); } // call after adding or removing setup items!
     void requestRender() const { callback( lh_cb_render, NULL ); }
     void requestPolling() const { callback( lh_cb_polling, NULL ); }
 };

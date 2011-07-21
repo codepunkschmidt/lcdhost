@@ -22,6 +22,8 @@ public:
     LogitechG19( libusb_device *usbdev, libusb_device_descriptor *dd, LH_QtObject *drv );
     ~LogitechG19();
 
+    const char *input_name(const char *devid, int item);
+
     const char* render_argb32(int,int,const void*) { return NULL; }
     const char* render_mono(int,int,const void*) { return NULL; }
     const char* get_backlight(lh_device_backlight*) { return NULL; }

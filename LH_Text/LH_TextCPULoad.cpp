@@ -46,7 +46,7 @@ public:
     const char *userInit()
     {
         if( const char *err = LH_Text::userInit() ) return err;
-        setup_text_->setName( "Average CPU load" );
+        setup_text_->setTitle( "Average CPU load" );
         setup_text_->setFlag( LH_FLAG_READONLY, true );
         setText("?%");
         return 0;

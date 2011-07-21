@@ -45,8 +45,8 @@ public:
     {
         Q_ASSERT( value >= min );
         Q_ASSERT( value <= max );
-        item_.param.slider.min = min;
-        item_.param.slider.max = max;
+        item_.param.i.min = min;
+        item_.param.i.max = max;
         item_.data.i = value;
     }
 
@@ -59,8 +59,8 @@ public:
     {
         if( item_.data.i != i )
         {
-            Q_ASSERT( i >= item_.param.slider.min );
-            Q_ASSERT( i <= item_.param.slider.max );
+            Q_ASSERT( i >= item_.param.i.min );
+            Q_ASSERT( i <= item_.param.i.max );
             item_.data.i = i;
             refresh();
             emit set();

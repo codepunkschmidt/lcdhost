@@ -40,51 +40,51 @@
 class LH_Qt_float : public LH_QtSetupItem
 {
 public:
-    LH_Qt_float( LH_QtObject *parent, QString name, float value, float min, float max, int flags = 0 )
+    LH_Qt_float( LH_QtObject *parent, QString name, double value, double min, double max, int flags = 0 )
         : LH_QtSetupItem( parent, name, lh_type_fraction, flags )
     {
-        item_.data.f = value;
-        item_.param.range.min = min;
-        item_.param.range.max = max;
+        item_.data.d = value;
+        item_.param.d.min = min;
+        item_.param.d.max = max;
     }
 
     LH_Qt_float( LH_QtObject *parent, QString name, float value, int flags = 0 )
         : LH_QtSetupItem( parent, name, lh_type_fraction, flags )
     {
-        item_.data.f = value;
-        item_.param.range.min = 0.0;
-        item_.param.range.max = 99.99;
+        item_.data.d = value;
+        item_.param.d.min = 0.0;
+        item_.param.d.max = 99.99;
     }
 
     void setMinimum( float min )
     {
-        item_.param.range.min = min;
+        item_.param.d.min = min;
         refresh();
     }
 
     void setMaximum( float max )
     {
-        item_.param.range.max = max;
+        item_.param.d.max = max;
         refresh();
     }
 
     void setMinMax( float min, float max )
     {
-        item_.param.range.min = min;
-        item_.param.range.max = max;
+        item_.param.d.min = min;
+        item_.param.d.max = max;
         refresh();
     }
 
-    float value() const
+    double value() const
     {
-        return item_.data.f;
+        return item_.data.d;
     }
 
-    void setValue(float f)
+    void setValue(double d)
     {
-        if( !qFuzzyCompare( item_.data.f, f ) )
+        if( !qFuzzyCompare( item_.data.d, d ) )
         {
-            item_.data.f = f;
+            item_.data.d = d;
             refresh();
             emit set();
         }

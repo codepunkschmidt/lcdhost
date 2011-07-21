@@ -115,11 +115,12 @@ static void * image_new( const lh_class *cls )
         img->blob = NULL;
         img->state = 0;
         memset( &img->setup_filename, 0, sizeof(img->setup_filename) );
-        img->setup_filename.name = "Filename";
+        img->setup_filename.size = sizeof(img->setup_filename);
+        img->setup_filename.id = "Filename";
         img->setup_filename.help = NULL;
         img->setup_filename.type = lh_type_string_filename;
-        img->setup_filename.param.size = sizeof(img->filename);
-        img->setup_filename.data.s = img->filename;
+        img->setup_filename.data.b.p = img->filename;
+        img->setup_filename.data.b.n = sizeof(img->filename);
         img->setup_filename.flags = 0;
         img->setup_array[0] = & img->setup_filename;
         img->setup_array[1] = NULL;
@@ -161,14 +162,14 @@ static lh_setup_item ** image_setup_data(void *obj)
   item is changed since we only have one. To illustrate self-unloading,
   if the filename equals 'unload', we request unloading.
   */
-static void image_setup_change(void*obj,lh_setup_item *i)
+static void image_setup_change( void*obj, lh_setup_item *i )
 {
     lh_image *img = obj;
     if( img && img->cb )
     {
-        if( !strcmp( i->data.s, "unload" ) )
+        if( !strcmp( (char*)i->data.b.p, "unload" ) )
         {
-            strcpy( i->data.s, "was-unloaded" );
+            strcpy( (char*)i->data.b.p, "was-unloaded" );
             img->cb( img->cb_id, img, lh_cb_setup_refresh, i );
             img->cb( img->cb_id, img, lh_cb_unload, "Filename was 'unload'." );
         }
@@ -182,18 +183,6 @@ static void image_setup_change(void*obj,lh_setup_item *i)
             img->cb( img->cb_id, img, lh_cb_render, NULL );
         }
     }
-    return;
-}
-
-/**
-  Not using input.
-  */
-static void image_input(void*obj,lh_setup_item *i,int f,int v)
-{
-    Q_UNUSED(obj);
-    Q_UNUSED(i);
-    Q_UNUSED(f);
-    Q_UNUSED(v);
     return;
 }
 
@@ -330,7 +319,6 @@ static lh_class class_image =
         image_setup_data,
         0, /* not using setup_resize, the filename isn't dynamically allocated */
         image_setup_change,
-        image_input,
         image_polling,
         image_notify,
         0, /* not using class list */
@@ -404,9 +392,9 @@ EXPORT const lh_object_calltable* lh_get_object_calltable( void *ref )
         0, /* setup_data */
         0, /* setup_resize */
         0, /* setup_change */
-        0, /* input */
         0, /* polling */
         0, /* notify */
+        0, /* input_name */
         plugin_class_list, /* class list */
         0 /* term */
     };

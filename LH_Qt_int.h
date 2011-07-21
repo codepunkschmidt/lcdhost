@@ -44,16 +44,16 @@ public:
         : LH_QtSetupItem( parent, name, lh_type_integer, flags )
     {
         item_.data.i = value;
-        item_.param.slider.min = min;
-        item_.param.slider.max = max;
+        item_.param.i.min = min;
+        item_.param.i.max = max;
     }
 
     LH_Qt_int( LH_QtObject *parent, QString name, int value, int flags = 0 )
         : LH_QtSetupItem( parent, name, lh_type_integer, flags )
     {
         item_.data.i = value;
-        item_.param.slider.min = 0;
-        item_.param.slider.max = 99;
+        item_.param.i.min = 0;
+        item_.param.i.max = 99;
     }
 
     int value() const
@@ -63,20 +63,20 @@ public:
 
     void setMinimum( int min )
     {
-        item_.param.slider.min = min;
+        item_.param.i.min = min;
         refresh();
     }
 
     void setMaximum( int max )
     {
-        item_.param.slider.max = max;
+        item_.param.i.max = max;
         refresh();
     }
 
     void setMinMax( int min, int max )
     {
-        item_.param.slider.min = min;
-        item_.param.slider.max = max;
+        item_.param.i.min = min;
+        item_.param.i.max = max;
         refresh();
     }
 

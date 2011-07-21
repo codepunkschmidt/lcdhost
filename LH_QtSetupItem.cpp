@@ -35,7 +35,7 @@
 #include <QDebug>
 #include "LH_QtSetupItem.h"
 
-LH_QtSetupItem::LH_QtSetupItem( LH_QtObject *parent, QString name, lh_setup_type type, int flags ) : QObject( parent )
+LH_QtSetupItem::LH_QtSetupItem( LH_QtObject *parent, QString id, lh_setup_type type, int flags ) : QObject( parent )
 {
     Q_ASSERT( parent != NULL );
 #ifndef QT_NO_DEBUG
@@ -43,32 +43,25 @@ LH_QtSetupItem::LH_QtSetupItem( LH_QtObject *parent, QString name, lh_setup_type
         qWarning() << parent->metaObject()->className() << parent->objectName() << "creates setup items before init()";
 #endif
     memset( &item_, 0, sizeof(item_) );
-    setName(name);
-    order_ = 0;
-    if( flags & LH_FLAG_FIRST ) order_ = -1;
-    if( flags & LH_FLAG_LAST ) order_ = 1;
+    item_.size = sizeof(item_);
+    if( flags & LH_FLAG_FIRST ) item_.order = -1;
+    if( flags & LH_FLAG_LAST ) item_.order = 1;
     item_.type = type;
     item_.flags = flags;
-}
-
-void LH_QtSetupItem::setName(QString s)
-{
-    setObjectName(s);
-    name_array_ = s.toUtf8();
-    item_.name = name_array_.constData();
-    return;
+    setId(id);
 }
 
 void LH_QtSetupItem::setup_change()
 {
-    emit changed();
+    if( type() == lh_type_string_inputstate || type() == lh_type_string_inputvalue )
+    {
+        emit input( QString(), item_.param.input.flags, item_.param.input.value );
+    }
+    else
+    {
+        emit changed();
+    }
     if( item_.flags & LH_FLAG_AUTORENDER ) parent()->requestRender();
-    return;
-}
-
-void LH_QtSetupItem::setup_input( int flags, int value )
-{
-    emit input( QString(), flags, value );
     return;
 }
 
@@ -88,10 +81,58 @@ void LH_QtSetupItem::setFlag( int f, bool state )
     return;
 }
 
-
 void LH_QtSetupItem::setOrder( int n )
 {
-    order_ = n;
+    if( item_.order != n )
+    {
+        item_.order = n;
+        parent()->callback(lh_cb_setup_refresh, item() );
+    }
+}
+
+void LH_QtSetupItem::setId( QString s )
+{
+    Q_ASSERT( !s.isEmpty() );
+    if( title_array_.isNull() )
+    {
+        title_array_ = s.toUtf8();
+        item_.title = title_array_.data();
+        if( title_array_.startsWith('~') )
+        {
+            title_array_.remove(0,1);
+            item_.flags |= LH_FLAG_HIDETITLE;
+        }
+        if( title_array_.startsWith('^') )
+        {
+            title_array_.remove(0,1);
+            item_.flags |= LH_FLAG_BLANKTITLE;
+        }
+    }
+    if( s.contains('/') )
+    {
+        qWarning() << parent()->objectName() << "setup item ID contains slashes:" << s;
+        s.replace('/','\\');
+    }
+    setObjectName(s);
+    id_array_ = s.toAscii();
+    item_.id = id_array_.data();
+    return;
+}
+
+void LH_QtSetupItem::setTitle(QString s)
+{
+    if( s.isEmpty() )
+    {
+        title_array_.clear();
+        item_.title = 0;
+    }
+    else
+    {
+        title_array_ = s.toUtf8();
+        item_.title = title_array_.data();
+    }
+    parent()->callback( lh_cb_setup_refresh, item() );
+    return;
 }
 
 void LH_QtSetupItem::setLink(QString s)
@@ -104,31 +145,25 @@ void LH_QtSetupItem::setLink(QString s)
     else
     {
         link_array_ = s.toUtf8();
-        item_.link = link_array_.constData();
+        item_.link = link_array_.data();
     }
     parent()->callback( lh_cb_setup_refresh, item() );
     return;
 }
 
-QString LH_QtSetupItem::link()
-{
-    if( item_.link ) return QString::fromUtf8( item_.link );
-    return QString();
-}
-
 void LH_QtSetupItem::setHelp(QString s)
 {
-    if( help_ != s )
+    if( s.isEmpty() )
     {
-        if( s.isEmpty() ) help_.clear();
-        else help_ = s.toUtf8();
-        item_.help = help_.constData();
-        parent()->callback( lh_cb_setup_refresh, item() );
+        help_array_.clear();
+        item_.help = 0;
     }
+    else
+    {
+        help_array_ = s.toUtf8();
+        item_.help = help_array_.data();
+    }
+    parent()->callback( lh_cb_setup_refresh, item() );
     return;
 }
 
-QString LH_QtSetupItem::help()
-{
-    return QString::fromUtf8(help_);
-}

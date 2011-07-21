@@ -35,22 +35,6 @@
 #ifndef LH_SYSTEMSTATE_H
 #define LH_SYSTEMSTATE_H
 
-/* 64 bits integers for the common platforms */
-/* Consider including <QtGlobal> for the real deal */
-#if !defined(Q_INT64_C)
-# if defined(_MSC_VER) && defined(_UI64_MAX)
-#  define Q_INT64_C(c) c ## i64    /* signed 64 bit constant */
-#  define Q_UINT64_C(c) c ## ui64   /* unsigned 64 bit constant */
-typedef __int64 qint64;            /* 64 bit signed */
-typedef unsigned __int64 quint64;  /* 64 bit unsigned */
-# else
-#  define Q_INT64_C(c) static_cast<long long>(c ## LL)     /* signed 64 bit constant */
-#  define Q_UINT64_C(c) static_cast<unsigned long long>(c ## ULL) /* unsigned 64 bit constant */
-typedef long long qint64;           /* 64 bit signed */
-typedef unsigned long long quint64; /* 64 bit unsigned */
-# endif
-#endif
-
 typedef struct lh_cpudata_t
 {
     qint64 system;      /**< time spent in system processes (system wide cumulative, no unit specified) */

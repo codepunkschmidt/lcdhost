@@ -20,7 +20,7 @@ lh_class *LH_MailcountText::classInfo()
 
 LH_MailcountText::LH_MailcountText() : LH_Text()
 {
-    setup_text_->setName( "Unread mail count" );
+    setup_text_->setTitle( "Unread mail count" );
     setup_text_->setValue("0");
     setup_text_->setFlag( LH_FLAG_READONLY, true );
     setup_text_->setFlag( LH_FLAG_NOSAVE, true );

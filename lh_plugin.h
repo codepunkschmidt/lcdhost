@@ -69,6 +69,22 @@
 #include <stddef.h>
 #include <limits.h>
 
+/* 64 bits integers for the common platforms */
+/* Consider including <QtGlobal> for the real deal */
+#if !defined(Q_INT64_C)
+# if defined(_MSC_VER) && defined(_UI64_MAX)
+#  define Q_INT64_C(c) c ## i64    /* signed 64 bit constant */
+#  define Q_UINT64_C(c) c ## ui64   /* unsigned 64 bit constant */
+typedef __int64 qint64;            /* 64 bit signed */
+typedef unsigned __int64 quint64;  /* 64 bit unsigned */
+# else
+#  define Q_INT64_C(c) static_cast<long long>(c ## LL)     /* signed 64 bit constant */
+#  define Q_UINT64_C(c) static_cast<unsigned long long>(c ## ULL) /* unsigned 64 bit constant */
+typedef long long qint64;           /* 64 bit signed */
+typedef unsigned long long quint64; /* 64 bit unsigned */
+# endif
+#endif
+
 #include "lh_systemstate.h"
 
 #define LH_API_MAJOR 5
@@ -184,9 +200,14 @@ typedef struct lh_blob_t
 typedef enum lh_callbackcode_t
 {
     lh_cb_unload, /* ask that the plugin be unloaded, param: NULL or const char *message */
+    lh_cb_reload, /* request the plugin reloaded, param: NULL or const char *message */
+    lh_cb_load_layout, /* request loading of a new layout, param: UTF-8 encoded file name relative to data path */
 
+    lh_cb_setup_add, /* add a new setup item, param: lh_setup_item* */
+    lh_cb_setup_remove, /* remove a setup item, param: lh_setup_item* */
     lh_cb_setup_refresh, /* LCDHost will re-read your setup item, param: lh_setup_item* */
-    lh_cb_setup_rebuild, /* use this if you add or remove setup items, LCDHost will call setup_data() again */
+    /* lh_cb_setup_rebuild, */ /* use this if you add or remove setup items, LCDHost will call setup_data() again */
+
     lh_cb_log, /* log an UTF-8 encoded string in the error log */
     lh_cb_polling, /* ask for a call to the polling function, param: NULL */
     lh_cb_notify, /* ask for a call to the notify function, param: NULL */
@@ -201,18 +222,11 @@ typedef enum lh_callbackcode_t
     /* These requests are meaningful only for device drivers */
     lh_cb_arrive, /* a new device have been detected, param is lh_device pointer */
     lh_cb_leave, /* a device has left the system */
-    lh_cb_input, /* a device input has changed, param is pointer to lh_device_input */
 
-    lh_cb_load_layout, /* request loading of a new layout, param: UTF-8 encoded file name relative to data path */
-    lh_cb_read_source, /* read a data source, flags have LH_FLAG_NOSINK on fail, param: lh_setup_item* */
+    lh_cb_input, /* a device input has changed, param is pointer to lh_device_input */
 
     /* Support calls */
     lh_cb_utf8_to_local8bit, /* request UTF-8 to local 8-bit conversion, param: char *string */
-
-    /* NOT YET IN USE */
-    lh_cb_reload, /* request the plugin reloaded, param: NULL or const char *message */
-    lh_cb_setup_add, /* add a new setup item, param: lh_setup_item* */
-    lh_cb_setup_remove, /* remove a setup item, param: lh_setup_item* */
 
     lh_cb_unused
 } lh_callbackcode;
@@ -243,26 +257,27 @@ typedef struct lh_signature_t
 typedef enum lh_setup_type_t
 {
     lh_type_none,
-    lh_type_integer,
+    lh_type_integer, /* integer selection using spinbox */
     lh_type_integer_boolean, /* checkbox */
     lh_type_integer_color, /* 32-bit AARRGGBB */
-    lh_type_integer_slider,
-    lh_type_integer_progress,
+    lh_type_integer_slider, /* slider to select an integer */
+    lh_type_integer_progress, /* progress bar */
     lh_type_integer_list, /* using dropdown box, have user select one of the param.list strings */
-    lh_type_fraction,
+    lh_type_integer_listbox, /* using listbox, have user select one of the param.list strings */
+    lh_type_fraction, /* double selection using spinbox */
     lh_type_string, /* all strings are null-terminated, utf-8 encoded */
     lh_type_string_script, /* inline script */
     lh_type_string_filename, /* present the user with an file selection dialog */
     lh_type_string_font, /* simple font selection, see QFont::toString() for string format */
     lh_type_string_inputstate, /* ask user for a specific button state or half axis movement */
     lh_type_string_inputvalue, /* ask user for a button or full axis movement */
-    lh_type_image_png, /* allows the display of a PNG image in the setup pane (data.s and param.size used) */
-    lh_type_image_qimage, /* allows the display of a QImage in the setup pane static_cast<QImage*>(data.s) */
-    lh_type_integer_listbox, /* using listbox, have user select one of the param.list strings */
     lh_type_string_button, /* a clickable button */
     lh_type_string_htmlhelp, /* show the help text in-line, receive clicked links */
-    lh_type_array_int, /* data.i contains array size param.array points to data area */
-    lh_type_array_double, /* data.i contains array size param.array points to data area */
+    lh_type_string_combobox, /* using combobox, allow user to select or type a string value */
+    lh_type_image_png, /* allows the display of a PNG image in the setup pane */
+    lh_type_image_qimage, /* not saved - allows the display of a QImage in the setup pane, param.p */
+    lh_type_array_qint64, /* no UI - store an array of qint64 in buffer */
+    lh_type_array_double, /* no UI - store an array of doubles in buffer */
     lh_type_last /* marks last used value */
 } lh_setup_type;
 
@@ -279,62 +294,89 @@ typedef enum lh_setup_type_t
 #define LH_FLAG_HIDETITLE   0x0400 /* Setup item title is not shown in GUI (all space to value) */
 #define LH_FLAG_HIDEVALUE   0x0800 /* Setup item value is not shown in GUI (all space to title) */
 
+#define LH_STATE_SOURCE     0x0001 /* Setup item is a data source */
+
+/**
+  Stores 'secondary' data for setup items. These are not
+  preserved by LCDHost, but are used to control UI elements
+  or limit data ranges, and in the case of the 'input' struct,
+  pass on input device data.
+  */
 typedef union lh_setup_param_t
 {
-    size_t size;    /**< size of buffer pointed to by 'data.s' */
     struct {
-        int min;    /**< int, slider or progress minimum value */
-        int max;    /**< int, slider or progress maximum value */
-    } slider;
+        qint64 min;
+        qint64 max;
+    } i;
     struct {
-        float min;  /**< float minimum value */
-        float max;  /**< float maximum value */
-    } range;
+        double min;
+        double max;
+    } d;
+    struct
+    {
+        int value;
+        int flags;
+    } input; /**< for device input items */
     const char *list; /**< tab-delimited list of strings */
-    void *array; /**< array data area */
+    void *p; /* for lh_type_image_qimage, points to a QImage */
 } lh_setup_param;
 
+/**
+  Stores 'primary' data for setup items. This is the
+  data that will be preserved by LCDHost.
+  */
 typedef union lh_setup_data_t
 {
-    char *s; /* note that only 's' can be initialized in a global or static, see C syntax rules */
-    float f;
-    int i;
+    struct {
+        size_t n; /* buffer size */
+        void *p; /* buffer pointer */
+    } b;
+    double d; /* floating point data */
+    qint64 i; /* integer data */
 } lh_setup_data;
 
 /**
  Setup items are the main information link between LCDHost and it's plugins.
 
- Start a setup item name with '^' to not display the name, leaving the name column blank.
- Obsoleted. Use LH_FLAG_BLANKTITLE.
+ They're identified by their 'id', which must be an ASCII string
+ containing no forward slashes. It is case sensitive.
 
- Start a setup item name with '~' to extend the setup item into the name column.
- Obsoleted. Use LH_FLAG_HIDETITLE.
+ LCDHost will preserve the data portion of a setup item, and setup items
+ will be set to the stored data between sessions unless the LH_FLAG_NOSAVE
+ flag is set. All other parts of the setup item are dictated by the plugin.
 
- You can have LCDHost automatically update a setup item with data from another item.
- The 'link' member, if not NULL, specifies how data linking is handled. The first
- character specifies if it's a data source or a data sink. The rest is a path
- specification separated with slashes. If the first character is an at sign '@'
- then it's a source, with the path defining it's position in the data source tree.
- If the first character is an equal sign '=', then it's a sink, and the path
- specifies which source it wants.
+ Setup items can be set to export their own value or import another setup
+ items value. This is known as 'data linking'. A setup item may be either
+ a 'data source' exporting it's value or a 'data sink' importing another
+ item's value.
 
- Examples:
-    link = "@/system/Mail count"; // ok, data source providing a mail count
-    link = "=/system/Mail count"; // ok, data sink reading the above source
-    link = "/system/cpu/count"; // error, missing command character
-    link = "=system/cpu/count"; // error, missing initial path slash
+ If the state LH_STATE_SOURCE is set, then the item will export it's value.
+ By default, it's exported using the ID, but the 'link' member may be set
+ to export it under any valid path.
 
+ If the LH_STATE_SOURCE is NOT set, and the 'link' member is not NULL, then
+ the item is a data sink, and will receive updates from data sources with
+ the same 'link'.
+
+ The LH_FLAG_NOSINK and LH_FLAG_NOSOURCE flags override the LH_STATE_SOURCE
+ state and link path, and if set, will prevent the data item from either receiving
+ or exposing data, respectively.
 */
 typedef struct lh_setup_item_t
 {
-    /* int size; */ /* sizeof(lh_setup_item) */
-    const char *name; /* name to identify this item uniquely, and display to the user (start with ~ to hide from display */
+    /* the ephemeral portion, controlled by plugin */
+    int size; /* sizeof(lh_setup_item) */
+    const char *id; /* unique id, ASCII, may not contain forward slashes, may not be NULL */
+    const char *title; /* title, UTF-8, should be localized, if NULL id will be used */
     const char *help; /* short HTML help text shows as tooltip or as value, may be NULL */
-    const char *link; /* data link, ASCII only, see comment above, may be NULL */
-    /* int order */ /* ordering of setup item in the UI, lower values first */
+    int order; /* ordering of setup item in the UI, lower values first */
     lh_setup_type type; /* type of data, see enum above */
     int flags; /* LH_FLAG_xxx */
-    lh_setup_param param;
+    lh_setup_param param; /* UI parameters, list data etc */
+
+    /* the data portion, these things are saved by LCDHost */
+    unsigned states; /* LH_STATE_xxx */
+    const char *link; /* data link path, see notes above, usually NULL */
     lh_setup_data data;
 } lh_setup_item;
 
@@ -358,9 +400,9 @@ typedef struct lh_object_calltable_t
     lh_setup_item ** (*obj_setup_data)(void*); /**< return array of pointers to setup items, NULL terminated */
     void (*obj_setup_resize)(void*, lh_setup_item*, size_t); /**< item data storage is too small, please resize */
     void (*obj_setup_change)(void*, lh_setup_item*); /**< given item has been changed */
-    void (*obj_setup_input)(void*, lh_setup_item*, int, int); /**< input item has changed, wanted flags in 'f', new state/value in 'v' */
     int (*obj_polling)(void*); /**< return ms to wait before next call, or zero to stop polling */
     int (*obj_notify)(void*,int,void*); /**< return wanted notification mask, see LH_NOTE_xxx */
+    const char *(*obj_input_name)(void*,const char*,int); /**< return device or item name */
     const lh_class **(*obj_class_list)(void*); /**< return current list of layout classes, or NULL */
     void (*obj_term)(void*); /**< terminate */
 } lh_object_calltable;
@@ -378,7 +420,6 @@ typedef struct lh_device_backlight_t
     char is_writeable; /* device backlight setting is writable */
 } lh_device_backlight;
 
-
 enum lh_device_flag
 {
     lh_df_button      = 0x0001,
@@ -395,19 +436,30 @@ enum lh_device_flag
 
 /**
   Used when the state of a device input (button, slider, stick, whatever) changes.
-  The devid must be set, and must be the same as the devid in the lh_device struct.
-  The 'item' is used to uniquely identify the control for that device. It may not
-  be zero. The 'control' string is the human readable name for the 'item'. If it's
-  NULL, it will be substituted by the 'item' in base-16.
+
+  \c devid must be a globally unique id for the device. A suggested format is
+  to use the HID codes in four-hexadecimal digits groups separated by colons:
+    vendor:product:version:page:usage
+
+  \c item is used to uniquely identify the control for that device. Together
+  with devid, forms a string uniquely identifying the input control in the format
+  "devid/+item", which is used when storing references to the control in
+  setup items. Note that the 'item' value is considered a signed integer, and
+  the sign is always encoded ('+' or '-'). In case of a specific device state
+  being encoded, '/flags' are appended.
+
+  The object which does the lh_cb_input callback with this structure should
+  export the obj_input_name() function.
   */
-typedef struct lh_device_input_t
+#define LH_DEVID_LEN 32
+#define LH_INPUTID_LEN (LH_DEVID_LEN+2+20+1)
+typedef struct lh_input_t
 {
-    const char *devid; /* device id */
-    const char *control; /* control name, human readable, unique for the device (may be NULL) */
-    int item; /* control id, unique for the device (must not be zero) */
-    int flags; /* describes kind of control, see lh_device_flag */
-    int value; /* */
-} lh_device_input;
+    char devid[LH_DEVID_LEN]; /* device id, ASCII only, no forward slashes */
+    int item; /* control item identifier, must not be zero */
+    int flags; /* describes kind of control and basic state, see lh_device_flag */
+    int value; /* the exact value of the control */
+} lh_input;
 
 /**
   This structure is what defines a driver device methods. It's embedded in
@@ -416,8 +468,6 @@ typedef struct lh_device_input_t
 
   Members in this structure may be set to NULL. Return values are either NULL,
   to indicate success, or a pointer to an UTF-8 encoded error string.
-  The exception to this is the \c obj_buttons function, which returns the
-  current button state.
 
   IMPORTANT! Since the plugin creates and destroys devices when it needs,
   you MUST let LCDHost know that a device is dying before it's lh_device pointer
@@ -426,8 +476,9 @@ typedef struct lh_device_input_t
 
   \code
     myDevice = new myDevice();
-    callback(cb_id, myDevice, lh_cb_arrive, myDevice->devtable );
-    callback(cb_id, myDevice, lh_cb_leave, myDevice->devtable );
+    myDevice->lh_device_data.obj = myDevice;
+    callback(cb_id, myDevice, lh_cb_arrive, & myDevice->lh_device_data );
+    callback(cb_id, myDevice, lh_cb_leave, & myDevice->lh_device_data );
     delete myDevice;
   \endcode
 
@@ -446,7 +497,13 @@ typedef struct lh_device_calltable_t
 } lh_device_calltable;
 
 /**
-  This structure gives basic information about a device.
+  This structure gives basic information about an output device.
+
+  \c devid is a globally unique identifier for the device.
+  It may not contain forward slashes. It is suggested to
+  be formed using hexadecimal HID values in the format
+
+    vendor:product:version:page:usage
 
   \c name is the text to present to the user as the
   devices name, for example 'Logitech G19'. This text should
@@ -472,7 +529,6 @@ typedef struct lh_device_t
     int height; /* height in pixels */
     int depth; /* bit depth */
     int noauto; /* don't autoselect this device; manual selection only */
-    const char *button[LH_DEVICE_MAXBUTTONS]; /* UTF-8 encoded softbutton names (may be NULL) */
     lh_blob *logo; /* device logo or image */
     lh_object_calltable objtable;
     lh_device_calltable table;

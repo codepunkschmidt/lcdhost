@@ -86,7 +86,7 @@ const char *LH_NowPlayingText::userInit()
     setup_hide_playing_state_->setHelp("This changes the behaviour of the \"State\" option, causing it not to display the \"Playing\" value.");
     connect(setup_hide_playing_state_, SIGNAL(changed()), this, SLOT(refresh_text()));
 
-    setup_text_->setName( "Now Playing" );
+    setup_text_->setTitle( "Now Playing" );
     setup_text_->setFlag( LH_FLAG_READONLY, true );
     setup_text_->setFlag( LH_FLAG_HIDDEN, true );
     setup_text_->setFlag( LH_FLAG_NOSAVE, true );

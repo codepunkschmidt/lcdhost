@@ -67,7 +67,6 @@ const char *LH_TextFile::userInit()
     setup_file_->setHelp("<p>Select the file whose contents will be shown. "
                          "The file will be checked for updates regularly.</p>");
     connect( setup_file_, SIGNAL(changed()), this, SLOT(fileChanged()) );
-    setup_text_->setName("~HiddenText");
     setup_text_->setFlag(LH_FLAG_HIDDEN|LH_FLAG_READONLY,true);
     return 0;
 }

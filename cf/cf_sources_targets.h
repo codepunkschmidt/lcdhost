@@ -8,6 +8,7 @@
 
 #include "..\LH_QtSetupItem.h"
 #include "..\LH_Qt_QString.h"
+#include "..\LH_Qt_QStringList.h"
 
 #ifndef EXPORT
 # define EXPORT extern "C" Q_DECL_EXPORT
@@ -30,6 +31,7 @@ public:
     }
 
     LH_QtSetupItem* obj() { return obj_; }
+    lh_setup_type type() { return (obj_==NULL? lh_type_none : obj_->type()); }
     QString name() { return name_; }
 
     QString value(QString mode, int i = 0)
@@ -118,6 +120,10 @@ public:
             {
             case lh_type_string:
                 value = ((LH_Qt_QString*)obj_)->value();
+                break;
+            case lh_type_integer_list:
+            case lh_type_integer_listbox:
+                value = ((LH_Qt_QStringList*)obj_)->valueText();
                 break;
             default:
                 qWarning() << "Unhandled cf source type: " << obj_->type();

@@ -69,7 +69,7 @@ void LH_QtCFInstance::cf_initialize()
     if (cf_initialized_)
         return;
     else
-    {
+    {        
         rule_dirty_ = false;
 
         int LH_FLAG_UI = LH_FLAG_NOSAVE | LH_FLAG_NOSOURCE | LH_FLAG_NOSINK ;
@@ -120,6 +120,7 @@ void LH_QtCFInstance::cf_initialize()
                                                     , LH_FLAG_UI | LH_FLAG_LAST | LH_FLAG_HIDDEN);
 
         setup_cf_testValue1_ = new LH_Qt_QString(this, "^Value 1", "", LH_FLAG_UI | LH_FLAG_LAST | LH_FLAG_HIDDEN);
+        setup_cf_testValue1_List_= new LH_Qt_QStringList(this, "^Value 1 (List)", QStringList(), LH_FLAG_UI | LH_FLAG_LAST | LH_FLAG_HIDDEN);
         setup_cf_testValue2_ = new LH_Qt_QString(this, "^Value 2", "", LH_FLAG_UI | LH_FLAG_LAST | LH_FLAG_HIDDEN);
         setup_cf_target_ = new LH_Qt_QStringList(this, "Target", QStringList(), LH_FLAG_UI | LH_FLAG_LAST | LH_FLAG_HIDDEN);
 
@@ -129,6 +130,7 @@ void LH_QtCFInstance::cf_initialize()
         setup_cf_newValue_Bool_ = new LH_Qt_bool(this, "^New Value - Boolean","",LH_FLAG_UI | LH_FLAG_LAST | LH_FLAG_HIDDEN);
         setup_cf_newValue_File_  = new LH_Qt_QFileInfo(this,"^New Value - File",QFileInfo(""),LH_FLAG_UI | LH_FLAG_LAST | LH_FLAG_HIDDEN);
         setup_cf_newValue_Slider_= new LH_Qt_QSlider(this,"^New Value - Slider",0,0,0, LH_FLAG_UI | LH_FLAG_LAST | LH_FLAG_HIDDEN);
+        setup_cf_newValue_List_ = new LH_Qt_QStringList(this,"^New Value - List",QStringList(), LH_FLAG_UI | LH_FLAG_LAST | LH_FLAG_HIDDEN);
 
         setup_cf_menu3_ = new LH_Qt_QString(this, "^CFMenu3", QString(),  LH_FLAG_UI | LH_FLAG_LAST | LH_FLAG_HIDDEN, lh_type_string_htmlhelp);
         setRuleEditMenu(false,false,false);
@@ -136,46 +138,66 @@ void LH_QtCFInstance::cf_initialize()
 
         setup_cf_XML_ = new LH_Qt_QTextEdit(this, "Conditions XML", "<rules/>", LH_FLAG_LAST | LH_FLAG_HIDDEN);
 
-        connect(setup_cf_enabled_, SIGNAL(changed()), this, SLOT(cf_enabled_changed()));
-        connect(setup_cf_source_, SIGNAL(changed()), this, SLOT(cf_source_changed()));
-        connect(setup_cf_source_, SIGNAL(set()), this, SLOT(cf_source_changed()));
-        connect(setup_cf_target_, SIGNAL(changed()), this, SLOT(cf_target_changed()));
-        connect(setup_cf_target_, SIGNAL(set()), this, SLOT(cf_target_changed()));
-        connect(setup_cf_test_, SIGNAL(changed()), this, SLOT(cf_condition_changed()));
-        connect(setup_cf_test_, SIGNAL(set()), this, SLOT(cf_condition_changed()));
-        connect(setup_cf_XML_, SIGNAL(changed()), this, SLOT(cf_XML_changed()));
-        connect(setup_cf_rules_, SIGNAL(changed()), this, SLOT(cf_rules_changed()));
+        connect(setup_cf_enabled_,         SIGNAL(changed()), this, SLOT(cf_enabled_changed()));
+        connect(setup_cf_enabled_,         SIGNAL(set()),     this, SLOT(cf_enabled_changed()));
+        connect(setup_cf_source_,          SIGNAL(changed()), this, SLOT(cf_source_changed()));
+        connect(setup_cf_source_,          SIGNAL(set()),     this, SLOT(cf_source_changed()));
+        connect(setup_cf_source_mode_,     SIGNAL(changed()), this, SLOT(cf_source_changed()));
+        connect(setup_cf_test_,            SIGNAL(changed()), this, SLOT(cf_condition_changed()));
+        connect(setup_cf_test_,            SIGNAL(set()),     this, SLOT(cf_condition_changed()));
+        connect(setup_cf_target_,          SIGNAL(changed()), this, SLOT(cf_target_changed()));
+        connect(setup_cf_target_,          SIGNAL(set()),     this, SLOT(cf_target_changed()));
+        connect(setup_cf_XML_,             SIGNAL(changed()), this, SLOT(cf_XML_changed()));
+        connect(setup_cf_rules_,           SIGNAL(changed()), this, SLOT(cf_rules_changed()));
 
-        connect(setup_cf_state_, SIGNAL(changed()), this, SLOT(cf_state_value_updated()));
-        connect(setup_cf_state_, SIGNAL(set()), this, SLOT(cf_state_value_updated()));
-        connect(setup_cf_visibility_, SIGNAL(changed()), this, SLOT(cf_update_visibility()));
-        connect(setup_cf_visibility_, SIGNAL(set()), this, SLOT(cf_update_visibility()));
+        connect(setup_cf_state_,           SIGNAL(changed()), this, SLOT(cf_state_value_updated()));
+        connect(setup_cf_state_,           SIGNAL(set()),     this, SLOT(cf_state_value_updated()));
+        connect(setup_cf_visibility_,      SIGNAL(changed()), this, SLOT(cf_update_visibility()));
+        connect(setup_cf_visibility_,      SIGNAL(set()),     this, SLOT(cf_update_visibility()));
 
-        connect(setup_cf_source_, SIGNAL(changed()), this, SLOT(cf_rule_edited()));
-        connect(setup_cf_target_, SIGNAL(changed()), this, SLOT(cf_rule_edited()));
-        connect(setup_cf_test_, SIGNAL(changed()), this, SLOT(cf_rule_edited()));
-        connect(setup_cf_testValue1_, SIGNAL(changed()), this, SLOT(cf_rule_edited()));
-        connect(setup_cf_testValue2_, SIGNAL(changed()), this, SLOT(cf_rule_edited()));
+        connect(setup_cf_source_,          SIGNAL(changed()), this, SLOT(cf_rule_edited()));
+        connect(setup_cf_source_mode_,     SIGNAL(changed()), this, SLOT(cf_rule_edited()));
+        connect(setup_cf_target_,          SIGNAL(changed()), this, SLOT(cf_rule_edited()));
+        connect(setup_cf_test_,            SIGNAL(changed()), this, SLOT(cf_rule_edited()));
+        connect(setup_cf_testValue1_,      SIGNAL(changed()), this, SLOT(cf_rule_edited()));
+        connect(setup_cf_testValue1_List_, SIGNAL(changed()), this, SLOT(cf_rule_edited()));
+        connect(setup_cf_testValue2_,      SIGNAL(changed()), this, SLOT(cf_rule_edited()));
 
-        connect(setup_cf_newValue_Color_, SIGNAL(changed()), this, SLOT(cf_rule_edited()));
-        connect(setup_cf_newValue_Font_, SIGNAL(changed()), this, SLOT(cf_rule_edited()));
+        connect(setup_cf_newValue_Color_,  SIGNAL(changed()), this, SLOT(cf_rule_edited()));
+        connect(setup_cf_newValue_Font_,   SIGNAL(changed()), this, SLOT(cf_rule_edited()));
         connect(setup_cf_newValue_String_, SIGNAL(changed()), this, SLOT(cf_rule_edited()));
-        connect(setup_cf_newValue_Bool_, SIGNAL(changed()), this, SLOT(cf_rule_edited()));
+        connect(setup_cf_newValue_Bool_,   SIGNAL(changed()), this, SLOT(cf_rule_edited()));
         connect(setup_cf_newValue_Slider_, SIGNAL(changed()), this, SLOT(cf_rule_edited()));
-        connect(setup_cf_newValue_File_, SIGNAL(changed()), this, SLOT(cf_rule_edited()));
+        connect(setup_cf_newValue_List_,   SIGNAL(changed()), this, SLOT(cf_rule_edited()));
+        connect(setup_cf_newValue_File_,   SIGNAL(changed()), this, SLOT(cf_rule_edited()));
 
         cf_source_list_pos = 0;
         cf_target_list_pos = 0;
 
         add_cf_source(setup_cf_state_, true);
         add_cf_target(setup_cf_state_, true);
-        add_cf_target(setup_cf_visibility_, true);
+        add_cf_target(setup_cf_visibility_, true, true);
+
+        QTimer::singleShot(100, this, SLOT(cf_apply_rules()));
     }
+}
+
+void LH_QtCFInstance::add_cf_source(LH_QtSetupItem *si)
+{
+    add_cf_source(si, false);
+}
+
+void LH_QtCFInstance::add_cf_source(QString name)
+{
+    add_cf_source(name, NULL, false);
 }
 
 void LH_QtCFInstance::add_cf_source(LH_QtSetupItem *si, bool atEnd)
 {
     add_cf_source(si->id(), si, atEnd);
+    if (name.at(0)=='^')
+        name = name.right(name.length()-1);
+    add_cf_source(name, si, atEnd);
 }
 
 void LH_QtCFInstance::add_cf_source(QString name, bool atEnd)
@@ -213,9 +235,22 @@ void LH_QtCFInstance::add_cf_source(QString name, LH_QtSetupItem* si, bool atEnd
     }
 }
 
-void LH_QtCFInstance::add_cf_target(LH_QtSetupItem *si, bool atEnd)
+void LH_QtCFInstance::add_cf_target(LH_QtSetupItem *si, bool hide)
 {
+    add_cf_target(si, hide, false);
+}
+
+void LH_QtCFInstance::add_cf_target(LH_QtSetupItem *si, bool hide, bool atEnd)
+{
+    if(hide)
+        si->setFlag(LH_FLAG_HIDDEN, true);
+
     cf_initialize();
+
+    QString name = si->name();
+    if (name.at(0)=='^')
+        name = name.right(name.length()-1);
+
     if(atEnd || targets_.length()==0)
     {
         targets_.append(si);
@@ -251,7 +286,11 @@ void LH_QtCFInstance::cf_set_edit_controls_visibility(cf_rule_edit_mode editMode
 
     setup_cf_source_->setFlag(LH_FLAG_HIDDEN, !setup_cf_enabled_->value() || cf_rule_editing_==None);
     setup_cf_test_->setFlag(LH_FLAG_HIDDEN, !setup_cf_enabled_->value() || cf_rule_editing_==None);
-    setup_cf_testValue1_->setFlag(LH_FLAG_HIDDEN, !setup_cf_enabled_->value() || cf_rule_editing_==None);
+    if(!setup_cf_enabled_->value() || cf_rule_editing_==None)
+    {
+        setup_cf_testValue1_->setFlag(LH_FLAG_HIDDEN, true);
+        setup_cf_testValue1_List_->setFlag(LH_FLAG_HIDDEN, true);
+    }
     setup_cf_target_->setFlag(LH_FLAG_HIDDEN, !setup_cf_enabled_->value() || cf_rule_editing_==None);
 
     setRuleItemMenu(cf_rule_editing_==Existing,cf_rule_editing_==Existing,cf_rule_editing_==Existing);
@@ -268,6 +307,21 @@ void LH_QtCFInstance::cf_source_changed()
     {
         setup_cf_source_mode_->setFlag(LH_FLAG_HIDDEN, !setup_cf_enabled_->value() || cf_rule_editing_==None );
 
+        lh_setup_type source_type = (setup_cf_source_mode_->valueText()=="Value"? sources_[setup_cf_source_->valueText()]->type() : lh_type_string);
+        bool v1vis = (!setup_cf_testValue1_->hasFlag(LH_FLAG_HIDDEN)) || (!setup_cf_testValue1_List_->hasFlag(LH_FLAG_HIDDEN));
+        bool isList = source_type==lh_type_integer_list || source_type==lh_type_integer_listbox;
+        setup_cf_testValue1_->setFlag(LH_FLAG_HIDDEN, (!isList? !v1vis : true));
+        setup_cf_testValue1_List_->setFlag(LH_FLAG_HIDDEN, (isList? !v1vis : true));
+
+        if(isList)
+        {
+            LH_Qt_QStringList* source_List = (LH_Qt_QStringList*)sources_[setup_cf_source_->valueText()]->obj();
+            setup_cf_testValue1_List_->list().clear();
+            for(int i=0; i<source_List->list().length(); i++ )
+                setup_cf_testValue1_List_->list().append(source_List->list().at(i));
+            setup_cf_testValue1_List_->refreshList();
+        }
+
         setup_cf_source_mode_->list().clear();
         setup_cf_source_mode_->list().append(sources_[setup_cf_source_->valueText()]->getModes());
         setup_cf_source_mode_->refreshList();
@@ -278,16 +332,31 @@ void LH_QtCFInstance::cf_target_changed()
 {
     if (setup_cf_target_->value()>=0 && setup_cf_target_->value()<targets_.length())
     {
-        setup_cf_newValue_Color_->setFlag( LH_FLAG_HIDDEN, !setup_cf_enabled_->value() || setup_cf_newValue_Color_->type()!=targets_[setup_cf_target_->value()]->type()  || cf_rule_editing_==None);
-        setup_cf_newValue_Font_->setFlag(  LH_FLAG_HIDDEN, !setup_cf_enabled_->value() || setup_cf_newValue_Font_->type()!=targets_[setup_cf_target_->value()]->type()  || cf_rule_editing_==None);
-        setup_cf_newValue_String_->setFlag(LH_FLAG_HIDDEN, !setup_cf_enabled_->value() || setup_cf_newValue_String_->type()!=targets_[setup_cf_target_->value()]->type()  || cf_rule_editing_==None);
-        setup_cf_newValue_Bool_->setFlag(  LH_FLAG_HIDDEN, !setup_cf_enabled_->value() || setup_cf_newValue_Bool_->type()!=targets_[setup_cf_target_->value()]->type()  || cf_rule_editing_==None);
-        setup_cf_newValue_File_->setFlag(  LH_FLAG_HIDDEN, !setup_cf_enabled_->value() || setup_cf_newValue_File_->type()!=targets_[setup_cf_target_->value()]->type()  || cf_rule_editing_==None);
-        setup_cf_newValue_Slider_->setFlag(  LH_FLAG_HIDDEN, !setup_cf_enabled_->value() || setup_cf_newValue_Slider_->type()!=targets_[setup_cf_target_->value()]->type()  || cf_rule_editing_==None);
-        if(setup_cf_newValue_Slider_->type()==targets_[setup_cf_target_->value()]->type())
+        lh_setup_type targetType = targets_[setup_cf_target_->value()]->type();
+
+        if(targetType==lh_type_integer_listbox) targetType=lh_type_integer_list;
+
+        setup_cf_newValue_Color_->setFlag( LH_FLAG_HIDDEN, !setup_cf_enabled_->value() || targetType!=setup_cf_newValue_Color_->type() || cf_rule_editing_==None);
+        setup_cf_newValue_Font_->setFlag(  LH_FLAG_HIDDEN, !setup_cf_enabled_->value() || targetType!=setup_cf_newValue_Font_->type()  || cf_rule_editing_==None);
+        setup_cf_newValue_String_->setFlag(LH_FLAG_HIDDEN, !setup_cf_enabled_->value() || targetType!=setup_cf_newValue_String_->type()|| cf_rule_editing_==None);
+        setup_cf_newValue_Bool_->setFlag(  LH_FLAG_HIDDEN, !setup_cf_enabled_->value() || targetType!=setup_cf_newValue_Bool_->type()  || cf_rule_editing_==None);
+        setup_cf_newValue_File_->setFlag(  LH_FLAG_HIDDEN, !setup_cf_enabled_->value() || targetType!=setup_cf_newValue_File_->type()  || cf_rule_editing_==None);
+        setup_cf_newValue_Slider_->setFlag(LH_FLAG_HIDDEN, !setup_cf_enabled_->value() || targetType!=setup_cf_newValue_Slider_->type()|| cf_rule_editing_==None);
+        setup_cf_newValue_List_->setFlag(  LH_FLAG_HIDDEN, !setup_cf_enabled_->value() || targetType!=setup_cf_newValue_List_->type()  || cf_rule_editing_==None);
+
+        if(targetType==setup_cf_newValue_Slider_->type())
         {
-            setup_cf_newValue_Slider_->setMin(((LH_Qt_QSlider*)targets_[setup_cf_target_->value()])->min());
-            setup_cf_newValue_Slider_->setMax(((LH_Qt_QSlider*)targets_[setup_cf_target_->value()])->max());
+            LH_Qt_QSlider* target = (LH_Qt_QSlider*)targets_[setup_cf_target_->value()];
+            setup_cf_newValue_Slider_->setMin(target->min());
+            setup_cf_newValue_Slider_->setMax(target->max());
+        }
+        if(targetType==setup_cf_newValue_List_->type())
+        {
+            setup_cf_newValue_List_->list().clear();
+            LH_Qt_QStringList* target = (LH_Qt_QStringList*)targets_[setup_cf_target_->value()];
+            for(int i=0; i<target->list().length(); i++ )
+                setup_cf_newValue_List_->list().append(target->list().at(i));
+            setup_cf_newValue_List_->refreshList();
         }
     }
 }
@@ -338,7 +407,7 @@ void LH_QtCFInstance::cf_rules_changed()
 
         cf_rule rule(root.childNodes().at(setup_cf_rules_->value()));
         rule_dirty_ = false;
-        rule.conditions[0]->edit(this);
+        rule.conditions[0]->edit(this, sources_);
         rule.actions[0]->edit(this, targets_);
     } else
         cf_set_edit_controls_visibility(None);
@@ -444,7 +513,6 @@ void LH_QtCFInstance::cf_paste_rules()
         return;
     else
         clip_text = QString(file.readAll().data());
-
 
     //const QClipboard *clipboard = QApplication::clipboard();
     //const QMimeData *mimeData = clipboard->mimeData();
@@ -579,4 +647,13 @@ void LH_QtCFInstance::cf_rule_edited()
 {
     rule_dirty_ = true;
     setRuleEditMenu(true, rule_dirty_, true);
+}
+
+void LH_QtCFInstance::cf_set_rules(QString rulesXML, bool enable_cf)
+{
+    setup_cf_XML_->setValue(rulesXML);
+    if(enable_cf)
+        setup_cf_enabled_->setValue(true);
+    cf_XML_changed();
+    cf_rules_changed();
 }

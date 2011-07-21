@@ -44,12 +44,41 @@ public:
             return "";
     }
 
-    void edit(LH_QtCFInstance* sender)
+    void edit(LH_QtCFInstance* sender, cf_source_list sources)
     {
         sender->setup_cf_test_->setValue( test_ );
         sender->setup_cf_source_->setValue( source_ );
         sender->setup_cf_source_mode_->setValue( mode_ );
-        sender->setup_cf_testValue1_->setValue( values(0) );
+
+        sender->setup_cf_testValue1_->setFlag(LH_FLAG_HIDDEN, false);
+
+        bool v1vis = (!sender->setup_cf_testValue1_->hasFlag(LH_FLAG_HIDDEN)) || (!sender->setup_cf_testValue1_List_->hasFlag(LH_FLAG_HIDDEN));
+        LH_Qt_QStringList* source_List;
+
+        switch((mode_=="Value"? sources[source_]->type() : lh_type_string))
+        {
+        case lh_type_integer_list:
+        case lh_type_integer_listbox:
+            sender->setup_cf_testValue1_List_->list().clear();
+            source_List = (LH_Qt_QStringList*)sources[source_]->obj();
+
+            for(int i=0; i<source_List->list().length(); i++ )
+                sender->setup_cf_testValue1_List_->list().append(source_List->list().at(i));
+            sender->setup_cf_testValue1_List_->refreshList();
+
+            sender->setup_cf_testValue1_->setFlag(LH_FLAG_HIDDEN, true);
+            sender->setup_cf_testValue1_List_->setFlag(LH_FLAG_HIDDEN, !v1vis);
+
+            sender->setup_cf_testValue1_List_->setValue( values(0) );
+            break;
+        default:
+            sender->setup_cf_testValue1_->setFlag(LH_FLAG_HIDDEN, !v1vis);
+            sender->setup_cf_testValue1_List_->setFlag(LH_FLAG_HIDDEN, true);
+
+            sender->setup_cf_testValue1_->setValue( values(0) );
+            break;
+        }
+
         sender->setup_cf_testValue2_->setValue( values(1) );
     }
 

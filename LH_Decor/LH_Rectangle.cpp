@@ -39,24 +39,6 @@
 
 #include "LH_Rectangle.h"
 
-LH_PLUGIN_CLASS(LH_Rectangle)
-
-lh_class *LH_Rectangle::classInfo()
-{
-    static lh_class classInfo =
-    {
-        sizeof(lh_class),
-        "Static",
-        "StaticRectangle",
-        "Rounded rectangle",
-        48,48,
-        lh_object_calltable_NULL,
-        lh_instance_calltable_NULL
-    };
-
-    return &classInfo;
-}
-
 const char *LH_Rectangle::userInit()
 {
     if( const char *err = LH_QtCFInstance::userInit() ) return err;

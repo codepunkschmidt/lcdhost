@@ -25,12 +25,8 @@
 #ifndef LH_CURSORIMAGE_H
 #define LH_CURSORIMAGE_H
 
-#include <QtGlobal>
-#include <QHash>
-
 #include "../LH_Monitoring/LH_QImage/LH_QImage.h"
 #include "../LH_Qt_QString.h"
-#include "../LH_Qt_QFileInfo.h"
 
 #include "LH_CursorData.h"
 
@@ -41,16 +37,13 @@ class LH_CursorImage : public LH_QImage
     bool updateState();
 
 protected:
-    QHash<QString, QStringList> *imageDefinitions;
-
     LH_Qt_QString *setup_coordinate_;
-    LH_Qt_QString *setup_cursor_state_;
+    LH_Qt_QStringList *setup_cursor_state_;
 
 public:
     const char *userInit();
 
     int polling();
-
 
     static lh_class *classInfo();
 

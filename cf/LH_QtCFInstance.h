@@ -39,6 +39,7 @@
 #include <QtGlobal>
 #include <QImage>
 #include <QtXml>
+#include <QTimer>
 
 #include "..\LH_QtPlugin.h"
 #include "..\LH_QtObject.h"
@@ -116,6 +117,10 @@ class LH_QtCFInstance : public LH_QtInstance
 
     void setRuleItemMenu(bool, bool, bool);
     void setRuleEditMenu(bool, bool, bool);
+
+    void add_cf_source(LH_QtSetupItem *si, bool atEnd);
+    void add_cf_source(QString name, bool atEnd);
+    void add_cf_target(LH_QtSetupItem *s, bool hide, bool atEnd);
 protected:
     LH_Qt_bool        *setup_cf_enabled_;
 
@@ -131,15 +136,17 @@ protected:
 
     void cf_source_notify(QString name, QString value, int index = 0, int count = 1);
 
-    void add_cf_source(LH_QtSetupItem *si, bool atEnd = false);
-    void add_cf_source(QString name, bool atEnd = false);
-    void add_cf_target(LH_QtSetupItem *si, bool atEnd = false);
+    void add_cf_source(LH_QtSetupItem *si);
+    void add_cf_source(QString name);
+    void add_cf_target(LH_QtSetupItem *si, bool hide = false);
 
+    void cf_set_rules(QString rulesXML, bool enable_cf = true);
 public:
     LH_Qt_QStringList *setup_cf_source_;
     LH_Qt_QStringList *setup_cf_source_mode_;
     LH_Qt_QStringList *setup_cf_test_;
     LH_Qt_QString     *setup_cf_testValue1_;
+    LH_Qt_QStringList *setup_cf_testValue1_List_;
     LH_Qt_QString     *setup_cf_testValue2_;
     LH_Qt_QStringList *setup_cf_target_;
     LH_Qt_QColor      *setup_cf_newValue_Color_;
@@ -148,6 +155,7 @@ public:
     LH_Qt_QFileInfo   *setup_cf_newValue_File_;
     LH_Qt_bool        *setup_cf_newValue_Bool_;
     LH_Qt_QSlider     *setup_cf_newValue_Slider_;
+    LH_Qt_QStringList *setup_cf_newValue_List_;
 
     LH_QtCFInstance() : LH_QtInstance(0),
         cf_initialized_(false),
@@ -157,6 +165,7 @@ public:
         setup_cf_source_mode_(0),
         setup_cf_test_(0),
         setup_cf_testValue1_(0),
+        setup_cf_testValue1_List_(0),
         setup_cf_testValue2_(0),
         setup_cf_target_(0),
         setup_cf_newValue_Color_(0),
@@ -164,7 +173,8 @@ public:
         setup_cf_newValue_String_(0),
         setup_cf_newValue_File_(0),
         setup_cf_newValue_Bool_(0),
-        setup_cf_newValue_Slider_(0)
+        setup_cf_newValue_Slider_(0),
+        setup_cf_newValue_List_(0)
     {}
 
     int notify(int n,void* p);

@@ -67,9 +67,7 @@ const char *LH_CursorImage::userInit()
                                "e.g.: 1,1"
                                );
 
-    setup_cursor_state_ = new LH_Qt_QString( this, tr("Cursor State"), "OFF", LH_FLAG_NOSAVE|LH_FLAG_NOSINK|LH_FLAG_NOSOURCE|LH_FLAG_READONLY );
-
-    imageDefinitions = new QHash<QString, QStringList>();
+    setup_cursor_state_ = new LH_Qt_QStringList( this, tr("Cursor State"), QStringList()<<"OFF"<<"OFF_SEL"<<"ON"<<"ON_SEL", LH_FLAG_NOSAVE|LH_FLAG_NOSINK|LH_FLAG_NOSOURCE|LH_FLAG_READONLY );
 
     add_cf_target(setup_image_file_);
     add_cf_source(setup_cursor_state_);
@@ -102,7 +100,7 @@ bool LH_CursorImage::updateState()
         }
     }
     QString newStatusCode = QString("%1%2").arg(newActive? "ON" : "OFF").arg(newSelected? "_SEL" : "");
-    if(setup_cursor_state_->value() != newStatusCode)
+    if(setup_cursor_state_->valueText() != newStatusCode)
     {
         setup_cursor_state_->setValue(newStatusCode);
         return true;

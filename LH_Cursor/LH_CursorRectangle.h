@@ -45,11 +45,10 @@ class LH_CursorRectangle : public LH_Rectangle
 
 protected:
     LH_Qt_QString *setup_coordinate_;
+    LH_Qt_QStringList *setup_cursor_state_;
 
     LH_Qt_bool *setup_layout_trigger_;
     LH_Qt_QFileInfo *setup_layout_;
-
-    LH_Qt_QString *setup_cursor_state_;
 
 public:
     const char *userInit();
@@ -57,7 +56,6 @@ public:
     int polling() ;
 
     static lh_class *classInfo();
-
 
 public slots:
     void changeLayoutTrigger();

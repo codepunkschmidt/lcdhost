@@ -47,10 +47,6 @@ lh_class *LH_CursorRectangle::classInfo()
 
 const char *LH_CursorRectangle::userInit()
 {
-    setup_cursor_state_ = new LH_Qt_QString( this, tr("Cursor State"), "OFF", LH_FLAG_NOSAVE|LH_FLAG_NOSINK|LH_FLAG_NOSOURCE|LH_FLAG_READONLY );
-
-    if( const char *err = LH_Rectangle::userInit() ) return err;
-
     setup_coordinate_ = new LH_Qt_QString(this, "Coordinate", "1,1", LH_FLAG_AUTORENDER);
     setup_coordinate_->setHelp("This is the coordinate of this object, i.e. when the cursor is at the point specified here this object is selected. <br/>"
                                "<br/>"
@@ -59,6 +55,15 @@ const char *LH_CursorRectangle::userInit()
                                "The format is [x],[y] <br/>"
                                "e.g.: 1,1"
                                );
+    setup_cursor_state_ = new LH_Qt_QStringList( this, tr("Cursor State"), QStringList()<<"OFF"<<"OFF_SEL"<<"ON"<<"ON_SEL", LH_FLAG_NOSAVE|LH_FLAG_NOSINK|LH_FLAG_NOSOURCE|LH_FLAG_READONLY );
+
+    LH_Qt_QString *hr = new LH_Qt_QString(this,tr("~Coord-Area-Rule"),QString(), LH_FLAG_NOSAVE | LH_FLAG_NOSOURCE | LH_FLAG_NOSINK, lh_type_string_htmlhelp );
+    hr->setHelp("<hr>");
+
+    if( const char *err = LH_Rectangle::userInit() ) return err;
+
+    hr = new LH_Qt_QString(this,tr("~Rect-Area-Rule"),QString(),LH_FLAG_NOSAVE | LH_FLAG_NOSOURCE | LH_FLAG_NOSINK, lh_type_string_htmlhelp );
+    hr->setHelp("<hr>");
 
     setup_layout_trigger_ = new LH_Qt_bool(this,"Layout Trigger",false,0);
     setup_layout_trigger_->setHelp("Cursor Rectangles can be used to create a simple menu. Simply check this box and when selected the selected layout will be opened.<br/>"
@@ -69,20 +74,6 @@ const char *LH_CursorRectangle::userInit()
 
     connect(setup_layout_trigger_, SIGNAL(changed()), this, SLOT(changeLayoutTrigger()));
 
-//    colorDefinitions.insert("OFF",     (colorMapData){"OFF",     QColor("white"),  false, QColor(0,0,0,0), false});
-//    colorDefinitions.insert("ON",      (colorMapData){"ON",      QColor("red"),    false, QColor(0,0,0,0), false});
-//    colorDefinitions.insert("OFF_SEL", (colorMapData){"OFF_SEL", QColor("blue"),   false, QColor(0,0,0,0), false});
-//    colorDefinitions.insert("ON_SEL",  (colorMapData){"ON_SEL",  QColor("purple"), false, QColor(0,0,0,0), false});
-
-    /*
-    LH_Qt_QSlider *setup_penwidth_;
-    LH_Qt_QSlider *setup_rounding_;
-    LH_Qt_QColor *setup_pencolor_;
-    LH_Qt_QColor *setup_bgcolor1_;
-    LH_Qt_QColor *setup_bgcolor2_;
-    LH_Qt_bool *setup_gradient_;
-    LH_Qt_bool *setup_horizontal_;
-      */
     add_cf_target(setup_penwidth_);
     add_cf_target(setup_pencolor_);
     add_cf_target(setup_bgcolor1_);
@@ -90,6 +81,25 @@ const char *LH_CursorRectangle::userInit()
     add_cf_target(setup_gradient_);
     add_cf_target(setup_horizontal_);
     add_cf_source(setup_cursor_state_);
+
+    cf_set_rules("<rules>"
+                 "<rule>"
+                 "<conditions><condition test='Equals'><source>Cursor State</source><value id='1'>OFF</value></condition></conditions>"
+                 "<actions><action type='property'><target>Fill color 1</target><value>FFFFFFFF</value></action></actions>"
+                 "</rule>"
+                 "<rule>"
+                 "<conditions><condition test='Equals'><source>Cursor State</source><value id='1'>OFF_SEL</value></condition></conditions>"
+                 "<actions><action type='property'><target>Fill color 1</target><value>FF0000FF</value></action></actions>"
+                 "</rule>"
+                 "<rule>"
+                 "<conditions><condition test='Equals'><source>Cursor State</source><value id='1'>ON</value></condition></conditions>"
+                 "<actions><action type='property'><target>Fill color 1</target><value>FFFF0000</value></action></actions>"
+                 "</rule>"
+                 "<rule>"
+                 "<conditions><condition test='Equals'><source>Cursor State</source><value id='1'>ON_SEL</value></condition></conditions>"
+                 "<actions><action type='property'><target>Fill color 1</target><value>FF800080</value></action></actions>"
+                 "</rule>"
+                 "</rules>");
 
     return 0;
 }
@@ -120,7 +130,7 @@ bool LH_CursorRectangle::updateState()
     }
 
     QString newStatusCode = QString("%1%2").arg(newActive? "ON" : "OFF").arg(newSelected? "_SEL" : "");
-    if(setup_cursor_state_->value() != newStatusCode)
+    if(setup_cursor_state_->valueText() != newStatusCode)
     {
         setup_cursor_state_->setValue(newStatusCode);
 

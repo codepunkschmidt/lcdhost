@@ -34,44 +34,36 @@
 
   */
 
-#ifndef LH_RECTANGLE_H
-#define LH_RECTANGLE_H
+#ifndef LH_STATICRECTANGLE_H
+#define LH_STATICRECTANGLE_H
 
 #include "../LH_QtPlugin.h"
-#include "../cf/LH_QtCFInstance.h"
+#include "LH_Rectangle.h"
 #include "../LH_Qt_bool.h"
 #include "../LH_Qt_QSlider.h"
 #include "../LH_Qt_QColor.h"
 
-class LH_Rectangle : public LH_QtCFInstance
+class LH_StaticRectangle : public LH_Rectangle
 {
     Q_OBJECT
-
-protected:
-    LH_Qt_QSlider *setup_penwidth_;
-    LH_Qt_QSlider *setup_rounding_;
-    LH_Qt_QColor *setup_pencolor_;
-    LH_Qt_QColor *setup_bgcolor1_;
-    LH_Qt_QColor *setup_bgcolor2_;
-    LH_Qt_bool *setup_gradient_;
-    LH_Qt_bool *setup_horizontal_;
-
 public:
-    const char *userInit();
+    static lh_class *classInfo()
+    {
+        static lh_class classInfo =
+        {
+            sizeof(lh_class),
+            "Static",
+            "StaticRectangle",
+            "Rounded rectangle",
+            48,48,
+            lh_object_calltable_NULL,
+            lh_instance_calltable_NULL
+        };
 
-    virtual int notify( int n, void* );
-    QImage *render_qimage( int w, int h );
-
-    int penwidth() const { return setup_penwidth_->value(); }
-    int rounding() const { return setup_rounding_->value(); }
-    bool gradient() const { return setup_gradient_->value(); }
-    bool horizontal() const { return setup_horizontal_->value(); }
-    QColor pencolor() const { return setup_pencolor_->value(); }
-    QColor bgcolor1() const { return setup_bgcolor1_->value(); }
-    QColor bgcolor2() const { return setup_bgcolor2_->value(); }
-
-public slots:
-    void enableGradient(bool);
+        return &classInfo;
+    }
 };
 
-#endif // LH_RECTANGLE_H
+LH_PLUGIN_CLASS(LH_StaticRectangle)
+
+#endif // LH_STATICRECTANGLE_H

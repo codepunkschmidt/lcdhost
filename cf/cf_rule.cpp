@@ -26,7 +26,13 @@ cf_rule_condition::cf_rule_condition(LH_QtCFInstance *sender, QObject* parent): 
     test_ = sender->setup_cf_test_->valueText();
     source_ = sender->setup_cf_source_->valueText();
     mode_ = sender->setup_cf_source_mode_->valueText();
-    values_.append(sender->setup_cf_testValue1_->value());
+
+    if(!sender->setup_cf_testValue1_->hasFlag(LH_FLAG_HIDDEN))
+        values_.append(sender->setup_cf_testValue1_->value());
+
+    if(!sender->setup_cf_testValue1_List_->hasFlag(LH_FLAG_HIDDEN))
+        values_.append(sender->setup_cf_testValue1_List_->valueText());
+
     if(!sender->setup_cf_testValue2_->hasFlag(LH_FLAG_HIDDEN))
          values_.append(sender->setup_cf_testValue2_->value());
 }
@@ -261,6 +267,11 @@ cf_rule_action_property::cf_rule_action_property(LH_QtCFInstance *sender, QObjec
         break;
     case lh_type_integer_slider:
         value_ = QString::number(sender->setup_cf_newValue_Slider_->value());
+        break;
+    case lh_type_integer_list:
+    case lh_type_integer_listbox:
+        value_ = sender->setup_cf_newValue_List_->valueText();
+        break;
     default:
         qWarning() << "Unable to acquire value for target: unrecognised type (" << sender->targets()[target_]->type() << ")";
         value_ = "";
@@ -356,6 +367,16 @@ bool cf_rule_action_property::setTargetValue(LH_QtCFInstance* sender, cf_target_
         if(((LH_Qt_QSlider*)target)->value() != i )
         {
             ((LH_Qt_QSlider*)target)->setValue(i);
+            if(!setPlaceholder) return true;
+        }
+        break;
+    case lh_type_integer_list:
+    case lh_type_integer_listbox:
+        if(setPlaceholder)
+            target = sender->setup_cf_newValue_List_;
+        if(((LH_Qt_QStringList*)target)->valueText() != value_ )
+        {
+            ((LH_Qt_QStringList*)target)->setValue(value_);
             if(!setPlaceholder) return true;
         }
         break;

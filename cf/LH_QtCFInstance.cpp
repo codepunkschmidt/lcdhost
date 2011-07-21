@@ -195,9 +195,7 @@ void LH_QtCFInstance::add_cf_source(QString name)
 void LH_QtCFInstance::add_cf_source(LH_QtSetupItem *si, bool atEnd)
 {
     add_cf_source(si->id(), si, atEnd);
-    if (name.at(0)=='^')
-        name = name.right(name.length()-1);
-    add_cf_source(name, si, atEnd);
+    // add_cf_source(si->id(), si, atEnd); // JLI: Twice!? Or should this be with title() ?
 }
 
 void LH_QtCFInstance::add_cf_source(QString name, bool atEnd)
@@ -246,10 +244,6 @@ void LH_QtCFInstance::add_cf_target(LH_QtSetupItem *si, bool hide, bool atEnd)
         si->setFlag(LH_FLAG_HIDDEN, true);
 
     cf_initialize();
-
-    QString name = si->name();
-    if (name.at(0)=='^')
-        name = name.right(name.length()-1);
 
     if(atEnd || targets_.length()==0)
     {

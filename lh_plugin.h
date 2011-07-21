@@ -87,7 +87,7 @@ typedef unsigned long long quint64; /* 64 bit unsigned */
 
 #include "lh_systemstate.h"
 
-#define LH_API_MAJOR 5
+#define LH_API_MAJOR 6
 #define LH_API_MINOR 0
 #define LH_DEVICE_MAXBUTTONS 32
 

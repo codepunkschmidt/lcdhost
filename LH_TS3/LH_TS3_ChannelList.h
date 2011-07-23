@@ -1,7 +1,7 @@
 #ifndef LH_TS3_CHANNELLIST_H
 #define LH_TS3_CHANNELLIST_H
 
-#include <QList>
+#include <QHash>
 
 struct channeldetail
 {
@@ -13,7 +13,7 @@ struct channeldetail
     bool neededSubscribePower;
 };
 
-class channellist: public QList<channeldetail>
+class channellist: public QHash<int,channeldetail>
 {
 public:
     bool load(QString responseMsg)
@@ -45,7 +45,7 @@ public:
                 pos += rx.matchedLength();
                 pos = rx.indexIn(item,pos);
             }
-            append(chan);
+            insert(chan.cid, chan);
         }
         return true;
     }

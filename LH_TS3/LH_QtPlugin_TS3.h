@@ -27,6 +27,7 @@
 
 #include "../LH_QtPlugin.h"
 #include "../LH_Qt_QString.h"
+#include "../LH_Qt_bool.h"
 #include "../LH_Qt_QStringList.h"
 
 #include "LH_TS3_ChannelList.h"
@@ -72,14 +73,25 @@ class LH_QtPlugin_TS3 : public LH_QtPlugin
     clientlist clients_;
     clientlist speakers_;
 
+    int myclid_;
+
     void openConnection();
     void talkChanged(QString params);
     responseResult parseResult(QString msg);
-    void refreshSpeakers();
+    void updateTalking(bool force = false);
     void updateStatus(bool isRunning, bool isConnected = false, bool showChannels = false, bool showClients = false);
 protected:
-    LH_Qt_QString *setup_status;
-    LH_Qt_QString *setup_speakers;
+    LH_Qt_QString *setup_status_;
+    LH_Qt_QString *setup_talking_;
+    LH_Qt_QString *setup_talking_details_;
+    LH_Qt_QString *setup_username_expression_;
+    LH_Qt_QString *setup_username_;
+    LH_Qt_QString *setup_channelname_;
+    LH_Qt_bool *setup_microphone_present_;
+    LH_Qt_bool *setup_speakers_present_;
+    LH_Qt_bool *setup_microphone_active_;
+    LH_Qt_bool *setup_speakers_active_;
+    LH_Qt_QString *setup_user_detail_;
 
 public:
     const char *userInit();
@@ -91,9 +103,11 @@ public slots:
     void TS3Disconnected();
     void TS3ConnectionError(QAbstractSocket::SocketError);
     void TS3DataReceived();
+    void updateMyDetails();
 
 signals:
-    void speakersChanged(QString);
+    void talkingChanged(QString);
+    void myDetailsChanged();
 };
 
 #endif // LH_QTPLUGIN_TS3_H

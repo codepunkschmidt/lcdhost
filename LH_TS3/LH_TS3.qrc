@@ -1,0 +1,7 @@
+<RCC>
+    <qresource prefix="/images">
+        <file alias="active.png">images/active.png</file>
+        <file alias="notrunning.png">images/notrunning.png</file>
+        <file alias="unconnected.png">images/unconnected.png</file>
+    </qresource>
+</RCC>

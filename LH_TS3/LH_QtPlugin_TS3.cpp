@@ -55,12 +55,46 @@ const char *LH_QtPlugin_TS3::userInit()
     tryConnectTimer_.start();
 
     socket_ = new QTcpSocket(this);
+    myclid_ = -1;
 
-    setup_status = new LH_Qt_QString(this,tr("Connection Status"),QString(),LH_FLAG_FIRST | LH_FLAG_NOSAVE | LH_FLAG_NOSINK | LH_FLAG_NOSOURCE | LH_FLAG_HIDETITLE, lh_type_string_htmlhelp );
+    setup_status_ = new LH_Qt_QString(this,tr("Connection Status"),QString(), LH_FLAG_NOSAVE | LH_FLAG_NOSINK | LH_FLAG_NOSOURCE | LH_FLAG_HIDETITLE, lh_type_string_htmlhelp );
     updateStatus(false);
 
-    setup_speakers = new LH_Qt_QString(this, "Speakers", "", LH_FLAG_READONLY | LH_FLAG_NOSAVE | LH_FLAG_NOSINK);
-    setup_speakers->setLink("@/Monitoring/3rdParty/TeamSpeak3/Speaking");
+    setup_talking_ = new LH_Qt_QString(this, "Talking", "", LH_FLAG_NOSAVE | LH_FLAG_NOSINK | LH_FLAG_HIDDEN);
+    setup_talking_->setLink("@/Monitoring/3rdParty/TeamSpeak3/Talking");
+
+    setup_talking_details_ = new LH_Qt_QString(this, "Talking Details", QString(), LH_FLAG_NOSAVE | LH_FLAG_NOSINK | LH_FLAG_NOSOURCE | LH_FLAG_HIDETITLE, lh_type_string_htmlhelp);
+    updateTalking(true);
+
+    LH_Qt_QString *hr = new LH_Qt_QString(this,tr("hr1"),QString(), LH_FLAG_NOSAVE | LH_FLAG_NOSINK | LH_FLAG_NOSOURCE | LH_FLAG_HIDETITLE, lh_type_string_htmlhelp );
+    hr->setHelp("<hr/>");
+
+    setup_username_expression_ = new LH_Qt_QString(this, "Username Epression", "", LH_FLAG_NOSINK | LH_FLAG_NOSOURCE);
+    setup_username_expression_->setTitle("Username:");
+    setup_username_expression_->setHelp("Entering your user name will enable the plugin to acquire additional information about your status.<br/><br/>Note that this field is actually a Regular Expression, so you can have it match multiple possible names. The first match it finds will be the one it uses.");
+    connect(setup_username_expression_, SIGNAL(changed()), this, SLOT(updateMyDetails()));
+
+    setup_username_ = new LH_Qt_QString(this, "Username", "", LH_FLAG_HIDDEN | LH_FLAG_READONLY | LH_FLAG_NOSAVE | LH_FLAG_NOSINK);
+    setup_username_->setLink("@/Monitoring/3rdParty/TeamSpeak3/Username");
+    connect(setup_username_, SIGNAL(changed()), this, SLOT(updateMyDetails()));
+
+    setup_user_detail_ = new LH_Qt_QString(this,tr("User Details"),QString(), LH_FLAG_NOSAVE | LH_FLAG_NOSINK | LH_FLAG_NOSOURCE | LH_FLAG_HIDETITLE, lh_type_string_htmlhelp );
+    setup_user_detail_->setHelp("");
+
+    setup_channelname_ = new LH_Qt_QString(this, "Channel", "", LH_FLAG_HIDDEN | LH_FLAG_READONLY | LH_FLAG_NOSAVE | LH_FLAG_NOSINK);
+    setup_channelname_->setLink("@/Monitoring/3rdParty/TeamSpeak3/Username");
+    setup_microphone_present_ = new LH_Qt_bool(this, "Microphone Present", true, LH_FLAG_HIDDEN | LH_FLAG_READONLY | LH_FLAG_NOSAVE | LH_FLAG_NOSINK | LH_FLAG_BLANKTITLE);
+    setup_microphone_present_->setLink("@/Monitoring/3rdParty/TeamSpeak3/Microphone Present");
+    setup_microphone_active_ = new LH_Qt_bool(this, "Microphone Active", true, LH_FLAG_HIDDEN | LH_FLAG_READONLY | LH_FLAG_NOSAVE | LH_FLAG_NOSINK | LH_FLAG_BLANKTITLE);
+    setup_microphone_active_->setLink("@/Monitoring/3rdParty/TeamSpeak3/Microphone Active");
+    setup_speakers_present_ = new LH_Qt_bool(this, "Speakers Present", true, LH_FLAG_HIDDEN | LH_FLAG_READONLY | LH_FLAG_NOSAVE | LH_FLAG_NOSINK | LH_FLAG_BLANKTITLE);
+    setup_speakers_present_->setLink("@/Monitoring/3rdParty/TeamSpeak3/Speaker Present");
+    setup_speakers_active_ = new LH_Qt_bool(this, "Speakers Active", true, LH_FLAG_HIDDEN | LH_FLAG_READONLY | LH_FLAG_NOSAVE | LH_FLAG_NOSINK | LH_FLAG_BLANKTITLE);
+    setup_speakers_active_->setLink("@/Monitoring/3rdParty/TeamSpeak3/Speaker Active");
+
+    /*
+    LH_Qt_QString *setup_user_detail_;
+    */
 
     connect(socket_, SIGNAL(connected()), this, SLOT(TS3Connected()));
     connect(socket_, SIGNAL(disconnected()), this, SLOT(TS3Disconnected()));
@@ -172,7 +206,7 @@ void LH_QtPlugin_TS3::TS3DataReceived()
             channels_.clear();
             clients_.clear();
             speakers_.clear();
-            refreshSpeakers();
+            updateTalking();
             //qDebug() << "LH_TS3: Client is not connected to a server.";
             updateStatus(true);
         }
@@ -215,6 +249,7 @@ void LH_QtPlugin_TS3::TS3DataReceived()
         {
             updateStatus(true,true,true,true);
             server_action_ = sa_listening;
+            updateMyDetails();
         }
         break;
     case sa_none:
@@ -257,27 +292,71 @@ void LH_QtPlugin_TS3::talkChanged(QString params)
             return;
         speakers_.remove(clid);
     }
-    refreshSpeakers();
+    updateTalking();
 }
 
-void LH_QtPlugin_TS3::refreshSpeakers()
+void LH_QtPlugin_TS3::updateTalking(bool force)
 {
-    QString speakers = speakers_.toString();
-    if(setup_speakers->value()!=speakers)
+    QString talkingNames = speakers_.toString();
+    if(force || setup_talking_->value()!=talkingNames)
     {
-        //qDebug() << "Speakers: " << speakers;
-        setup_speakers->setValue(speakers);
-        emit speakersChanged(speakers);
+        //qDebug() << "Talking: " << talkingNames;
+        setup_talking_->setValue(talkingNames);
+        setup_talking_details_->setHelp(QString("<hr/><table style='margin-left:4px'>"
+                                        "<tr><td><img src=':/images/%2.png'/></td><td width='56' style='padding-left:5px;'>Talking:<img src=':/images/sizer.png'/></td>   <td><img src=':/images/sizer.png'/>%1</td> </tr>"
+                                        "</table>")
+                                        .arg(talkingNames)
+                                        .arg(talkingNames==""? "empty" : "talking")
+                                        );
+        emit talkingChanged(talkingNames);
     }
 }
 
 void LH_QtPlugin_TS3::updateStatus(bool isRunning, bool isConnected, bool showChannels, bool showClients)
 {
-    setup_status->setHelp(QString("<table><tr><td><img src=':/images/%5.png'/></td><td>TS3 is %1%2.</td></tr></table><hr/>Channels: %3<br/>Users: %4<hr/>")
+    setup_status_->setHelp(QString("<table style='margin-left:4px'>"
+                                   "<tr><td><img src=':/images/%5.png'/></td><td style='padding-left:5px'>TS3 is %1%2.</td></tr>"
+                                   "</table>"
+                                   "<hr/>"
+                                   "<table style='margin-left:23px'>"
+                                   "<tr><td><img src=':/images/sizer.png'/></td> <td width='56'>Channels:</td>  <td>%3</td></tr>"
+                                   "<tr><td><img src=':/images/sizer.png'/></td> <td width='56'>Users:</td>     <td>%4</td></tr>"
+                                   "</table>"
+                                   )
             .arg(isRunning? "running" : "not running")
             .arg(isRunning? (isConnected? " and is connected" : " but is not connected") : "")
             .arg(showChannels? QString::number(channels_.count()) : "N/A")
             .arg(showClients? QString::number(clients_.count()) : "N/A")
             .arg(!isRunning? "notrunning" : (isConnected? "active" : "unconnected"))
             );
+}
+
+void LH_QtPlugin_TS3::updateMyDetails()
+{
+    myclid_ = clients_.findclid(setup_username_expression_->value());
+    if(clients_.contains(myclid_))
+    {
+        clientdetail myClient = clients_.value(myclid_);
+        channeldetail myChannel = channels_.value(myClient.cid);
+
+        setup_user_detail_->setHelp(QString("<hr/><table style='margin-left:23px'>"
+                                            "<tr><td><img src=':/images/sizer.png'/></td> <td width='56'>Username:</td>   <td>%1</td></tr>"
+                                            "<tr><td><img src=':/images/sizer.png'/></td> <td width='56'>Channel:</td>    <td>%2</td></tr>"
+                                            "<tr><td><img src=':/images/sizer.png'/></td> <td width='56'>Microphone:</td> <td><img src=':/images/microphone%3.png'/></td></tr>"
+                                            "<tr><td><img src=':/images/sizer.png'/></td> <td width='56'>Speakers:</td>   <td><img src=':/images/sound%4.png'/></td></tr>"
+                                            "</table>")
+                                    .arg(myClient.name)
+                                    .arg(myChannel.name)
+                                    .arg(!myClient.inputHardware? "-disabled" : (myClient.inputMuted? "-mute" : ""))
+                                    .arg(!myClient.outputHardware? "-disabled" : (myClient.outputMuted? "-mute" : ""))
+                                    );
+        setup_microphone_present_->setValue(myClient.inputHardware);
+        setup_microphone_active_->setValue(!myClient.inputMuted && myClient.inputHardware);
+        setup_speakers_present_->setValue(myClient.outputHardware);
+        setup_speakers_active_->setValue(!myClient.outputMuted && myClient.outputHardware);
+        setup_channelname_->setValue(myChannel.name);
+        setup_username_->setValue(myClient.name);
+        emit myDetailsChanged();
+    } else
+        setup_user_detail_->setHelp("");
 }

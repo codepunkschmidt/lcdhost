@@ -42,6 +42,9 @@
 
 enum server_action {
     sa_none,
+    sa_disconnected,
+    sa_connecting,
+    sa_eventregister_pending,
     sa_reconnect,
     sa_channellist_pending,
     sa_clientlist_pending,
@@ -61,28 +64,32 @@ class LH_QtPlugin_TS3 : public LH_QtPlugin
 {
     Q_OBJECT
 
-    QTime pollTimer_;
+    QTime tryConnectTimer_;
     QTcpSocket *socket_;
     server_action server_action_;
 
     channellist channels_;
     clientlist clients_;
     clientlist speakers_;
-    int schandlerid_;
 
     void openConnection();
-    void talkChanged(bool status, bool whisper, int clid);
+    void talkChanged(QString params);
+    responseResult parseResult(QString msg);
+    void refreshSpeakers();
+    void updateStatus(bool isRunning, bool isConnected = false, bool showChannels = false, bool showClients = false);
 protected:
+    LH_Qt_QString *setup_status;
     LH_Qt_QString *setup_speakers;
 
 public:
     const char *userInit();
+    int notify( int code, void *param );
 
     int sendMessage(QString);
 public slots:
     void TS3Connected();
     void TS3Disconnected();
-    void TS3ConnectionError(QAbstractSocket::SocketError socketError) { Q_UNUSED(socketError); qDebug() << "LH_TS3: Connection Error - " << socket_->errorString(); }
+    void TS3ConnectionError(QAbstractSocket::SocketError);
     void TS3DataReceived();
 
 signals:

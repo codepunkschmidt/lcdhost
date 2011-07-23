@@ -22,3 +22,6 @@ HEADERS += \
     LH_QtPlugin_TS3.h \
     LH_TS3_ClientList.h \
     LH_TS3_ChannelList.h
+
+RESOURCES += \
+     LH_TS3.qrc

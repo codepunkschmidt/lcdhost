@@ -79,18 +79,12 @@ const char *LH_WeatherImage::userInit()
     setup_file_->setOrder(-1);
     connect( setup_file_, SIGNAL(changed()), this, SLOT(fileChanged()) );
 
-    setup_text_ = new LH_Qt_QString( this, tr("~"), QString(), LH_FLAG_READONLY|LH_FLAG_NOSAVE|LH_FLAG_HIDDEN|LH_FLAG_AUTORENDER );
-    setup_text_->setOrder(-1);
+    setup_feedback_ = new LH_Qt_QString(this, "Feedback","",LH_FLAG_READONLY | LH_FLAG_NOSAVE | LH_FLAG_NOSINK | LH_FLAG_NOSOURCE | LH_FLAG_BLANKTITLE, lh_type_string_htmlhelp);
 
     imageDefinitions = new QHash<int, QStringList>();
 
     weatherCode = "3200";
     isNight = false;
-    return 0;
-}
-
-int LH_WeatherImage::polling()
-{
     return 0;
 }
 
@@ -123,7 +117,6 @@ QImage *LH_WeatherImage::render_qimage(int w, int h)
     {
         QString folderPath = setup_file_->value().dir().path() + "/";
         QString imageName = getWeatherImageName();
-
         if (imageName=="")
             image_ = new QImage();
         else
@@ -159,13 +152,11 @@ void LH_WeatherImage::fileChanged()
     setup_file_->value().refresh();
     if( !setup_file_->value().isFile() )
     {
-        setup_text_->setValue(tr("No such file."));
-        setup_text_->setFlag(LH_FLAG_HIDDEN,false);
+        qWarning() << "LH_Weather: Image map does not exist: " << setup_file_->value().absoluteFilePath();
         return;
     }
     else
     {
-        setup_text_->setFlag(LH_FLAG_HIDDEN,true);
         QFile file( setup_file_->value().filePath() );
 
         if( file.open( QIODevice::ReadOnly) )
@@ -187,8 +178,7 @@ void LH_WeatherImage::fileChanged()
             }
             updateImage(true);
         } else {
-            setup_text_->setValue(tr("Unable to open file."));
-            setup_text_->setFlag(LH_FLAG_HIDDEN,false);
+            qWarning() << "LH_Weather: Unable to open file: " << setup_file_->value().absoluteFilePath();
             return;
         }
     }
@@ -222,7 +212,7 @@ void LH_WeatherImage::updateImage(bool rerender)
     else
         dayNight = "Day";
 
-    setup_text_->setValue(QString("Weather Code %1 received for %2; resolved to image: %3").arg(weatherCode, dayNight, getWeatherImageName()));
+    setup_feedback_->setHelp(QString("Weather Code %1 received for %2; resolved to image: %3").arg(weatherCode, dayNight, getWeatherImageName()));
 
     if (rerender) callback(lh_cb_render,NULL);
 }

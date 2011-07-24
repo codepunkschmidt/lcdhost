@@ -54,12 +54,11 @@ class LH_WeatherImage:public LH_QtInstance
 protected:
     LH_Qt_QStringList *setup_value_type_;
     LH_Qt_QFileInfo *setup_file_;
-    LH_Qt_QString *setup_text_;
+    LH_Qt_QString *setup_feedback_;
     LH_Qt_QTextEdit *setup_usage_;
 
 public:
     const char *userInit();
-    int polling();
     int notify(int n,void* p);
     int width( void*obj,int h );
     int height( void*obj,int h );

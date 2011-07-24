@@ -65,7 +65,7 @@ const char *LH_NowPlayingStatusImage::userInit()
     setup_item_->setHelp("The item to base your rules on.<br/><br/>Note that not all players provide all data items. If you user such a player you may find a custom string a better choice.");
     connect(setup_item_, SIGNAL(changed()), this, SLOT(setup_item_changed()));
 
-    setup_custom_ = new LH_Qt_QString(this, "^Custom", "{artist}{artist?: \"}{title}{artist?:\"} {status?[}{status}{status?]}", LH_FLAG_FIRST | LH_FLAG_HIDDEN);
+    setup_custom_ = new LH_Qt_QString(this, "Custom", "{artist}{artist?: \"}{title}{artist?:\"} {status?[}{status}{status?]}", LH_FLAG_FIRST | LH_FLAG_HIDDEN | LH_FLAG_BLANKTITLE);
     setup_custom_->setHelp("Enter a template string.<br/><br/>"
                            "Templates: <br/><br/>"
                            "<table>"

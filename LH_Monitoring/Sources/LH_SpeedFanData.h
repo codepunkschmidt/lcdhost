@@ -19,7 +19,6 @@ protected:
 public:
 
     LH_SpeedFanData( LH_QtObject *parent, LH_MonitoringUI *ui, monitoringDataMode dataMode = mdmNumbers, bool includeGroups = false );
-    ~LH_SpeedFanData();
 
     QString appName() { return "SpeedFan"; }
     monitoringDataType getType();

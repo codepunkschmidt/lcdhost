@@ -19,11 +19,6 @@ LH_SpeedFanData::LH_SpeedFanData(LH_QtObject *parent, LH_MonitoringUI *ui, monit
     ui_->refresh(mon_type);
 }
 
-LH_SpeedFanData::~LH_SpeedFanData()
-{
-
-}
-
 monitoringDataType LH_SpeedFanData::getType()
 {
     if(is_avg_)

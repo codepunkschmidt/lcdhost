@@ -79,36 +79,36 @@ const char *LH_CursorAction::userInit()
                                "Note that this functionality is meant more for pages than for menus, but can be used on either."
                                );
 
-    setup_act_copy_ = new LH_Qt_QString(this, "^Copy Actions", "Copy",  LH_FLAG_UI, lh_type_string_button);
-    setup_act_paste_ = new LH_Qt_QString(this, "^Paste Actions", "Paste",  LH_FLAG_UI, lh_type_string_button);
+    setup_act_copy_ = new LH_Qt_QString(this, "Copy Actions", "Copy",  LH_FLAG_UI | LH_FLAG_BLANKTITLE, lh_type_string_button);
+    setup_act_paste_ = new LH_Qt_QString(this, "Paste Actions", "Paste",  LH_FLAG_UI | LH_FLAG_BLANKTITLE, lh_type_string_button);
 
     setup_act_rules_ = new LH_Qt_QStringList(this, "Actions", QStringList(),LH_FLAG_UI,lh_type_integer_listbox);
     setup_act_rules_->setHelp("This box contains the list of actions that will be perfromed when the coordinate is selected. Each action is done in the order shown here.<br/><br/>Select an action from this list to edit or delete it.");
 
-    setup_act_move_up_= new LH_Qt_QString(this, "^Move Action Up", "Move Up",  LH_FLAG_UI | LH_FLAG_READONLY, lh_type_string_button);
-    setup_act_move_down_= new LH_Qt_QString(this, "^Move Action Down", "Move Down",  LH_FLAG_UI | LH_FLAG_READONLY, lh_type_string_button);
-    setup_act_new_ = new LH_Qt_QString(this, "^New Action", "New",  LH_FLAG_UI, lh_type_string_button);
-    setup_act_delete_ = new LH_Qt_QString(this, "^Delete Action", "Delete", LH_FLAG_UI | LH_FLAG_READONLY, lh_type_string_button);
+    setup_act_move_up_= new LH_Qt_QString(this, "Move Action Up", "Move Up",  LH_FLAG_UI | LH_FLAG_READONLY | LH_FLAG_BLANKTITLE, lh_type_string_button);
+    setup_act_move_down_= new LH_Qt_QString(this, "Move Action Down", "Move Down",  LH_FLAG_UI | LH_FLAG_READONLY | LH_FLAG_BLANKTITLE, lh_type_string_button);
+    setup_act_new_ = new LH_Qt_QString(this, "New Action", "New",  LH_FLAG_UI | LH_FLAG_BLANKTITLE, lh_type_string_button);
+    setup_act_delete_ = new LH_Qt_QString(this, "Delete Action", "Delete", LH_FLAG_UI | LH_FLAG_READONLY | LH_FLAG_BLANKTITLE, lh_type_string_button);
 
     setup_action_desc_ = new LH_Qt_QString(this, "Description", "",LH_FLAG_READONLY|LH_FLAG_HIDDEN|LH_FLAG_UI);
     setup_action_type_ = new LH_Qt_QStringList(this, "Action Type", actionTypes_.list(),LH_FLAG_READONLY|LH_FLAG_HIDDEN|LH_FLAG_UI);
 
-    setup_action_parameter1_desc_ = new LH_Qt_QString(  this, "^p0_desc","",LH_FLAG_READONLY|LH_FLAG_HIDDEN|LH_FLAG_UI);
-    setup_action_parameter1_str_  = new LH_Qt_QString(  this, "^p0_str" ,"",LH_FLAG_READONLY|LH_FLAG_HIDDEN|LH_FLAG_UI);
-    setup_action_parameter1_int_  = new LH_Qt_int(      this, "^p0_int" ,0,LH_FLAG_READONLY|LH_FLAG_HIDDEN|LH_FLAG_UI);
-    setup_action_parameter1_file_ = new LH_Qt_QFileInfo(this, "^p0_file",QFileInfo(),LH_FLAG_READONLY|LH_FLAG_HIDDEN|LH_FLAG_UI);
+    setup_action_parameter1_desc_ = new LH_Qt_QString(  this, "p0_desc","",LH_FLAG_READONLY|LH_FLAG_HIDDEN|LH_FLAG_UI | LH_FLAG_BLANKTITLE);
+    setup_action_parameter1_str_  = new LH_Qt_QString(  this, "p0_str" ,"",LH_FLAG_READONLY|LH_FLAG_HIDDEN|LH_FLAG_UI | LH_FLAG_BLANKTITLE);
+    setup_action_parameter1_int_  = new LH_Qt_int(      this, "p0_int" ,0,LH_FLAG_READONLY|LH_FLAG_HIDDEN|LH_FLAG_UI | LH_FLAG_BLANKTITLE);
+    setup_action_parameter1_file_ = new LH_Qt_QFileInfo(this, "p0_file",QFileInfo(),LH_FLAG_READONLY|LH_FLAG_HIDDEN|LH_FLAG_UI | LH_FLAG_BLANKTITLE);
 
-    setup_action_parameter2_desc_ = new LH_Qt_QString(  this, "^p1_desc","",LH_FLAG_READONLY|LH_FLAG_HIDDEN|LH_FLAG_UI);
-    setup_action_parameter2_str_  = new LH_Qt_QString(  this, "^p1_str" ,"",LH_FLAG_READONLY|LH_FLAG_HIDDEN|LH_FLAG_UI);
-    setup_action_parameter2_int_  = new LH_Qt_int(      this, "^p1_int" ,0,LH_FLAG_READONLY|LH_FLAG_HIDDEN|LH_FLAG_UI);
-    setup_action_parameter2_file_ = new LH_Qt_QFileInfo(this, "^p1_file",QFileInfo(),LH_FLAG_READONLY|LH_FLAG_HIDDEN|LH_FLAG_UI);
+    setup_action_parameter2_desc_ = new LH_Qt_QString(  this, "p1_desc","",LH_FLAG_READONLY|LH_FLAG_HIDDEN|LH_FLAG_UI | LH_FLAG_BLANKTITLE);
+    setup_action_parameter2_str_  = new LH_Qt_QString(  this, "p1_str" ,"",LH_FLAG_READONLY|LH_FLAG_HIDDEN|LH_FLAG_UI | LH_FLAG_BLANKTITLE);
+    setup_action_parameter2_int_  = new LH_Qt_int(      this, "p1_int" ,0,LH_FLAG_READONLY|LH_FLAG_HIDDEN|LH_FLAG_UI | LH_FLAG_BLANKTITLE);
+    setup_action_parameter2_file_ = new LH_Qt_QFileInfo(this, "p1_file",QFileInfo(),LH_FLAG_READONLY|LH_FLAG_HIDDEN|LH_FLAG_UI | LH_FLAG_BLANKTITLE);
 
-    setup_action_enabled_= new LH_Qt_bool(this, "^Action Enabled", true, LH_FLAG_READONLY|LH_FLAG_HIDDEN|LH_FLAG_UI);
+    setup_action_enabled_= new LH_Qt_bool(this, "Action Enabled", true, LH_FLAG_READONLY|LH_FLAG_HIDDEN|LH_FLAG_UI | LH_FLAG_BLANKTITLE);
 
-    setup_act_save_   = new LH_Qt_QString(this, "^Save Condition", "Save", LH_FLAG_UI | LH_FLAG_HIDDEN, lh_type_string_button);
-    setup_act_cancel_ = new LH_Qt_QString(this, "^Cancel Condition Edit", "Cancel", LH_FLAG_UI | LH_FLAG_HIDDEN, lh_type_string_button);
+    setup_act_save_   = new LH_Qt_QString(this, "Save Condition", "Save", LH_FLAG_UI | LH_FLAG_HIDDEN | LH_FLAG_BLANKTITLE, lh_type_string_button);
+    setup_act_cancel_ = new LH_Qt_QString(this, "Cancel Condition Edit", "Cancel", LH_FLAG_UI | LH_FLAG_HIDDEN | LH_FLAG_BLANKTITLE, lh_type_string_button);
 
-    setup_act_XML_ = new LH_Qt_QTextEdit(this, tr("~"), "<actions>\n</actions>", LH_FLAG_HIDDEN);
+    setup_act_XML_ = new LH_Qt_QTextEdit(this, "Action XML", "<actions>\n</actions>", LH_FLAG_HIDDEN | LH_FLAG_HIDETITLE);
 
     connect( setup_jump_to_,                SIGNAL(input(QString,int,int)), this, SLOT(doJumpTo(QString,int,int)) );
     connect( setup_act_XML_,                SIGNAL(changed()), this, SLOT(xmlChanged()));

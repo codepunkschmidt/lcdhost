@@ -45,16 +45,13 @@ static inline uint PREMUL(uint x)
     return x;
 }
 
-LH_Dial::LH_Dial()
-{
-    min_ = max_ = 0.0;
-    polling_on_ = false;
-    isClock = false;
-}
-
 const char *LH_Dial::userInit()
 {
     if( const char *err = LH_QtInstance::userInit() ) return err;
+
+    min_ = max_ = 0.0;
+    polling_on_ = false;
+    isClock = false;
 
     faceImage_ = new QImage();
 
@@ -152,10 +149,11 @@ const char *LH_Dial::userInit()
     return 0;
 }
 
-LH_Dial::~LH_Dial()
+void LH_Dial::userTerm()
 {
     for(int i = 0; i<needleImage_.count(); i++)
         delete needleImage_[i];
+    LH_QtInstance::userTerm();
 }
 
 void LH_Dial::addNeedle(QString name)

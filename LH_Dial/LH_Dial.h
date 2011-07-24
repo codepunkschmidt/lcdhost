@@ -131,10 +131,8 @@ protected:
 
     void setNeedleVisibility(bool visible, int index = 0);
 public:    
-    LH_Dial();
-    ~LH_Dial();
-
     virtual const char *userInit();
+    void userTerm();
 
     int polling();
     QImage *render_qimage( int w, int h );

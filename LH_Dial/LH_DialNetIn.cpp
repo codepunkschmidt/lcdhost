@@ -32,10 +32,14 @@ class LH_DialNetIn : public LH_Dial
     LH_QtNetwork net_;
 
 public:
-    LH_DialNetIn() : net_(this)
+    LH_DialNetIn() : LH_Dial(), net_(this) {}
+
+    const char *userInit()
     {
+        if( const char *err = LH_Dial::userInit() ) return err;
         setMin(0.0);
         setMax(1000.0);
+        return 0;
     }
 
     static lh_class *classInfo()

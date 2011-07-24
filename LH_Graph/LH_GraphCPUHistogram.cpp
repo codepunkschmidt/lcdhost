@@ -74,11 +74,12 @@ public:
         return 0;
     }
 
-    ~LH_GraphCPUHistogram()
+    void userTerm()
     {
         delete valCount;
         delete valCache;
         delete lastVal;
+        LH_Graph::userTerm();
     }
 
     static lh_class *classInfo()

@@ -38,8 +38,12 @@ protected:
     LH_Qt_QStringList *setup_units_;
 
 public:
-    LH_GraphNetIn( ) : net_(this)
+    LH_GraphNetIn() : LH_Graph(), net_(this) {}
+
+    virtual const char *userInit()
     {
+        if( const char *err = LH_Graph::userInit() ) return err;
+
         QStringList valuesList;
         valuesList.append("kb/s (kilobits per second)");
         valuesList.append("Mb/s (megabits per second)");
@@ -55,6 +59,7 @@ public:
         setYUnit("kb/s");
 
         net_.smoothingHidden(true);
+        return 0;
     }
 
     static lh_class *classInfo()

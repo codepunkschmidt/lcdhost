@@ -40,17 +40,14 @@ class LH_GraphMemVirtual : public LH_Graph
 
 
 public:
-    LH_GraphMemVirtual()
+    virtual const char *userInit()
     {
+        if( const char *err = LH_Graph::userInit() ) return err;
         unitBase = 1024 * 1024 * 1024;
         setMin(0.0);
         setMax(1000.0);
         setYUnit("GB");
         initialized = false;
-    }
-
-    virtual const char *userInit()
-    {
         initialize();
         return 0;
     }

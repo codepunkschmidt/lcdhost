@@ -65,14 +65,14 @@ const char *LH_MonitoringImage::userInit()
 
     setup_image_file_->setFlags( LH_FLAG_AUTORENDER | LH_FLAG_READONLY | LH_FLAG_NOSAVE );
 
-    LH_Qt_QString* hr = new LH_Qt_QString(this,tr("~Mon-Data-Rule"), QString(), LH_FLAG_NOSAVE | LH_FLAG_NOSOURCE | LH_FLAG_NOSINK,lh_type_string_htmlhelp );
+    LH_Qt_QString* hr = new LH_Qt_QString(this,tr("Mon-Data-Rule"), QString(), LH_FLAG_NOSAVE | LH_FLAG_NOSOURCE | LH_FLAG_NOSINK | LH_FLAG_HIDETITLE,lh_type_string_htmlhelp );
     hr->setHelp("<hr>");
     hr->setOrder(-1);
 
     setup_value_ = new LH_Qt_QString( this, tr("Current Value"), "N/A", LH_FLAG_READONLY|LH_FLAG_NOSAVE );
     setup_value_->setOrder(-1);
 
-    LH_Qt_QString* hr2 =new LH_Qt_QString(this,tr("~Mon-Props-Rule"), QString(), LH_FLAG_NOSAVE | LH_FLAG_NOSOURCE | LH_FLAG_NOSINK,lh_type_string_htmlhelp );
+    LH_Qt_QString* hr2 =new LH_Qt_QString(this,tr("Mon-Props-Rule"), QString(), LH_FLAG_NOSAVE | LH_FLAG_NOSOURCE | LH_FLAG_NOSINK | LH_FLAG_HIDETITLE,lh_type_string_htmlhelp );
     hr2->setHelp("<hr>");
     hr2->setOrder(-1);
 

@@ -31,6 +31,7 @@ protected:
     bool is_group_;
 
     LH_MonitoringUI *ui_;
+    monitoringDataMode dataMode_;
 
     // get the selected data item
     virtual bool getData(float& , QString& , QString& ) { return false; }

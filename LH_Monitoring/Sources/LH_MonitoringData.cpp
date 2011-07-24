@@ -5,7 +5,7 @@
 
 LH_MonitoringData::LH_MonitoringData(LH_QtObject *parent, LH_MonitoringUI *ui, monitoringDataMode dataMode, bool includeGroups) : QObject(parent)
 {
-    Q_UNUSED(dataMode);
+    dataMode_ = dataMode;
     ui_ = ui;
     includeGroups_ = includeGroups;
     is_group_ = false;

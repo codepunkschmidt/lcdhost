@@ -118,7 +118,7 @@ const char *LH_CursorController::userInit()
 
     setup_persistent_ = new LH_Qt_bool(this,"^Persistent Selection",false,0);
     setup_persistent_->setHelp("Ticking this box will cause the system to automatically recall the cursor's last position whether you save the layout or not.<br/><br/>This is mainly of use within menu layouts and allows the menu to open with the last selected option still highlighted.");
-    setup_persistent_autoselect_ = new LH_Qt_bool(this,"^Auto-reselect",false, LH_FLAG_HIDDEN);
+    setup_persistent_autoselect_ = new LH_Qt_bool(this,"Auto-reselect",false, LH_FLAG_HIDDEN | LH_FLAG_BLANKTITLE);
     setup_persistent_autoselect_->setHelp("When recovering a persited selection, this option determins if the option is merely highlighed (i.e. the cursor is positioned on it) or if the option is actually selected.");
     setup_persistent_file_ = new LH_Qt_QFileInfo(this, "Persistence File", QFileInfo(), LH_FLAG_HIDDEN);
     setup_persistent_file_->setHelp("The file in which to save the persisted location.<br/><br/>Note that you can use this to make serveral layouts work together as though they were all parts of the same layout by pointing them all to this file, thus causing the cursor position to persist accross them.");

@@ -57,14 +57,12 @@ const char *LH_QtPlugin_TS3::userInit()
     socket_ = new QTcpSocket(this);
     myclid_ = -1;
 
-    setup_status_ = new LH_Qt_QString(this,tr("Connection Status"),QString(), LH_FLAG_NOSAVE | LH_FLAG_NOSINK | LH_FLAG_NOSOURCE | LH_FLAG_HIDETITLE, lh_type_string_htmlhelp );
-    updateStatus(false);
+    setup_connection_details_ = new LH_Qt_QString(this,tr("Connection Details"),QString(), LH_FLAG_NOSAVE | LH_FLAG_NOSINK | LH_FLAG_NOSOURCE | LH_FLAG_HIDETITLE, lh_type_string_htmlhelp );
 
     setup_talking_ = new LH_Qt_QString(this, "Talking", "", LH_FLAG_NOSAVE | LH_FLAG_NOSINK | LH_FLAG_HIDDEN);
     setup_talking_->setLink("@/Monitoring/3rdParty/TeamSpeak3/Talking");
 
     setup_talking_details_ = new LH_Qt_QString(this, "Talking Details", QString(), LH_FLAG_NOSAVE | LH_FLAG_NOSINK | LH_FLAG_NOSOURCE | LH_FLAG_HIDETITLE, lh_type_string_htmlhelp);
-    updateTalking(true);
 
     LH_Qt_QString *hr = new LH_Qt_QString(this,tr("hr1"),QString(), LH_FLAG_NOSAVE | LH_FLAG_NOSINK | LH_FLAG_NOSOURCE | LH_FLAG_HIDETITLE, lh_type_string_htmlhelp );
     hr->setHelp("<hr/>");
@@ -83,14 +81,13 @@ const char *LH_QtPlugin_TS3::userInit()
 
     setup_channelname_ = new LH_Qt_QString(this, "Channel", "", LH_FLAG_HIDDEN | LH_FLAG_READONLY | LH_FLAG_NOSAVE | LH_FLAG_NOSINK);
     setup_channelname_->setLink("@/Monitoring/3rdParty/TeamSpeak3/Username");
-    setup_microphone_present_ = new LH_Qt_bool(this, "Microphone Present", true, LH_FLAG_HIDDEN | LH_FLAG_READONLY | LH_FLAG_NOSAVE | LH_FLAG_NOSINK | LH_FLAG_BLANKTITLE);
-    setup_microphone_present_->setLink("@/Monitoring/3rdParty/TeamSpeak3/Microphone Present");
-    setup_microphone_active_ = new LH_Qt_bool(this, "Microphone Active", true, LH_FLAG_HIDDEN | LH_FLAG_READONLY | LH_FLAG_NOSAVE | LH_FLAG_NOSINK | LH_FLAG_BLANKTITLE);
-    setup_microphone_active_->setLink("@/Monitoring/3rdParty/TeamSpeak3/Microphone Active");
-    setup_speakers_present_ = new LH_Qt_bool(this, "Speakers Present", true, LH_FLAG_HIDDEN | LH_FLAG_READONLY | LH_FLAG_NOSAVE | LH_FLAG_NOSINK | LH_FLAG_BLANKTITLE);
-    setup_speakers_present_->setLink("@/Monitoring/3rdParty/TeamSpeak3/Speaker Present");
-    setup_speakers_active_ = new LH_Qt_bool(this, "Speakers Active", true, LH_FLAG_HIDDEN | LH_FLAG_READONLY | LH_FLAG_NOSAVE | LH_FLAG_NOSINK | LH_FLAG_BLANKTITLE);
-    setup_speakers_active_->setLink("@/Monitoring/3rdParty/TeamSpeak3/Speaker Active");
+
+    setup_connection_status_ = new LH_Qt_QStringList(this, "Connection Status", QStringList() << "Not Running" << "Not Connected" << "Connected", LH_FLAG_HIDDEN | LH_FLAG_READONLY | LH_FLAG_NOSAVE | LH_FLAG_NOSINK );
+    setup_connection_status_->setLink("@/Monitoring/3rdParty/TeamSpeak3/Connection Status");
+    setup_microphone_status_ = new LH_Qt_QStringList(this, "Microphone Status", QStringList() << "N/A" << "None" << "Muted" << "Active", LH_FLAG_HIDDEN | LH_FLAG_READONLY | LH_FLAG_NOSAVE | LH_FLAG_NOSINK );
+    setup_microphone_status_->setLink("@/Monitoring/3rdParty/TeamSpeak3/Microphone Status");
+    setup_speakers_status_   = new LH_Qt_QStringList(this, "Speaker Status"   , QStringList() << "N/A" << "None" << "Muted" << "Active", LH_FLAG_HIDDEN | LH_FLAG_READONLY | LH_FLAG_NOSAVE | LH_FLAG_NOSINK );
+    setup_speakers_status_->setLink("@/Monitoring/3rdParty/TeamSpeak3/Speaker Status");
 
     /*
     LH_Qt_QString *setup_user_detail_;
@@ -101,6 +98,8 @@ const char *LH_QtPlugin_TS3::userInit()
     connect(socket_, SIGNAL(readyRead()), this, SLOT(TS3DataReceived()));
     connect(socket_, SIGNAL(error(QAbstractSocket::SocketError)), this, SLOT(TS3ConnectionError(QAbstractSocket::SocketError)));
 
+    updateStatus(false);
+    updateTalking(true);
     openConnection();
     return 0;
 }
@@ -159,6 +158,8 @@ void LH_QtPlugin_TS3::TS3Connected() {
 void LH_QtPlugin_TS3::TS3Disconnected()
 {
     //qDebug() << "LH_TS3: Disconnected";
+    clients_.clear();
+    channels_.clear();
     updateStatus(false);
     server_action_ = sa_disconnected;
     if(server_action_ == sa_reconnect)
@@ -179,6 +180,9 @@ void LH_QtPlugin_TS3::TS3ConnectionError(QAbstractSocket::SocketError socketErro
     {
         qWarning() << "LH_TS3: Connection Error - " << socket_->errorString();
         server_action_ = sa_disconnected;
+        clients_.clear();
+        channels_.clear();
+        updateStatus(false);
         tryConnectTimer_.restart();
     }
 }
@@ -277,8 +281,8 @@ void LH_QtPlugin_TS3::talkChanged(QString params)
 
     if(rx.indexIn(params)!=-1)
     {
-        status = (rx.cap(1).toInt()!=0);
-        whisper = (rx.cap(2).toInt()!=0);
+        status = (rx.cap(1).toInt()==1);
+        whisper = (rx.cap(2).toInt()==1);
         clid = rx.cap(3).toInt();
     }
 
@@ -314,7 +318,7 @@ void LH_QtPlugin_TS3::updateTalking(bool force)
 
 void LH_QtPlugin_TS3::updateStatus(bool isRunning, bool isConnected, bool showChannels, bool showClients)
 {
-    setup_status_->setHelp(QString("<table style='margin-left:4px'>"
+    setup_connection_details_->setHelp(QString("<table style='margin-left:4px'>"
                                    "<tr><td><img src=':/images/%5.png'/></td><td style='padding-left:5px'>TS3 is %1%2.</td></tr>"
                                    "</table>"
                                    "<hr/>"
@@ -329,6 +333,8 @@ void LH_QtPlugin_TS3::updateStatus(bool isRunning, bool isConnected, bool showCh
             .arg(showClients? QString::number(clients_.count()) : "N/A")
             .arg(!isRunning? "notrunning" : (isConnected? "active" : "unconnected"))
             );
+    setup_connection_status_->setValue(!isRunning? 0 : (!isConnected? 1 : 2));
+    updateMyDetails();
 }
 
 void LH_QtPlugin_TS3::updateMyDetails()
@@ -350,13 +356,17 @@ void LH_QtPlugin_TS3::updateMyDetails()
                                     .arg(!myClient.inputHardware? "-disabled" : (myClient.inputMuted? "-mute" : ""))
                                     .arg(!myClient.outputHardware? "-disabled" : (myClient.outputMuted? "-mute" : ""))
                                     );
-        setup_microphone_present_->setValue(myClient.inputHardware);
-        setup_microphone_active_->setValue(!myClient.inputMuted && myClient.inputHardware);
-        setup_speakers_present_->setValue(myClient.outputHardware);
-        setup_speakers_active_->setValue(!myClient.outputMuted && myClient.outputHardware);
+
+        setup_microphone_status_->setValue(!myClient.inputHardware? 1 : (myClient.inputMuted? 2 : 3));
+        setup_speakers_status_->setValue(!myClient.outputHardware? 1 : (myClient.outputMuted? 2 : 3));
         setup_channelname_->setValue(myChannel.name);
         setup_username_->setValue(myClient.name);
-        emit myDetailsChanged();
-    } else
+    } else {
         setup_user_detail_->setHelp("");
+        setup_microphone_status_->setValue(0);
+        setup_speakers_status_->setValue(0);
+        setup_channelname_->setValue("");
+        setup_username_->setValue("");
+    }
+    emit myDetailsChanged();
 }

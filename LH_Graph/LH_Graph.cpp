@@ -105,7 +105,7 @@ const char *LH_Graph::userInit()
     setup_sample_rate_ = new LH_Qt_int(this,"Sample Rate",1,1,12,LH_FLAG_AUTORENDER);
     setup_sample_rate_->setHelp( "<p>How frequently to log data.</p>");
 
-    setup_description_ = new LH_Qt_QString(this,"~","...",LH_FLAG_READONLY|LH_FLAG_NOSAVE);
+    setup_description_ = new LH_Qt_QString(this,"Description","...",LH_FLAG_READONLY|LH_FLAG_NOSAVE|LH_FLAG_NOSINK|LH_FLAG_NOSOURCE|LH_FLAG_HIDETITLE);
     setup_description_->setHelp( "<p>Combining the \"Max Samples\" and the \"Sample Rate\" this field displays that total timespan of the graph.</p>");
 
     setup_line_selection_ = new LH_Qt_QStringList(this,"Selected Line",QStringList());

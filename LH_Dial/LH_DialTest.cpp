@@ -35,8 +35,9 @@ protected:
     LH_Qt_float *setup_val_;
 
 public:
-    LH_DialTest()
+    const char *userInit()
     {
+        if( const char *err = LH_Dial::userInit() ) return err;
         setup_min_ = new LH_Qt_float(this,"Minimum",000,0,1000,LH_FLAG_AUTORENDER);
         setup_max_ = new LH_Qt_float(this,"Maximum",100,0,1000,LH_FLAG_AUTORENDER);
         setup_val_ = new LH_Qt_float(this,"Value  ",010,0,1000,LH_FLAG_AUTORENDER);
@@ -45,6 +46,7 @@ public:
 
         setMin(0.0);
         setMax(100.0);
+        return 0;
     }
 
     static lh_class *classInfo()

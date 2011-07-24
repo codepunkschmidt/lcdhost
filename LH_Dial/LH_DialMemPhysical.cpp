@@ -29,10 +29,12 @@
 class LH_DialMemPhysical : public LH_Dial
 {
 public:
-    LH_DialMemPhysical()
+    const char *userInit()
     {
+        if( const char *err = LH_Dial::userInit() ) return err;
         setMin(0.0);
         setMax(1000.0);
+        return 0;
     }
 
     static lh_class *classInfo()

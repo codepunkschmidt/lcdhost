@@ -81,16 +81,15 @@ class LH_QtPlugin_TS3 : public LH_QtPlugin
     void updateTalking(bool force = false);
     void updateStatus(bool isRunning, bool isConnected = false, bool showChannels = false, bool showClients = false);
 protected:
-    LH_Qt_QString *setup_status_;
+    LH_Qt_QString *setup_connection_details_;
     LH_Qt_QString *setup_talking_;
     LH_Qt_QString *setup_talking_details_;
     LH_Qt_QString *setup_username_expression_;
     LH_Qt_QString *setup_username_;
     LH_Qt_QString *setup_channelname_;
-    LH_Qt_bool *setup_microphone_present_;
-    LH_Qt_bool *setup_speakers_present_;
-    LH_Qt_bool *setup_microphone_active_;
-    LH_Qt_bool *setup_speakers_active_;
+    LH_Qt_QStringList *setup_connection_status_;
+    LH_Qt_QStringList *setup_microphone_status_;
+    LH_Qt_QStringList *setup_speakers_status_;
     LH_Qt_QString *setup_user_detail_;
 
 public:

@@ -56,8 +56,10 @@ lh_class *LH_DataViewerText::classInfo()
     return &classInfo;
 }
 
-LH_DataViewerText::LH_DataViewerText() : data_(this)
+const char *LH_DataViewerText::userInit()
 {
+    if( const char *err = LH_Text::userInit() ) return err;
+
     setup_text_->setValue(" ");
     setup_text_->setFlags(LH_FLAG_READONLY | LH_FLAG_NOSAVE);
 
@@ -71,7 +73,7 @@ LH_DataViewerText::LH_DataViewerText() : data_(this)
 
     updateTimer_.start();
     scrollTimer_.start();
-    return;
+    return 0;
 }
 
 int LH_DataViewerText::polling()

@@ -42,12 +42,10 @@ protected:
     LH_Qt_QFileInfo *setup_file_;
 
 public:
-    LH_DataViewerExpiredImage();
-    ~LH_DataViewerExpiredImage();
+    LH_DataViewerExpiredImage() : data_(this) {}
+    const char *userInit();
 
     int polling();
-    int width( void*obj,int h );
-    int height( void*obj,int h );
     QImage *render_qimage( int w, int h );
 
     static lh_class *classInfo();

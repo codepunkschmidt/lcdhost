@@ -92,9 +92,8 @@ protected:
 
     QString get_dir_layout();
 public:
-    LH_DataViewerConnector();
-    ~LH_DataViewerConnector();
-    const char *userInit(){ hide(); return NULL; }
+    const char *userInit();
+    void userTerm();
 
     int polling();
 

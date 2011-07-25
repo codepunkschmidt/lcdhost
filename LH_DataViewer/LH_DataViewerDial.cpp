@@ -18,8 +18,9 @@ lh_class *LH_DataViewerDial::classInfo()
     return &classInfo;
 }
 
-LH_DataViewerDial::LH_DataViewerDial() : data_(this)
+const char *LH_DataViewerDial::userInit()
 {
+    if( const char *err = LH_Dial::userInit() ) return err;
     setup_lookup_code_ = new LH_Qt_QString( this, "Data Template", "");
     setup_lookup_code_->setOrder(-3);
 
@@ -44,6 +45,7 @@ LH_DataViewerDial::LH_DataViewerDial() : data_(this)
 
     setMin(0.0);
     setMax(100.0);
+    return 0;
 }
 
 int LH_DataViewerDial::polling()

@@ -52,8 +52,8 @@ protected:
     LH_Qt_QString *setup_text_;
 
 public:
-    LH_DataViewerImage();
-    ~LH_DataViewerImage();
+    LH_DataViewerImage() : data_(this) {}
+    const char *userInit();
 
     int polling();
     int width( void*obj,int h );

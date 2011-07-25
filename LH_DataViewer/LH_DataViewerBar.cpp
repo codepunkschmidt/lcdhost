@@ -19,8 +19,10 @@ lh_class *LH_DataViewerBar::classInfo()
     return &classInfo;
 }
 
-LH_DataViewerBar::LH_DataViewerBar() : data_(this)
+const char *LH_DataViewerBar::userInit()
 {
+    if( const char *err = LH_Bar::userInit() ) return err;
+
     setup_lookup_code_ = new LH_Qt_QString( this, "Data Template", "");
     setup_lookup_code_->setOrder(-3);
 
@@ -45,6 +47,7 @@ LH_DataViewerBar::LH_DataViewerBar() : data_(this)
 
     setMin(0.0);
     setMax(100.0);
+    return 0;
 }
 
 int LH_DataViewerBar::polling()

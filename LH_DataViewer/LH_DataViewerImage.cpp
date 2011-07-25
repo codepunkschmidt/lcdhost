@@ -53,8 +53,10 @@ lh_class *LH_DataViewerImage::classInfo()
     return &classinfo;
 }
 
-LH_DataViewerImage::LH_DataViewerImage() : data_(this)
+const char *LH_DataViewerImage::userInit()
 {
+    if( const char *err = LH_QtInstance::userInit() ) return err;
+
     setup_lookup_code_ = new LH_Qt_QString(this, "Lookup Code", "");
     connect( setup_lookup_code_, SIGNAL(changed()), this, SLOT(updateImage()) );
 
@@ -73,11 +75,7 @@ LH_DataViewerImage::LH_DataViewerImage() : data_(this)
 
     imageCode_X_ = "";
     imageCode_Y_ = "";
-}
-
-LH_DataViewerImage::~LH_DataViewerImage()
-{
-    return;
+    return 0;
 }
 
 int LH_DataViewerImage::polling()

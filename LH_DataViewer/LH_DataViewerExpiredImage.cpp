@@ -52,17 +52,14 @@ lh_class *LH_DataViewerExpiredImage::classInfo()
     return &classinfo;
 }
 
-LH_DataViewerExpiredImage::LH_DataViewerExpiredImage() : data_(this)
+const char *LH_DataViewerExpiredImage::userInit()
 {
+    if( const char *err = LH_QtInstance::userInit() ) return err;
     setup_file_ = new LH_Qt_QFileInfo( this, tr("File"), QFileInfo(), LH_FLAG_AUTORENDER );
     setup_file_->setOrder(-1);
     connect( setup_file_, SIGNAL(changed()), this, SLOT(fileChanged()) );
     isExpired = true;
-}
-
-LH_DataViewerExpiredImage::~LH_DataViewerExpiredImage()
-{
-    return;
+    return 0;
 }
 
 int LH_DataViewerExpiredImage::polling()
@@ -71,44 +68,12 @@ int LH_DataViewerExpiredImage::polling()
     return polling_rate;
 }
 
-int LH_DataViewerExpiredImage::width( void*obj,int h )
-{
-    Q_UNUSED(obj);
-    Q_UNUSED(h);
-    return -1;
-}
-
-int LH_DataViewerExpiredImage::height( void*obj,int h )
-{
-    Q_UNUSED(obj);
-    Q_UNUSED(h);
-    return -1;
-}
-
 QImage *LH_DataViewerExpiredImage::render_qimage(int w, int h)
 {
     delete image_;
     if( setup_file_->value().isFile() )
-    {
-        //setup_file_->value;
-        //QString folderPath = setup_file_->value().dir().path() + "/";
-        //QString imageName = getImageName();
-
-
-        if ( isExpired )
-        {
-            image_ = new QImage(setup_file_->value().absoluteFilePath());
-        } else
-        {
-            uchar *data = new uchar[4];
-            data[0] = 255;
-            data[1] = 0;
-            data[2] = 0;
-            data[3] = 0;
-
-            image_ = new QImage(data,1,1,QImage::Format_ARGB32);
-        }            
-    } else
+        image_ = new QImage(setup_file_->value().absoluteFilePath());
+    else
         image_ = new QImage(w,h,QImage::Format_Invalid);
     return image_;
 }
@@ -124,5 +89,5 @@ void LH_DataViewerExpiredImage::updateImage(bool rerender)
         if(isExpired != data_.expired) rerender = true;
         isExpired = data_.expired;
     }
-    if (rerender) callback(lh_cb_render,NULL);
+    setVisible(isExpired);
 }

@@ -59,8 +59,10 @@ lh_class *LH_DataViewerConnector::classInfo()
 #define source_type_INI 3
 
 
-LH_DataViewerConnector::LH_DataViewerConnector()
+const char *LH_DataViewerConnector::userInit()
 {
+    if( const char *err = LH_QtInstance::userInit() ) return err;
+
     setup_feedback_ = new LH_Qt_QString(this, "Feedback", "", LH_FLAG_READONLY | LH_FLAG_NOSAVE);
 
     QStringList langs = listLanguages();
@@ -85,6 +87,8 @@ LH_DataViewerConnector::LH_DataViewerConnector()
 
     dataExpiry_ = 0;
     repolled_ = false;
+    hide();
+    return 0;
 }
 
 QString LH_DataViewerConnector::get_dir_layout()
@@ -113,14 +117,14 @@ qDebug() << get_dir_layout();
     return languages;
 }
 
-LH_DataViewerConnector::~LH_DataViewerConnector()
+void LH_DataViewerConnector::userTerm()
 {
     //delete sourceWatcher_;
     delete rootNode;
     rootNode = 0;
     delete sharedData;
     sharedData = 0;
-    return ;
+    LH_QtInstance::userTerm() ;
 }
 
 int LH_DataViewerConnector::polling()

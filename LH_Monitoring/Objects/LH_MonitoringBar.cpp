@@ -54,7 +54,7 @@ const char *LH_MonitoringBar::userInit()
 
     ui_ = new LH_MonitoringUI(this, mdmNumbers, true);
 
-    LH_Qt_QString* hr = new LH_Qt_QString(this,tr("Mon-Data-Rule"),QString(), LH_FLAG_NOSAVE | LH_FLAG_NOSOURCE | LH_FLAG_NOSINK | LH_FLAG_HIDETITLE,lh_type_string_htmlhelp );
+    LH_Qt_QString* hr = new LH_Qt_QString(this,("Mon-Data-Rule"),QString(), LH_FLAG_NOSAVE | LH_FLAG_NOSOURCE | LH_FLAG_NOSINK | LH_FLAG_HIDETITLE,lh_type_string_htmlhelp );
     hr->setHelp("<hr>");
     hr->setOrder(-3);
 
@@ -68,7 +68,7 @@ const char *LH_MonitoringBar::userInit()
     setup_min_->setOrder(-3);
     connect( setup_min_, SIGNAL(changed()), this, SLOT(updateBounds()) );
 
-    LH_Qt_QString* hr2 =new LH_Qt_QString(this,tr("Mon-Props-Rule"), QString(), LH_FLAG_NOSAVE | LH_FLAG_NOSOURCE | LH_FLAG_NOSINK | LH_FLAG_HIDETITLE,lh_type_string_htmlhelp );
+    LH_Qt_QString* hr2 =new LH_Qt_QString(this,("Mon-Props-Rule"), QString(), LH_FLAG_NOSAVE | LH_FLAG_NOSOURCE | LH_FLAG_NOSINK | LH_FLAG_HIDETITLE,lh_type_string_htmlhelp );
     hr2->setHelp("<hr>");
     hr2->setOrder(-3);
 

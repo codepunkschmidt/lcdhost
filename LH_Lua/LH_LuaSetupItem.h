@@ -10,7 +10,7 @@ class LH_LuaSetupItem : public LH_QtSetupItem
 
 public:
     LH_LuaSetupItem( LH_LuaInstance *parent, const char *id )
-        : LH_QtSetupItem( parent, QString::fromAscii(id), lh_type_none, 0 ) {}
+        : LH_QtSetupItem( parent, id, lh_type_none, 0 ) {}
 
     LH_LuaInstance *parent() const { return static_cast<LH_LuaInstance *>(LH_QtSetupItem::parent()); }
     virtual void setup_change();

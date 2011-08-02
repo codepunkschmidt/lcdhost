@@ -17,22 +17,22 @@ LH_RSSInterface::LH_RSSInterface(LH_QtObject* parent)
 
     setup_method_ = NULL;
 
-    setup_delay_ = new LH_Qt_QSlider(parent,tr("Switch delay"),5,1,10);
+    setup_delay_ = new LH_Qt_QSlider(parent,("Switch delay"),5,1,10);
     connect( setup_delay_, SIGNAL(changed()), this, SLOT(changeDelay()) );
 
-    setup_browser_ = new LH_Qt_InputState(parent,tr("Open in browser"),QString(),LH_FLAG_AUTORENDER);
+    setup_browser_ = new LH_Qt_InputState(parent,("Open in browser"),QString(),LH_FLAG_AUTORENDER);
     connect( setup_browser_, SIGNAL(input(QString,int,int)), this, SLOT(openBrowser(QString,int,int)) );
 
-    setup_prev_ = new LH_Qt_InputState(parent,tr("Previous Headline"),QString(),LH_FLAG_AUTORENDER);
+    setup_prev_ = new LH_Qt_InputState(parent,("Previous Headline"),QString(),LH_FLAG_AUTORENDER);
     connect( setup_prev_, SIGNAL(input(QString,int,int)), this, SLOT(prevHeadline(QString,int,int)) );
 
-    setup_next_ = new LH_Qt_InputState(parent,tr("Next Headline"),QString(),LH_FLAG_AUTORENDER);
+    setup_next_ = new LH_Qt_InputState(parent,("Next Headline"),QString(),LH_FLAG_AUTORENDER);
     connect( setup_next_, SIGNAL(input(QString,int,int)), this, SLOT(nextHeadline(QString,int,int)) );
 
-    setup_refresh_ = new LH_Qt_int(parent,tr("Refresh (minutes)"),5);
+    setup_refresh_ = new LH_Qt_int(parent,("Refresh (minutes)"),5);
     connect( setup_refresh_, SIGNAL(changed()), this, SLOT(changeRefresh()) );
 
-    setup_modify_ = new LH_Qt_int(parent,tr("Modify Visible"),0,-20,20);
+    setup_modify_ = new LH_Qt_int(parent,("Modify Visible"),0,-20,20);
     setup_modify_->setHelp("Use this to display a different item from the one that is currently active: set it to 1 for the \"next\" item, \"-1\" for the previous item, etc.");
     connect( setup_modify_, SIGNAL(changed()), this, SLOT(reemitChanged()) );
 

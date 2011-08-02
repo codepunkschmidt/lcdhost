@@ -50,8 +50,8 @@ class LH_Qt_QStringList : public LH_QtSetupItem
     QStringList list_;
 
 public:
-    LH_Qt_QStringList( LH_QtObject *parent, const QString& name, const QStringList& list, int flags = 0, lh_setup_type subtype = lh_type_integer_list  )
-        : LH_QtSetupItem( parent, name, subtype, flags )
+    LH_Qt_QStringList( LH_QtObject *parent, const char *ident, const QStringList& list, int flags = 0, lh_setup_type subtype = lh_type_integer_list  )
+        : LH_QtSetupItem( parent, ident, subtype, flags )
     {
         list_ = list;
         setList( list_.join("\n").toUtf8() );

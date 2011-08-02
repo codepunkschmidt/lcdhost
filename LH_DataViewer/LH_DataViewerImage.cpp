@@ -62,11 +62,11 @@ const char *LH_DataViewerImage::userInit()
 
     setup_lookup_code_value_ = new LH_Qt_QString(this, " ", "", LH_FLAG_READONLY|LH_FLAG_NOSAVE|LH_FLAG_NOSAVE);
 
-    setup_file_ = new LH_Qt_QFileInfo( this, tr("File"), QFileInfo(), LH_FLAG_AUTORENDER );
+    setup_file_ = new LH_Qt_QFileInfo( this, ("File"), QFileInfo(), LH_FLAG_AUTORENDER );
     setup_file_->setOrder(-1);
     connect( setup_file_, SIGNAL(changed()), this, SLOT(fileChanged()) );
 
-    setup_text_ = new LH_Qt_QString( this, tr("~"), QString(), LH_FLAG_READONLY|LH_FLAG_NOSAVE|LH_FLAG_HIDDEN|LH_FLAG_AUTORENDER );
+    setup_text_ = new LH_Qt_QString( this, ("~"), QString(), LH_FLAG_READONLY|LH_FLAG_NOSAVE|LH_FLAG_HIDDEN|LH_FLAG_AUTORENDER );
 
     //setup_text_->setOrder(-1);
 
@@ -151,7 +151,7 @@ void LH_DataViewerImage::fileChanged()
     setup_file_->value().refresh();
     if( !setup_file_->value().isFile() )
     {
-        setup_text_->setValue(tr("No such file."));
+        setup_text_->setValue(("No such file."));
         setup_text_->setFlag(LH_FLAG_HIDDEN,false);
         return;
     }
@@ -197,7 +197,7 @@ void LH_DataViewerImage::fileChanged()
             }
             updateImage(true);
         } else {
-            setup_text_->setValue(tr("Unable to open file."));
+            setup_text_->setValue(("Unable to open file."));
             setup_text_->setFlag(LH_FLAG_HIDDEN,false);
             return;
         }

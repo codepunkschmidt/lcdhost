@@ -70,7 +70,7 @@ const char *LH_Bar::userInit()
     setup_type_ = new LH_Qt_QStringList(this, "Bar Style", valueTypes, LH_FLAG_AUTORENDER);
     connect( setup_type_, SIGNAL(changed()), this, SLOT(changeType()) );
 
-    setup_file_ = new LH_Qt_QFileInfo( this, tr("Bar Image"), QFileInfo(), LH_FLAG_AUTORENDER | LH_FLAG_HIDDEN );
+    setup_file_ = new LH_Qt_QFileInfo( this,"Bar Image", QFileInfo(), LH_FLAG_AUTORENDER | LH_FLAG_HIDDEN );
     connect( setup_file_, SIGNAL(changed()), this, SLOT(changeFile()) );
 
     valueTypes = QStringList();
@@ -80,13 +80,13 @@ const char *LH_Bar::userInit()
     setup_masking_ = new LH_Qt_QStringList(this, "Masking", valueTypes, LH_FLAG_AUTORENDER | LH_FLAG_HIDDEN);
     connect( setup_masking_, SIGNAL(changed()), this, SLOT(changeFile()) );
 
-    setup_file_endMask_ = new LH_Qt_QFileInfo( this, tr("Transparency Mask"), QFileInfo(), LH_FLAG_AUTORENDER | LH_FLAG_HIDDEN );
+    setup_file_endMask_ = new LH_Qt_QFileInfo( this, "Transparency Mask", QFileInfo(), LH_FLAG_AUTORENDER | LH_FLAG_HIDDEN );
     connect( setup_file_endMask_, SIGNAL(changed()), this, SLOT(changeFile()) );
 
     setup_pencolor1_ = new LH_Qt_QColor(this,"Bar color (start)",Qt::green,LH_FLAG_AUTORENDER);
     setup_pencolor2_ = new LH_Qt_QColor(this,"Bar color (end)",Qt::red,LH_FLAG_AUTORENDER);
 
-    setup_file_bg_ = new LH_Qt_QFileInfo( this, tr("Bar Background Image"), QFileInfo(), LH_FLAG_AUTORENDER | LH_FLAG_HIDDEN );
+    setup_file_bg_ = new LH_Qt_QFileInfo( this,"Bar Background Image", QFileInfo(), LH_FLAG_AUTORENDER | LH_FLAG_HIDDEN );
     connect( setup_file_bg_, SIGNAL(changed()), this, SLOT(changeFile()) );
 
     setup_bgcolor_ = new LH_Qt_QColor(this,"Background color",Qt::transparent,LH_FLAG_AUTORENDER);

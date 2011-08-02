@@ -7,8 +7,8 @@ class LH_Qt_array_double : public LH_Qt_array
 {
     Q_OBJECT
 public:
-    LH_Qt_array_double( LH_QtObject *parent, const QString& name, int size = 0, int flags = 0 )
-        : LH_Qt_array( parent, name, size, flags, lh_type_array_double )
+    LH_Qt_array_double( LH_QtObject *parent, const char *ident, int size = 0, int flags = 0 )
+        : LH_Qt_array( parent, ident, size, flags, lh_type_array_double )
     {
     }
 

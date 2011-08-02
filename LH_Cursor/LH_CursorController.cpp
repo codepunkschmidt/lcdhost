@@ -62,7 +62,7 @@ const char *LH_CursorController::userInit()
 
     QStringList modeNames = QStringList();
     foreach(cursorMode cm, cursorModes) modeNames.append(cm.description);
-    setup_mode_ = new LH_Qt_QStringList(this,tr("Cursor Mode"),modeNames,LH_FLAG_AUTORENDER);
+    setup_mode_ = new LH_Qt_QStringList(this,("Cursor Mode"),modeNames,LH_FLAG_AUTORENDER);
     setup_mode_->setHelp("This allows the user to select how the cursor should behave. Each cursor mode is a combination of several options:<br/>"
                          "<br/>"
                          "<ul>"

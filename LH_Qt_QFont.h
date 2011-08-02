@@ -43,8 +43,8 @@ class LH_Qt_QFont : public LH_Qt_QString
     QFont font_;
 
 public:
-    LH_Qt_QFont( LH_QtObject *parent, const QString& name, const QFont& value, int flags = 0 )
-        : LH_Qt_QString( parent, name, value.toString(), flags, lh_type_string_font ), font_(value)
+    LH_Qt_QFont( LH_QtObject *parent, const char *ident, const QFont& value, int flags = 0 )
+        : LH_Qt_QString( parent, ident, value.toString(), flags, lh_type_string_font ), font_(value)
     {
         return;
     }

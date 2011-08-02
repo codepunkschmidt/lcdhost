@@ -55,7 +55,7 @@ lh_class *LH_DataViewerExpiredImage::classInfo()
 const char *LH_DataViewerExpiredImage::userInit()
 {
     if( const char *err = LH_QtInstance::userInit() ) return err;
-    setup_file_ = new LH_Qt_QFileInfo( this, tr("File"), QFileInfo(), LH_FLAG_AUTORENDER );
+    setup_file_ = new LH_Qt_QFileInfo( this, ("File"), QFileInfo(), LH_FLAG_AUTORENDER );
     setup_file_->setOrder(-1);
     connect( setup_file_, SIGNAL(changed()), this, SLOT(fileChanged()) );
     isExpired = true;

@@ -40,16 +40,16 @@
 class LH_Qt_int : public LH_QtSetupItem
 {
 public:
-    LH_Qt_int( LH_QtObject *parent, const QString& name, qint64 value, qint64 min, qint64 max, int flags = 0, lh_setup_type subtype = lh_type_integer )
-        : LH_QtSetupItem( parent, name, subtype, flags|LH_FLAG_MINMAX )
+    LH_Qt_int( LH_QtObject *parent, const char *ident, qint64 value, qint64 min, qint64 max, int flags = 0, lh_setup_type subtype = lh_type_integer )
+        : LH_QtSetupItem( parent, ident, subtype, flags|LH_FLAG_MINMAX )
     {
         item_.data.i = value;
         item_.param.i.min = min;
         item_.param.i.max = max;
     }
 
-    LH_Qt_int( LH_QtObject *parent, const QString& name, qint64 value, int flags = 0, lh_setup_type subtype = lh_type_integer )
-        : LH_QtSetupItem( parent, name, subtype, flags )
+    LH_Qt_int( LH_QtObject *parent, const char *ident, qint64 value, int flags = 0, lh_setup_type subtype = lh_type_integer )
+        : LH_QtSetupItem( parent, ident, subtype, flags )
     {
         item_.data.i = value;
     }

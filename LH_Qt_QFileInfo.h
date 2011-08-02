@@ -45,8 +45,8 @@ class LH_Qt_QFileInfo : public LH_Qt_QString
     QFileInfo fi_;
 
 public:
-    LH_Qt_QFileInfo( LH_QtObject *parent, const QString& name, const QFileInfo& value, int flags = 0 )
-        : LH_Qt_QString( parent, name, value.filePath(), flags, lh_type_string_filename ), fi_(value)
+    LH_Qt_QFileInfo( LH_QtObject *parent, const char *ident, const QFileInfo& value, int flags = 0 )
+        : LH_Qt_QString( parent, ident, value.filePath(), flags, lh_type_string_filename ), fi_(value)
     {
         return;
     }

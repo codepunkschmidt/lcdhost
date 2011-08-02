@@ -58,11 +58,11 @@ lh_class *LH_Background::classInfo()
 const char *LH_Background::userInit()
 {
     if( const char *err = LH_QtInstance::userInit() ) return err;
-    setup_startcolor_ = new LH_Qt_QColor(this,tr("First color"),Qt::white,LH_FLAG_AUTORENDER);
-    setup_gradient_ = new LH_Qt_bool(this,tr("^Background is a gradient"),false);
+    setup_startcolor_ = new LH_Qt_QColor(this,("First color"),Qt::white,LH_FLAG_AUTORENDER);
+    setup_gradient_ = new LH_Qt_bool(this,("^Background is a gradient"),false);
     connect( setup_gradient_, SIGNAL(change(bool)), this, SLOT(enableGradient(bool)) );
-    setup_stopcolor_ = new LH_Qt_QColor(this,tr("Second color"),Qt::lightGray,LH_FLAG_HIDDEN|LH_FLAG_AUTORENDER);
-    setup_horizontal_ = new LH_Qt_bool(this,tr("^Gradient is horizontal"),false,LH_FLAG_HIDDEN|LH_FLAG_AUTORENDER);
+    setup_stopcolor_ = new LH_Qt_QColor(this,("Second color"),Qt::lightGray,LH_FLAG_HIDDEN|LH_FLAG_AUTORENDER);
+    setup_horizontal_ = new LH_Qt_bool(this,("^Gradient is horizontal"),false,LH_FLAG_HIDDEN|LH_FLAG_AUTORENDER);
     return 0;
 }
 

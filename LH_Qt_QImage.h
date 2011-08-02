@@ -43,8 +43,8 @@ class LH_Qt_QImage : public LH_QtSetupItem
     QImage image_;
 
 public:
-    LH_Qt_QImage( LH_QtObject *parent, const QString& name, const QImage& value, int flags = 0 )
-        : LH_QtSetupItem( parent, name, lh_type_pointer_qimage, flags ), image_(value)
+    LH_Qt_QImage( LH_QtObject *parent, const char *ident, const QImage& value, int flags = 0 )
+        : LH_QtSetupItem( parent, ident, lh_type_pointer_qimage, flags ), image_(value)
     {
         item_.param.p = (void*)&image_;
         return;

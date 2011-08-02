@@ -76,7 +76,7 @@ const char *LH_Dial::userInit()
     setup_face_fillcolor2_ = new LH_Qt_QColor(this,"Fill color (end)",Qt::lightGray,LH_FLAG_AUTORENDER);
     setup_face_fillcolor2_->setHelp( "<p>The color used to fill dial's face at the bottom</p>");
 
-    setup_face_image_ = new LH_Qt_QFileInfo( this, tr("Face Image"), QFileInfo(), LH_FLAG_AUTORENDER | LH_FLAG_HIDDEN);
+    setup_face_image_ = new LH_Qt_QFileInfo( this, ("Face Image"), QFileInfo(), LH_FLAG_AUTORENDER | LH_FLAG_HIDDEN);
     setup_face_image_->setHelp( "<p>Image file to load and use as the dial's face</p>");
 
     setup_face_ticks_ = new LH_Qt_bool(this,"Show Ticks",false,LH_FLAG_AUTORENDER);
@@ -117,7 +117,7 @@ const char *LH_Dial::userInit()
     setup_needle_gap_ = new LH_Qt_int(this,"Needle Gap (%)",0,0,100,LH_FLAG_AUTORENDER|LH_FLAG_NOSAVE);
     setup_needle_gap_->setHelp( "<p>The gap between the center of the dial and the needle's start as a percentage of the dial's radius.</p>");
 
-    setup_needle_image_ = new LH_Qt_QFileInfo( this, tr("Needle Image"), QFileInfo(), LH_FLAG_AUTORENDER | LH_FLAG_HIDDEN |LH_FLAG_NOSAVE);
+    setup_needle_image_ = new LH_Qt_QFileInfo( this, ("Needle Image"), QFileInfo(), LH_FLAG_AUTORENDER | LH_FLAG_HIDDEN |LH_FLAG_NOSAVE);
     setup_needle_image_->setHelp( "<p>Image file to load and use for this needle (see \"Needle Style\" for more information about how the image will be used).</p>");
     connect( setup_needle_style_, SIGNAL(changed()), this, SLOT(changeNeedleStyle()));
 

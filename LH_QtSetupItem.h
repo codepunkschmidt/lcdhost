@@ -78,7 +78,7 @@ protected:
     }
 
 public:
-    LH_QtSetupItem( LH_QtObject *parent, const QString& ident, lh_setup_type type, int flags );
+    LH_QtSetupItem( LH_QtObject *parent, const char *ident, lh_setup_type type, int flags );
     ~LH_QtSetupItem();
 
     LH_QtObject *parent() const { return static_cast<LH_QtObject *>(LH_QtObject::parent()); }
@@ -90,11 +90,11 @@ public:
     void refreshData() { callback( lh_cb_setup_refresh_data, 0 ); }
 
     // metadata
-    void setIdent( const QString& s );
+    void setIdent(const char * s);
     const char *ident() const { return ident_array_.constData(); }
     void setTitle(const QString& s);
     const char *title() const { return title_array_.constData(); }
-    void setLink(const QString& s);
+    void setLink(const char * s);
     const char *link() const { return link_array_.constData(); }
     void setHelp(const QString& s);
     const char *help() const { return help_array_.constData(); }

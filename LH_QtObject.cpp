@@ -33,6 +33,7 @@
   */
 
 #include <QDebug>
+#include <QTextStream>
 #include "LH_QtObject.h"
 #include "LH_QtSetupItem.h"
 
@@ -113,19 +114,10 @@ const char *LH_QtObject::userInit()
 
 const char *LH_QtObject::input_name( const char *devid, int item )
 {
-    static char buf[64];
-    if( devid )
-    {
-        int len = strlen( devid );
-        if( len > 48 ) len = 48;
-        memcpy( buf, devid, len+1 );
-        if( item )
-        {
-            buf[len++] = '/';
-            if( item >= 0 ) buf[len++] = '+';
-            itoa( item, buf+len, 10 );
-        }
-        return buf;
-    }
-    return 0;
+    static QByteArray ary;
+    if( devid == 0 ) return 0;
+    if( item == 0 ) return devid;
+    QTextStream s(&ary);
+    s << devid << '/' << forcesign << item;
+    return ary.constData();
 }

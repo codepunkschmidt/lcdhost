@@ -1,6 +1,8 @@
 TARGET = LH_Monitoring
 TEMPLATE = lib
-DEFINES += LH_Monitoring_LIBRARY
+DEFINES += LH_MONITORING_LIBRARY
+DEFINES += COMMON_OBJECT_NAME="Monitoring"
+DEFINES += MONITORING_FOLDER="System"
 QT += xml
 
 include(../Plugins.pri)
@@ -18,9 +20,14 @@ HEADERS += \
     ../LH_QtInstance.h \
     ../lh_plugin.h \
     LH_QImage/LH_QImage.h \
-#    LH_AidaWriter.h \
+    LH_AidaWriter.h \
     LH_RivaWriter.h \
     Sources/LH_SpeedFanTypes.h \
+    Objects/LH_MonitoringText.h \
+    Objects/LH_MonitoringImage.h \
+    Objects/LH_MonitoringGraph.h \
+    Objects/LH_MonitoringDial.h \
+    Objects/LH_MonitoringBar.h \
     Sources/LH_SpeedFanData.h \
     Sources/LH_RivaTunerTypes.h \
     Sources/LH_RivaTunerData.h \
@@ -39,12 +46,9 @@ HEADERS += \
     Sources/LH_AfterburnerTypes.h \
     Sources/LH_AfterburnerData.h \
     Sources/LH_MonitoringUI.h \
-    Objects/LH_MonitoringText.h \
-    Objects/LH_MonitoringImage.h \
-    Objects/LH_MonitoringGraph.h \
-    Objects/LH_MonitoringDial.h \
-    Objects/LH_MonitoringBar.h \
     Sources/LH_HWMonData.h
+#    Sources/LH_HWiNFOTypes.h \
+#    Sources/LH_HWiNFOData.h
 
 SOURCES += \
     LH_QtPlugin_Monitoring.cpp \
@@ -58,8 +62,13 @@ SOURCES += \
     ../LH_QtInstance.cpp \
     LH_QImage/logo_blob.c \
     LH_QImage/LH_QImage.cpp \
- #   LH_AidaWriter.cpp \
+    LH_AidaWriter.cpp \
     LH_RivaWriter.cpp \
+    Objects/LH_MonitoringText.cpp \
+    Objects/LH_MonitoringImage.cpp \
+    Objects/LH_MonitoringGraph.cpp \
+    Objects/LH_MonitoringDial.cpp \
+    Objects/LH_MonitoringBar.cpp \
     Sources/LH_SpeedFanData.cpp \
     Sources/LH_RivaTunerData.cpp \
     Sources/LH_MonitoringData.cpp \
@@ -71,11 +80,7 @@ SOURCES += \
     Sources/LH_Aida64Data.cpp \
     Sources/LH_AfterburnerData.cpp \
     Sources/LH_MonitoringUI.cpp \
-    Objects/LH_MonitoringText.cpp \
-    Objects/LH_MonitoringImage.cpp \
-    Objects/LH_MonitoringGraph.cpp \
-    Objects/LH_MonitoringDial.cpp \
-    Objects/LH_MonitoringBar.cpp \
     Sources/LH_HWMonData.cpp
+#    Sources/LH_HWiNFOData.cpp
 
 RESOURCES +=

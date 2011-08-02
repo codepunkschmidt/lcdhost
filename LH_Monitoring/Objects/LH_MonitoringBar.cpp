@@ -33,9 +33,9 @@ lh_class *LH_MonitoringBar::classInfo()
     static lh_class classInfo =
     {
         sizeof(lh_class),
-        "3rdParty/Monitoring",
-        "MonitoringBar",
-        "Monitoring (Bar)",
+        "3rdParty/"STRINGIZE(MONITORING_FOLDER)" Monitoring",
+        STRINGIZE(COMMON_OBJECT_NAME)"Bar",
+        STRINGIZE(COMMON_OBJECT_NAME)" (Bar)",
         48,48
         
     };

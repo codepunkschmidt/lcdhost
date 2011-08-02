@@ -10,6 +10,7 @@
 
 #include "LH_MonitoringData.h"
 
+#ifdef LH_MONITORING_LIBRARY
 #include "LH_AfterburnerData.h"
 #include "LH_ATITrayToolsData.h"
 #include "LH_CoreTempData.h"
@@ -20,6 +21,8 @@
 #include "LH_LogitechData.h"
 #include "LH_Aida64Data.h"
 #include "LH_HWMonData.h"
+#include "LH_HWiNFOData.h"
+#endif
 
 enum ui_mon_entry_type
 {
@@ -95,7 +98,7 @@ public:
     int value(ui_mon_entry_type);
     QString valueText(ui_mon_entry_type);
     int count(ui_mon_entry_type);
-    void setValue(ui_mon_entry_type, int);
+    void setValue(ui_mon_entry_type, int, bool fix=false);
 
     bool applyOffset();
     bool applyFormat();

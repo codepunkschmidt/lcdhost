@@ -11,7 +11,7 @@ LH_MonitoringUI::LH_MonitoringUI(LH_QtObject *parent, monitoringDataMode dataMod
 
     int LH_FLAG_SAVEOBJECT_VISIBILITY = LH_FLAG_HIDDEN; //for debugging, set this to LH_FLAG_READONLY
 
-    setup_monitoring_app_ = new LH_Qt_QStringList(parent, "Application", QStringList() << "(Please Select)" << "Aida64" << "ATI Tray Tools" << "Core Temp" << "Fraps" << "GPU-Z" << "HWMonitor + HWMonTray" << "Logitech Monitoring Gadget" << "MSI Afterburner" << "RivaTuner" << "SpeedFan", LH_FLAG_READONLY | LH_FLAG_NOSAVE);
+    setup_monitoring_app_ = new LH_Qt_QStringList(parent, "Application", QStringList() << "(Please Select)" << "Aida64" << "ATI Tray Tools" << "Core Temp" << "Fraps" << "GPU-Z" << "HWiNFO" << "HWMonitor + HWMonTray" << "Logitech Monitoring Gadget" << "MSI Afterburner" << "RivaTuner" << "SpeedFan", LH_FLAG_READONLY | LH_FLAG_NOSAVE);
     setup_monitoring_app_->setHelp( "<p>The 3rd party application you are using used to monitor your system.</p>");
     setup_monitoring_app_->setOrder(-4);
 
@@ -243,17 +243,23 @@ int LH_MonitoringUI::count(ui_mon_entry_type et)
     return -1;
 }
 
-void LH_MonitoringUI::setValue(ui_mon_entry_type et, int i)
+void LH_MonitoringUI::setValue(ui_mon_entry_type et, int i, bool fix)
 {
     switch(et)
     {
     case mon_type:
+        if(fix && i>=setup_value_type_->list().length())
+            i = setup_value_type_->list().length()-1;
         return setup_value_type_->setValue(i);
         break;
     case mon_group:
+        if(fix && i>=setup_value_group_->list().length())
+            i = setup_value_group_->list().length()-1;
         return setup_value_group_->setValue(i);
         break;
     case mon_item:
+        if(fix && i>=setup_value_item_->list().length())
+            i = setup_value_item_->list().length()-1;
         return setup_value_item_->setValue(i);
         break;
     }
@@ -515,6 +521,7 @@ void LH_MonitoringUI::acquireAppData()
         delete data_;
         data_ = NULL;
     }
+#ifdef LH_MONITORING_LIBRARY
     if(setup_monitoring_app_->valueText() == "MSI Afterburner")
         data_ = new LH_AfterburnerData((LH_QtObject*)parent(), this, dataMode_, includeGroups_);
     if(setup_monitoring_app_->valueText() == "ATI Tray Tools")
@@ -535,6 +542,10 @@ void LH_MonitoringUI::acquireAppData()
         data_ = new LH_Aida64Data((LH_QtObject*)parent(), this, dataMode_, includeGroups_);
     if(setup_monitoring_app_->valueText() == "HWMonitor + HWMonTray")
         data_ = new LH_HWMonData((LH_QtObject*)parent(), this, dataMode_, includeGroups_);
+    if(setup_monitoring_app_->valueText() == "HWiNFO")
+        data_ = new LH_HWiNFOData((LH_QtObject*)parent(), this, dataMode_, includeGroups_);
+#elif LH_TORRENTMON_LIBRARY
+#endif
 
     if(!data_) reset();
 }

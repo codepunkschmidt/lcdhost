@@ -33,9 +33,9 @@ lh_class *LH_MonitoringGraph::classInfo()
     static lh_class classInfo =
     {
         sizeof(lh_class),
-        "3rdParty/Monitoring",
-        "MonitoringGraph",
-        "Monitoring (Graph)",
+        "3rdParty/"STRINGIZE(MONITORING_FOLDER)" Monitoring",
+        STRINGIZE(COMMON_OBJECT_NAME)"Graph",
+        STRINGIZE(COMMON_OBJECT_NAME)" (Graph)",
         48,48
         
     };

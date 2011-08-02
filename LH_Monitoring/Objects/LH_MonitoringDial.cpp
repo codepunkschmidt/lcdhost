@@ -33,9 +33,9 @@ lh_class *LH_MonitoringDial::classInfo()
     static lh_class classInfo =
     {
         sizeof(lh_class),
-        "3rdParty/Monitoring",
-        "MonitoringDial",
-        "Monitoring (Dial)",
+        "3rdParty/"STRINGIZE(MONITORING_FOLDER)" Monitoring",
+        STRINGIZE(COMMON_OBJECT_NAME)"Dial",
+        STRINGIZE(COMMON_OBJECT_NAME)" (Dial)",
         48,48
         
     };

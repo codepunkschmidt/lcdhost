@@ -39,8 +39,8 @@ lh_class *LH_WeatherBrowserOpener::classInfo()
         "WeatherBrowserOpener",
         "Weather Browser Opener",
         -1, -1,
-        lh_object_calltable_NULL,
-        lh_instance_calltable_NULL
+        
+        
     };
 
     if( classInfo.width == -1 )

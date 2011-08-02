@@ -35,7 +35,7 @@ public:
     void closeEvent(QCloseEvent *);
     QNetworkAccessManager *manager() { return manager_; }
 
-    bool event(QEvent *);
+    void customEvent(QEvent *);
     bool paused() const;
     void updateRequests();
 

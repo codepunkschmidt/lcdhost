@@ -33,45 +33,62 @@
   */
 
 #include <QDebug>
+#include "LH_QtPlugin.h"
 #include "LH_QtInstance.h"
 
-LH_QtClassLoader *LH_QtClassLoader::first_ = NULL;
-static const lh_class **classlist_ = NULL;
-static QList<lh_layout_class> *manual_list_ = NULL;
-
 #define RECAST(obj) reinterpret_cast<LH_QtInstance*>(obj)
-static void obj_prerender(void *obj) { RECAST(obj)->prerender(); }
-static int obj_width(void *obj,int h) { return RECAST(obj)->width(h); }
-static int obj_height(void *obj,int w) { return RECAST(obj)->height(w); }
-static const lh_blob * obj_render_blob(void *obj,int w,int h) { return RECAST(obj)->render_blob(w,h); }
-static void * obj_render_qimage(void *obj,int w,int h) { return RECAST(obj)->render_qimage(w,h); }
-static void obj_delete(void *obj) { delete RECAST(obj); }
 
-void LH_QtInstance::build_instance_calltable( lh_instance_calltable *ct, lh_class_factory_t cf )
+static void obj_prerender(lh_layout_item *obj)
 {
-    if( ct )
-    {
-        ct->size = sizeof(lh_instance_calltable);
-        ct->obj_new = cf;
-        ct->obj_prerender = obj_prerender;
-        ct->obj_width = obj_width;
-        ct->obj_height = obj_height;
-        ct->obj_render_blob = obj_render_blob;
-        ct->obj_render_qimage = obj_render_qimage;
-        ct->obj_delete = obj_delete;
-    }
-    return;
+    RECAST(obj->obj.ref)->prerender();
 }
 
-void LH_QtInstance::term()
+static int obj_width(lh_layout_item *obj,int h)
+{
+    return RECAST(obj->obj.ref)->width(h);
+}
+
+static int obj_height(lh_layout_item *obj,int w)
+{
+    return RECAST(obj->obj.ref)->height(w);
+}
+
+static const lh_blob * obj_render_blob(lh_layout_item *obj,int w,int h)
+{
+    return RECAST(obj->obj.ref)->render_blob(w,h);
+}
+
+static void * obj_render_qimage(lh_layout_item *obj,int w,int h)
+{
+    return RECAST(obj->obj.ref)->render_qimage(w,h);
+}
+
+LH_QtInstance::LH_QtInstance( lh_callback_t cb, void* cb_id )
+    : LH_QtObject(&li_.obj,LH_QtPlugin::instance()), image_(0)
+{
+    li_.size = sizeof(lh_layout_item);
+    li_.obj.cb = cb;
+    li_.obj.cb_id = cb_id;
+    li_.obj_prerender = obj_prerender;
+    li_.obj_width = obj_width;
+    li_.obj_height = obj_height;
+    li_.obj_render_blob = obj_render_blob;
+    li_.obj_render_qimage = obj_render_qimage;
+}
+
+LH_QtInstance::~LH_QtInstance()
 {
     if( image_ )
     {
         delete image_;
         image_ = NULL;
     }
-    LH_QtObject::term();
-    return;
+}
+
+QString LH_QtInstance::layoutPath() const
+{
+    if( li_.layout.dir ) return QString::fromUtf8( li_.layout.dir );
+    return LH_QtPlugin::dir_data();
 }
 
 /**
@@ -98,83 +115,5 @@ QImage *LH_QtInstance::initImage(int w, int h)
         }
     }
     return image_;
-}
-
-/**
-  Return the autoregistered classes.
-*/
-const lh_class ** LH_QtInstance::auto_class_list(void)
-{
-    int count = 0;
-
-    // count and check classes
-    for( LH_QtClassLoader *load=LH_QtClassLoader::first_; load; load=load->next_)
-    {
-        Q_ASSERT( load->info_ != NULL );
-        lh_class *p = load->info_();
-        if( p )
-        {
-            LH_QtObject::build_object_calltable( &p->objtable );
-            LH_QtInstance::build_instance_calltable( &p->table, load->factory_ );
-            ++ count;
-        }
-    }
-    if( manual_list_ )
-    {
-        for( int i=0; i<manual_list_->size(); ++i )
-        {
-            lh_class *p = manual_list_->at(i).info();
-            if( p )
-            {
-                LH_QtInstance::build_instance_calltable( &p->table, manual_list_->at(i).factory() );
-                ++ count;
-            }
-        }
-    }
-
-    // free the old list, if any
-    if( classlist_ )
-    {
-        free( classlist_ );
-        classlist_ = 0;
-    }
-
-    // allocate list and fill it
-    if( count > 0 )
-    {
-        int n = 0;
-        classlist_ = (const lh_class**) malloc( sizeof(lh_class*) * (count+1) );
-        for( LH_QtClassLoader *load=LH_QtClassLoader::first_; load; load=load->next_)
-        {
-            if( n<count && load->info_() )
-                classlist_[n++] = load->info_();
-        }
-        if( manual_list_ )
-        {
-            for( int i=0; i<manual_list_->size(); ++i )
-                if( n<count && manual_list_->at(i).info() )
-                    classlist_[n++] = manual_list_->at(i).info();
-        }
-        Q_ASSERT( n==count );
-        classlist_[n] = NULL;
-    }
-
-    return classlist_;
-}
-
-void lh_add_class( lh_class *p, lh_class_factory_t f )
-{
-    if( manual_list_ == NULL ) manual_list_ = new QList<lh_layout_class>();
-    for( int i=0; i<manual_list_->size(); ++i )
-        if( manual_list_->at(i).info() == p ) return;
-    manual_list_->append(lh_layout_class(p,f));
-}
-
-void lh_remove_class( lh_class *p )
-{
-    if( manual_list_ == NULL ) return;
-    for( int i=0; i<manual_list_->size(); ++i )
-        if( manual_list_->at(i).info() == p )
-            manual_list_->removeAt(i), i=0;
 }
 

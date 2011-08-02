@@ -46,8 +46,8 @@ lh_class *LH_DataViewerImage::classInfo()
         "DataViewerImage",
         "Data Image",
         -1, -1,
-        lh_object_calltable_NULL,
-        lh_instance_calltable_NULL
+        
+        
     };
 
     return &classinfo;

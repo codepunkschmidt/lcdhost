@@ -54,7 +54,7 @@ public:
         cpu_ = new LH_QtCPU(this);
         setup_text_->setTitle( "Average core load" );
         setup_text_->setFlag( LH_FLAG_READONLY, true );
-        setup_core_selector_ = new LH_Qt_int( this, "Select core", 1, 1, state()->cpu_count, LH_FLAG_FIRST );
+        setup_core_selector_ = new LH_Qt_int( this, "Select core", 1, 1, cpu_->count(), LH_FLAG_FIRST );
         connect( setup_core_selector_, SIGNAL(changed()), this, SLOT(updateValue()) );
         setText("0%");
         return 0;
@@ -69,8 +69,6 @@ public:
             "SystemCoreText",
             "Core Load (Text)",
             -1, -1,
-            lh_object_calltable_NULL,
-            lh_instance_calltable_NULL
         };
 
         if( classInfo.width == -1 )
@@ -86,9 +84,8 @@ public:
 
     int notify(int n,void* p)
     {
-        int retv = cpu_->notify(n,p) | LH_NOTE_SECOND;
         if( !n || n&LH_NOTE_SECOND ) updateValue();
-        return retv | LH_Text::notify(n,p);
+        return LH_NOTE_SECOND | LH_Text::notify(n,p);
     }
 
 public slots:

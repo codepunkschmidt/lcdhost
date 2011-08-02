@@ -36,110 +36,68 @@
 #include "LH_QtObject.h"
 #include "LH_QtSetupItem.h"
 
-LH_QtPlugin *LH_QtObject::plugin_ = 0;
-
-static int compareSetupItems( const LH_QtSetupItem *a, const LH_QtSetupItem *b )
-{
-    return a->order() < b->order();
-}
-
 #define RECAST(obj) reinterpret_cast<LH_QtObject*>(obj)
 
-static const char *obj_init( void *obj, lh_callback_t cb, int cb_id, const char *name, const lh_systemstate *state)
+static const char *obj_init( lh_object *obj, const char *name )
 {
-    return RECAST(obj)->init(cb,cb_id,name,state);
+    return RECAST(obj->ref)->init(name);
 }
 
-static lh_setup_item **obj_setup_data( void *obj )
+static int obj_polling( lh_object *obj )
 {
-    return RECAST(obj)->setup_data();
+    return RECAST(obj->ref)->polling();
 }
 
-static void obj_setup_resize( void *obj, lh_setup_item *item, size_t needed )
+static int obj_notify( lh_object *obj, int code, void *param )
 {
-    RECAST(obj)->setup_resize(item,needed);
+    return RECAST(obj->ref)->notify(code,param);
 }
 
-static void obj_setup_change( void *obj, lh_setup_item *item )
+static const char *obj_input_name( lh_object *obj, const char *devid, int item )
 {
-    RECAST(obj)->setup_change(item);
+    return RECAST(obj->ref)->input_name(devid,item);
 }
 
-static int obj_polling( void *obj )
-{
-    return RECAST(obj)->polling();
-}
-
-static int obj_notify( void *obj, int code, void *param )
-{
-    return RECAST(obj)->notify(code,param);
-}
-
-static const char *obj_input_name( void *obj, const char *devid, int item )
-{
-    return RECAST(obj)->input_name(devid,item);
-}
-
-static const lh_class ** obj_class_list( void *obj )
-{
-    return RECAST(obj)->class_list();
-}
-
-static void obj_term( void *obj )
-{
-    RECAST(obj)->term();
-}
-
-void LH_QtObject::build_object_calltable( lh_object_calltable *ct )
-{
-    if( ct )
-    {
-        ct->size = sizeof(lh_object_calltable);
-        ct->obj_init = obj_init;
-        ct->obj_setup_data = obj_setup_data;
-        ct->obj_setup_resize = obj_setup_resize;
-        ct->obj_setup_change = obj_setup_change;
-        ct->obj_polling = obj_polling;
-        ct->obj_notify = obj_notify;
-        ct->obj_input_name = obj_input_name;
-        ct->obj_class_list = obj_class_list;
-        ct->obj_term = obj_term;
-    }
-    return;
-}
-
-LH_QtObject::LH_QtObject( LH_QtObject *parent )
-    : QObject( parent ), cb_(0), cb_id_(0), state_(0)
+LH_QtObject::LH_QtObject( lh_object *p, LH_QtObject *parent ) : QObject( parent ), p_obj_(p)
 #ifndef QT_NO_DEBUG
-    ,clean_init_(false), clean_term_(false)
+  ,clean_init_(false), warning_issued_(false)
 #endif
 {
-    if( parent )
-    {
-        cb_ = parent->cb_;
-        state_ = parent->state_;
-    }
+    Q_ASSERT( p_obj_ );
+    p_obj_->size = sizeof(lh_object);
+    p_obj_->ref = this;
+    p_obj_->cb = 0;
+    p_obj_->cb_id = 0;
+    p_obj_->obj_init = obj_init;
+    p_obj_->obj_input_name = obj_input_name;
+    p_obj_->obj_notify = obj_notify;
+    p_obj_->obj_polling = obj_polling;
 }
 
-const char *LH_QtObject::init( lh_callback_t cb, int cb_id, const char *name, const lh_systemstate* state )
+LH_QtObject::~LH_QtObject()
+{
+    p_obj_->cb = 0;
+    p_obj_->cb_id = 0;
+}
+
+const char *LH_QtObject::init( const char *title )
 {
     const char *retv = 0;
-    cb_ = cb;
-    cb_id_ = cb_id;
-    if( name ) setObjectName( QString::fromUtf8(name) );
-    state_ = state;
+
+    Q_ASSERT( isValid() );
+    if( title ) setObjectName( QString::fromUtf8(title) );
 
 #ifndef QT_NO_DEBUG
-    // Make sure there's no children yet, as constructor must be 'clean'
+    // Make sure there's no children yet, as constructor should be 'clean'
     if( children().count() )
-        qWarning() << metaObject()->className() << name << "has children before init()";
+        qWarning() << metaObject()->className() << objectName() << "has children before init()";
 #endif
 
     retv = userInit();
 
 #ifndef QT_NO_DEBUG
     if( !clean_init_ )
-        qWarning() << metaObject()->className() << name << "did not complete userInit() chain";
+        qWarning() << metaObject()->className() << objectName() << "did not complete userInit() chain";
 #endif
 
     return retv;
@@ -150,65 +108,6 @@ const char *LH_QtObject::userInit()
 #ifndef QT_NO_DEBUG
     clean_init_ = true;
 #endif
-    return 0;
-}
-
-lh_setup_item **LH_QtObject::setup_data()
-{
-    QList<LH_QtSetupItem*> list;
-    for( QObjectList::const_iterator i = children().constBegin(); i != children().constEnd(); ++i )
-    {
-        LH_QtSetupItem *si = qobject_cast<LH_QtSetupItem *>(*i);
-        if( si ) list.append(si);
-    }
-    qStableSort( list.begin(), list.end(), compareSetupItems );
-
-    setup_item_vector_.clear();
-    foreach( LH_QtSetupItem *si, list ) setup_item_vector_.append( si->item() );
-    setup_item_vector_.append( NULL );
-
-    return setup_item_vector_.data();
-}
-
-void LH_QtObject::setup_resize(lh_setup_item *item,size_t needed)
-{
-    for( QObjectList::const_iterator i = children().constBegin(); i != children().constEnd(); ++i )
-    {
-        LH_QtSetupItem *si = qobject_cast<LH_QtSetupItem *>(*i);
-        if( si && si->item() == item )
-        {
-            si->setup_resize(needed);
-            return;
-        }
-    }
-    Q_ASSERT(0);
-    return;
-}
-
-void LH_QtObject::setup_change(lh_setup_item *item)
-{
-    for( QObjectList::const_iterator i = children().constBegin(); i != children().constEnd(); ++i )
-    {
-        LH_QtSetupItem *si = qobject_cast<LH_QtSetupItem *>(*i);
-        if( si && si->item() == item )
-        {
-            si->setup_change();
-            return;
-        }
-    }
-    Q_ASSERT(0);
-    return;
-}
-
-int LH_QtObject::polling()
-{
-    return 0;
-}
-
-int LH_QtObject::notify( int code, void *param )
-{
-    Q_UNUSED(code);
-    Q_UNUSED(param);
     return 0;
 }
 
@@ -229,33 +128,4 @@ const char *LH_QtObject::input_name( const char *devid, int item )
         return buf;
     }
     return 0;
-}
-
-const lh_class ** LH_QtObject::class_list()
-{
-    return 0;
-}
-
-void LH_QtObject::userTerm()
-{
-#ifndef QT_NO_DEBUG
-    clean_term_ = true;
-#endif
-    return;
-}
-
-
-void LH_QtObject::term()
-{
-    userTerm();
-
-#ifndef QT_NO_DEBUG
-    if( !clean_term_ )
-        qWarning() << metaObject()->className() << objectName() << "did not complete userTerm() chain";
-    Q_ASSERT( clean_term_ );
-#endif
-
-    cb_ = 0;
-    cb_id_ = 0;
-    state_ = 0;
 }

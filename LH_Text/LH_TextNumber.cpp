@@ -39,9 +39,10 @@
 const char *LH_TextNumber::userInit()
 {
     if( const char *err = LH_Text::userInit() ) return err;
-    value_ = max_ = 0.0;
     bytes_ = false;
     setup_text_->setFlag( LH_FLAG_READONLY, true );
+    setup_value_ = new LH_Qt_double(this,"Value",0,LH_FLAG_AUTORENDER);
+    setup_value_->setHelp("Link a data source to this value using the button on the left.");
     setup_bits_ = new LH_Qt_bool(this,"Bits instead of bytes",false,LH_FLAG_AUTORENDER|LH_FLAG_FIRST|LH_FLAG_HIDDEN);
     setup_bits_->setHelp("<p>If this is selected, the value will be shown in bits rather than bytes.</p>");
     setup_showsuffix_ = new LH_Qt_bool(this,"Show multiplier",true,LH_FLAG_AUTORENDER|LH_FLAG_FIRST);
@@ -54,22 +55,12 @@ const char *LH_TextNumber::userInit()
 
 bool LH_TextNumber::makeText()
 {
-    qreal scale = 1.0;
+    double scale = 1.0;
     if( setup_bits_->value() ) scale = 8.0;
-    return setNum(value_*scale,setup_scale_->value(),setup_showsuffix_->value(),max_*scale,bytes_);
-}
-
-bool LH_TextNumber::setMax( qreal m )
-{
-    if( m == max_ ) return false;
-    max_ = m;
-    if( setup_scale_->value() == 1 ) return makeText();
-    return false;
-}
-
-bool LH_TextNumber::setValue( qreal v )
-{
-    if( v == value_ ) return false;
-    value_ = v;
-    return makeText();
+    return setNum(
+                setup_value_->value()*scale,
+                setup_scale_->value(),
+                setup_showsuffix_->value(),
+                setup_value_->max()*scale,
+                bytes_);
 }

@@ -58,9 +58,8 @@ protected:
     LH_Qt_QString *setup_internal_ip_;
 
 public:
-    LH_QtPlugin_WebKit() : LH_QtPlugin() {}
+    ~LH_QtPlugin_WebKit();
 
-    virtual void term();
     const char *userInit();
 
     bool startServer();

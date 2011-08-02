@@ -36,8 +36,8 @@ lh_class *LH_MonitoringGraph::classInfo()
         "3rdParty/Monitoring",
         "MonitoringGraph",
         "Monitoring (Graph)",
-        48,48,
-        lh_instance_calltable_NULL
+        48,48
+        
     };
 
     return &classInfo;

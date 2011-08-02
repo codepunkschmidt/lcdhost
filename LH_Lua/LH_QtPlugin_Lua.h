@@ -60,7 +60,6 @@ class LH_QtPlugin_Lua : public LH_QtPlugin
     Q_OBJECT
 
     lua_State *L;
-    // QFileSystemWatcher *watcher_;
     QString luadir_;
     QTime dirmodified_; // we need this to avoid races
     bool needscan_;
@@ -70,19 +69,11 @@ class LH_QtPlugin_Lua : public LH_QtPlugin
 
 public:
     LH_QtPlugin_Lua() : LH_QtPlugin(), L(NULL), needscan_(false) {}
+    ~LH_QtPlugin_Lua();
 
-    const char * lh_name() { return "Lua"; }
-    const char * lh_shortdesc() { return "Lua scripting"; }
-    const char * lh_author() { return "Johan \"SirReal\" Lindh"; }
-    const char * lh_homepage() { return "<a href=\"http://www.linkdata.se/software/lcdhost\">Link Data Stockholm</a>"; }
-    const char * lh_longdesc()
-    {
-        return "";
-    }
+    lua_State *luaState() { return L; }
 
-    const char *lh_load();
-    void lh_unload();
-
+    const char *userInit();
     int notify( int code, void *);
 
 public slots:

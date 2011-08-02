@@ -37,9 +37,9 @@ lh_class *LH_QImage::classInfo()
         "Static",
         "StaticImage2",
         "Static Image 2",
-        48,48,
-        lh_object_calltable_NULL,
-        lh_instance_calltable_NULL
+        48,48
+        
+        
     };
     return &classInfo;
 }

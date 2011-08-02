@@ -25,19 +25,13 @@
   */
 
 #include "LH_Graph.h"
+#include "../LH_Qt_int.h"
 
 class LH_GraphMemPhysical : public LH_Graph
 {
-    bool initialized;
-    qreal unitBase;
-
-    void initialize(){
-        if( state()->mem_data.tot_phys ) {
-            initialized = true;
-            setMax( state()->mem_data.tot_phys / unitBase );
-        }
-    }
-
+    double unitBase;
+    LH_Qt_int *link_phys_mem_used_;
+    LH_Qt_int *link_phys_mem_total_;
 
 public:
     const char *userInit()
@@ -47,8 +41,11 @@ public:
         setMin(0.0);
         setMax(1000.0);
         setYUnit("GB");
-        initialized = false;
-        initialize();
+        if( const char *err = LH_Graph::userInit() ) return err;
+        link_phys_mem_used_ = new LH_Qt_int(this,"LinkPhysMemUsed",0);
+        link_phys_mem_used_->setLink("/system/memory/physical/used");
+        link_phys_mem_total_ = new LH_Qt_int(this,"LinkPhysMemTotal",0);
+        link_phys_mem_total_->setLink("/system/memory/physical/total");
         return 0;
     }
 
@@ -60,9 +57,7 @@ public:
             "System/Memory/Physical",
             "SystemMemoryPhysicalGraph",
             "Physical memory used (Graph)",
-            48,48,
-            lh_object_calltable_NULL,
-            lh_instance_calltable_NULL
+            48,48
         };
         return &classInfo;
     }
@@ -71,15 +66,11 @@ public:
     {
         Q_UNUSED(p);
 
-        if( state()->mem_data.tot_phys )
+        if(!n || n&LH_NOTE_SECOND)
         {
-            if (!initialized) initialize();
-            if(!n || n&LH_NOTE_SECOND)
-            {
-                qreal used_mem = ( state()->mem_data.tot_phys - state()->mem_data.free_phys ) / unitBase;
-                addValue(used_mem);
-                callback(lh_cb_render,NULL);
-            }
+            setMax( link_phys_mem_total_->value() / unitBase );
+            addValue( link_phys_mem_used_->value() / unitBase );
+            callback(lh_cb_render,NULL);
         }
         return LH_NOTE_SECOND;
     }

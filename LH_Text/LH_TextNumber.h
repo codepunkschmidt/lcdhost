@@ -38,17 +38,17 @@
 #define LH_TEXTNUMBER_H
 
 #include "LH_Text.h"
+#include "../LH_Qt_double.h"
 
 class LH_TextNumber : public LH_Text
 {
     Q_OBJECT
-    qreal value_;
-    qreal max_;
 
     bool makeText();
     bool bytes_;
 
 protected:
+    LH_Qt_double *setup_value_;
     LH_Qt_bool *setup_showsuffix_;
     LH_Qt_bool *setup_showunits_;
     LH_Qt_bool *setup_bits_;
@@ -56,15 +56,12 @@ protected:
 
 public:
     const char *userInit();
-    void prerender() { makeText(); }
+    void prerender()
+    {
+        makeText();
+    }
 
     bool showUnits() const { return setup_showunits_->value() && (setup_scale_->value() != 1); }
-
-    bool setMax( qreal m ); // return true if text changed and we need rendering
-    qreal max() const { return max_; }
-
-    bool setValue( qreal v ); // return true if text changed and we need rendering
-    qreal value() const { return value_; }
 
     bool isBytes() const { return bytes_; }
     void setBytes( bool b ) { bytes_ = b; }

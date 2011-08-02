@@ -32,27 +32,111 @@
   POSSIBILITY OF SUCH DAMAGE.
   */
 
+#include <QtDebug>
 #include "LH_QtPlugin.h"
 #include "LH_QtInstance.h"
 
 LH_SIGNATURE();
 
-/**
-  Exported from all LCDHost plugins.
-  Note that lh_create() and lh_destroy() are defined with the LH_PLUGIN(classname) macro.
-*/
-EXPORT const lh_object_calltable* lh_get_object_calltable( void *ref )
+LH_QtLayoutClassLoader *LH_QtLayoutClassLoader::first_ = NULL;
+LH_QtLayoutClassLoader::LH_QtLayoutClassLoader(
+    const lh_class *classinfo,
+    obj_layout_item_create_t fc,
+    obj_layout_item_destroy_t fd )
 {
-    static lh_object_calltable objtable;
-    Q_UNUSED(ref);
-    if( objtable.size != sizeof(lh_object_calltable) )
-        LH_QtObject::build_object_calltable( &objtable );
-    return &objtable;
+    Q_ASSERT( classinfo );
+    Q_ASSERT( classinfo->size == sizeof(lh_class) );
+    Q_ASSERT( fc );
+    Q_ASSERT( fd );
+    memset( &cls_, 0, sizeof(lh_layout_class) );
+    cls_.obj.size = sizeof(lh_object);
+    cls_.size = sizeof(lh_layout_class);
+    if( classinfo )
+    {
+        cls_.path = classinfo->path;
+        cls_.ident = classinfo->ident;
+        cls_.name = classinfo->name;
+        cls_.width = classinfo->width;
+        cls_.height = classinfo->height;
+    }
+    cls_.obj_layout_item_create = fc;
+    cls_.obj_layout_item_destroy = fd;
+    next_ = first_;
+    first_ = this;
 }
 
-const lh_class **LH_QtPlugin::class_list()
+LH_QtPlugin *LH_QtPlugin::instance_ = 0;
+
+QString LH_QtPlugin::dir_binaries()
 {
-    return LH_QtInstance::auto_class_list();
+    static QString retv;
+    if( retv.isEmpty() && instance_ )
+    {
+        const char *p = 0;
+        instance_->callback( lh_cb_dir_binaries, &p );
+        retv = QString::fromUtf8(p);
+    }
+    return retv;
+}
+
+QString LH_QtPlugin::dir_plugins()
+{
+    static QString retv;
+    if( retv.isEmpty() && instance_ )
+    {
+        const char *p = 0;
+        instance_->callback( lh_cb_dir_plugins, &p );
+        retv = QString::fromUtf8(p);
+    }
+    return retv;
+}
+
+QString LH_QtPlugin::dir_data()
+{
+    static QString retv;
+    Q_ASSERT( instance_ );
+    if( retv.isEmpty() && instance_ )
+    {
+        const char *p = 0;
+        instance_->callback( lh_cb_dir_data, &p );
+        retv = QString::fromUtf8(p);
+        Q_ASSERT( retv.endsWith('/') );
+    }
+    return retv;
+}
+
+LH_QtPlugin::LH_QtPlugin( lh_callback_t cb, void* cb_id ) :
+    LH_QtObject(&obj_,0)
+{
+    Q_ASSERT( instance_ == 0 );
+    obj_.cb = cb;
+    obj_.cb_id = cb_id;
+    instance_ = this;
+}
+
+LH_QtPlugin::~LH_QtPlugin()
+{
+    for( LH_QtLayoutClassLoader *to_load = LH_QtLayoutClassLoader::first_; to_load; to_load=to_load->next_ )
+    {
+        Q_ASSERT( to_load->cls_.obj.size == sizeof(lh_object) );
+        Q_ASSERT( to_load->cls_.size == sizeof(lh_layout_class) );
+        if( to_load->cls_.obj.cb && to_load->cls_.obj.cb_id )
+            to_load->cls_.obj.cb( to_load->cls_.obj.cb_id, lh_cb_destroy, 0 );
+    }
+    Q_ASSERT( instance_ == this );
+    instance_ = 0;
+}
+
+const char *LH_QtPlugin::userInit()
+{
+    if( const char *err = LH_QtObject::userInit() ) return err;
+    for( LH_QtLayoutClassLoader *to_load = LH_QtLayoutClassLoader::first_; to_load; to_load=to_load->next_ )
+    {
+        Q_ASSERT( to_load->cls_.obj.size == sizeof(lh_object) );
+        Q_ASSERT( to_load->cls_.size == sizeof(lh_layout_class) );
+        callback( lh_cb_class_create, &to_load->cls_ );
+    }
+    return 0;
 }
 
 void LH_QtPlugin::requestReload( const char *msg )

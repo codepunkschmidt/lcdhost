@@ -50,9 +50,7 @@ public:
             "System/Network/Outbound",
             "SystemNetworkOutboundDial",
             "Outbound Bandwidth Usage (Dial)",
-            48,48,
-            lh_object_calltable_NULL,
-            lh_instance_calltable_NULL
+            48,48
         };
 
         return &classInfo;
@@ -61,7 +59,7 @@ public:
     int notify(int n, void *p)
     {
         setVal( net_.outPermille() );
-        return net_.notify(n,p);
+        return LH_NOTE_NET|LH_Dial::notify(n,p);
     }
 };
 

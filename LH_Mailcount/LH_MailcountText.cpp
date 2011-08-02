@@ -10,9 +10,9 @@ lh_class *LH_MailcountText::classInfo()
         "System/Mail",
         "SystemMailText",
         "Unread mail (Text)",
-        48,48,
-        lh_object_calltable_NULL,
-        lh_instance_calltable_NULL
+        48,48
+        
+        
     };
 
     return &classinfo;

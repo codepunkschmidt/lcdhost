@@ -109,11 +109,6 @@ lua_All_functions LuaFunctions;
 #include <cairo-win32.h>
 #endif
 
-static const lh_systemstate *lcdhost_state()
-{
-    return LH_LuaInstance::top()->state();
-}
-
 static void my_setenv(const char *name, const char *value )
 {
 #ifdef Q_WS_WIN
@@ -210,7 +205,7 @@ extern "C" int lh_lua_draw_text(lua_State *L)
         QFont font;
 
         font.fromString( QString::fromUtf8(f,flen) );
-        QFont::StyleStrategy wanted_strategy = ( lcdhost_state()->dev_depth == 1 ) ? QFont::NoAntialias : QFont::PreferAntialias;
+        QFont::StyleStrategy wanted_strategy = QFont::PreferAntialias;
         if( !(font.styleStrategy() & wanted_strategy) ) font.setStyleStrategy( wanted_strategy );
 
         p.setFont( font );
@@ -296,239 +291,18 @@ extern "C" int lh_lua_print(lua_State *L)
     return 0; // no return values
 }
 
-static const char *lh_state_key(int w)
+const char *LH_QtPlugin_Lua::userInit()
 {
-    static const char *keys[28] = {
-        "dev_width",
-        "dev_height",
-        "dev_depth",
-        "dev_fps",
-        "run_time",
-        "run_idle",
-        "net_max_in",
-        "net_max_out",
-        "net_cur_in",
-        "net_cur_out",
-        "net_data_device",
-        "net_data_when",
-        "net_data_in",
-        "net_data_out",
-        "mem_data_tot_phys",
-        "mem_data_tot_virt",
-        "mem_data_free_phys",
-        "mem_data_free_virt",
-        "cpu_count",
-        "cpu_load",
-        "cpu_self_now",
-        "cpu_self_avg",
-        "dir_binaries",
-        "dir_plugins",
-        "dir_data",
-        "dir_layout",
-        "layout_file",
-        "layout_rps"
-    };
-    static char core_str[32];
-    int core = 1;
+    if( const char *err = LH_QtPlugin::userInit() ) return err;
 
-    if( w < 1 ) return NULL;
-    if( w <= 28 ) return keys[w-1];
-
-    w -= 29;
-
-    if( w >= (lcdhost_state()->cpu_count*3) )
-        return NULL;
-
-    while( w>2 )
-    {
-        ++ core;
-        w -= 3;
-    }
-
-    switch( w )
-    {
-    case 0: snprintf(core_str,sizeof(core_str),"cpu_core_system_%d",core); break;
-    case 1: snprintf(core_str,sizeof(core_str),"cpu_core_user_%d",core); break;
-    case 2: snprintf(core_str,sizeof(core_str),"cpu_core_total_%d",core); break;
-    }
-
-    return core_str;
-}
-
-static void lh_lcdhost_state_getvalue(lua_State *L,int which)
-{
-#ifndef QT_NO_DEBUG
-    int old_top = lua_gettop(L);
-#endif
-
-    if( which <= 28 )
-    {
-        switch(which)
-        {
-        case 1: lua_pushinteger( L, lcdhost_state()->dev_width ); break;
-        case 2: lua_pushinteger( L, lcdhost_state()->dev_height ); break;
-        case 3: lua_pushinteger( L, lcdhost_state()->dev_depth ); break;
-        case 4: lua_pushinteger( L, lcdhost_state()->dev_fps ); break;
-        case 5: lua_pushinteger( L, lcdhost_state()->run_time ); break;
-        case 6: lua_pushinteger( L, lcdhost_state()->run_idle ); break;
-        case 7: lua_pushnumber( L, lcdhost_state()->net_max_in ); break;
-        case 8: lua_pushnumber( L, lcdhost_state()->net_max_out ); break;
-        case 9: lua_pushnumber( L, lcdhost_state()->net_cur_in ); break;
-        case 10: lua_pushnumber( L, lcdhost_state()->net_cur_out ); break;
-        case 11: lua_pushinteger( L, lcdhost_state()->net_data.device ); break;
-        case 12: lua_pushnumber( L, lcdhost_state()->net_data.when ); break;
-        case 13: lua_pushnumber( L, lcdhost_state()->net_data.in ); break;
-        case 14: lua_pushnumber( L, lcdhost_state()->net_data.out ); break;
-        case 15: lua_pushnumber( L, lcdhost_state()->mem_data.tot_phys ); break;
-        case 16: lua_pushnumber( L, lcdhost_state()->mem_data.tot_virt ); break;
-        case 17: lua_pushnumber( L, lcdhost_state()->mem_data.free_phys ); break;
-        case 18: lua_pushnumber( L, lcdhost_state()->mem_data.free_virt ); break;
-        case 19: lua_pushinteger( L, lcdhost_state()->cpu_count ); break;
-        case 20: lua_pushinteger( L, lcdhost_state()->cpu_load ); break;
-        case 21: lua_pushinteger( L, lcdhost_state()->cpu_self_now ); break;
-        case 22: lua_pushinteger( L, lcdhost_state()->cpu_self_avg ); break;
-        case 23: lua_pushstring( L, lcdhost_state()->dir_binaries ); break;
-        case 24: lua_pushstring( L, lcdhost_state()->dir_plugins ); break;
-        case 25: lua_pushstring( L, lcdhost_state()->dir_data ); break;
-        case 26: lua_pushstring( L, lcdhost_state()->dir_layout ); break;
-        case 27: lua_pushstring( L, lcdhost_state()->layout_file ); break;
-        case 28: lua_pushinteger( L, lcdhost_state()->layout_rps ); break;
-        default: lua_pushnil(L); break;
-        }
-    }
-    else
-    {
-        int core = 0;
-        which -= 29;
-
-        if( which < (lcdhost_state()->cpu_count*3) )
-        {
-            while( which>2 )
-            {
-                ++ core;
-                which -= 3;
-            }
-
-            switch( which )
-            {
-            case 0:
-                lua_pushnumber(L,lcdhost_state()->cpu_cores[core].system);
-                break;
-            case 1:
-                lua_pushnumber(L,lcdhost_state()->cpu_cores[core].user);
-                break;
-            case 2:
-                lua_pushnumber(L,lcdhost_state()->cpu_cores[core].total);
-                break;
-            default:
-                Q_ASSERT(0);
-                lua_pushnil(L);
-                break;
-            }
-        }
-        else
-            lua_pushnil(L);
-    }
-
-    Q_ASSERT( old_top+1 == lua_gettop(L) );
-    return;
-}
-
-extern "C" int lh_lcdhost_state_index(lua_State *L)
-{
-#ifndef QT_NO_DEBUG
-    int old_top = lua_gettop(L);
-#endif
-
-    if( !lcdhost_state() ) return 0;
-
-    if( lua_isnumber(L,-1) )
-    {
-        lh_lcdhost_state_getvalue(L,lua_tonumber(L,-1));
-    }
-    else if( lua_isstring(L,-1) )
-    {
-        const char *idx = lua_tostring(L,-1);
-        int w = 0;
-        for( w=1; w>=1; ++w )
-        {
-            const char *k = lh_state_key(w);
-            if( k == NULL ) { w = 0; break; }
-            if( !strcmp( k, idx ) ) break;
-        }
-        lh_lcdhost_state_getvalue(L,w);
-    }
-    else
-        lua_pushnil(L);
-
-    Q_ASSERT( old_top+1 == lua_gettop(L) );
-    return 1;
-}
-
-extern "C" int lh_block_newindex(lua_State *L)
-{
-    Q_UNUSED(L);
-    return 0;
-}
-
-extern "C" int lh_lcdhost_state_next(lua_State *L)
-{
-#ifndef QT_NO_DEBUG
-    int old_top = lua_gettop(L);
-#endif
-
-    const char *lsk = NULL;
-    int where = 0;
-
-    if( lua_isstring(L,2) )
-    {
-        const char *k = lua_tostring(L,2);
-        for( int i=1;!where;++i)
-        {
-            lsk = lh_state_key(i);
-            if( lsk == NULL ) break;
-            if( !strcmp(k,lsk) ) where = i;
-        }
-    }
-
-    if( lua_isnumber(L,2) )
-        where = (int) lua_tonumber(L,2);
-
-    if( lua_isnil(L,2) )
-        where = 0;
-
-    ++ where;
-    lsk = lh_state_key(where);
-    if( lsk )
-    {
-        lua_pushstring( L, lsk );
-        lh_lcdhost_state_index( L );
-        Q_ASSERT( old_top+2 == lua_gettop(L) );
-        return 2;
-    }
-
-    Q_ASSERT( old_top == lua_gettop(L) );
-    return 0;
-}
-
-extern "C" int lh_lcdhost_state_pairs(lua_State *L)
-{
-    lua_pushcclosure( L, lh_lcdhost_state_next, 0 );
-    lua_newtable( L );
-    lua_pushnil( L );
-    return 3;
-}
-
-const char *LH_QtPlugin_Lua::lh_load()
-{
     QString lua_cpath;
     QString lua_path;
     QString path;
     const char *env_lua_cpath;
     const char *env_lua_path;
     const char *env_path;
-    QString dir_data = QString::fromUtf8( state()->dir_data ? state()->dir_data : "" );
-    QString dir_plugins = QString::fromUtf8( state()->dir_plugins ? state()->dir_plugins : "" );
+    QString dir_data = LH_QtPlugin::dir_data();
+    QString dir_plugins = LH_QtPlugin::dir_plugins();
 
     // Create DATADIR/lua/clibs if it doesn't exist
     {
@@ -689,6 +463,7 @@ const char *LH_QtPlugin_Lua::lh_load()
     lua_rawset(L,-3);
     lua_setglobal(L, "lcdhost");
 
+#if 0
     // set the lcdhost.state metatable
     lua_getglobal(L,"lcdhost");
     lua_pushliteral(L,"state");
@@ -705,6 +480,7 @@ const char *LH_QtPlugin_Lua::lh_load()
     lua_rawset(L,-3);
     lua_setmetatable(L,-2);
     lua_pop(L,2);
+#endif
 
     // redirect print()
     lua_pushliteral(L,"print");
@@ -734,9 +510,18 @@ const char *LH_QtPlugin_Lua::lh_load()
     return NULL;
 }
 
-void LH_QtPlugin_Lua::lh_unload()
+LH_QtPlugin_Lua::~LH_QtPlugin_Lua()
 {
-    LH_LuaClass::clear();
+    foreach( QObject *o, children() )
+    {
+        LH_LuaInstance *ali = qobject_cast<LH_LuaInstance *>(o);
+        if( ali ) delete ali;
+    }
+    foreach( QObject *o, children() )
+    {
+        LH_LuaClass *alc = qobject_cast<LH_LuaClass *>(o);
+        if( alc ) delete alc;
+    }
     if( L ) { lua_close(L); L = NULL; }
 }
 
@@ -754,10 +539,8 @@ int LH_QtPlugin_Lua::notify( int code, void *)
 
 void LH_QtPlugin_Lua::loadLuaFile( QFileInfo fi )
 {
-    const char *dir_data_p = state()->dir_data;
-    QString err = LH_LuaClass::load(L,fi,dir_data_p ? dir_data_p : "");
+    QString err = LH_LuaClass::load(this, fi);
     if( !err.isEmpty() ) qWarning() << "LH_Lua:" << err;
-    else callback( lh_cb_class_refresh, 0 );
     return;
 }
 

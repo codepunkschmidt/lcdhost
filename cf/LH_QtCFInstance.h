@@ -44,7 +44,6 @@
 #include "..\LH_QtPlugin.h"
 #include "..\LH_QtObject.h"
 #include "..\LH_QtInstance.h"
-
 #include "..\LH_Qt_bool.h"
 #include "..\LH_Qt_QString.h"
 #include "..\LH_Qt_QStringList.h"
@@ -157,7 +156,8 @@ public:
     LH_Qt_QSlider     *setup_cf_newValue_Slider_;
     LH_Qt_QStringList *setup_cf_newValue_List_;
 
-    LH_QtCFInstance() : LH_QtInstance(0),
+    LH_QtCFInstance() :
+        LH_QtInstance(),
         cf_initialized_(false),
         cf_rule_editing_(Default),
         watching_non_setup_item_(false),

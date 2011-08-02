@@ -35,64 +35,14 @@
 #ifndef LH_QT_QSLIDER_H
 #define LH_QT_QSLIDER_H
 
-#include "LH_QtSetupItem.h"
+#include "LH_Qt_int.h"
 
-class LH_Qt_QSlider : public LH_QtSetupItem
+class LH_Qt_QSlider : public LH_Qt_int
 {
 public:
-    LH_Qt_QSlider( LH_QtObject *parent, QString name, int value, int min, int max, int flags = 0 )
-        : LH_QtSetupItem( parent, name, lh_type_integer_slider, flags )
+    LH_Qt_QSlider( LH_QtObject *parent, const QString& name, int value, int min, int max, int flags = 0 )
+        : LH_Qt_int( parent, name, value, min, max, flags, lh_type_integer_slider )
     {
-        Q_ASSERT( value >= min );
-        Q_ASSERT( value <= max );
-        item_.param.i.min = min;
-        item_.param.i.max = max;
-        item_.data.i = value;
-    }
-
-    int value() const
-    {
-        return item_.data.i;
-    }
-
-    void setValue(int i)
-    {
-        if( item_.data.i != i )
-        {
-            Q_ASSERT( i >= item_.param.i.min );
-            Q_ASSERT( i <= item_.param.i.max );
-            item_.data.i = i;
-            refresh();
-            emit set();
-        }
-    }
-
-    int min()
-    {
-        return item_.param.i.min;
-    }
-
-    void setMin(int min)
-    {
-        item_.param.i.min = min;
-        if( value() < min ) setValue(min);
-    }
-
-    int max()
-    {
-        return item_.param.i.max;
-    }
-
-    void setMax(int max)
-    {
-        item_.param.i.max = max;
-        if( value() > max ) setValue(max);
-    }
-
-    virtual void setup_change()
-    {
-        emit change( value() );
-        LH_QtSetupItem::setup_change();
     }
 };
 

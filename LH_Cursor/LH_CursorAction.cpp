@@ -23,6 +23,7 @@
   */
 
 #include "LH_CursorAction.h"
+#include "../LH_QtPlugin.h"
 #include <QProcess>
 #include <QDesktopServices>
 
@@ -38,9 +39,9 @@ lh_class *LH_CursorAction::classInfo()
         "Cursor",
         "CursorAction",
         "Cursor Action",
-        48,48,
-        lh_object_calltable_NULL,
-        lh_instance_calltable_NULL
+        48,48
+        
+        
     };
     return &classInfo;
 }
@@ -207,7 +208,7 @@ void LH_CursorAction::fire(int startAt)
             {
                 QString layout = action.getParameter(e,0);
                 if (!layout.contains(":"))
-                    layout = QString("%1\%2").arg(state()->dir_layout).arg(layout);
+                    layout = QString("%1\%2").arg(layoutPath()).arg(layout);
                 static QByteArray ary;
                 ary = layout.toUtf8();
                 callback(lh_cb_load_layout, ary.data() );
@@ -219,14 +220,14 @@ void LH_CursorAction::fire(int startAt)
                 QString path = action.getParameter(e,0);
                 QFileInfo exe = QFileInfo(path);
                 if(!exe.isFile())
-                    exe = QFileInfo(QString("%1%2").arg(state()->dir_layout).arg(path));
+                    exe = QFileInfo(QString("%1%2").arg(layoutPath()).arg(path));
                 QString argsString = action.getParameter(e,1);
                 QStringList argsList;
                 if(rx.indexIn(argsString) != -1)
                     for(int i=1; i<=rx.captureCount(); i++)
                         if(rx.cap(i)!="")
                             argsList.append(rx.cap(i));
-                process.startDetached(exe.absoluteFilePath(),argsList,state()->dir_layout);
+                process.startDetached(exe.absoluteFilePath(),argsList,layoutPath());
             }else
             if(typeCode=="url")
             {
@@ -448,7 +449,7 @@ void LH_CursorAction::deleteAction()
 
 void LH_CursorAction::copyActions()
 {
-    QFile file(QString("%1action_cache.xml").arg(state()->dir_binaries));
+    QFile file(QString("%1action_cache.xml").arg(LH_QtPlugin::dir_data()));
     if (!file.open(QIODevice::WriteOnly | QIODevice::Text))
         return;
     else
@@ -458,7 +459,7 @@ void LH_CursorAction::copyActions()
 void LH_CursorAction::pasteActions()
 {
     QString clip_text;
-    QFile file(QString("%1action_cache.xml").arg(state()->dir_binaries));
+    QFile file(QString("%1action_cache.xml").arg(LH_QtPlugin::dir_data()));
     if (!file.open(QIODevice::ReadOnly | QIODevice::Text))
         return;
     else

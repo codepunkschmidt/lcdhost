@@ -34,7 +34,7 @@
 #include "../LH_Qt_QSlider.h"
 #include "../LH_Qt_bool.h"
 #include "../LH_Qt_int.h"
-#include "../LH_Qt_float.h"
+#include "../LH_Qt_double.h"
 #include "../LH_Qt_QTextEdit.h"
 #include "../LH_Qt_QFont.h"
 #include "../LH_Qt_QFileInfo.h"
@@ -49,16 +49,16 @@ class LH_Graph : public LH_QtInstance
 
     const static bool isDebug = false;
 
-    float defaultMax_, defaultMin_;
+    double defaultMax_, defaultMin_;
 
-    qreal dataMaxY_;
-    qreal dataMinY_;
-    qreal dataDeltaY_;
+    double dataMaxY_;
+    double dataMinY_;
+    double dataDeltaY_;
 
-    qreal graphMaxY_;
-    qreal graphMinY_;
+    double graphMaxY_;
+    double graphMinY_;
 
-    qreal divisorY_;
+    double divisorY_;
 
     QString unitText_;
 
@@ -67,17 +67,17 @@ class LH_Graph : public LH_QtInstance
     QHash<int,QImage> fgImgs_;
     void reload_images();
 
-    QList< QList<qreal> > values_;
+    QList< QList<double> > values_;
     QVector<int> cacheCount_;
-    QVector<qreal> cacheVal_;
+    QVector<double> cacheVal_;
 
     bool userDefinableLimits_;
 
-    qreal max(qreal);
-    qreal min(qreal);
+    double max(double);
+    double min(double);
 
     bool hasDeadValue_;
-    qreal deadValue_;
+    double deadValue_;
 protected:
     bool graph_empty_;
 
@@ -95,8 +95,8 @@ protected:
     LH_Qt_QString *setup_description_;
 
     LH_Qt_bool *setup_max_grow_;
-    LH_Qt_float *setup_max_;
-    LH_Qt_float *setup_min_;
+    LH_Qt_double *setup_max_;
+    LH_Qt_double *setup_min_;
 
     LH_Qt_bool *setup_auto_scale_y_max_;
     LH_Qt_bool *setup_auto_scale_y_min_;
@@ -114,21 +114,20 @@ protected:
     LH_Qt_int *setup_fg_alpha_;
 
 public:
-    LH_Graph( float defaultMin = 0, float defaultMax = 0 );
+    LH_Graph( double defaultMin = 0, double defaultMax = 0 );
+    ~LH_Graph();
 
     const char *userInit();
-    void userTerm();
-
     int notify(int code,void* param);
     QImage *render_qimage( int w, int h );
 
-    qreal max();
-    qreal min();
+    double max();
+    double min();
     bool canGrow();
     bool canGrow(bool);
 
-    bool setMin( qreal r ); // return true if rendering needed
-    bool setMax( qreal r, bool b = false ); // return true if rendering needed
+    bool setMin( double r ); // return true if rendering needed
+    bool setMax( double r, bool b = false ); // return true if rendering needed
 
     void addLine(QString name);
     int lineCount();
@@ -136,13 +135,13 @@ public:
     void setLines(QStringList names) {clearLines(); for(int i=0; i<names.length(); i++) addLine(names[i]);}
 
 
-    void setYUnit( QString str, qreal divisor = 1);
+    void setYUnit( QString str, double divisor = 1);
 
     void drawSingle( int lineID = 0 );
     void drawAll( ) { for( int i=0; i<lineCount(); i++ ) drawSingle( i ); }
 
-    void addValue(float value, int lineID = 0);
-    void addValues(QVector<float> values ) { for( int i=0; i<values.size(); ++i ) addValue( values.at(i), i ); }
+    void addValue(double value, int lineID = 0);
+    void addValues(QVector<double> values ) { for( int i=0; i<values.size(); ++i ) addValue( values.at(i), i ); }
 
     void updateDescText();
     void loadColors(int lineID, QColor& penColor, QColor& fillColor1, QColor& fillColor2, QString& fgImgPath, int& fgImgAlpha);
@@ -151,14 +150,14 @@ public:
     void findDataBounds();
     void addText(QPainter& painter, QRect rect, int flags, QString text);
     void addText(QPainter& painter, QRect rect, int flags, QString text, int Xmod, int Ymod);
-    QString getLabelText(qreal val);
+    QString getLabelText(double val);
 
-    void clear(float newMin=0, float newMax=1, bool newGrow = true);
+    void clear(double newMin=0, double newMax=1, bool newGrow = true);
 
     bool userDefinableLimits();
     bool setUserDefinableLimits(bool v);
 
-    void setDeadValue(qreal v){
+    void setDeadValue(double v){
         hasDeadValue_ = true;
         deadValue_ = v;
     }

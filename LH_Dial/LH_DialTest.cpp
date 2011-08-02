@@ -25,22 +25,21 @@
   */
 
 #include "LH_Dial.h"
-#include "../LH_Qt_float.h"
+#include "../LH_Qt_double.h"
 
 class LH_DialTest : public LH_Dial
 {
 protected:
-    LH_Qt_float *setup_min_;
-    LH_Qt_float *setup_max_;
-    LH_Qt_float *setup_val_;
+    LH_Qt_double *setup_min_;
+    LH_Qt_double *setup_max_;
+    LH_Qt_double *setup_val_;
 
 public:
     const char *userInit()
     {
         if( const char *err = LH_Dial::userInit() ) return err;
-        setup_min_ = new LH_Qt_float(this,"Minimum",000,0,1000,LH_FLAG_AUTORENDER);
-        setup_max_ = new LH_Qt_float(this,"Maximum",100,0,1000,LH_FLAG_AUTORENDER);
-        setup_val_ = new LH_Qt_float(this,"Value  ",010,0,1000,LH_FLAG_AUTORENDER);
+        setup_max_ = new LH_Qt_double(this,"Maximum",100,0,1000,LH_FLAG_AUTORENDER);
+        setup_val_ = new LH_Qt_double(this,"Value  ",010,0,1000,LH_FLAG_AUTORENDER);
 
         connect(setup_val_, SIGNAL(changed()), this, SLOT(changeVal()) );
 
@@ -58,9 +57,9 @@ public:
             "Test",
             "TestDial",
             "Test Dial",
-            48,48,
-            lh_object_calltable_NULL,
-            lh_instance_calltable_NULL
+            48,48
+            
+            
         };
 
         return &classInfo;
@@ -76,8 +75,8 @@ public:
 
         setMin(setup_min_->value());
         setMax(setup_max_->value());
-        setup_val_->setMinimum(setup_min_->value());
-        setup_val_->setMaximum(setup_max_->value());
+        setup_val_->setMin(setup_min_->value());
+        setup_val_->setMax(setup_max_->value());
 
         setVal(setup_val_->value());
 
@@ -88,8 +87,8 @@ public:
     {
         setMin(setup_min_->value());
         setMax(setup_max_->value());
-        setup_val_->setMinimum(setup_min_->value());
-        setup_val_->setMaximum(setup_max_->value());
+        setup_val_->setMin(setup_min_->value());
+        setup_val_->setMax(setup_max_->value());
 
         setVal(setup_val_->value());
 

@@ -59,17 +59,10 @@ public:
             "System/CPU",
             "SystemCPUHistogram",
             "Core Load (Bar)",
-            48,48,
-            lh_object_calltable_NULL,
-            lh_instance_calltable_NULL
+            48,48
         };
 
         return &classInfo;
-    }
-
-    int notify(int n, void *p)
-    {
-        return cpu_->notify(n,p);
     }
 
     QImage *render_qimage( int w, int h )

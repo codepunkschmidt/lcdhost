@@ -97,7 +97,7 @@ const char *LH_Lg320x240::userInit()
     return NULL;
 }
 
-void LH_Lg320x240::userTerm()
+LH_Lg320x240::~LH_Lg320x240()
 {
     if( g19thread_ )
     {
@@ -110,5 +110,4 @@ void LH_Lg320x240::userTerm()
         else delete g19thread_;
     }
     g19thread_ = 0;
-    LH_QtPlugin::userTerm();
 }

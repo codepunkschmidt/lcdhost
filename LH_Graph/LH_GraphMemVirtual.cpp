@@ -29,15 +29,9 @@
 class LH_GraphMemVirtual : public LH_Graph
 {
     bool initialized;
-    qreal unitBase;
-
-    void initialize(){
-        if( state()->mem_data.tot_virt ) {
-            initialized = true;
-            setMax( state()->mem_data.tot_virt / unitBase );
-        }
-    }
-
+    double unitBase;
+    LH_Qt_int *link_virt_mem_used_;
+    LH_Qt_int *link_virt_mem_total_;
 
 public:
     virtual const char *userInit()
@@ -48,7 +42,11 @@ public:
         setMax(1000.0);
         setYUnit("GB");
         initialized = false;
-        initialize();
+        if( const char *err = LH_Graph::userInit() ) return err;
+        link_virt_mem_used_ = new LH_Qt_int(this,"LinkVirtMemUsed",0);
+        link_virt_mem_used_->setLink("/system/memory/virtual/used");
+        link_virt_mem_total_ = new LH_Qt_int(this,"LinkVirtMemTotal",0);
+        link_virt_mem_total_->setLink("/system/memory/virtual/total");
         return 0;
     }
 
@@ -60,9 +58,7 @@ public:
             "System/Memory/Virtual",
             "SystemMemoryVirtualGraph",
             "Virtual memory used (Graph)",
-            48,48,
-            lh_object_calltable_NULL,
-            lh_instance_calltable_NULL
+            48,48
         };
         return &classInfo;
     }
@@ -71,15 +67,11 @@ public:
     {
         Q_UNUSED(p);
 
-        if( state()->mem_data.tot_virt )
+        if(!n || n&LH_NOTE_SECOND)
         {
-            if (!initialized) initialize();
-            if(!n || n&LH_NOTE_SECOND)
-            {
-                qreal used_mem = ( state()->mem_data.tot_virt - state()->mem_data.free_virt ) / unitBase;
-                addValue(used_mem);
-                callback(lh_cb_render,NULL);
-            }
+            setMax( link_virt_mem_total_->value() / unitBase );
+            addValue( link_virt_mem_used_->value() / unitBase );
+            callback(lh_cb_render,NULL);
         }
         return LH_NOTE_SECOND;
     }

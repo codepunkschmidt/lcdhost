@@ -45,6 +45,8 @@
 #include "../LH_Qt_QSlider.h"
 #include "../LH_Qt_QFileInfo.h"
 #include "../LH_Qt_bool.h"
+#include "../LH_Qt_array_double.h"
+#include "../LH_Qt_double.h"
 #include "../LH_Qt_int.h"
 
 class LH_Bar : public LH_QtCFInstance
@@ -58,8 +60,8 @@ class LH_Bar : public LH_QtCFInstance
     QImage bar_img_endMask_;
     QImage bar_img_emptyMask_;
 
-    void draw_bar( qreal value, int pos = 0, int total = 1 );
-    qreal boundedValue(qreal value);
+    void draw_bar( double value, int pos = 0, int total = 1 );
+    double boundedValue(double value);
 
 protected:
     LH_Qt_QStringList *setup_type_;
@@ -75,36 +77,35 @@ protected:
     LH_Qt_bool *setup_discrete_;
     LH_Qt_int *setup_discrete_count_;
 
+
 public:
     const char *userInit();
     QImage *render_qimage( int w, int h );
 
     qreal min() const { return min_; }
     qreal max() const { return max_; }
-
     bool setMin( qreal r ); // return true if rendering needed
     bool setMax( qreal r ); // return true if rendering needed
 
-    void drawSingle( qreal value )
+
+    void drawSingle( double value )
     {
         cf_source_notify("Value", QString::number(boundedValue(value)));
         draw_bar(value);
     }
-    void drawList( qreal *values, int total )
+
+    void drawList( const double *values, int total )
     {
         for( int i=0; i<total; ++i )
             cf_source_notify("Value", QString::number(boundedValue(values[i])), i, total);
         for( int i=0; i<total; ++i )
             draw_bar( values[i], i, total );
     }
-    void drawList( const QVector<qreal> &values )
-    {
-        for( int i=0; i<values.size(); ++i )
-            cf_source_notify("Value", QString::number(boundedValue(values.at(i))), i, values.size());
-        for( int i=0; i<values.size(); ++i )
-            draw_bar( values.at(i), i, values.size() );
-    }
 
+    void drawList( const QVector<double> &values )
+    {
+        drawList( values.constData(), values.size() );
+    }
 
 public slots:
     void changeType();

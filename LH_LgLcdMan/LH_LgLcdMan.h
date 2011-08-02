@@ -63,13 +63,12 @@ class LH_LgLcdMan : public LH_QtPlugin
 
 public:
     LH_LgLcdMan() : LH_QtPlugin(), thread_(NULL), bw_(NULL), qvga_(NULL) {}
+    ~LH_LgLcdMan();
 
     virtual const char *userInit();
-    virtual void userTerm();
-
     virtual int notify(int code,void *param);
 
-    bool event( QEvent * e );
+    void customEvent( QEvent * e );
 
     void setBW( QImage img ) { if( thread_ ) thread_->setBW(img); }
     void setQVGA( QImage img ) { if( thread_ ) thread_->setQVGA(img); }

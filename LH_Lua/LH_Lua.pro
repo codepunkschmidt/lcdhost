@@ -15,7 +15,8 @@ SOURCES += \
     LH_QtPlugin_Lua.cpp \
     LH_LuaClass.cpp \
     LH_LuaInstance.cpp \
-    luaXT.cpp
+    luaXT.cpp \
+    LH_LuaSetupItem.cpp
 	
 HEADERS += \
     ../LH_QtPlugin.h \
@@ -24,7 +25,8 @@ HEADERS += \
     ../LH_QtSetupItem.h \
     LH_QtPlugin_Lua.h \
     LH_LuaClass.h \
-    LH_LuaInstance.h
+    LH_LuaInstance.h \
+    LH_LuaSetupItem.h
 
 
 macx {

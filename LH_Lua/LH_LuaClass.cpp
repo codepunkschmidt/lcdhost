@@ -41,25 +41,37 @@
 
 QList<LH_LuaClass*> LH_LuaClass::list_;
 
-static void* lh_luaclass_creator( const lh_class *cls )
+static lh_layout_item *lua_layout_item_create( lh_layout_class *lc, lh_callback_t cb, void*cb_id )
 {
-    Q_UNUSED( cls );
-    return new LH_LuaInstance( cls );
+    return (new LH_LuaInstance( (LH_LuaClass *) lc->obj.ref, cb, cb_id ))->item();
 }
 
-LH_LuaClass::LH_LuaClass( lua_State *luastate, QFileInfo fi, QString filename ) : L(luastate), fi_(fi), filename_(filename)
+static void lua_layout_item_destroy(lh_layout_class *lc, lh_layout_item *li )
 {
+    Q_UNUSED(lc);
+    LH_LuaInstance *inst = (LH_LuaInstance *) li->obj.ref;
+    delete inst;
+}
+
+LH_LuaClass::LH_LuaClass( LH_QtPlugin_Lua *parent, QFileInfo fi, QString filename )
+    : LH_QtObject( &classinfo_.obj, parent ), L(parent->luaState()), fi_(fi), filename_(filename)
+{
+}
+
+const char *LH_LuaClass::userInit()
+{
+    if( const char *err = LH_QtObject::userInit() ) return err;
+
 #ifndef QT_NO_DEBUG
     int old_top = lua_gettop(L);
 #endif
 
-    memset( &classinfo_, 0, sizeof(classinfo_) );
-    classinfo_.size = sizeof(lh_class);
+    classinfo_.size = sizeof(lh_layout_class);
 
     lua_pushliteral(L,"class_id");
     lua_rawget(L,-2);
-    id_array_.append( lua_tostring(L,-1) );
-    classinfo_.id = id_array_.constData();
+    ident_array_.append( lua_tostring(L,-1) );
+    classinfo_.ident = ident_array_.constData();
     lua_pop(L,1);
 
     lua_pushliteral(L,"class_name");
@@ -86,6 +98,9 @@ LH_LuaClass::LH_LuaClass( lua_State *luastate, QFileInfo fi, QString filename ) 
     else classinfo_.height = -1;
     lua_pop(L,1);
 
+    classinfo_.obj_layout_item_create = lua_layout_item_create;
+    classinfo_.obj_layout_item_destroy = lua_layout_item_destroy;
+
     // put it into the registry
     lua_pushlightuserdata(L,this);
     lua_pushvalue(L,-2);
@@ -99,7 +114,7 @@ LH_LuaClass::LH_LuaClass( lua_State *luastate, QFileInfo fi, QString filename ) 
         lua_rawget(L,-2);
         if( lua_istable(L,-1) )
         {
-            lua_pushlstring(L,id_array_.constData(),id_array_.size());
+            lua_pushlstring(L,ident_array_.constData(),ident_array_.size());
             lua_pushvalue(L,-4); // copy of module
 
             // assert the state so I haven't f-ed up
@@ -115,13 +130,14 @@ LH_LuaClass::LH_LuaClass( lua_State *luastate, QFileInfo fi, QString filename ) 
     }
     lua_pop(L,1); // pop lcdhost
 
-    lh_add_class( &classinfo_, lh_luaclass_creator );
+    parent()->callback( lh_cb_class_create, &classinfo_ );
+
     list_.append(this);
 
-    qDebug() << "LH_Lua: loaded" << id_array_.constData() << "from" << filename_;
+    qDebug() << "LH_Lua: loaded" << ident_array_.constData() << "from" << filename_;
 
     Q_ASSERT( old_top == lua_gettop(L) );
-    return;
+    return 0;
 }
 
 LH_LuaClass::~LH_LuaClass()
@@ -130,8 +146,8 @@ LH_LuaClass::~LH_LuaClass()
     int old_top = lua_gettop(L);
 #endif
 
+    callback( lh_cb_destroy );
     list_.removeAll( this );
-    lh_remove_class( &classinfo_ );
     memset( &classinfo_, 0, sizeof(classinfo_) );
 
     // Unload the module from Lua by setting
@@ -143,7 +159,7 @@ LH_LuaClass::~LH_LuaClass()
         lua_rawget(L,-2);
         if( lua_istable(L,-1) )
         {
-            lua_pushlstring(L,id_array_.constData(),id_array_.size());
+            lua_pushlstring(L,ident_array_.constData(),ident_array_.size());
             lua_pushnil(L);
             lua_rawset(L,-3);
         }
@@ -174,8 +190,10 @@ void LH_LuaClass::lua_pushmodule()
 // This function loads the file and verifies that it
 // looks like a valid LCDHost layout class.
 // Returns error message or QString() if we have it loaded.
-QString LH_LuaClass::load( lua_State *L, QFileInfo fi, const char *datapath )
+QString LH_LuaClass::load( LH_QtPlugin_Lua *parent, QFileInfo fi )
 {
+    lua_State *L = parent->luaState();
+
 #ifndef QT_NO_DEBUG
     int old_top = lua_gettop(L);
 #endif
@@ -185,11 +203,8 @@ QString LH_LuaClass::load( lua_State *L, QFileInfo fi, const char *datapath )
     QByteArray filename_array = filename.toLocal8Bit();
     const char *magic = NULL;
 
-    if( datapath && *datapath )
-    {
-        QDir datadir(datapath);
-        filename = datadir.relativeFilePath( fi.filePath() );
-    }
+    QDir datadir( LH_QtPlugin::dir_data() );
+    filename = datadir.relativeFilePath( fi.filePath() );
 
     Q_ASSERT( L != NULL );
 
@@ -296,30 +311,10 @@ QString LH_LuaClass::load( lua_State *L, QFileInfo fi, const char *datapath )
     lua_pop(L,1); // looked good, pop it so the module is at top again
 
     // Create the class (needs module at stack top)
-    new LH_LuaClass(L,fi,filename);
+    new LH_LuaClass(parent,fi,filename);
     lua_pop(L,1); // pop module
 
 bail_out:
     Q_ASSERT( old_top == lua_gettop(L) );
     return retv;
-}
-
-LH_LuaClass *LH_LuaClass::from_lh_class( const lh_class *cls )
-{
-    if( cls == NULL ) return NULL;
-    foreach( LH_LuaClass *luaclass, list_ )
-    {
-        if( cls == &luaclass->classinfo_ )
-            return luaclass;
-    }
-    qDebug() << "LH_LuaClass can't find class for" << cls->id;
-    return NULL;
-}
-
-void LH_LuaClass::clear()
-{
-#if 0
-    while( !list_.isEmpty() )
-        delete list_.takeFirst();
-#endif
 }

@@ -79,9 +79,9 @@ lh_class *LH_DialTime::classInfo()
         "System/Date and time",
         "SystemTimeDial",
         "Time (Dial)",
-        48,48,
-        lh_object_calltable_NULL,
-        lh_instance_calltable_NULL
+        48,48
+        
+        
     };
 
     return &classInfo;

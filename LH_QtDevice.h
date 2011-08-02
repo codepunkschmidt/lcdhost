@@ -48,16 +48,15 @@
 class LH_QtDevice : public LH_QtObject
 {
     Q_OBJECT
-    QByteArray devid_;
-    QByteArray name_;
-    lh_device lh_dev_;
-    char item_name_[8];
+    lh_output_device lh_dev_;
 
 public:
-    LH_QtDevice( LH_QtObject *parent );
+    LH_QtDevice( const char *devid, LH_QtObject *parent );
     virtual ~LH_QtDevice();
 
-    lh_device *lh_dev() { return &lh_dev_; }
+    LH_QtObject *parent() const { return static_cast<LH_QtObject *>(LH_QtObject::parent()); }
+
+    lh_output_device *lh_dev() { return &lh_dev_; }
 
     /**
       These methods are the ones you need to override in your
@@ -72,13 +71,6 @@ public:
     virtual const char* set_backlight(lh_device_backlight*) { return NULL; }
     virtual const char* close() { return NULL; }
 
-    void arrive();
-    void leave();
-
-    QByteArray devid() const { return QByteArray(lh_dev_.devid); }
-    void setDevid( QByteArray );
-    QString name() const { return QString::fromUtf8(lh_dev_.name); }
-    void setName( QString );
     QSize size() const { return QSize( lh_dev_.width, lh_dev_.height); }
     void setSize( QSize s ) { lh_dev_.width = s.width(); lh_dev_.height = s.height(); }
     void setSize( int w, int h ) { lh_dev_.width = w; lh_dev_.height = h; }

@@ -96,10 +96,9 @@ protected:
 
 public:
     LH_WebKit( const bool enableParsing = false) : LH_QtInstance(0), parsingEnabled_(enableParsing) {}
+    ~LH_WebKit();
 
     const char *userInit();
-    void userTerm();
-
     int notify(int, void *);
     QImage *render_qimage(int w, int h);
 

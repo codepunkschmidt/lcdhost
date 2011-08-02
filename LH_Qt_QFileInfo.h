@@ -45,7 +45,7 @@ class LH_Qt_QFileInfo : public LH_Qt_QString
     QFileInfo fi_;
 
 public:
-    LH_Qt_QFileInfo( LH_QtObject *parent, QString name, QFileInfo value, int flags = 0 )
+    LH_Qt_QFileInfo( LH_QtObject *parent, const QString& name, const QFileInfo& value, int flags = 0 )
         : LH_Qt_QString( parent, name, value.filePath(), flags, lh_type_string_filename ), fi_(value)
     {
         return;
@@ -53,22 +53,24 @@ public:
 
     virtual void setup_change()
     {
-        const char *path = "";
-        LH_Qt_QString::setup_change();
-        if( parent() && parent()->state() ) path = parent()->state()->dir_layout;
-        fi_ = QFileInfo( QString::fromUtf8(path), LH_Qt_QString::value() );
-        return;
+        getString();
+        fi_ = QFileInfo( str_ );
+        emit change( fi_ );
+        LH_QtSetupItem::setup_change();
     }
 
-    QFileInfo& value()
+    QFileInfo value()
     {
         return fi_;
     }
 
     void setValue(const QFileInfo &fi)
     {
-        fi_ = fi;
-        LH_Qt_QString::setValue( fi_.filePath() );
+        if( fi != fi_ )
+        {
+            fi_ = fi;
+            setValue( fi.filePath() );
+        }
     }
 };
 

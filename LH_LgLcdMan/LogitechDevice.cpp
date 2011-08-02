@@ -41,7 +41,8 @@
 #include "EventLgLcdNotification.h"
 #include "LogitechDevice.h"
 
-LogitechDevice::LogitechDevice( LH_LgLcdMan *drv, bool bw ) : LH_QtDevice(drv)
+LogitechDevice::LogitechDevice( LH_LgLcdMan *drv, bool bw )
+    : LH_QtDevice( bw ? "LH_LgLcdMan:BW" : "LH_LgLcdMan:QVGA", drv)
 {
     drv_ = drv;
     opened_ = false;
@@ -50,26 +51,21 @@ LogitechDevice::LogitechDevice( LH_LgLcdMan *drv, bool bw ) : LH_QtDevice(drv)
 
     if( bw_ )
     {
-        setDevid( "LH_LgLcdMan:BW" );
-        setName( QObject::tr("Logitech B/W LCD") );
+        setObjectName( QObject::tr("Logitech B/W LCD") );
         setSize( 160, 43 );
         setDepth( 1 );
     }
     else
     {
-        setDevid( "LH_LgLcdMan:QVGA" );
-        setName( QObject::tr("Logitech QVGA LCD") );
+        setObjectName( QObject::tr("Logitech QVGA LCD") );
         setSize( 320, 240 );
         setDepth( 32 );
     }
-
-    arrive();
     return;
 }
 
 LogitechDevice::~LogitechDevice()
 {
-    leave();
     if( opened() ) close();
 }
 

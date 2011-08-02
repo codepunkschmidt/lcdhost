@@ -45,8 +45,8 @@ lh_class *LH_MonitoringImage::classInfo()
         "3rdParty/Monitoring",
         "MonitoringImage",
         "Monitoring (Image)",
-        48,48,
-        lh_instance_calltable_NULL
+        48,48
+        
     };
 
     return &classInfo;

@@ -36,8 +36,8 @@ lh_class *LH_MonitoringDial::classInfo()
         "3rdParty/Monitoring",
         "MonitoringDial",
         "Monitoring (Dial)",
-        48,48,
-        lh_instance_calltable_NULL
+        48,48
+        
     };
 
     return &classInfo;

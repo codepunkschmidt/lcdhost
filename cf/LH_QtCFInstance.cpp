@@ -78,13 +78,13 @@ void LH_QtCFInstance::cf_initialize()
         cf_rule_editing_ = None;
         watching_non_setup_item_ = false;
 
-        LH_Qt_QString *hr = new LH_Qt_QString(this,tr("CF-Area-Rule"),QString(),LH_FLAG_LAST | LH_FLAG_UI | LH_FLAG_HIDETITLE, lh_type_string_htmlhelp );
+        LH_Qt_QString *hr = new LH_Qt_QString(this,"CF-Area-Rule",QString(),LH_FLAG_LAST | LH_FLAG_UI | LH_FLAG_HIDETITLE, lh_type_string_htmlhelp );
         hr->setHelp("<hr>");
 
         setup_cf_enabled_ = new LH_Qt_bool(this, "Enable Conditional Formatting", false, LH_FLAG_LAST | LH_FLAG_AUTORENDER | LH_FLAG_BLANKTITLE);
         setup_cf_enabled_->setHelp("<p>Conditional Formatting allows a number of properties on the object to change automatically.</p><p>E.g. a text object could change it's fore or background colour or its font.</p>");
 
-        LH_Qt_QString *comment = new LH_Qt_QString(this,tr("comment"), QString(), LH_FLAG_LAST | LH_FLAG_UI | LH_FLAG_BLANKTITLE,lh_type_string_htmlhelp );
+        LH_Qt_QString *comment = new LH_Qt_QString(this,"comment", QString(), LH_FLAG_LAST | LH_FLAG_UI | LH_FLAG_BLANKTITLE,lh_type_string_htmlhelp );
         comment->setHelp("<span style='color:grey'>(Conditional Formatting is still experimental)</span>");
 
         setup_cf_state_ = new LH_Qt_QString(this, "State", "", LH_FLAG_NOSAVE | LH_FLAG_READONLY | LH_FLAG_LAST | LH_FLAG_HIDDEN);

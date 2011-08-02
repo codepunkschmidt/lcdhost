@@ -40,8 +40,8 @@
 class LH_Qt_QColor : public LH_QtSetupItem
 {
 public:
-    LH_Qt_QColor( LH_QtObject *parent, const QString& name, const QColor& value, int flags = 0 )
-        : LH_QtSetupItem( parent, name, lh_type_integer_color, flags )
+    LH_Qt_QColor( LH_QtObject *parent, const char *ident, const QColor& value, int flags = 0 )
+        : LH_QtSetupItem( parent, ident, lh_type_integer_color, flags )
     {
         item_.data.i = value.rgba();
     }

@@ -6,8 +6,8 @@
 class LH_Qt_array : public LH_QtSetupItem
 {
 public:
-    LH_Qt_array( LH_QtObject *parent, const QString& name, int size = 0, int flags = 0, lh_setup_type subtype = lh_type_array_qint64 )
-        : LH_QtSetupItem( parent, name, subtype, flags )
+    LH_Qt_array( LH_QtObject *parent, const char *ident, int size = 0, int flags = 0, lh_setup_type subtype = lh_type_array_qint64 )
+        : LH_QtSetupItem( parent, ident, subtype, flags )
     {
         resize( size );
         memset( data_array_.data(), 0, data_array_.size()  );

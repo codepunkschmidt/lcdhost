@@ -71,18 +71,18 @@ const char *LH_Mailcount::userInit()
     if( const char *err = LH_QtInstance::userInit() ) return err;
 
     envelope_count_ = -1;
-    email_count_ = new LH_Qt_int(this,tr("Unread mail count"),0,
+    email_count_ = new LH_Qt_int(this,("Unread mail count"),0,
                                  LH_FLAG_READONLY|LH_FLAG_NOSAVE|LH_FLAG_NOSOURCE|LH_FLAG_AUTORENDER);
     email_count_->setLink("=/system/Mail count");
 
-    mail_image_ = new LH_Qt_QFileInfo(this,tr("Mail envelope image"),QFileInfo(),LH_FLAG_NOSOURCE|LH_FLAG_NOSINK|LH_FLAG_AUTORENDER);
+    mail_image_ = new LH_Qt_QFileInfo(this,("Mail envelope image"),QFileInfo(),LH_FLAG_NOSOURCE|LH_FLAG_NOSINK|LH_FLAG_AUTORENDER);
     connect( mail_image_, SIGNAL(changed()), this, SLOT(makeEnvelope()) );
 
-    flashing_ = new LH_Qt_bool(this,tr("Flash when there is mail"),true,LH_FLAG_AUTORENDER);
+    flashing_ = new LH_Qt_bool(this,("Flash when there is mail"),true,LH_FLAG_AUTORENDER);
     connect( flashing_, SIGNAL(changed()), this, SLOT(requestPolling()) );
     connect( flashing_, SIGNAL(changed()), this, SLOT(makeEnvelope()) );
 
-    smoothflash_ = new LH_Qt_bool(this,tr("Use smooth flashes"),false);
+    smoothflash_ = new LH_Qt_bool(this,("Use smooth flashes"),false);
     connect( smoothflash_, SIGNAL(changed()), this, SLOT(requestPolling()) );
 
     flash_on_ = true;

@@ -40,16 +40,16 @@
 class LH_Qt_double : public LH_QtSetupItem
 {
 public:
-    LH_Qt_double( LH_QtObject *parent, const QString& name, double value, double min, double max, int flags = 0 )
-        : LH_QtSetupItem( parent, name, lh_type_double, flags|LH_FLAG_MINMAX )
+    LH_Qt_double( LH_QtObject *parent, const char *ident, double value, double min, double max, int flags = 0 )
+        : LH_QtSetupItem( parent, ident, lh_type_double, flags|LH_FLAG_MINMAX )
     {
         item_.data.d = value;
         item_.param.d.min = min;
         item_.param.d.max = max;
     }
 
-    LH_Qt_double( LH_QtObject *parent, const QString& name, double value, int flags = 0 )
-        : LH_QtSetupItem( parent, name, lh_type_double, flags )
+    LH_Qt_double( LH_QtObject *parent, const char *ident, double value, int flags = 0 )
+        : LH_QtSetupItem( parent, ident, lh_type_double, flags )
     {
         item_.data.d = value;
     }

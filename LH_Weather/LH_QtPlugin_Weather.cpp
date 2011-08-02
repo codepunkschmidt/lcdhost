@@ -131,7 +131,7 @@ const char *LH_QtPlugin_Weather::userInit()
 
     setup_method_ = NULL;
 
-    setup_refresh_ = new LH_Qt_int(this,tr("Refresh (minutes)"),5);
+    setup_refresh_ = new LH_Qt_int(this,("Refresh (minutes)"),5);
     setup_refresh_->setHelp("How long to wait before checking for an update to the feed (in minutes)");
     connect( setup_refresh_, SIGNAL(changed()), this, SLOT(requestPolling()) );
 

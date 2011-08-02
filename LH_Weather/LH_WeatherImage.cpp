@@ -68,7 +68,7 @@ const char *LH_WeatherImage::userInit()
     setup_value_type_->setOrder(-4);
     connect( setup_value_type_, SIGNAL(changed()), this, SLOT(updateImage()) );
 
-    setup_file_ = new LH_Qt_QFileInfo( this, tr("File"), QFileInfo(), LH_FLAG_AUTORENDER );
+    setup_file_ = new LH_Qt_QFileInfo( this, ("File"), QFileInfo(), LH_FLAG_AUTORENDER );
     setup_file_->setHelp( "<p>The image map file instructs the weather image on how to match up "
                           "a weather code with the appropriate images in the same folder.</p>"
                           "<p>The format is as follows:</p>"

@@ -6,8 +6,8 @@
 class LH_Qt_array_int : public LH_Qt_array
 {
 public:
-    LH_Qt_array_int( LH_QtObject *parent, const QString& name, int size = 0, int flags = 0 )
-        : LH_Qt_array( parent, name, size, flags, lh_type_array_qint64 )
+    LH_Qt_array_int( LH_QtObject *parent, const char *ident, int size = 0, int flags = 0 )
+        : LH_Qt_array( parent, ident, size, flags, lh_type_array_qint64 )
     {
     }
 

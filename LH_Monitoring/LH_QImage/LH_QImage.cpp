@@ -48,7 +48,7 @@ lh_class *LH_QImage::classInfo()
 const char *LH_QImage::userInit()
 {
     if( const char *err = LH_QtCFInstance::userInit() ) return err;
-    setup_image_file_ = new LH_Qt_QFileInfo( this, tr("Image"), QFileInfo(), LH_FLAG_AUTORENDER );
+    setup_image_file_ = new LH_Qt_QFileInfo( this, ("Image"), QFileInfo(), LH_FLAG_AUTORENDER );
     setup_show_placeholder_ = new LH_Qt_bool( this, "Show placholder image when empty", true, LH_FLAG_AUTORENDER | LH_FLAG_BLANKTITLE);
     return 0;
 }

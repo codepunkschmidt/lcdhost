@@ -39,10 +39,12 @@
 class LH_TextMemPhysicalTotal : public LH_TextNumber
 {
 public:
-    LH_TextMemPhysicalTotal() : LH_TextNumber()
+    const char *userInit()
     {
+        if( const char *err = LH_TextNumber::userInit() ) return err;
         setBytes(true);
         setup_value_->setLink("/system/memory/physical/total");
+        return 0;
     }
 
     static lh_class *classInfo()

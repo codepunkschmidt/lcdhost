@@ -47,7 +47,7 @@ static void obj_setup_change( lh_setup_item *obj )
     RECAST(obj->obj.ref)->setup_change();
 }
 
-LH_QtSetupItem::LH_QtSetupItem( LH_QtObject *parent, const QString& ident, lh_setup_type type, int flags )
+LH_QtSetupItem::LH_QtSetupItem( LH_QtObject *parent, const char *ident, lh_setup_type type, int flags )
     : LH_QtObject( &item_.obj, parent )
 
 {
@@ -122,11 +122,9 @@ void LH_QtSetupItem::setOrder( int n )
     }
 }
 
-void LH_QtSetupItem::setIdent( const QString& s )
+void LH_QtSetupItem::setIdent( const char *s )
 {
-    Q_ASSERT( !s.isEmpty() );
-
-    if( s.startsWith('^') )
+    if( *s == '^' )
     {
 #ifndef QT_NO_DEBUG
         if( !parent()->warning_issued_ )
@@ -140,7 +138,7 @@ void LH_QtSetupItem::setIdent( const QString& s )
         item_.flags |= LH_FLAG_BLANKTITLE;
     }
 
-    if( s.startsWith('~') )
+    if( *s == '~' )
     {
 #ifndef QT_NO_DEBUG
         if( !parent()->warning_issued_ )
@@ -156,14 +154,14 @@ void LH_QtSetupItem::setIdent( const QString& s )
 
     if( title_array_.isNull() )
     {
-        title_array_ = s.toUtf8();
+        title_array_ = QByteArray(s);
         if( title_array_.startsWith('^') ) title_array_.remove(0,1);
         if( title_array_.startsWith('~') ) title_array_.remove(0,1);
         item_.title = title_array_.data();
     }
 
     setObjectName(s);
-    ident_array_ = s.toAscii();
+    ident_array_ = QByteArray(s);
 
     if( ident_array_.contains('/') )
     {
@@ -193,16 +191,16 @@ void LH_QtSetupItem::setTitle(const QString& s)
     return;
 }
 
-void LH_QtSetupItem::setLink(const QString& s)
+void LH_QtSetupItem::setLink(const char *s)
 {
-    if( s.isEmpty() )
+    if( s == 0 || *s == 0 )
     {
         link_array_.clear();
         item_.link = 0;
     }
     else
     {
-        link_array_ = s.toUtf8();
+        link_array_ = QByteArray(s);
         item_.link = link_array_.data();
     }
     refreshMeta();

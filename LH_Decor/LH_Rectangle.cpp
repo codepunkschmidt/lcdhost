@@ -42,14 +42,14 @@
 const char *LH_Rectangle::userInit()
 {
     if( const char *err = LH_QtCFInstance::userInit() ) return err;
-    setup_penwidth_ = new LH_Qt_QSlider(this,tr("Pen width"),0,0,1000,LH_FLAG_AUTORENDER);
-    setup_rounding_ = new LH_Qt_QSlider(this,tr("Corner rounding"),20,0,100,LH_FLAG_AUTORENDER);
-    setup_pencolor_ = new LH_Qt_QColor(this,tr("Pen color"),Qt::black,LH_FLAG_AUTORENDER);
-    setup_bgcolor1_ = new LH_Qt_QColor(this,tr("Fill color 1"),Qt::white,LH_FLAG_AUTORENDER);
-    setup_gradient_ = new LH_Qt_bool(this,tr("^Background is a gradient"),false);
+    setup_penwidth_ = new LH_Qt_QSlider(this,("Pen width"),0,0,1000,LH_FLAG_AUTORENDER);
+    setup_rounding_ = new LH_Qt_QSlider(this,("Corner rounding"),20,0,100,LH_FLAG_AUTORENDER);
+    setup_pencolor_ = new LH_Qt_QColor(this,("Pen color"),Qt::black,LH_FLAG_AUTORENDER);
+    setup_bgcolor1_ = new LH_Qt_QColor(this,("Fill color 1"),Qt::white,LH_FLAG_AUTORENDER);
+    setup_gradient_ = new LH_Qt_bool(this,("^Background is a gradient"),false);
     connect( setup_gradient_, SIGNAL(change(bool)), this, SLOT(enableGradient(bool)) );
-    setup_bgcolor2_ = new LH_Qt_QColor(this,tr("Fill color 2"),Qt::lightGray,LH_FLAG_HIDDEN|LH_FLAG_AUTORENDER);
-    setup_horizontal_ = new LH_Qt_bool(this,tr("^Gradient is horizontal"),false,LH_FLAG_HIDDEN|LH_FLAG_AUTORENDER);
+    setup_bgcolor2_ = new LH_Qt_QColor(this,("Fill color 2"),Qt::lightGray,LH_FLAG_HIDDEN|LH_FLAG_AUTORENDER);
+    setup_horizontal_ = new LH_Qt_bool(this,("^Gradient is horizontal"),false,LH_FLAG_HIDDEN|LH_FLAG_AUTORENDER);
     return 0;
 }
 

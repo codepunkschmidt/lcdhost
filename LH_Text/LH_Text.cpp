@@ -65,34 +65,34 @@ const char *LH_Text::userInit()
 
     richtext_ = false;
 
-    setup_text_ = new LH_Qt_QString( this, tr("Text"), QString(), LH_FLAG_FOCUS|LH_FLAG_AUTORENDER );
+    setup_text_ = new LH_Qt_QString( this, ("Text"), QString(), LH_FLAG_FOCUS|LH_FLAG_AUTORENDER );
     setup_text_->setOrder(-2);
     setup_text_->setHelp( "<p>The displayed text. Note that this supports "
                           "a limited HTML subset, including images and tables.</p>");
     connect( setup_text_, SIGNAL(changed()), this, SLOT(textChanged()) );
 
-    setup_font_ = new LH_Qt_QFont( this, tr("Font"), QFont("Arial",10), LH_FLAG_AUTORENDER );
+    setup_font_ = new LH_Qt_QFont( this, ("Font"), QFont("Arial",10), LH_FLAG_AUTORENDER );
     setup_font_->setHelp( "<p>Font used to display the text.</p>");
     connect( setup_font_, SIGNAL(changed()), this, SLOT(fontChanged()) );
 
-    setup_fontresize_ = new LH_Qt_bool( this, tr("^Adjust font size to instance height"), true, LH_FLAG_AUTORENDER );
+    setup_fontresize_ = new LH_Qt_bool( this, ("^Adjust font size to instance height"), true, LH_FLAG_AUTORENDER );
     setup_fontresize_->setHelp( "<p>Rather than using a fixed font size, "
                           "LCDHost will adjust the font height to "
                           "match the instance height.</p>"
                           );
     connect( setup_fontresize_, SIGNAL(changed()), this, SLOT(fontChanged()) );
 
-    setup_pencolor_ = new LH_Qt_QColor( this, tr("Color"), Qt::black, LH_FLAG_AUTORENDER );
+    setup_pencolor_ = new LH_Qt_QColor( this, ("Color"), Qt::black, LH_FLAG_AUTORENDER );
     setup_pencolor_->setHelp( "<p>The color used to write the text.</p>");
     connect( setup_pencolor_, SIGNAL(changed()), this, SLOT(makeTextImage()) );
 
-    setup_bgcolor_ = new LH_Qt_QColor( this, tr("Background"), Qt::transparent, LH_FLAG_AUTORENDER );
+    setup_bgcolor_ = new LH_Qt_QColor( this, ("Background"), Qt::transparent, LH_FLAG_AUTORENDER );
     setup_bgcolor_->setHelp( "<p>The color for the background.</p>");
     connect( setup_bgcolor_, SIGNAL(changed()), this, SLOT(makeTextImage()) );
 
-    setup_horizontal_ = new LH_Qt_QStringList( this, tr("Horizontal"), QStringList() << tr("Center") << tr("Left")
-                                               << tr("Right") << tr("Scroll (Marquee)") << tr("Reverse scroll (Marquee)")
-                                               << tr("Scroll (Loop)") << tr("Reverse scroll (Loop)")
+    setup_horizontal_ = new LH_Qt_QStringList( this, ("Horizontal"), QStringList() << ("Center") << ("Left")
+                                               << ("Right") << ("Scroll (Marquee)") << ("Reverse scroll (Marquee)")
+                                               << ("Scroll (Loop)") << ("Reverse scroll (Loop)")
                                               , LH_FLAG_AUTORENDER );
     setup_horizontal_->setHelp( "<p>How to handle the text if it is wider than "
                                 "the available horizontal area. You can either adjust "
@@ -101,9 +101,9 @@ const char *LH_Text::userInit()
                                 "in the reverse direction, left to right.</p>");
     connect( setup_horizontal_, SIGNAL(changed()), this, SLOT(requestPolling()) );
 
-    setup_vertical_ = new LH_Qt_QStringList( this, tr("Vertical"), QStringList() << tr("Center") << tr("Top")
-                                             << tr("Bottom") << tr("Scroll (Marquee)") << tr("Reverse scroll (Marquee)")
-                                            << tr("Scroll (Loop)") << tr("Reverse scroll (Loop)"), LH_FLAG_AUTORENDER );
+    setup_vertical_ = new LH_Qt_QStringList( this, ("Vertical"), QStringList() << ("Center") << ("Top")
+                                             << ("Bottom") << ("Scroll (Marquee)") << ("Reverse scroll (Marquee)")
+                                            << ("Scroll (Loop)") << ("Reverse scroll (Loop)"), LH_FLAG_AUTORENDER );
     setup_vertical_->setHelp( "<p>How to handle the text if it is taller than "
                                 "the available vertical area. You can either adjust "
                                 "the text to the top, center or bottom, or you can "
@@ -111,14 +111,14 @@ const char *LH_Text::userInit()
                                 "in the reverse direction, top to bottom.</p>");
     connect( setup_vertical_, SIGNAL(changed()), this, SLOT(requestPolling()) );
 
-    setup_scrollrate_ = new LH_Qt_QSlider( this, tr("Scroll rate"), 15, 1, 30, LH_FLAG_AUTORENDER );
+    setup_scrollrate_ = new LH_Qt_QSlider( this, ("Scroll rate"), 15, 1, 30, LH_FLAG_AUTORENDER );
     setup_scrollrate_->setHelp( "<p>How often the text is scrolled.</p>");
     connect( setup_scrollrate_, SIGNAL(changed()), this, SLOT(requestPolling()) );
 
-    setup_scrollstep_ = new LH_Qt_QSlider( this, tr("Scroll step"), 2, 1, 20, LH_FLAG_AUTORENDER );
+    setup_scrollstep_ = new LH_Qt_QSlider( this, ("Scroll step"), 2, 1, 20, LH_FLAG_AUTORENDER );
     setup_scrollstep_->setHelp( "<p>How large each scroll step is.</p>");
 
-    setup_scrollgap_ = new LH_Qt_QSlider( this, tr("Scroll gap"), 10, 0, 340, LH_FLAG_AUTORENDER );
+    setup_scrollgap_ = new LH_Qt_QSlider( this, ("Scroll gap"), 10, 0, 340, LH_FLAG_AUTORENDER );
     setup_scrollgap_->setHelp( "<p>How large a gap between \"loop\" scrolling text.</p>");
 
     scrollposx_ = scrollposy_ = 0;

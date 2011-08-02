@@ -67,7 +67,7 @@ const char *LH_CursorImage::userInit()
                                "e.g.: 1,1"
                                );
 
-    setup_cursor_state_ = new LH_Qt_QStringList( this, tr("Cursor State"), QStringList()<<"OFF"<<"OFF_SEL"<<"ON"<<"ON_SEL", LH_FLAG_NOSAVE|LH_FLAG_NOSINK|LH_FLAG_NOSOURCE|LH_FLAG_READONLY );
+    setup_cursor_state_ = new LH_Qt_QStringList( this, ("Cursor State"), QStringList()<<"OFF"<<"OFF_SEL"<<"ON"<<"ON_SEL", LH_FLAG_NOSAVE|LH_FLAG_NOSINK|LH_FLAG_NOSOURCE|LH_FLAG_READONLY );
 
     add_cf_target(setup_image_file_);
     add_cf_source(setup_cursor_state_);

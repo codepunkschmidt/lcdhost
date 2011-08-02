@@ -60,7 +60,7 @@ lh_class *LH_TextFile::classInfo()
 const char *LH_TextFile::userInit()
 {
     if( const char *err = LH_Text::userInit() ) return err;
-    setup_file_ = new LH_Qt_QFileInfo( this, tr("File"), QFileInfo(), LH_FLAG_AUTORENDER );
+    setup_file_ = new LH_Qt_QFileInfo( this, ("File"), QFileInfo(), LH_FLAG_AUTORENDER );
     setup_file_->setOrder(-1);
     setup_file_->setHelp("<p>Select the file whose contents will be shown. "
                          "The file will be checked for updates regularly.</p>");
@@ -81,7 +81,7 @@ void LH_TextFile::checkFile()
     setup_file_->value().refresh();
     if( !setup_file_->value().isFile() )
     {
-        setup_text_->setValue(tr("No such file."));
+        setup_text_->setValue(("No such file."));
         setup_text_->setFlag(LH_FLAG_HIDDEN,false);
         return;
     }

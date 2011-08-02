@@ -82,6 +82,20 @@ LH_QtSetupItem::~LH_QtSetupItem()
     callback( lh_cb_destroy );
 }
 
+int LH_QtSetupItem::notify( int note, void *param )
+{
+    if( note & LH_NOTE_WARNING )
+    {
+        int w = (int) param;
+        if( w == LH_WARNING_DUPLICATE_SOURCE )
+        {
+            Q_ASSERT( item_.states & LH_STATE_SOURCE );
+            emit duplicateSource();
+        }
+    }
+    return LH_NOTE_WARNING;
+}
+
 void LH_QtSetupItem::setup_resize( size_t needed )
 {
     data_array_.resize(needed);

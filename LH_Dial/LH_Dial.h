@@ -131,8 +131,8 @@ protected:
 
     void setNeedleVisibility(bool visible, int index = 0);
 public:    
-    virtual const char *userInit();
-    void userTerm();
+    ~LH_Dial();
+    const char *userInit();
 
     int polling();
     QImage *render_qimage( int w, int h );

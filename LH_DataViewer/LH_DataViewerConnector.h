@@ -92,14 +92,8 @@ protected:
 
     QString get_dir_layout();
 public:
+    ~LH_DataViewerConnector();
     const char *userInit();
-    void userTerm();
-    const char *userInit()
-    {
-        if( const char *err = LH_QtInstance::userInit() ) return err;
-        hide();
-        return 0;
-    }
 
     int polling();
 

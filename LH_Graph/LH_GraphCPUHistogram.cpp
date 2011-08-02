@@ -61,6 +61,13 @@ class LH_GraphCPUHistogram : public LH_Graph
     }
 
 public:
+    ~LH_GraphCPUHistogram()
+    {
+        delete valCount;
+        delete valCache;
+        delete lastVal;
+    }
+
     const char *userInit()
     {
         if( const char *err = LH_Graph::userInit() ) return err;
@@ -72,14 +79,6 @@ public:
         cpu_->smoothingHidden(true);
         initialize(cpu_->count());
         return 0;
-    }
-
-    void userTerm()
-    {
-        delete valCount;
-        delete valCache;
-        delete lastVal;
-        LH_Graph::userTerm();
     }
 
     static lh_class *classInfo()

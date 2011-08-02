@@ -117,14 +117,13 @@ qDebug() << get_dir_layout();
     return languages;
 }
 
-void LH_DataViewerConnector::userTerm()
+LH_DataViewerConnector::~LH_DataViewerConnector()
 {
     //delete sourceWatcher_;
     delete rootNode;
     rootNode = 0;
     delete sharedData;
     sharedData = 0;
-    LH_QtInstance::userTerm() ;
 }
 
 int LH_DataViewerConnector::polling()

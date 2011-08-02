@@ -41,17 +41,17 @@
 #include <QtXml>
 #include <QTimer>
 
-#include "..\LH_QtPlugin.h"
-#include "..\LH_QtObject.h"
-#include "..\LH_QtInstance.h"
-#include "..\LH_Qt_bool.h"
-#include "..\LH_Qt_QString.h"
-#include "..\LH_Qt_QStringList.h"
-#include "..\LH_Qt_QTextEdit.h"
-#include "..\LH_Qt_QColor.h"
-#include "..\LH_Qt_QFont.h"
-#include "..\LH_Qt_QFileInfo.h"
-#include "..\LH_Qt_QSlider.h"
+#include "../LH_QtPlugin.h"
+#include "../LH_QtObject.h"
+#include "../LH_QtInstance.h"
+#include "../LH_Qt_bool.h"
+#include "../LH_Qt_QString.h"
+#include "../LH_Qt_QStringList.h"
+#include "../LH_Qt_QTextEdit.h"
+#include "../LH_Qt_QColor.h"
+#include "../LH_Qt_QFont.h"
+#include "../LH_Qt_QFileInfo.h"
+#include "../LH_Qt_QSlider.h"
 
 #include "cf_sources_targets.h"
 

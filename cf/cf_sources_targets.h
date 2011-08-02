@@ -6,9 +6,9 @@
 #include <QList>
 #include <QHash>
 
-#include "..\LH_QtSetupItem.h"
-#include "..\LH_Qt_QString.h"
-#include "..\LH_Qt_QStringList.h"
+#include "../LH_QtSetupItem.h"
+#include "../LH_Qt_QString.h"
+#include "../LH_Qt_QStringList.h"
 
 #ifndef EXPORT
 # define EXPORT extern "C" Q_DECL_EXPORT

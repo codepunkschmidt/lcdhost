@@ -172,12 +172,12 @@ static void lh_self_item_data_setvalue(lua_State *L, LH_LuaSetupItem* item, int 
         case lh_type_integer:
         case lh_type_integer_slider:
         case lh_type_integer_progress:
-            item->setValue( lua_tointeger(L,-1) );
+            item->setValue( (qlonglong) lua_tointeger(L,-1) );
             break;
         case lh_type_integer_color:
             if( lua_isnumber(L,-1) )
             {
-                item->setValue( lua_tointeger(L,-1) );
+                item->setValue( (qlonglong) lua_tointeger(L,-1) );
             }
             else if( lua_isstring(L,-1) )
             {
@@ -190,7 +190,7 @@ static void lh_self_item_data_setvalue(lua_State *L, LH_LuaSetupItem* item, int 
         case lh_type_integer_list:
         case lh_type_integer_listbox:
             // in Lua, lists start at 1!
-            item->setValue( lua_tointeger(L,-1) - 1 );
+            item->setValue( (qlonglong) lua_tointeger(L,-1) - 1 );
             break;
         case lh_type_integer_boolean:
             item->setValue( (bool) lua_toboolean(L,-1) );

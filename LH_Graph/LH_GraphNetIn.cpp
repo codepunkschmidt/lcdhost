@@ -38,7 +38,7 @@ protected:
     LH_Qt_QStringList *setup_units_;
 
 public:
-    LH_GraphNetIn() : LH_Graph(), net_(this) {}
+    LH_GraphNetIn() : LH_Graph(), net_(0) {}
 
     virtual const char *userInit()
     {

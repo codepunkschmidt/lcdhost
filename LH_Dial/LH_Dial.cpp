@@ -149,11 +149,10 @@ const char *LH_Dial::userInit()
     return 0;
 }
 
-void LH_Dial::userTerm()
+LH_Dial::~LH_Dial()
 {
     for(int i = 0; i<needleImage_.count(); i++)
         delete needleImage_[i];
-    LH_QtInstance::userTerm();
 }
 
 void LH_Dial::addNeedle(QString name)

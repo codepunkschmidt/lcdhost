@@ -317,60 +317,6 @@ QString LH_QtPlugin_TorrentMon::toTimeString(qlonglong etaSeconds)
         int seconds = etaSeconds;
         return QString("%1s").arg(seconds);
     }
-
-
-
-    /*int seconds = etaSeconds;
-    int minutes = seconds / 60;
-    seconds %= 60;
-    int hours = minutes / 60;
-    minutes %= 60;
-    int days = hours / 24;
-    hours %= 24;
-    int weeks = days / 7;
-    days %= 7;
-    int years = weeks / 52;
-    weeks %= 52;*/
-
-
-    /*QString result = "";
-    if(seconds>0)
-        result = QString("%1s").arg(seconds);
-    if(minutes>0)
-        result = QString("%1m %2s").arg(minutes).arg(seconds);
-    if(hours>0)
-    {
-        if(seconds/60.0 >= 0.5 && ++minutes >=60 ) { hours++; minutes -=60; }
-        return QString("%1h %2m").arg(hours).arg(minutes);
-    }
-
-
-    if(years>0)
-    {
-        if(days/7.0 >= 0.5 && ++weeks >=52 ) { years++; weeks -=52; }
-        return QString("%1y %2w").arg(years).arg(weeks);
-    }
-    if(weeks>0)
-    {
-        if(hours/24.0 >= 0.5 && ++days >=7 ) { weeks++; days -=7; }
-        return QString("%1w %2d").arg(weeks).arg(days);
-    }
-    /*if(days>0)
-    {
-        if(minutes/60.0 >= 0.5 && ++hours >=60 ) { days++; hours -=60; }
-        return QString("%1d %2h").arg(days).arg(hours);
-    }
-    if(hours>0)
-    {
-        if(minutes/60.0 >= 0.5 && ++minutes >=60 ) { days++; minutes -=60; }
-        return QString("%1h %2m").arg(hours).arg(minutes);
-    }
-    if(minutes>0)
-        return QString("%1m %2s").arg(minutes).arg(seconds);
-    if(seconds>0)
-        return QString("%1s").arg(seconds);*/
-
-
     return "";
 }
 

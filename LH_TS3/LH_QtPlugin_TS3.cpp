@@ -57,14 +57,14 @@ const char *LH_QtPlugin_TS3::userInit()
     socket_ = new QTcpSocket(this);
     myclid_ = -1;
 
-    setup_connection_details_ = new LH_Qt_QString(this,tr("Connection Details"),QString(), LH_FLAG_NOSAVE | LH_FLAG_NOSINK | LH_FLAG_NOSOURCE | LH_FLAG_HIDETITLE, lh_type_string_htmlhelp );
+    setup_connection_details_ = new LH_Qt_QString(this,("Connection Details"),QString(), LH_FLAG_NOSAVE | LH_FLAG_NOSINK | LH_FLAG_NOSOURCE | LH_FLAG_HIDETITLE, lh_type_string_htmlhelp );
 
     setup_talking_ = new LH_Qt_QString(this, "Talking", "", LH_FLAG_NOSAVE | LH_FLAG_NOSINK | LH_FLAG_HIDDEN);
     setup_talking_->setLink("@/Monitoring/3rdParty/TeamSpeak3/Talking");
 
     setup_talking_details_ = new LH_Qt_QString(this, "Talking Details", QString(), LH_FLAG_NOSAVE | LH_FLAG_NOSINK | LH_FLAG_NOSOURCE | LH_FLAG_HIDETITLE, lh_type_string_htmlhelp);
 
-    LH_Qt_QString *hr = new LH_Qt_QString(this,tr("hr1"),QString(), LH_FLAG_NOSAVE | LH_FLAG_NOSINK | LH_FLAG_NOSOURCE | LH_FLAG_HIDETITLE, lh_type_string_htmlhelp );
+    LH_Qt_QString *hr = new LH_Qt_QString(this,("hr1"),QString(), LH_FLAG_NOSAVE | LH_FLAG_NOSINK | LH_FLAG_NOSOURCE | LH_FLAG_HIDETITLE, lh_type_string_htmlhelp );
     hr->setHelp("<hr/>");
 
     setup_username_expression_ = new LH_Qt_QString(this, "Username Epression", "", LH_FLAG_NOSINK | LH_FLAG_NOSOURCE);
@@ -76,7 +76,7 @@ const char *LH_QtPlugin_TS3::userInit()
     setup_username_->setLink("@/Monitoring/3rdParty/TeamSpeak3/Username");
     connect(setup_username_, SIGNAL(changed()), this, SLOT(updateMyDetails()));
 
-    setup_user_detail_ = new LH_Qt_QString(this,tr("User Details"),QString(), LH_FLAG_NOSAVE | LH_FLAG_NOSINK | LH_FLAG_NOSOURCE | LH_FLAG_HIDETITLE, lh_type_string_htmlhelp );
+    setup_user_detail_ = new LH_Qt_QString(this,("User Details"),QString(), LH_FLAG_NOSAVE | LH_FLAG_NOSINK | LH_FLAG_NOSOURCE | LH_FLAG_HIDETITLE, lh_type_string_htmlhelp );
     setup_user_detail_->setHelp("");
 
     setup_channelname_ = new LH_Qt_QString(this, "Channel", "", LH_FLAG_HIDDEN | LH_FLAG_READONLY | LH_FLAG_NOSAVE | LH_FLAG_NOSINK);

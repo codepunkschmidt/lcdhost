@@ -51,8 +51,8 @@ class LH_QtPlugin_NowPlaying : public LH_QtPlugin
     QTimer timer_;
 
 public:
+    ~LH_QtPlugin_NowPlaying();
     const char *userInit();
-    void userTerm();
 
 public slots:
     void refresh_data();

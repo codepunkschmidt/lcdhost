@@ -29,7 +29,7 @@
 
 class LH_GraphNetIn : public LH_Graph
 {
-    LH_QtNetwork net_;
+    LH_QtNetwork *net_;
     int valCount;
     qreal valCache;
     qreal lastVal;
@@ -44,6 +44,8 @@ public:
     {
         if( const char *err = LH_Graph::userInit() ) return err;
 
+        net_ = new LH_QtNetwork(this);
+
         QStringList valuesList;
         valuesList.append("kb/s (kilobits per second)");
         valuesList.append("Mb/s (megabits per second)");
@@ -57,8 +59,8 @@ public:
         setMin(0.0);
         setMax(1000);
         setYUnit("kb/s");
-
-        net_.smoothingHidden(true);
+        net_->smoothingHidden(true);
+        return 0;
         return 0;
     }
 
@@ -70,9 +72,7 @@ public:
             "System/Network/Inbound",
             "SystemNetworkInboundGraph",
             "Inbound Bandwidth Usage (Graph)",
-            48,48,
-            lh_object_calltable_NULL,
-            lh_instance_calltable_NULL
+            48,48
         };
 
         return &classInfo;
@@ -83,18 +83,19 @@ public:
         changeUnits();
         if(!n || n&LH_NOTE_SECOND)
         {
-            if (valCount!=0) {
+            if (valCount!=0)
+            {
                 lastVal = valCache/valCount;
-                setMax( state()->net_max_in);
+                setMax( net_->inMax() );
                 addValue(lastVal);
             }
             valCache = 0;
             valCount = 0;
         } else {
-            valCache+=net_.inRate();
+            valCache+=net_->inRate();
             valCount+=1;
         }
-        return LH_Graph::notify(n,p) | net_.notify(n,p) | LH_NOTE_SECOND;
+        return LH_Graph::notify(n,p) | LH_NOTE_SECOND;
     }
 
     QImage *render_qimage( int w, int h )

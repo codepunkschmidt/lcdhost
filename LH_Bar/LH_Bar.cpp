@@ -57,71 +57,68 @@ static inline uint PREMUL(uint x) {
 
 const char *LH_Bar::userInit()
 {
-    const char *retv = LH_QtCFInstance::userInit();
-    if( !retv )
-    {
-        uchar *data = (uchar[4]){255,0,0,0};
-        bar_img_emptyMask_ = QImage(data,1,1,QImage::Format_ARGB32);
+    if( const char *err = LH_QtCFInstance::userInit() ) return err;
 
-        QStringList valueTypes = QStringList();
-        valueTypes.append("Gradient Fill");
-        valueTypes.append("Image Stretch");
-        valueTypes.append("Image Crop");
+    uchar *data = (uchar[4]){255,0,0,0};
+    bar_img_emptyMask_ = QImage(data,1,1,QImage::Format_ARGB32);
 
-        setup_type_ = new LH_Qt_QStringList(this, "Bar Style", valueTypes, LH_FLAG_AUTORENDER);
-        connect( setup_type_, SIGNAL(changed()), this, SLOT(changeType()) );
+    QStringList valueTypes = QStringList();
+    valueTypes.append("Gradient Fill");
+    valueTypes.append("Image Stretch");
+    valueTypes.append("Image Crop");
 
-        setup_file_ = new LH_Qt_QFileInfo( this, tr("Bar Image"), QFileInfo(), LH_FLAG_AUTORENDER | LH_FLAG_HIDDEN );
-        connect( setup_file_, SIGNAL(changed()), this, SLOT(changeFile()) );
+    setup_type_ = new LH_Qt_QStringList(this, "Bar Style", valueTypes, LH_FLAG_AUTORENDER);
+    connect( setup_type_, SIGNAL(changed()), this, SLOT(changeType()) );
 
-        valueTypes = QStringList();
-        valueTypes.append("None");
-        valueTypes.append("Bar Image Transparency");
-        valueTypes.append("Custom Image Transparency");
-        setup_masking_ = new LH_Qt_QStringList(this, "Masking", valueTypes, LH_FLAG_AUTORENDER | LH_FLAG_HIDDEN);
-        connect( setup_masking_, SIGNAL(changed()), this, SLOT(changeFile()) );
+    setup_file_ = new LH_Qt_QFileInfo( this, tr("Bar Image"), QFileInfo(), LH_FLAG_AUTORENDER | LH_FLAG_HIDDEN );
+    connect( setup_file_, SIGNAL(changed()), this, SLOT(changeFile()) );
 
-        setup_file_endMask_ = new LH_Qt_QFileInfo( this, tr("Transparency Mask"), QFileInfo(), LH_FLAG_AUTORENDER | LH_FLAG_HIDDEN );
-        connect( setup_file_endMask_, SIGNAL(changed()), this, SLOT(changeFile()) );
+    valueTypes = QStringList();
+    valueTypes.append("None");
+    valueTypes.append("Bar Image Transparency");
+    valueTypes.append("Custom Image Transparency");
+    setup_masking_ = new LH_Qt_QStringList(this, "Masking", valueTypes, LH_FLAG_AUTORENDER | LH_FLAG_HIDDEN);
+    connect( setup_masking_, SIGNAL(changed()), this, SLOT(changeFile()) );
 
-        setup_pencolor1_ = new LH_Qt_QColor(this,"Bar color (start)",Qt::green,LH_FLAG_AUTORENDER);
-        setup_pencolor2_ = new LH_Qt_QColor(this,"Bar color (end)",Qt::red,LH_FLAG_AUTORENDER);
+    setup_file_endMask_ = new LH_Qt_QFileInfo( this, tr("Transparency Mask"), QFileInfo(), LH_FLAG_AUTORENDER | LH_FLAG_HIDDEN );
+    connect( setup_file_endMask_, SIGNAL(changed()), this, SLOT(changeFile()) );
 
-        setup_file_bg_ = new LH_Qt_QFileInfo( this, tr("Bar Background Image"), QFileInfo(), LH_FLAG_AUTORENDER | LH_FLAG_HIDDEN );
-        connect( setup_file_bg_, SIGNAL(changed()), this, SLOT(changeFile()) );
+    setup_pencolor1_ = new LH_Qt_QColor(this,"Bar color (start)",Qt::green,LH_FLAG_AUTORENDER);
+    setup_pencolor2_ = new LH_Qt_QColor(this,"Bar color (end)",Qt::red,LH_FLAG_AUTORENDER);
 
-        setup_bgcolor_ = new LH_Qt_QColor(this,"Background color",Qt::transparent,LH_FLAG_AUTORENDER);
-        setup_direction_ = new LH_Qt_QStringList(this,"Direction",
-                                                 QStringList("Automatic")
-                                                 <<"Bottom to top"
-                                                 <<"Left to right"
-                                                 <<"Top to bottom"
-                                                 <<"Right to left",LH_FLAG_AUTORENDER);
-        setup_spacing_ = new LH_Qt_QSlider(this,"Spacing",0,0,100,LH_FLAG_AUTORENDER);
+    setup_file_bg_ = new LH_Qt_QFileInfo( this, tr("Bar Background Image"), QFileInfo(), LH_FLAG_AUTORENDER | LH_FLAG_HIDDEN );
+    connect( setup_file_bg_, SIGNAL(changed()), this, SLOT(changeFile()) );
 
-        setup_discrete_ = new LH_Qt_bool(this,"Discrete Segments",false,LH_FLAG_AUTORENDER);
-        connect( setup_discrete_, SIGNAL(changed()), this, SLOT(changeDiscrete()) );
-        setup_discrete_count_ = new LH_Qt_int(this,"Number of Segments",20,LH_FLAG_AUTORENDER | LH_FLAG_READONLY);
+    setup_bgcolor_ = new LH_Qt_QColor(this,"Background color",Qt::transparent,LH_FLAG_AUTORENDER);
+    setup_direction_ = new LH_Qt_QStringList(this,"Direction",
+                                             QStringList("Automatic")
+                                             <<"Bottom to top"
+                                             <<"Left to right"
+                                             <<"Top to bottom"
+                                             <<"Right to left",LH_FLAG_AUTORENDER);
+    setup_spacing_ = new LH_Qt_QSlider(this,"Spacing",0,0,100,LH_FLAG_AUTORENDER);
+
+    setup_discrete_ = new LH_Qt_bool(this,"Discrete Segments",false,LH_FLAG_AUTORENDER);
+    connect( setup_discrete_, SIGNAL(changed()), this, SLOT(changeDiscrete()) );
+    setup_discrete_count_ = new LH_Qt_int(this,"Number of Segments",20,LH_FLAG_AUTORENDER | LH_FLAG_READONLY);
 
 
-        min_ = max_ = 0.0;
+    min_ = max_ = 0.0;
 
-        changeType();
+    changeType();
 
-        add_cf_source("Value");
-        add_cf_target(setup_pencolor1_);
-        add_cf_target(setup_pencolor2_);
-        add_cf_target(setup_file_);
-        add_cf_target(setup_file_bg_);
-        add_cf_target(setup_bgcolor_);
-    }
-    return retv;
+    add_cf_source("Value");
+    add_cf_target(setup_pencolor1_);
+    add_cf_target(setup_pencolor2_);
+    add_cf_target(setup_file_);
+    add_cf_target(setup_file_bg_);
+    add_cf_target(setup_bgcolor_);
+    return 0;
 }
 
-
-qreal LH_Bar::boundedValue(qreal value)
+double LH_Bar::boundedValue(double value)
 {
-    if( max_ < min_ ) { qreal tmp = max_; max_ = min_; min_ = tmp; }
+    if( max_ < min_ ) { double tmp = max_; max_ = min_; min_ = tmp; }
 
     if( value > max_ ) value = max_;
     else if( value < min_ ) value = min_;
@@ -135,14 +132,14 @@ qreal LH_Bar::boundedValue(qreal value)
     return value;
 }
 
-void LH_Bar::draw_bar( qreal value, int pos, int total )
+void LH_Bar::draw_bar( double value, int pos, int total )
 {
-    qreal x, y;
-    qreal image_width, image_height, tot;  // saves a bunch of casts
-    qreal bar_width, bar_height;
+    double x, y;
+    double image_width, image_height, tot;  // saves a bunch of casts
+    double bar_width, bar_height;
     int direction;
-    qreal spacing;
-    qreal spacesize;
+    double spacing;
+    double spacesize;
     QPainter painter;
     QLinearGradient gradient;
     QRectF rect;
@@ -179,12 +176,12 @@ void LH_Bar::draw_bar( qreal value, int pos, int total )
         else spacesize = (image_width - tot) / (tot-1.0) / 100.0;
         spacing = setup_spacing_->value() * spacesize;
         bar_width = ( image_width - ( spacing * (tot-1.0) ) ) / tot;
-        x = (bar_width + spacing) * (qreal) pos;
+        x = (bar_width + spacing) * (double) pos;
         y = 0;
-        bar_height = (qreal) image_height * value;
+        bar_height = (double) image_height * value;
         if(setup_discrete_->value())
         {
-            qreal segWidth = image_height/setup_discrete_count_->value();
+            double segWidth = image_height/setup_discrete_count_->value();
             bar_height =  qRound( bar_height / segWidth ) * segWidth;
         }
         break;
@@ -196,11 +193,11 @@ void LH_Bar::draw_bar( qreal value, int pos, int total )
         spacing = setup_spacing_->value() * spacesize;
         bar_width = ( image_height - ( spacing * (tot-1.0) ) ) / tot;
         x = 0;
-        y = (bar_width + spacing) * (qreal) pos;
-        bar_height = (qreal) image_width * value;
+        y = (bar_width + spacing) * (double) pos;
+        bar_height = (double) image_width * value;
         if(setup_discrete_->value())
         {
-            qreal segWidth = image_width/setup_discrete_count_->value();
+            double segWidth = image_width/setup_discrete_count_->value();
             bar_height =  qRound( bar_height / segWidth ) * segWidth;
         }
         break;
@@ -319,14 +316,14 @@ void LH_Bar::draw_bar( qreal value, int pos, int total )
     }
 }
 
-bool LH_Bar::setMin( qreal r )
+bool LH_Bar::setMin( double r )
 {
     if( min_ == r ) return false;
     min_ = r;
     return true;
 }
 
-bool LH_Bar::setMax( qreal r )
+bool LH_Bar::setMax( double r )
 {
     if( max_ == r ) return false;
     max_ = r;
@@ -378,4 +375,3 @@ void LH_Bar::changeFile()
     }
     bar_img_endMask_ = QImage(maskFile);
 }
-

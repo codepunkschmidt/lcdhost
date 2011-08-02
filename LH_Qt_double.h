@@ -37,64 +37,26 @@
 
 #include "LH_QtSetupItem.h"
 
-class LH_Qt_float : public LH_QtSetupItem
+class LH_Qt_double : public LH_QtSetupItem
 {
 public:
-    LH_Qt_float( LH_QtObject *parent, QString name, double value, double min, double max, int flags = 0 )
-        : LH_QtSetupItem( parent, name, lh_type_fraction, flags )
+    LH_Qt_double( LH_QtObject *parent, const QString& name, double value, double min, double max, int flags = 0 )
+        : LH_QtSetupItem( parent, name, lh_type_double, flags|LH_FLAG_MINMAX )
     {
         item_.data.d = value;
         item_.param.d.min = min;
         item_.param.d.max = max;
     }
 
-    LH_Qt_float( LH_QtObject *parent, QString name, float value, int flags = 0 )
-        : LH_QtSetupItem( parent, name, lh_type_fraction, flags )
+    LH_Qt_double( LH_QtObject *parent, const QString& name, double value, int flags = 0 )
+        : LH_QtSetupItem( parent, name, lh_type_double, flags )
     {
         item_.data.d = value;
-        item_.param.d.min = 0.0;
-        item_.param.d.max = 99.99;
     }
 
-    void setMinimum( float min )
-    {
-        item_.param.d.min = min;
-        refresh();
-    }
-
-    void setMaximum( float max )
-    {
-        item_.param.d.max = max;
-        refresh();
-    }
-
-    void setMinMax( float min, float max )
-    {
-        item_.param.d.min = min;
-        item_.param.d.max = max;
-        refresh();
-    }
-
-    double value() const
-    {
-        return item_.data.d;
-    }
-
-    void setValue(double d)
-    {
-        if( !qFuzzyCompare( item_.data.d, d ) )
-        {
-            item_.data.d = d;
-            refresh();
-            emit set();
-        }
-    }
-
-    virtual void setup_change()
-    {
-        emit change( value() );
-        LH_QtSetupItem::setup_change();
-    }
+    double value() const { return item_.data.d; }
+    double min() const { return item_.param.d.min; }
+    double max() const { return item_.param.d.max; }
 };
 
 #endif // LH_QT_FLOAT_H

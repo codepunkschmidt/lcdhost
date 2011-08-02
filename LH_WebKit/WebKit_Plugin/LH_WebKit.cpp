@@ -46,7 +46,7 @@ const char *LH_WebKit::userInit()
 
     zoom_ = new LH_Qt_QSlider(this,"Zoom",10,1,20,LH_FLAG_FOCUS);
     zoom_->setOrder(1);
-    connect( zoom_, SIGNAL(change(int)), this, SLOT(zoomChanged(int)) );
+    connect( zoom_, SIGNAL(change(qint64)), this, SLOT(zoomChanged(int)) );
 
     progress_ = new LH_Qt_QProgressBar(this,"~WebKitProgress",0,0,100,LH_FLAG_READONLY|LH_FLAG_HIDDEN);
     progress_->setOrder(2);
@@ -81,7 +81,7 @@ const char *LH_WebKit::userInit()
     return 0;
 }
 
-void LH_WebKit::userTerm()
+LH_WebKit::~LH_WebKit()
 {
     if( sock_ )
     {
@@ -89,7 +89,6 @@ void LH_WebKit::userTerm()
         delete sock_;
         sock_ = NULL;
     }
-    LH_QtInstance::userTerm();
 }
 
 
@@ -181,7 +180,7 @@ void LH_WebKit::error(QLocalSocket::LocalSocketError err)
 {
     if( err == QLocalSocket::ServerNotFoundError  )
     {
-        static_cast<LH_QtPlugin_WebKit*>(plugin())->startServer();
+        static_cast<LH_QtPlugin_WebKit*>(LH_QtPlugin::instance())->startServer();
         return;
     }
 
@@ -246,11 +245,10 @@ void LH_WebKit::sendData( bool resize )
 QHash<QString, QString> LH_WebKit::getTokens()
 {
     QHash<QString, QString> tokens;
+    QString s = layoutPath();
 
-    QString layoutPath = state()->dir_layout;
-    if (layoutPath.endsWith('\\') || layoutPath.endsWith('/'))
-        layoutPath = layoutPath.left(layoutPath.length()-1);
-    tokens.insert( "layout_path", layoutPath );
+    if( s.endsWith('\\') || s.endsWith('/')) s.remove( s.length()-1, 1 );
+    tokens.insert( "layout_path", s );
 
     return tokens;
 }

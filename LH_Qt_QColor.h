@@ -35,31 +35,26 @@
 #ifndef LH_QT_QCOLOR_H
 #define LH_QT_QCOLOR_H
 
-#include <QColor>
 #include "LH_QtSetupItem.h"
 
 class LH_Qt_QColor : public LH_QtSetupItem
 {
 public:
-    LH_Qt_QColor( LH_QtObject *parent, QString name, QColor value, int flags = 0 )
+    LH_Qt_QColor( LH_QtObject *parent, const QString& name, const QColor& value, int flags = 0 )
         : LH_QtSetupItem( parent, name, lh_type_integer_color, flags )
     {
         item_.data.i = value.rgba();
     }
 
+    virtual void setup_change()
+    {
+        emit change( QColor::fromRgba(item_.data.i) );
+        LH_QtSetupItem::setup_change();
+    }
+
     QColor value() const
     {
         return QColor::fromRgba(item_.data.i);
-    }
-
-    void setValue(QColor c)
-    {
-        if( item_.data.i != (int) c.rgba() )
-        {
-            item_.data.i = c.rgba();
-            refresh();
-            emit set();
-        }
     }
 };
 

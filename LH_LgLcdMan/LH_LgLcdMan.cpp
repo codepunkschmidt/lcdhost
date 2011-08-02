@@ -126,7 +126,7 @@ const char *LH_LgLcdMan::userInit()
     return NULL;
 }
 
-void LH_LgLcdMan::userTerm()
+LH_LgLcdMan::~LH_LgLcdMan()
 {
     if( thread_ )
     {
@@ -135,7 +135,6 @@ void LH_LgLcdMan::userTerm()
             qDebug() << "LH_LgLcdMan: Logitech drivers not responding, expect problems";
         thread_ = NULL;
     }
-    LH_QtPlugin::userTerm();
     return;
 }
 
@@ -218,16 +217,16 @@ const char* LH_LgLcdMan::lglcd_Err( int result, const char *filename, unsigned l
     return uk_err_buf;
 }
 
-bool LH_LgLcdMan::event( QEvent * e )
+void LH_LgLcdMan::customEvent( QEvent * e )
 {
     if( e->type() == EventLgLcdButton::type() )
     {
         EventLgLcdButton *be = static_cast<EventLgLcdButton*>(e);
         if( be->bw && bw_ ) bw_->setButtonState( be->buttons );
         if( !be->bw && qvga_ ) qvga_->setButtonState( be->buttons );
-        return true;
+        return;
     }
-    return false;
+    Q_ASSERT(0);
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////

@@ -25,15 +25,19 @@
   */
 
 #include "LH_Dial.h"
+#include "../LH_QtMemory.h"
 
 class LH_DialMemPhysical : public LH_Dial
 {
+    LH_QtMemory *mem_;
+
 public:
     const char *userInit()
     {
         if( const char *err = LH_Dial::userInit() ) return err;
-        setMin(0.0);
-        setMax(1000.0);
+        mem_ = new LH_QtMemory(this);
+        setMin( 0 );
+        setMax( 1000.0 );
         return 0;
     }
 
@@ -45,9 +49,7 @@ public:
             "System/Memory/Physical",
             "SystemMemoryPhysicalDial",
             "Physical memory used (Dial)",
-            48,48,
-            lh_object_calltable_NULL,
-            lh_instance_calltable_NULL
+            48,48
         };
 
         return &classInfo;
@@ -55,17 +57,11 @@ public:
 
     int notify(int n, void *p)
     {
-        Q_UNUSED(p);
         if( !n || n&LH_NOTE_MEM )
         {
-            if( state()->mem_data.tot_phys )
-            {
-                qreal used_mem = ( state()->mem_data.tot_phys - state()->mem_data.free_phys );
-                setVal( used_mem * 1000.0 / (qreal) (state()->mem_data.tot_phys) );
-                //requestRender();
-            }
+            setVal( mem_->physLoad() );
         }
-        return LH_NOTE_MEM;
+        return LH_NOTE_MEM | LH_Dial::notify(n,p);
     }
 };
 

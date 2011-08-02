@@ -103,7 +103,7 @@ lh_class *LH_NowPlayingStatusImage::classInfo()
         "NowPlayingStatusImage",
         "Now Playing (Status Image)",
         -1, -1,
-        lh_instance_calltable_NULL
+        
     };
 
     return &classInfo;

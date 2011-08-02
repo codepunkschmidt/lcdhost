@@ -263,7 +263,7 @@ cf_rule_action_property::cf_rule_action_property(LH_QtCFInstance *sender, QObjec
         value_ = (sender->setup_cf_newValue_Bool_->value()?"true":"false");
         break;
     case lh_type_string_filename:
-        value_ = getRelativeFilePath(sender->setup_cf_newValue_File_->value(), sender->state()->dir_layout);
+        value_ = getRelativeFilePath(sender->setup_cf_newValue_File_->value(), sender->layoutPath() );
         break;
     case lh_type_integer_slider:
         value_ = QString::number(sender->setup_cf_newValue_Slider_->value());
@@ -351,7 +351,7 @@ bool cf_rule_action_property::setTargetValue(LH_QtCFInstance* sender, cf_target_
             target = sender->setup_cf_newValue_File_;
         file = QFileInfo(value_);
         if(!file.isFile())
-            file = QFileInfo(QString("%1%2").arg(sender->state()->dir_layout).arg(value_));
+            file = QFileInfo(QString("%1%2").arg(sender->layoutPath()).arg(value_));
 
         if(file.isFile())
             if(((LH_Qt_QFileInfo*)target)->value() != file )

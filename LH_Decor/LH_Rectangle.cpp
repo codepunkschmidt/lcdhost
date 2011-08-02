@@ -77,7 +77,7 @@ QImage *LH_Rectangle::render_qimage( int w, int h )
     {
         QRectF rect = image_->rect();
 
-        if( state()->dev_depth == 1 )
+        if( isMonochrome() )
         {
             painter.setRenderHint( QPainter::Antialiasing, false );
             painter.setRenderHint( QPainter::TextAntialiasing, false );

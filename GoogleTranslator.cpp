@@ -7,6 +7,8 @@
 #include <QNetworkProxyQuery>
 #include <QUrl>
 
+#include "LH_QtPlugin.h"
+
 GoogleTranslator::GoogleTranslator(QString name, LH_QtObject *parent) : QObject(parent)
 {
     parent_ = parent;
@@ -264,7 +266,7 @@ void GoogleTranslator::addToCache(QString sourceItem, QString translatedItem)
 QString GoogleTranslator::getCacheFileName()
 {
     return QString("%1translations.%2.%3.%4.cache")
-            .arg(QString::fromUtf8(parent_->state()->dir_data))
+            .arg( LH_QtPlugin::dir_data() )
             .arg(name_)
             .arg(sourceLanguage_)
             .arg(targetLanguage_);

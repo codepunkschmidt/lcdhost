@@ -39,60 +39,24 @@
 
 class LH_Qt_QString : public LH_QtSetupItem
 {
-    QString str_;
-    QByteArray array_;
-
 public:
-    // Reasonable subtypes:
-    //  lh_type_string
-    //  lh_type_string_button
-    
-    LH_Qt_QString( LH_QtObject *parent, QString name, QString value, int flags = 0, lh_setup_type subtype = lh_type_string )
-        : LH_QtSetupItem( parent, name, subtype, flags ), str_(value), array_(value.toUtf8())
+    LH_Qt_QString( LH_QtObject *parent, const QString& name, const QString& value, int flags = 0, lh_setup_type subtype = lh_type_string )
+        : LH_QtSetupItem( parent, name, subtype, flags )
     {
-        item_.data.b.n = array_.capacity();
-        item_.data.b.p = array_.data();
-        return;
-    }
-
-    virtual void setup_resize( size_t needed )
-    {
-        array_.resize(needed);
-        item_.data.b.n = array_.capacity();
-        item_.data.b.p = array_.data();
+        setString( value );
         return;
     }
 
     virtual void setup_change()
     {
-        str_ = QString::fromUtf8( (const char*) item_.data.b.p );
+        getString();
         emit change( str_ );
         LH_QtSetupItem::setup_change();
-        return;
-    }
-
-    virtual void setup_input( int flags, int value )
-    {
-        emit input( str_, flags, value );
     }
 
     const QString& value() const
     {
         return str_;
-    }
-
-    void setValue(const QString &s)
-    {
-        if( s != str_ )
-        {
-            str_ = s;
-            array_ = str_.toUtf8();
-            item_.data.b.p = array_.data();
-            item_.data.b.n = array_.capacity();
-            Q_ASSERT( QString::fromUtf8( (const char *)item_.data.b.p ) == s );
-            refresh();
-            emit set();
-        }
     }
 };
 

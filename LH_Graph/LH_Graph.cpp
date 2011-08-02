@@ -45,7 +45,7 @@ static inline uint PREMUL(uint x) {
     return x;
 }
 
-LH_Graph::LH_Graph( float defaultMin, float defaultMax )
+LH_Graph::LH_Graph( double defaultMin, double defaultMax )
 {
     defaultMin_ = defaultMin;
     defaultMax_ = defaultMax;
@@ -124,7 +124,7 @@ const char *LH_Graph::userInit()
     setup_fg_alpha_ = new LH_Qt_int(this,"Fill Image Opacity", 255, 0, 255, LH_FLAG_AUTORENDER | LH_FLAG_HIDDEN);
     setup_fg_alpha_->setHelp( "<p>This value affects the opacity of the fill image.</p>");
 
-    setup_max_ = new LH_Qt_float(this, "Graph Ymax",defaultMax_,-99999999,99999999, LH_FLAG_AUTORENDER | LH_FLAG_HIDDEN);
+    setup_max_ = new LH_Qt_double(this, "Graph Ymax",defaultMax_,-99999999,99999999, LH_FLAG_AUTORENDER | LH_FLAG_HIDDEN);
     setup_max_->setHelp( "<p>The maximum value displayed on the graph.</p>"
                          "<p>This value can only be set when \"Ymax Can Grow\" is disabled (see below).</p>");
 
@@ -134,7 +134,7 @@ const char *LH_Graph::userInit()
     setup_auto_scale_y_max_ = new LH_Qt_bool(this,"Auto Scale Ymax", false, LH_FLAG_AUTORENDER);
     setup_auto_scale_y_max_->setHelp( "<p>When enabled, the plotted area's highest point will shift with the visible data to create a \"zooming\" effect. The less variation in the data the tighter the zoom. (Best used with \"Auto Scale Ymin\".)</p>");
 
-    setup_min_ = new LH_Qt_float(this, "Graph Ymin",defaultMin_,-99999999,99999999, LH_FLAG_AUTORENDER | LH_FLAG_READONLY | LH_FLAG_HIDDEN);
+    setup_min_ = new LH_Qt_double(this, "Graph Ymin",defaultMin_,-99999999,99999999, LH_FLAG_AUTORENDER | LH_FLAG_READONLY | LH_FLAG_HIDDEN);
     setup_min_->setHelp( "<p>The minimum value displayed on the graph.</p>");
 
     setup_auto_scale_y_min_ = new LH_Qt_bool(this,"Auto Scale Ymin", false, LH_FLAG_AUTORENDER);
@@ -195,7 +195,7 @@ const char *LH_Graph::userInit()
     return 0;
 }
 
-void LH_Graph::userTerm()
+LH_Graph::~LH_Graph()
 {
     if (isDebug) qDebug() << "graph: destroy: begin";
 
@@ -213,27 +213,26 @@ void LH_Graph::userTerm()
     disconnect( setup_show_real_limits_, SIGNAL(changed()) );
     disconnect( setup_max_grow_, SIGNAL(changed()) );
     if (isDebug) qDebug() << "graph: destroy: done";
-    LH_QtInstance::userTerm();
 }
 
-qreal LH_Graph::max()
+double LH_Graph::max()
 {
     if (setup_min_->value() < setup_max_->value())
         return setup_max_->value();
     else
         return setup_min_->value()+1;
 }
-qreal LH_Graph::max(qreal val)
+double LH_Graph::max(double val)
 {
     setup_max_->setValue(val);
     return max();
 }
 
-qreal LH_Graph::min()
+double LH_Graph::min()
 {
     return setup_min_->value();
 }
-qreal LH_Graph::min(qreal val)
+double LH_Graph::min(double val)
 {
     setup_min_->setValue(val);
     return min();
@@ -266,13 +265,13 @@ void LH_Graph::findDataBounds()
     // examine data points for each line and shift the data boundries accordingly
     for(int lineID=0;lineID<lineCount(); lineID++)
     {
-        qreal valueMin = max();
-        qreal valueMax = min();
+        double valueMin = max();
+        double valueMax = min();
         bool isConstant = true;
-        float constantValue = 0;
+        double constantValue = 0;
         for(int i=0;i<values_[lineID].length() && i<len_;i++)
         {
-            qreal y = values_[lineID].at(i);
+            double y = values_[lineID].at(i);
             if(i==0)
                 constantValue = y;
             else
@@ -388,11 +387,11 @@ void LH_Graph::drawSingle( int lineID )
 
     //assemble the array of points for the graph (based on values & orientation)
     bool isConstant = true;
-    float constantValue = 0;
+    double constantValue = 0;
     int i;
     for(i=0;i<values_[lineID].length() && i<len_;i++)
     {
-        qreal x = 0; qreal y=0;
+        double x = 0; double y=0;
         switch(setup_orientation_->value())
         {
         case 0:
@@ -438,8 +437,8 @@ void LH_Graph::drawSingle( int lineID )
 
     //apply point corrections & prep gradient
     QLinearGradient gradient;
-    qreal x = points[i-1].x();
-    qreal y = points[i-1].y();
+    double x = points[i-1].x();
+    double y = points[i-1].y();
     switch(setup_orientation_->value())
     {
     case 0:
@@ -595,7 +594,7 @@ void LH_Graph::drawSingle( int lineID )
     if (isDebug) qDebug() << "graph: draw line: done " << lineID;
 }
 
-QString LH_Graph::getLabelText(qreal val)
+QString LH_Graph::getLabelText(double val)
 {
     int prec = 1 - int(log10(dataDeltaY_/ divisorY_));
     if (prec<0) prec = 0;
@@ -637,7 +636,7 @@ void LH_Graph::addLine(QString name)
     setup_line_selection_->refreshList();
     cacheCount_.append(0);
     cacheVal_.append(0);
-    values_.append( QList<qreal>() );
+    values_.append( QList<double>() );
 
     QStringList configs = setup_line_configs_->value().split('~',QString::SkipEmptyParts);
     if (configs.length()<lineCount())
@@ -667,7 +666,7 @@ void LH_Graph::clearLines()
     setup_line_selection_->setFlag(LH_FLAG_HIDDEN, false);
 }
 
-bool LH_Graph::setMin( qreal r )
+bool LH_Graph::setMin( double r )
 {
     if( min() == r ) return false;
     min(r);
@@ -676,7 +675,7 @@ bool LH_Graph::setMin( qreal r )
     return true;
 }
 
-bool LH_Graph::setMax( qreal r, bool b )
+bool LH_Graph::setMax( double r, bool b )
 {
     if(!userDefinableLimits_) canGrow( b );
     if(graphMinY_==r) r++;
@@ -686,7 +685,7 @@ bool LH_Graph::setMax( qreal r, bool b )
     return true;
 }
 
-void LH_Graph::setYUnit( QString str, qreal divisor )
+void LH_Graph::setYUnit( QString str, double divisor )
 {
     unitText_ = str;
     if (divisor!=0) divisorY_ = divisor;
@@ -706,12 +705,12 @@ QImage *LH_Graph::render_qimage( int w, int h )
     return image_;
 }
 
-void LH_Graph::addValue(float value, int lineID )
+void LH_Graph::addValue(double value, int lineID )
 {
     if (lineID>=lineCount()) return;
     if (isDebug) qDebug() << "graph: add value: begin " << lineID;
     cacheCount_[lineID] ++;
-    cacheVal_[lineID] += (qreal)value;
+    cacheVal_[lineID] += (double)value;
     if(cacheCount_[lineID] >= setup_sample_rate_->value())
     {
         if (values_[lineID].length()>=len_) values_[lineID].pop_back();
@@ -874,7 +873,7 @@ void LH_Graph::updateLabelSelection()
     setup_label_shadow_->setFlag(LH_FLAG_HIDDEN, !(setup_show_y_max_->value() | setup_show_y_min_->value()));
 }
 
-void LH_Graph::clear(float newMin, float newMax, bool newGrow)
+void LH_Graph::clear(double newMin, double newMax, bool newGrow)
 {
     for(int lineID=0;lineID<lineCount(); lineID++)
     {

@@ -43,7 +43,7 @@ class LH_Qt_QFont : public LH_Qt_QString
     QFont font_;
 
 public:
-    LH_Qt_QFont( LH_QtObject *parent, QString name, QFont value, int flags = 0 )
+    LH_Qt_QFont( LH_QtObject *parent, const QString& name, const QFont& value, int flags = 0 )
         : LH_Qt_QString( parent, name, value.toString(), flags, lh_type_string_font ), font_(value)
     {
         return;
@@ -51,9 +51,10 @@ public:
 
     virtual void setup_change()
     {
-        LH_Qt_QString::setup_change();
-        font_.fromString( LH_Qt_QString::value() );
-        return;
+        getString();
+        font_.fromString( str_ );
+        emit change( font_ );
+        LH_QtSetupItem::setup_change();
     }
 
     QFont value() const
@@ -66,7 +67,7 @@ public:
         if( f != font_ )
         {
             font_ = f;
-            LH_Qt_QString::setValue( font_.toString() );
+            setValue( font_.toString() );
         }
     }
 };

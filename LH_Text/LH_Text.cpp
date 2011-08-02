@@ -136,7 +136,7 @@ const char *LH_Text::userInit()
 
 void LH_Text::setRenderHints( QPainter& p )
 {
-    if( monochrome() )
+    if( isMonochrome() )
     {
         p.setRenderHint( QPainter::Antialiasing, false );
         p.setRenderHint( QPainter::TextAntialiasing, false );
@@ -162,9 +162,6 @@ void LH_Text::makeTextImage( int forheight )
     QPainter painter;
     int flags = Qt::AlignTop|Qt::AlignLeft|Qt::TextSingleLine|Qt::TextIncludeTrailingSpaces;
 
-    Q_ASSERT( state() );
-    Q_ASSERT( state()->layout_file && *(state()->layout_file) );
-
     // make sure forheight is reasonable if given
     if( forheight < 0 ) forheight = 0;
     if( forheight && forheight < 4 )
@@ -177,7 +174,7 @@ void LH_Text::makeTextImage( int forheight )
     if( fontresize() )
     {
         int targetsize;
-        if( monochrome() ) targetsize = qMax(forheight,7);
+        if( isMonochrome() ) targetsize = qMax(forheight,7);
         else targetsize = qMax(forheight,20);
         font_.setPixelSize( targetsize );
         QFontMetrics fm( font_, &textimage_ );
@@ -186,7 +183,7 @@ void LH_Text::makeTextImage( int forheight )
 
     // Set font antialiasing strategy
     int strat = font_.styleStrategy();
-    if( monochrome() )
+    if( isMonochrome() )
     {
         strat &= ~QFont::PreferAntialias;
         strat |= QFont::NoAntialias;
@@ -302,7 +299,7 @@ void LH_Text::makeTextImage( int forheight )
     // If forheight was given, ensure that height
     if( forheight && forheight != textimage_.height() )
     {
-        if( forheight < (textimage_.height()-3) && !monochrome() )
+        if( forheight < (textimage_.height()-3) && !isMonochrome() )
         {
             // scale the text image if higher by more than 3 pixels
             textimage_ = textimage_.scaledToHeight( forheight, Qt::SmoothTransformation );
@@ -335,11 +332,10 @@ void LH_Text::textChanged()
     {
         doc_.setDocumentMargin( 0 );
         doc_.setIndentWidth( 20 );
-        if( state() )
-            doc_.setMetaInformation(
-                        QTextDocument::DocumentUrl,
-                        QUrl::fromLocalFile(QString::fromUtf8(state()->dir_layout)).toString()
-                        );
+        doc_.setMetaInformation(
+                    QTextDocument::DocumentUrl,
+                    QUrl::fromLocalFile(layoutPath()).toString()
+                    );
         doc_.setHtml( setup_text_->value() );
         setup_fontresize_->setValue( false );
         setup_fontresize_->setFlag( LH_FLAG_READONLY|LH_FLAG_HIDDEN, true );

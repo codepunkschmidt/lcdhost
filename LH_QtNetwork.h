@@ -35,26 +35,37 @@
 #ifndef LH_QTNETWORK_H
 #define LH_QTNETWORK_H
 
+#include <QObject>
 #include <QQueue>
 #include "lh_plugin.h"
 #include "LH_QtInstance.h"
+#include "LH_Qt_int.h"
 #include "LH_Qt_QSlider.h"
 
-class LH_QtNetwork
+class LH_QtNetwork : public QObject
 {
     LH_QtInstance *parent_;
-    QQueue<lh_netdata*> data_;
+    LH_Qt_int *link_net_in_rate_;
+    LH_Qt_int *link_net_in_max_;
+    LH_Qt_int *link_net_out_rate_;
+    LH_Qt_int *link_net_out_max_;
+    QQueue<qint64> inrate_;
+    QQueue<qint64> outrate_;
 
 protected:
     LH_Qt_QSlider *setup_smoothing_;
 
 public:
-    explicit LH_QtNetwork( LH_QtInstance *parent );
+    LH_QtNetwork( LH_QtInstance *parent );
     ~LH_QtNetwork();
 
-    int notify(int n, void *p);
+    LH_QtInstance *parent() const { return static_cast<LH_QtInstance *>(QObject::parent()); }
 
-    const lh_systemstate *state() const { return parent_->state(); }
+    // int notify(int n, void *p);
+    // const lh_systemstate *state() const { return parent_->state(); }
+
+    qint64 inMax() const { return link_net_in_max_->value(); }
+    qint64 outMax() const { return link_net_out_max_->value(); }
 
     int samples() const { return setup_smoothing_->value() + 1; }
     qint64 inRate() const;
@@ -65,6 +76,10 @@ public:
 
     void smoothingOrder(int n) { setup_smoothing_->setOrder(n); }
     void smoothingHidden(bool hide) { setup_smoothing_->setFlag(LH_FLAG_HIDDEN, hide); }
+
+public slots:
+    void addInRate(qint64);
+    void addOutRate(qint64);
 };
 
 #endif // LH_QTNETWORK_H

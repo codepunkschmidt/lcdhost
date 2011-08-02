@@ -194,7 +194,7 @@ void LH_QtCFInstance::add_cf_source(QString name)
 
 void LH_QtCFInstance::add_cf_source(LH_QtSetupItem *si, bool atEnd)
 {
-    add_cf_source(si->id(), si, atEnd);
+    add_cf_source(si->ident(), atEnd);
     // add_cf_source(si->id(), si, atEnd); // JLI: Twice!? Or should this be with title() ?
 }
 
@@ -248,12 +248,12 @@ void LH_QtCFInstance::add_cf_target(LH_QtSetupItem *si, bool hide, bool atEnd)
     if(atEnd || targets_.length()==0)
     {
         targets_.append(si);
-        setup_cf_target_->list().append(si->id());
+        setup_cf_target_->list().append(si->ident());
     }
     else
     {
         targets_.insert(cf_target_list_pos, si);
-        setup_cf_target_->list().insert(cf_target_list_pos, si->id());
+        setup_cf_target_->list().insert(cf_target_list_pos, si->ident());
         cf_target_list_pos++;
     }
     setup_cf_target_->refreshList();
@@ -445,7 +445,7 @@ void LH_QtCFInstance::cf_state_value_updated()
 {
     if (QObject::sender()!=NULL)
     {
-        QString senderName = ((LH_QtSetupItem*)QObject::sender())->id();
+        QString senderName = ((LH_QtSetupItem*)QObject::sender())->ident();
         if(sources_.contains(senderName))
             sources_[senderName]->setValue();
     }
@@ -469,7 +469,7 @@ void LH_QtCFInstance::cf_apply_rules(bool allowRender)
 
     if (QObject::sender()!=NULL)
     {
-        QString senderName = ((LH_QtSetupItem*)QObject::sender())->id();
+        QString senderName = ((LH_QtSetupItem*)QObject::sender())->ident();
         if(sources_.contains(senderName))
             sources_[senderName]->setValue();
     }
@@ -488,7 +488,7 @@ void LH_QtCFInstance::cf_apply_rules(bool allowRender)
 
 void LH_QtCFInstance::cf_copy_rules()
 {
-    QFile file(QString("%1cf_cache.xml").arg(state()->dir_binaries));
+    QFile file( LH_QtPlugin::dir_data().append("cf_cache.xml") );
     if (!file.open(QIODevice::WriteOnly | QIODevice::Text))
         return;
     else
@@ -502,7 +502,7 @@ void LH_QtCFInstance::cf_copy_rules()
 void LH_QtCFInstance::cf_paste_rules()
 {
     QString clip_text;
-    QFile file(QString("%1cf_cache.xml").arg(state()->dir_binaries));
+    QFile file( LH_QtPlugin::dir_data().append("cf_cache.xml") );
     if (!file.open(QIODevice::ReadOnly | QIODevice::Text))
         return;
     else

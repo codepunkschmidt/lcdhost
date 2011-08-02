@@ -39,8 +39,8 @@ lh_class *LH_DataViewerConnector::classInfo()
         "DataViewerConnector",
         "Data Connector",
         -1, -1,
-        lh_object_calltable_NULL,
-        lh_instance_calltable_NULL
+        
+        
     };
 
     if( classInfo.width == -1 )
@@ -93,7 +93,7 @@ const char *LH_DataViewerConnector::userInit()
 
 QString LH_DataViewerConnector::get_dir_layout()
 {
-    return QString::fromUtf8( state()->dir_layout );
+    return layoutPath();
 }
 
 QStringList LH_DataViewerConnector::listLanguages()

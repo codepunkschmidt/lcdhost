@@ -158,12 +158,11 @@ const char *LH_QtPlugin_NowPlaying::userInit()
     return NULL;
 }
 
-void LH_QtPlugin_NowPlaying::userTerm()
+LH_QtPlugin_NowPlaying::~LH_QtPlugin_NowPlaying()
 {
     //currentTrack->clearArtwork();
     timer_.stop();
-    currentTrack->deleteLater();
-    LH_QtPlugin::userTerm();
+    // currentTrack->deleteLater();
     return;
 }
 

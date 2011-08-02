@@ -42,6 +42,7 @@ public:
     LH_TextMemVirtualFree()
     {
         setBytes(true);
+        setup_value_->setLink("/system/memory/virtual/free");
     }
 
     static lh_class *classInfo()
@@ -53,20 +54,8 @@ public:
             "SystemMemoryVirtualFreeText",
             "Virtual memory available (Text)",
             20,10,
-            lh_object_calltable_NULL,
-            lh_instance_calltable_NULL
         };
         return &classInfo;
-    }
-
-    int notify(int code, void *param)
-    {
-        if( !code || code&LH_NOTE_MEM )
-        {
-            if( setValue( state()->mem_data.free_virt ) | setMax( state()->mem_data.tot_virt ) )
-                callback(lh_cb_render,NULL);
-        }
-        return LH_TextNumber::notify(code,param) | LH_NOTE_MEM;
     }
 };
 

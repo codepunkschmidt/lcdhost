@@ -45,8 +45,8 @@ lh_class *LH_DataViewerExpiredImage::classInfo()
         "DataViewerExpiredImage",
         "Data Expired Image",
         -1, -1,
-        lh_object_calltable_NULL,
-        lh_instance_calltable_NULL
+        
+        
     };
 
     return &classinfo;

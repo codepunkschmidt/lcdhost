@@ -35,42 +35,14 @@
 #ifndef LH_QT_QPROGRESSBAR_H
 #define LH_QT_QPROGRESSBAR_H
 
-#include "LH_QtSetupItem.h"
+#include "LH_Qt_int.h"
 
-class LH_Qt_QProgressBar : public LH_QtSetupItem
+class LH_Qt_QProgressBar : public LH_Qt_int
 {
 public:
-    LH_Qt_QProgressBar( LH_QtObject *parent, QString name, int value, int min, int max, int flags = 0 )
-        : LH_QtSetupItem( parent, name, lh_type_integer_progress, flags )
+    LH_Qt_QProgressBar( LH_QtObject *parent, const QString& name, int value, int min, int max, int flags = 0 )
+        : LH_Qt_int( parent, name, value, min, max, flags, lh_type_integer_progress )
     {
-        Q_ASSERT( value >= min );
-        Q_ASSERT( value <= max );
-        item_.param.i.min = min;
-        item_.param.i.max = max;
-        item_.data.i = value;
-    }
-
-    int value() const
-    {
-        return item_.data.i;
-    }
-
-    void setValue(int i)
-    {
-        if( item_.data.i != i )
-        {
-            Q_ASSERT( i >= item_.param.i.min );
-            Q_ASSERT( i <= item_.param.i.max );
-            item_.data.i = i;
-            refresh();
-            emit set();
-        }
-    }
-
-    virtual void setup_change()
-    {
-        emit change( value() );
-        LH_QtSetupItem::setup_change();
     }
 };
 

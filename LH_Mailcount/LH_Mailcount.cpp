@@ -58,9 +58,9 @@ lh_class *LH_Mailcount::classInfo()
         "System/Mail",
         "SystemMailIcon",
         "Unread mail (Icon)",
-        48,48,
-        lh_object_calltable_NULL,
-        lh_instance_calltable_NULL
+        48,48
+        
+        
     };
 
     return &classinfo;

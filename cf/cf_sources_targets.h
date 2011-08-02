@@ -180,7 +180,7 @@ public:
             if(source->name() == name)
                 return source;
             else
-                if(source->obj() != NULL && source->obj()->id() == name)
+                if(source->obj() != NULL && source->obj()->ident() == name)
                     return source;
         }
         return NULL;
@@ -213,7 +213,7 @@ public:
     {
         for(int i=0; i<length(); i++)
         {
-            if(((LH_QtSetupItem*)at(i))->id() == name)
+            if(((LH_QtSetupItem*)at(i))->ident() == name)
                 return at(i);
         }
         return NULL;

@@ -103,7 +103,7 @@ lh_class *LH_NowPlayingText::classInfo()
         "NowPlayingText",
         "Now Playing (Text)",
         -1, -1,
-        lh_instance_calltable_NULL
+        
     };
 
     if( classInfo.width == -1 )

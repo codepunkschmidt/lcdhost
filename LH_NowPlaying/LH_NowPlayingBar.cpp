@@ -57,7 +57,7 @@ lh_class *LH_NowPlayingBar::classInfo()
         "NowPlayingBar",
         "Now Playing (Progress Bar)",
         -1, -1,
-        lh_instance_calltable_NULL
+        
     };
 
     return &classInfo;

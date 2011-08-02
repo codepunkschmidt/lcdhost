@@ -47,20 +47,20 @@ lh_class *LH_WebKitHTML::classInfo()
         "DynamicWebKitHTML",
         "WebKit HTML",
         96, 32,
-        lh_object_calltable_NULL,
-        lh_instance_calltable_NULL
     };
 
     return &classinfo;
 }
 
-LH_WebKitHTML::LH_WebKitHTML()
+const char *LH_WebKitHTML::userInit()
 {
+    if( const char *err = LH_WebKit::userInit() ) return err;
     html_ = new LH_Qt_QTextEdit(this,"~WebKitHTMLScript",QString(),LH_FLAG_FOCUS);
     connect( html_, SIGNAL(changed()), this, SLOT(htmlChanged()) );
+    return 0;
 }
 
 void LH_WebKitHTML::htmlChanged()
 {
-    sendRequest( QUrl::fromLocalFile( QString::fromUtf8( state()->dir_layout ) + "/" ), html_->value() );
+    sendRequest( QUrl::fromLocalFile( layoutPath() + "/" ), html_->value() );
 }

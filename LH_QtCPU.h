@@ -37,34 +37,36 @@
 
 #include <QObject>
 #include <QQueue>
+
 #include "lh_plugin.h"
+#include "LH_Qt_int.h"
+#include "LH_Qt_array_int.h"
 #include "LH_QtInstance.h"
 #include "LH_Qt_QSlider.h"
 
 class LH_QtCPU : public QObject
 {
-    QQueue<lh_cpudata*> load_;
-    int load( lh_cpudata *from, lh_cpudata *to );
+    QQueue<int*> load_;
+    // int load( lh_cpudata *from, lh_cpudata *to );
 
 protected:
+    LH_Qt_array_int *link_coreloads_;
     LH_Qt_QSlider *setup_smoothing_;
 
 public:
     explicit LH_QtCPU(LH_QtInstance *parent);
     ~LH_QtCPU();
 
-    int notify(int n, void *p);
+    // int notify(int n, void *p);
 
     int count();
     int samples() { return setup_smoothing_->value() + 1; }
     LH_QtInstance *parent() const { return static_cast<LH_QtInstance *>(QObject::parent()); }
-    const lh_systemstate *state() const { return parent()->state(); }
 
     int coreload(int n); // 0...10000
     int averageload(); // 0...10000
 
     void smoothingOrder(int n) { setup_smoothing_->setOrder(n); }
-
     void smoothingHidden(bool hide) { setup_smoothing_->setFlag(LH_FLAG_HIDDEN, hide); }
 };
 

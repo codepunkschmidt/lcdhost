@@ -19,9 +19,10 @@ class LH_QtPlugin_Mailcount : public LH_QtPlugin
     QTime last_check_;
 
 public:
+    ~LH_QtPlugin_Mailcount();
+
     virtual const char *userInit();
     virtual int notify( int code, void *param );
-    virtual void userTerm();
 
 public slots:
     void getUnreadMailcount();

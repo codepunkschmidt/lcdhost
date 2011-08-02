@@ -36,62 +36,106 @@
 #define LH_QTSETUPITEM_H
 
 #include <QObject>
+#include <QString>
+#include <QByteArray>
+#include <QColor>
+#include <QFont>
+#include <QFileInfo>
 
 #include "LH_QtObject.h"
 
-/**
-  Helper class to manage setup items. Subclass this, mapping the LCDHost setup types to Qt classes.
-  */
-class LH_QtSetupItem : public QObject
+class LH_QtSetupItem : public LH_QtObject
 {
     Q_OBJECT
-    QByteArray id_array_;
+
+    QByteArray ident_array_;
     QByteArray title_array_;
     QByteArray link_array_;
     QByteArray help_array_;
+    QByteArray list_array_;
 
 protected:
+    QString str_; // string helper
+    QByteArray data_array_;
     lh_setup_item item_;
 
+    void setArray( const QByteArray& a )
+    {
+        data_array_ = a;
+        item_.data.b.p = data_array_.data();
+        item_.data.b.n = data_array_.capacity();
+    }
+
+    void setString( const QString& s )
+    {
+        str_ = s;
+        setArray( str_.toUtf8() );
+    }
+
+    void getString()
+    {
+        str_ = QString::fromUtf8( (const char*) item_.data.b.p );
+    }
+
 public:
-    LH_QtSetupItem( LH_QtObject *parent, QString id, lh_setup_type type, int flags );
+    LH_QtSetupItem( LH_QtObject *parent, const QString& ident, lh_setup_type type, int flags );
+    ~LH_QtSetupItem();
 
-    LH_QtObject *parent() const { return static_cast<LH_QtObject *>(QObject::parent()); }
+    LH_QtObject *parent() const { return static_cast<LH_QtObject *>(LH_QtObject::parent()); }
 
-    virtual void setup_resize( size_t ) {}
-    virtual void setup_change();
+    void setup_resize( size_t needed );
+    virtual void setup_change(); // virtual to allow subclasses to update derived object caches
 
-    void refresh() { parent()->callback( lh_cb_setup_refresh, item() ); }
+    void refreshMeta() { callback( lh_cb_setup_refresh_meta, 0 ); }
+    void refreshData() { callback( lh_cb_setup_refresh_data, 0 ); }
 
-    void setFlags( int f ) { if( item_.flags != f ) { item_.flags = f; refresh(); } }
+    // metadata
+    void setIdent( const QString& s );
+    const char *ident() const { return ident_array_.constData(); }
+    void setTitle(const QString& s);
+    const char *title() const { return title_array_.constData(); }
+    void setLink(const QString& s);
+    const char *link() const { return link_array_.constData(); }
+    void setHelp(const QString& s);
+    const char *help() const { return help_array_.constData(); }
     int flags() const { return item_.flags; }
-    void setFlag( int f, bool state ); // set individual flag(s) on or off
     bool hasFlag( int f ) const { return (item_.flags & f) ? true : false; }
+    void setFlags( int f ) { if( item_.flags != f ) { item_.flags = f; refreshMeta(); } }
+    void setFlag( int f, bool state ); // set individual flag(s) on or off
 
-    void setId( QString s );
-    QString id() const { return objectName(); }
-    void setTitle(QString s);
-    QString title() const { return QString::fromUtf8(title_array_); }
-    void setLink(QString s);
-    QString link() { return QString::fromAscii(link_array_); }
-    void setHelp(QString s);
-    QString help() { return QString::fromUtf8(help_array_); }
+    void setMin( double );
+    void setMax( double );
+    void setMinMax( double, double );
 
+    void setMin( qint64 );
+    void setMax( qint64 );
+    void setMinMax( qint64, qint64 );
+
+    void setMin( int n ) { setMin( (qint64)n ); }
+    void setMax( int n ) { setMax( (qint64)n ); }
+    void setMinMax( int a, int b ) { setMinMax( (qint64)a, (qint64)b ); }
+
+    void setList( const QByteArray& list );
+    QByteArray& list() { return list_array_; } // call refreshList() if you modify it
+    void refreshList();
+
+    // data
     lh_setup_item *item() { return &item_; }
-
-    lh_setup_type type() { return item_.type; }
-
+    lh_setup_type type() const { return item_.type; }
     int order() const { return item_.order; }
     void setOrder( int n );
 
 signals:
-    void changed();
     void change( bool );
-    void change( int );
+    void change( qint64 );
     void change( double );
     void change( QString );
-    void input( QString, int, int );
-    void set();
+    void change( QColor );
+    void change( QFont );
+    void change( QFileInfo );
+    void changed(); // changed from LCDHost
+    void set(); // set programatically using setValue()
+    void input( int, int );
 
 public slots:
     void setVisible( bool b ) { setFlag( LH_FLAG_HIDDEN, !b ); }
@@ -100,10 +144,15 @@ public slots:
     void setWriteable( bool b ) { setFlag( LH_FLAG_READONLY, !b ); }
     void setSaving( bool b ) { setFlag( LH_FLAG_NOSAVE, !b ); }
 
-    virtual void setValue( bool ) { emit set(); }
-    virtual void setValue( int ) { emit set(); }
-    virtual void setValue( double ) { emit set(); }
-    virtual void setValue( QString ) { emit set(); }
+    void setValue( bool );
+    void setValue( int );
+    void setValue( const QColor& );
+    void setValue( qlonglong );
+    void setValue( double );
+    void setValue( void * );
+    void setValue( const QString& );
+    void setValue( const QByteArray& );
+    void setValue( const char *, int len = -1 );
 };
 
 #endif // LH_QTSETUPITEM_H

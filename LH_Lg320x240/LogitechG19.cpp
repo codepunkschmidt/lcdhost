@@ -2,7 +2,8 @@
 #include <QDebug>
 #include "LogitechG19.h"
 
-LogitechG19::LogitechG19( libusb_device *usbdev, libusb_device_descriptor *dd, LH_QtObject *drv ) : LH_QtDevice(drv)
+LogitechG19::LogitechG19( libusb_device *usbdev, libusb_device_descriptor *dd, LH_QtObject *drv )
+    : LH_QtDevice("LH_Lg320x240:G19",drv)
 {
     usbdev_ = usbdev;
     lcdhandle_ = 0;
@@ -47,8 +48,7 @@ LogitechG19::LogitechG19( libusb_device *usbdev, libusb_device_descriptor *dd, L
         }
         if( conf_desc ) libusb_free_config_descriptor( conf_desc );
     }
-    setDevid("LH_Lg320x240:G19");
-    setName("Logitech G19 LCD (USB)");
+    setObjectName("Logitech G19 LCD (USB)");
     setSize(320,240);
     setDepth(16);
 #ifdef Q_WS_WIN
@@ -56,12 +56,10 @@ LogitechG19::LogitechG19( libusb_device *usbdev, libusb_device_descriptor *dd, L
 #else
     setAutoselect(true);
 #endif
-    arrive();
 }
 
 LogitechG19::~LogitechG19()
 {
-    leave();
 }
 
 #define ASSERT_USB(x) do { int retv_ = x; if( retv_ ) { qDebug() << #x << libusb_strerror((libusb_error)retv_); return libusb_strerror((libusb_error) retv_); } } while(0)

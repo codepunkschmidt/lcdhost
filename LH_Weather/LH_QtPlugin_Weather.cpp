@@ -331,7 +331,7 @@ void LH_QtPlugin_Weather::processResponse(QByteArray xmlData, QString name, QXml
 void LH_QtPlugin_Weather::saveXMLResponse(QByteArray data, QString docType)
 {
     QDateTime now = QDateTime::currentDateTime();
-    QFile file(QString("%3\\lcdhost.weather.%1.%2.xml").arg(docType, now.toString("yyMMddhhmmsszzz"), state()->dir_binaries));
+    QFile file(QString("%3\\lcdhost.weather.%1.%2.xml").arg(docType, now.toString("yyMMddhhmmsszzz"), LH_QtPlugin::dir_data()));
     if (!file.open(QIODevice::WriteOnly | QIODevice::Text))
     {
         qWarning() << "LH_QtPlugin_Weather: Unable to save XML data";

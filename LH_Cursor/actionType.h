@@ -50,12 +50,12 @@ class actionType
 {
     LH_CursorAction *cursorAction_;
 
-    void setIntMinMax(LH_Qt_int *int_, int minVal, int maxVal)
+    void setIntMinMax(LH_Qt_int *int_, qint64 minVal, qint64 maxVal)
     {
         int val = int_->value();
         int_->setMinMax(minVal,maxVal);
-        if(val<minVal)val = minVal;
-        if(val>maxVal)val = maxVal;
+        if(val<minVal) val = minVal;
+        if(val>maxVal) val = maxVal;
         int_->setValue(val);
     }
 

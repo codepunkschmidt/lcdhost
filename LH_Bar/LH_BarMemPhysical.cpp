@@ -35,19 +35,22 @@
   */
 
 #include "LH_Bar.h"
+#include "../LH_Qt_int.h"
 
 class LH_BarMemPhysical : public LH_Bar
 {
+    LH_Qt_int *link_mem_phys_;
+
 public:
     const char *userInit()
     {
-        const char *retv = LH_Bar::userInit();
-        if( !retv )
-        {
-            setMin(0.0);
-            setMax(1000.0);
-        }
-        return retv;
+        if( const char *err = LH_Bar::userInit() ) return err;
+        link_mem_phys_ = new LH_Qt_int(this,"MemPhys",0,LH_FLAG_HIDDEN|LH_FLAG_NOSAVE);
+        link_mem_phys_->setLink("/system/mem/physical/load");
+        connect( link_mem_phys_, SIGNAL(change(qint64)), this, SLOT(drawSingle(qreal)) );
+        setMin(0.0);
+        setMax(1000.0);
+        return 0;
     }
 
     static lh_class *classInfo()
@@ -58,14 +61,13 @@ public:
             "System/Memory/Physical",
             "SystemMemoryPhysicalBar",
             "Physical memory used (Bar)",
-            48,48,
-            lh_object_calltable_NULL,
-            lh_instance_calltable_NULL
+            48,48
         };
 
         return &classInfo;
     }
 
+#if 0
     int notify(int n, void *p)
     {
         Q_UNUSED(p);
@@ -86,6 +88,7 @@ public:
         }
         return image_;
     }
+#endif
 };
 
 LH_PLUGIN_CLASS(LH_BarMemPhysical)

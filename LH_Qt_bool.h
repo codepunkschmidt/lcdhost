@@ -40,31 +40,21 @@
 class LH_Qt_bool : public LH_QtSetupItem
 {
 public:
-    LH_Qt_bool( LH_QtObject *parent, QString name, bool value, int flags = 0 )
+    LH_Qt_bool( LH_QtObject *parent, const QString& name, bool value, int flags = 0 )
         : LH_QtSetupItem( parent, name, lh_type_integer_boolean, flags )
     {
         item_.data.i = value;
     }
 
+    virtual void setup_change()
+    {
+        emit change( (bool) item_.data.i );
+        LH_QtSetupItem::setup_change();
+    }
+
     bool value() const
     {
         return item_.data.i ? true : false;
-    }
-
-    void setValue(bool b)
-    {
-        if( (item_.data.i != 0) != b )
-        {
-            item_.data.i = ( b ? 1 : 0 );
-            refresh();
-            emit set();
-        }
-    }
-
-    virtual void setup_change()
-    {
-        emit change( value() );
-        LH_QtSetupItem::setup_change();
     }
 };
 

@@ -11,6 +11,7 @@ SOURCES += \
     ../LH_QtSetupItem.cpp \
     ../LH_QtCPU.cpp \
     ../LH_QtNetwork.cpp \
+    ../LH_QtMemory.cpp \
     LH_Dial.cpp \
     LH_DialCPUAverage.cpp \
     LH_DialCPUHistogram.cpp \
@@ -29,6 +30,7 @@ HEADERS += \
     ../LH_QtSetupItem.h \
     ../LH_QtCPU.h \
     ../LH_QtNetwork.h \
+    ../LH_QtMemory.h \
     LH_Dial.h \
     LH_DialTime.h \
     ../LH_QtInstance.h

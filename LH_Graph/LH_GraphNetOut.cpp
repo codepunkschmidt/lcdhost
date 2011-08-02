@@ -29,7 +29,7 @@
 
 class LH_GraphNetOut : public LH_Graph
 {
-    LH_QtNetwork net_;
+    LH_QtNetwork *net_;
     int valCount;
     qreal valCache;
     qreal lastVal;
@@ -38,11 +38,13 @@ protected:
     LH_Qt_QStringList *setup_units_;
 
 public:
-    LH_GraphNetOut() : LH_Graph(), net_(this) {}
+    LH_GraphNetOut() : net_(0) { }
 
-    virtual const char *userInit()
+    const char *userInit()
     {
         if( const char *err = LH_Graph::userInit() ) return err;
+
+        net_ = new LH_QtNetwork(this);
 
         QStringList valuesList;
         valuesList.append("kb/s (kilobits per second)");
@@ -58,7 +60,7 @@ public:
         setMax(1000);
         setYUnit("kb/s");
 
-        net_.smoothingHidden(true);
+        net_->smoothingHidden(true);
         return 0;
     }
 
@@ -70,9 +72,9 @@ public:
             "System/Network/Outbound",
             "SystemNetworkOutboundGraph",
             "Outbound Bandwidth Usage (Graph)",
-            48,48,
-            lh_object_calltable_NULL,
-            lh_instance_calltable_NULL
+            48,48
+            
+            
         };
 
         return &classInfo;
@@ -85,16 +87,16 @@ public:
         {
             if (valCount!=0) {
                 lastVal = valCache/valCount;
-                setMax( state()->net_max_out);
+                setMax( net_->outMax() );
                 addValue(lastVal);
             }
             valCache = 0;
             valCount = 0;
         } else {
-            valCache+=net_.outRate();
+            valCache+=net_->outRate();
             valCount+=1;
         }
-        return LH_Graph::notify(n,p) | net_.notify(n,p) | LH_NOTE_SECOND;
+        return LH_Graph::notify(n,p) | LH_NOTE_SECOND;
     }
 
     QImage *render_qimage( int w, int h )

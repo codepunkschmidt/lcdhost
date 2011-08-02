@@ -43,8 +43,8 @@ lh_class *LH_WeatherText::classInfo()
         "WeatherText",
         "Weather Text",
         -1, -1,
-        lh_object_calltable_NULL,
-        lh_instance_calltable_NULL
+        
+        
     };
 
     if( classInfo.width == -1 )

@@ -46,17 +46,19 @@ lh_class *LH_WebKitFile::classInfo()
         "DynamicWebKitFile",
         "WebKit local file",
         96, 32,
-        lh_object_calltable_NULL,
-        lh_instance_calltable_NULL
+        
+        
     };
 
     return &classinfo;
 }
 
-LH_WebKitFile::LH_WebKitFile()
+const char *LH_WebKitFile::userInit()
 {
+    if( const char *err = LH_WebKit::userInit() ) return err;
     setup_file_ = new LH_Qt_QFileInfo(this,"File",QFileInfo(),LH_FLAG_FOCUS);
     connect( setup_file_, SIGNAL(changed()), this, SLOT(fileChanged()) );
+    return 0;
 }
 
 void LH_WebKitFile::fileChanged()

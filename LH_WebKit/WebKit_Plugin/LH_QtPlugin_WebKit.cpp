@@ -74,9 +74,9 @@ bool LH_QtPlugin_WebKit::startServer()
         qDebug() << "LH_WebKit: attempting to start" << wksname;
         QProcess::startDetached( wksname, QStringList("--hidden")
                                 << "--datadir"
-                                << QString::fromUtf8( state()->dir_data )
+                                << dir_data()
                                 << "--plugindir"
-                                << QString::fromUtf8( state()->dir_plugins )
+                                << dir_plugins()
                                 << "--verbose"
                                 );
     }
@@ -94,7 +94,7 @@ bool LH_QtPlugin_WebKit::sendQuit()
     return true;
 }
 
-void LH_QtPlugin_WebKit::term()
+LH_QtPlugin_WebKit::~LH_QtPlugin_WebKit()
 {
     sendQuit();
 
@@ -109,8 +109,6 @@ void LH_QtPlugin_WebKit::term()
         delete rssFeeds;
         rssFeeds = NULL;
     }
-
-    LH_QtPlugin::term();
 }
 
 const char *LH_QtPlugin_WebKit::userInit()

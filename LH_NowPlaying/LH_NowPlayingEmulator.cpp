@@ -54,7 +54,7 @@ lh_class *LH_NowPlayingEmulator::classInfo()
         "NowPlayingEmulator",
         "Now Playing Emulator (Text)",
         -1, -1,
-        lh_instance_calltable_NULL
+        
     };
 
     if( classInfo.width == -1 )

@@ -54,8 +54,7 @@ protected:
     LH_Qt_bool *setup_horizontal_;
 
 public:
-    LH_Background();
-
+    const char *userInit();
     QImage *render_qimage( int w, int h );
 
     static lh_class *classInfo();

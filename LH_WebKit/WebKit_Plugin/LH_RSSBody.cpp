@@ -12,8 +12,8 @@ lh_class *LH_RSSBody::classInfo()
         "DynamicRSSFeedBody",
         "RSS feed (Body)",
         -1, -1,
-        lh_object_calltable_NULL,
-        lh_instance_calltable_NULL
+        
+        
     };
     return &classInfo;
 }
@@ -26,7 +26,8 @@ const char *LH_RSSBody::userInit()
     connect( rss_, SIGNAL(changed()), this, SLOT(setRssItem()) );
     connect( rss_, SIGNAL(begin()), this, SLOT(beginFetch()) );
 
-    setup_template_->setHelp(setup_template_->help() + ""
+    setup_template_->setHelp(
+                QString(setup_template_->help()).append(
                              "<br><b>\\title</b> : RSS item title "
                              "<br><b>\\author</b> : RSS item author "
                              "<br><b>\\link</b> : RSS item link url "
@@ -34,7 +35,7 @@ const char *LH_RSSBody::userInit()
                              "<br><b>\\thumbnail_url</b> : RSS item thumbnail url "
                              "<br><b>\\thumbnail_height</b> : RSS item thumbnail height "
                              "<br><b>\\thumbnail_width</b> : RSS item thumbnail width "
-                             );
+                    ));
     setRssItem();
     return 0;
 }
@@ -46,7 +47,7 @@ int LH_RSSBody::notify(int code,void* param)
 
 void LH_RSSBody::setRssItem()
 {
-    sendRequest( QUrl::fromLocalFile( QString::fromUtf8( state()->dir_layout ) + "/" ), rss_->item().description );
+    sendRequest( QUrl::fromLocalFile( layoutPath() + "/" ), rss_->item().description );
 }
 
 QHash<QString, QString> LH_RSSBody::getTokens()

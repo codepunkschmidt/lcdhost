@@ -42,54 +42,7 @@
 #include "../LH_QtInstance.h"
 #include "LH_LuaClass.h"
 
-
-class LH_LuaInstance;
-
-class lua_setup_item
-{
-    LH_LuaInstance *parent_;
-    QByteArray id_;
-    QByteArray title_;
-    QByteArray help_;
-    QByteArray data_;
-    QByteArray paramlist_;
-    lh_setup_item item_;
-
-public:
-    lua_setup_item(LH_LuaInstance *parent, const char *id) : parent_(parent), id_(id)
-    {
-        memset(&item_,0,sizeof(item_));
-        item_.size = sizeof(item_);
-        item_.id = id_.data();
-    }
-
-    LH_LuaInstance *parent() { return parent_; }
-    int order() const { return item_.order; }
-    void setOrder(int n) { item_.order = n; }
-    lh_setup_item* item() { return &item_; }
-    const char* id() const { return id_.constData(); }
-    QByteArray& title() { return title_; }
-    void setTitle( const QByteArray& a ) { title_ = a; item_.title = title_.data(); }
-    QByteArray& help() { return help_; }
-    QByteArray& data() { return data_; }
-    void setData( const char *s, size_t n )
-    {
-        data_.clear();
-        data_.append( s, n );
-        item_.data.b.p = data_.data();
-        item_.data.b.n = data_.capacity();
-    }
-    QByteArray& paramlist() { return paramlist_; }
-
-    void setup_resize(size_t needed)
-    {
-        data_.resize(needed);
-        item_.data.b.p = data_.data();
-        item_.data.b.n = data_.capacity();
-        return;
-    }
-};
-
+class LH_LuaSetupItem;
 
 class LH_LuaInstance : public LH_QtInstance
 {
@@ -97,37 +50,30 @@ class LH_LuaInstance : public LH_QtInstance
 
     static QStack<LH_LuaInstance*> *stack_;
 
-    const lh_class *cls_;
-    lua_State *L;
     LH_LuaClass *alc_;
+    lua_State *L;
     lh_blob *blob_;
     int ref_; // reference to 'self' in the registry
-    QList<lua_setup_item*> items_;
-    QVector<lh_setup_item*> setup_item_vector_;
 
 public:
-    LH_LuaInstance( const lh_class *cls, LH_QtObject *parent = 0) : LH_QtInstance( parent ), cls_(cls), L(0), alc_(0), blob_(0), ref_(LUA_NOREF) {}
-
+    LH_LuaInstance( LH_LuaClass *alc, lh_callback_t cb, void *cb_id )
+        : LH_QtInstance( cb, cb_id ), alc_(alc), L(alc->luaState()), blob_(0), ref_(LUA_NOREF) {}
+    ~LH_LuaInstance();
 
     void lua_pushself() { lua_rawgeti(L, LUA_REGISTRYINDEX, ref_); }
     bool lua_pushfunction(const char *funcname);
 
-    virtual const char *init( lh_callback_t cb, int cb_id, const char *name, const lh_systemstate* state );
-    virtual lh_setup_item **setup_data();
-    virtual void setup_resize( lh_setup_item *item, size_t needed );
-    virtual void setup_change( lh_setup_item *item );
-    virtual int polling();
-    virtual int notify( int, void* );
-    virtual void term();
+    void setup_change( LH_LuaSetupItem *item );
+
+    const char *userInit();
+    int polling();
+    int notify( int, void* );
 
     void prerender();
     int width( int );
     int height( int );
     lh_blob *render_blob( int, int );
     QImage *render_qimage( int, int );
-    QList<lua_setup_item*>& items() { return items_; }
-
-    void update_setup_item_vector();
 
     static void push( LH_LuaInstance *inst ) { if( stack_ == 0 ) stack_ = new QStack<LH_LuaInstance*>(); stack_->push(inst); }
     static LH_LuaInstance *top() { return ( stack_ ? stack_->top() : 0); }

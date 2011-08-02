@@ -85,7 +85,7 @@ int LH_QtPlugin_Mailcount::notify( int code, void *param )
     return LH_QtPlugin::notify( code, param ) | LH_NOTE_SECOND;
 }
 
-void LH_QtPlugin_Mailcount::userTerm()
+LH_QtPlugin_Mailcount::~LH_QtPlugin_Mailcount()
 {
 #ifdef Q_WS_WIN
     if( hShell32Dll )
@@ -95,7 +95,6 @@ void LH_QtPlugin_Mailcount::userTerm()
             SHGetUnreadMailCountW = 0;
     }
 #endif
-    LH_QtPlugin::userTerm();
     return;
 }
 

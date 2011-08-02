@@ -57,12 +57,3 @@ char __lcdhostplugin_xml[] =
   "<p>The source code for this plugin is included with the distribution.</p>"
   "</longdesc>"
 "</lcdhostplugin>";
-
-const char *LH_QtPlugin_Bar::lh_load()
-{
-    return NULL;
-}
-
-void LH_QtPlugin_Bar::lh_unload()
-{
-}

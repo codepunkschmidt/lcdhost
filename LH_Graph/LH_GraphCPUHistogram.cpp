@@ -90,9 +90,9 @@ public:
             "System/CPU",
             "SystemCPUHistogramGraph",
             "Core Load (Graph)",
-            48,48,
-            lh_object_calltable_NULL,
-            lh_instance_calltable_NULL
+            48,48
+            
+            
         };
 
         return &classInfo;
@@ -121,7 +121,7 @@ public:
                 }
             }
         }
-        return LH_Graph::notify(n,p) | cpu_->notify(n,p) | LH_NOTE_SECOND;
+        return LH_Graph::notify(n,p) | LH_NOTE_SECOND;
     }
 
     QImage *render_qimage( int w, int h )

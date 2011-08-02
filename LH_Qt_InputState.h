@@ -40,9 +40,15 @@
 class LH_Qt_InputState : public LH_Qt_QString
 {
 public:
-    LH_Qt_InputState( LH_QtObject *parent, QString name, QString value, int flags = 0 )
+    LH_Qt_InputState( LH_QtObject *parent, const QString& name, const QString& value, int flags = 0 )
         : LH_Qt_QString( parent, name, value, flags, lh_type_string_inputstate )
     {
+    }
+
+    virtual void setup_change()
+    {
+        emit input( item_.param.input.flags, item_.param.input.value );
+        LH_Qt_QString::setup_change();
     }
 };
 

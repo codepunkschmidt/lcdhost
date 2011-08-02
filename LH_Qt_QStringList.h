@@ -38,23 +38,23 @@
 #include <QStringList>
 #include "LH_QtSetupItem.h"
 
+/*
+  Supports the following setup types:
+    lh_type_integer_list
+    lh_type_integer_listbox
+    lh_type_string_combobox
+  */
+
 class LH_Qt_QStringList : public LH_QtSetupItem
 {
     QStringList list_;
-    QByteArray encodedlist_;
 
 public:
-	// Reasonable subtypes:
-	//  lh_type_integer_list - Yields a dropdown box
-	//  lh_type_integer_listbox - Yields a listbox
-
-    LH_Qt_QStringList( LH_QtObject *parent, QString name, QStringList value, int flags = 0, lh_setup_type subtype = lh_type_integer_list  )
+    LH_Qt_QStringList( LH_QtObject *parent, const QString& name, const QStringList& list, int flags = 0, lh_setup_type subtype = lh_type_integer_list  )
         : LH_QtSetupItem( parent, name, subtype, flags )
     {
-        list_ = value;
-        encodedlist_ = list_.join("\t").toUtf8();
-        item_.param.list = encodedlist_.constData();
-        item_.data.i = 0;
+        list_ = list;
+        setList( list_.join("\n").toUtf8() );
     }
     
     QStringList& list()
@@ -64,45 +64,61 @@ public:
 
     void refreshList()
     {
-        encodedlist_ = list_.join("\t").toUtf8();
-        item_.param.list = encodedlist_.constData();
-        if( item_.data.i >= list_.size() ) item_.data.i = list_.size() - 1;
-        refresh();
+        setList( list_.join("\n").toUtf8() );
+        refreshMeta();
     }
 
     int value() const
     {
-        return item_.data.i;
+        if( type() & lh_type_integer )
+            return item_.data.i;
+        if( type() & lh_type_string )
+            return list_.indexOf( str_ );
+        return -1;
     }
 
     QString valueText() const
     {
-        if( value() < 0 || value() >= list_.size() ) return QString();
-        return list_.at( value() );
+        if( type() & lh_type_integer )
+        {
+            if( item_.data.i >= 0 && item_.data.i < list_.size() )
+                return list_.at( item_.data.i );
+        }
+        if( type() & lh_type_string )
+            return str_;
+        return QString();
     }
 
-    virtual void setup_change()
+    void setValue(const QString& s)
     {
-        emit change( value() );
-        LH_QtSetupItem::setup_change();
+        if( type() & lh_type_integer )
+        {
+            LH_QtSetupItem::setValue( list_.indexOf(s) );
+            return;
+        }
+        if( type() & lh_type_string )
+        {
+            LH_QtSetupItem::setValue( s );
+            return;
+        }
     }
 
     void setValue(int i)
     {
-        if( i < -1 ) i = -1;
-        if( i >= list_.size() ) i = list_.size();
-        if( item_.data.i != i )
+        if( i < -1 || i >= list_.size() ) i = -1;
+        if( type() & lh_type_integer )
         {
-            item_.data.i = i;
-            refresh();
-            emit set();
+            LH_QtSetupItem::setValue( i );
+            return;
+        }
+        if( type() & lh_type_string )
+        {
+            if( i == -1 ) LH_QtSetupItem::setValue(QString());
+            else LH_QtSetupItem::setValue( list_.at(i) );
+            return;
         }
     }
 
-    void setValue(QString str)
-    {
-        setValue( list_.indexOf(str) );
-    }
 };
 
 #endif // LH_QT_QSTRINGLIST_H

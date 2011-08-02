@@ -36,10 +36,7 @@
 #define LH_QTOBJECT_H
 
 #include <QObject>
-#include <QVector>
 #include "lh_plugin.h"
-
-class LH_QtPlugin;
 
 /**
   Base class for Qt-based LCDHost plugin objects,
@@ -49,63 +46,50 @@ class LH_QtObject : public QObject
 {
     Q_OBJECT
 
-    static LH_QtPlugin *plugin_;
-
-    lh_callback_t cb_;
-    int cb_id_;
-    const lh_systemstate *state_;
-    QVector<lh_setup_item*> setup_item_vector_;
+    lh_object *p_obj_;
+public:
 #ifndef QT_NO_DEBUG
     bool clean_init_;
-    bool clean_term_;
+    bool warning_issued_;
 #endif
 
-public:
-    LH_QtObject( LH_QtObject *parent = 0);
-    virtual ~LH_QtObject() {}
+    LH_QtObject( lh_object *p, LH_QtObject *parent = 0);
+    ~LH_QtObject();
 
-    bool isValid() const { return cb_ && cb_id_; }
-    void callback( lh_callbackcode_t code, void *param ) const
+    bool isValid() const { return p_obj_ && (p_obj_->size == sizeof(lh_object)) && p_obj_->cb && p_obj_->cb_id; }
+    lh_object *obj() const { return p_obj_; }
+    void callback( lh_callbackcode_t code, void *param = 0 ) const
     {
-        if( cb_ ) cb_( cb_id_, this, code, param );
+        if( p_obj_->cb && p_obj_->cb_id )
+            p_obj_->cb( p_obj_->cb_id, code, param );
     }
 
-    // These implement the lh_object_callback functions. If you reimplement them, make
-    // sure to call the base class copy of them and preserve or modify the return value
-    // (if any) to suit.
-    virtual const char *init( lh_callback_t cb, int cb_id, const char *name, const lh_systemstate* state );
-    virtual lh_setup_item **setup_data();
-    virtual void setup_resize( lh_setup_item *item, size_t needed );
-    virtual void setup_change( lh_setup_item *item );
-    virtual int polling();
-    virtual int notify( int code, void *param );
-    virtual const char *input_name( const char *devid, int item );
-    virtual const lh_class **class_list();
-    virtual void term();
+    // This gets called by LCDHost when the corresponding UI elements
+    // have been created, layout information is available (if this
+    // object is a layout item). This function calls userInit().
+    const char *init( const char *title = 0 );
 
-    // You should use these two instead of init() and term(), that way you won't need to
-    // pass on the parameters that init() takes to the ancestor. init() will call
-    // userInit() when it's done and term() will call userTerm() before it does
-    // it's work. Make *sure* you call the inherited userInit() and check it's
-    // return value in your overridden userInit(). Also, make sure the inherited
-    // userTerm() is called after your own.
+    // Not all callbacks will work in all constructors.
+    // You should leave the constructor 'clean', and do your
+    // initialization in userInit().
+    // Make sure to call the base class userInit() first thing.
     virtual const char *userInit();
-    virtual void userTerm();
+
+    // These implement the lh_object functions. If you reimplement them, make sure
+    // to call the base class copy of them and preserve or modify the return value.
+    virtual int polling() { return 0; }
+    virtual int notify( int, void * ) { return 0; }
+    virtual const char *input_name( const char *devid, int item );
+
+    // Deprecated. Move userTerm() code to destructor.
+    virtual int userTerm() { Q_ASSERT(0); return 0; }
 
     // Convenience wrappers
     void show() const { int b = 0; callback( lh_cb_sethidden, (void*)&b ); }
     void hide() const { int b = 1; callback( lh_cb_sethidden, (void*)&b ); }
     void setVisible( bool b ) const { int notb = !b; callback( lh_cb_sethidden, (void*)&notb ); }
 
-    const lh_systemstate* state() const { return state_; }
-
-    static void set_plugin( LH_QtPlugin *p ) { plugin_ = p; }
-    static LH_QtPlugin *plugin() { return plugin_; }
-
-    static void build_object_calltable( lh_object_calltable *ct );
-
 public slots:
-    // void requestRebuild() const { callback( lh_cb_setup_rebuild, NULL ); } // call after adding or removing setup items!
     void requestRender() const { callback( lh_cb_render, NULL ); }
     void requestPolling() const { callback( lh_cb_polling, NULL ); }
 };

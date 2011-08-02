@@ -52,8 +52,6 @@ lh_class *LH_TextFile::classInfo()
         "StaticTextFile",
         "Text (file)",
         96, 32,
-        lh_object_calltable_NULL,
-        lh_instance_calltable_NULL
     };
 
     return &classinfo;

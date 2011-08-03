@@ -21,7 +21,7 @@
 #include "LH_LogitechData.h"
 #include "LH_Aida64Data.h"
 #include "LH_HWMonData.h"
-//#include "LH_HWiNFOData.h"
+#include "LH_HWiNFOData.h"
 #endif
 
 enum ui_mon_entry_type

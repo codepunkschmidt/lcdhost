@@ -56,6 +56,7 @@ const char *LH_QtPlugin_TorrentMon::userInit()
     setup_webui_password_ = new LH_Qt_QString(this, "WebUI Password", "password", LH_FLAG_NOSOURCE | LH_FLAG_NOSINK | LH_FLAG_HIDDEN);
     setup_webui_port_ = new LH_Qt_QString(this, "WebUI Port#", "16335", LH_FLAG_NOSOURCE | LH_FLAG_NOSINK | LH_FLAG_HIDDEN);
 
+    setup_webui_status_ = new LH_Qt_QString(this, "WebUI Status", "", LH_FLAG_NOSOURCE | LH_FLAG_NOSINK | LH_FLAG_HIDETITLE | LH_FLAG_NOSAVE | LH_FLAG_HIDDEN, lh_type_string_htmlhelp);
     setup_data_summary_ = new LH_Qt_QString(this, "Summary", "", LH_FLAG_NOSOURCE | LH_FLAG_NOSINK | LH_FLAG_HIDETITLE | LH_FLAG_NOSAVE, lh_type_string_htmlhelp);
     updateSummary();
 
@@ -200,6 +201,7 @@ void LH_QtPlugin_TorrentMon::finishedWebUI(QNetworkReply* reply)
     {
         if( reply->error() == QNetworkReply::NoError && reply->attribute(QNetworkRequest::HttpStatusCodeAttribute) == 200 )
         {
+            setup_webui_status_->setFlag(LH_FLAG_HIDDEN, true);
             QString response = QString(reply->readAll());
             if(response.startsWith("<html>"))
             {
@@ -243,11 +245,25 @@ void LH_QtPlugin_TorrentMon::finishedWebUI(QNetworkReply* reply)
                     }
                 }
                 else
-                    qWarning() << "An error occurred during parsing";
+                    qWarning() << "LH_TorrentMon: An error occurred during parsing WebUI torrent data.";
             }
         }
         else
-            qWarning() << "LH_TorrentMon: Error fetching WebUI torrent data:" << reply->attribute(QNetworkRequest::HttpStatusCodeAttribute) << reply->errorString();
+        {
+            switch(reply->error())
+            {
+                case QNetworkReply::NoError:
+                    setup_webui_status_->setHelp("Unable to aqcuire WebUI data: Http code " + reply->attribute(QNetworkRequest::HttpStatusCodeAttribute).toInt());
+                    break;
+                case QNetworkReply::ConnectionRefusedError:
+                    setup_webui_status_->setHelp("Connection refused. <br/>Either the uTorrent/BitTorrent is not running or the settings are wrong.");
+                    break;
+                default:
+                    setup_webui_status_->setHelp("Unable to aqcuire WebUI data: " + reply->errorString());
+                    break;
+            }
+            setup_webui_status_->setFlag(LH_FLAG_HIDDEN, false);
+        }
         reply->deleteLater();
         reply = NULL;
     }

@@ -40,11 +40,12 @@ char __lcdhostplugin_xml[] =
   "<homepageurl><a href=\"http://www.codeleap.co.uk\">CodeLeap</a></homepageurl>"
   "<logourl></logourl>"
   "<shortdesc>"
-  "TS3..."
+    "Enables interaction with TeamSpeak 3."
   "</shortdesc>"
   "<longdesc>"
-    "<p>TS3...</p>"
-"</longdesc>"
+    "<p>This plugin allows LCDHost to receive information from a running copy of TeamSpeak 3, such as the identity of people currently speaking.</p>"
+    "<p>It can also display your current microphone / speak mute status, the name of the channel you are cennected to and more.</p>"
+  "</longdesc>"
 "</lcdhostplugin>";
 
 const char *LH_QtPlugin_TS3::userInit()

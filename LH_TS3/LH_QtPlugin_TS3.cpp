@@ -61,7 +61,9 @@ const char *LH_QtPlugin_TS3::userInit()
     setup_connection_details_ = new LH_Qt_QString(this,("Connection Details"),QString(), LH_FLAG_NOSAVE | LH_FLAG_NOSINK | LH_FLAG_NOSOURCE | LH_FLAG_HIDETITLE, lh_type_string_htmlhelp );
 
     setup_talking_ = new LH_Qt_QString(this, "Talking", "", LH_FLAG_NOSAVE | LH_FLAG_NOSINK | LH_FLAG_HIDDEN);
-    setup_talking_->setLink("@/Monitoring/3rdParty/TeamSpeak3/Talking");
+    setup_talking_->item()->states |= LH_STATE_SOURCE;
+    setup_talking_->setLink("Monitoring/3rdParty/TeamSpeak3/Talking");
+    setup_talking_->refreshData();
 
     setup_talking_details_ = new LH_Qt_QString(this, "Talking Details", QString(), LH_FLAG_NOSAVE | LH_FLAG_NOSINK | LH_FLAG_NOSOURCE | LH_FLAG_HIDETITLE, lh_type_string_htmlhelp);
 
@@ -74,21 +76,33 @@ const char *LH_QtPlugin_TS3::userInit()
     connect(setup_username_expression_, SIGNAL(changed()), this, SLOT(updateMyDetails()));
 
     setup_username_ = new LH_Qt_QString(this, "Username", "", LH_FLAG_HIDDEN | LH_FLAG_READONLY | LH_FLAG_NOSAVE | LH_FLAG_NOSINK);
-    setup_username_->setLink("@/Monitoring/3rdParty/TeamSpeak3/Username");
+    setup_username_->item()->states |= LH_STATE_SOURCE;
+    setup_username_->setLink("Monitoring/3rdParty/TeamSpeak3/Username");
+    setup_username_->refreshData();
     connect(setup_username_, SIGNAL(changed()), this, SLOT(updateMyDetails()));
 
     setup_user_detail_ = new LH_Qt_QString(this,("User Details"),QString(), LH_FLAG_NOSAVE | LH_FLAG_NOSINK | LH_FLAG_NOSOURCE | LH_FLAG_HIDETITLE, lh_type_string_htmlhelp );
     setup_user_detail_->setHelp("");
 
     setup_channelname_ = new LH_Qt_QString(this, "Channel", "", LH_FLAG_HIDDEN | LH_FLAG_READONLY | LH_FLAG_NOSAVE | LH_FLAG_NOSINK);
-    setup_channelname_->setLink("@/Monitoring/3rdParty/TeamSpeak3/Username");
+    setup_channelname_->item()->states |= LH_STATE_SOURCE;
+    setup_channelname_->setLink("Monitoring/3rdParty/TeamSpeak3/Username");
+    setup_channelname_->refreshData();
 
-    setup_connection_status_ = new LH_Qt_QStringList(this, "Connection Status", QStringList() << "Not Running" << "Not Connected" << "Connected", LH_FLAG_HIDDEN | LH_FLAG_READONLY | LH_FLAG_NOSAVE | LH_FLAG_NOSINK );
-    setup_connection_status_->setLink("@/Monitoring/3rdParty/TeamSpeak3/Connection Status");
-    setup_microphone_status_ = new LH_Qt_QStringList(this, "Microphone Status", QStringList() << "N/A" << "None" << "Muted" << "Active", LH_FLAG_HIDDEN | LH_FLAG_READONLY | LH_FLAG_NOSAVE | LH_FLAG_NOSINK );
-    setup_microphone_status_->setLink("@/Monitoring/3rdParty/TeamSpeak3/Microphone Status");
-    setup_speakers_status_   = new LH_Qt_QStringList(this, "Speaker Status"   , QStringList() << "N/A" << "None" << "Muted" << "Active", LH_FLAG_HIDDEN | LH_FLAG_READONLY | LH_FLAG_NOSAVE | LH_FLAG_NOSINK );
-    setup_speakers_status_->setLink("@/Monitoring/3rdParty/TeamSpeak3/Speaker Status");
+    setup_connection_status_ = new LH_Qt_QStringList(this, "Connection Status", QStringList() << "Not Running" << "Not Connected" << "Connected", /*LH_FLAG_HIDDEN | LH_FLAG_READONLY |*/ LH_FLAG_NOSAVE | LH_FLAG_NOSINK );
+    setup_connection_status_->item()->states |= LH_STATE_SOURCE;
+    setup_connection_status_->setLink("Monitoring/3rdParty/TeamSpeak3/Connection Status");
+    setup_connection_status_->refreshData();
+
+    setup_microphone_status_ = new LH_Qt_QStringList(this, "Microphone Status", QStringList() << "N/A" << "None" << "Muted" << "Active", /*LH_FLAG_HIDDEN | LH_FLAG_READONLY |*/ LH_FLAG_NOSAVE | LH_FLAG_NOSINK );
+    setup_microphone_status_->item()->states |= LH_STATE_SOURCE;
+    setup_microphone_status_->setLink("Monitoring/3rdParty/TeamSpeak3/Microphone Status");
+    setup_microphone_status_->refreshData();
+
+    setup_speakers_status_   = new LH_Qt_QStringList(this, "Speaker Status"   , QStringList() << "N/A" << "None" << "Muted" << "Active", /*LH_FLAG_HIDDEN | LH_FLAG_READONLY |*/ LH_FLAG_NOSAVE | LH_FLAG_NOSINK );
+    setup_speakers_status_->item()->states |= LH_STATE_SOURCE;
+    setup_speakers_status_->setLink("Monitoring/3rdParty/TeamSpeak3/Speaker Status");
+    setup_speakers_status_->refreshData();
 
     /*
     LH_Qt_QString *setup_user_detail_;

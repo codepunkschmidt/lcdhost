@@ -83,6 +83,7 @@ public:
 
     LH_QtObject *parent() const { return static_cast<LH_QtObject *>(LH_QtObject::parent()); }
 
+    int notify( int note, void *param );
     void setup_resize( size_t needed );
     virtual void setup_change(); // virtual to allow subclasses to update derived object caches
 
@@ -136,6 +137,7 @@ signals:
     void changed(); // changed from LCDHost
     void set(); // set programatically using setValue()
     void input( int, int );
+    void duplicateSource();
 
 public slots:
     void setVisible( bool b ) { setFlag( LH_FLAG_HIDDEN, !b ); }

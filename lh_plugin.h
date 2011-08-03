@@ -95,6 +95,9 @@ typedef unsigned long long quint64; /* 64 bit unsigned */
 #define LH_NOTE_MEM         0x00000004 /* memory load data updated */
 #define LH_NOTE_NET         0x00000008 /* network load data updated */
 #define LH_NOTE_DEVICE      0x00000010 /* output device has changed */
+#define LH_NOTE_WARNING     0x00000020 /* warnings, param: LH_WARNING_xxx (cast param to int) */
+
+#define LH_WARNING_DUPLICATE_SOURCE 1
 
 #define LH_ALIGN_LEFT       0
 #define LH_ALIGN_CENTER     1

@@ -89,7 +89,6 @@ int LH_QtSetupItem::notify( int note, void *param )
         int w = (int) param;
         if( w == LH_WARNING_DUPLICATE_SOURCE )
         {
-            Q_ASSERT( item_.states & LH_STATE_SOURCE );
             emit duplicateSource();
         }
     }

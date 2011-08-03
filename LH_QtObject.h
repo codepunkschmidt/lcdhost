@@ -92,6 +92,9 @@ public:
 public slots:
     void requestRender() const { callback( lh_cb_render, NULL ); }
     void requestPolling() const { callback( lh_cb_polling, NULL ); }
+
+signals:
+    void initialized(); // emitted once userInit() completes
 };
 
 #endif // LH_QTOBJECT_H

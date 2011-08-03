@@ -542,8 +542,8 @@ void LH_MonitoringUI::acquireAppData()
         data_ = new LH_Aida64Data((LH_QtObject*)parent(), this, dataMode_, includeGroups_);
     if(setup_monitoring_app_->valueText() == "HWMonitor + HWMonTray")
         data_ = new LH_HWMonData((LH_QtObject*)parent(), this, dataMode_, includeGroups_);
-    if(setup_monitoring_app_->valueText() == "HWiNFO")
-        data_ = new LH_HWiNFOData((LH_QtObject*)parent(), this, dataMode_, includeGroups_);
+    // if(setup_monitoring_app_->valueText() == "HWiNFO")
+        // data_ = new LH_HWiNFOData((LH_QtObject*)parent(), this, dataMode_, includeGroups_);
 #elif LH_TORRENTMON_LIBRARY
 #endif
 

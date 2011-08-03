@@ -73,7 +73,7 @@ const char *LH_Mailcount::userInit()
     envelope_count_ = -1;
     email_count_ = new LH_Qt_int(this,("Unread mail count"),0,
                                  LH_FLAG_READONLY|LH_FLAG_NOSAVE|LH_FLAG_NOSOURCE|LH_FLAG_AUTORENDER);
-    email_count_->setLink("=/system/Mail count");
+    email_count_->setLink("/system/mail/count");
 
     mail_image_ = new LH_Qt_QFileInfo(this,("Mail envelope image"),QFileInfo(),LH_FLAG_NOSOURCE|LH_FLAG_NOSINK|LH_FLAG_AUTORENDER);
     connect( mail_image_, SIGNAL(changed()), this, SLOT(makeEnvelope()) );

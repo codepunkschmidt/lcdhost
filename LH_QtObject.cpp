@@ -101,6 +101,7 @@ const char *LH_QtObject::init( const char *title )
         qWarning() << metaObject()->className() << objectName() << "did not complete userInit() chain";
 #endif
 
+    if( retv == 0 ) emit initialized();
     return retv;
 }
 

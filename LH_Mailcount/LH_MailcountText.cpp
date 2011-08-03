@@ -26,7 +26,7 @@ LH_MailcountText::LH_MailcountText() : LH_Text()
     setup_text_->setFlag( LH_FLAG_NOSAVE, true );
 
     email_count_ = new LH_Qt_int(this,("Mail count"),0,LH_FLAG_NOSAVE|LH_FLAG_NOSOURCE);
-    email_count_->setLink("=/system/Mail count");
+    email_count_->setLink("/system/mail/count");
     connect( email_count_, SIGNAL(changed()), this, SLOT(update()) );
 
     hide_limit_ = new LH_Qt_int(this,("Hide when less than"),0,LH_FLAG_AUTORENDER);

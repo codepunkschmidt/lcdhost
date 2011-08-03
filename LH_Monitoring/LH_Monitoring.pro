@@ -46,9 +46,9 @@ HEADERS += \
     Sources/LH_AfterburnerTypes.h \
     Sources/LH_AfterburnerData.h \
     Sources/LH_MonitoringUI.h \
-    Sources/LH_HWMonData.h
-#    Sources/LH_HWiNFOTypes.h \
-#    Sources/LH_HWiNFOData.h
+    Sources/LH_HWMonData.h \
+    Sources/LH_HWiNFOTypes.h \
+    Sources/LH_HWiNFOData.h
 
 SOURCES += \
     LH_QtPlugin_Monitoring.cpp \
@@ -80,7 +80,7 @@ SOURCES += \
     Sources/LH_Aida64Data.cpp \
     Sources/LH_AfterburnerData.cpp \
     Sources/LH_MonitoringUI.cpp \
-    Sources/LH_HWMonData.cpp
-#    Sources/LH_HWiNFOData.cpp
+    Sources/LH_HWMonData.cpp \
+    Sources/LH_HWiNFOData.cpp
 
 RESOURCES +=

@@ -92,6 +92,7 @@ protected:
     LH_Qt_QString *setup_webui_username_;
     LH_Qt_QString *setup_webui_password_;
     LH_Qt_QString *setup_webui_port_;
+    LH_Qt_QString *setup_webui_status_;
 
     LH_Qt_QString *setup_data_summary_;
 

@@ -30,8 +30,6 @@ public:
         return;
     }
 
-    ~LH_NowPlayingReader();
-
     TrackInfo info() { return info_; }
     bool playerFound() { return playerFound_; }
     QString artworkFileName()
@@ -58,7 +56,8 @@ public:
     }
 
     void refresh();
-    virtual void run() { refresh(); }
+    void run();
+    void timerEvent(QTimerEvent *);
 
 signals:
     void changed();

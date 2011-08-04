@@ -37,7 +37,7 @@
 
 #include "../LH_QtPlugin.h"
 
-class LH_Lg160x43 : public LH_QtPlugin
+class LH_QtPlugin_Lg160x43 : public LH_QtPlugin
 {
     Q_OBJECT
 

@@ -107,7 +107,7 @@ LH_Lg320x240::~LH_Lg320x240()
             qWarning() << "LH_Lg320x240: worker thread not responding";
             g19thread_->terminate();
         }
-        else delete g19thread_;
+        delete g19thread_;
     }
     g19thread_ = 0;
 }

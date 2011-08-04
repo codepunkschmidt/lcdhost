@@ -41,26 +41,19 @@
 #include "EventLgLcdNotification.h"
 #include "LogitechDevice.h"
 
-LogitechDevice::LogitechDevice( LH_LgLcdMan *drv, bool bw )
-    : LH_QtDevice( bw ? "LH_LgLcdMan:BW" : "LH_LgLcdMan:QVGA", drv)
+LogitechDevice::LogitechDevice( bool bw )
+    : LH_QtDevice( bw ? "LH_LgLcdMan:BW" : "LH_LgLcdMan:QVGA",
+          bw ? 160 : 320,
+          bw ? 43 : 240,
+          bw ? 1 : 32,
+          false )
 {
-    drv_ = drv;
     opened_ = false;
     bw_ = bw;
     buttonState_ = 0;
 
-    if( bw_ )
-    {
-        setObjectName( QObject::tr("Logitech B/W LCD") );
-        setSize( 160, 43 );
-        setDepth( 1 );
-    }
-    else
-    {
-        setObjectName( QObject::tr("Logitech QVGA LCD") );
-        setSize( 320, 240 );
-        setDepth( 32 );
-    }
+    if( bw_ ) setObjectName( QObject::tr("Logitech B/W LCD") );
+    else setObjectName( QObject::tr("Logitech QVGA LCD") );
     return;
 }
 

@@ -83,6 +83,8 @@ const char *LH_WebKit::userInit()
 
 LH_WebKit::~LH_WebKit()
 {
+    parseThread->quit();
+    parseThread->wait();
     if( sock_ )
     {
         if( sock_->state() == QLocalSocket::ConnectedState ) sock_->abort();

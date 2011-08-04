@@ -47,7 +47,7 @@ void LogitechG19Thread::run()
 
                 if( g19dev )
                 {
-                    LogitechG19 *the_g19 = new LogitechG19(g19dev,&dd,qobject_cast<LH_QtObject*>(parent()));
+                    LogitechG19 *the_g19 = new LogitechG19(g19dev,&dd);
                     g19_ = the_g19;
                     // poll the LCD keys
                     while( !time_to_die_ && g19_ )

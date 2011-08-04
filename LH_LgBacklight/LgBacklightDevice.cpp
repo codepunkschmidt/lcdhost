@@ -30,8 +30,12 @@ LgBacklightDevice::LgBacklightDevice( const struct hid_device_info *di, LH_LgBac
             if( b > 255 ) b = 255;
             color_ = QColor( r, g, b );
         }
+        else
+            qDebug() << "LgBacklightDevice can't get feature report for" << name_;
         hid_close( dev );
     }
+    else
+        qDebug() << "LgBacklightDevice can't open" << name_;
 }
 
 // automatic intensity correction

@@ -334,7 +334,7 @@ EXPORT lh_object *lh_create( lh_callback_t cb, void *cb_id )
 EXPORT void lh_destroy( lh_object *o )
 {
     Q_UNUSED(o);
-    // if( image_class.obj.cb && image_class.obj.cb_id )
+    if( image_class.obj.cb && image_class.obj.cb_id )
     {
         image_class.obj.cb( image_class.obj.cb_id, lh_cb_destroy, 0 );
     }

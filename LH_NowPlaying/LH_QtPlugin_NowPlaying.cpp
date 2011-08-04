@@ -152,21 +152,15 @@ const char *LH_QtPlugin_NowPlaying::userInit()
 {
     if( const char *err = LH_QtPlugin::userInit() ) return err;
     currentTrack = new LH_NowPlayingReader(this);
-    timer_.setInterval(500);
-    timer_.start();
-    connect(&timer_, SIGNAL(timeout()), this, SLOT(refresh_data()));
     return NULL;
 }
 
 LH_QtPlugin_NowPlaying::~LH_QtPlugin_NowPlaying()
 {
-    //currentTrack->clearArtwork();
-    timer_.stop();
-    // currentTrack->deleteLater();
+    if( currentTrack )
+    {
+        currentTrack->quit();
+        currentTrack->wait();
+    }
     return;
-}
-
-void LH_QtPlugin_NowPlaying::refresh_data() {
-    if(!currentTrack->isRunning())
-         currentTrack->run();
 }

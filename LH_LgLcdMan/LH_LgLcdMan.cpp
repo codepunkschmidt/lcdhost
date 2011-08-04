@@ -132,8 +132,11 @@ LH_LgLcdMan::~LH_LgLcdMan()
     {
         thread_->timeToDie();
         if( !thread_->wait(4000) )
+        {
             qDebug() << "LH_LgLcdMan: Logitech drivers not responding, expect problems";
-        thread_ = NULL;
+            thread_->terminate();
+        }
+        delete thread_;
     }
     return;
 }
@@ -147,7 +150,7 @@ int LH_LgLcdMan::notify(int code,void *param)
     if( thread_ )
     {
         if( thread_->hasBW() && bw_ == NULL )
-            bw_ = new LogitechDevice( this, true );
+            bw_ = new LogitechDevice( true );
 
         if( !thread_->hasBW() && bw_ != NULL )
         {
@@ -156,7 +159,7 @@ int LH_LgLcdMan::notify(int code,void *param)
         }
 
         if( thread_->hasQVGA() && qvga_ == NULL )
-            qvga_ = new LogitechDevice( this, false );
+            qvga_ = new LogitechDevice( false );
 
         if( !thread_->hasQVGA() && qvga_ != NULL )
         {

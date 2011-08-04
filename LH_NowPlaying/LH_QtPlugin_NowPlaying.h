@@ -41,21 +41,16 @@
 #include "../LH_QtPlugin.h"
 #include "LH_NowPlayingReader.h"
 #include <QDebug>
-#include <QTimer>
 
 #define VERSION 2.21
 
 class LH_QtPlugin_NowPlaying : public LH_QtPlugin
 {
     Q_OBJECT
-    QTimer timer_;
 
 public:
     ~LH_QtPlugin_NowPlaying();
     const char *userInit();
-
-public slots:
-    void refresh_data();
 };
 
 #endif // LH_QTPLUGIN_NOWPLAYING_H

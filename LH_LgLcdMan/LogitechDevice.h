@@ -61,15 +61,15 @@ class LogitechDevice : public LH_QtDevice
     bool opened_;
     bool bw_; // if true a BW device, else QVGA
     unsigned long buttonState_;
-    LH_LgLcdMan *drv_;
+    // LH_LgLcdMan *drv_;
 
 public:
-    LogitechDevice( LH_LgLcdMan *drv, bool bw );
+    LogitechDevice( bool bw );
     ~LogitechDevice();
 
     const char *input_name(const char *devid, int item);
 
-    LH_LgLcdMan* drv() const { return drv_; }
+    // LH_LgLcdMan* drv() const { return drv_; }
     const char* open() { opened_ = true; return NULL; }
     const char* render_qimage(QImage*);
     int buttons() { return (int) buttonState_; }
@@ -79,7 +79,7 @@ public:
 
     bool opened() const { return opened_; }
 
-    // LH_LgLcdMan *drv() const { return static_cast<LH_LgLcdMan *>(LH_QtDevice::drv()); }
+    LH_LgLcdMan *drv() const { return static_cast<LH_LgLcdMan *>(parent()); }
     unsigned long buttonState() const { return buttonState_; }
     void setButtonState( unsigned long ul );
 };

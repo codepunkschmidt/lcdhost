@@ -1,4 +1,5 @@
 #include "LH_NowPlayingReader.h"
+#include <QBasicTimer>
 
 LH_NowPlayingReader* currentTrack;
 
@@ -12,8 +13,17 @@ void close_itunes_connection();
 
 //----------------------------------------------------------------------------------------------------------
 
-LH_NowPlayingReader::~LH_NowPlayingReader() {
+void LH_NowPlayingReader::run()
+{
+    QBasicTimer timer;
+    timer.start(500,this);
+    exec();
     close_itunes_connection();
+}
+
+void LH_NowPlayingReader::timerEvent(QTimerEvent *)
+{
+    refresh();
 }
 
 void LH_NowPlayingReader::refresh()

@@ -45,7 +45,7 @@
 #include "Lg160x43Device.h"
 #include "../LH_Qt_QImage.h"
 
-LH_PLUGIN(LH_Lg160x43)
+LH_PLUGIN(LH_QtPlugin_Lg160x43)
 
 char __lcdhostplugin_xml[] =
 "<?xml version=\"1.0\"?>"
@@ -67,7 +67,7 @@ char __lcdhostplugin_xml[] =
   "</longdesc>"
 "</lcdhostplugin>";
 
-const char *LH_Lg160x43::userInit()
+const char *LH_QtPlugin_Lg160x43::userInit()
 {
     if( const char *err = LH_QtPlugin::userInit() ) return err;
 #ifdef Q_WS_WIN
@@ -80,7 +80,7 @@ const char *LH_Lg160x43::userInit()
     return NULL;
 }
 
-void LH_Lg160x43::scan()
+void LH_QtPlugin_Lg160x43::scan()
 {
     // Maintain list of available devices
     struct hid_device_info *hdi_head = hid_enumerate( 0x0, 0x0 );
@@ -119,7 +119,7 @@ void LH_Lg160x43::scan()
                 }
                 if( !found )
                 {
-                    new Lg160x43Device( hdi, this );
+                    new Lg160x43Device( hdi );
                 }
             }
         }

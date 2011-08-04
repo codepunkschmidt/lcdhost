@@ -41,7 +41,7 @@
 #include "LH_QtObject.h"
 
 /**
-  Suggested base class for LCD devices reported by your driver. You
+  Suggested base class for output devices reported by your driver. You
   don't need to inherit from this, but it does provide a good starting
   point.
   */
@@ -51,7 +51,7 @@ class LH_QtDevice : public LH_QtObject
     lh_output_device lh_dev_;
 
 public:
-    LH_QtDevice( const char *devid, LH_QtObject *parent );
+    LH_QtDevice( const char *devid, int w, int h, int d, bool noauto );
     virtual ~LH_QtDevice();
 
     LH_QtObject *parent() const { return static_cast<LH_QtObject *>(LH_QtObject::parent()); }
@@ -72,11 +72,7 @@ public:
     virtual const char* close() { return NULL; }
 
     QSize size() const { return QSize( lh_dev_.width, lh_dev_.height); }
-    void setSize( QSize s ) { lh_dev_.width = s.width(); lh_dev_.height = s.height(); }
-    void setSize( int w, int h ) { lh_dev_.width = w; lh_dev_.height = h; }
     int depth() const { return lh_dev_.depth; }
-    void setDepth( int n ) { lh_dev_.depth = n; }
-    void setAutoselect(bool b) { lh_dev_.noauto = !b; }
     bool autoselect() const { return lh_dev_.noauto == 0; } /* available for autoselection by LCDHost */
     bool monochrome() const { return lh_dev_.depth == 1; }
 };

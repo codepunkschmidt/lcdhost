@@ -39,7 +39,7 @@
 #include "LH_VirtualLCD.h"
 #include "../LH_Qt_QImage.h"
 
-LH_PLUGIN(LH_VirtualLCD)
+LH_PLUGIN(LH_QtPlugin_VirtualLCD)
 
 char __lcdhostplugin_xml[] =
 "<?xml version=\"1.0\"?>"
@@ -66,7 +66,8 @@ protected:
     LH_Qt_QImage *setup_output_;
 
 public:
-    VirtualLCD( const char *devid, LH_QtPlugin *drv ) : LH_QtDevice(devid,drv) {}
+    VirtualLCD( const char *devid, int w, int h, int d, bool noauto ) :
+        LH_QtDevice(devid,w,h,d,noauto) {}
 
     const char *userInit()
     {
@@ -113,35 +114,10 @@ public:
     }
 };
 
-
-class VirtualQVGA : public VirtualLCD
-{
-public:
-    VirtualQVGA( LH_QtPlugin *drv ) : VirtualLCD( "LH_VirtualLCD:320x240x32", drv )
-    {
-        setObjectName("Virtual 320x240x32 LCD");
-        setSize(320,240);
-        setDepth(32);
-        setAutoselect(false);
-    }
-};
-
-class VirtualBW : public VirtualLCD
-{
-public:
-    VirtualBW( LH_QtPlugin *drv ) : VirtualLCD( "LH_VirtualLCD:160x43x1", drv )
-    {
-        setObjectName("Virtual 160x43x1 LCD");
-        setSize(160,43);
-        setDepth(1);
-        setAutoselect(false);
-    }
-};
-
-const char *LH_VirtualLCD::userInit()
+const char *LH_QtPlugin_VirtualLCD::userInit()
 {
     if( const char *err = LH_QtPlugin::userInit() ) return err;
-    new VirtualQVGA(this);
-    new VirtualBW(this);
+    new VirtualLCD( "LH_VirtualLCD:320x240x32", 320, 240, 32, true );
+    new VirtualLCD( "LH_VirtualLCD:160x43x1", 160, 43, 1, true );
     return 0;
 }

@@ -53,7 +53,7 @@ public:
     bool warning_issued_;
 #endif
 
-    LH_QtObject( lh_object *p, LH_QtObject *parent = 0);
+    LH_QtObject( lh_object *p, QObject *parent = 0);
     ~LH_QtObject();
 
     bool isValid() const { return p_obj_ && (p_obj_->size == sizeof(lh_object)) && p_obj_->cb && p_obj_->cb_id; }

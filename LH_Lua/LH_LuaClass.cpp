@@ -36,6 +36,7 @@
 #include <QDateTime>
 #include <QDir>
 
+#include "../LH_QtObject.h"
 #include "LH_LuaClass.h"
 #include "LH_LuaInstance.h"
 
@@ -53,7 +54,7 @@ static void lua_layout_item_destroy(lh_layout_class *lc, lh_layout_item *li )
     delete inst;
 }
 
-LH_LuaClass::LH_LuaClass( LH_QtPlugin_Lua *parent, QFileInfo fi, QString filename )
+LH_LuaClass::LH_LuaClass( LH_Lua *parent, QFileInfo fi, QString filename )
     : LH_QtObject( &classinfo_.obj, parent ), L(parent->luaState()), fi_(fi), filename_(filename)
 {
 }
@@ -130,7 +131,7 @@ const char *LH_LuaClass::userInit()
     }
     lua_pop(L,1); // pop lcdhost
 
-    parent()->callback( lh_cb_class_create, &classinfo_ );
+    LH_QtPlugin::instance()->callback( lh_cb_class_create, &classinfo_ );
 
     list_.append(this);
 
@@ -190,7 +191,7 @@ void LH_LuaClass::lua_pushmodule()
 // This function loads the file and verifies that it
 // looks like a valid LCDHost layout class.
 // Returns error message or QString() if we have it loaded.
-QString LH_LuaClass::load( LH_QtPlugin_Lua *parent, QFileInfo fi )
+QString LH_LuaClass::load( LH_Lua *parent, QFileInfo fi )
 {
     lua_State *L = parent->luaState();
 

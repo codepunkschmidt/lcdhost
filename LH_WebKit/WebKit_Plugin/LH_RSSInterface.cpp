@@ -21,13 +21,13 @@ LH_RSSInterface::LH_RSSInterface(LH_QtObject* parent)
     connect( setup_delay_, SIGNAL(changed()), this, SLOT(changeDelay()) );
 
     setup_browser_ = new LH_Qt_InputState(parent,("Open in browser"),QString(),LH_FLAG_AUTORENDER);
-    connect( setup_browser_, SIGNAL(input(QString,int,int)), this, SLOT(openBrowser(QString,int,int)) );
+    connect( setup_browser_, SIGNAL(input(int,int)), this, SLOT(openBrowser(int,int)) );
 
     setup_prev_ = new LH_Qt_InputState(parent,("Previous Headline"),QString(),LH_FLAG_AUTORENDER);
-    connect( setup_prev_, SIGNAL(input(QString,int,int)), this, SLOT(prevHeadline(QString,int,int)) );
+    connect( setup_prev_, SIGNAL(input(int,int)), this, SLOT(prevHeadline(int,int)) );
 
     setup_next_ = new LH_Qt_InputState(parent,("Next Headline"),QString(),LH_FLAG_AUTORENDER);
-    connect( setup_next_, SIGNAL(input(QString,int,int)), this, SLOT(nextHeadline(QString,int,int)) );
+    connect( setup_next_, SIGNAL(input(int,int)), this, SLOT(nextHeadline(int,int)) );
 
     setup_refresh_ = new LH_Qt_int(parent,("Refresh (minutes)"),5);
     connect( setup_refresh_, SIGNAL(changed()), this, SLOT(changeRefresh()) );
@@ -123,27 +123,18 @@ RSSItem LH_RSSInterface::item()
     return getFeed()->item(setup_modify_->value());
 }
 
-void LH_RSSInterface::openBrowser(QString key,int flags,int value)
+void LH_RSSInterface::openBrowser(int,int)
 {
-    Q_UNUSED(key);
-    Q_UNUSED(flags);
-    Q_UNUSED(value);
     getFeed()->openItem(setup_modify_->value());
 }
 
-void LH_RSSInterface::prevHeadline(QString key,int flags,int value)
+void LH_RSSInterface::prevHeadline(int,int)
 {
-    Q_UNUSED(key);
-    Q_UNUSED(flags);
-    Q_UNUSED(value);
     getFeed()->moveBack();
 }
 
-void LH_RSSInterface::nextHeadline(QString key,int flags,int value)
+void LH_RSSInterface::nextHeadline(int,int)
 {
-    Q_UNUSED(key);
-    Q_UNUSED(flags);
-    Q_UNUSED(value);
     getFeed()->moveNext();
 }
 

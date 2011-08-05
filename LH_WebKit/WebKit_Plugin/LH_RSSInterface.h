@@ -66,9 +66,9 @@ public slots:
     void changeRefresh();
     void updateRefresh();
 
-    void openBrowser(QString,int,int);
-    void prevHeadline(QString,int,int);
-    void nextHeadline(QString,int,int);
+    void openBrowser(int,int);
+    void prevHeadline(int,int);
+    void nextHeadline(int,int);
 };
 
 #endif // LH_RSSINTERFACE_H

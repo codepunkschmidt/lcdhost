@@ -59,7 +59,7 @@ static const char *obj_input_name( lh_object *obj, const char *devid, int item )
     return RECAST(obj->ref)->input_name(devid,item);
 }
 
-LH_QtObject::LH_QtObject( lh_object *p, LH_QtObject *parent ) : QObject( parent ), p_obj_(p)
+LH_QtObject::LH_QtObject( lh_object *p, QObject *parent ) : QObject( parent ), p_obj_(p)
 #ifndef QT_NO_DEBUG
   ,clean_init_(false), warning_issued_(false)
 #endif

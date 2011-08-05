@@ -36,48 +36,20 @@
 #define LH_QTPLUGIN_LUA_H
 
 #include <QFileInfo>
-#include <QFileSystemWatcher>
-#include <QTime>
-#include <QLibrary>
 
 #include "../LH_QtPlugin.h"
-
-#define LUADIR "lua"
-
-extern "C" {
-#ifdef LUA_STATIC
-# include "lua.h"
-# include "lauxlib.h"
-# include "lualib.h"
-#else
-# include "lua_dyn.h"
-# define LUA_PREFIX LuaFunctions.
-#endif
-}
+#include "LH_LuaThread.h"
 
 class LH_QtPlugin_Lua : public LH_QtPlugin
 {
     Q_OBJECT
 
-    lua_State *L;
-    QString luadir_;
-    QTime dirmodified_; // we need this to avoid races
-    bool needscan_;
-
-    void scanForFiles();
-    void loadLuaFile( QFileInfo fi );
+    LH_LuaThread *thread_;
 
 public:
-    LH_QtPlugin_Lua() : LH_QtPlugin(), L(NULL), needscan_(false) {}
+    LH_QtPlugin_Lua() : LH_QtPlugin(), thread_(0) {}
     ~LH_QtPlugin_Lua();
-
-    lua_State *luaState() { return L; }
-
     const char *userInit();
-    int notify( int code, void *);
-
-public slots:
-    void directoryChanged(QString);
 };
 
 #endif // LH_QTPLUGIN_LUA_H

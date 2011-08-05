@@ -38,7 +38,9 @@
 #include <QList>
 #include <QString>
 #include <QFileInfo>
-#include "LH_QtPlugin_Lua.h"
+
+#include "LH_Lua.h"
+#include "../LH_QtObject.h"
 
 #define LUA_MAGIC "wf7bFprtNhNGS6XKjmrc"
 
@@ -72,7 +74,7 @@ class LH_LuaClass : public LH_QtObject
     QByteArray path_array_;
     lh_layout_class classinfo_;
 
-    LH_LuaClass( LH_QtPlugin_Lua *parent, QFileInfo fi, QString filename );
+    LH_LuaClass( LH_Lua *parent, QFileInfo fi, QString filename );
 
     static QList<LH_LuaClass*> list_;
 
@@ -80,7 +82,7 @@ public:
     ~LH_LuaClass();
     const char *userInit();
 
-    LH_QtPlugin_Lua *parent() const { return static_cast<LH_QtPlugin_Lua *>(LH_QtObject::parent()); }
+    LH_Lua *parent() const { return static_cast<LH_Lua *>(QObject::parent()); }
     lua_State *luaState() { return L; }
     lh_layout_class *classInfo() { return &classinfo_; }
     QString filename() const { return filename_; }
@@ -90,7 +92,7 @@ public:
 
     const QFileInfo& fileInfo() const { return fi_; }
 
-    static QString load( LH_QtPlugin_Lua *parent, QFileInfo fi );
+    static QString load( LH_Lua *parent, QFileInfo fi );
 };
 
 #endif // LH_LUACLASS_H

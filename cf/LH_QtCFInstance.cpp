@@ -194,8 +194,8 @@ void LH_QtCFInstance::add_cf_source(QString name)
 
 void LH_QtCFInstance::add_cf_source(LH_QtSetupItem *si, bool atEnd)
 {
-    add_cf_source(si->ident(), atEnd);
-    // add_cf_source(si->id(), si, atEnd); // JLI: Twice!? Or should this be with title() ?
+    //add_cf_source(si->ident(), atEnd);
+    add_cf_source(si->ident(), si, atEnd); // JLI: Twice!? Or should this be with title() ?
 }
 
 void LH_QtCFInstance::add_cf_source(QString name, bool atEnd)
@@ -270,6 +270,7 @@ void LH_QtCFInstance::cf_enabled_changed()
 
     cf_set_edit_controls_visibility();
 
+    cf_apply_rules();
     callback(lh_cb_notify, NULL);
 }
 
@@ -453,12 +454,12 @@ void LH_QtCFInstance::cf_state_value_updated()
 
 void LH_QtCFInstance::cf_update_visibility()
 {
-    if (QObject::sender()!=NULL)
-    {
-        //QString senderName = ((LH_QtSetupItem*)QObject::sender())->name();
-        //if(sources_.contains(senderName))
-        //    sources_[senderName]->setValue();
-    }
+    //if (QObject::sender()!=NULL)
+    //{
+    //    QString senderName = ((LH_QtSetupItem*)QObject::sender())->name();
+    //    if(sources_.contains(senderName))
+    //        sources_[senderName]->setValue();
+    //}
     setVisible(setup_cf_visibility_->value());
 }
 
@@ -467,11 +468,15 @@ void LH_QtCFInstance::cf_apply_rules(bool allowRender)
     if(!setup_cf_enabled_->value())
         return;
 
-    if (QObject::sender()!=NULL)
+    if (QObject::sender()!=NULL && QObject::sender()->inherits("LH_QtSetupItem"))
     {
-        QString senderName = ((LH_QtSetupItem*)QObject::sender())->ident();
-        if(sources_.contains(senderName))
-            sources_[senderName]->setValue();
+        LH_QtSetupItem* sender_setup_item = ((LH_QtSetupItem*)QObject::sender());
+        if(sender_setup_item->ident()!=NULL)
+        {
+            QString senderName = sender_setup_item->ident();
+            if(sources_.contains(senderName))
+                sources_[senderName]->setValue();
+        }
     }
 
     QDomDocument doc("");

@@ -44,7 +44,7 @@ char __lcdhostplugin_xml[] =
   "</shortdesc>"
   "<longdesc>"
     "<p>This plugin allows LCDHost to receive information from a running copy of TeamSpeak 3, such as the identity of people currently speaking.</p>"
-    "<p>It can also display your current microphone / speak mute status, the name of the channel you are cennected to and more.</p>"
+    "<p>It can also display your current microphone / speak mute status, the name of the channel you are connected to and more.</p>"
   "</longdesc>"
 "</lcdhostplugin>";
 
@@ -60,33 +60,32 @@ const char *LH_QtPlugin_TS3::userInit()
 
     setup_connection_details_ = new LH_Qt_QString(this,("Connection Details"),QString(), LH_FLAG_NOSAVE | LH_FLAG_NOSINK | LH_FLAG_NOSOURCE | LH_FLAG_HIDETITLE, lh_type_string_htmlhelp );
 
-    setup_talking_ = new LH_Qt_QString(this, "Talking", "", LH_FLAG_NOSAVE | LH_FLAG_NOSINK | LH_FLAG_HIDDEN);
-    setup_talking_->item()->states |= LH_STATE_SOURCE;
-    setup_talking_->setLink("Monitoring/3rdParty/TeamSpeak3/Talking");
-    setup_talking_->refreshData();
-
     setup_talking_details_ = new LH_Qt_QString(this, "Talking Details", QString(), LH_FLAG_NOSAVE | LH_FLAG_NOSINK | LH_FLAG_NOSOURCE | LH_FLAG_HIDETITLE, lh_type_string_htmlhelp);
 
     LH_Qt_QString *hr = new LH_Qt_QString(this,("hr1"),QString(), LH_FLAG_NOSAVE | LH_FLAG_NOSINK | LH_FLAG_NOSOURCE | LH_FLAG_HIDETITLE, lh_type_string_htmlhelp );
     hr->setHelp("<hr/>");
 
-    setup_username_expression_ = new LH_Qt_QString(this, "Username Epression", "", LH_FLAG_NOSINK | LH_FLAG_NOSOURCE);
-    setup_username_expression_->setTitle("Username:");
-    setup_username_expression_->setHelp("Entering your user name will enable the plugin to acquire additional information about your status.<br/><br/>Note that this field is actually a Regular Expression, so you can have it match multiple possible names. The first match it finds will be the one it uses.");
-    connect(setup_username_expression_, SIGNAL(changed()), this, SLOT(updateMyDetails()));
-
-    setup_username_ = new LH_Qt_QString(this, "Username", "", LH_FLAG_HIDDEN | LH_FLAG_READONLY | LH_FLAG_NOSAVE | LH_FLAG_NOSINK);
-    setup_username_->item()->states |= LH_STATE_SOURCE;
-    setup_username_->setLink("Monitoring/3rdParty/TeamSpeak3/Username");
-    setup_username_->refreshData();
-    connect(setup_username_, SIGNAL(changed()), this, SLOT(updateMyDetails()));
+    /*setup_nickname_expression_ = new LH_Qt_QString(this, "Nickname Epression", "", LH_FLAG_NOSINK | LH_FLAG_NOSOURCE);
+    setup_nickname_expression_->setTitle("Nickname:");
+    setup_nickname_expression_->setHelp("Entering your nickname will enable the plugin to acquire additional information about your status.<br/><br/>Note that this field is actually a Regular Expression, so you can have it match multiple possible names. The first match it finds will be the one it uses.");
+    connect(setup_nickname_expression_, SIGNAL(changed()), this, SLOT(updateMyDetails()));*/
 
     setup_user_detail_ = new LH_Qt_QString(this,("User Details"),QString(), LH_FLAG_NOSAVE | LH_FLAG_NOSINK | LH_FLAG_NOSOURCE | LH_FLAG_HIDETITLE, lh_type_string_htmlhelp );
     setup_user_detail_->setHelp("");
 
-    setup_channelname_ = new LH_Qt_QString(this, "Channel", "", LH_FLAG_HIDDEN | LH_FLAG_READONLY | LH_FLAG_NOSAVE | LH_FLAG_NOSINK);
+    setup_nickname_ = new LH_Qt_QString(this, "Nickname", "", /*LH_FLAG_HIDDEN | LH_FLAG_READONLY |*/ LH_FLAG_NOSAVE | LH_FLAG_NOSINK);
+    setup_nickname_->item()->states |= LH_STATE_SOURCE;
+    setup_nickname_->setLink("Monitoring/3rdParty/TeamSpeak3/Nickname");
+    setup_nickname_->refreshData();
+
+    setup_talking_ = new LH_Qt_QString(this, "Talking", "", /*LH_FLAG_HIDDEN | LH_FLAG_READONLY |*/ LH_FLAG_NOSAVE | LH_FLAG_NOSINK);
+    setup_talking_->item()->states |= LH_STATE_SOURCE;
+    setup_talking_->setLink("Monitoring/3rdParty/TeamSpeak3/Talking");
+    setup_talking_->refreshData();
+
+    setup_channelname_ = new LH_Qt_QString(this, "Channel", "", /*LH_FLAG_HIDDEN | LH_FLAG_READONLY |*/ LH_FLAG_NOSAVE | LH_FLAG_NOSINK);
     setup_channelname_->item()->states |= LH_STATE_SOURCE;
-    setup_channelname_->setLink("Monitoring/3rdParty/TeamSpeak3/Username");
+    setup_channelname_->setLink("Monitoring/3rdParty/TeamSpeak3/Channel Name");
     setup_channelname_->refreshData();
 
     setup_connection_status_ = new LH_Qt_QStringList(this, "Connection Status", QStringList() << "Not Running" << "Not Connected" << "Connected", /*LH_FLAG_HIDDEN | LH_FLAG_READONLY |*/ LH_FLAG_NOSAVE | LH_FLAG_NOSINK );
@@ -108,6 +107,7 @@ const char *LH_QtPlugin_TS3::userInit()
     LH_Qt_QString *setup_user_detail_;
     */
 
+    connect(setup_nickname_, SIGNAL(changed()), this, SLOT(updateMyDetails()));
     connect(socket_, SIGNAL(connected()), this, SLOT(TS3Connected()));
     connect(socket_, SIGNAL(disconnected()), this, SLOT(TS3Disconnected()));
     connect(socket_, SIGNAL(readyRead()), this, SLOT(TS3DataReceived()));
@@ -154,7 +154,6 @@ void LH_QtPlugin_TS3::openConnection()
 void LH_QtPlugin_TS3::TS3Connected() {
     //qDebug() << "LH_TS3: Connected";
     updateStatus(true);
-
     server_action_ = sa_eventregister_pending;
     sendMessage(QString("clientnotifyregister schandlerid=%1 event=notifytalkstatuschange \n"
 
@@ -216,6 +215,7 @@ void LH_QtPlugin_TS3::TS3DataReceived()
     QString receivedMsg = QString(socket_->readAll());
     //QRegExp rxSCHandler("selected schandlerid=([0-9]*)");
     QRegExp rxNotify("notify(\\w*) schandlerid=([0-9]*) (.*)");
+    QRegExp rxMyID("clid=([0-9]*) cid=([0-9]*)");
     responseResult result = parseResult(receivedMsg);
 
     if(result.isResult && !result.isValid)
@@ -242,8 +242,8 @@ void LH_QtPlugin_TS3::TS3DataReceived()
         if(QString("clientleftview,cliententerview,clientupdated,clientmoved").split(',').contains(rxNotify.cap(1)) ||
            QString("channelcreated,channeledited,channeldeleted,channelmoved").split(',').contains(rxNotify.cap(1)) )
         {
-            server_action_ = sa_channellist_pending;
-            sendMessage("channellist");
+            server_action_ = sa_whoami_pending;
+            sendMessage("whoami");
         }
     }
     else switch(server_action_)
@@ -251,8 +251,17 @@ void LH_QtPlugin_TS3::TS3DataReceived()
     case sa_eventregister_pending:
         if(!result.isResult)
             break;
-        server_action_ = sa_channellist_pending;
-        sendMessage("channellist");
+        server_action_ = sa_whoami_pending;
+        sendMessage("whoami");
+        break;
+    case sa_whoami_pending:
+        if(rxMyID.indexIn(receivedMsg)!=-1)
+        {
+            myclid_ = rxMyID.cap(1).toInt();
+            updateMyDetails();
+            server_action_ = sa_channellist_pending;
+            sendMessage("channellist");
+        }
         break;
     case sa_channellist_pending:
         if(channels_.load(receivedMsg))
@@ -354,14 +363,14 @@ void LH_QtPlugin_TS3::updateStatus(bool isRunning, bool isConnected, bool showCh
 
 void LH_QtPlugin_TS3::updateMyDetails()
 {
-    myclid_ = clients_.findclid(setup_username_expression_->value());
+    //myclid_ = clients_.findclid(setup_nickname_expression_->value());
     if(clients_.contains(myclid_))
     {
         clientdetail myClient = clients_.value(myclid_);
         channeldetail myChannel = channels_.value(myClient.cid);
 
         setup_user_detail_->setHelp(QString("<hr/><table style='margin-left:23px'>"
-                                            "<tr><td><img src=':/images/sizer.png'/></td> <td width='56'>Username:</td>   <td>%1</td></tr>"
+                                            "<tr><td><img src=':/images/sizer.png'/></td> <td width='56'>Nickname:</td>   <td>%1</td></tr>"
                                             "<tr><td><img src=':/images/sizer.png'/></td> <td width='56'>Channel:</td>    <td>%2</td></tr>"
                                             "<tr><td><img src=':/images/sizer.png'/></td> <td width='56'>Microphone:</td> <td><img src=':/images/microphone%3.png'/></td></tr>"
                                             "<tr><td><img src=':/images/sizer.png'/></td> <td width='56'>Speakers:</td>   <td><img src=':/images/sound%4.png'/></td></tr>"
@@ -375,13 +384,13 @@ void LH_QtPlugin_TS3::updateMyDetails()
         setup_microphone_status_->setValue(!myClient.inputHardware? 1 : (myClient.inputMuted? 2 : 3));
         setup_speakers_status_->setValue(!myClient.outputHardware? 1 : (myClient.outputMuted? 2 : 3));
         setup_channelname_->setValue(myChannel.name);
-        setup_username_->setValue(myClient.name);
+        setup_nickname_->setValue(myClient.name);
     } else {
         setup_user_detail_->setHelp("");
         setup_microphone_status_->setValue(0);
         setup_speakers_status_->setValue(0);
         setup_channelname_->setValue("");
-        setup_username_->setValue("");
+        setup_nickname_->setValue("");
     }
     emit myDetailsChanged();
 }

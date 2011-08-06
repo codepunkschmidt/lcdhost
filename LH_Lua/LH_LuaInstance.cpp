@@ -218,7 +218,9 @@ static void lh_self_item_data_setvalue(lua_State *L, LH_LuaSetupItem* item, int 
             Q_ASSERT(0);
             break;
         case lh_type_pointer:
+
         case lh_type_array:
+        case lh_type_array_string:
         case lh_type_array_qint64:
         case lh_type_array_double:
             Q_ASSERT(0);
@@ -417,6 +419,7 @@ static void lh_self_item_data_getvalue(lua_State *L, LH_LuaSetupItem* item, int 
             lua_pushstring(L,"pointer");
             break;
         case lh_type_array:
+        case lh_type_array_string:
         case lh_type_array_qint64:
         case lh_type_array_double:
             lua_pushstring(L,"array");
@@ -463,6 +466,7 @@ static void lh_self_item_data_getvalue(lua_State *L, LH_LuaSetupItem* item, int 
         case lh_type_pointer:
         case lh_type_pointer_qimage:
         case lh_type_array:
+        case lh_type_array_string:
         case lh_type_array_qint64:
         case lh_type_array_double:
             Q_ASSERT(0);

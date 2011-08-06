@@ -61,9 +61,6 @@ public:
 
     LH_QtInstance *parent() const { return static_cast<LH_QtInstance *>(QObject::parent()); }
 
-    // int notify(int n, void *p);
-    // const lh_systemstate *state() const { return parent_->state(); }
-
     qint64 inMax() const { return link_net_in_max_->value(); }
     qint64 outMax() const { return link_net_out_max_->value(); }
 

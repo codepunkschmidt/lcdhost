@@ -65,10 +65,9 @@ const char *LH_WeatherBrowserOpener::userInit()
     return NULL;
 }
 
-void LH_WeatherBrowserOpener::openBrowser(QString key,int flags,int value)
+void LH_WeatherBrowserOpener::openBrowser(int flags,int value)
 {
     qDebug() << "Open Browser";
-    Q_UNUSED(key);
     Q_UNUSED(flags);
     Q_UNUSED(value);
     if( weather_data.url !="" )

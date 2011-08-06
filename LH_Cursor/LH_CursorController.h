@@ -83,13 +83,13 @@ public:
     static lh_class *classInfo();
 
 public slots:
-    void doMoveUp(QString key,int flags,int value);
-    void doMoveDown(QString key,int flags,int value);
-    void doMoveLeft(QString key,int flags,int value);
-    void doMoveRight(QString key,int flags,int value);
-    void doSelect(QString key,int flags,int value);
-    void doReselect(QString key,int flags,int value);
-    void doActivate(QString key,int flags,int value);
+    void doMoveUp(int flags,int value);
+    void doMoveDown(int flags,int value);
+    void doMoveLeft(int flags,int value);
+    void doMoveRight(int flags,int value);
+    void doSelect(int flags,int value);
+    void doReselect(int flags,int value);
+    void doActivate(int flags,int value);
 
     void updateLocation(int xMod, int yMod, bool absolute = false);
     void changeMode();

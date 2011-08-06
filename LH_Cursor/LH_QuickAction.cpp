@@ -65,7 +65,7 @@ const char *LH_QuickAction::userInit()
                            "<br/>"
                            "<b>Layout Designers Beware!</b> firing off a \"load layout\" command will not give you the option of saving any changes you may have made to the current layout! Make sure you haved saved your layout before testing layout loading!");
 
-    connect( setup_fire_, SIGNAL(input(QString,int,int)), this, SLOT(doFire(QString,int,int)) );
+    connect( setup_fire_, SIGNAL(input(int,int)), this, SLOT(doFire(int,int)) );
     connect( setup_timeout_, SIGNAL(changed()), this, SLOT(changeTimeout()) );
     connect( setup_enable_timeout_, SIGNAL(changed()), this, SLOT(changeTimeout()) );
     connect( timer_, SIGNAL(timeout()), this, SLOT(doCountdown()) );
@@ -93,12 +93,10 @@ void LH_QuickAction::doCountdown()
         doFire();
 }
 
-void LH_QuickAction::doFire(QString key,int flags,int value)
+void LH_QuickAction::doFire(int flags,int value)
 {
-    Q_UNUSED(key);
     Q_UNUSED(flags);
     Q_UNUSED(value);
-
     if(setup_layout_->value().isFile())
     {
         static QByteArray ary;

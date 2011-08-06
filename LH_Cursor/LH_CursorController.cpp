@@ -90,31 +90,31 @@ const char *LH_CursorController::userInit()
 
     setup_move_up_ = new LH_Qt_InputState(this,"Up","",0);
     setup_move_up_->setHelp("The key used to move the cursor up, usually the up key from the LCD control");
-    connect( setup_move_up_, SIGNAL(input(QString,int,int)), this, SLOT(doMoveUp(QString,int,int)) );
+    connect( setup_move_up_, SIGNAL(input(int,int)), this, SLOT(doMoveUp(int,int)) );
 
     setup_move_down_ = new LH_Qt_InputState(this,"Down","",0);
     setup_move_down_->setHelp("The key used to move the cursor down, usually the down key from the LCD control");
-    connect( setup_move_down_, SIGNAL(input(QString,int,int)), this, SLOT(doMoveDown(QString,int,int)) );
+    connect( setup_move_down_, SIGNAL(input(int,int)), this, SLOT(doMoveDown(int,int)) );
 
     setup_move_left_ = new LH_Qt_InputState(this,"Left","",0);
     setup_move_left_->setHelp("The key used to move the cursor left, usually the left key from the LCD control");
-    connect( setup_move_left_, SIGNAL(input(QString,int,int)), this, SLOT(doMoveLeft(QString,int,int)) );
+    connect( setup_move_left_, SIGNAL(input(int,int)), this, SLOT(doMoveLeft(int,int)) );
 
     setup_move_right_ = new LH_Qt_InputState(this,"Right","",0);
     setup_move_right_->setHelp("The key used to move the cursor right, usually the right key from the LCD control");
-    connect( setup_move_right_, SIGNAL(input(QString,int,int)), this, SLOT(doMoveRight(QString,int,int)) );
+    connect( setup_move_right_, SIGNAL(input(int,int)), this, SLOT(doMoveRight(int,int)) );
 
     setup_select_ = new LH_Qt_InputState(this,"Select","",0);
     setup_select_->setHelp("The key used to select the currently highlighted option, usually the Ok key from the LCD control");
-    connect( setup_select_, SIGNAL(input(QString,int,int)), this, SLOT(doSelect(QString,int,int)) );
+    connect( setup_select_, SIGNAL(input(int,int)), this, SLOT(doSelect(int,int)) );
 
     setup_reselect_ = new LH_Qt_InputState(this,"Reselect","",0);
     setup_reselect_->setHelp("The key used to reselect the previously selected highlighted option. Usually this is unused, but is very useful for menu layouts where it acts as a \"return to last layout\" (or cancel) command");
-    connect( setup_reselect_, SIGNAL(input(QString,int,int)), this, SLOT(doReselect(QString,int,int)) );
+    connect( setup_reselect_, SIGNAL(input(int,int)), this, SLOT(doReselect(int,int)) );
 
     setup_activate_ = new LH_Qt_InputState(this,"Enable","",0);
     setup_activate_->setHelp("The key used to activate the cursor control");
-    connect( setup_activate_, SIGNAL(input(QString,int,int)), this, SLOT(doActivate(QString,int,int)) );
+    connect( setup_activate_, SIGNAL(input(int,int)), this, SLOT(doActivate(int,int)) );
 
     setup_persistent_ = new LH_Qt_bool(this,"^Persistent Selection",false,0);
     setup_persistent_->setHelp("Ticking this box will cause the system to automatically recall the cursor's last position whether you save the layout or not.<br/><br/>This is mainly of use within menu layouts and allows the menu to open with the last selected option still highlighted.");
@@ -132,9 +132,8 @@ const char *LH_CursorController::userInit()
     return NULL;
 }
 
-void LH_CursorController::doMoveUp(QString key,int flags,int value)
+void LH_CursorController::doMoveUp(int flags,int value)
 {
-    Q_UNUSED(key);
     Q_UNUSED(flags);
     Q_UNUSED(value);
     if( cursor_data.active )
@@ -143,9 +142,8 @@ void LH_CursorController::doMoveUp(QString key,int flags,int value)
     }
 }
 
-void LH_CursorController::doMoveDown(QString key,int flags,int value)
+void LH_CursorController::doMoveDown(int flags,int value)
 {
-    Q_UNUSED(key);
     Q_UNUSED(flags);
     Q_UNUSED(value);
     if( cursor_data.active )
@@ -154,9 +152,8 @@ void LH_CursorController::doMoveDown(QString key,int flags,int value)
     }
 }
 
-void LH_CursorController::doMoveLeft(QString key,int flags,int value)
+void LH_CursorController::doMoveLeft(int flags,int value)
 {
-    Q_UNUSED(key);
     Q_UNUSED(flags);
     Q_UNUSED(value);
     if( cursor_data.active )
@@ -165,9 +162,8 @@ void LH_CursorController::doMoveLeft(QString key,int flags,int value)
     }
 }
 
-void LH_CursorController::doMoveRight(QString key,int flags,int value)
+void LH_CursorController::doMoveRight(int flags,int value)
 {
-    Q_UNUSED(key);
     Q_UNUSED(flags);
     Q_UNUSED(value);
     if( cursor_data.active )
@@ -176,9 +172,8 @@ void LH_CursorController::doMoveRight(QString key,int flags,int value)
     }
 }
 
-void LH_CursorController::doSelect(QString key,int flags,int value)
+void LH_CursorController::doSelect(int flags,int value)
 {
-    Q_UNUSED(key);
     Q_UNUSED(flags);
     Q_UNUSED(value);
 
@@ -215,12 +210,12 @@ void LH_CursorController::doSelect(QString key,int flags,int value)
     }
 }
 
-void LH_CursorController::doReselect(QString key,int flags,int value)
+void LH_CursorController::doReselect(int flags,int value)
 {
     if( cursor_data.active )
     {
         updateLocation(cursor_data.lastSelX, cursor_data.lastSelY, true);
-        doSelect(key,flags,value);
+        doSelect(flags,value);
     }
 }
 
@@ -268,9 +263,8 @@ void LH_CursorController::loadPersistedSelection()
     }
 }
 
-void LH_CursorController::doActivate(QString key,int flags,int value)
+void LH_CursorController::doActivate(int flags,int value)
 {
-    Q_UNUSED(key);
     Q_UNUSED(flags);
     Q_UNUSED(value);
 
@@ -346,7 +340,7 @@ void LH_CursorController::updateLocation(int xMod, int yMod, bool absolute)
     if(moved) {
         cursor_data.x = newX;
         cursor_data.y = newY;
-        if(cursorModes[setup_mode_->value()].select==smNone) doSelect("",0,0);
+        if(cursorModes[setup_mode_->value()].select==smNone) doSelect(0,0);
     }
 
     persistSelection();
@@ -393,7 +387,7 @@ void LH_CursorController::changeBounds()
 
 int LH_CursorController::polling()
 {
-    if(cursor_data.sendSelect) doSelect(0,0,0);
+    if(cursor_data.sendSelect) doSelect(0,0);
     setup_coordinate_->setValue(QString("%1,%2").arg(cursor_data.x).arg(cursor_data.y));
     return 200;
 }

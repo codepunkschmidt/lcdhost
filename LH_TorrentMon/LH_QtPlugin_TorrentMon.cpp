@@ -273,6 +273,7 @@ void LH_QtPlugin_TorrentMon::finishedWebUI(QNetworkReply* reply)
 
 void LH_QtPlugin_TorrentMon::authenticationRequiredWebUI(QNetworkReply *reply, QAuthenticator *auth)
 {
+    Q_UNUSED(reply);
     auth->setUser(setup_webui_username_->value());
     auth->setPassword(setup_webui_password_->value());
 }

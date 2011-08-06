@@ -116,9 +116,9 @@ const char *LH_QtPlugin_WebKit::userInit()
     if( const char *err = LH_QtPlugin::userInit() ) return err;
 
     setup_internal_ip_ = new LH_Qt_QString(this, "IP Address (Internal)", "N/A", LH_FLAG_NOSAVE | LH_FLAG_NOSINK | LH_FLAG_READONLY);
-    setup_internal_ip_->setLink("@/system/IP Address/IPv4/Internal");
+    setup_internal_ip_->setLink("/system/IP Address/IPv4/Internal",true);
     setup_external_ip_ = new LH_Qt_QString(this, "IP Address (External)", "N/A", LH_FLAG_NOSAVE | LH_FLAG_NOSINK | LH_FLAG_READONLY);
-    setup_external_ip_->setLink("@/system/IP Address/IPv4/External");
+    setup_external_ip_->setLink("/system/IP Address/IPv4/External",true);
 
     nam_ = new QNetworkAccessManager(this);
     connect(nam_, SIGNAL(finished(QNetworkReply*)), this, SLOT(finished(QNetworkReply*)));

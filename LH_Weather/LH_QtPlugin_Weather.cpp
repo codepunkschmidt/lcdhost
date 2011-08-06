@@ -318,7 +318,7 @@ void LH_QtPlugin_Weather::processResponse(QByteArray xmlData, QString name, QXml
     }
 }
 
-//void LH_QtPlugin_Weather::openBrowser(QString key,int flags,int value)
+//void LH_QtPlugin_Weather::openBrowserint flags,int value)
 //{
 //    qDebug() << "Open Browser";
 //    Q_UNUSED(key);
@@ -416,7 +416,7 @@ void LH_QtPlugin_Weather::parseXmlWeather(bool is5Day, QXmlStreamReader& xml_)
                 }
                 if( xml_.name() == "units" )
                 {
-                    weather_data.units.temperature = getWeatherValue(xml_, "temperature", "°");
+                    weather_data.units.temperature = getWeatherValue(xml_, "temperature", "");
                     weather_data.units.distance = getWeatherValue(xml_, "distance");
                     weather_data.units.pressure = getWeatherValue(xml_, "pressure");
                     weather_data.units.speed = getWeatherValue(xml_, "speed");

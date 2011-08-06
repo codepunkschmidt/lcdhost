@@ -149,7 +149,7 @@ public:
     void fire(int = 0);
 
 public slots:
-    void doJumpTo(QString key,int flags,int value);
+    void doJumpTo(int flags,int value);
     void xmlChanged();
     void reloadAction();
     void saveAction();

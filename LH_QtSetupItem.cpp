@@ -85,7 +85,7 @@ int LH_QtSetupItem::notify( int note, void *param )
 {
     if( note & LH_NOTE_WARNING )
     {
-        int w = (int) param;
+        qptrdiff w = (qptrdiff) param;
         if( w == LH_WARNING_DUPLICATE_SOURCE )
         {
             emit duplicateSource();
@@ -203,8 +203,9 @@ void LH_QtSetupItem::setTitle(const QString& s)
     return;
 }
 
-void LH_QtSetupItem::setLink(const char *s)
+void LH_QtSetupItem::setLink(const char *s, bool issource)
 {
+    item_.states &= ~LH_STATE_SOURCE;
     if( s == 0 || *s == 0 )
     {
         link_array_.clear();
@@ -213,7 +214,19 @@ void LH_QtSetupItem::setLink(const char *s)
     else
     {
         link_array_ = QByteArray(s);
+        if( link_array_.startsWith('=') )
+        {
+            qWarning() << parent()->objectName() << objectName() << "link starts with '='";
+            link_array_.remove(0,1);
+        }
+        if( link_array_.startsWith('@') )
+        {
+            qWarning() << parent()->objectName() << objectName() << "link starts with '@'";
+            link_array_.remove(0,1);
+            issource = true;
+        }
         item_.link = link_array_.data();
+        if( issource ) item_.states |= LH_STATE_SOURCE;
     }
     refreshMeta();
     return;

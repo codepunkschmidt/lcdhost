@@ -42,7 +42,7 @@ public:
     static lh_class *classInfo();
 
 public slots:
-    void openBrowser(QString,int,int);
+    void openBrowser(int,int);
 };
 
 #endif // LH_WeatherBrowserOpener_H

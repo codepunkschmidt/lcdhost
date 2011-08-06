@@ -51,7 +51,7 @@ public:
     static lh_class *classInfo();
 
 public slots:
-    void doFire(QString key="",int flags=0,int value=0);
+    void doFire(int flags=0,int value=0);
     void changeTimeout();
     void doCountdown();
 };

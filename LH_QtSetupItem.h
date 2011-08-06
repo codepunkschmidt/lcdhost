@@ -95,8 +95,10 @@ public:
     const char *ident() const { return ident_array_.constData(); }
     void setTitle(const QString& s);
     const char *title() const { return title_array_.constData(); }
-    void setLink(const char * s);
+    void setLink(const char * s,bool is_source = false);
     const char *link() const { return link_array_.constData(); }
+    bool isSource() const { return item_.states & LH_STATE_SOURCE; }
+    bool isSink() const { return !link_array_.isEmpty() && !isSource(); }
     void setHelp(const QString& s);
     const char *help() const { return help_array_.constData(); }
     int flags() const { return item_.flags; }

@@ -111,7 +111,7 @@ const char *LH_CursorAction::userInit()
 
     setup_act_XML_ = new LH_Qt_QTextEdit(this, "Action XML", "<actions>\n</actions>", LH_FLAG_HIDDEN | LH_FLAG_HIDETITLE);
 
-    connect( setup_jump_to_,                SIGNAL(input(QString,int,int)), this, SLOT(doJumpTo(QString,int,int)) );
+    connect( setup_jump_to_,                SIGNAL(input(int,int)), this, SLOT(doJumpTo(int,int)) );
     connect( setup_act_XML_,                SIGNAL(changed()), this, SLOT(xmlChanged()));
     connect( setup_act_rules_,              SIGNAL(changed()), this, SLOT(reloadAction()));
 
@@ -269,9 +269,8 @@ void LH_CursorAction::fire(int startAt)
     }
 }
 
-void LH_CursorAction::doJumpTo(QString key, int flags, int value)
+void LH_CursorAction::doJumpTo(int flags, int value)
 {
-    Q_UNUSED(key);
     Q_UNUSED(flags);
     Q_UNUSED(value);
     QString coord = setup_coordinate_->value().split(';')[0];

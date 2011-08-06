@@ -47,7 +47,7 @@ const char *LH_QtPlugin_Mailcount::userInit()
     email_count_ = new LH_Qt_int(this,("Mail count"),0,LH_FLAG_READONLY|LH_FLAG_NOSAVE|LH_FLAG_NOSINK);
     email_count_->setHelp("This is the number of waiting e-mails, as reported by the "
                           "operating system.");
-    email_count_->setLink("@/system/Mail count");
+    email_count_->setLink("/system/mail/count",true);
     email_addr_ = new LH_Qt_QString(this,("Only check address"),QString());
     email_addr_->setHelp("If not empty, limits the search for waiting email to the "
                          "given e-mail address. <strong>Leave it empty</strong> for normal use.");

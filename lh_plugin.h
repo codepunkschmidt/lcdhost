@@ -401,6 +401,7 @@ typedef struct lh_setup_item_t
     const char *ident; /* unique id, ASCII, may not contain forward slashes, may not be NULL */
     const char *title; /* title, UTF-8, should be localized, if NULL id will be used */
     const char *help; /* short HTML help text shows as tooltip or as value, may be NULL */
+    const char *filter; /* data link filter, NULL if unused */
     int order; /* ordering of setup item in the UI, lower values first */
     lh_setup_type type; /* type of data, see enum above */
     int flags; /* LH_FLAG_xxx */

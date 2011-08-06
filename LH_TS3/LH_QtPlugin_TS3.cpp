@@ -226,7 +226,7 @@ void LH_QtPlugin_TS3::TS3DataReceived()
         else
         {
             qWarning() << QString("LH_TS3: Unhandled Response Error: %1%2 (%3)").arg(result.errorMessage, (result.extraMessage==""?"":QString(" (%1)").arg(result.extraMessage))).arg(result.errorCode);
-            Q_ASSERT(false);
+            // Q_ASSERT(false);
         }
     }
     else if(rxNotify.indexIn(receivedMsg)!=-1)

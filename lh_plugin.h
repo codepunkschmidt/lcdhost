@@ -45,7 +45,7 @@
   6.  lh_destroy() is called
   7.  LCDHost has the operating system unload the shared library
 
-  lh_object *lh_create()
+  lh_object *lh_create( lh_callback_t, void* )
     Create the plugin object and return a lh_object pointer.
     LCDHost will provide this pointer when calling the functions
     in lh_object structure. Return NULL on error.
@@ -77,8 +77,6 @@ typedef long long qint64;           /* 64 bit signed */
 typedef unsigned long long quint64; /* 64 bit unsigned */
 # endif
 #endif
-
-#include "lh_systemstate.h"
 
 #define LH_API_MAJOR 6
 #define LH_API_MINOR 0
@@ -267,7 +265,7 @@ typedef enum lh_setup_type_t
     lh_type_double = 0x0200, /* double selection using spinbox */
 
     lh_type_string = 0x0400, /* all strings are null-terminated, utf-8 encoded */
-    lh_type_string_script, /* inline script */
+    lh_type_string_script, /* multiline text editor */
     lh_type_string_filename, /* present the user with an file selection dialog */
     lh_type_string_font, /* simple font selection, see QFont::toString() for string format */
     lh_type_string_inputstate, /* ask user for a specific button state or half axis movement */
@@ -279,10 +277,11 @@ typedef enum lh_setup_type_t
     lh_type_pointer = 0x0800, /* not saved - store a pointer */
     lh_type_pointer_qimage, /* not saved - allows the display of a QImage in the setup pane, param.p */
 
-    lh_type_array = 0x1000, /* basic data storage */
+    lh_type_array = 0x1000, /* basic fixed-size data storage */
+    lh_type_array_png, /* allows the display of a PNG image */
     lh_type_array_qint64, /* no UI - store an array of qint64 in buffer */
     lh_type_array_double, /* no UI - store an array of doubles in buffer */
-    lh_type_array_png, /* allows the display of a PNG image in the setup pane */
+    lh_type_array_string, /* no UI - data is a list of NUL-delimited UTF-8 strings */
 
     lh_type_last /* marks last used value */
 } lh_setup_type;
@@ -622,7 +621,6 @@ extern "C" {
 /* Utility functions in lh_plugin.c */
 lh_blob *lh_binaryfile_to_blob( const char *filename ); /* Caller must free() the blob */
 void lh_blob_to_headerfile( lh_blob *blob, const char *filename, const char *varname );
-int lh_cpuload( lh_cpudata *from, lh_cpudata *to ); /* Returns average load between those times as permille */
 
 #ifdef __cplusplus
 }

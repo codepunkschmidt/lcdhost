@@ -211,7 +211,6 @@ void LH_QtPlugin_TorrentMon::finishedWebUI(QNetworkReply* reply)
                     webUIToken_ = rx.cap(1);
             } else {
                 bool ok;
-                //json is a QString containing the JSON data
                 QVariantMap result = Json::parse(response, ok).toMap();
                 if(ok) {
                     torrents.value("WebUI")->clear();

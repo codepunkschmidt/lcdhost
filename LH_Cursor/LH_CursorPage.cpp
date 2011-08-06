@@ -37,14 +37,10 @@ lh_class *LH_CursorPage::classInfo()
         "Cursor",
         "CursorPage",
         "Cursor Page",
-        -1, -1,
-        
-        
+        -1, -1
     };
-
     return &classinfo;
 }
-
 
 LH_CursorPage::LH_CursorPage()
 {
@@ -68,16 +64,13 @@ const char *LH_CursorPage::userInit()
                                "<br/>"
                                "When selected a page (and all its children) is visible. When not selected it (and all its children) are hidden, although they can still be selected in the Instances tree."
                                );
+    setup_json_data_ = new LH_Qt_QString(this, "Cursor Data", "", LH_FLAG_NOSAVE | LH_FLAG_NOSOURCE | LH_FLAG_LAST /*| LH_FLAG_READONLY | LH_FLAG_HIDEVALUE*/);
+    setup_json_data_->setLink("Cursors/#1");
+    setup_json_data_->refreshData();
 
+    connect(setup_json_data_,SIGNAL(changed()),this,SLOT(updateState()));
     return 0;
 }
-
-int LH_CursorPage::polling()
-{
-    if(updateState()) callback(lh_cb_render,NULL);
-    return 100;
-}
-
 
 QImage *LH_CursorPage::render_qimage( int w, int h )
 {
@@ -90,6 +83,7 @@ QImage *LH_CursorPage::render_qimage( int w, int h )
 bool LH_CursorPage::updateState()
 {
     QStringList mycoords = setup_coordinate_->value().split(';');
+    cursorData cursor_data(setup_json_data_->value());
 
     bool newSelected = false;
     bool newActive = false;
@@ -101,8 +95,8 @@ bool LH_CursorPage::updateState()
             int myX = mycoord.at(0).toInt();
             int myY = mycoord.at(1).toInt();
 
-            newSelected = newSelected || ( cursor_data.selState && cursor_data.selX==myX && cursor_data.selY==myY );
-            newActive = newActive ||  ( cursor_data.active && cursor_data.x==myX && cursor_data.y==myY );
+            newSelected |= ( cursor_data.selState && cursor_data.selX==myX && cursor_data.selY==myY );
+            newActive |= ( cursor_data.active && cursor_data.x==myX && cursor_data.y==myY );
         }
     }
     if(selected!=newSelected || active != newActive)

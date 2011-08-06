@@ -1,6 +1,11 @@
 #ifndef LH_CURSORDATA_H
 #define LH_CURSORDATA_H
 
+#include <QString>
+#include <QVariant>
+#include <QVariantMap>
+#include "../json.h"
+
 struct minmax {
     int min;
     int max;
@@ -11,7 +16,7 @@ struct bounds {
     minmax y;
 };
 
-struct cursorData
+/*struct cursorData
 {
     int x;
     int y;
@@ -26,8 +31,106 @@ struct cursorData
     int lastSelX2;
     int lastSelY2;
     bounds range;
-};
+};*/
 
-extern cursorData cursor_data;
+class cursorData
+{
+public:
+    int x;
+    int y;
+    bool active;
+    int selX;
+    int selY;
+    bool selState;
+    int lastSelX;
+    int lastSelY;
+    bool lastSelSet;
+    bool sendSelect;
+    int lastSelX2;
+    int lastSelY2;
+    bounds range;
+
+    cursorData()
+    {
+        x = 1;
+        y = 1;
+        active = false;
+        selX = 0;
+        selY = 0;
+        selState = false;
+        lastSelX = 0;
+        lastSelY = 0;
+        lastSelSet = false;
+        sendSelect = false;
+        lastSelX2 = 0;
+        lastSelY2 = 0;
+        range = (bounds){(minmax){0,0},(minmax){0,0}};
+    }
+
+    cursorData(QString jsonData)
+    {
+        bool ok;
+        QVariantMap jobject = Json::parse(jsonData, ok).toMap();
+
+        x = jobject["x"].toInt();
+        y = jobject["y"].toInt();
+        active = jobject["active"].toBool();
+        selX = jobject["selX"].toInt();
+        selY = jobject["selY"].toInt();
+        selState = jobject["selState"].toBool();
+        lastSelX = jobject["lastSelX"].toInt();
+        lastSelY = jobject["lastSelY"].toInt();
+        lastSelSet = jobject["lastSelSet"].toBool();;
+        sendSelect = jobject["sendSelect"].toBool();;
+        lastSelX2 = jobject["lastSelX2"].toInt();
+        lastSelY2 = jobject["lastSelY2"].toInt();
+
+        QVariantMap rangeMap = jobject["range"].toMap();
+        QVariantMap rangeYMap = jobject["y"].toMap();
+        QVariantMap rangeXMap = jobject["x"].toMap();
+
+        range = (bounds){
+                    (minmax){rangeXMap["min"].toInt(),rangeXMap["max"].toInt()},
+                    (minmax){rangeYMap["min"].toInt(),rangeYMap["max"].toInt()}
+                };
+
+    }
+
+    QString serialize()
+    {
+        QVariantMap jobject;
+        QVariantMap rangeMap;
+        QVariantMap rangeYMap;
+        QVariantMap rangeXMap;
+
+        jobject.insert("x",x);
+        jobject.insert("y",y);
+        jobject.insert("active",active);
+        jobject.insert("selX",selX);
+        jobject.insert("selY",selY);
+        jobject.insert("selState",selState);
+        jobject.insert("lastSelX",lastSelX);
+        jobject.insert("lastSelY",lastSelY);
+        jobject.insert("lastSelSet",lastSelSet);
+        jobject.insert("sendSelect",sendSelect);
+        jobject.insert("lastSelX2",lastSelX2);
+        jobject.insert("lastSelY2",lastSelY2);
+
+        rangeYMap.insert("min", range.y.min);
+        rangeYMap.insert("max", range.y.max);
+        rangeMap.insert("y", rangeYMap);
+
+        rangeXMap.insert("min", range.x.min);
+        rangeXMap.insert("max", range.x.max);
+        rangeMap.insert("x", rangeXMap);
+
+        jobject.insert("range", rangeMap);
+
+
+        return QString(Json::serialize(jobject));
+    }
+};//*/
+
+//extern cursorData cursor_data;
 
 #endif // LH_CURSORDATA_H

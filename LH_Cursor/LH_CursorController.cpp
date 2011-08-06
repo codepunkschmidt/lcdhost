@@ -23,6 +23,7 @@
  **/
 
 #include "LH_CursorController.h"
+#include "../json.h"
 
 #include "QDebug"
 
@@ -36,9 +37,7 @@ lh_class *LH_CursorController::classInfo()
         "Cursor",
         "CursorController",
         "Cursor Controller",
-        -1, -1,
-        
-        
+        -1, -1
     };
 
     return &classInfo;
@@ -58,7 +57,7 @@ const char *LH_CursorController::userInit()
     cursorModes.append((cursorMode){smSelectDeselect, false, "Move & Select / Deselect Only (Always activated)"});
     cursorModes.append((cursorMode){smSelect        , false, "Move & Select Only (Always activated)"});
 
-    cursor_data = (cursorData){1,1,false,0,0,false,0,0,false,false,0,0,(bounds){(minmax){0,0},(minmax){0,0}}};
+    //cursor_data_ = (cursorData){1,1,false,0,0,false,0,0,false,false,0,0,(bounds){(minmax){0,0},(minmax){0,0}}};
 
     QStringList modeNames = QStringList();
     foreach(cursorMode cm, cursorModes) modeNames.append(cm.description);
@@ -80,12 +79,12 @@ const char *LH_CursorController::userInit()
     setup_boundry_ = new LH_Qt_QString(this,"Boundries","1,1,3,3",0);
     setup_boundry_->setHelp("This box should contain the borders of the \"box\" the cusror can move in.</br></br>The format is [left],[top],[right],[bottom] <br/><br/>e.g.:<br/>\"1,1,1,4\" would denote a box one column wide and four rows high<br/>\"1,1,3,3\" would be a square of three columns and three rows.");
     connect( setup_boundry_, SIGNAL(changed()), this, SLOT(changeBounds()) );
-    setup_boundry_loop_ = new LH_Qt_bool(this, "^Loop at edges", false);
+    setup_boundry_loop_ = new LH_Qt_bool(this, "Loop at edges", false, LH_FLAG_BLANKTITLE);
     setup_boundry_loop_->setHelp("By default when at the furthest edge of the box the cursor stops. Ticking this however will change that so that moving off one edge will bring the cursor back in on the opposite side.");
 
     setup_invalid_coordinates_ = new LH_Qt_QString(this,"Invalid Points\n(x,y;x,y;x,y)","",0);
     setup_invalid_coordinates_->setHelp("If you wish to create a \"void\" in the cusrsor space, this allows you to do so. List all the points here that the cursor is not allowed to land on and it will be prevented from doing so either by jumping over the invlid points to the next valid one or simply by blocking its movement.<br/><br/>The format is [x1],[y1];[x2],[y2];[x3][y3]; etc...<br/>e.g.: for the boundry \"1,1,2,5\" the invalid points \"1,2;1,3;1,4\" would prevent the cursor landing on any of the top three middle cells, creating a \"U\"-like shape.");
-    setup_jump_invalid_ = new LH_Qt_bool(this, "^Jump over invalid points", true);
+    setup_jump_invalid_ = new LH_Qt_bool(this, "Jump over invalid points", true, LH_FLAG_BLANKTITLE);
     setup_jump_invalid_->setHelp("By default when the cursor tries to move onto an invlid point it \"jumps\" the cell in question, and keeps moving in the same direction until reaching one where it is allowed to be. Alternatively, checking this box will prevent this, turning invalid points into \"walls\" that have to be moved around manually.");
 
     setup_move_up_ = new LH_Qt_InputState(this,"Up","",0);
@@ -116,12 +115,28 @@ const char *LH_CursorController::userInit()
     setup_activate_->setHelp("The key used to activate the cursor control");
     connect( setup_activate_, SIGNAL(input(int,int)), this, SLOT(doActivate(int,int)) );
 
-    setup_persistent_ = new LH_Qt_bool(this,"^Persistent Selection",false,0);
+    setup_persistent_ = new LH_Qt_bool(this,"Persistent Selection",false, LH_FLAG_BLANKTITLE);
     setup_persistent_->setHelp("Ticking this box will cause the system to automatically recall the cursor's last position whether you save the layout or not.<br/><br/>This is mainly of use within menu layouts and allows the menu to open with the last selected option still highlighted.");
     setup_persistent_autoselect_ = new LH_Qt_bool(this,"Auto-reselect",false, LH_FLAG_HIDDEN | LH_FLAG_BLANKTITLE);
     setup_persistent_autoselect_->setHelp("When recovering a persited selection, this option determins if the option is merely highlighed (i.e. the cursor is positioned on it) or if the option is actually selected.");
     setup_persistent_file_ = new LH_Qt_QFileInfo(this, "Persistence File", QFileInfo(), LH_FLAG_HIDDEN);
     setup_persistent_file_->setHelp("The file in which to save the persisted location.<br/><br/>Note that you can use this to make serveral layouts work together as though they were all parts of the same layout by pointing them all to this file, thus causing the cursor position to persist accross them.");
+
+#ifdef ENABLE_VIRTUAL_CURSOR_KEYS
+    setup_virtual_keys_ = new LH_Qt_QString(this, "Virtual Keys","",  LH_FLAG_NOSAVE | LH_FLAG_NOSOURCE | LH_FLAG_NOSINK | LH_FLAG_LAST | LH_FLAG_BLANKTITLE, lh_type_string_htmlhelp);
+    setup_virtual_keys_->setHelp("<table>"
+                                 "<tr><td>  </td><td><a href='up'>[  Up  ]</a></td><td>  </td></tr>"
+                                 "<tr><td><a href='left'>[Left]</a></td><td><a href='sel'>[  OK  ]</a></td><td><a href='right'>[Right]</a></td></tr>"
+                                 "<tr><td>  </td><td><a href='down'>[Down]</a></td><td>  </td></tr>"
+                                 "<tr><td>  </td><td>  </td><td>  </td></tr>"
+                                 "<tr><td><a href='act'>[ Act ]</a></td><td>  </td><td><a href='resel'>[  Re  ]</a></td></tr>"
+                                 "</table>");
+    connect(setup_virtual_keys_, SIGNAL(change(QString)), this, SLOT(virtualKeyPress(QString)) );
+#endif
+
+    setup_json_data_ = new LH_Qt_QString(this, "Cursor Data", "", LH_FLAG_NOSAVE | LH_FLAG_NOSINK | LH_FLAG_LAST /*| LH_FLAG_READONLY | LH_FLAG_HIDEVALUE*/);
+    setup_json_data_->setLink("Cursors/#1", true);
+    setup_json_data_->refreshData();
 
     connect(setup_persistent_, SIGNAL(changed()), this, SLOT(changePersistent()));
     connect(setup_persistent_file_, SIGNAL(changed()), this, SLOT(loadPersistedSelection()));
@@ -136,7 +151,7 @@ void LH_CursorController::doMoveUp(int flags,int value)
 {
     Q_UNUSED(flags);
     Q_UNUSED(value);
-    if( cursor_data.active )
+    if( cursor_data_.active )
     {
         updateLocation(0,-1);
     }
@@ -146,7 +161,7 @@ void LH_CursorController::doMoveDown(int flags,int value)
 {
     Q_UNUSED(flags);
     Q_UNUSED(value);
-    if( cursor_data.active )
+    if( cursor_data_.active )
     {
         updateLocation(0,1);
     }
@@ -156,7 +171,7 @@ void LH_CursorController::doMoveLeft(int flags,int value)
 {
     Q_UNUSED(flags);
     Q_UNUSED(value);
-    if( cursor_data.active )
+    if( cursor_data_.active )
     {
         updateLocation(-1,0);
     }
@@ -166,7 +181,7 @@ void LH_CursorController::doMoveRight(int flags,int value)
 {
     Q_UNUSED(flags);
     Q_UNUSED(value);
-    if( cursor_data.active )
+    if( cursor_data_.active )
     {
         updateLocation(1,0);
     }
@@ -177,45 +192,61 @@ void LH_CursorController::doSelect(int flags,int value)
     Q_UNUSED(flags);
     Q_UNUSED(value);
 
-    if( cursor_data.active )
+    if( cursor_data_.active )
     {
-        cursor_data.sendSelect = false;
+        cursor_data_.sendSelect = false;
         if(cursorModes[setup_mode_->value()].select==smSelectDeselect &&
-           cursor_data.selState &&
-           cursor_data.selX == cursor_data.x &&
-           cursor_data.selY == cursor_data.y)
+           cursor_data_.selState &&
+           cursor_data_.selX == cursor_data_.x &&
+           cursor_data_.selY == cursor_data_.y)
         {
-            cursor_data.selState = false;
+            cursor_data_.selState = false;
         }
         else
         {
-            cursor_data.selX = cursor_data.x;
-            cursor_data.selY = cursor_data.y;
-            cursor_data.selState = true;
+            cursor_data_.selX = cursor_data_.x;
+            cursor_data_.selY = cursor_data_.y;
+            cursor_data_.selState = true;
 
-            if(cursor_data.lastSelSet)
+            if(cursor_data_.lastSelSet)
             {
-                cursor_data.lastSelX2 = cursor_data.lastSelX;
-                cursor_data.lastSelY2 = cursor_data.lastSelY;
+                cursor_data_.lastSelX2 = cursor_data_.lastSelX;
+                cursor_data_.lastSelY2 = cursor_data_.lastSelY;
             } else {
-                cursor_data.lastSelX2 = cursor_data.selX;
-                cursor_data.lastSelY2 = cursor_data.selY;
+                cursor_data_.lastSelX2 = cursor_data_.selX;
+                cursor_data_.lastSelY2 = cursor_data_.selY;
             }
 
-            cursor_data.lastSelSet = true;
-            cursor_data.lastSelX = cursor_data.selX;
-            cursor_data.lastSelY = cursor_data.selY;
+            cursor_data_.lastSelSet = true;
+            cursor_data_.lastSelX = cursor_data_.selX;
+            cursor_data_.lastSelY = cursor_data_.selY;
         }
         persistSelection();
     }
+    setup_json_data_->setValue( cursor_data_.serialize() );
 }
 
 void LH_CursorController::doReselect(int flags,int value)
 {
-    if( cursor_data.active )
+    Q_UNUSED(flags);
+    Q_UNUSED(value);
+
+    if( cursor_data_.active )
     {
-        updateLocation(cursor_data.lastSelX, cursor_data.lastSelY, true);
-        doSelect(flags,value);
+        updateLocation(cursor_data_.lastSelX, cursor_data_.lastSelY, true);
+        doSelect();
+    }
+}
+
+void LH_CursorController::doActivate(int flags,int value)
+{
+    Q_UNUSED(flags);
+    Q_UNUSED(value);
+
+    if( cursorModes[setup_mode_->value()].activate )
+    {
+        cursor_data_.active = !cursor_data_.active;
+        updateLocation(0,0);
     }
 }
 
@@ -224,7 +255,7 @@ void LH_CursorController::persistSelection()
     if (!setup_persistent_->value()) return;
     if (setup_persistent_file_->value().isFile())
     {
-        QString selString = QString("%1,%2,%3,%4,%5").arg(cursor_data.x).arg(cursor_data.y).arg(cursor_data.selState).arg(cursor_data.selX).arg(cursor_data.selY);
+        QString selString = QString("%1,%2,%3,%4,%5").arg(cursor_data_.x).arg(cursor_data_.y).arg(cursor_data_.selState).arg(cursor_data_.selX).arg(cursor_data_.selY);
         QFile persistFile ( setup_persistent_file_->value().absoluteFilePath() );
         persistFile.open(QIODevice::WriteOnly|QFile::Truncate);
         persistFile.write(selString.toUtf8());
@@ -247,31 +278,19 @@ void LH_CursorController::loadPersistedSelection()
         {
             updateLocation(selData[0].toInt(), selData[1].toInt(), true);
 
-            cursor_data.lastSelSet = true;
-            cursor_data.lastSelX = cursor_data.x;
-            cursor_data.lastSelY = cursor_data.y;
-            cursor_data.lastSelX2 = cursor_data.x;
-            cursor_data.lastSelY2 = cursor_data.y;
+            cursor_data_.lastSelSet = true;
+            cursor_data_.lastSelX = cursor_data_.x;
+            cursor_data_.lastSelY = cursor_data_.y;
+            cursor_data_.lastSelX2 = cursor_data_.x;
+            cursor_data_.lastSelY2 = cursor_data_.y;
 
             if(setup_persistent_autoselect_->value())
             {
-                cursor_data.selState = (selData[2] == "1");
-                cursor_data.selX = selData[3].toInt();
-                cursor_data.selY = selData[4].toInt();
+                cursor_data_.selState = (selData[2] == "1");
+                cursor_data_.selX = selData[3].toInt();
+                cursor_data_.selY = selData[4].toInt();
             }
         }
-    }
-}
-
-void LH_CursorController::doActivate(int flags,int value)
-{
-    Q_UNUSED(flags);
-    Q_UNUSED(value);
-
-    if( cursorModes[setup_mode_->value()].activate )
-    {
-        cursor_data.active = !cursor_data.active;
-        updateLocation(0,0);
     }
 }
 
@@ -282,20 +301,20 @@ void LH_CursorController::updateLocation(int xMod, int yMod, bool absolute)
 
     bool moved = false;
 
-    int newX = cursor_data.x;
-    int newY = cursor_data.y;
+    int newX = cursor_data_.x;
+    int newY = cursor_data_.y;
 
     if (boundsList.length()>=4)
     {
-        cursor_data.range.x = (minmax){boundsList.at(0).toInt(), boundsList.at(2).toInt()};
-        cursor_data.range.y = (minmax){boundsList.at(1).toInt(), boundsList.at(3).toInt()};
+        cursor_data_.range.x = (minmax){boundsList.at(0).toInt(), boundsList.at(2).toInt()};
+        cursor_data_.range.y = (minmax){boundsList.at(1).toInt(), boundsList.at(3).toInt()};
 
         if (absolute)
         {
-            if(xMod >= cursor_data.range.x.min &&
-               xMod <= cursor_data.range.x.max &&
-               yMod >= cursor_data.range.y.min &&
-               yMod <= cursor_data.range.y.max
+            if(xMod >= cursor_data_.range.x.min &&
+               xMod <= cursor_data_.range.x.max &&
+               yMod >= cursor_data_.range.y.min &&
+               yMod <= cursor_data_.range.y.max
                )
             {
                 newX = xMod;
@@ -311,10 +330,10 @@ void LH_CursorController::updateLocation(int xMod, int yMod, bool absolute)
             {
                 loops++;
                 while(!moved &&
-                      newX+xMod >= cursor_data.range.x.min &&
-                      newX+xMod <= cursor_data.range.x.max &&
-                      newY+yMod >= cursor_data.range.y.min &&
-                      newY+yMod <= cursor_data.range.y.max
+                      newX+xMod >= cursor_data_.range.x.min &&
+                      newX+xMod <= cursor_data_.range.x.max &&
+                      newY+yMod >= cursor_data_.range.y.min &&
+                      newY+yMod <= cursor_data_.range.y.max
                       )
                 {
                     newX += xMod;
@@ -328,36 +347,37 @@ void LH_CursorController::updateLocation(int xMod, int yMod, bool absolute)
                 if(!setup_boundry_loop_->value()) break;
                 else if(!moved)
                 {
-                    if(xMod==1)  newX = cursor_data.range.x.min - xMod;
-                    if(xMod==-1) newX = cursor_data.range.x.max - xMod;
-                    if(yMod==1)  newY = cursor_data.range.y.min - yMod;
-                    if(yMod==-1) newY = cursor_data.range.y.max - yMod;
+                    if(xMod==1)  newX = cursor_data_.range.x.min - xMod;
+                    if(xMod==-1) newX = cursor_data_.range.x.max - xMod;
+                    if(yMod==1)  newY = cursor_data_.range.y.min - yMod;
+                    if(yMod==-1) newY = cursor_data_.range.y.max - yMod;
                 }
             }
         }
     }
 
     if(moved) {
-        cursor_data.x = newX;
-        cursor_data.y = newY;
+        cursor_data_.x = newX;
+        cursor_data_.y = newY;
         if(cursorModes[setup_mode_->value()].select==smNone) doSelect(0,0);
     }
 
     persistSelection();
 
-    setup_coordinate_->setValue(QString("%1,%2").arg(cursor_data.x).arg(cursor_data.y));
+    setup_json_data_->setValue( cursor_data_.serialize() );
+
+    setup_coordinate_->setValue(QString("%1,%2").arg(cursor_data_.x).arg(cursor_data_.y));
 }
 
 void LH_CursorController::changeMode()
 {
     if(cursorModes[setup_mode_->value()].select!=smSelectDeselect)
     {
-        cursor_data.selX = cursor_data.x;
-        cursor_data.selY = cursor_data.y;
-        cursor_data.selState = true;
-        //qDebug() << "Selected";
+        cursor_data_.selX = cursor_data_.x;
+        cursor_data_.selY = cursor_data_.y;
+        cursor_data_.selState = true;
     }
-    cursor_data.active = !cursorModes[setup_mode_->value()].activate;
+    cursor_data_.active = !cursorModes[setup_mode_->value()].activate;
     setup_select_->setFlag(LH_FLAG_HIDDEN, cursorModes[setup_mode_->value()].select==smNone);
     setup_reselect_->setFlag(LH_FLAG_HIDDEN, cursorModes[setup_mode_->value()].select!=smSelectDeselect);
     setup_activate_->setFlag(LH_FLAG_HIDDEN, !cursorModes[setup_mode_->value()].activate);
@@ -367,8 +387,8 @@ void LH_CursorController::changeBounds()
 {
     QStringList bounds = setup_boundry_->value().split(',');
 
-    cursor_data.range.x = (minmax){bounds.at(0).toInt(), bounds.at(2).toInt()};
-    cursor_data.range.y = (minmax){bounds.at(1).toInt(), bounds.at(3).toInt()};
+    cursor_data_.range.x = (minmax){bounds.at(0).toInt(), bounds.at(2).toInt()};
+    cursor_data_.range.y = (minmax){bounds.at(1).toInt(), bounds.at(3).toInt()};
 
     bool showHorz = false;
     bool showVert = false;
@@ -387,8 +407,8 @@ void LH_CursorController::changeBounds()
 
 int LH_CursorController::polling()
 {
-    if(cursor_data.sendSelect) doSelect(0,0);
-    setup_coordinate_->setValue(QString("%1,%2").arg(cursor_data.x).arg(cursor_data.y));
+    if(cursor_data_.sendSelect) doSelect();
+    setup_coordinate_->setValue(QString("%1,%2").arg(cursor_data_.x).arg(cursor_data_.y));
     return 200;
 }
 
@@ -398,3 +418,16 @@ void LH_CursorController::changePersistent()
     setup_persistent_file_->setFlag(LH_FLAG_HIDDEN, !setup_persistent_->value());
     setup_persistent_autoselect_->setFlag(LH_FLAG_HIDDEN, !setup_persistent_->value());
 }
+
+#ifdef ENABLE_VIRTUAL_CURSOR_KEYS
+void LH_CursorController::virtualKeyPress(QString s)
+{
+    if( s == "up" ) doMoveUp();
+    else if( s == "down" ) doMoveDown();
+    else if( s == "left" ) doMoveLeft();
+    else if( s == "right" ) doMoveRight();
+    else if( s == "sel" ) doSelect();
+    else if( s == "act" ) doActivate();
+    else if( s == "resel" ) doReselect();
+}
+#endif

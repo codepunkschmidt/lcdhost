@@ -38,8 +38,6 @@ lh_class *LH_CursorRectangle::classInfo()
         "CursorRectangle",
         "Cursor Rectangle",
         48,48
-        
-        
     };
 
     return &classInfo;
@@ -47,7 +45,9 @@ lh_class *LH_CursorRectangle::classInfo()
 
 const char *LH_CursorRectangle::userInit()
 {
-    setup_coordinate_ = new LH_Qt_QString(this, "Coordinate", "1,1", LH_FLAG_AUTORENDER);
+    if( const char *err = LH_Rectangle::userInit() ) return err;
+
+    setup_coordinate_ = new LH_Qt_QString(this, "Coordinate", "1,1", LH_FLAG_AUTORENDER | LH_FLAG_FIRST);
     setup_coordinate_->setHelp("This is the coordinate of this object, i.e. when the cursor is at the point specified here this object is selected. <br/>"
                                "<br/>"
                                "Note that many objects can have the same coordinate if the user requires.<br/>"
@@ -55,12 +55,15 @@ const char *LH_CursorRectangle::userInit()
                                "The format is [x],[y] <br/>"
                                "e.g.: 1,1"
                                );
-    setup_cursor_state_ = new LH_Qt_QStringList( this, ("Cursor State"), QStringList()<<"OFF"<<"OFF_SEL"<<"ON"<<"ON_SEL", LH_FLAG_NOSAVE|LH_FLAG_NOSINK|LH_FLAG_NOSOURCE|LH_FLAG_READONLY );
 
-    LH_Qt_QString *hr = new LH_Qt_QString(this,("Coord-Area-Rule"),QString(), LH_FLAG_NOSAVE | LH_FLAG_NOSOURCE | LH_FLAG_NOSINK | LH_FLAG_HIDETITLE, lh_type_string_htmlhelp );
+    setup_json_data_ = new LH_Qt_QString(this, "Cursor Data", "", LH_FLAG_NOSAVE | LH_FLAG_NOSOURCE | LH_FLAG_LAST /*| LH_FLAG_READONLY | LH_FLAG_HIDEVALUE*/);
+    setup_json_data_->setLink("Cursors/#1");
+    setup_json_data_->refreshData();
+
+    setup_cursor_state_ = new LH_Qt_QStringList( this, ("Cursor State"), QStringList()<<"OFF"<<"OFF_SEL"<<"ON"<<"ON_SEL", LH_FLAG_NOSAVE|LH_FLAG_NOSINK|LH_FLAG_NOSOURCE|LH_FLAG_READONLY | LH_FLAG_FIRST );
+
+    LH_Qt_QString *hr = new LH_Qt_QString(this,("Coord-Area-Rule"),QString(), LH_FLAG_NOSAVE | LH_FLAG_NOSOURCE | LH_FLAG_NOSINK | LH_FLAG_HIDETITLE | LH_FLAG_FIRST, lh_type_string_htmlhelp );
     hr->setHelp("<hr>");
-
-    if( const char *err = LH_Rectangle::userInit() ) return err;
 
     hr = new LH_Qt_QString(this,("Rect-Area-Rule"),QString(),LH_FLAG_NOSAVE | LH_FLAG_NOSOURCE | LH_FLAG_NOSINK | LH_FLAG_HIDETITLE, lh_type_string_htmlhelp );
     hr->setHelp("<hr>");
@@ -72,6 +75,7 @@ const char *LH_CursorRectangle::userInit()
     setup_layout_ = new LH_Qt_QFileInfo(this, "Layout", QFileInfo(), LH_FLAG_HIDDEN);
     setup_layout_trigger_->setHelp("The layout to load when the rectangle is selected.");
 
+    connect(setup_json_data_,SIGNAL(changed()),this,SLOT(updateState()));
     connect(setup_layout_trigger_, SIGNAL(changed()), this, SLOT(changeLayoutTrigger()));
 
     add_cf_target(setup_penwidth_);
@@ -104,14 +108,9 @@ const char *LH_CursorRectangle::userInit()
     return 0;
 }
 
-int LH_CursorRectangle::polling()
-{
-    if(updateState()) callback(lh_cb_render,NULL);
-    return 100;
-}
-
 bool LH_CursorRectangle::updateState()
 {
+    cursorData cursor_data(setup_json_data_->value());
     QStringList mycoords = setup_coordinate_->value().split(';');
 
     bool newSelected = false;
@@ -124,8 +123,8 @@ bool LH_CursorRectangle::updateState()
             int myX = mycoord.at(0).toInt();
             int myY = mycoord.at(1).toInt();
 
-            newSelected = newSelected || ( cursor_data.selState && cursor_data.selX==myX && cursor_data.selY==myY );
-            newActive = newActive ||  ( cursor_data.active && cursor_data.x==myX && cursor_data.y==myY );
+            newSelected |= ( cursor_data.selState && cursor_data.selX==myX && cursor_data.selY==myY );
+            newActive |= ( cursor_data.active && cursor_data.x==myX && cursor_data.y==myY );
         }
     }
 

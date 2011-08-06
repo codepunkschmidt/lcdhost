@@ -1,3 +1,3 @@
 #include "LH_CursorData.h"
 
-cursorData cursor_data;
+//cursorData cursor_data;

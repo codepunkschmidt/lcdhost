@@ -41,11 +41,10 @@ class LH_CursorRectangle : public LH_Rectangle
 {
     Q_OBJECT
 
-    bool updateState();
-
 protected:
     LH_Qt_QString *setup_coordinate_;
     LH_Qt_QStringList *setup_cursor_state_;
+    LH_Qt_QString *setup_json_data_;
 
     LH_Qt_bool *setup_layout_trigger_;
     LH_Qt_QFileInfo *setup_layout_;
@@ -53,12 +52,11 @@ protected:
 public:
     const char *userInit();
 
-    int polling() ;
-
     static lh_class *classInfo();
 
 public slots:
     void changeLayoutTrigger();
+    bool updateState();
 };
 
 #endif // LH_CURSORRECTANGLE_H

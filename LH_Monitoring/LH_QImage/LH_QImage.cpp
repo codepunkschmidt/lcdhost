@@ -53,6 +53,13 @@ const char *LH_QImage::userInit()
     return 0;
 }
 
+QImage* LH_QImage::getPlaceholder()
+{
+    QImage* image = new QImage();
+    image->loadFromData(_logo_blob_d.data, _logo_blob_d.len);
+    return image;
+}
+
 QImage *LH_QImage::render_qimage(int w, int h)
 {
     delete image_;
@@ -64,10 +71,7 @@ QImage *LH_QImage::render_qimage(int w, int h)
     else
     {
         if(setup_show_placeholder_->value())
-        {
-            image_ = new QImage();
-            image_->loadFromData(_logo_blob_d.data, _logo_blob_d.len);
-        }
+            image_ = getPlaceholder();
         else
             image_ = new QImage(w,h,QImage::Format_Invalid);
     }

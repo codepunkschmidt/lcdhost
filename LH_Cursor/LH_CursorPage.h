@@ -44,22 +44,23 @@ class LH_CursorPage : public LH_QtInstance
 
     bool active;
     bool selected;
-    bool updateState();
 
 protected:
     LH_Qt_QString *setup_coordinate_;
     LH_Qt_bool *setup_showing_;
+    LH_Qt_QString *setup_json_data_;
 
 public:
     LH_CursorPage();
 
     const char *userInit();
 
-    int polling();
-
     QImage *render_qimage( int w, int h );
 
     static lh_class *classInfo();
+
+public slots:
+    bool updateState();
 };
 
 #endif // LH_CURSORPAGE_H

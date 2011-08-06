@@ -74,6 +74,10 @@ const char *LH_CursorAction::userInit()
                                "In short the cursor page works by changing its width (which only works if the width is set to \"adjust\") which will then make any objects that are aligned to the right edge of the page move off & on screen creating the illusion of a page of objects being hidden/shown."
                                );
 
+    setup_json_data_ = new LH_Qt_QString(this, "Cursor Data", "", LH_FLAG_NOSAVE | LH_FLAG_NOSOURCE | LH_FLAG_LAST /*| LH_FLAG_READONLY | LH_FLAG_HIDEVALUE*/);
+    setup_json_data_->setLink("Cursors/#1");
+    setup_json_data_->refreshData();
+
     setup_jump_to_ = new LH_Qt_InputState(this, "Quick Select", "", LH_FLAG_NOSINK | LH_FLAG_NOSOURCE);
     setup_jump_to_->setHelp("This optional field allows you to bind a specific key to this coordinate; when that key is pressed the cursor immediately jumps to and selects the coordintes.<br/>"
                                "<br/>"
@@ -110,6 +114,8 @@ const char *LH_CursorAction::userInit()
     setup_act_cancel_ = new LH_Qt_QString(this, "Cancel Condition Edit", "Cancel", LH_FLAG_UI | LH_FLAG_HIDDEN | LH_FLAG_BLANKTITLE, lh_type_string_button);
 
     setup_act_XML_ = new LH_Qt_QTextEdit(this, "Action XML", "<actions>\n</actions>", LH_FLAG_HIDDEN | LH_FLAG_HIDETITLE);
+
+    connect(setup_json_data_,SIGNAL(changed()),this,SLOT(updateState()));
 
     connect( setup_jump_to_,                SIGNAL(input(int,int)), this, SLOT(doJumpTo(int,int)) );
     connect( setup_act_XML_,                SIGNAL(changed()), this, SLOT(xmlChanged()));
@@ -155,6 +161,7 @@ int LH_CursorAction::polling()
 
 bool LH_CursorAction::updateState()
 {
+    cursorData cursor_data(setup_json_data_->value());
     QStringList mycoords = setup_coordinate_->value().split(';');
 
     bool newSelected = false;
@@ -238,7 +245,7 @@ void LH_CursorAction::fire(int startAt)
                 waiting = true;
                 delay = action.getParameter(e,0).toInt();
                 break;
-            }else
+/*            }else
             if(typeCode=="move")
             {
                 cursor_data.x = action.getParameter(e,0).toInt();
@@ -263,8 +270,8 @@ void LH_CursorAction::fire(int startAt)
                 cursor_data.x = cursor_data.lastSelX2;
                 cursor_data.y = cursor_data.lastSelY2;
                 cursor_data.sendSelect = true;
-            } else
-                Q_ASSERT(false);
+*/            } else
+                qWarning() << "LH_Cursor: Unknown Action: " << typeCode;
         }
     }
 }
@@ -273,10 +280,10 @@ void LH_CursorAction::doJumpTo(int flags, int value)
 {
     Q_UNUSED(flags);
     Q_UNUSED(value);
-    QString coord = setup_coordinate_->value().split(';')[0];
+/*    QString coord = setup_coordinate_->value().split(';')[0];
     cursor_data.x = coord.split(',')[0].toInt();
     cursor_data.y = coord.split(',')[1].toInt();
-    cursor_data.sendSelect = true;
+    cursor_data.sendSelect = true;*/
 }
 
 void LH_CursorAction::xmlChanged()
@@ -342,6 +349,7 @@ void LH_CursorAction::reloadAction()
         setup_action_type_->setValue( actionTypes_.indexOf(typeCode) );
         setup_action_desc_->setValue( e.attribute("desc") );
 
+        cursorData cursor_data(setup_json_data_->value());
         actionTypes_.at(typeCode).displayParameter(0,setup_action_parameter1_desc_,setup_action_parameter1_str_,setup_action_parameter1_int_,setup_action_parameter1_file_, cursor_data, e);
         actionTypes_.at(typeCode).displayParameter(1,setup_action_parameter2_desc_,setup_action_parameter2_str_,setup_action_parameter2_int_,setup_action_parameter2_file_, cursor_data, e);
 
@@ -359,6 +367,7 @@ void LH_CursorAction::saveAction()
     paramValues.append( at.getParameterValue(1,setup_action_parameter2_str_,setup_action_parameter2_int_,setup_action_parameter2_file_));
 
     //in case the type has changed, update the parameter visibility
+    cursorData cursor_data(setup_json_data_->value());
     at.displayParameter(0,setup_action_parameter1_desc_,setup_action_parameter1_str_,setup_action_parameter1_int_,setup_action_parameter1_file_, cursor_data);
     at.displayParameter(1,setup_action_parameter2_desc_,setup_action_parameter2_str_,setup_action_parameter2_int_,setup_action_parameter2_file_, cursor_data);
 
@@ -490,6 +499,7 @@ void LH_CursorAction::uneditAction(){
 void LH_CursorAction::actionTypeChanged()
 {
     QString typeCode = actionTypes_.at(setup_action_type_->value()).typeCode;
+    cursorData cursor_data(setup_json_data_->value());
     actionTypes_.at(typeCode).displayParameter(0,setup_action_parameter1_desc_,setup_action_parameter1_str_,setup_action_parameter1_int_,setup_action_parameter1_file_, cursor_data);
     actionTypes_.at(typeCode).displayParameter(1,setup_action_parameter2_desc_,setup_action_parameter2_str_,setup_action_parameter2_int_,setup_action_parameter2_file_, cursor_data);
 }

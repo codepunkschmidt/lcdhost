@@ -25,15 +25,13 @@
 #ifndef LH_CURSORCONTROLLER_H
 #define LH_CURSORCONTROLLER_H
 
-// #include <windows.h>
-// #include <tchar.h>
-// #include <stdio.h>
-
 #include "../LH_Text/LH_Text.h"
 #include "../LH_Qt_InputState.h"
 #include "../LH_Qt_QFileInfo.h"
 
 #include "LH_CursorData.h"
+
+#define ENABLE_VIRTUAL_CURSOR_KEYS
 
 enum selectMode
 {
@@ -56,6 +54,7 @@ class LH_CursorController : public LH_QtInstance
 
     void persistSelection();
 
+    cursorData cursor_data_;
 protected:
 
     LH_Qt_QString *setup_coordinate_;
@@ -76,6 +75,12 @@ protected:
     LH_Qt_bool *setup_persistent_autoselect_;
     LH_Qt_QFileInfo *setup_persistent_file_;
 
+    LH_Qt_QString *setup_json_data_;
+
+#ifdef ENABLE_VIRTUAL_CURSOR_KEYS
+    LH_Qt_QString *setup_virtual_keys_;
+#endif
+
 public:
     const char *userInit();
     int polling();
@@ -83,13 +88,13 @@ public:
     static lh_class *classInfo();
 
 public slots:
-    void doMoveUp(int flags,int value);
-    void doMoveDown(int flags,int value);
-    void doMoveLeft(int flags,int value);
-    void doMoveRight(int flags,int value);
-    void doSelect(int flags,int value);
-    void doReselect(int flags,int value);
-    void doActivate(int flags,int value);
+    void doMoveUp(int flags=0,int value=0);
+    void doMoveDown(int flags=0,int value=0);
+    void doMoveLeft(int flags=0,int value=0);
+    void doMoveRight(int flags=0,int value=0);
+    void doSelect(int flags=0,int value=0);
+    void doReselect(int flags=0,int value=0);
+    void doActivate(int flags=0,int value=0);
 
     void updateLocation(int xMod, int yMod, bool absolute = false);
     void changeMode();
@@ -97,6 +102,10 @@ public slots:
 
     void changePersistent();
     void loadPersistedSelection();
+
+#ifdef ENABLE_VIRTUAL_CURSOR_KEYS
+    void virtualKeyPress(QString);
+#endif
 };
 
 #endif // LH_CURSORCONTROLLER_H

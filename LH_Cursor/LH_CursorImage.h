@@ -34,19 +34,18 @@ class LH_CursorImage : public LH_QImage
 {
     Q_OBJECT
 
-    bool updateState();
-
 protected:
     LH_Qt_QString *setup_coordinate_;
     LH_Qt_QStringList *setup_cursor_state_;
+    LH_Qt_QString *setup_json_data_;
 
 public:
     const char *userInit();
 
-    int polling();
-
     static lh_class *classInfo();
 
+public slots:
+    bool updateState();
 };
 
 #endif // LH_CURSORIMAGE_H

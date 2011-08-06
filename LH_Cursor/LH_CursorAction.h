@@ -42,59 +42,10 @@
 #include <QtXml>
 
 
-class actionTypes
-{
-    QHash<QString,actionType> actionTypes_;
-    QStringList actionTypeIDs_;
-    LH_CursorAction *cursorAction_;
-
-    void add(actionType at)
-    {
-        actionTypes_.insert(at.typeCode, at);
-        actionTypeIDs_.append(at.typeCode);
-        // return actionTypes_[at.typeCode];
-        return;
-    }
-
-public:
-    actionTypes( LH_CursorAction *p ) : cursorAction_(p) {
-        add( actionType(p,"open"      ,"Open Layout"               , QList<actionParameter>() << actionParameter("Layout File",aptFile) ) );
-        add( actionType(p,"run"       ,"Run Application"           , QList<actionParameter>() << actionParameter("Application",aptFile,"path") << actionParameter("Parameters",aptString,"args") ) );
-        add( actionType(p,"url"       ,"Open URL"                  , QList<actionParameter>() << actionParameter("URL",aptString) ) );
-        add( actionType(p,"move"      ,"Move Cursor"               , QList<actionParameter>() << actionParameter("New X Coordinate",aptInteger,"","x",altCursorX) << actionParameter("New Y Coordinate",aptInteger,"","y",altCursorY)) );
-        add( actionType(p,"select"    ,"Move Cursor & Select"      , QList<actionParameter>() << actionParameter("New X Coordinate",aptInteger,"","x",altCursorX) << actionParameter("New Y Coordinate",aptInteger,"","y",altCursorY)) );
-        add( actionType(p,"wait"      ,"Wait"                      , QList<actionParameter>() << actionParameter("Delay (in ms)",aptInteger,"","",altWait)) );
-        add( actionType(p,"deselect"  ,"Clear Selection") );
-        add( actionType(p,"deactivate","Deactivate the Cursor") );
-        add( actionType(p,"reselect"  ,"Reselect the previous item") );
-    }
-    actionType at(int index)
-    {
-        return at(actionTypeIDs_[index]);
-    }
-    actionType at(QString typeCode)
-    {
-        return actionTypes_.value(typeCode,actionType(this->cursorAction_));
-    }
-    QStringList list()
-    {
-        QStringList list_ = QStringList();
-        for (int i=0; i<actionTypeIDs_.count(); i++)
-            list_.append(at(i).description);
-        return list_;
-    }
-    int indexOf(QString typeCode)
-    {
-        return actionTypeIDs_.indexOf(typeCode);
-    }
-};
-
 class LH_CursorAction : public LH_QtInstance
 {
     Q_OBJECT
     actionTypes actionTypes_;
-
-    bool updateState();
 
     bool fired;
     bool selected;
@@ -110,7 +61,7 @@ protected:
 
     LH_Qt_QString *setup_coordinate_;
     LH_Qt_InputState *setup_jump_to_;
-
+    LH_Qt_QString *setup_json_data_;
 
     LH_Qt_QString     *setup_action_desc_;
     LH_Qt_QStringList *setup_action_type_;
@@ -149,6 +100,7 @@ public:
     void fire(int = 0);
 
 public slots:
+    bool updateState();
     void doJumpTo(int flags,int value);
     void xmlChanged();
     void reloadAction();

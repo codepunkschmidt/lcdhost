@@ -60,13 +60,16 @@ LH_QtSetupItem::LH_QtSetupItem( LH_QtObject *parent, const char *ident, lh_setup
     item_.ident = 0;
     item_.title = 0;
     item_.help = 0;
+    item_.filter = 0;
     item_.order = 0;
     item_.type = type;
     item_.flags = flags;
     memset( &item_.param, 0, sizeof(lh_setup_param) );
+
     item_.states = 0;
     item_.link = 0;
     memset( &item_.data, 0, sizeof(lh_setup_data) );
+
     item_.obj_setup_resize = obj_setup_resize;
     item_.obj_setup_change = obj_setup_change;
 
@@ -206,12 +209,7 @@ void LH_QtSetupItem::setTitle(const QString& s)
 void LH_QtSetupItem::setLink(const char *s, bool issource)
 {
     item_.states &= ~LH_STATE_SOURCE;
-    if( s == 0 || *s == 0 )
-    {
-        link_array_.clear();
-        item_.link = 0;
-    }
-    else
+    if( s && *s )
     {
         link_array_ = QByteArray(s);
         if( link_array_.startsWith('=') )
@@ -227,6 +225,28 @@ void LH_QtSetupItem::setLink(const char *s, bool issource)
         }
         item_.link = link_array_.data();
         if( issource ) item_.states |= LH_STATE_SOURCE;
+    }
+    else
+    {
+        link_array_.clear();
+        item_.link = 0;
+    }
+    refreshMeta();
+    return;
+}
+
+
+void LH_QtSetupItem::setLinkFilter( const char *s )
+{
+    if( s && *s )
+    {
+        filter_array_ = QByteArray(s);
+        item_.filter = filter_array_.data();
+    }
+    else
+    {
+        filter_array_.clear();
+        item_.filter = 0;
     }
     refreshMeta();
     return;

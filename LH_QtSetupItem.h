@@ -52,6 +52,7 @@ class LH_QtSetupItem : public LH_QtObject
     QByteArray title_array_;
     QByteArray link_array_;
     QByteArray help_array_;
+    QByteArray filter_array_;
     QByteArray list_array_;
 
 protected:
@@ -101,6 +102,8 @@ public:
     bool isSink() const { return !link_array_.isEmpty() && !isSource(); }
     void setHelp(const QString& s);
     const char *help() const { return help_array_.constData(); }
+    void setLinkFilter( const char * );
+    const char *linkFilter() { return filter_array_.constData(); }
     int flags() const { return item_.flags; }
     bool hasFlag( int f ) const { return (item_.flags & f) ? true : false; }
     void setFlags( int f ) { if( item_.flags != f ) { item_.flags = f; refreshMeta(); } }

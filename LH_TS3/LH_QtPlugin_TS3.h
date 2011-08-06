@@ -46,6 +46,7 @@ enum server_action {
     sa_disconnected,
     sa_connecting,
     sa_eventregister_pending,
+    sa_whoami_pending,
     sa_reconnect,
     sa_channellist_pending,
     sa_clientlist_pending,
@@ -84,8 +85,8 @@ protected:
     LH_Qt_QString *setup_connection_details_;
     LH_Qt_QString *setup_talking_;
     LH_Qt_QString *setup_talking_details_;
-    LH_Qt_QString *setup_username_expression_;
-    LH_Qt_QString *setup_username_;
+    //LH_Qt_QString *setup_nickname_expression_;
+    LH_Qt_QString *setup_nickname_;
     LH_Qt_QString *setup_channelname_;
     LH_Qt_QStringList *setup_connection_status_;
     LH_Qt_QStringList *setup_microphone_status_;

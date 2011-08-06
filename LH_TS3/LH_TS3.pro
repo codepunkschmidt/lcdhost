@@ -16,7 +16,12 @@ SOURCES += \
     ../LH_Monitoring/LH_QImage/logo_blob.c \
     ../LH_Monitoring/LH_QImage/LH_QImage.cpp \
     ../LH_Text/LH_Text.cpp \
-    LH_TS3MuteImage.cpp
+    LH_TS3SpeakingImage.cpp \
+    LH_TS3MuteImage.cpp \
+    LH_TS3ConnectionImage.cpp \
+    LH_TS3SpeakingText.cpp \
+    LH_TS3NicknameText.cpp \
+    LH_TS3ChannelNameText.cpp
 
 HEADERS += \
     ../LH_QtPlugin.h \

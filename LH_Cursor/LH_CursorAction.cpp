@@ -164,7 +164,7 @@ bool LH_CursorAction::updateState()
 {
     bool newSelected;
     bool newActive;
-    QString newStatusCode = cursor_data(setup_json_data_->value()).getState(setup_coordinate_->value().split(';'),newSelected,newActive);
+    QString newStatusCode = cursorData(setup_json_data_->value()).getState(setup_coordinate_->value().split(';'),newSelected,newActive);
 
     if(statusCode_ != newStatusCode)
     {

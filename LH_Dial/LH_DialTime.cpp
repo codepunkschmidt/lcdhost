@@ -30,6 +30,8 @@ const char *LH_DialTime::userInit()
 {
     if( const char *err = LH_Dial::userInit() ) return err;
 
+    setup_type_->setFlag(LH_FLAG_NOSAVE, true);
+
     setMin(0.0);
     setMax(60.0);
     isClock = true;

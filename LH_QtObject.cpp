@@ -77,8 +77,6 @@ LH_QtObject::LH_QtObject( lh_object *p, QObject *parent ) : QObject( parent ), p
 
 LH_QtObject::~LH_QtObject()
 {
-    callback( lh_cb_destroy );
-    memset( p_obj_, 0, sizeof(lh_object) );
 }
 
 const char *LH_QtObject::init( const char *title )

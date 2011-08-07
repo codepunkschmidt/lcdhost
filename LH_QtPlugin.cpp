@@ -121,7 +121,11 @@ LH_QtPlugin::~LH_QtPlugin()
         Q_ASSERT( to_load->cls_.obj.size == sizeof(lh_object) );
         Q_ASSERT( to_load->cls_.size == sizeof(lh_layout_class) );
         if( to_load->cls_.obj.cb && to_load->cls_.obj.cb_id )
+        {
             to_load->cls_.obj.cb( to_load->cls_.obj.cb_id, lh_cb_destroy, 0 );
+            to_load->cls_.obj.cb = 0;
+            to_load->cls_.obj.cb_id = 0;
+        }
     }
     Q_ASSERT( instance_ == this );
     instance_ = 0;

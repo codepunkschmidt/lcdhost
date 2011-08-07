@@ -107,4 +107,6 @@ LH_QtDevice::LH_QtDevice( const char *devid, int w, int h, int d, bool noauto ) 
 
 LH_QtDevice::~LH_QtDevice()
 {
+    callback( lh_cb_destroy );
+    memset( &lh_dev_, 0, sizeof(lh_output_device) );
 }

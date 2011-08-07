@@ -82,6 +82,8 @@ LH_QtSetupItem::LH_QtSetupItem( LH_QtObject *parent, const char *ident, lh_setup
 
 LH_QtSetupItem::~LH_QtSetupItem()
 {
+    callback( lh_cb_destroy );
+    memset( &item_, 0, sizeof(lh_setup_item) );
 }
 
 int LH_QtSetupItem::notify( int note, void *param )

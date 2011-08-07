@@ -139,34 +139,6 @@ void LH_QtSetupItem::setOrder( int n )
 
 void LH_QtSetupItem::setIdent( const char *s )
 {
-    if( *s == '^' )
-    {
-#ifndef QT_NO_DEBUG
-        if( !parent()->warning_issued_ )
-        {
-            qWarning() << parent()->metaObject()->className()
-                       << parent()->objectName()
-                       << "setup item ID starts with ^" << s;
-            parent()->warning_issued_ = true;
-        }
-#endif
-        item_.flags |= LH_FLAG_BLANKTITLE;
-    }
-
-    if( *s == '~' )
-    {
-#ifndef QT_NO_DEBUG
-        if( !parent()->warning_issued_ )
-        {
-            qWarning() << parent()->metaObject()->className()
-                       << parent()->objectName()
-                       << "setup item ID starts with ~" << s;
-            parent()->warning_issued_ = true;
-        }
-#endif
-        item_.flags |= LH_FLAG_HIDETITLE;
-    }
-
     if( title_array_.isNull() )
     {
         title_array_ = QByteArray(s);
@@ -175,15 +147,36 @@ void LH_QtSetupItem::setIdent( const char *s )
         item_.title = title_array_.data();
     }
 
-    setObjectName(s);
+    setObjectName( QString::fromAscii(s) );
     ident_array_ = QByteArray(s);
 
-    if( ident_array_.contains('/') )
+    // check for ident warnings
+    if( !parent()->warning_issued_ )
     {
-        qWarning() << parent()->metaObject()->className()
-                   << parent()->objectName()
-                   << "setup item ID contains slashes:" << s;
-        ident_array_.replace('/','\\');
+        if( ident_array_.startsWith('^') && !(item_.flags&LH_FLAG_BLANKTITLE) )
+        {
+            qWarning() << parent()->metaObject()->className()
+                       << parent()->objectName()
+                       << "setup item ID starts with ^" << s;
+            parent()->warning_issued_ = true;
+            item_.flags |= LH_FLAG_BLANKTITLE;
+        }
+        if( ident_array_.startsWith('~') && !(item_.flags&LH_FLAG_HIDETITLE) )
+        {
+            qWarning() << parent()->metaObject()->className()
+                       << parent()->objectName()
+                       << "setup item ID starts with ~" << s;
+            parent()->warning_issued_ = true;
+            item_.flags |= LH_FLAG_HIDETITLE;
+        }
+        if( ident_array_.contains('/') )
+        {
+            qWarning() << parent()->metaObject()->className()
+                       << parent()->objectName()
+                       << "setup item ID contains slashes:" << s;
+            parent()->warning_issued_ = true;
+            ident_array_.replace('/','\\');
+        }
     }
 
     item_.ident = ident_array_.data();

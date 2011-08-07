@@ -75,7 +75,7 @@ const char *LH_Text::userInit()
     setup_font_->setHelp( "<p>Font used to display the text.</p>");
     connect( setup_font_, SIGNAL(changed()), this, SLOT(fontChanged()) );
 
-    setup_fontresize_ = new LH_Qt_bool( this, ("^Adjust font size to instance height"), true, LH_FLAG_AUTORENDER );
+    setup_fontresize_ = new LH_Qt_bool( this, ("^Adjust font size to instance height"), true, LH_FLAG_AUTORENDER|LH_FLAG_BLANKTITLE );
     setup_fontresize_->setHelp( "<p>Rather than using a fixed font size, "
                           "LCDHost will adjust the font height to "
                           "match the instance height.</p>"

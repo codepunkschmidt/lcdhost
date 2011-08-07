@@ -129,6 +129,27 @@ public:
 
         return QString(Json::serialize(jobject));
     }
+
+    QString getState(QStringList mycoords, bool &newSelected, bool &newActive)
+    {
+        newSelected = false;
+        newActive = false;
+
+        foreach (QString mycoord_str, mycoords)
+        {
+            QStringList mycoord = mycoord_str.split(',');
+            if(mycoord.length()==2)
+            {
+                int myX = mycoord.at(0).toInt();
+                int myY = mycoord.at(1).toInt();
+
+                newSelected |= ( cursor_data.selState && cursor_data.selX==myX && cursor_data.selY==myY );
+                newActive |= ( cursor_data.active && cursor_data.x==myX && cursor_data.y==myY );
+            }
+        }
+
+        return QString("%1%2").arg(newActive? "ON" : "OFF").arg(newSelected? "_SEL" : "");
+    }
 };//*/
 
 //extern cursorData cursor_data;

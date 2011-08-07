@@ -136,6 +136,7 @@ const char *LH_CursorController::userInit()
 
     setup_json_data_ = new LH_Qt_QString(this, "Cursor Data", "", LH_FLAG_NOSAVE | LH_FLAG_NOSINK | LH_FLAG_LAST /*| LH_FLAG_READONLY | LH_FLAG_HIDEVALUE*/);
     setup_json_data_->setLink("Cursors/#1", true);
+    setup_json_data_->setLinkFilter("Cursors");
     setup_json_data_->refreshData();
 
     connect(setup_persistent_, SIGNAL(changed()), this, SLOT(changePersistent()));

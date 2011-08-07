@@ -2,6 +2,7 @@
 #define LH_CURSORDATA_H
 
 #include <QString>
+#include <QStringList>
 #include <QVariant>
 #include <QVariantMap>
 #include "../json.h"
@@ -143,8 +144,8 @@ public:
                 int myX = mycoord.at(0).toInt();
                 int myY = mycoord.at(1).toInt();
 
-                newSelected |= ( cursor_data.selState && cursor_data.selX==myX && cursor_data.selY==myY );
-                newActive |= ( cursor_data.active && cursor_data.x==myX && cursor_data.y==myY );
+                newSelected |= ( selState && selX==myX && selY==myY );
+                newActive |= ( active && x==myX && y==myY );
             }
         }
 

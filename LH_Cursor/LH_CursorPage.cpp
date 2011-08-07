@@ -85,7 +85,7 @@ bool LH_CursorPage::updateState()
 {
     bool newSelected;
     bool newActive;
-    cursor_data(setup_json_data_->value()).getState(setup_coordinate_->value().split(';'),newSelected,newActive);
+    cursorData(setup_json_data_->value()).getState(setup_coordinate_->value().split(';'),newSelected,newActive);
 
     if(selected!=newSelected || active != newActive)
     {

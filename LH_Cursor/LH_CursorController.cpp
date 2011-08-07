@@ -411,12 +411,6 @@ void LH_CursorController::changeBounds()
     }
 }
 
-
-int LH_CursorController::polling()
-{
-    return 0;
-}
-
 void LH_CursorController::changePersistent()
 {
     setup_persistent_file_->setFlag(LH_FLAG_HIDDEN, !setup_persistent_->value());

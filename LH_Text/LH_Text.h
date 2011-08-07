@@ -105,8 +105,8 @@ public:
     virtual QColor bgcolor() { return setup_bgcolor_->value(); }
 
     QFont font() const { return font_; }
-    int horizontal() const { return setup_horizontal_->value(); }
-    int vertical() const { return setup_vertical_->value(); }
+    int horizontal() const { return setup_horizontal_->index(); }
+    int vertical() const { return setup_vertical_->index(); }
     bool fontresize() const { return setup_fontresize_->value(); }
     int scrollrate() const { return setup_scrollrate_->value(); }
     int scrollstep() const { return setup_scrollstep_->value(); }

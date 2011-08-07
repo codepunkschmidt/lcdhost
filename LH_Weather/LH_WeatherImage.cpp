@@ -186,19 +186,19 @@ void LH_WeatherImage::fileChanged()
 
 void LH_WeatherImage::updateImage(bool rerender)
 {
-    bool newIsNight = (setup_value_type_->value()<=1) && weather_data.isNight;
+    bool newIsNight = (setup_value_type_->index()<=1) && weather_data.isNight;
     if (isNight!=newIsNight) rerender = true;
     isNight = newIsNight;
 
     QString newWeatherCode = weather_data.condition.code;
-    switch(setup_value_type_->value())
+    switch(setup_value_type_->index())
     {
     case 1:
     case 2:
     case 3:
     case 4:
     case 5:
-        newWeatherCode = weather_data.forecast[setup_value_type_->value()-1].code;
+        newWeatherCode = weather_data.forecast[setup_value_type_->index()-1].code;
         break;
     }
 

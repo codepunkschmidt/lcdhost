@@ -59,7 +59,7 @@ bool LH_TextNumber::makeText()
     if( setup_bits_->value() ) scale = 8.0;
     return setNum(
                 setup_value_->value()*scale,
-                setup_scale_->value(),
+                setup_scale_->index(),
                 setup_showsuffix_->value(),
                 setup_value_->max()*scale,
                 bytes_);

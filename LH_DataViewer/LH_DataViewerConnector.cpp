@@ -646,8 +646,8 @@ dataNode* LH_DataViewerConnector::findNode(QString address, QHash<QString,int> i
 void LH_DataViewerConnector::languageFileChanged()
 {
     QString fileName;
-    if(setup_language_->value()>0 && setup_language_->value() < setup_language_->list().count())
-        fileName = QString("%1lists.%2.txt").arg(get_dir_layout()).arg(setup_language_->list().at(setup_language_->value()));
+    if(setup_language_->index()>0 && setup_language_->index() < setup_language_->list().count())
+        fileName = QString("%1lists.%2.txt").arg(get_dir_layout()).arg(setup_language_->list().at(setup_language_->index()));
     else
         fileName = setup_map_file_->value().absoluteFilePath();
 

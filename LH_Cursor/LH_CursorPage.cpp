@@ -65,7 +65,7 @@ const char *LH_CursorPage::userInit()
                                "When selected a page (and all its children) is visible. When not selected it (and all its children) are hidden, although they can still be selected in the Instances tree."
                                );
     setup_json_data_ = new LH_Qt_QString(this, "Cursor Data", "", LH_FLAG_NOSAVE | LH_FLAG_NOSOURCE | LH_FLAG_LAST /*| LH_FLAG_READONLY | LH_FLAG_HIDEVALUE*/);
-    setup_json_data_->setLink("Cursors/#1");
+    setup_json_data_->setLink("Cursors/Primary Cursor");
     setup_json_data_->setLinkFilter("Cursors");
     setup_json_data_->refreshData();
 

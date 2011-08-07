@@ -135,7 +135,8 @@ const char *LH_CursorController::userInit()
 #endif
 
     setup_json_data_ = new LH_Qt_QString(this, "Cursor Data", "", LH_FLAG_NOSAVE | LH_FLAG_NOSINK | LH_FLAG_LAST /*| LH_FLAG_READONLY | LH_FLAG_HIDEVALUE*/);
-    setup_json_data_->setLink("Cursors/#1", true);
+    connect(setup_json_data_,SIGNAL(duplicateSource()),this,SLOT(changeSourceLink()));
+    setup_json_data_->setLink("Cursors/Primary Cursor", true);
     setup_json_data_->setLinkFilter("Cursors");
     setup_json_data_->refreshData();
 
@@ -440,4 +441,21 @@ void LH_CursorController::processPostback()
         if(cursor_data_.sendSelect) doSelect();
         setup_coordinate_->setValue(QString("%1,%2").arg(cursor_data_.x).arg(cursor_data_.y));
     }
+}
+
+void LH_CursorController::changeSourceLink()
+{
+    QString linkName = QString(setup_json_data_->link());
+    if(linkName=="Cursors/Primary Cursor")
+        setup_json_data_->setLink("Cursors/Secondary Cursor", true);
+    else
+    {
+        QRegExp rx("Cursors/Secondary Cursor \\[([0-9]*)\\]");
+        int n = 2;
+        if(rx.indexIn(linkName))
+            n = rx.cap(1).toInt()+1;
+        QString newLink = QString("Cursors/Secondary Cursor [%1]").arg(n);
+        setup_json_data_->setLink(newLink.toUtf8(), true);
+    }
+    qDebug() << "LH_Cursor: Changed link from " << linkName << " to " << QString(setup_json_data_->link());
 }

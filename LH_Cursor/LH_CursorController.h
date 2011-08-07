@@ -104,6 +104,7 @@ public slots:
     void loadPersistedSelection();
 
     void processPostback();
+    void changeSourceLink();
 
 #ifdef ENABLE_VIRTUAL_CURSOR_KEYS
     void virtualKeyPress(QString);

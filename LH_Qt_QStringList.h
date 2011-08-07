@@ -52,7 +52,7 @@ class LH_Qt_QStringList : public LH_Qt_QString
 public:
     LH_Qt_QStringList( LH_QtObject *parent, const char *ident, const QStringList& list, int flags = 0,
                        lh_setup_type subtype = lh_type_string_list  )
-        : LH_Qt_QString( parent, ident, list.first(), flags, subtype )
+        : LH_Qt_QString( parent, ident, list.isEmpty()?QString():list.first(), flags, subtype )
     {
         list_ = list;
         setList( list_.join("\n").toUtf8() );

@@ -28,25 +28,17 @@
 
 class LH_GraphMemVirtual : public LH_Graph
 {
-    bool initialized;
-    double unitBase;
-    LH_Qt_int *link_virt_mem_used_;
-    LH_Qt_int *link_virt_mem_total_;
-
 public:
     virtual const char *userInit()
     {
         if( const char *err = LH_Graph::userInit() ) return err;
-        unitBase = 1024 * 1024 * 1024;
+
+        setup_linked_values_->setLink("/system/memory/virtual/used");
+        setup_max_->setLink("/system/memory/virtual/total");
+
         setMin(0.0);
         setMax(1000.0);
-        setYUnit("GB");
-        initialized = false;
-        if( const char *err = LH_Graph::userInit() ) return err;
-        link_virt_mem_used_ = new LH_Qt_int(this,"LinkVirtMemUsed",0);
-        link_virt_mem_used_->setLink("/system/memory/virtual/used");
-        link_virt_mem_total_ = new LH_Qt_int(this,"LinkVirtMemTotal",0);
-        link_virt_mem_total_->setLink("/system/memory/virtual/total");
+        setYUnit("GB", 1024 * 1024 * 1024);
         return 0;
     }
 
@@ -61,26 +53,6 @@ public:
             48,48
         };
         return &classInfo;
-    }
-
-    int notify(int n, void *p)
-    {
-        Q_UNUSED(p);
-
-        if(!n || n&LH_NOTE_SECOND)
-        {
-            setMax( link_virt_mem_total_->value() / unitBase );
-            addValue( link_virt_mem_used_->value() / unitBase );
-            callback(lh_cb_render,NULL);
-        }
-        return LH_NOTE_SECOND;
-    }
-
-    QImage *render_qimage( int w, int h )
-    {
-        if( LH_Graph::render_qimage(w,h) == NULL ) return NULL;
-        drawSingle();
-        return image_;
     }
 };
 

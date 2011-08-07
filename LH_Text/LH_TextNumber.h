@@ -61,7 +61,7 @@ public:
         makeText();
     }
 
-    bool showUnits() const { return setup_showunits_->value() && (setup_scale_->value() != 1); }
+    bool showUnits() const { return setup_showunits_->value() && (setup_scale_->index() != 1); }
 
     bool isBytes() const { return bytes_; }
     void setBytes( bool b ) { bytes_ = b; }

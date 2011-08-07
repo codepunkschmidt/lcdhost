@@ -158,7 +158,8 @@ void LH_Bar::draw_bar( double value, int pos, int total )
 
     value = boundedValue(value);
 
-    direction = setup_direction_->value();
+
+    direction = setup_direction_->list().indexOf( setup_direction_->value() );
     if( direction < 1 )
     {
         if( image_width > image_height ) direction = 2;
@@ -250,7 +251,7 @@ void LH_Bar::draw_bar( double value, int pos, int total )
             break;
         }
 
-        switch( setup_type_->value() )
+        switch( setup_type_->list().indexOf( setup_type_->value()) )
         {
         case 0: //Gradient fill
             painter.setRenderHint( QPainter::Antialiasing, true );
@@ -295,7 +296,9 @@ void LH_Bar::draw_bar( double value, int pos, int total )
                     break;
                 }
 
-                if((setup_masking_->value()==1 &&setup_file_->value().isFile()) || (setup_masking_->value()==2 && setup_file_endMask_->value().isFile()))
+                int masking_type = setup_masking_->list().indexOf( setup_masking_->value() );
+                if((masking_type==1 &&setup_file_->value().isFile()) ||
+                        (masking_type==2 && setup_file_endMask_->value().isFile()))
                 {
                     QImage tempImg = QImage(bar_img_);
                     QPainter tempPaint;
@@ -339,13 +342,15 @@ QImage *LH_Bar::render_qimage( int w, int h )
 
 void LH_Bar::changeType()
 {
-    setup_file_->setFlag(LH_FLAG_HIDDEN, (setup_type_->value()==0));
-    setup_file_bg_->setFlag(LH_FLAG_HIDDEN, (setup_type_->value()==0));
-    setup_masking_->setFlag(LH_FLAG_HIDDEN, (setup_type_->value()!=2));
-    setup_file_endMask_->setFlag(LH_FLAG_HIDDEN, (setup_type_->value()!=2 || setup_masking_->value()!=2));
+    int setup_type = setup_type_->index();
+    int setup_masking = setup_masking_->index();
+    setup_file_->setFlag(LH_FLAG_HIDDEN, (setup_type==0));
+    setup_file_bg_->setFlag(LH_FLAG_HIDDEN, (setup_type==0));
+    setup_masking_->setFlag(LH_FLAG_HIDDEN, (setup_type!=2));
+    setup_file_endMask_->setFlag(LH_FLAG_HIDDEN, (setup_type!=2 || setup_masking!=2));
 
-    setup_pencolor1_->setFlag(LH_FLAG_HIDDEN, (setup_type_->value()!=0));
-    setup_pencolor2_->setFlag(LH_FLAG_HIDDEN, (setup_type_->value()!=0));
+    setup_pencolor1_->setFlag(LH_FLAG_HIDDEN, (setup_type!=0));
+    setup_pencolor2_->setFlag(LH_FLAG_HIDDEN, (setup_type!=0));
 }
 
 void LH_Bar::changeDiscrete()
@@ -358,10 +363,10 @@ void LH_Bar::changeFile()
     bar_img_ = QImage(setup_file_->value().absoluteFilePath());
     bar_img_bg_ = QImage(setup_file_bg_->value().absoluteFilePath());
 
-    setup_file_endMask_->setFlag(LH_FLAG_HIDDEN, (setup_type_->value()!=2 || setup_masking_->value()!=2));
+    setup_file_endMask_->setFlag(LH_FLAG_HIDDEN, (setup_type_->index()!=2 || setup_masking_->index()!=2));
 
     QString maskFile;
-    switch(setup_masking_->value())
+    switch(setup_masking_->index())
     {
     case 0:
         maskFile = "";

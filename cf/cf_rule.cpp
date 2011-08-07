@@ -23,15 +23,15 @@ cf_rule_condition::cf_rule_condition(QDomNode condNode, QObject* parent): QObjec
 
 cf_rule_condition::cf_rule_condition(LH_QtCFInstance *sender, QObject* parent): QObject(parent)
 {
-    test_ = sender->setup_cf_test_->valueText();
-    source_ = sender->setup_cf_source_->valueText();
-    mode_ = sender->setup_cf_source_mode_->valueText();
+    test_ = sender->setup_cf_test_->value();
+    source_ = sender->setup_cf_source_->value();
+    mode_ = sender->setup_cf_source_mode_->value();
 
     if(!sender->setup_cf_testValue1_->hasFlag(LH_FLAG_HIDDEN))
         values_.append(sender->setup_cf_testValue1_->value());
 
     if(!sender->setup_cf_testValue1_List_->hasFlag(LH_FLAG_HIDDEN))
-        values_.append(sender->setup_cf_testValue1_List_->valueText());
+        values_.append(sender->setup_cf_testValue1_List_->value());
 
     if(!sender->setup_cf_testValue2_->hasFlag(LH_FLAG_HIDDEN))
          values_.append(sender->setup_cf_testValue2_->value());
@@ -247,7 +247,7 @@ cf_rule_action_property::cf_rule_action_property(QDomNode actNode, QObject* pare
 
 cf_rule_action_property::cf_rule_action_property(LH_QtCFInstance *sender, QObject* parent): cf_rule_action("property", parent)
 {
-    target_ = sender->setup_cf_target_->valueText();
+    target_ = sender->setup_cf_target_->value();
     switch(sender->targets()[target_]->type())
     {
     case lh_type_integer_color:
@@ -268,9 +268,9 @@ cf_rule_action_property::cf_rule_action_property(LH_QtCFInstance *sender, QObjec
     case lh_type_integer_slider:
         value_ = QString::number(sender->setup_cf_newValue_Slider_->value());
         break;
-    case lh_type_integer_list:
-    case lh_type_integer_listbox:
-        value_ = sender->setup_cf_newValue_List_->valueText();
+    case lh_type_string_list:
+    case lh_type_string_listbox:
+        value_ = sender->setup_cf_newValue_List_->value();
         break;
     default:
         qWarning() << "Unable to acquire value for target: unrecognised type (" << sender->targets()[target_]->type() << ")";
@@ -370,11 +370,11 @@ bool cf_rule_action_property::setTargetValue(LH_QtCFInstance* sender, cf_target_
             if(!setPlaceholder) return true;
         }
         break;
-    case lh_type_integer_list:
-    case lh_type_integer_listbox:
+    case lh_type_string_list:
+    case lh_type_string_listbox:
         if(setPlaceholder)
             target = sender->setup_cf_newValue_List_;
-        if(((LH_Qt_QStringList*)target)->valueText() != value_ )
+        if(((LH_Qt_QStringList*)target)->value() != value_ )
         {
             ((LH_Qt_QStringList*)target)->setValue(value_);
             if(!setPlaceholder) return true;

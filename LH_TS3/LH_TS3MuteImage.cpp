@@ -5,8 +5,8 @@ LH_PLUGIN_CLASS(LH_TS3MuteImage)
 QImage* LH_TS3MuteImage::getPlaceholder()
 {
     QImage* image = new QImage();
-    QString source = setup_mute_source_->valueText();
-    QString status = setup_mute_status_->valueText();
+    QString source = setup_mute_source_->value();
+    QString status = setup_mute_status_->value();
     image->load(QString(":/images/%1%2.png")
                 .arg(status=="N/A"?"empty":(source=="Microphone"?"microphone":"sound"))
                 .arg(status=="None"?"-disabled":(status=="Muted"?"-mute":""))
@@ -46,9 +46,9 @@ lh_class *LH_TS3MuteImage::classInfo()
 
 void LH_TS3MuteImage::changeSource()
 {
-    if(setup_mute_source_->valueText()=="Speakers")
+    if(setup_mute_source_->value()=="Speakers")
         setup_mute_status_->setLink("Monitoring/3rdParty/TeamSpeak3/Speaker Status");
-    if(setup_mute_source_->valueText()=="Microphone")
+    if(setup_mute_source_->value()=="Microphone")
         setup_mute_status_->setLink("Monitoring/3rdParty/TeamSpeak3/Microphone Status");
     setup_mute_status_->refreshData();
 }

@@ -115,7 +115,7 @@ bool LH_CursorRectangle::updateState()
     bool newActive;
     QString newStatusCode = cursorData(setup_json_data_->value()).getState(setup_coordinate_->value().split(';'),newSelected,newActive);
 
-    if(setup_cursor_state_->valueText() != newStatusCode)
+    if(setup_cursor_state_->value() != newStatusCode)
     {
         setup_cursor_state_->setValue(newStatusCode);
 

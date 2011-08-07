@@ -178,7 +178,7 @@ QNetworkReply* LH_QtPlugin_Weather::fetchWeather(bool is5Day, QXmlStreamReader& 
 
     xml_.clear();
     QString unitValue = "c";
-    if(setup_units_type_->value()==1) unitValue = "f";
+    if(setup_units_type_->index()==1) unitValue = "f";
 
     QString host;
     QString path;

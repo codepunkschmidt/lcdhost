@@ -119,7 +119,7 @@ lh_class *LH_NowPlayingText::classInfo()
 
 void LH_NowPlayingText::setup_item_changed()
 {
-    setup_custom_->setFlag(LH_FLAG_HIDDEN, setup_item_->value()!=8);
+    setup_custom_->setFlag(LH_FLAG_HIDDEN, setup_item_->index()!=8);
     refresh_text();
 }
 
@@ -128,7 +128,7 @@ void LH_NowPlayingText::refresh_text()
     if (currentTrack->playerFound())
     {
         QString template_value = "";
-        switch(setup_item_->value())
+        switch(setup_item_->index())
         {
         case 0:     //Track Title
             template_value = "{title}";

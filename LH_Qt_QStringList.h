@@ -36,7 +36,7 @@
 #define LH_QT_QSTRINGLIST_H
 
 #include <QStringList>
-#include "LH_QtSetupItem.h"
+#include "LH_Qt_QString.h"
 
 /*
   Supports the following setup types:
@@ -45,13 +45,14 @@
     lh_type_string_combobox
   */
 
-class LH_Qt_QStringList : public LH_QtSetupItem
+class LH_Qt_QStringList : public LH_Qt_QString
 {
     QStringList list_;
 
 public:
-    LH_Qt_QStringList( LH_QtObject *parent, const char *ident, const QStringList& list, int flags = 0, lh_setup_type subtype = lh_type_integer_list  )
-        : LH_QtSetupItem( parent, ident, subtype, flags )
+    LH_Qt_QStringList( LH_QtObject *parent, const char *ident, const QStringList& list, int flags = 0,
+                       lh_setup_type subtype = lh_type_string_list  )
+        : LH_Qt_QString( parent, ident, list.isEmpty()?QString():list.first(), flags, subtype )
     {
         list_ = list;
         setList( list_.join("\n").toUtf8() );
@@ -68,57 +69,26 @@ public:
         refreshMeta();
     }
 
-    int value() const
+    int index() const
     {
-        if( type() & lh_type_integer )
-            return item_.data.i;
-        if( type() & lh_type_string )
-            return list_.indexOf( str_ );
-        return -1;
+        return list_.indexOf(str_);
     }
 
-    QString valueText() const
+    void setValue( int n )
     {
-        if( type() & lh_type_integer )
-        {
-            if( item_.data.i >= 0 && item_.data.i < list_.size() )
-                return list_.at( item_.data.i );
-        }
-        if( type() & lh_type_string )
-            return str_;
-        return QString();
+        setIndex(n);
     }
 
-    void setValue(const QString& s)
+    void setValue( const QString& s )
     {
-        if( type() & lh_type_integer )
-        {
-            LH_QtSetupItem::setValue( list_.indexOf(s) );
-            return;
-        }
-        if( type() & lh_type_string )
-        {
-            LH_QtSetupItem::setValue( s );
-            return;
-        }
+        LH_Qt_QString::setValue( s );
     }
 
-    void setValue(int i)
+    void setIndex(int idx)
     {
-        if( i < -1 || i >= list_.size() ) i = -1;
-        if( type() & lh_type_integer )
-        {
-            LH_QtSetupItem::setValue( i );
-            return;
-        }
-        if( type() & lh_type_string )
-        {
-            if( i == -1 ) LH_QtSetupItem::setValue(QString());
-            else LH_QtSetupItem::setValue( list_.at(i) );
-            return;
-        }
+        if( idx<0 || idx>list_.size() ) setValue( QString() );
+        else setValue( list_.at(idx) );
     }
-
 };
 
 #endif // LH_QT_QSTRINGLIST_H

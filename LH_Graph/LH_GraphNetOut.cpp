@@ -108,7 +108,7 @@ public:
 
     void changeUnits()
     {
-        switch(setup_units_->value())
+        switch(setup_units_->index())
         {
         case 0:
             setYUnit("kb/s", 1024 / 8);

@@ -362,7 +362,7 @@ void LH_Graph::drawSingle( int lineID )
 
         delete image_;
 
-        switch(setup_bg_type_->value())
+        switch(setup_bg_type_->index())
         {
         case 2:
             if(setup_bg_image_->value().isFile())
@@ -392,7 +392,7 @@ void LH_Graph::drawSingle( int lineID )
     for(i=0;i<values_[lineID].length() && i<len_;i++)
     {
         double x = 0; double y=0;
-        switch(setup_orientation_->value())
+        switch(setup_orientation_->index())
         {
         case 0:
             x = ((len_-1) - i) * w / (len_-1);
@@ -439,7 +439,7 @@ void LH_Graph::drawSingle( int lineID )
     QLinearGradient gradient;
     double x = points[i-1].x();
     double y = points[i-1].y();
-    switch(setup_orientation_->value())
+    switch(setup_orientation_->index())
     {
     case 0:
         points[i++] =  QPointF(x, h+10);
@@ -502,7 +502,7 @@ void LH_Graph::drawSingle( int lineID )
         bool doDraw = !(hasDeadValue_ && isConstant && (deadValue_ == constantValue));
         if (doDraw)
         {
-            switch(setup_fg_type_->value())
+            switch(setup_fg_type_->index())
             {
             case 0:
                 painter.drawPolyline(points, values_[lineID].length());
@@ -560,7 +560,7 @@ void LH_Graph::drawSingle( int lineID )
             QString minLabel = getLabelText((setup_show_real_limits_->value()? dataMinY_: graphMinY_));
 
             bool emptyHide = setup_hide_when_empty_->value() && graph_empty_;
-            switch(setup_orientation_->value())
+            switch(setup_orientation_->index())
             {
             case 0:
             case 2:
@@ -821,13 +821,13 @@ void LH_Graph::updateDescText()
 
 void LH_Graph::changeType()
 {
-    setup_fillcolor1_->setFlag(LH_FLAG_HIDDEN, (setup_fg_type_->value()!=1));
-    setup_fillcolor2_->setFlag(LH_FLAG_HIDDEN, (setup_fg_type_->value()!=1));
-    setup_fg_image_->setFlag(LH_FLAG_HIDDEN, (setup_fg_type_->value()!=2));
-    setup_fg_alpha_->setFlag(LH_FLAG_HIDDEN, (setup_fg_type_->value()!=2));
+    setup_fillcolor1_->setFlag(LH_FLAG_HIDDEN, (setup_fg_type_->index()!=1));
+    setup_fillcolor2_->setFlag(LH_FLAG_HIDDEN, (setup_fg_type_->index()!=1));
+    setup_fg_image_->setFlag(LH_FLAG_HIDDEN, (setup_fg_type_->index()!=2));
+    setup_fg_alpha_->setFlag(LH_FLAG_HIDDEN, (setup_fg_type_->index()!=2));
 
-    setup_bgcolor_->setFlag(LH_FLAG_HIDDEN, (setup_bg_type_->value()!=1));
-    setup_bg_image_->setFlag(LH_FLAG_HIDDEN, (setup_bg_type_->value()!=2));
+    setup_bgcolor_->setFlag(LH_FLAG_HIDDEN, (setup_bg_type_->index()!=1));
+    setup_bg_image_->setFlag(LH_FLAG_HIDDEN, (setup_bg_type_->index()!=2));
 }
 
 void LH_Graph::changeSelectedLine()
@@ -838,10 +838,10 @@ void LH_Graph::changeSelectedLine()
     QString fgImgPath = "";
     int fgImgAlpha = 255;
 
-    if (setup_line_selection_->value() >= lineCount()) setup_line_selection_->setValue(lineCount()-1);
-    if (setup_line_selection_->value() < 0) setup_line_selection_->setValue(0);
+    if (setup_line_selection_->index() >= lineCount()) setup_line_selection_->setValue(lineCount()-1);
+    if (setup_line_selection_->index() < 0) setup_line_selection_->setValue(0);
 
-    loadColors(setup_line_selection_->value(), penColor, fillColor1, fillColor2, fgImgPath, fgImgAlpha);
+    loadColors(setup_line_selection_->index(), penColor, fillColor1, fillColor2, fgImgPath, fgImgAlpha);
 
     setup_pencolor_->setValue(penColor);
     setup_fillcolor1_->setValue(fillColor1);
@@ -854,7 +854,7 @@ void LH_Graph::updateSelectedLine()
 {
     QStringList configs = setup_line_configs_->value().split('~',QString::SkipEmptyParts);
 
-    int lineID = setup_line_selection_->value();
+    int lineID = setup_line_selection_->index();
     if( lineID < 0 ) lineID = 0;
     if( lineID >= configs.length() ) lineID = configs.length()-1;
 

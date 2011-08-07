@@ -138,7 +138,7 @@ void LH_WeatherText::updateText()
 QString LH_WeatherText::getSelectedValueText()
 {
     //return QString("%1:\r\n%2%5\r\n%3 (%4)").arg(weather_data.location.city, weather_data.condition.temp, weather_data.condition.text, weather_data.condition.code, weather_data.units.temperature);
-    QString selValue = valueTypes.at( setup_value_type_->value() );
+    QString selValue = valueTypes.at( setup_value_type_->index() );
     QString valueText;
 
     const int unit_none = 0;

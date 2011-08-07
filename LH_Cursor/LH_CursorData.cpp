@@ -1,3 +1,3 @@
 #include "LH_CursorData.h"
 
-//cursorData cursor_data;
+QHash<QString, QString> postback_data;

@@ -73,14 +73,6 @@ const char *LH_CursorPage::userInit()
     return 0;
 }
 
-QImage *LH_CursorPage::render_qimage( int w, int h )
-{
-    Q_UNUSED(w);
-    Q_UNUSED(h);
-    return image_;
-}
-
-
 bool LH_CursorPage::updateState()
 {
     bool newSelected;

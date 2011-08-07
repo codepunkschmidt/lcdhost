@@ -75,9 +75,14 @@ const char *LH_CursorAction::userInit()
                                );
 
     setup_json_data_ = new LH_Qt_QString(this, "Cursor Data", "", LH_FLAG_NOSAVE | LH_FLAG_NOSOURCE | LH_FLAG_LAST /*| LH_FLAG_READONLY | LH_FLAG_HIDEVALUE*/);
-    setup_json_data_->setLink("Cursors/#1");
+    setup_json_data_->setLink("Cursors/#1", true);
     setup_json_data_->setLinkFilter("Cursors");
     setup_json_data_->refreshData();
+
+    setup_json_postback_ = new LH_Qt_QString(this, "Cursor Postback", "", LH_FLAG_NOSAVE | LH_FLAG_NOSINK | LH_FLAG_LAST | LH_FLAG_READONLY );
+    setup_json_postback_->setLink("Cursors/Postback", true);
+    setup_json_postback_->setLinkFilter("CursorPostback");
+    setup_json_postback_->refreshData();
 
     setup_jump_to_ = new LH_Qt_InputState(this, "Quick Select", "", LH_FLAG_NOSINK | LH_FLAG_NOSOURCE);
     setup_jump_to_->setHelp("This optional field allows you to bind a specific key to this coordinate; when that key is pressed the cursor immediately jumps to and selects the coordintes.<br/>"
@@ -183,6 +188,7 @@ bool LH_CursorAction::updateState()
 
 void LH_CursorAction::fire(int startAt)
 {
+    cursorData cursor_data(setup_json_data_->value());
     fired = true;
     waiting = false;
     QDomDocument actionsXML("actionsXML");
@@ -232,32 +238,37 @@ void LH_CursorAction::fire(int startAt)
                 waiting = true;
                 delay = action.getParameter(e,0).toInt();
                 break;
-/*            }else
+            }else
             if(typeCode=="move")
             {
                 cursor_data.x = action.getParameter(e,0).toInt();
                 cursor_data.y = action.getParameter(e,1).toInt();
+                cursor_data.postback(setup_json_postback_, setup_json_data_);
             }else
             if(typeCode=="select")
             {
                 cursor_data.x = action.getParameter(e,0).toInt();
                 cursor_data.y = action.getParameter(e,1).toInt();
                 cursor_data.sendSelect = true;
+                cursor_data.postback(setup_json_postback_, setup_json_data_);
             }else
             if(typeCode=="deselect")
             {
                 cursor_data.selState = false;
+                cursor_data.postback(setup_json_postback_, setup_json_data_);
             }else
             if(typeCode=="deactivate")
             {
                 cursor_data.active = false;
+                cursor_data.postback(setup_json_postback_, setup_json_data_);
             }else
             if(typeCode=="reselect")
             {
                 cursor_data.x = cursor_data.lastSelX2;
                 cursor_data.y = cursor_data.lastSelY2;
                 cursor_data.sendSelect = true;
-*/            } else
+                cursor_data.postback(setup_json_postback_, setup_json_data_);
+            } else
                 qWarning() << "LH_Cursor: Unknown Action: " << typeCode;
         }
     }
@@ -267,10 +278,12 @@ void LH_CursorAction::doJumpTo(int flags, int value)
 {
     Q_UNUSED(flags);
     Q_UNUSED(value);
-/*    QString coord = setup_coordinate_->value().split(';')[0];
+    QString coord = setup_coordinate_->value().split(';')[0];
+    cursorData cursor_data(setup_json_data_->value());
     cursor_data.x = coord.split(',')[0].toInt();
     cursor_data.y = coord.split(',')[1].toInt();
-    cursor_data.sendSelect = true;*/
+    cursor_data.sendSelect = true;
+    cursor_data.postback(setup_json_postback_, setup_json_data_);
 }
 
 void LH_CursorAction::xmlChanged()

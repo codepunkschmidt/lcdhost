@@ -2,10 +2,15 @@
 #define LH_CURSORDATA_H
 
 #include <QString>
+#include <QHash>
 #include <QStringList>
 #include <QVariant>
 #include <QVariantMap>
+#include <QDateTime>
 #include "../json.h"
+#include "../LH_Qt_QString.h"
+
+extern QHash<QString, QString> postback_data;
 
 struct minmax {
     int min;
@@ -36,6 +41,24 @@ struct bounds {
 
 class cursorData
 {
+private:
+    void reset()
+    {
+        x = 1;
+        y = 1;
+        active = false;
+        selX = 0;
+        selY = 0;
+        selState = false;
+        lastSelX = 0;
+        lastSelY = 0;
+        lastSelSet = false;
+        sendSelect = false;
+        lastSelX2 = 0;
+        lastSelY2 = 0;
+        range = (bounds){(minmax){0,0},(minmax){0,0}};
+    }
+
 public:
     int x;
     int y;
@@ -53,48 +76,44 @@ public:
 
     cursorData()
     {
-        x = 1;
-        y = 1;
-        active = false;
-        selX = 0;
-        selY = 0;
-        selState = false;
-        lastSelX = 0;
-        lastSelY = 0;
-        lastSelSet = false;
-        sendSelect = false;
-        lastSelX2 = 0;
-        lastSelY2 = 0;
-        range = (bounds){(minmax){0,0},(minmax){0,0}};
+        reset();
     }
 
     cursorData(QString jsonData)
     {
+        if(!deserialize(jsonData))
+            reset();
+    }
+
+    bool deserialize(QString jsonData)
+    {
         bool ok;
         QVariantMap jobject = Json::parse(jsonData, ok).toMap();
+        if(ok)
+        {
+            x = jobject["x"].toInt();
+            y = jobject["y"].toInt();
+            active = jobject["active"].toBool();
+            selX = jobject["selX"].toInt();
+            selY = jobject["selY"].toInt();
+            selState = jobject["selState"].toBool();
+            lastSelX = jobject["lastSelX"].toInt();
+            lastSelY = jobject["lastSelY"].toInt();
+            lastSelSet = jobject["lastSelSet"].toBool();;
+            sendSelect = jobject["sendSelect"].toBool();;
+            lastSelX2 = jobject["lastSelX2"].toInt();
+            lastSelY2 = jobject["lastSelY2"].toInt();
 
-        x = jobject["x"].toInt();
-        y = jobject["y"].toInt();
-        active = jobject["active"].toBool();
-        selX = jobject["selX"].toInt();
-        selY = jobject["selY"].toInt();
-        selState = jobject["selState"].toBool();
-        lastSelX = jobject["lastSelX"].toInt();
-        lastSelY = jobject["lastSelY"].toInt();
-        lastSelSet = jobject["lastSelSet"].toBool();;
-        sendSelect = jobject["sendSelect"].toBool();;
-        lastSelX2 = jobject["lastSelX2"].toInt();
-        lastSelY2 = jobject["lastSelY2"].toInt();
+            QVariantMap rangeMap = jobject["range"].toMap();
+            QVariantMap rangeYMap = rangeMap["y"].toMap();
+            QVariantMap rangeXMap = rangeMap["x"].toMap();
 
-        QVariantMap rangeMap = jobject["range"].toMap();
-        QVariantMap rangeYMap = jobject["y"].toMap();
-        QVariantMap rangeXMap = jobject["x"].toMap();
-
-        range = (bounds){
-                    (minmax){rangeXMap["min"].toInt(),rangeXMap["max"].toInt()},
-                    (minmax){rangeYMap["min"].toInt(),rangeYMap["max"].toInt()}
-                };
-
+            range = (bounds){
+                        (minmax){rangeXMap["min"].toInt(),rangeXMap["max"].toInt()},
+                        (minmax){rangeYMap["min"].toInt(),rangeYMap["max"].toInt()}
+                    };
+        }
+        return ok;
     }
 
     QString serialize()
@@ -151,8 +170,17 @@ public:
 
         return QString("%1%2").arg(newActive? "ON" : "OFF").arg(newSelected? "_SEL" : "");
     }
-};//*/
 
-//extern cursorData cursor_data;
+    void postback(LH_Qt_QString *setup_json_postback_, LH_Qt_QString *setup_json_data_)
+    {
+        QString key = setup_json_data_->link();
+        if(postback_data.contains(key))
+            postback_data.remove(key);
+        postback_data.insert(key, serialize());
+
+        setup_json_postback_->setValue( QString::number(QDateTime::currentMSecsSinceEpoch()) );
+    }
+
+};
 
 #endif // LH_CURSORDATA_H

@@ -66,6 +66,7 @@ const char *LH_CursorPage::userInit()
                                );
     setup_json_data_ = new LH_Qt_QString(this, "Cursor Data", "", LH_FLAG_NOSAVE | LH_FLAG_NOSOURCE | LH_FLAG_LAST /*| LH_FLAG_READONLY | LH_FLAG_HIDEVALUE*/);
     setup_json_data_->setLink("Cursors/#1");
+    setup_json_data_->setLinkFilter("Cursors");
     setup_json_data_->refreshData();
 
     connect(setup_json_data_,SIGNAL(changed()),this,SLOT(updateState()));
@@ -82,23 +83,10 @@ QImage *LH_CursorPage::render_qimage( int w, int h )
 
 bool LH_CursorPage::updateState()
 {
-    QStringList mycoords = setup_coordinate_->value().split(';');
-    cursorData cursor_data(setup_json_data_->value());
+    bool newSelected;
+    bool newActive;
+    cursor_data(setup_json_data_->value()).getState(setup_coordinate_->value().split(';'),newSelected,newActive);
 
-    bool newSelected = false;
-    bool newActive = false;
-    foreach (QString mycoord_str, mycoords)
-    {
-        QStringList mycoord = mycoord_str.split(',');
-        if(mycoord.length()==2)
-        {
-            int myX = mycoord.at(0).toInt();
-            int myY = mycoord.at(1).toInt();
-
-            newSelected |= ( cursor_data.selState && cursor_data.selX==myX && cursor_data.selY==myY );
-            newActive |= ( cursor_data.active && cursor_data.x==myX && cursor_data.y==myY );
-        }
-    }
     if(selected!=newSelected || active != newActive)
     {
         selected = newSelected;

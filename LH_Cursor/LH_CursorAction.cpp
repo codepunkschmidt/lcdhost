@@ -76,6 +76,7 @@ const char *LH_CursorAction::userInit()
 
     setup_json_data_ = new LH_Qt_QString(this, "Cursor Data", "", LH_FLAG_NOSAVE | LH_FLAG_NOSOURCE | LH_FLAG_LAST /*| LH_FLAG_READONLY | LH_FLAG_HIDEVALUE*/);
     setup_json_data_->setLink("Cursors/#1");
+    setup_json_data_->setLinkFilter("Cursors");
     setup_json_data_->refreshData();
 
     setup_jump_to_ = new LH_Qt_InputState(this, "Quick Select", "", LH_FLAG_NOSINK | LH_FLAG_NOSOURCE);
@@ -161,24 +162,10 @@ int LH_CursorAction::polling()
 
 bool LH_CursorAction::updateState()
 {
-    cursorData cursor_data(setup_json_data_->value());
-    QStringList mycoords = setup_coordinate_->value().split(';');
+    bool newSelected;
+    bool newActive;
+    QString newStatusCode = cursor_data(setup_json_data_->value()).getState(setup_coordinate_->value().split(';'),newSelected,newActive);
 
-    bool newSelected = false;
-    bool newActive = false;
-    foreach (QString mycoord_str, mycoords)
-    {
-        QStringList mycoord = mycoord_str.split(',');
-        if(mycoord.length()==2)
-        {
-            int myX = mycoord.at(0).toInt();
-            int myY = mycoord.at(1).toInt();
-
-            newSelected = newSelected || ( cursor_data.selState && cursor_data.selX==myX && cursor_data.selY==myY );
-            newActive = newActive ||  ( cursor_data.active && cursor_data.x==myX && cursor_data.y==myY );
-        }
-    }
-    QString newStatusCode = QString("%1%2").arg(newActive? "ON" : "OFF").arg(newSelected? "_SEL" : "");
     if(statusCode_ != newStatusCode)
     {
         statusCode_ = newStatusCode;

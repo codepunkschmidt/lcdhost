@@ -93,7 +93,7 @@ const char *LH_CursorAction::userInit()
     setup_act_copy_ = new LH_Qt_QString(this, "Copy Actions", "Copy",  LH_FLAG_UI | LH_FLAG_BLANKTITLE, lh_type_string_button);
     setup_act_paste_ = new LH_Qt_QString(this, "Paste Actions", "Paste",  LH_FLAG_UI | LH_FLAG_BLANKTITLE, lh_type_string_button);
 
-    setup_act_rules_ = new LH_Qt_QStringList(this, "Actions", QStringList(),LH_FLAG_UI,lh_type_integer_listbox);
+    setup_act_rules_ = new LH_Qt_QStringList(this, "Actions", QStringList(),LH_FLAG_UI,lh_type_string_listbox);
     setup_act_rules_->setHelp("This box contains the list of actions that will be perfromed when the coordinate is selected. Each action is done in the order shown here.<br/><br/>Select an action from this list to edit or delete it.");
 
     setup_act_move_up_= new LH_Qt_QString(this, "Move Action Up", "Move Up",  LH_FLAG_UI | LH_FLAG_READONLY | LH_FLAG_BLANKTITLE, lh_type_string_button);
@@ -311,7 +311,7 @@ void LH_CursorAction::xmlChanged()
 void LH_CursorAction::enableEditUI(bool enabled)
 {
     int offFlag = (enabled? 0 : LH_FLAG_HIDDEN | LH_FLAG_READONLY);
-    int curPos = setup_act_rules_->value();
+    int curPos = setup_act_rules_->index();
 
     setup_action_desc_->setFlags(LH_FLAG_UI | offFlag);
     setup_action_type_->setFlags(LH_FLAG_UI | offFlag);
@@ -337,13 +337,13 @@ void LH_CursorAction::enableEditUI(bool enabled)
 
 void LH_CursorAction::reloadAction()
 {
-    enableEditUI(setup_act_rules_->list().count()!=0 && setup_act_rules_->value()!=-1);
+    enableEditUI(setup_act_rules_->list().count()!=0 && setup_act_rules_->index()!=-1);
     if(setup_act_rules_->list().count()==0) return;
 
     QDomDocument actionsXML("actionsXML");
-    if(actionsXML.setContent(setup_act_XML_->value()) && actionsXML.firstChild().childNodes().count()!=0 && setup_act_rules_->value()!=-1)
+    if(actionsXML.setContent(setup_act_XML_->value()) && actionsXML.firstChild().childNodes().count()!=0 && setup_act_rules_->index()!=-1)
     {
-        QDomElement e = actionsXML.firstChild().childNodes().at(setup_act_rules_->value()).toElement();
+        QDomElement e = actionsXML.firstChild().childNodes().at(setup_act_rules_->index()).toElement();
         QString typeCode = e.attribute("type");
 
         setup_action_type_->setValue( actionTypes_.indexOf(typeCode) );
@@ -378,11 +378,11 @@ void LH_CursorAction::saveAction()
     //Update the xml data
     QString strXML = at.generateXML(setup_action_enabled_->value(),setup_action_desc_->value(),paramValues);
     QStringList xmlLines = setup_act_XML_->value().split("\n");
-    if(setup_act_rules_->value()!=-1)
+    if(setup_act_rules_->index()!=-1)
     {
         //setup_act_rules_->list()[setup_act_rules_->value()] = desc;
         //setup_act_rules_->refreshList();
-        xmlLines[setup_act_rules_->value()+1] = strXML;
+        xmlLines[setup_act_rules_->index()+1] = strXML;
     } else {
         xmlLines.insert(xmlLines.count()-1, strXML);
         //setup_act_rules_->setValue(setup_act_rules_->list().count()-1);
@@ -393,7 +393,7 @@ void LH_CursorAction::saveAction()
 
 void LH_CursorAction::moveAction_up()
 {
-    int curPos = setup_act_rules_->value();
+    int curPos = setup_act_rules_->index();
 
     if(curPos <= 0) return;
 
@@ -410,7 +410,7 @@ void LH_CursorAction::moveAction_up()
 
 void LH_CursorAction::moveAction_down()
 {
-    int curPos = setup_act_rules_->value();
+    int curPos = setup_act_rules_->index();
 
     if(curPos >= setup_act_rules_->list().count()-1) return;
 
@@ -443,7 +443,7 @@ void LH_CursorAction::newAction()
 
 void LH_CursorAction::deleteAction()
 {
-    int selIndex = setup_act_rules_->value();
+    int selIndex = setup_act_rules_->index();
 
     QStringList xmlLines = setup_act_XML_->value().split("\n");
     xmlLines.removeAt(selIndex+1);

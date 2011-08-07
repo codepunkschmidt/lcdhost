@@ -123,8 +123,8 @@ static void lh_settype_setup_item( lua_State *L, LH_LuaSetupItem *item )
         if( !strcmp(t,"progress") ) item->item()->type = lh_type_integer_progress;
         break;
     case 'l': // list
-        if( !strcmp(t,"list") ) item->item()->type = lh_type_integer_list;
-        if( !strcmp(t,"listbox") ) item->item()->type = lh_type_integer_listbox;
+        if( !strcmp(t,"list") ) item->item()->type = lh_type_string_list;
+        if( !strcmp(t,"listbox") ) item->item()->type = lh_type_string_listbox;
         break;
     case 'b':
         if( !strcmp(t,"boolean") ) item->item()->type = lh_type_integer_boolean;
@@ -187,11 +187,6 @@ static void lh_self_item_data_setvalue(lua_State *L, LH_LuaSetupItem* item, int 
             else
                 item->setValue( (qlonglong) QColor(Qt::black).rgba() );
             break;
-        case lh_type_integer_list:
-        case lh_type_integer_listbox:
-            // in Lua, lists start at 1!
-            item->setValue( (qlonglong) lua_tointeger(L,-1) - 1 );
-            break;
         case lh_type_integer_boolean:
             item->setValue( (bool) lua_toboolean(L,-1) );
             break;
@@ -208,6 +203,8 @@ static void lh_self_item_data_setvalue(lua_State *L, LH_LuaSetupItem* item, int 
         case lh_type_string_inputstate:
         case lh_type_string_inputvalue:
         case lh_type_array_png:
+        case lh_type_string_list:
+        case lh_type_string_listbox:
             {
                 size_t len = 0;
                 const char *str = lua_tolstring( L, -1, &len );
@@ -261,8 +258,8 @@ static void lh_self_item_data_setvalue(lua_State *L, LH_LuaSetupItem* item, int 
         break;
     case 6:
         Q_ASSERT( !strcmp("list",lh_self_item_data_key[where]) );
-        if( item->item()->type != lh_type_integer_list &&
-            item->item()->type != lh_type_integer_listbox )
+        if( item->item()->type != lh_type_string_list &&
+            item->item()->type != lh_type_string_listbox )
         {
             lua_pushstring(L,"must set 'type' to \"list\" or \"listbox\" before setting 'list'");
             lua_error(L);
@@ -379,10 +376,10 @@ static void lh_self_item_data_getvalue(lua_State *L, LH_LuaSetupItem* item, int 
         case lh_type_integer_progress:
             lua_pushstring(L,"progress");
             break;
-        case lh_type_integer_list:
+        case lh_type_string_list:
             lua_pushstring(L,"list");
             break;
-        case lh_type_integer_listbox:
+        case lh_type_string_listbox:
             lua_pushstring(L,"listbox");
             break;
         case lh_type_integer_boolean:
@@ -440,11 +437,6 @@ static void lh_self_item_data_getvalue(lua_State *L, LH_LuaSetupItem* item, int 
         case lh_type_integer_progress:
             lua_pushinteger(L,item->item()->data.i);
             break;
-        case lh_type_integer_list:
-        case lh_type_integer_listbox:
-            // in Lua, lists start at 1!
-            lua_pushinteger(L,item->item()->data.i + 1);
-            break;
         case lh_type_integer_boolean:
             lua_pushboolean(L,item->item()->data.i);
             break;
@@ -461,6 +453,8 @@ static void lh_self_item_data_getvalue(lua_State *L, LH_LuaSetupItem* item, int 
         case lh_type_string_inputstate:
         case lh_type_string_inputvalue:
         case lh_type_array_png:
+        case lh_type_string_list:
+        case lh_type_string_listbox:
             lua_pushlstring(L, (const char*) item->item()->data.b.p, item->item()->data.b.n );
             break;
         case lh_type_pointer:
@@ -495,7 +489,7 @@ static void lh_self_item_data_getvalue(lua_State *L, LH_LuaSetupItem* item, int 
         break;
     case 6: // list
         Q_ASSERT( !strcmp("list",lh_self_item_data_key[where]));
-        if( (item->item()->type == lh_type_integer_list || item->item()->type == lh_type_integer_listbox)
+        if( (item->item()->type == lh_type_string_list || item->item()->type == lh_type_string_listbox)
             && item->item()->param.list )
             lua_pushstring(L,item->item()->param.list);
         else

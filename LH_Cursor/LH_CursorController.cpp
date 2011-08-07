@@ -202,7 +202,7 @@ void LH_CursorController::doSelect(int flags,int value)
     if( cursor_data_.active )
     {
         cursor_data_.sendSelect = false;
-        if(cursorModes[setup_mode_->value()].select==smSelectDeselect &&
+        if(cursorModes[setup_mode_->index()].select==smSelectDeselect &&
            cursor_data_.selState &&
            cursor_data_.selX == cursor_data_.x &&
            cursor_data_.selY == cursor_data_.y)
@@ -250,7 +250,7 @@ void LH_CursorController::doActivate(int flags,int value)
     Q_UNUSED(flags);
     Q_UNUSED(value);
 
-    if( cursorModes[setup_mode_->value()].activate )
+    if( cursorModes[setup_mode_->index()].activate )
     {
         cursor_data_.active = !cursor_data_.active;
         updateLocation(0,0);
@@ -366,7 +366,7 @@ void LH_CursorController::updateLocation(int xMod, int yMod, bool absolute)
     if(moved) {
         cursor_data_.x = newX;
         cursor_data_.y = newY;
-        if(cursorModes[setup_mode_->value()].select==smNone) doSelect(0,0);
+        if(cursorModes[setup_mode_->index()].select==smNone) doSelect(0,0);
     }
 
     persistSelection();
@@ -378,16 +378,16 @@ void LH_CursorController::updateLocation(int xMod, int yMod, bool absolute)
 
 void LH_CursorController::changeMode()
 {
-    if(cursorModes[setup_mode_->value()].select!=smSelectDeselect)
+    if(cursorModes[setup_mode_->index()].select!=smSelectDeselect)
     {
         cursor_data_.selX = cursor_data_.x;
         cursor_data_.selY = cursor_data_.y;
         cursor_data_.selState = true;
     }
-    cursor_data_.active = !cursorModes[setup_mode_->value()].activate;
-    setup_select_->setFlag(LH_FLAG_HIDDEN, cursorModes[setup_mode_->value()].select==smNone);
-    setup_reselect_->setFlag(LH_FLAG_HIDDEN, cursorModes[setup_mode_->value()].select!=smSelectDeselect);
-    setup_activate_->setFlag(LH_FLAG_HIDDEN, !cursorModes[setup_mode_->value()].activate);
+    cursor_data_.active = !cursorModes[setup_mode_->index()].activate;
+    setup_select_->setFlag(LH_FLAG_HIDDEN, cursorModes[setup_mode_->index()].select==smNone);
+    setup_reselect_->setFlag(LH_FLAG_HIDDEN, cursorModes[setup_mode_->index()].select!=smSelectDeselect);
+    setup_activate_->setFlag(LH_FLAG_HIDDEN, !cursorModes[setup_mode_->index()].activate);
 }
 
 void LH_CursorController::changeBounds()

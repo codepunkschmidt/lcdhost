@@ -416,14 +416,12 @@ void LH_QtSetupItem::setValue( const char *s, int len )
 
 void LH_QtSetupItem::setList( const QByteArray& list )
 {
-    if( type() == lh_type_integer_list ||
-            type() == lh_type_integer_listbox ||
+    if( type() == lh_type_string_list ||
+            type() == lh_type_string_listbox ||
             type() == lh_type_string_combobox )
     {
         list_array_ = list;
         item_.param.list = list_array_.constData();
-        if( (type()&lh_type_integer) && (item_.data.i < -1 || item_.data.i >= list.count()) )
-            item_.data.i = -1;
         return;
     }
     Q_ASSERT(!"LH_QtSetupItem::setList() called for non-list type");
@@ -432,8 +430,8 @@ void LH_QtSetupItem::setList( const QByteArray& list )
 
 void LH_QtSetupItem::refreshList()
 {
-    if( type() == lh_type_integer_list ||
-            type() == lh_type_integer_listbox ||
+    if( type() == lh_type_string_list ||
+            type() == lh_type_string_listbox ||
             type() == lh_type_string_combobox )
     {
         item_.param.list = list_array_.constData();

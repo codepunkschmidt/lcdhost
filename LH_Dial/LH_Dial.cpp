@@ -752,6 +752,7 @@ void LH_Dial::changeType()
     if(selVal<0)selVal=0;
 
     setup_orientation_->setFlag(LH_FLAG_HIDDEN, setup_type_->index()==0 );
+    int idx = setup_orientation_->index();
     setup_orientation_->list().clear();
     switch(setup_type_->index())
     {
@@ -771,10 +772,10 @@ void LH_Dial::changeType()
         setup_orientation_->list().append("Bottom Right");
         break;
     }
+    if(idx>=setup_orientation_->list().count())
+        idx = setup_orientation_->list().count()-1;
     setup_orientation_->refreshList();
-    setup_orientation_->refreshList();
-    setup_orientation_->refreshList();
-    setup_orientation_->refreshList();
+    setup_orientation_->setIndex(idx);
 
     if(selVal>=setup_orientation_->list().count()) selVal = setup_orientation_->list().count()-1;
     setup_orientation_->setValue(selVal);

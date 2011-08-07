@@ -259,8 +259,6 @@ typedef enum lh_setup_type_t
     lh_type_integer_color, /* 32-bit AARRGGBB */
     lh_type_integer_slider, /* slider to select an integer */
     lh_type_integer_progress, /* progress bar */
-    lh_type_integer_list, /* using dropdown box, have user select one of the param.list strings */
-    lh_type_integer_listbox, /* using listbox, have user select one of the param.list strings */
 
     lh_type_double = 0x0200, /* double selection using spinbox */
 
@@ -272,6 +270,8 @@ typedef enum lh_setup_type_t
     lh_type_string_inputvalue, /* ask user for a button or full axis movement */
     lh_type_string_button, /* a clickable button */
     lh_type_string_htmlhelp, /* show the help text in-line, receive clicked links */
+    lh_type_string_list, /* using dropdown box, have user select one of the param.list strings */
+    lh_type_string_listbox, /* using listbox, have user select one of the param.list strings */
     lh_type_string_combobox, /* using combobox, allow user to select or type a string value */
 
     lh_type_pointer = 0x0800, /* not saved - store a pointer */

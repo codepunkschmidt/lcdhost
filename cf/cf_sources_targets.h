@@ -119,11 +119,9 @@ public:
             switch(obj_->type())
             {
             case lh_type_string:
+            case lh_type_string_list:
+            case lh_type_string_listbox:
                 value = ((LH_Qt_QString*)obj_)->value();
-                break;
-            case lh_type_integer_list:
-            case lh_type_integer_listbox:
-                value = ((LH_Qt_QStringList*)obj_)->valueText();
                 break;
             default:
                 qWarning() << "Unhandled cf source type: " << obj_->type();

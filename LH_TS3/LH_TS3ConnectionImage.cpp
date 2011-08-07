@@ -12,7 +12,7 @@ protected:
     QImage* getPlaceholder()
     {
         QImage* image = new QImage();
-        QString status = setup_connection_status_->valueText();
+        QString status = setup_connection_status_->value();
         image->load(QString(":/images/%1.png")
                     .arg(status=="Not Running"?"notrunning":(status=="Not Connected"?"unconnected":"active"))
                     );

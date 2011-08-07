@@ -197,13 +197,13 @@ int LH_MonitoringUI::value(ui_mon_entry_type et)
     switch(et)
     {
     case mon_type:
-        return setup_value_type_->value();
+        return setup_value_type_->index();
         break;
     case mon_group:
-        return setup_value_group_->value();
+        return setup_value_group_->index();
         break;
     case mon_item:
-        return setup_value_item_->value();
+        return setup_value_item_->index();
         break;
     }
     return -1;
@@ -214,13 +214,13 @@ QString LH_MonitoringUI::valueText(ui_mon_entry_type et)
     switch(et)
     {
     case mon_type:
-        return setup_value_type_->valueText();
+        return setup_value_type_->value();
         break;
     case mon_group:
-        return setup_value_group_->valueText();
+        return setup_value_group_->value();
         break;
     case mon_item:
-        return setup_value_item_->valueText();
+        return setup_value_item_->value();
         break;
     }
     return "";
@@ -309,19 +309,19 @@ void LH_MonitoringUI::changeTypeSelection()
     {
     case ui_mode_items:
         if (setup_value_type_->list().length()!=0)
-            setup_value_type_index_->setValue(setup_value_type_->value());
+            setup_value_type_index_->setValue(setup_value_type_->index());
         setup_value_item_->list().clear();
         break;
     case ui_mode_index:
-        loadItemsList( setup_value_type_->value() );
+        loadItemsList( setup_value_type_->index() );
         setup_value_index_->setValue( getIndex() );
         break;
     case ui_mode_aida64:
         if (setup_value_type_->list().length()!=0)
         {
-            if(setup_value_type_->value()!=-1)
-                if(setup_value_type_->value() < setup_value_type_->list().count())
-                    setup_value_type_name_->setValue(QString(setup_value_type_->list().at(setup_value_type_->value())).remove(" [Unavailable]"));
+            if(setup_value_type_->index()!=-1)
+                if(setup_value_type_->index() < setup_value_type_->list().count())
+                    setup_value_type_name_->setValue(QString(setup_value_type_->list().at(setup_value_type_->index())).remove(" [Unavailable]"));
             setup_value_group_name_->setValue("");
             setup_value_item_name_->setValue("");
             ((LH_Aida64Data*)data_)->updateLists();
@@ -366,7 +366,7 @@ void LH_MonitoringUI::changeGroupSelection()
     {
     case ui_mode_items:
         if (setup_value_group_->list().length()!=0)
-            setup_value_group_index_->setValue(setup_value_group_->value());
+            setup_value_group_index_->setValue(setup_value_group_->index());
         setup_value_item_->list().clear();
         break;
     case ui_mode_index:
@@ -375,9 +375,9 @@ void LH_MonitoringUI::changeGroupSelection()
     case ui_mode_aida64:
         if (setup_value_group_->list().length()!=0)
         {
-            if(setup_value_group_->value()!=-1)
-                if(setup_value_group_->value() < setup_value_group_->list().count())
-                    setup_value_group_name_->setValue(setup_value_group_->list().at(setup_value_group_->value()));
+            if(setup_value_group_->index()!=-1)
+                if(setup_value_group_->index() < setup_value_group_->list().count())
+                    setup_value_group_name_->setValue(setup_value_group_->list().at(setup_value_group_->index()));
             setup_value_item_name_->setValue("");
             ((LH_Aida64Data*)data_)->updateLists();
             changeItemSelection();
@@ -421,16 +421,16 @@ void LH_MonitoringUI::changeItemSelection()
     {
     case ui_mode_items:
         if (setup_value_item_->list().length()!=0)
-            setup_value_item_index_->setValue(setup_value_item_->value());
+            setup_value_item_index_->setValue(setup_value_item_->index());
         break;
     case ui_mode_index:
         setup_value_index_->setValue(getIndex());
         break;
     case ui_mode_aida64:
         if (setup_value_item_->list().length()!=0)
-            if(setup_value_item_->value()!=-1)
-                if(setup_value_item_->value()<setup_value_item_->list().count())
-                    setup_value_item_name_->setValue(setup_value_item_->list().at(setup_value_item_->value()));
+            if(setup_value_item_->index()!=-1)
+                if(setup_value_item_->index()<setup_value_item_->list().count())
+                    setup_value_item_name_->setValue(setup_value_item_->list().at(setup_value_item_->index()));
         data_->setIsGroup(setup_value_item_name_->value() == "All");
         break;
     }
@@ -454,8 +454,8 @@ void LH_MonitoringUI::setIndexSelection()
 int LH_MonitoringUI::getIndex()
 {
     if(mode_!=ui_mode_index) return 0;
-    int typeID = setup_value_type_->value();
-    int itemID = setup_value_item_->value();
+    int typeID = setup_value_type_->index();
+    int itemID = setup_value_item_->index();
     if(typeID < sensors_.length() && typeID != -1)
         if(itemID < sensors_[typeID].indexes.length() && itemID!=-1)
             return sensors_[typeID].indexes[itemID];
@@ -470,7 +470,7 @@ void LH_MonitoringUI::setIndex(int index)
     {
         if(sensors_[i].indexes.contains(index))
         {
-            if(setup_value_type_->value()!=i || setup_value_item_->list().count()==0)
+            if(setup_value_type_->index()!=i || setup_value_item_->list().count()==0)
             {
                 setup_value_type_->setValue(i);
                 loadItemsList(i);
@@ -498,7 +498,7 @@ void LH_MonitoringUI::changeAppSelection()
 {
     if (setup_monitoring_app_->list().length()!=0)
     {
-        QString val = setup_monitoring_app_->valueText();
+        QString val = setup_monitoring_app_->value();
         if(val!="") setup_monitoring_app_name_->setValue(val);
     }
 
@@ -522,27 +522,27 @@ void LH_MonitoringUI::acquireAppData()
         data_ = NULL;
     }
 #ifdef LH_MONITORING_LIBRARY
-    if(setup_monitoring_app_->valueText() == "MSI Afterburner")
+    if(setup_monitoring_app_->value() == "MSI Afterburner")
         data_ = new LH_AfterburnerData((LH_QtObject*)parent(), this, dataMode_, includeGroups_);
-    if(setup_monitoring_app_->valueText() == "ATI Tray Tools")
+    if(setup_monitoring_app_->value() == "ATI Tray Tools")
         data_ = new LH_ATITrayToolsData((LH_QtObject*)parent(), this, dataMode_, includeGroups_);
-    if(setup_monitoring_app_->valueText() == "Core Temp")
+    if(setup_monitoring_app_->value() == "Core Temp")
         data_ = new LH_CoreTempData((LH_QtObject*)parent(), this, dataMode_, includeGroups_);
-    if(setup_monitoring_app_->valueText() == "SpeedFan")
+    if(setup_monitoring_app_->value() == "SpeedFan")
         data_ = new LH_SpeedFanData((LH_QtObject*)parent(), this, dataMode_, includeGroups_);
-    if(setup_monitoring_app_->valueText() == "RivaTuner")
+    if(setup_monitoring_app_->value() == "RivaTuner")
         data_ = new LH_RivaTunerData((LH_QtObject*)parent(), this, dataMode_, includeGroups_);
-    if(setup_monitoring_app_->valueText() == "GPU-Z")
+    if(setup_monitoring_app_->value() == "GPU-Z")
         data_ = new LH_GPUZData((LH_QtObject*)parent(), this, dataMode_, includeGroups_);
-    if(setup_monitoring_app_->valueText() == "Fraps")
+    if(setup_monitoring_app_->value() == "Fraps")
         data_ = new LH_FrapsData((LH_QtObject*)parent(), this, dataMode_, includeGroups_);
-    if(setup_monitoring_app_->valueText() == "Logitech Monitoring Gadget")
+    if(setup_monitoring_app_->value() == "Logitech Monitoring Gadget")
         data_ = new LH_LogitechData((LH_QtObject*)parent(), this, dataMode_, includeGroups_);
-    if(setup_monitoring_app_->valueText() == "Aida64")
+    if(setup_monitoring_app_->value() == "Aida64")
         data_ = new LH_Aida64Data((LH_QtObject*)parent(), this, dataMode_, includeGroups_);
-    if(setup_monitoring_app_->valueText() == "HWMonitor + HWMonTray")
+    if(setup_monitoring_app_->value() == "HWMonitor + HWMonTray")
         data_ = new LH_HWMonData((LH_QtObject*)parent(), this, dataMode_, includeGroups_);
-    // if(setup_monitoring_app_->valueText() == "HWiNFO")
+    // if(setup_monitoring_app_->value() == "HWiNFO")
         // data_ = new LH_HWiNFOData((LH_QtObject*)parent(), this, dataMode_, includeGroups_);
 #elif LH_TORRENTMON_LIBRARY
 #endif

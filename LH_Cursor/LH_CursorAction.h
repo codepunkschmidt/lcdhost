@@ -62,6 +62,7 @@ protected:
     LH_Qt_QString *setup_coordinate_;
     LH_Qt_InputState *setup_jump_to_;
     LH_Qt_QString *setup_json_data_;
+    LH_Qt_QString *setup_json_postback_;
 
     LH_Qt_QString     *setup_action_desc_;
     LH_Qt_QStringList *setup_action_type_;

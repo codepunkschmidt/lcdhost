@@ -139,6 +139,12 @@ const char *LH_CursorController::userInit()
     setup_json_data_->setLinkFilter("Cursors");
     setup_json_data_->refreshData();
 
+    setup_duplex_postback_ = new LH_Qt_QString(this, "Cursor Postback", "", LH_FLAG_NOSAVE | LH_FLAG_NOSOURCE | LH_FLAG_LAST | LH_FLAG_READONLY );
+    setup_duplex_postback_->setLink("Cursors/Postback");
+    setup_duplex_postback_->setLinkFilter("CursorPostback");
+    setup_duplex_postback_->refreshData();
+
+    connect(setup_duplex_postback_,SIGNAL(changed()),this,SLOT(processPostback()));
     connect(setup_persistent_, SIGNAL(changed()), this, SLOT(changePersistent()));
     connect(setup_persistent_file_, SIGNAL(changed()), this, SLOT(loadPersistedSelection()));
 
@@ -408,11 +414,8 @@ void LH_CursorController::changeBounds()
 
 int LH_CursorController::polling()
 {
-    if(cursor_data_.sendSelect) doSelect();
-    setup_coordinate_->setValue(QString("%1,%2").arg(cursor_data_.x).arg(cursor_data_.y));
-    return 200;
+    return 0;
 }
-
 
 void LH_CursorController::changePersistent()
 {
@@ -432,3 +435,15 @@ void LH_CursorController::virtualKeyPress(QString s)
     else if( s == "resel" ) doReselect();
 }
 #endif
+
+void LH_CursorController::processPostback()
+{
+    QString key = setup_json_data_->link();
+    if(postback_data.contains(key))
+    {
+        qDebug() << "CURSOR POSTBACK: " << cursor_data_.deserialize(postback_data.value(key));
+        postback_data.remove(key);
+        if(cursor_data_.sendSelect) doSelect();
+        setup_coordinate_->setValue(QString("%1,%2").arg(cursor_data_.x).arg(cursor_data_.y));
+    }
+}

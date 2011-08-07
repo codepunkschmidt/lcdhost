@@ -76,6 +76,7 @@ protected:
     LH_Qt_QFileInfo *setup_persistent_file_;
 
     LH_Qt_QString *setup_json_data_;
+    LH_Qt_QString *setup_duplex_postback_;
 
 #ifdef ENABLE_VIRTUAL_CURSOR_KEYS
     LH_Qt_QString *setup_virtual_keys_;
@@ -83,7 +84,6 @@ protected:
 
 public:
     const char *userInit();
-    int polling();
 
     static lh_class *classInfo();
 
@@ -102,6 +102,8 @@ public slots:
 
     void changePersistent();
     void loadPersistedSelection();
+
+    void processPostback();
 
 #ifdef ENABLE_VIRTUAL_CURSOR_KEYS
     void virtualKeyPress(QString);

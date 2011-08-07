@@ -25,29 +25,21 @@
   */
 
 #include "LH_Graph.h"
-#include "../LH_QtCPU.h"
 
 class LH_GraphCPUAverage : public LH_Graph
 {
-    LH_QtCPU *cpu_;
-    int valCount;
-    qreal valCache;
-    qreal lastVal;
-
 public:
     const char *userInit()
     {
         if( const char *err = LH_Graph::userInit() ) return err;
-        cpu_ = new LH_QtCPU(this);
-        valCount = 0;
-        valCache = 0;
-        lastVal = 0;
+
+        setup_linked_values_->setLink("/system/cpu/coreloads");
+        setUseLinkedValueAverage(true);
 
         setMin(0.0);
         setMax(100);
         setYUnit("%");
 
-        cpu_->smoothingHidden(true);
         return 0;
     }
 
@@ -60,35 +52,9 @@ public:
             "SystemCPUAverageGraph",
             "Average Load (Graph)",
             48,48
-            
-            
         };
 
         return &classInfo;
-    }
-
-    int notify(int n, void *p)
-    {
-        if(!n || n&LH_NOTE_SECOND)
-        {
-            if (valCount!=0) {
-                lastVal = valCache/valCount;
-                addValue(lastVal);
-            }
-            valCache = 0;
-            valCount = 0;
-        } else {
-            valCache+=cpu_->averageload()/100;
-            valCount+=1;
-        }
-        return LH_Graph::notify(n,p) | LH_NOTE_SECOND;
-    }
-
-    QImage *render_qimage( int w, int h )
-    {
-        if( LH_Graph::render_qimage(w,h) == NULL ) return NULL;
-        drawSingle();
-        return image_;
     }
 };
 

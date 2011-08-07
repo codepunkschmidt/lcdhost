@@ -57,6 +57,7 @@ LH_Graph::LH_Graph( double defaultMin, double defaultMax )
     len_ = 30;
     divisorY_ = 1;
     unitText_ = "";
+    useLinkedValueAverage_ = false;
     return;
 }
 
@@ -128,6 +129,9 @@ const char *LH_Graph::userInit()
     setup_max_->setHelp( "<p>The maximum value displayed on the graph.</p>"
                          "<p>This value can only be set when \"Ymax Can Grow\" is disabled (see below).</p>");
 
+    setup_linked_values_ = new LH_Qt_array_double(this,"Linked Value",0,LH_FLAG_NOSAVE);
+    setup_units_ = new LH_Qt_QStringList(this,"Units",QStringList(),LH_FLAG_AUTORENDER | LH_FLAG_HIDDEN);
+
     setup_max_grow_ = new LH_Qt_bool(this,"Ymax Can Grow", true, LH_FLAG_AUTORENDER | LH_FLAG_READONLY | LH_FLAG_HIDDEN);
     setup_max_grow_->setHelp( "<p>When enabled the value for \"Graph Ymax\" will increase automatically to ensure no value goes off the top edge.</p>");
 
@@ -189,6 +193,8 @@ const char *LH_Graph::userInit()
     connect( setup_show_y_min_, SIGNAL(changed()), this, SLOT(updateLabelSelection()) );
     connect( setup_show_real_limits_, SIGNAL(changed()), this, SLOT(updateLabelSelection()) );
     connect( setup_max_grow_, SIGNAL(changed()), this, SLOT(updateLimitControls()) );
+    connect( setup_linked_values_, SIGNAL(changed()), this, SLOT(newLinkedValue()) );
+    connect( setup_units_, SIGNAL(changed()), this, SLOT(changeUnits()));
 
     if (isDebug) qDebug() << "graph: init: done";
 
@@ -691,17 +697,40 @@ void LH_Graph::setYUnit( QString str, double divisor )
     if (divisor!=0) divisorY_ = divisor;
 }
 
-int LH_Graph::notify(int code,void* param)
+int LH_Graph::notify(int n, void *p)
 {
-    Q_UNUSED(code);
-    Q_UNUSED(param);
-    return 0;
+    Q_UNUSED(p);
+    if(setup_linked_values_->link()==NULL)
+        return 0;
+    else
+    {
+        if(n&LH_NOTE_SECOND)
+        {
+            double totalTotal = 0;
+            for(int n=0; n<linkedValues.count(); n++)
+            {
+                double total = 0;
+                foreach(double d, linkedValues[n])
+                    total += d;
+                if(!useLinkedValueAverage_)
+                    addValue(total/linkedValues[n].count(), n);
+                else
+                    totalTotal += total/linkedValues[n].count();
+                linkedValues[n].clear();
+            }
+            if(useLinkedValueAverage_)
+                addValue(totalTotal/linkedValues.count());
+            requestRender();
+        }
+        return LH_NOTE_SECOND;
+    }
 }
 
 QImage *LH_Graph::render_qimage( int w, int h )
 {
     if( LH_QtInstance::initImage(w,h) == NULL ) return NULL;
     image_->fill( PREMUL( setup_bgcolor_->value().rgba() ) );
+    drawAll();
     return image_;
 }
 
@@ -951,4 +980,37 @@ void LH_Graph::reload_images()
         if(QFileInfo(fgImgPath).isFile())
             fgImgs_.insert(lineID, QImage(fgImgPath).scaled(w,h));
     }
+}
+
+void LH_Graph::newLinkedValue()
+{
+    while(linkedValues.count()<setup_linked_values_->size())
+        linkedValues.append( QList<double>() );
+    while(linkedValues.count()>setup_linked_values_->size())
+        linkedValues.removeLast();
+
+    for(int n=0; n<setup_linked_values_->size(); n++)
+    {
+        linkedValues[n].append(setup_linked_values_->at(n));
+    }
+    callback(lh_cb_notify);
+}
+
+void LH_Graph::changeUnits()
+{
+    if(setup_units_->index()==-1)
+        return;
+
+    customUnit u = customUnits.at(setup_units_->index());
+    setYUnit(u.text, u.divisor);
+}
+
+void LH_Graph::addCustomUnits(QString caption, QString text, double divisor)
+{
+    customUnits.append((customUnit){text, divisor});
+    setup_units_->list().append(caption);
+    setup_units_->refreshList();
+    if(setup_units_->index()==-1)
+        setup_units_->setIndex(0);
+    setup_units_->setFlag(LH_FLAG_HIDDEN, false);
 }

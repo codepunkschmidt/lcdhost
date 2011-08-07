@@ -38,8 +38,15 @@
 #include "../LH_Qt_QTextEdit.h"
 #include "../LH_Qt_QFont.h"
 #include "../LH_Qt_QFileInfo.h"
+#include "../LH_Qt_array_double.h"
 #include "QList"
 #include "QHash"
+
+struct customUnit
+{
+    QString text;
+    double divisor;
+};
 
 class LH_Graph : public LH_QtInstance
 {
@@ -78,8 +85,12 @@ class LH_Graph : public LH_QtInstance
 
     bool hasDeadValue_;
     double deadValue_;
+
+    QList< QList<double> >linkedValues;
+    bool useLinkedValueAverage_;
 protected:
     bool graph_empty_;
+    QList<customUnit> customUnits;
 
     LH_Qt_QStringList *setup_fg_type_;
     LH_Qt_QStringList *setup_bg_type_;
@@ -97,6 +108,8 @@ protected:
     LH_Qt_bool *setup_max_grow_;
     LH_Qt_double *setup_max_;
     LH_Qt_double *setup_min_;
+    LH_Qt_array_double *setup_linked_values_;
+    LH_Qt_QStringList *setup_units_;
 
     LH_Qt_bool *setup_auto_scale_y_max_;
     LH_Qt_bool *setup_auto_scale_y_min_;
@@ -162,6 +175,10 @@ public:
         deadValue_ = v;
     }
 
+    void addCustomUnits(QString, QString, double);
+
+    void setUseLinkedValueAverage(bool val) { useLinkedValueAverage_ = val; }
+    bool useLinkedValueAverage() { return useLinkedValueAverage_; }
 public slots:
     void changeMaxSamples();
     void changeSampleRate();
@@ -172,6 +189,8 @@ public slots:
     void updateLimitControls();
     void updateFGImage();
     void updateBGImage();
+    void newLinkedValue();
+    void changeUnits();
 };
 
 #endif // LH_GRAPH_H

@@ -200,7 +200,7 @@ void LH_CursorController::doSelect(int flags,int value)
     Q_UNUSED(flags);
     Q_UNUSED(value);
 
-    if( cursor_data_.active )
+    if( cursor_data_.active && setup_mode_->index()!=-1)
     {
         cursor_data_.sendSelect = false;
         if(cursorModes[setup_mode_->index()].select==smSelectDeselect &&
@@ -250,6 +250,8 @@ void LH_CursorController::doActivate(int flags,int value)
 {
     Q_UNUSED(flags);
     Q_UNUSED(value);
+    if(setup_mode_->index()==-1)
+        return;
 
     if( cursorModes[setup_mode_->index()].activate )
     {
@@ -367,7 +369,8 @@ void LH_CursorController::updateLocation(int xMod, int yMod, bool absolute)
     if(moved) {
         cursor_data_.x = newX;
         cursor_data_.y = newY;
-        if(cursorModes[setup_mode_->index()].select==smNone) doSelect(0,0);
+        if(setup_mode_->index()!=-1)
+            if(cursorModes[setup_mode_->index()].select==smNone) doSelect(0,0);
     }
 
     persistSelection();
@@ -379,6 +382,8 @@ void LH_CursorController::updateLocation(int xMod, int yMod, bool absolute)
 
 void LH_CursorController::changeMode()
 {
+    if(setup_mode_->index()==-1)
+        return;
     if(cursorModes[setup_mode_->index()].select!=smSelectDeselect)
     {
         cursor_data_.selX = cursor_data_.x;

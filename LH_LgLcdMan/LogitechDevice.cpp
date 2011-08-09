@@ -81,7 +81,8 @@ const char *LogitechDevice::input_name(const char *devid, int n)
     case 0x2000: return "Down";
     case 0x4000: return "Menu";
     }
-    return LH_QtObject::input_name(devid,n);
+    return 0;
+    // return LH_QtObject::input_name(devid,n);
 }
 
 void LogitechDevice::setButtonState( unsigned long button )
@@ -94,8 +95,8 @@ void LogitechDevice::setButtonState( unsigned long button )
             if( (button&mask) != (buttonState_&mask) )
             {
                 lh_input di;
-                strncpy( di.devid, lh_dev()->devid, sizeof(di.devid) );
-                di.devid[sizeof(di.devid)-1] = 0;
+                strncpy( di.ident, lh_dev()->obj.ident, sizeof(di.ident) );
+                di.ident[sizeof(di.ident)-1] = 0;
                 di.item = bit;
                 di.flags = lh_df_button;
                 if( button & mask )

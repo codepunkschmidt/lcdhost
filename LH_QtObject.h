@@ -47,17 +47,27 @@ class LH_QtObject : public QObject
     Q_OBJECT
 
     lh_object *p_obj_;
+
+protected:
+    QByteArray title_array_;
+
 public:
 #ifndef QT_NO_DEBUG
     bool clean_init_;
-    bool warning_issued_;
 #endif
 
     LH_QtObject( lh_object *p, QObject *parent = 0);
+    LH_QtObject( lh_object *p, const char *ident, QObject *parent = 0);
     ~LH_QtObject();
 
     bool isValid() const { return p_obj_ && (p_obj_->size == sizeof(lh_object)) && p_obj_->cb && p_obj_->cb_id; }
     lh_object *obj() const { return p_obj_; }
+    const char *ident() const { return p_obj_->ident; }
+
+    void setTitle(const char *s = 0);
+    void setTitle( const QString& );
+    QString title() const { return QString::fromUtf8(p_obj_->title); }
+
     void callback( lh_callbackcode_t code, void *param = 0 ) const
     {
         if( p_obj_->cb && p_obj_->cb_id )
@@ -67,7 +77,7 @@ public:
     // This gets called by LCDHost when the corresponding UI elements
     // have been created, layout information is available (if this
     // object is a layout item). This function calls userInit().
-    const char *init( const char *title = 0 );
+    const char *init();
 
     // Not all callbacks will work in all constructors.
     // You should leave the constructor 'clean', and do your
@@ -79,7 +89,6 @@ public:
     // to call the base class copy of them and preserve or modify the return value.
     virtual int polling() { return 0; }
     virtual int notify( int, void * ) { return 0; }
-    virtual const char *input_name( const char *devid, int item );
 
     // Deprecated. Move userTerm() code to destructor.
     virtual int userTerm() { Q_ASSERT(0); return 0; }

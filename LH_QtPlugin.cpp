@@ -53,9 +53,9 @@ LH_QtLayoutClassLoader::LH_QtLayoutClassLoader(
     cls_.size = sizeof(lh_layout_class);
     if( classinfo )
     {
+        strncpy( cls_.obj.ident, classinfo->ident, sizeof(cls_.obj.ident)-1 );
+        cls_.obj.title = classinfo->title;
         cls_.path = classinfo->path;
-        cls_.ident = classinfo->ident;
-        cls_.name = classinfo->name;
         cls_.width = classinfo->width;
         cls_.height = classinfo->height;
     }
@@ -106,7 +106,7 @@ QString LH_QtPlugin::dir_data()
 }
 
 LH_QtPlugin::LH_QtPlugin( lh_callback_t cb, void* cb_id ) :
-    LH_QtObject(&obj_,0)
+    LH_QtObject(&obj_)
 {
     Q_ASSERT( instance_ == 0 );
     obj_.cb = cb;

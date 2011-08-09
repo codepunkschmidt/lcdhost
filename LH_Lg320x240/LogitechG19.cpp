@@ -99,7 +99,7 @@ const char* LogitechG19::input_name(const char *devid, int n)
     case 0x40: return "Down";
     case 0x80: return "Up";
     }
-    return LH_QtObject::input_name(devid,n);
+    return 0;
 }
 
 int LogitechG19::buttons()
@@ -130,7 +130,7 @@ int LogitechG19::buttons()
             if( (button&mask) != (last_buttons_&mask) )
             {
                 lh_input di;
-                strcpy( di.devid, lh_dev()->devid );
+                strcpy( di.ident, lh_dev()->obj.ident );
                 di.item = bit;
                 di.flags = lh_df_button;
                 if( button & mask )

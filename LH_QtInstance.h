@@ -47,7 +47,7 @@ typedef struct lh_class_t
     int size; /* sizeof(lh_class) */
     const char *path;
     const char *ident;
-    const char *name;
+    const char *title;
     int width;
     int height;
 } lh_class;

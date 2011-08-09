@@ -123,8 +123,8 @@ const char *LH_CursorController::userInit()
     setup_persistent_file_->setHelp("The file in which to save the persisted location.<br/><br/>Note that you can use this to make serveral layouts work together as though they were all parts of the same layout by pointing them all to this file, thus causing the cursor position to persist accross them.");
 
 #ifdef ENABLE_VIRTUAL_CURSOR_KEYS
-    setup_virtual_keys_ = new LH_Qt_QString(this, "Virtual Keys","",  LH_FLAG_NOSAVE | LH_FLAG_NOSOURCE | LH_FLAG_NOSINK | LH_FLAG_LAST | LH_FLAG_BLANKTITLE, lh_type_string_htmlhelp);
-    setup_virtual_keys_->setHelp("<table>"
+    setup_virtual_keys_ = new LH_Qt_html(this, 0, LH_FLAG_NOSOURCE | LH_FLAG_NOSINK | LH_FLAG_LAST );
+    setup_virtual_keys_->setTitle("<table>"
                                  "<tr><td>  </td><td><a href='up'>[  Up  ]</a></td><td>  </td></tr>"
                                  "<tr><td><a href='left'>[Left]</a></td><td><a href='sel'>[  OK  ]</a></td><td><a href='right'>[Right]</a></td></tr>"
                                  "<tr><td>  </td><td><a href='down'>[Down]</a></td><td>  </td></tr>"

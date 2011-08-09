@@ -34,6 +34,7 @@
 
 #include "LH_WeatherImage.h"
 #include "../LH_Qt_QStringList.h"
+#include "../LH_Qt_html.h"
 
 LH_PLUGIN_CLASS(LH_WeatherImage)
 
@@ -79,7 +80,7 @@ const char *LH_WeatherImage::userInit()
     setup_file_->setOrder(-1);
     connect( setup_file_, SIGNAL(changed()), this, SLOT(fileChanged()) );
 
-    setup_feedback_ = new LH_Qt_QString(this, "Feedback","",LH_FLAG_READONLY | LH_FLAG_NOSAVE | LH_FLAG_NOSINK | LH_FLAG_NOSOURCE | LH_FLAG_BLANKTITLE, lh_type_string_htmlhelp);
+    setup_feedback_ = new LH_Qt_html(this, "", LH_FLAG_READONLY | LH_FLAG_NOSINK | LH_FLAG_NOSOURCE );
 
     imageDefinitions = new QHash<int, QStringList>();
 

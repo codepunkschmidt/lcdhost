@@ -71,14 +71,14 @@ const char *LH_LuaClass::userInit()
 
     lua_pushliteral(L,"class_id");
     lua_rawget(L,-2);
-    ident_array_.append( lua_tostring(L,-1) );
-    classinfo_.ident = ident_array_.constData();
+    strncpy( classinfo_.obj.ident, lua_tostring(L,-1), sizeof(classinfo_.obj.ident)-1 );
+    classinfo_.obj.ident[sizeof(classinfo_.obj.ident)-1] = 0;
     lua_pop(L,1);
 
     lua_pushliteral(L,"class_name");
     lua_rawget(L,-2);
     name_array_.append( lua_tostring(L,-1) );
-    classinfo_.name = name_array_.constData();
+    classinfo_.obj.title = name_array_.constData();
     lua_pop(L,1);
 
     lua_pushliteral(L,"class_path");
@@ -319,3 +319,4 @@ bail_out:
     Q_ASSERT( old_top == lua_gettop(L) );
     return retv;
 }
+

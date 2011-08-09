@@ -48,7 +48,7 @@ static void obj_setup_change( lh_setup_item *obj )
 }
 
 LH_QtSetupItem::LH_QtSetupItem( LH_QtObject *parent, const char *ident, lh_setup_type type, int flags )
-    : LH_QtObject( &item_.obj, parent )
+    : LH_QtObject( &item_.obj, ident, parent )
 
 {
     Q_ASSERT( parent != NULL );
@@ -56,9 +56,49 @@ LH_QtSetupItem::LH_QtSetupItem( LH_QtObject *parent, const char *ident, lh_setup
     if( !parent->isValid() )
         qCritical() << parent->metaObject()->className() << "creates setup items before init()";
 
+    if( ident )
+    {
+        // check for ident warnings
+        if( *ident == '^' && !(flags&LH_FLAG_BLANKTITLE) )
+        {
+            flags |= LH_FLAG_BLANKTITLE;
+            qWarning() << parent->metaObject()->className()
+                       << parent->objectName()
+                       << objectName()
+                       << "added LH_FLAG_BLANKTITLE";
+        }
+
+        if( *ident == '~' && !(flags&LH_FLAG_HIDETITLE) )
+        {
+            flags |= LH_FLAG_HIDETITLE;
+            qWarning() << parent->metaObject()->className()
+                       << parent->objectName()
+                       << objectName()
+                       << "added LH_FLAG_HIDETITLE";
+        }
+
+        // set default title
+        title_array_ = QByteArray(ident);
+        if( title_array_.startsWith('^') ) title_array_.remove(0,1);
+        if( title_array_.startsWith('~') ) title_array_.remove(0,1);
+        item_.obj.title = title_array_.data();
+    }
+    else
+    {
+        // auto generated id's for setup items don't make sense
+        // if they're stored
+        if( !(flags&LH_FLAG_NOSAVE) )
+        {
+            flags |= LH_FLAG_NOSAVE;
+            qWarning() << parent->metaObject()->className()
+                       << parent->objectName()
+                       << objectName()
+                       << "added LH_FLAG_NOSAVE";
+        }
+    }
+
+
     item_.size = sizeof(lh_setup_item);
-    item_.ident = 0;
-    item_.title = 0;
     item_.help = 0;
     item_.filter = 0;
     item_.order = 0;
@@ -76,7 +116,6 @@ LH_QtSetupItem::LH_QtSetupItem( LH_QtObject *parent, const char *ident, lh_setup
     if( flags & LH_FLAG_FIRST ) -- item_.order;
     if( flags & LH_FLAG_LAST ) ++ item_.order;
 
-    setIdent(ident);
     parent->callback( lh_cb_setup_create, &item_ );
 }
 
@@ -137,68 +176,6 @@ void LH_QtSetupItem::setOrder( int n )
         item_.order = n;
         refreshMeta();
     }
-}
-
-void LH_QtSetupItem::setIdent( const char *s )
-{
-    if( title_array_.isNull() )
-    {
-        title_array_ = QByteArray(s);
-        if( title_array_.startsWith('^') ) title_array_.remove(0,1);
-        if( title_array_.startsWith('~') ) title_array_.remove(0,1);
-        item_.title = title_array_.data();
-    }
-
-    setObjectName( QString::fromAscii(s) );
-    ident_array_ = QByteArray(s);
-
-    // check for ident warnings
-    if( !parent()->warning_issued_ )
-    {
-        if( ident_array_.startsWith('^') && !(item_.flags&LH_FLAG_BLANKTITLE) )
-        {
-            qWarning() << parent()->metaObject()->className()
-                       << parent()->objectName()
-                       << "setup item ID starts with ^" << s;
-            parent()->warning_issued_ = true;
-            item_.flags |= LH_FLAG_BLANKTITLE;
-        }
-        if( ident_array_.startsWith('~') && !(item_.flags&LH_FLAG_HIDETITLE) )
-        {
-            qWarning() << parent()->metaObject()->className()
-                       << parent()->objectName()
-                       << "setup item ID starts with ~" << s;
-            parent()->warning_issued_ = true;
-            item_.flags |= LH_FLAG_HIDETITLE;
-        }
-        if( ident_array_.contains('/') )
-        {
-            qWarning() << parent()->metaObject()->className()
-                       << parent()->objectName()
-                       << "setup item ID contains slashes:" << s;
-            parent()->warning_issued_ = true;
-            ident_array_.replace('/','\\');
-        }
-    }
-
-    item_.ident = ident_array_.data();
-    return;
-}
-
-void LH_QtSetupItem::setTitle(const QString& s)
-{
-    if( s.isEmpty() )
-    {
-        title_array_.clear();
-        item_.title = 0;
-    }
-    else
-    {
-        title_array_ = s.toUtf8();
-        item_.title = title_array_.data();
-    }
-    refreshMeta();
-    return;
 }
 
 void LH_QtSetupItem::setLink(const char *s, bool issource)

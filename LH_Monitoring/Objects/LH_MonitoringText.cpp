@@ -32,6 +32,7 @@
 #include <QRegExp>
 
 #include "LH_MonitoringText.h"
+#include "../LH_Qt_html.h"
 
 LH_PLUGIN_CLASS(LH_MonitoringText)
 
@@ -69,8 +70,7 @@ const char *LH_MonitoringText::userInit()
 
     ui_ = new LH_MonitoringUI(this, mdmAll, false);
 
-    LH_Qt_QString* hr = new LH_Qt_QString(this,("Mon-Data-Rule"), QString(), LH_FLAG_NOSAVE | LH_FLAG_NOSOURCE | LH_FLAG_NOSINK | LH_FLAG_HIDETITLE,lh_type_string_htmlhelp );
-    hr->setHelp("<hr>");
+    LH_Qt_html* hr = new LH_Qt_html(this, "<hr>", LH_FLAG_NOSOURCE | LH_FLAG_NOSINK );
     hr->setOrder(-3);
 
     setup_value_round_ = new LH_Qt_bool(this,"Round",false, LH_FLAG_AUTORENDER);
@@ -93,9 +93,7 @@ const char *LH_MonitoringText::userInit()
     setup_post_text_->setOrder(-3);
     connect( setup_post_text_, SIGNAL(changed()), this, SLOT(updateText()) );
 
-    LH_Qt_QString* hr2 =new LH_Qt_QString(this,("Mon-Props-Rule"), QString(), LH_FLAG_NOSAVE | LH_FLAG_NOSOURCE | LH_FLAG_NOSINK | LH_FLAG_HIDETITLE,lh_type_string_htmlhelp );
-    hr2->setHelp("<hr>");
-    hr2->setOrder(-3);
+    (new LH_Qt_html(this, "<hr>", LH_FLAG_NOSOURCE | LH_FLAG_NOSINK ))->setOrder(-3);
 
     setup_text_->setFlag( LH_FLAG_HIDDEN, true );
     setup_text_->setFlag( LH_FLAG_NOSAVE, true );

@@ -26,6 +26,7 @@
 #include <QPainter>
 
 #include "LH_CursorRectangle.h"
+#include "../LH_Qt_html.h"
 
 LH_PLUGIN_CLASS(LH_CursorRectangle)
 
@@ -63,11 +64,8 @@ const char *LH_CursorRectangle::userInit()
 
     setup_cursor_state_ = new LH_Qt_QStringList( this, ("Cursor State"), QStringList()<<"OFF"<<"OFF_SEL"<<"ON"<<"ON_SEL", LH_FLAG_NOSAVE|LH_FLAG_NOSINK|LH_FLAG_NOSOURCE|LH_FLAG_READONLY | LH_FLAG_FIRST );
 
-    LH_Qt_QString *hr = new LH_Qt_QString(this,("Coord-Area-Rule"),QString(), LH_FLAG_NOSAVE | LH_FLAG_NOSOURCE | LH_FLAG_NOSINK | LH_FLAG_HIDETITLE | LH_FLAG_FIRST, lh_type_string_htmlhelp );
-    hr->setHelp("<hr>");
-
-    hr = new LH_Qt_QString(this,("Rect-Area-Rule"),QString(),LH_FLAG_NOSAVE | LH_FLAG_NOSOURCE | LH_FLAG_NOSINK | LH_FLAG_HIDETITLE, lh_type_string_htmlhelp );
-    hr->setHelp("<hr>");
+    new LH_Qt_html(this,"<hr>", LH_FLAG_NOSOURCE | LH_FLAG_NOSINK | LH_FLAG_FIRST );
+    new LH_Qt_html(this,"<hr>", LH_FLAG_NOSOURCE | LH_FLAG_NOSINK );
 
     setup_layout_trigger_ = new LH_Qt_bool(this,"Layout Trigger",false,0);
     setup_layout_trigger_->setHelp("Cursor Rectangles can be used to create a simple menu. Simply check this box and when selected the selected layout will be opened.<br/>"

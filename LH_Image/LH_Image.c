@@ -125,16 +125,14 @@ static void image_setup_change( lh_setup_item *obj )
 /**
   On init, report our single setup item.
   */
-static const char *image_init(lh_object *obj, const char *name)
+static const char *image_init(lh_object *obj)
 {
-    Q_UNUSED(name);
-
     lh_image *img = (void*) obj;
 
     img->setup_filename.obj.size = sizeof(lh_object);
     img->setup_filename.obj.ref = img;
     img->setup_filename.size = sizeof(lh_setup_item);
-    img->setup_filename.ident = "Filename";
+    strcpy( img->setup_filename.obj.ident, "Filename");
     img->setup_filename.type = lh_type_string_filename;
     img->setup_filename.data.b.p = img->filename;
     img->setup_filename.data.b.n = sizeof(img->filename);
@@ -265,24 +263,22 @@ static lh_layout_class image_class =
         0, /* ref */
         0, /* cb_id */
         0, /* cb */
-        0,
-        0,
-        0,
-        0
+        0, /* obj_init */
+        0, /* obj_polling */
+        0, /* obj_notify */
+        "StaticImage", /* ident */
+        "Image" /* title */
     },
     sizeof(lh_layout_class),
     "Static", /* path */
-    "StaticImage", /* ident */
-    "Image", /* name */
     -1,-1, /* default size */
     image_new,
     image_delete
 };
 
 
-static const char *image_plugin_init( lh_object *o, const char *name )
+static const char *image_plugin_init( lh_object *o )
 {
-    Q_UNUSED(name);
     o->cb( o->cb_id, lh_cb_class_create, &image_class );
     return 0;
 }
@@ -299,9 +295,10 @@ static lh_object image_plugin =
     0, /* cb_id */
     0, /* cb */
     image_plugin_init, /* to register our single class */
-    0,
-    0,
-    0
+    0, /* obj_polling */
+    0, /* obj_notify */
+    {}, /* ident */
+    "Image", /* title */
 };
 
 /**************************************************************************
@@ -334,10 +331,7 @@ EXPORT lh_object *lh_create( lh_callback_t cb, void *cb_id )
 EXPORT void lh_destroy( lh_object *o )
 {
     Q_UNUSED(o);
-    if( image_class.obj.cb && image_class.obj.cb_id )
-    {
-        image_class.obj.cb( image_class.obj.cb_id, lh_cb_destroy, 0 );
-    }
+    image_class.obj.cb( image_class.obj.cb_id, lh_cb_destroy, 0 );
     return;
 }
 

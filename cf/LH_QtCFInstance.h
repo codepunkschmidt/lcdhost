@@ -46,6 +46,7 @@
 #include "../LH_QtInstance.h"
 #include "../LH_Qt_bool.h"
 #include "../LH_Qt_QString.h"
+#include "../LH_Qt_html.h"
 #include "../LH_Qt_QStringList.h"
 #include "../LH_Qt_QTextEdit.h"
 #include "../LH_Qt_QColor.h"

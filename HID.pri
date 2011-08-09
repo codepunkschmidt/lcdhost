@@ -6,7 +6,8 @@ HEADERS += $$PWD/hidapi/hidapi.h \
     ../LH_Qt_array_int.h \
     ../LH_Qt_array_double.h \
     ../LH_Qt_array.h \
-    ../LH_QtMemory.h
+    ../LH_QtMemory.h \
+    ../LH_Qt_html.h
 
 win32 {
         SOURCES += $$PWD/hidapi/win/hid.cpp
@@ -24,5 +25,4 @@ unix:!macx {
 }
 
 SOURCES += \
-    ../LH_Qt_array_int.cpp \
     ../LH_QtMemory.cpp

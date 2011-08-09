@@ -47,8 +47,7 @@ const char *LH_QtPlugin_TorrentMon::userInit()
     setup_use_vuze_->setTitle("Enable Vuze Monitoring");
     setup_vuze_path_ = new LH_Qt_QFileInfo(this, "Vuze Stats File",fi,LH_FLAG_NOSOURCE | LH_FLAG_NOSINK | LH_FLAG_HIDDEN);
 
-    LH_Qt_QString *hr = new LH_Qt_QString(this,"hr-sep-1","", LH_FLAG_NOSOURCE | LH_FLAG_NOSINK | LH_FLAG_HIDETITLE | LH_FLAG_NOSAVE, lh_type_string_htmlhelp);
-    hr->setHelp("<hr>");
+    new LH_Qt_html(this,"<hr>", LH_FLAG_NOSOURCE | LH_FLAG_NOSINK );
 
     setup_use_webui_ = new LH_Qt_bool(this, "Enable WebUI",false,LH_FLAG_NOSOURCE | LH_FLAG_NOSINK | LH_FLAG_BLANKTITLE);
     setup_use_webui_->setTitle("Enable µTorrent/BitTorrent Monitoring (via WebUI)");
@@ -56,8 +55,8 @@ const char *LH_QtPlugin_TorrentMon::userInit()
     setup_webui_password_ = new LH_Qt_QString(this, "WebUI Password", "password", LH_FLAG_NOSOURCE | LH_FLAG_NOSINK | LH_FLAG_HIDDEN);
     setup_webui_port_ = new LH_Qt_QString(this, "WebUI Port#", "16335", LH_FLAG_NOSOURCE | LH_FLAG_NOSINK | LH_FLAG_HIDDEN);
 
-    setup_webui_status_ = new LH_Qt_QString(this, "WebUI Status", "", LH_FLAG_NOSOURCE | LH_FLAG_NOSINK | LH_FLAG_HIDETITLE | LH_FLAG_NOSAVE | LH_FLAG_HIDDEN, lh_type_string_htmlhelp);
-    setup_data_summary_ = new LH_Qt_QString(this, "Summary", "", LH_FLAG_NOSOURCE | LH_FLAG_NOSINK | LH_FLAG_HIDETITLE | LH_FLAG_NOSAVE, lh_type_string_htmlhelp);
+    setup_webui_status_ = new LH_Qt_html(this, "", LH_FLAG_NOSOURCE | LH_FLAG_NOSINK | LH_FLAG_NOSAVE | LH_FLAG_HIDDEN);
+    setup_data_summary_ = new LH_Qt_html(this, "", LH_FLAG_NOSOURCE | LH_FLAG_NOSINK | LH_FLAG_NOSAVE );
     updateSummary();
 
     reply_ = NULL;

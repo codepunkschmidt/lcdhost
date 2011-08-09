@@ -39,9 +39,9 @@
 
 #define RECAST(obj) reinterpret_cast<LH_QtObject*>(obj)
 
-static const char *obj_init( lh_object *obj, const char *name )
+static const char *obj_init( lh_object *obj )
 {
-    return RECAST(obj->ref)->init(name);
+    return RECAST(obj->ref)->init();
 }
 
 static int obj_polling( lh_object *obj )
@@ -54,37 +54,71 @@ static int obj_notify( lh_object *obj, int code, void *param )
     return RECAST(obj->ref)->notify(code,param);
 }
 
-static const char *obj_input_name( lh_object *obj, const char *devid, int item )
-{
-    return RECAST(obj->ref)->input_name(devid,item);
-}
-
 LH_QtObject::LH_QtObject( lh_object *p, QObject *parent ) : QObject( parent ), p_obj_(p)
 #ifndef QT_NO_DEBUG
-  ,clean_init_(false), warning_issued_(false)
+  ,clean_init_(false)
 #endif
 {
     Q_ASSERT( p_obj_ );
+    memset( p_obj_, 0, sizeof(lh_object) );
     p_obj_->size = sizeof(lh_object);
     p_obj_->ref = this;
-    p_obj_->cb = 0;
-    p_obj_->cb_id = 0;
     p_obj_->obj_init = obj_init;
-    p_obj_->obj_input_name = obj_input_name;
     p_obj_->obj_notify = obj_notify;
     p_obj_->obj_polling = obj_polling;
+}
+
+LH_QtObject::LH_QtObject( lh_object *p, const char *ident, QObject *parent ) : QObject( parent ), p_obj_(p)
+#ifndef QT_NO_DEBUG
+  ,clean_init_(false)
+#endif
+{
+    Q_ASSERT( p_obj_ );
+    memset( p_obj_, 0, sizeof(lh_object) );
+    p_obj_->size = sizeof(lh_object);
+    p_obj_->ref = this;
+    p_obj_->obj_init = obj_init;
+    p_obj_->obj_notify = obj_notify;
+    p_obj_->obj_polling = obj_polling;
+
+    if( ident )
+    {
+        strncpy( p_obj_->ident, ident, sizeof(p_obj_->ident)-1 );
+        for( char *p = p_obj_->ident; *p; ++p )
+        {
+            if( *p == '<' ) *p = '(';
+            if( *p == '/' ) *p = '|';
+            if( *p == '>' ) *p = ')';
+        }
+
+        if( strcmp( ident, p_obj_->ident ) )
+        {
+            qWarning() << parent->metaObject()->className()
+                       << parent->objectName()
+                       << QString(p_obj_->ident)
+                       << "ident changed";
+        }
+    }
+    else
+    {
+        QByteArray ba = QString("%1:%2").arg(parent->objectName()).arg((qptrdiff)this,0,36).toAscii();
+        ba.truncate( LH_MAX_IDENT-1 );
+        strncpy( p_obj_->ident, ba.constData(), sizeof(p_obj_->ident)-1 );
+    }
+
+    setObjectName( QString::fromAscii(p_obj_->ident) );
 }
 
 LH_QtObject::~LH_QtObject()
 {
 }
 
-const char *LH_QtObject::init( const char *title )
+const char *LH_QtObject::init()
 {
     const char *retv = 0;
 
     Q_ASSERT( isValid() );
-    if( title ) setObjectName( QString::fromUtf8(title) );
+    setObjectName( QString::fromAscii(p_obj_->ident) );
 
 #ifndef QT_NO_DEBUG
     // Make sure there's no children yet, as constructor should be 'clean'
@@ -111,6 +145,23 @@ const char *LH_QtObject::userInit()
     return 0;
 }
 
+void LH_QtObject::setTitle(const char *s)
+{
+    title_array_ = QByteArray(s);
+    p_obj_->title = title_array_.data();
+    callback( lh_cb_title_refresh );
+    return;
+}
+
+void LH_QtObject::setTitle(const QString& s)
+{
+    title_array_ = s.toUtf8();
+    p_obj_->title = title_array_.data();
+    callback( lh_cb_title_refresh );
+    return;
+}
+
+#if 0
 const char *LH_QtObject::input_name( const char *devid, int item )
 {
     static QByteArray ary;
@@ -120,3 +171,4 @@ const char *LH_QtObject::input_name( const char *devid, int item )
     s << devid << '/' << forcesign << item;
     return ary.constData();
 }
+#endif

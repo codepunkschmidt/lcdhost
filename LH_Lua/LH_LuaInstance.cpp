@@ -195,7 +195,7 @@ static void lh_self_item_data_setvalue(lua_State *L, LH_LuaSetupItem* item, int 
             break;
         case lh_type_string:
         case lh_type_string_combobox:
-        case lh_type_string_htmlhelp:
+        case lh_type_string_htmllink:
         case lh_type_string_button:
         case lh_type_string_script:
         case lh_type_string_filename:
@@ -351,7 +351,7 @@ static void lh_self_item_data_getvalue(lua_State *L, LH_LuaSetupItem* item, int 
     {
     case 1:
         Q_ASSERT( !strcmp("title",lh_self_item_data_key[where]));
-        lua_pushstring(L,item->title());
+        lua_pushstring(L,item->obj()->title);
         break;
     case 2:
         Q_ASSERT( !strcmp("type",lh_self_item_data_key[where]));
@@ -389,7 +389,7 @@ static void lh_self_item_data_getvalue(lua_State *L, LH_LuaSetupItem* item, int 
             lua_pushstring(L,"combobox");
             break;
         case lh_type_string:
-        case lh_type_string_htmlhelp:
+        case lh_type_string_htmllink:
         case lh_type_string_script:
             lua_pushstring(L,"string");
             break;
@@ -445,7 +445,7 @@ static void lh_self_item_data_getvalue(lua_State *L, LH_LuaSetupItem* item, int 
             break;
         case lh_type_string:
         case lh_type_string_combobox:
-        case lh_type_string_htmlhelp:
+        case lh_type_string_htmllink:
         case lh_type_string_button:
         case lh_type_string_script:
         case lh_type_string_font:

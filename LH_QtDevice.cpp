@@ -79,13 +79,13 @@ LH_QtDevice::LH_QtDevice( const char *devid, int w, int h, int d, bool noauto ) 
     LH_QtObject( &lh_dev_.obj, LH_QtPlugin::instance() )
 {
     lh_dev_.size = sizeof(lh_output_device);
-    memset( lh_dev_.devid, 0, sizeof(lh_dev_.devid) );
+    memset( lh_dev_.obj.ident, 0, sizeof(lh_dev_.obj.ident) );
 
     if( devid )
     {
         int devidlen = strlen(devid);
-        if( devidlen >= LH_DEVID_LEN ) devidlen = LH_DEVID_LEN;
-        memcpy( lh_dev_.devid, devid, devidlen );
+        if( devidlen >= LH_MAX_IDENT ) devidlen = LH_MAX_IDENT;
+        memcpy( lh_dev_.obj.ident, devid, devidlen );
     }
 
     lh_dev_.width = w;
@@ -101,7 +101,7 @@ LH_QtDevice::LH_QtDevice( const char *devid, int w, int h, int d, bool noauto ) 
     lh_dev_.obj_set_backlight = obj_set_backlight;
     lh_dev_.obj_close = obj_close;
 
-    parent()->callback( lh_cb_device_create, &lh_dev_ );
+    parent()->callback( lh_cb_output_create, &lh_dev_ );
     return;
 }
 

@@ -34,6 +34,7 @@
 #include <QHash>
 
 #include "../LH_Qt_QStringList.h"
+#include "../LH_Qt_html.h"
 
 LH_PLUGIN_CLASS(LH_MonitoringImage)
 
@@ -65,16 +66,12 @@ const char *LH_MonitoringImage::userInit()
 
     setup_image_file_->setFlags( LH_FLAG_AUTORENDER | LH_FLAG_READONLY | LH_FLAG_NOSAVE );
 
-    LH_Qt_QString* hr = new LH_Qt_QString(this,("Mon-Data-Rule"), QString(), LH_FLAG_NOSAVE | LH_FLAG_NOSOURCE | LH_FLAG_NOSINK | LH_FLAG_HIDETITLE,lh_type_string_htmlhelp );
-    hr->setHelp("<hr>");
-    hr->setOrder(-1);
+    (new LH_Qt_html(this,"<hr>", LH_FLAG_NOSOURCE | LH_FLAG_NOSINK ))->setOrder(-1);
 
     setup_value_ = new LH_Qt_QString( this, ("Current Value"), "N/A", LH_FLAG_READONLY|LH_FLAG_NOSAVE );
     setup_value_->setOrder(-1);
 
-    LH_Qt_QString* hr2 =new LH_Qt_QString(this,("Mon-Props-Rule"), QString(), LH_FLAG_NOSAVE | LH_FLAG_NOSOURCE | LH_FLAG_NOSINK | LH_FLAG_HIDETITLE,lh_type_string_htmlhelp );
-    hr2->setHelp("<hr>");
-    hr2->setOrder(-1);
+    (new LH_Qt_html(this,"<hr>", LH_FLAG_NOSOURCE | LH_FLAG_NOSINK ))->setOrder(-1);
 
     add_cf_target(setup_image_file_);
     add_cf_source(setup_value_);

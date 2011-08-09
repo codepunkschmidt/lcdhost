@@ -58,20 +58,16 @@ const char *LH_QtPlugin_TS3::userInit()
     socket_ = new QTcpSocket(this);
     myclid_ = -1;
 
-    setup_connection_details_ = new LH_Qt_QString(this,("Connection Details"),QString(), LH_FLAG_NOSAVE | LH_FLAG_NOSINK | LH_FLAG_NOSOURCE | LH_FLAG_HIDETITLE, lh_type_string_htmlhelp );
-
-    setup_talking_details_ = new LH_Qt_QString(this, "Talking Details", QString(), LH_FLAG_NOSAVE | LH_FLAG_NOSINK | LH_FLAG_NOSOURCE | LH_FLAG_HIDETITLE, lh_type_string_htmlhelp);
-
-    LH_Qt_QString *hr = new LH_Qt_QString(this,("hr1"),QString(), LH_FLAG_NOSAVE | LH_FLAG_NOSINK | LH_FLAG_NOSOURCE | LH_FLAG_HIDETITLE, lh_type_string_htmlhelp );
-    hr->setHelp("<hr/>");
+    setup_connection_details_ = new LH_Qt_html(this, "", LH_FLAG_NOSINK | LH_FLAG_NOSOURCE );
+    setup_talking_details_ = new LH_Qt_html(this, "", LH_FLAG_NOSINK | LH_FLAG_NOSOURCE );
+    new LH_Qt_html( this, "<hr/>", LH_FLAG_NOSINK | LH_FLAG_NOSOURCE );
 
     /*setup_nickname_expression_ = new LH_Qt_QString(this, "Nickname Epression", "", LH_FLAG_NOSINK | LH_FLAG_NOSOURCE);
     setup_nickname_expression_->setTitle("Nickname:");
     setup_nickname_expression_->setHelp("Entering your nickname will enable the plugin to acquire additional information about your status.<br/><br/>Note that this field is actually a Regular Expression, so you can have it match multiple possible names. The first match it finds will be the one it uses.");
     connect(setup_nickname_expression_, SIGNAL(changed()), this, SLOT(updateMyDetails()));*/
 
-    setup_user_detail_ = new LH_Qt_QString(this,("User Details"),QString(), LH_FLAG_NOSAVE | LH_FLAG_NOSINK | LH_FLAG_NOSOURCE | LH_FLAG_HIDETITLE, lh_type_string_htmlhelp );
-    setup_user_detail_->setHelp("");
+    setup_user_detail_ = new LH_Qt_html(this, "", LH_FLAG_NOSINK | LH_FLAG_NOSOURCE );
 
     setup_nickname_ = new LH_Qt_QString(this, "Nickname", "", /*LH_FLAG_HIDDEN | LH_FLAG_READONLY |*/ LH_FLAG_NOSAVE | LH_FLAG_NOSINK);
     setup_nickname_->setLink("Monitoring/3rdParty/TeamSpeak3/Nickname", true);

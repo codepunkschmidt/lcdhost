@@ -48,8 +48,6 @@ class LH_QtSetupItem : public LH_QtObject
 {
     Q_OBJECT
 
-    QByteArray ident_array_;
-    QByteArray title_array_;
     QByteArray link_array_;
     QByteArray help_array_;
     QByteArray filter_array_;
@@ -92,10 +90,6 @@ public:
     void refreshData() { callback( lh_cb_setup_refresh_data, 0 ); }
 
     // metadata
-    void setIdent(const char * s);
-    const char *ident() const { return ident_array_.constData(); }
-    void setTitle(const QString& s);
-    const char *title() const { return title_array_.constData(); }
     void setLink(const char * s,bool is_source = false);
     const char *link() const { return link_array_.constData(); }
     bool isSource() const { return item_.states & LH_STATE_SOURCE; }

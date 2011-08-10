@@ -46,13 +46,14 @@ struct cursorMode{
     QString description;
 };
 
-class LH_CursorController : public LH_QtInstance
+class LH_CursorController : public LH_QtCFInstance
 {
     Q_OBJECT
 
     QList<cursorMode> cursorModes;
 
     void persistSelection();
+    void updateLinkData();
 
     cursorData cursor_data_;
 protected:
@@ -75,8 +76,16 @@ protected:
     LH_Qt_bool *setup_persistent_autoselect_;
     LH_Qt_QFileInfo *setup_persistent_file_;
 
-    LH_Qt_QString *setup_json_data_;
-    LH_Qt_QString *setup_duplex_postback_;
+    LH_Qt_QString *setup_link_json_data_;
+    LH_Qt_QString *setup_link_current_pos;
+    LH_Qt_QString *setup_link_selected_pos;
+    LH_Qt_QString *setup_link_postback_;
+
+    LH_Qt_bool *setup_cursor_active_;
+    LH_Qt_int *setup_cursor_sel_x_;
+    LH_Qt_int *setup_cursor_sel_y_;
+    LH_Qt_int *setup_cursor_x_;
+    LH_Qt_int *setup_cursor_y_;
 
 #ifdef ENABLE_VIRTUAL_CURSOR_KEYS
     LH_Qt_QString *setup_virtual_keys_;
@@ -105,6 +114,7 @@ public slots:
 
     void processPostback();
     void changeSourceLink();
+    void changeCursorData();
 
 #ifdef ENABLE_VIRTUAL_CURSOR_KEYS
     void virtualKeyPress(QString);

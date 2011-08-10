@@ -45,7 +45,7 @@ lh_class *LH_CursorController::classInfo()
 
 const char *LH_CursorController::userInit()
 {
-    if( const char *err = LH_QtInstance::userInit() ) return err;
+    if( const char *err = LH_QtCFInstance::userInit() ) return err;
 
     setup_coordinate_ = new LH_Qt_QString(this, "Coordinate", "1,1", LH_FLAG_NOSAVE | LH_FLAG_READONLY | LH_FLAG_FIRST);
     setup_coordinate_->setHelp("The current cursor location.");
@@ -124,33 +124,64 @@ const char *LH_CursorController::userInit()
 
 #ifdef ENABLE_VIRTUAL_CURSOR_KEYS
     setup_virtual_keys_ = new LH_Qt_html(this, 0, LH_FLAG_NOSOURCE | LH_FLAG_NOSINK | LH_FLAG_LAST );
-    setup_virtual_keys_->setTitle("<table>"
-                                 "<tr><td>  </td><td><a href='up'>[  Up  ]</a></td><td>  </td></tr>"
-                                 "<tr><td><a href='left'>[Left]</a></td><td><a href='sel'>[  OK  ]</a></td><td><a href='right'>[Right]</a></td></tr>"
-                                 "<tr><td>  </td><td><a href='down'>[Down]</a></td><td>  </td></tr>"
-                                 "<tr><td>  </td><td>  </td><td>  </td></tr>"
-                                 "<tr><td><a href='act'>[ Act ]</a></td><td>  </td><td><a href='resel'>[  Re  ]</a></td></tr>"
-                                 "</table>");
+    setup_virtual_keys_->setTitle("<hr><center><table>"
+                                 "<tr><td>  </td><td style='background-color:silver;'><center><a href='up'>[  Up  ]</a></center></td><td>  </td><td>         </td><td style='background-color:silver;'><center><a href='act'>[ Act ]</a></center></td></tr>"
+                                 "<tr><td style='background-color:silver;'><center><a href='left'>[Left]</a></center></td><td style='background-color:silver;'><center><a href='sel'>[  OK  ]</a></center></td><td style='background-color:silver;'><center><a href='right'>[Right]</a></center></td><td>  </td></tr>"
+                                 "<tr><td>  </td><td style='background-color:silver;'><center><a href='down'>[Down]</a></center></td><td>  </td><td>  </td><td style='background-color:silver;'><center><a href='resel'>[  Re  ]</a></center></td></tr>"
+                                 "</table></center>");
     connect(setup_virtual_keys_, SIGNAL(change(QString)), this, SLOT(virtualKeyPress(QString)) );
 #endif
 
-    setup_json_data_ = new LH_Qt_QString(this, "Cursor Data", "", LH_FLAG_NOSAVE | LH_FLAG_NOSINK | LH_FLAG_LAST /*| LH_FLAG_READONLY | LH_FLAG_HIDEVALUE*/);
-    connect(setup_json_data_,SIGNAL(duplicateSource()),this,SLOT(changeSourceLink()));
-    setup_json_data_->setLink("Cursors/Primary Cursor", true);
-    setup_json_data_->setLinkFilter("Cursors");
-    setup_json_data_->refreshData();
+    setup_link_json_data_ = new LH_Qt_QString(this, "Cursor Data", "", LH_FLAG_NOSAVE | LH_FLAG_NOSINK | LH_FLAG_READONLY | LH_FLAG_HIDDEN);
+    connect(setup_link_json_data_,SIGNAL(duplicateSource()),this,SLOT(changeSourceLink()));
+    setup_link_json_data_->setLink("Cursors/Primary Cursor", true);
+    setup_link_json_data_->setLinkFilter("Cursors");
+    setup_link_json_data_->refreshData();
 
-    setup_duplex_postback_ = new LH_Qt_QString(this, "Cursor Postback", "", LH_FLAG_NOSAVE | LH_FLAG_NOSOURCE | LH_FLAG_LAST | LH_FLAG_READONLY );
-    setup_duplex_postback_->setLink("Cursors/Postback");
-    setup_duplex_postback_->setLinkFilter("CursorPostback");
-    setup_duplex_postback_->refreshData();
+    setup_link_postback_ = new LH_Qt_QString(this, "Cursor Postback", "", LH_FLAG_NOSAVE | LH_FLAG_NOSOURCE | LH_FLAG_READONLY | LH_FLAG_HIDDEN);
+    setup_link_postback_->setLink("Cursors/Postback");
+    setup_link_postback_->setLinkFilter("CursorPostback");
+    setup_link_postback_->refreshData();
 
-    connect(setup_duplex_postback_,SIGNAL(changed()),this,SLOT(processPostback()));
+    setup_link_current_pos = new LH_Qt_QString(this, "Cursor Position", "", LH_FLAG_NOSAVE | LH_FLAG_NOSINK | LH_FLAG_READONLY | LH_FLAG_HIDDEN);
+    setup_link_current_pos->setLink("Cursors/Primary Cursor/Cursor Position", true);
+    setup_link_current_pos->refreshData();
+
+    setup_link_selected_pos = new LH_Qt_QString(this, "Selected Position", "", LH_FLAG_NOSAVE | LH_FLAG_NOSINK | LH_FLAG_READONLY | LH_FLAG_HIDDEN);
+    setup_link_selected_pos->setLink("Cursors/Primary Cursor/Selected Position", true);
+    setup_link_selected_pos->refreshData();
+
+    setup_cursor_active_ = new LH_Qt_bool(this, "Active", cursor_data_.active, LH_FLAG_NOSAVE | LH_FLAG_NOSINK | LH_FLAG_READONLY | LH_FLAG_HIDDEN);
+    setup_cursor_sel_x_ = new LH_Qt_int(this, "X (Selected)", cursor_data_.x, LH_FLAG_NOSAVE | LH_FLAG_NOSINK | LH_FLAG_READONLY | LH_FLAG_HIDDEN);
+    setup_cursor_sel_y_ = new LH_Qt_int(this, "Y (Selected)", cursor_data_.y, LH_FLAG_NOSAVE | LH_FLAG_NOSINK | LH_FLAG_READONLY | LH_FLAG_HIDDEN);
+    setup_cursor_x_ = new LH_Qt_int(this, "X (Current)", cursor_data_.x, LH_FLAG_NOSAVE | LH_FLAG_NOSINK | LH_FLAG_READONLY | LH_FLAG_HIDDEN);
+    setup_cursor_y_ = new LH_Qt_int(this, "Y (Current)", cursor_data_.y, LH_FLAG_NOSAVE | LH_FLAG_NOSINK | LH_FLAG_READONLY | LH_FLAG_HIDDEN);
+
+    connect(setup_link_postback_,SIGNAL(changed()),this,SLOT(processPostback()));
     connect(setup_persistent_, SIGNAL(changed()), this, SLOT(changePersistent()));
     connect(setup_persistent_file_, SIGNAL(changed()), this, SLOT(loadPersistedSelection()));
 
+    connect(setup_cursor_active_, SIGNAL(changed()), this, SLOT(changeCursorData()));
+    connect(setup_cursor_sel_x_, SIGNAL(changed()), this, SLOT(changeCursorData()));
+    connect(setup_cursor_sel_y_, SIGNAL(changed()), this, SLOT(changeCursorData()));
+    connect(setup_cursor_x_, SIGNAL(changed()), this, SLOT(changeCursorData()));
+    connect(setup_cursor_y_, SIGNAL(changed()), this, SLOT(changeCursorData()));
+
     updateLocation(0,0);
     hide();
+
+#ifdef LH_CF
+    add_cf_target(setup_cursor_active_);
+    add_cf_source(setup_cursor_active_);
+    add_cf_target(setup_cursor_sel_x_);
+    add_cf_source(setup_cursor_sel_x_);
+    add_cf_target(setup_cursor_sel_y_);
+    add_cf_source(setup_cursor_sel_y_);
+    add_cf_target(setup_cursor_x_);
+    add_cf_source(setup_cursor_x_);
+    add_cf_target(setup_cursor_y_);
+    add_cf_source(setup_cursor_y_);
+#endif
 
     return NULL;
 }
@@ -231,7 +262,7 @@ void LH_CursorController::doSelect(int flags,int value)
         }
         persistSelection();
     }
-    setup_json_data_->setValue( cursor_data_.serialize() );
+    updateLinkData();
 }
 
 void LH_CursorController::doReselect(int flags,int value)
@@ -374,8 +405,7 @@ void LH_CursorController::updateLocation(int xMod, int yMod, bool absolute)
     }
 
     persistSelection();
-
-    setup_json_data_->setValue( cursor_data_.serialize() );
+    updateLinkData();
 
     setup_coordinate_->setValue(QString("%1,%2").arg(cursor_data_.x).arg(cursor_data_.y));
 }
@@ -426,6 +456,7 @@ void LH_CursorController::changePersistent()
 #ifdef ENABLE_VIRTUAL_CURSOR_KEYS
 void LH_CursorController::virtualKeyPress(QString s)
 {
+    qDebug() << "LH_CursorController: Virtual Key Press - " << s;
     if( s == "up" ) doMoveUp();
     else if( s == "down" ) doMoveDown();
     else if( s == "left" ) doMoveLeft();
@@ -438,7 +469,7 @@ void LH_CursorController::virtualKeyPress(QString s)
 
 void LH_CursorController::processPostback()
 {
-    QString key = setup_json_data_->link();
+    QString key = setup_link_json_data_->link();
     if(postback_data.contains(key))
     {
         qDebug() << "CURSOR POSTBACK: " << cursor_data_.deserialize(postback_data.value(key));
@@ -450,17 +481,44 @@ void LH_CursorController::processPostback()
 
 void LH_CursorController::changeSourceLink()
 {
-    QString linkName = QString(setup_json_data_->link());
+    QString linkName = QString(setup_link_json_data_->link());
+    QString newLink = linkName;
     if(linkName=="Cursors/Primary Cursor")
-        setup_json_data_->setLink("Cursors/Secondary Cursor", true);
+        newLink ="Cursors/Secondary Cursor";
     else
     {
         QRegExp rx("Cursors/Secondary Cursor \\[([0-9]*)\\]");
         int n = 2;
         if(rx.indexIn(linkName))
             n = rx.cap(1).toInt()+1;
-        QString newLink = QString("Cursors/Secondary Cursor [%1]").arg(n);
-        setup_json_data_->setLink(newLink.toUtf8(), true);
+        newLink = QString("Cursors/Secondary Cursor [%1]").arg(n);
     }
-    qDebug() << "LH_Cursor: Changed link from " << linkName << " to " << QString(setup_json_data_->link());
+
+    setup_link_json_data_->setLink(newLink.toUtf8(), true);
+    setup_link_current_pos->setLink(QString("%1/Cursor Position").arg(newLink).toUtf8(), true);
+    setup_link_selected_pos->setLink(QString("%1/Selected Position").arg(newLink).toUtf8(), true);
+
+    qDebug() << "LH_Cursor: Changed link from " << linkName << " to " << newLink;
+}
+
+void LH_CursorController::updateLinkData()
+{
+    setup_link_json_data_->setValue( cursor_data_.serialize() );
+    setup_link_current_pos->setValue( QString("(%1,%2) [%3]").arg(cursor_data_.x).arg(cursor_data_.y).arg(cursor_data_.active) );
+    setup_link_selected_pos->setValue( QString("(%1,%2) [%3]").arg(cursor_data_.selX).arg(cursor_data_.selY).arg(cursor_data_.active) );
+
+    setup_cursor_active_->setValue( cursor_data_.active );
+    setup_cursor_sel_x_->setValue( cursor_data_.selX );
+    setup_cursor_sel_y_->setValue( cursor_data_.selY );
+    setup_cursor_x_->setValue( cursor_data_.x );
+    setup_cursor_y_->setValue( cursor_data_.y );
+}
+
+void LH_CursorController::changeCursorData()
+{
+    cursor_data_.active = setup_cursor_active_->value();
+    cursor_data_.selX = setup_cursor_sel_x_->value();
+    cursor_data_.selY = setup_cursor_sel_y_->value();
+    cursor_data_.x = setup_cursor_x_->value();
+    cursor_data_.y = setup_cursor_y_->value();
 }

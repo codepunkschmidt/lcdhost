@@ -69,33 +69,29 @@ const char *LH_QtPlugin_TS3::userInit()
 
     setup_user_detail_ = new LH_Qt_html(this, "", LH_FLAG_NOSINK | LH_FLAG_NOSOURCE );
 
-    setup_nickname_ = new LH_Qt_QString(this, "Nickname", "", /*LH_FLAG_HIDDEN | LH_FLAG_READONLY |*/ LH_FLAG_NOSAVE | LH_FLAG_NOSINK);
+    setup_nickname_ = new LH_Qt_QString(this, "Nickname", "", LH_FLAG_HIDDEN | LH_FLAG_READONLY | LH_FLAG_NOSAVE | LH_FLAG_NOSINK);
     setup_nickname_->setLink("Monitoring/3rdParty/TeamSpeak3/Nickname", true);
     setup_nickname_->refreshData();
 
-    setup_talking_ = new LH_Qt_QString(this, "Talking", "", /*LH_FLAG_HIDDEN | LH_FLAG_READONLY |*/ LH_FLAG_NOSAVE | LH_FLAG_NOSINK);
+    setup_talking_ = new LH_Qt_QString(this, "Talking", "", LH_FLAG_HIDDEN | LH_FLAG_READONLY | LH_FLAG_NOSAVE | LH_FLAG_NOSINK);
     setup_talking_->setLink("Monitoring/3rdParty/TeamSpeak3/Talking", true);
     setup_talking_->refreshData();
 
-    setup_channelname_ = new LH_Qt_QString(this, "Channel", "", /*LH_FLAG_HIDDEN | LH_FLAG_READONLY |*/ LH_FLAG_NOSAVE | LH_FLAG_NOSINK);
+    setup_channelname_ = new LH_Qt_QString(this, "Channel", "", LH_FLAG_HIDDEN | LH_FLAG_READONLY | LH_FLAG_NOSAVE | LH_FLAG_NOSINK);
     setup_channelname_->setLink("Monitoring/3rdParty/TeamSpeak3/Channel Name",true);
     setup_channelname_->refreshData();
 
-    setup_connection_status_ = new LH_Qt_QStringList(this, "Connection Status", QStringList() << "Not Running" << "Not Connected" << "Connected", /*LH_FLAG_HIDDEN | LH_FLAG_READONLY |*/ LH_FLAG_NOSAVE | LH_FLAG_NOSINK );
+    setup_connection_status_ = new LH_Qt_QStringList(this, "Connection Status", QStringList() << "Not Running" << "Not Connected" << "Connected", LH_FLAG_HIDDEN | LH_FLAG_READONLY | LH_FLAG_NOSAVE | LH_FLAG_NOSINK );
     setup_connection_status_->setLink("Monitoring/3rdParty/TeamSpeak3/Connection Status",true);
     setup_connection_status_->refreshData();
 
-    setup_microphone_status_ = new LH_Qt_QStringList(this, "Microphone Status", QStringList() << "N/A" << "None" << "Muted" << "Active", /*LH_FLAG_HIDDEN | LH_FLAG_READONLY |*/ LH_FLAG_NOSAVE | LH_FLAG_NOSINK );
+    setup_microphone_status_ = new LH_Qt_QStringList(this, "Microphone Status", QStringList() << "N/A" << "None" << "Muted" << "Active", LH_FLAG_HIDDEN | LH_FLAG_READONLY | LH_FLAG_NOSAVE | LH_FLAG_NOSINK );
     setup_microphone_status_->setLink("Monitoring/3rdParty/TeamSpeak3/Microphone Status",true);
     setup_microphone_status_->refreshData();
 
-    setup_speakers_status_   = new LH_Qt_QStringList(this, "Speaker Status"   , QStringList() << "N/A" << "None" << "Muted" << "Active", /*LH_FLAG_HIDDEN | LH_FLAG_READONLY |*/ LH_FLAG_NOSAVE | LH_FLAG_NOSINK );
+    setup_speakers_status_   = new LH_Qt_QStringList(this, "Speaker Status"   , QStringList() << "N/A" << "None" << "Muted" << "Active", LH_FLAG_HIDDEN | LH_FLAG_READONLY | LH_FLAG_NOSAVE | LH_FLAG_NOSINK );
     setup_speakers_status_->setLink("Monitoring/3rdParty/TeamSpeak3/Speaker Status",true);
     setup_speakers_status_->refreshData();
-
-    /*
-    LH_Qt_QString *setup_user_detail_;
-    */
 
     connect(setup_nickname_, SIGNAL(changed()), this, SLOT(updateMyDetails()));
     connect(socket_, SIGNAL(connected()), this, SLOT(TS3Connected()));
@@ -320,7 +316,7 @@ void LH_QtPlugin_TS3::updateTalking(bool force)
     {
         //qDebug() << "Talking: " << talkingNames;
         setup_talking_->setValue(talkingNames);
-        setup_talking_details_->setHelp(QString("<hr/><table style='margin-left:4px'>"
+        setup_talking_details_->setTitle(QString("<hr/><table style='margin-left:4px'>"
                                         "<tr><td><img src=':/images/%2.png'/></td><td width='56' style='padding-left:5px;'>Talking:<img src=':/images/sizer.png'/></td>   <td><img src=':/images/sizer.png'/>%1</td> </tr>"
                                         "</table>")
                                         .arg(talkingNames)
@@ -332,7 +328,7 @@ void LH_QtPlugin_TS3::updateTalking(bool force)
 
 void LH_QtPlugin_TS3::updateStatus(bool isRunning, bool isConnected, bool showChannels, bool showClients)
 {
-    setup_connection_details_->setHelp(QString("<table style='margin-left:4px'>"
+    setup_connection_details_->setTitle(QString("<table style='margin-left:4px'>"
                                    "<tr><td><img src=':/images/%5.png'/></td><td style='padding-left:5px'>TS3 is %1%2.</td></tr>"
                                    "</table>"
                                    "<hr/>"
@@ -359,7 +355,7 @@ void LH_QtPlugin_TS3::updateMyDetails()
         clientdetail myClient = clients_.value(myclid_);
         channeldetail myChannel = channels_.value(myClient.cid);
 
-        setup_user_detail_->setHelp(QString("<hr/><table style='margin-left:23px'>"
+        setup_user_detail_->setTitle(QString("<hr/><table style='margin-left:23px'>"
                                             "<tr><td><img src=':/images/sizer.png'/></td> <td width='56'>Nickname:</td>   <td>%1</td></tr>"
                                             "<tr><td><img src=':/images/sizer.png'/></td> <td width='56'>Channel:</td>    <td>%2</td></tr>"
                                             "<tr><td><img src=':/images/sizer.png'/></td> <td width='56'>Microphone:</td> <td><img src=':/images/microphone%3.png'/></td></tr>"
@@ -376,7 +372,7 @@ void LH_QtPlugin_TS3::updateMyDetails()
         setup_channelname_->setValue(myChannel.name);
         setup_nickname_->setValue(myClient.name);
     } else {
-        setup_user_detail_->setHelp("");
+        setup_user_detail_->setTitle("");
         setup_microphone_status_->setValue(0);
         setup_speakers_status_->setValue(0);
         setup_channelname_->setValue("");

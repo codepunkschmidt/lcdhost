@@ -43,7 +43,12 @@
 #include "../LH_Qt_QSlider.h"
 #include "../LH_Qt_QColor.h"
 
-class LH_Rectangle : public LH_QtCFInstance
+class LH_Rectangle :
+#ifdef LH_CF
+    public LH_QtCFInstance
+#else
+    public LH_QtInstance
+#endif
 {
     Q_OBJECT
 

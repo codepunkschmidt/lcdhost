@@ -196,6 +196,8 @@ const char *LH_Graph::userInit()
     connect( setup_linked_values_, SIGNAL(changed()), this, SLOT(newLinkedValue()) );
     connect( setup_units_, SIGNAL(changed()), this, SLOT(changeUnits()));
 
+    connect( this, SIGNAL(initialized()), this, SLOT(updateDescText()));
+
     if (isDebug) qDebug() << "graph: init: done";
 
     return 0;

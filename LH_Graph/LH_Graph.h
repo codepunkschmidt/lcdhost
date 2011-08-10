@@ -156,7 +156,6 @@ public:
     void addValue(double value, int lineID = 0);
     void addValues(QVector<double> values ) { for( int i=0; i<values.size(); ++i ) addValue( values.at(i), i ); }
 
-    void updateDescText();
     void loadColors(int lineID, QColor& penColor, QColor& fillColor1, QColor& fillColor2, QString& fgImgPath, int& fgImgAlpha);
     QString buildColorConfig();
 
@@ -180,6 +179,7 @@ public:
     void setUseLinkedValueAverage(bool val) { useLinkedValueAverage_ = val; }
     bool useLinkedValueAverage() { return useLinkedValueAverage_; }
 public slots:
+    void updateDescText();
     void changeMaxSamples();
     void changeSampleRate();
     void changeType();

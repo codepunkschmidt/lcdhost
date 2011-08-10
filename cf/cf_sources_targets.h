@@ -9,6 +9,8 @@
 #include "../LH_QtSetupItem.h"
 #include "../LH_Qt_QString.h"
 #include "../LH_Qt_QStringList.h"
+#include "../LH_Qt_int.h"
+#include "../LH_Qt_bool.h"
 
 #ifndef EXPORT
 # define EXPORT extern "C" Q_DECL_EXPORT
@@ -122,6 +124,12 @@ public:
             case lh_type_string_list:
             case lh_type_string_listbox:
                 value = ((LH_Qt_QString*)obj_)->value();
+                break;
+            case lh_type_integer:
+                value = QString::number(((LH_Qt_int*)obj_)->value());
+                break;
+            case lh_type_integer_boolean:
+                value = (((LH_Qt_bool*)obj_)->value()? "true" : "false");
                 break;
             default:
                 qWarning() << "Unhandled cf source type: " << obj_->type();

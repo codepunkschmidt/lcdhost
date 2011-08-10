@@ -53,6 +53,7 @@
 #include "../LH_Qt_QFont.h"
 #include "../LH_Qt_QFileInfo.h"
 #include "../LH_Qt_QSlider.h"
+#include "../LH_Qt_int.h"
 
 #include "cf_sources_targets.h"
 
@@ -154,6 +155,7 @@ public:
     LH_Qt_QString     *setup_cf_newValue_String_;
     LH_Qt_QFileInfo   *setup_cf_newValue_File_;
     LH_Qt_bool        *setup_cf_newValue_Bool_;
+    LH_Qt_int         *setup_cf_newValue_Int_;
     LH_Qt_QSlider     *setup_cf_newValue_Slider_;
     LH_Qt_QStringList *setup_cf_newValue_List_;
 
@@ -174,6 +176,7 @@ public:
         setup_cf_newValue_String_(0),
         setup_cf_newValue_File_(0),
         setup_cf_newValue_Bool_(0),
+        setup_cf_newValue_Int_(0),
         setup_cf_newValue_Slider_(0),
         setup_cf_newValue_List_(0)
     {}

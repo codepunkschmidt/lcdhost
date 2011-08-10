@@ -262,6 +262,9 @@ cf_rule_action_property::cf_rule_action_property(LH_QtCFInstance *sender, QObjec
     case lh_type_integer_boolean:
         value_ = (sender->setup_cf_newValue_Bool_->value()?"true":"false");
         break;
+    case lh_type_integer:
+        value_ = QString::number(sender->setup_cf_newValue_Int_->value());
+        break;
     case lh_type_string_filename:
         value_ = getRelativeFilePath(sender->setup_cf_newValue_File_->value(), sender->layoutPath() );
         break;
@@ -343,6 +346,16 @@ bool cf_rule_action_property::setTargetValue(LH_QtCFInstance* sender, cf_target_
         if(((LH_Qt_bool*)target)->value() != b )
         {
             ((LH_Qt_bool*)target)->setValue(b);
+            if(!setPlaceholder) return true;
+        }
+        break;
+    case lh_type_integer:
+        if(setPlaceholder)
+            target = sender->setup_cf_newValue_Int_;
+        i = value_.toInt(NULL);
+        if(((LH_Qt_int*)target)->value() != i )
+        {
+            ((LH_Qt_int*)target)->setValue(i);
             if(!setPlaceholder) return true;
         }
         break;

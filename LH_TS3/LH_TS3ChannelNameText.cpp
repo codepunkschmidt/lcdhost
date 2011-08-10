@@ -20,6 +20,7 @@ public:
         setText("");
         setup_text_->setLink("Monitoring/3rdParty/TeamSpeak3/Channel Name");
         setup_text_->refreshData();
+
         return 0;
     }
 

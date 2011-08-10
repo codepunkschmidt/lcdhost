@@ -220,10 +220,12 @@ void LH_WebKit::sendData( bool resize )
             else
                 if(parsingEnabled_)
                 {
-                    if(parseThread->isRunning())
+                    parseThread->quit();
+                    if( !parseThread->wait(1000) )
                     {
                         WebKitCommand(0, scaled_size(),url_,"Aborting...").write(sock_);
                         parseThread->terminate();
+                        parseThread->wait(1000);
                     }
                     WebKitCommand(0, scaled_size(),url_,"Parsing...").write(sock_);
                     parseThread->parsedHtml = setup_template_->value();

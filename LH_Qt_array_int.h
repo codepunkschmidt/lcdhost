@@ -21,16 +21,11 @@ public:
         return ((qint64*)item_.data.b.p)[index];
     }
 
-    int operator[]( int index ) const
-    {
-        return at(index);
-    }
-
-    qint64& operator[]( int index )
+    void setAt( int index, qint64 value )
     {
         Q_ASSERT( index >= 0 );
         Q_ASSERT( index < size() );
-        return ((qint64*)item_.data.b.p)[index];
+        ((qint64*)item_.data.b.p)[index] = value;
     }
 };
 

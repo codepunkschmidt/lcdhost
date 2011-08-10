@@ -32,13 +32,16 @@
   POSSIBILITY OF SUCH DAMAGE.
   */
 
+#include <QtDebug>
 #include "LH_QtCPU.h"
 #include "../lh_plugin.h"
 
 LH_QtCPU::LH_QtCPU( LH_QtInstance *parent ) : QObject( parent )
 {
     link_coreloads_ = new LH_Qt_array_int( parent, "Core loads", 0, LH_FLAG_HIDDEN|LH_FLAG_NOSAVE );
+    Q_ASSERT( link_coreloads_->size() == 0 );
     link_coreloads_->setLink("/system/cpu/coreloads");
+    connect( link_coreloads_, SIGNAL(changed()), this, SLOT(gotData()) );
     setup_smoothing_ = new LH_Qt_QSlider( parent,"Smoothing",3,1,10);
     load_.clear();
     return;
@@ -50,6 +53,16 @@ LH_QtCPU::~LH_QtCPU()
     return;
 }
 
+void LH_QtCPU::gotData()
+{
+    while( load_.size() > setup_smoothing_->value() ) delete[] load_.takeFirst();
+    int *newloads = new int[count()];
+    for( int i = 0; i<count(); i++ )
+        newloads[i] = link_coreloads_->at(i);
+    load_.append(newloads);
+    parent()->requestRender();
+}
+
 int LH_QtCPU::count()
 {
     return link_coreloads_->size();
@@ -57,17 +70,23 @@ int LH_QtCPU::count()
 
 int LH_QtCPU::coreload(int n)
 {
-    if( n<0 || n>=link_coreloads_->size() ) return 0;
-    return link_coreloads_->at(n);
+    int retv = 0;
+    if( load_.size() < 1 ) return 0;
+    if( n<0 || n>=count() ) return 0;
+    for( int i=0; i<load_.size(); ++i )
+        retv += load_.at(i)[n];
+    return retv / load_.size();
 }
 
 int LH_QtCPU::averageload()
 {
     int retv = 0;
+    if( load_.size() < 1 ) return 0;
     if( count() < 1 ) return 0;
-    for( int i = 0; i<count(); i++ )
-        retv += link_coreloads_->at(i);
-    retv /= count();
+    for( int i=0; i<count(); i++ )
+        for( int j=0; j<load_.size(); ++j )
+            retv += load_.at(j)[i];
+    retv /= (count() * load_.size());
     Q_ASSERT( retv >= 0 );
     Q_ASSERT( retv <= 10000 );
     return retv;

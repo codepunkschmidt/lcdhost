@@ -41,7 +41,7 @@ class LH_Qt_bool : public LH_QtSetupItem
 {
 public:
     LH_Qt_bool( LH_QtObject *parent, const char *ident, bool value, int flags = 0 )
-        : LH_QtSetupItem( parent, ident, lh_type_integer_boolean, flags|LH_FLAG_HIDETITLE|LH_FLAG_BLANKTITLE )
+        : LH_QtSetupItem( parent, ident, lh_type_integer_boolean, flags|((flags&LH_FLAG_BLANKTITLE)?LH_FLAG_HIDETITLE|LH_FLAG_BLANKTITLE:0) )
     {
         item_.data.i = value;
     }

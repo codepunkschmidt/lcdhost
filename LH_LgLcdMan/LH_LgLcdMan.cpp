@@ -121,7 +121,11 @@ const char *LH_LgLcdMan::userInit()
     thread_ = new LH_LgLcdLegacyThread( this );
 #endif
 
-    if( thread_ ) thread_->start();
+    if( thread_ )
+    {
+        thread_->start();
+        qDebug() << "LH_LgLcdMan started worker thread";
+    }
 
     return NULL;
 }
@@ -131,12 +135,17 @@ LH_LgLcdMan::~LH_LgLcdMan()
     if( thread_ )
     {
         thread_->timeToDie();
-        if( !thread_->wait(4000) )
+        if( !thread_->wait(1000) )
         {
-            qDebug() << "LH_LgLcdMan: Logitech drivers not responding, expect problems";
+            qDebug() << "LH_LgLcdMan: Logitech driver thread not responding, terminating it";
             thread_->terminate();
         }
-        delete thread_;
+        if( !thread_->wait(1000) )
+        {
+            qDebug() << "LH_LgLcdMan: Logitech driver thread won't terminate";
+        }
+        else
+            delete thread_;
     }
     return;
 }

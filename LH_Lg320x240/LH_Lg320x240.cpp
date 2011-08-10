@@ -102,12 +102,17 @@ LH_Lg320x240::~LH_Lg320x240()
     if( g19thread_ )
     {
         g19thread_->timeToDie();
-        while( !g19thread_->wait(4000) )
+        if( !g19thread_->wait(1000) )
         {
-            qWarning() << "LH_Lg320x240: worker thread not responding";
+            qWarning() << "LH_Lg320x240: worker thread not responding, terminating it";
             g19thread_->terminate();
         }
-        delete g19thread_;
+        if( !g19thread_->wait(1000) )
+        {
+            qWarning() << "LH_Lg320x240: worker thread can't be terminated";
+        }
+        else
+            delete g19thread_;
     }
     g19thread_ = 0;
 }

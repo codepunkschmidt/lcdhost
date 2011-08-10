@@ -62,7 +62,7 @@ protected:
     {
         data_array_ = a;
         item_.data.b.p = data_array_.data();
-        item_.data.b.n = data_array_.capacity();
+        item_.data.b.n = data_array_.size();
     }
 
     void setString( const QString& s )

@@ -86,7 +86,7 @@ public:
 
     void setIndex(int idx)
     {
-        if( idx<0 || idx>list_.size() ) setValue( QString() );
+        if( idx<0 || idx>=list_.size() ) setValue( QString() );
         else setValue( list_.at(idx) );
     }
 };

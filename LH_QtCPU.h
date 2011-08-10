@@ -46,8 +46,9 @@
 
 class LH_QtCPU : public QObject
 {
+    Q_OBJECT
+
     QQueue<int*> load_;
-    // int load( lh_cpudata *from, lh_cpudata *to );
 
 protected:
     LH_Qt_array_int *link_coreloads_;
@@ -56,8 +57,6 @@ protected:
 public:
     explicit LH_QtCPU(LH_QtInstance *parent);
     ~LH_QtCPU();
-
-    // int notify(int n, void *p);
 
     int count();
     int samples() { return setup_smoothing_->value() + 1; }
@@ -68,6 +67,9 @@ public:
 
     void smoothingOrder(int n) { setup_smoothing_->setOrder(n); }
     void smoothingHidden(bool hide) { setup_smoothing_->setFlag(LH_FLAG_HIDDEN, hide); }
+
+public slots:
+    void gotData();
 };
 
 #endif // LH_QTCPU_H

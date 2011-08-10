@@ -15,13 +15,14 @@ public:
 
     void resize( int size )
     {
+        Q_ASSERT( item_.type & lh_type_array );
         if( item_.type == lh_type_array_qint64 ) size *= sizeof(qint64);
         else if( item_.type == lh_type_array_double ) size *= sizeof(double);
         if( size > 0 )
         {
             data_array_.resize( size );
             item_.data.b.p = data_array_.data();
-            item_.data.b.n = size;
+            item_.data.b.n = data_array_.size();
         }
         else
         {
@@ -33,8 +34,16 @@ public:
 
     int size() const
     {
-        if( item_.type == lh_type_array_qint64 ) return item_.data.b.n / sizeof(qint64);
-        if( item_.type == lh_type_array_double ) return item_.data.b.n / sizeof(double);
+        if( item_.type == lh_type_array_qint64 )
+        {
+            Q_ASSERT( !(item_.data.b.n % sizeof(qint64)) );
+            return item_.data.b.n / sizeof(qint64);
+        }
+        if( item_.type == lh_type_array_double )
+        {
+            Q_ASSERT( !(item_.data.b.n % sizeof(double)) );
+            return item_.data.b.n / sizeof(double);
+        }
         return 0;
     }
 

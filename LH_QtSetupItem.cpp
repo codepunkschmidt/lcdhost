@@ -142,7 +142,7 @@ void LH_QtSetupItem::setup_resize( size_t needed )
 {
     data_array_.resize(needed);
     item_.data.b.p = data_array_.data();
-    item_.data.b.n = data_array_.capacity();
+    item_.data.b.n = data_array_.size();
     return;
 }
 
@@ -358,7 +358,7 @@ void LH_QtSetupItem::setValue( const QByteArray& a )
     {
         data_array_ = a;
         item_.data.b.p = data_array_.data();
-        item_.data.b.n = data_array_.capacity();
+        item_.data.b.n = data_array_.size();
         refreshData();
         emit set();
     }
@@ -383,10 +383,10 @@ void LH_QtSetupItem::setValue( const char *s, int len )
             return;
         }
     }
-    if( len > data_array_.capacity() ) data_array_.resize( len );
+    if( len > data_array_.size() ) data_array_.resize( len );
     memcpy( data_array_.data(), s, len );
     item_.data.b.p = data_array_.data();
-    item_.data.b.n = data_array_.capacity();
+    item_.data.b.n = data_array_.size();
     if( item_.type & lh_type_string ) getString();
     refreshData();
     emit set();

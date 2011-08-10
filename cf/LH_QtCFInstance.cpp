@@ -126,10 +126,11 @@ void LH_QtCFInstance::cf_initialize()
         setup_cf_newValue_Color_ = new LH_Qt_QColor(this, "New Value - Color",QColor(0,0,0),LH_FLAG_UI | LH_FLAG_LAST | LH_FLAG_HIDDEN | LH_FLAG_BLANKTITLE);
         setup_cf_newValue_Font_  = new LH_Qt_QFont(this, "New Value - Font",QFont("Arial",10),LH_FLAG_UI | LH_FLAG_LAST | LH_FLAG_HIDDEN | LH_FLAG_BLANKTITLE);
         setup_cf_newValue_String_= new LH_Qt_QString(this, "New Value - String","",LH_FLAG_UI | LH_FLAG_LAST | LH_FLAG_HIDDEN | LH_FLAG_BLANKTITLE);
-        setup_cf_newValue_Bool_ = new LH_Qt_bool(this, "New Value - Boolean","",LH_FLAG_UI | LH_FLAG_LAST | LH_FLAG_HIDDEN | LH_FLAG_BLANKTITLE);
+        setup_cf_newValue_Bool_  = new LH_Qt_bool(this, "New Value - Boolean",false,LH_FLAG_UI | LH_FLAG_LAST | LH_FLAG_HIDDEN | LH_FLAG_BLANKTITLE);
+        setup_cf_newValue_Int_   = new LH_Qt_int(this, "New Value - Integer",0,LH_FLAG_UI | LH_FLAG_LAST | LH_FLAG_HIDDEN | LH_FLAG_BLANKTITLE);
         setup_cf_newValue_File_  = new LH_Qt_QFileInfo(this,"New Value - File",QFileInfo(""),LH_FLAG_UI | LH_FLAG_LAST | LH_FLAG_HIDDEN | LH_FLAG_BLANKTITLE);
         setup_cf_newValue_Slider_= new LH_Qt_QSlider(this,"New Value - Slider",0,0,0, LH_FLAG_UI | LH_FLAG_LAST | LH_FLAG_HIDDEN | LH_FLAG_BLANKTITLE);
-        setup_cf_newValue_List_ = new LH_Qt_QStringList(this,"New Value - List",QStringList(), LH_FLAG_UI | LH_FLAG_LAST | LH_FLAG_HIDDEN | LH_FLAG_BLANKTITLE);
+        setup_cf_newValue_List_  = new LH_Qt_QStringList(this,"New Value - List",QStringList(), LH_FLAG_UI | LH_FLAG_LAST | LH_FLAG_HIDDEN | LH_FLAG_BLANKTITLE);
 
         setup_cf_menu3_ = new LH_Qt_html(this, 0, LH_FLAG_UI | LH_FLAG_LAST | LH_FLAG_HIDDEN | LH_FLAG_BLANKTITLE );
         setRuleEditMenu(false,false,false);
@@ -166,6 +167,7 @@ void LH_QtCFInstance::cf_initialize()
         connect(setup_cf_newValue_Font_,   SIGNAL(changed()), this, SLOT(cf_rule_edited()));
         connect(setup_cf_newValue_String_, SIGNAL(changed()), this, SLOT(cf_rule_edited()));
         connect(setup_cf_newValue_Bool_,   SIGNAL(changed()), this, SLOT(cf_rule_edited()));
+        connect(setup_cf_newValue_Int_,    SIGNAL(changed()), this, SLOT(cf_rule_edited()));
         connect(setup_cf_newValue_Slider_, SIGNAL(changed()), this, SLOT(cf_rule_edited()));
         connect(setup_cf_newValue_List_,   SIGNAL(changed()), this, SLOT(cf_rule_edited()));
         connect(setup_cf_newValue_File_,   SIGNAL(changed()), this, SLOT(cf_rule_edited()));
@@ -334,6 +336,7 @@ void LH_QtCFInstance::cf_target_changed()
     setup_cf_newValue_Font_->setFlag(  LH_FLAG_HIDDEN, !setup_cf_enabled_->value() || targetType!=setup_cf_newValue_Font_->type()  || cf_rule_editing_==None);
     setup_cf_newValue_String_->setFlag(LH_FLAG_HIDDEN, !setup_cf_enabled_->value() || targetType!=setup_cf_newValue_String_->type()|| cf_rule_editing_==None);
     setup_cf_newValue_Bool_->setFlag(  LH_FLAG_HIDDEN, !setup_cf_enabled_->value() || targetType!=setup_cf_newValue_Bool_->type()  || cf_rule_editing_==None);
+    setup_cf_newValue_Int_->setFlag(   LH_FLAG_HIDDEN, !setup_cf_enabled_->value() || targetType!=setup_cf_newValue_Int_->type()   || cf_rule_editing_==None);
     setup_cf_newValue_File_->setFlag(  LH_FLAG_HIDDEN, !setup_cf_enabled_->value() || targetType!=setup_cf_newValue_File_->type()  || cf_rule_editing_==None);
     setup_cf_newValue_Slider_->setFlag(LH_FLAG_HIDDEN, !setup_cf_enabled_->value() || targetType!=setup_cf_newValue_Slider_->type()|| cf_rule_editing_==None);
     setup_cf_newValue_List_->setFlag(  LH_FLAG_HIDDEN, !setup_cf_enabled_->value() || targetType!=setup_cf_newValue_List_->type()  || cf_rule_editing_==None);
@@ -460,12 +463,6 @@ void LH_QtCFInstance::cf_state_value_updated()
 
 void LH_QtCFInstance::cf_update_visibility()
 {
-    //if (QObject::sender()!=NULL)
-    //{
-    //    QString senderName = ((LH_QtSetupItem*)QObject::sender())->name();
-    //    if(sources_.contains(senderName))
-    //        sources_[senderName]->setValue();
-    //}
     setVisible(setup_cf_visibility_->value());
 }
 

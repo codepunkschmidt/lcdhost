@@ -1,3 +1,5 @@
+DEFINES += LH_CF
+
 QT += xml
 
 SOURCES += \

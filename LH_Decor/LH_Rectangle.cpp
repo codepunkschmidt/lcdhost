@@ -41,7 +41,7 @@
 
 const char *LH_Rectangle::userInit()
 {
-    if( const char *err = LH_QtCFInstance::userInit() ) return err;
+    if( const char *err = LH_QtInstance::userInit() ) return err;
     setup_penwidth_ = new LH_Qt_QSlider(this,("Pen width"),0,0,1000,LH_FLAG_AUTORENDER);
     setup_rounding_ = new LH_Qt_QSlider(this,("Corner rounding"),20,0,100,LH_FLAG_AUTORENDER);
     setup_pencolor_ = new LH_Qt_QColor(this,("Pen color"),Qt::black,LH_FLAG_AUTORENDER);

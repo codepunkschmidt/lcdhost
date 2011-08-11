@@ -59,7 +59,7 @@ public:
 
     void prerender()
     {
-        setText( QString("%1%%").arg(link_cpu_load_->value()/100) );
+        setText( QString::number(link_cpu_load_->value()/100).append('%') );
         LH_Text::prerender();
     }
 

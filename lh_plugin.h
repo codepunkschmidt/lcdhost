@@ -284,8 +284,8 @@ typedef enum lh_setup_type_t
 
     lh_type_array = 0x1000, /* basic fixed-size data storage */
     lh_type_array_png, /* allows the display of a PNG image */
-    lh_type_array_qint64, /* no UI - store an array of qint64 in buffer */
-    lh_type_array_double, /* no UI - store an array of doubles in buffer */
+    lh_type_array_qint64 = (lh_type_array|lh_type_integer), /* no UI - store an array of qint64 in buffer */
+    lh_type_array_double = (lh_type_array|lh_type_double), /* no UI - store an array of doubles in buffer */
     lh_type_array_string, /* no UI - data is a list of NUL-delimited UTF-8 strings */
 
     lh_type_last /* marks last used value */
@@ -303,9 +303,9 @@ typedef enum lh_setup_type_t
 #define LH_FLAG_NOSINK      0x0200 /* Setup item must not be used as a data sink */
 #define LH_FLAG_HIDETITLE   0x0400 /* Setup item title is not shown in GUI (all space to value) */
 #define LH_FLAG_HIDEVALUE   0x0800 /* Setup item value is not shown in GUI (all space to title) */
-#define LH_FLAG_MIN         0x1000 /* Limit numeric values to the min value given in params */
-#define LH_FLAG_MAX         0x2000 /* Limit numeric values to the max value given in params */
-#define LH_FLAG_MINMAX      0x3000 /* Limit numeric values to the min and max value given in params */
+#define LH_FLAG_MIN         0x1000 /* Limit UI numeric input to the min value given in params */
+#define LH_FLAG_MAX         0x2000 /* Limit UI numeric input to the max value given in params */
+#define LH_FLAG_MINMAX      0x3000 /* Limit UI numeric input to the min and max value given in params */
 
 #define LH_STATE_SOURCE     0x0001 /* Setup item is a data source */
 
@@ -313,9 +313,12 @@ typedef enum lh_setup_type_t
 
 /**
   Stores 'secondary' data for setup items. These are not
-  preserved by LCDHost, but are used to control UI elements
-  or limit data ranges, and in the case of the 'input' struct,
-  pass on input device data.
+  preserved by LCDHost, but are used to control UI elements.
+  The min/max values limit UI input only; programmatically
+  you may set any value. When using data linking, parameters
+  will be copied from a data source to a data sink. This is
+  useful since having min and max values help making rendering
+  decisions.
   */
 typedef union lh_setup_param_t
 {

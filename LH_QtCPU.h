@@ -58,12 +58,15 @@ public:
     explicit LH_QtCPU(LH_QtInstance *parent);
     ~LH_QtCPU();
 
-    int count();
-    int samples() { return setup_smoothing_->value() + 1; }
     LH_QtInstance *parent() const { return static_cast<LH_QtInstance *>(QObject::parent()); }
 
-    int coreload(int n); // 0...10000
-    int averageload(); // 0...10000
+    int count() const { return link_coreloads_->size(); }
+    int min() const { return link_coreloads_->min(); }
+    int max() const { return link_coreloads_->max(); }
+    int samples() { return setup_smoothing_->value() + 1; }
+
+    int coreload(int n); // min() ... max()
+    int averageload(); // min() ... max()
 
     void smoothingOrder(int n) { setup_smoothing_->setOrder(n); }
     void smoothingHidden(bool hide) { setup_smoothing_->setFlag(LH_FLAG_HIDDEN, hide); }

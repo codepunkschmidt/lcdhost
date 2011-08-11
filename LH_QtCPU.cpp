@@ -63,11 +63,6 @@ void LH_QtCPU::gotData()
     parent()->requestRender();
 }
 
-int LH_QtCPU::count()
-{
-    return link_coreloads_->size();
-}
-
 int LH_QtCPU::coreload(int n)
 {
     int retv = 0;
@@ -75,7 +70,10 @@ int LH_QtCPU::coreload(int n)
     if( n<0 || n>=count() ) return 0;
     for( int i=0; i<load_.size(); ++i )
         retv += load_.at(i)[n];
-    return retv / load_.size();
+    retv /= load_.size();
+    Q_ASSERT( retv >= link_coreloads_->min() );
+    Q_ASSERT( retv <= link_coreloads_->max() );
+    return retv;
 }
 
 int LH_QtCPU::averageload()
@@ -87,8 +85,8 @@ int LH_QtCPU::averageload()
         for( int j=0; j<load_.size(); ++j )
             retv += load_.at(j)[i];
     retv /= (count() * load_.size());
-    Q_ASSERT( retv >= 0 );
-    Q_ASSERT( retv <= 10000 );
+    Q_ASSERT( retv >= link_coreloads_->min() );
+    Q_ASSERT( retv <= link_coreloads_->max() );
     return retv;
 }
 

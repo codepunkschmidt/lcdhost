@@ -58,7 +58,11 @@ void LH_QtCPU::gotData()
     while( load_.size() > setup_smoothing_->value() ) delete[] load_.takeFirst();
     int *newloads = new int[count()];
     for( int i = 0; i<count(); i++ )
+    {
         newloads[i] = link_coreloads_->at(i);
+        Q_ASSERT( newloads[i] >= link_coreloads_->min() );
+        Q_ASSERT( newloads[i] <= link_coreloads_->max() );
+    }
     load_.append(newloads);
     parent()->requestRender();
 }

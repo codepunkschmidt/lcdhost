@@ -161,6 +161,34 @@ void LH_QtObject::setTitle(const QString& s)
     return;
 }
 
+QString LH_QtObject::dir_layout() const
+{
+    const LH_QtObject *par = qobject_cast<const LH_QtObject*>(parent());
+    if( par ) return par->dir_layout();
+    return dir_data();
+}
+
+QString LH_QtObject::dir_binaries() const
+{
+    const char *p = 0;
+    callback( lh_cb_dir_binaries, &p );
+    return QString::fromUtf8(p);
+}
+
+QString LH_QtObject::dir_plugins() const
+{
+    const char *p = 0;
+    callback( lh_cb_dir_plugins, &p );
+    return QString::fromUtf8(p);
+}
+
+QString LH_QtObject::dir_data() const
+{
+    const char *p = 0;
+    callback( lh_cb_dir_data, &p );
+    return QString::fromUtf8(p);
+}
+
 #if 0
 const char *LH_QtObject::input_name( const char *devid, int item )
 {

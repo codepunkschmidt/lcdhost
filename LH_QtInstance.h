@@ -72,7 +72,6 @@ public:
     LH_QtInstance( lh_callback_t cb = 0 , void* cb_id = 0 );
     ~LH_QtInstance();
 
-    QString layoutPath() const;
     bool isMonochrome() const { return li_.layout.depth == 1; }
 
     lh_layout_item *item() { return &li_; }
@@ -84,6 +83,11 @@ public:
     virtual int height( int ) { return -1; }
     virtual lh_blob *render_blob( int, int ) { return NULL; }
     virtual QImage *render_qimage( int, int ) { return NULL; }
+
+    virtual QString dir_layout() const
+    {
+        return QString::fromUtf8( li_.layout.dir );
+    }
 
     /* reimplement this static member in your own classes */
     static const lh_class *classInfo()

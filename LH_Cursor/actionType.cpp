@@ -95,7 +95,7 @@ void actionType::displayParameter(int id, LH_Qt_QString *desc_, LH_Qt_QString *s
             QString val = getParameter(e,id);
             str_->setValue(parameters[id].type != aptString ? "" : val);
             int_->setValue(parameters[id].type != aptInteger? id : val.toInt());
-            QString val2 = QString("%1%2").arg(cursorAction_->layoutPath()).arg(val);
+            QString val2 = QString("%1%2").arg(cursorAction_->dir_layout()).arg(val);
             file_->setValue(parameters[id].type != aptFile? QFileInfo() : (QFileInfo(val2).exists()? QFileInfo(val2) : QFileInfo(val)));
         }
     }
@@ -113,7 +113,7 @@ QString actionType::getParameterValue(int id, LH_Qt_QString *str_, LH_Qt_int *in
         return QString("%1").arg(int_->value());
     case aptFile:
         QString path = file_->value().absoluteFilePath();
-        QString dir_layout = cursorAction_->layoutPath();
+        QString dir_layout = cursorAction_->dir_layout();
         if (path.startsWith(dir_layout))
             path = path.replace(dir_layout,"",Qt::CaseInsensitive);
         return path;

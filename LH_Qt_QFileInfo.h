@@ -61,6 +61,11 @@ public:
 
     QFileInfo value()
     {
+        if( fi_.isRelative() )
+        {
+            QDir dir( dir_layout() );
+            return QFileInfo( dir, fi_.filePath() );
+        }
         return fi_;
     }
 

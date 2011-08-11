@@ -25,7 +25,7 @@ public:
         // get the data directory. we will save a temporary "art.jpg" file
         // here whilst it is valid. When the album changes or the plugin is
         // unloaded this file is automatically cleaned up.
-        artworkCachePath_ = LH_QtPlugin::dir_data();
+        artworkCachePath_ = LH_QtPlugin::instance()->dir_data();
         Q_ASSERT( artworkCachePath_.endsWith('/') );
         return;
     }

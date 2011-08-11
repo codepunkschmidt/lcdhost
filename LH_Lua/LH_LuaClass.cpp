@@ -204,7 +204,7 @@ QString LH_LuaClass::load( LH_Lua *parent, QFileInfo fi )
     QByteArray filename_array = filename.toLocal8Bit();
     const char *magic = NULL;
 
-    QDir datadir( LH_QtPlugin::dir_data() );
+    QDir datadir( LH_QtPlugin::instance()->dir_data() );
     filename = datadir.relativeFilePath( fi.filePath() );
 
     Q_ASSERT( L != NULL );

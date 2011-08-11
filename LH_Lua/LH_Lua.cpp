@@ -235,8 +235,8 @@ LH_Lua::LH_Lua(QObject *parent) : QObject( parent )
     const char *env_lua_cpath;
     const char *env_lua_path;
     const char *env_path;
-    QString dir_data = LH_QtPlugin::dir_data();
-    QString dir_plugins = LH_QtPlugin::dir_plugins();
+    QString dir_data = LH_QtPlugin::instance()->dir_data();
+    QString dir_plugins = LH_QtPlugin::instance()->dir_plugins();
 
     // Create DATADIR/lua/clibs if it doesn't exist
     {

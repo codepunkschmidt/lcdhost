@@ -47,7 +47,7 @@ int LH_RSSBody::notify(int code,void* param)
 
 void LH_RSSBody::setRssItem()
 {
-    sendRequest( QUrl::fromLocalFile( layoutPath() + "/" ), rss_->item().description );
+    sendRequest( QUrl::fromLocalFile( dir_layout() + "/" ), rss_->item().description );
 }
 
 QHash<QString, QString> LH_RSSBody::getTokens()

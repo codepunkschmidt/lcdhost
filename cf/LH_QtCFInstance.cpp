@@ -496,7 +496,7 @@ void LH_QtCFInstance::cf_apply_rules(bool allowRender)
 
 void LH_QtCFInstance::cf_copy_rules()
 {
-    QFile file( LH_QtPlugin::dir_data().append("cf_cache.xml") );
+    QFile file( dir_data().append("cf_cache.xml") );
     if (!file.open(QIODevice::WriteOnly | QIODevice::Text))
         return;
     else
@@ -510,7 +510,7 @@ void LH_QtCFInstance::cf_copy_rules()
 void LH_QtCFInstance::cf_paste_rules()
 {
     QString clip_text;
-    QFile file( LH_QtPlugin::dir_data().append("cf_cache.xml") );
+    QFile file( dir_data().append("cf_cache.xml") );
     if (!file.open(QIODevice::ReadOnly | QIODevice::Text))
         return;
     else

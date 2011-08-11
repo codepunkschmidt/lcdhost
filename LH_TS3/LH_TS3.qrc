@@ -1,0 +1,16 @@
+<RCC>
+    <qresource prefix="/">
+        <file>images/active.png</file>
+        <file>images/notrunning.png</file>
+        <file>images/unconnected.png</file>
+        <file>images/microphone.png</file>
+        <file>images/microphone-mute.png</file>
+        <file>images/sound.png</file>
+        <file>images/sound-mute.png</file>
+        <file>images/microphone-disabled.png</file>
+        <file>images/sound-disabled.png</file>
+        <file>images/sizer.png</file>
+        <file>images/talking.png</file>
+        <file>images/empty.png</file>
+    </qresource>
+</RCC>

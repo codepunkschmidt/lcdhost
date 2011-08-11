@@ -85,12 +85,6 @@ LH_QtInstance::~LH_QtInstance()
     }
 }
 
-QString LH_QtInstance::layoutPath() const
-{
-    if( li_.layout.dir ) return QString::fromUtf8( li_.layout.dir );
-    return LH_QtPlugin::dir_data();
-}
-
 /**
   Basic QImage handling. Call this at the start of
   your render_qimage to ensure that \c image_ is

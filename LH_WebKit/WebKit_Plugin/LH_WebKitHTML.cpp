@@ -62,5 +62,5 @@ const char *LH_WebKitHTML::userInit()
 
 void LH_WebKitHTML::htmlChanged()
 {
-    sendRequest( QUrl::fromLocalFile( layoutPath() + "/" ), html_->value() );
+    sendRequest( QUrl::fromLocalFile( dir_layout() + "/" ), html_->value() );
 }

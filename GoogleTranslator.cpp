@@ -266,7 +266,7 @@ void GoogleTranslator::addToCache(QString sourceItem, QString translatedItem)
 QString GoogleTranslator::getCacheFileName()
 {
     return QString("%1translations.%2.%3.%4.cache")
-            .arg( LH_QtPlugin::dir_data() )
+            .arg( LH_QtPlugin::instance()->dir_data() )
             .arg(name_)
             .arg(sourceLanguage_)
             .arg(targetLanguage_);

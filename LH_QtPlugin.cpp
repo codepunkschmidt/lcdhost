@@ -67,44 +67,6 @@ LH_QtLayoutClassLoader::LH_QtLayoutClassLoader(
 
 LH_QtPlugin *LH_QtPlugin::instance_ = 0;
 
-QString LH_QtPlugin::dir_binaries()
-{
-    static QString retv;
-    if( retv.isEmpty() && instance_ )
-    {
-        const char *p = 0;
-        instance_->callback( lh_cb_dir_binaries, &p );
-        retv = QString::fromUtf8(p);
-    }
-    return retv;
-}
-
-QString LH_QtPlugin::dir_plugins()
-{
-    static QString retv;
-    if( retv.isEmpty() && instance_ )
-    {
-        const char *p = 0;
-        instance_->callback( lh_cb_dir_plugins, &p );
-        retv = QString::fromUtf8(p);
-    }
-    return retv;
-}
-
-QString LH_QtPlugin::dir_data()
-{
-    static QString retv;
-    Q_ASSERT( instance_ );
-    if( retv.isEmpty() && instance_ )
-    {
-        const char *p = 0;
-        instance_->callback( lh_cb_dir_data, &p );
-        retv = QString::fromUtf8(p);
-        Q_ASSERT( retv.endsWith('/') );
-    }
-    return retv;
-}
-
 LH_QtPlugin::LH_QtPlugin( lh_callback_t cb, void* cb_id ) :
     LH_QtObject(&obj_)
 {

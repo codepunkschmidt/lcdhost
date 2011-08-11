@@ -93,7 +93,7 @@ const char *LH_DataViewerConnector::userInit()
 
 QString LH_DataViewerConnector::get_dir_layout()
 {
-    return layoutPath();
+    return dir_layout();
 }
 
 QStringList LH_DataViewerConnector::listLanguages()

@@ -249,7 +249,7 @@ void LH_WebKit::sendData( bool resize )
 QHash<QString, QString> LH_WebKit::getTokens()
 {
     QHash<QString, QString> tokens;
-    QString s = layoutPath();
+    QString s = dir_layout();
 
     if( s.endsWith('\\') || s.endsWith('/')) s.remove( s.length()-1, 1 );
     tokens.insert( "layout_path", s );

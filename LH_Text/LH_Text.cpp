@@ -334,7 +334,7 @@ void LH_Text::textChanged()
         doc_.setIndentWidth( 20 );
         doc_.setMetaInformation(
                     QTextDocument::DocumentUrl,
-                    QUrl::fromLocalFile(layoutPath()).toString()
+                    QUrl::fromLocalFile(dir_layout()).toString()
                     );
         doc_.setHtml( setup_text_->value() );
         setup_fontresize_->setValue( false );

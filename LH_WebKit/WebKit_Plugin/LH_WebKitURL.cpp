@@ -92,7 +92,7 @@ void LH_WebKitURL::finished( QNetworkReply* reply )
         {
             if( reply->attribute(QNetworkRequest::HttpStatusCodeAttribute) == 200 )
             {
-                sendRequest( QUrl::fromLocalFile( layoutPath() + "/" ), reply->readAll() );
+                sendRequest( QUrl::fromLocalFile( dir_layout() + "/" ), reply->readAll() );
             }
             else if( reply->attribute(QNetworkRequest::HttpStatusCodeAttribute) == 301 )
             {

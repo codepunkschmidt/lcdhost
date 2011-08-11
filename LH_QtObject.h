@@ -98,6 +98,11 @@ public:
     void hide() const { int b = 1; callback( lh_cb_sethidden, (void*)&b ); }
     void setVisible( bool b ) const { int notb = !b; callback( lh_cb_sethidden, (void*)&notb ); }
 
+    virtual QString dir_layout() const;
+    QString dir_binaries() const;
+    QString dir_plugins() const;
+    QString dir_data() const;
+
 public slots:
     void requestRender() const { callback( lh_cb_render, NULL ); }
     void requestPolling() const { callback( lh_cb_polling, NULL ); }

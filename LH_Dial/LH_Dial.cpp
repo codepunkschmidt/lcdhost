@@ -812,8 +812,8 @@ QString LH_Dial::buildNeedleConfig()
     QString needleImg = "";
     if(setup_needle_image_->value().isFile())
         needleImg = setup_needle_image_->value().absoluteFilePath();
-    if (needleImg.startsWith(layoutPath()))
-        needleImg.remove(layoutPath());
+    if (needleImg.startsWith(dir_layout()))
+        needleImg.remove(dir_layout());
 
     QStringList config = QStringList();
 
@@ -854,7 +854,7 @@ void LH_Dial::loadNeedleConfig(int needleID, int& needleStyle, QColor& needleCol
     needleGap = (config.at(7)).toInt();
     if(config.length()>8)
         needleImage = QString(config.at(8)).replace('?',',');
-    if(needleImage!="") needleImage = layoutPath() + needleImage;
+    if(needleImage!="") needleImage = dir_layout() + needleImage;
 
     if (isDebug) qDebug() << "dial: load needle config: end ";
 }

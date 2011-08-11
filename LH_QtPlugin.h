@@ -62,12 +62,8 @@ public:
     LH_QtPlugin(lh_callback_t cb = 0, void* cb_id = 0);
     ~LH_QtPlugin();
 
-    static LH_QtPlugin *instance() { return instance_; }
-    static QString dir_binaries();
-    static QString dir_plugins();
-    static QString dir_data();
-
     virtual const char *userInit();
+    static LH_QtPlugin *instance() { return instance_; }
 
 public slots:
     void requestReload( const char *msg = 0 );

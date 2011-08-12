@@ -127,15 +127,18 @@ LH_QtSetupItem::~LH_QtSetupItem()
 
 int LH_QtSetupItem::notify( int note, void *param )
 {
+    if( note & LH_NOTE_INPUT )
+    {
+        lh_input *p = (lh_input*)param;
+        emit input( p->flags, p->value );
+    }
     if( note & LH_NOTE_WARNING )
     {
         qptrdiff w = (qptrdiff) param;
         if( w == LH_WARNING_DUPLICATE_SOURCE )
-        {
             emit duplicateSource();
-        }
     }
-    return LH_NOTE_WARNING;
+    return LH_NOTE_WARNING|LH_NOTE_INPUT;
 }
 
 void LH_QtSetupItem::setup_resize( size_t needed )

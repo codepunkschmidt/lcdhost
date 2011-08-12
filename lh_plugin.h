@@ -96,6 +96,7 @@ typedef unsigned long long quint64; /* 64 bit unsigned */
 #define LH_NOTE_DEVICE      0x00000010 /* output device has changed */
 #define LH_NOTE_WARNING     0x00000020 /* warnings, param: LH_WARNING_xxx (cast param to int) */
 #define LH_NOTE_TITLE       0x00000040 /* title has been changed, param is NULL, obj.title ptr changed */
+#define LH_NOTE_INPUT       0x00000080 /* input to a lh_type_input_xxx setup item, param: lh_input* */
 
 #define LH_WARNING_DUPLICATE_SOURCE 1
 
@@ -331,11 +332,6 @@ typedef union lh_setup_param_t
         double min;
         double max;
     } d;
-    struct
-    {
-        int value;
-        int flags;
-    } input; /**< for device input items */
     const char *list; /**< newline-delimited list of UTF-8 strings */
     void *p; /* for lh_type_image_qimage, points to a QImage */
 } lh_setup_param;

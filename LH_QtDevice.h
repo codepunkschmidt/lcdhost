@@ -32,12 +32,11 @@
   POSSIBILITY OF SUCH DAMAGE.
   */
 
-#ifndef LH_QTDEVICE_H
-#define LH_QTDEVICE_H
+#ifndef LH_QTOUTPUTDEVICE_H
+#define LH_QTOUTPUTDEVICE_H
 
 #include <QImage>
 
-#include "LH_QtPlugin.h"
 #include "LH_QtObject.h"
 
 /**
@@ -45,14 +44,14 @@
   don't need to inherit from this, but it does provide a good starting
   point.
   */
-class LH_QtDevice : public LH_QtObject
+class LH_QtOutputDevice : public LH_QtObject
 {
     Q_OBJECT
     lh_output_device lh_dev_;
 
 public:
-    LH_QtDevice( const char *devid, int w, int h, int d, bool noauto );
-    virtual ~LH_QtDevice();
+    LH_QtOutputDevice( const char *devid, int w, int h, int d, bool noauto );
+    virtual ~LH_QtOutputDevice();
 
     LH_QtObject *parent() const { return static_cast<LH_QtObject *>(LH_QtObject::parent()); }
 
@@ -77,4 +76,4 @@ public:
     bool monochrome() const { return lh_dev_.depth == 1; }
 };
 
-#endif // LH_QTDEVICE_H
+#endif // LH_QTOUTPUTDEVICE_H

@@ -4,7 +4,7 @@
 #include "../LH_QtDevice.h"
 #include "hidapi.h"
 
-class Lg160x43Device : public LH_QtDevice
+class Lg160x43Device : public LH_QtOutputDevice
 {
     Q_OBJECT
 

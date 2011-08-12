@@ -13,7 +13,7 @@ enum
 };
 
 Lg160x43Device::Lg160x43Device( const struct hid_device_info *di )
-    : LH_QtDevice(di->path,160,43,1,false)
+    : LH_QtOutputDevice(di->path,160,43,1,false)
 {
     to_remove_ = false;
     product_id_ = di->product_id;

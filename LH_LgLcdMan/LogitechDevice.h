@@ -55,7 +55,7 @@
 # endif
 #endif
 
-class LogitechDevice : public LH_QtDevice
+class LogitechDevice : public LH_QtOutputDevice
 {
     Q_OBJECT
     bool opened_;

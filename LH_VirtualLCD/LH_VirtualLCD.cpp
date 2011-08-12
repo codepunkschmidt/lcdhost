@@ -60,18 +60,18 @@ char __lcdhostplugin_xml[] =
   "</longdesc>"
 "</lcdhostplugin>";
 
-class VirtualLCD : public LH_QtDevice
+class VirtualLCD : public LH_QtOutputDevice
 {
 protected:
     LH_Qt_QImage *setup_output_;
 
 public:
     VirtualLCD( const char *devid, int w, int h, int d, bool noauto ) :
-        LH_QtDevice(devid,w,h,d,noauto) {}
+        LH_QtOutputDevice(devid,w,h,d,noauto) {}
 
     const char *userInit()
     {
-        if( const char *err = LH_QtDevice::userInit() ) return err;
+        if( const char *err = LH_QtOutputDevice::userInit() ) return err;
         setup_output_ = new LH_Qt_QImage(this,"Output",QImage(),LH_FLAG_HIDDEN);
         return 0;
     }

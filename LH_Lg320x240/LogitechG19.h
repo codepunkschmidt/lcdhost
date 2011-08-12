@@ -4,7 +4,7 @@
 #include <../LH_QtDevice.h>
 #include "libusb.h"
 
-class LogitechG19 : public LH_QtDevice
+class LogitechG19 : public LH_QtOutputDevice
 {
     Q_OBJECT
 

@@ -42,7 +42,7 @@
 #include "LogitechDevice.h"
 
 LogitechDevice::LogitechDevice( bool bw )
-    : LH_QtDevice( bw ? "LH_LgLcdMan:BW" : "LH_LgLcdMan:QVGA",
+    : LH_QtOutputDevice( bw ? "LH_LgLcdMan:BW" : "LH_LgLcdMan:QVGA",
           bw ? 160 : 320,
           bw ? 43 : 240,
           bw ? 1 : 32,

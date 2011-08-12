@@ -33,7 +33,7 @@
   */
 
 #include <QDebug>
-#include "LH_QtDevice.h"
+#include "LH_QtOutputDevice.h"
 
 /**
   Device stubs.
@@ -75,7 +75,7 @@ static const char* obj_close(lh_output_device*obj)
     return RECAST(obj->obj.ref)->close();
 }
 
-LH_QtDevice::LH_QtDevice( const char *devid, int w, int h, int d, bool noauto ) :
+LH_QtOutputDevice::LH_QtOutputDevice( const char *devid, int w, int h, int d, bool noauto ) :
     LH_QtObject( &lh_dev_.obj, LH_QtPlugin::instance() )
 {
     lh_dev_.size = sizeof(lh_output_device);
@@ -105,7 +105,7 @@ LH_QtDevice::LH_QtDevice( const char *devid, int w, int h, int d, bool noauto ) 
     return;
 }
 
-LH_QtDevice::~LH_QtDevice()
+LH_QtOutputDevice::~LH_QtOutputDevice()
 {
     callback( lh_cb_destroy );
     memset( &lh_dev_, 0, sizeof(lh_output_device) );

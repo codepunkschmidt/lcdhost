@@ -21,6 +21,12 @@ public:
         return ((qint64*)item_.data.b.p)[index];
     }
 
+    qint64 at(int index, qint64 defaultValue) const
+    {
+        if( index < 0 || index >= size() ) return defaultValue;
+        return ((qint64*)item_.data.b.p)[index];
+    }
+
     void setAt( int index, qint64 value )
     {
         Q_ASSERT( index >= 0 );

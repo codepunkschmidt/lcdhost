@@ -35,7 +35,9 @@ public:
     {
         if( const char *err = LH_Graph::userInit() ) return err;
 
+        setLinkedValueMultiplier(0.01);
         setup_linked_values_->setLink("/system/cpu/coreloads");
+        setup_linked_values_->refreshData();
 
         setMin(0.0);
         setMax(100);

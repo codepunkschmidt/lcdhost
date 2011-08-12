@@ -2,6 +2,7 @@
 #define LH_QT_ARRAY_H
 
 #include "LH_QtSetupItem.h"
+#include <QString>
 
 class LH_Qt_array : public LH_QtSetupItem
 {
@@ -16,19 +17,32 @@ public:
     void resize( int size )
     {
         Q_ASSERT( item_.type & lh_type_array );
-        if( item_.type == lh_type_array_qint64 ) size *= sizeof(qint64);
-        else if( item_.type == lh_type_array_double ) size *= sizeof(double);
-        if( size > 0 )
+        Q_ASSERT( size >= 0 );
+        if( item_.type == lh_type_array_string )
         {
-            data_array_.resize( size );
-            item_.data.b.p = data_array_.data();
-            item_.data.b.n = data_array_.size();
+            QStringList _list = QString::fromUtf8( (const char*) item_.data.b.p ).split(QChar(0));
+            while ( _list.count() > size )
+                _list.removeLast();
+            while ( _list.count() < size )
+                _list.append("");
+            setArray(_list.join(QChar(0)).toUtf8());
         }
         else
         {
-            data_array_.clear();
-            item_.data.b.p = 0;
-            item_.data.b.n = 0;
+            if( item_.type == lh_type_array_qint64 ) size *= sizeof(qint64);
+            else if( item_.type == lh_type_array_double ) size *= sizeof(double);
+            if( size > 0 )
+            {
+                data_array_.resize( size );
+                item_.data.b.p = data_array_.data();
+                item_.data.b.n = data_array_.size();
+            }
+            else
+            {
+                data_array_.clear();
+                item_.data.b.p = 0;
+                item_.data.b.n = 0;
+            }
         }
     }
 
@@ -44,7 +58,19 @@ public:
             Q_ASSERT( !(item_.data.b.n % sizeof(double)) );
             return item_.data.b.n / sizeof(double);
         }
+        if( item_.type == lh_type_array_string )
+        {
+            return QString::fromUtf8( (const char*) item_.data.b.p ).split(QChar(0)).count();
+        }
         return 0;
+    }
+
+    QString stringAt(int index) const
+    {
+        QStringList _list = QString::fromUtf8( (const char*) item_.data.b.p ).split(QChar(0));
+        Q_ASSERT( index >= 0 );
+        Q_ASSERT( index < _list.length() );
+        return _list[index];
     }
 
     qint64 intMin() const

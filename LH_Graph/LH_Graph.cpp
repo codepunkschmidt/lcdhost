@@ -664,6 +664,18 @@ int LH_Graph::lineCount()
     return setup_line_selection_->list().count();
 }
 
+void LH_Graph::setLineCount(int count)
+{
+    if(count <= 0)
+        return;
+    if(count == setup_line_selection_->list().count())
+        return;
+    QStringList names;
+    for(int i = 0; i<count;)
+        names.append(QString("Line #%1").arg(++i));
+    setLines(names);
+}
+
 void LH_Graph::clearLines()
 {
     setup_line_selection_->list().clear();
@@ -709,19 +721,24 @@ int LH_Graph::notify(int n, void *p)
         if(n&LH_NOTE_SECOND)
         {
             double totalTotal = 0;
+            setLineCount(linkedValues.count());
             for(int n=0; n<linkedValues.count(); n++)
             {
                 double total = 0;
                 foreach(double d, linkedValues[n])
                     total += d;
+                if(linkedValues[n].count()!=0)
+                    total/=linkedValues[n].count();
                 if(!useLinkedValueAverage_)
-                    addValue(total/linkedValues[n].count(), n);
+                    addValue(total, n);
                 else
-                    totalTotal += total/linkedValues[n].count();
+                    totalTotal += total;
                 linkedValues[n].clear();
             }
+            if(linkedValues.count()!=0)
+                totalTotal/=linkedValues.count();
             if(useLinkedValueAverage_)
-                addValue(totalTotal/linkedValues.count());
+                addValue(totalTotal);
             requestRender();
         }
         return LH_NOTE_SECOND;
@@ -993,7 +1010,10 @@ void LH_Graph::newLinkedValue()
 
     for(int n=0; n<setup_linked_values_->size(); n++)
     {
-        linkedValues[n].append(setup_linked_values_->at(n));
+        double val = setup_linked_values_->at(n);
+        //val *= linkedValueMultiplier_;
+        linkedValues[n].append(val * linkedValueMultiplier_);
+        //qDebug() << linkedValueMultiplier_ << "*" << val << " = " << val * linkedValueMultiplier_;
     }
     callback(lh_cb_notify);
 }

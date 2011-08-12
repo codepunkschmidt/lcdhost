@@ -21,16 +21,11 @@ public:
         return ((double*)item_.data.b.p)[index];
     }
 
-    double operator[]( int index ) const
-    {
-        return at(index);
-    }
-
-    double& operator[]( int index )
+    void setAt( int index, double value )
     {
         Q_ASSERT( index >= 0 );
         Q_ASSERT( index < size() );
-        return ((double*)item_.data.b.p)[index];
+        ((double*)item_.data.b.p)[index] = value;
     }
 };
 

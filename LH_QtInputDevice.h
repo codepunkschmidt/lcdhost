@@ -9,10 +9,9 @@ class LH_QtInputDevice : public LH_QtObject
     lh_input_device lh_dev_;
 
 public:
-    explicit LH_QtInputDevice( const char *ident, int flags );
+    explicit LH_QtInputDevice( const char *ident, int flags, QObject *parent = 0 );
     ~LH_QtInputDevice();
 
-    LH_QtObject *parent() const { return static_cast<LH_QtObject *>(LH_QtObject::parent()); }
     lh_input_device *lh_dev() { return &lh_dev_; }
 
     virtual const char* open() { return NULL; }

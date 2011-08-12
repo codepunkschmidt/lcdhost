@@ -76,8 +76,8 @@ static const char* obj_close(lh_output_device*obj)
     return RECAST(obj->obj.ref)->close();
 }
 
-LH_QtOutputDevice::LH_QtOutputDevice( const char *ident, int w, int h, int d, bool noauto ) :
-    LH_QtObject( &lh_dev_.obj, ident, LH_QtPlugin::instance() )
+LH_QtOutputDevice::LH_QtOutputDevice( const char *ident, int w, int h, int d, bool noauto, QObject *parent ) :
+    LH_QtObject( &lh_dev_.obj, ident, parent )
 {
     lh_dev_.size = sizeof(lh_output_device);
     lh_dev_.width = w;
@@ -91,8 +91,7 @@ LH_QtOutputDevice::LH_QtOutputDevice( const char *ident, int w, int h, int d, bo
     lh_dev_.obj_get_backlight = obj_get_backlight;
     lh_dev_.obj_set_backlight = obj_set_backlight;
     lh_dev_.obj_close = obj_close;
-
-    parent()->callback( lh_cb_output_create, &lh_dev_ );
+    LH_QtPlugin::instance()->callback( lh_cb_output_create, &lh_dev_ );
     return;
 }
 

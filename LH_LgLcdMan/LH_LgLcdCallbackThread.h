@@ -40,36 +40,9 @@
 class LH_LgLcdCallbackThread : public LH_LgLcdThread
 {
     Q_OBJECT
-    int has_bw_;
-    int has_qvga_;
-    bool online_;
-
-    bool render( int conn );
-
 public:
-    static lgLcdOpenByTypeContext bw_cxt;
-    static lgLcdOpenByTypeContext qvga_cxt;
-
-    explicit LH_LgLcdCallbackThread(QObject *parent = 0) : LH_LgLcdThread(parent), has_bw_(0), has_qvga_(0), online_(false) {}
-
+    explicit LH_LgLcdCallbackThread(QObject *parent = 0) : LH_LgLcdThread(parent) {}
     void run();
-
-    bool hasBW() const { return has_bw_>0?true:false; }
-    bool hasQVGA() const { return has_qvga_>0?true:false; }
-
-#ifdef Q_WS_WIN
-    static DWORD WINAPI LH_LogitechButtonCB(int device, DWORD dwButtons, const PVOID pContext);
-#endif
-#ifdef Q_WS_MAC
-    static unsigned long LH_LogitechButtonCB(int device, unsigned long dwButtons, const void* pContext);
-#endif
-
-#ifdef Q_WS_WIN
-    static DWORD WINAPI LH_LogitechCB( int connection, const PVOID pContext, DWORD code, DWORD p1, DWORD p2, DWORD p3, DWORD p4 );
-#endif
-#ifdef Q_WS_MAC
-    static unsigned long LH_LogitechCB( int connection, const void* pContext, unsigned long code, unsigned long p1, unsigned long p2, unsigned long p3, unsigned long p4 );
-#endif
 };
 
 #endif // LH_LGLCDCALLBACKTHREAD_H

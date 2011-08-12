@@ -47,33 +47,19 @@
 #ifndef LH_LGLCDMAN_H
 #define LH_LGLCDMAN_H
 
-#include <QImage>
 #include "../LH_QtPlugin.h"
 #include "LH_LgLcdThread.h"
-
-
-class LogitechOutputDevice;
 
 class LH_LgLcdMan : public LH_QtPlugin
 {
     Q_OBJECT
     LH_LgLcdThread *thread_;
-    LogitechOutputDevice *bw_;
-    LogitechOutputDevice *qvga_;
 
 public:
-    LH_LgLcdMan() : LH_QtPlugin(), thread_(NULL), bw_(NULL), qvga_(NULL) {}
+    LH_LgLcdMan() : LH_QtPlugin(), thread_(0) {}
     ~LH_LgLcdMan();
 
     virtual const char *userInit();
-    virtual int notify(int code,void *param);
-
-    void customEvent( QEvent * e );
-
-    void setBW( QImage img ) { if( thread_ ) thread_->setBW(img); }
-    void setQVGA( QImage img ) { if( thread_ ) thread_->setQVGA(img); }
-
-    static const char *lglcd_Err( int result, const char *filename = NULL, unsigned line = 0 );
 };
 
 #endif // LH_LGLCDMAN_H

@@ -23,8 +23,8 @@ static const char* obj_close(lh_input_device*obj)
     return RECAST(obj->obj.ref)->close();
 }
 
-LH_QtInputDevice::LH_QtInputDevice( const char *ident, int flags ) :
-    LH_QtObject( &lh_dev_.obj, ident, LH_QtPlugin::instance() )
+LH_QtInputDevice::LH_QtInputDevice( const char *ident, int flags, QObject *parent ) :
+    LH_QtObject( &lh_dev_.obj, ident, parent )
 {
     lh_dev_.size = sizeof(lh_input_device);
     lh_dev_.flags = flags;
@@ -33,7 +33,7 @@ LH_QtInputDevice::LH_QtInputDevice( const char *ident, int flags ) :
     lh_dev_.obj_emulate = obj_emulate;
     lh_dev_.obj_close = obj_close;
 
-    parent()->callback( lh_cb_input_create, &lh_dev_ );
+    LH_QtPlugin::instance()->callback( lh_cb_input_create, &lh_dev_ );
     return;
 }
 

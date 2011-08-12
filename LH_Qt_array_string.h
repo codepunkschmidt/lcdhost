@@ -13,25 +13,23 @@ public:
 
     QString at(int index) const
     {
-        QStringList _list = QString::fromUtf8( (const char*) item_.data.b.p ).split(QChar(0));
         Q_ASSERT( index >= 0 );
-        Q_ASSERT( index < _list.length() );
-        return _list[index];
+        Q_ASSERT( index < list_.count() );
+        return list_[index];
     }
 
     QString at(int index, QString defaultValue) const
     {
-        if( index < 0 || index >= size() ) return defaultValue;
-        return at(index);
+        if( index < 0 || index >= list_.count() ) return defaultValue;
+        return list_[index];
     }
 
-    void setAt( int index, double value )
+    void setAt( int index, QString value )
     {
-        QStringList _list = QString::fromUtf8( (const char*) item_.data.b.p ).split(QChar(0));
         Q_ASSERT( index >= 0 );
-        Q_ASSERT( index < _list.length() );
-        _list[index] = value;
-        setArray(_list.join(QChar(0)).toUtf8());
+        Q_ASSERT( index < list_.count() );
+        list_[index] = value;
+        setArray(list_.join(QChar(0)).toUtf8());
     }
 };
 

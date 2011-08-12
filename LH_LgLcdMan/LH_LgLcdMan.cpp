@@ -159,7 +159,7 @@ int LH_LgLcdMan::notify(int code,void *param)
     if( thread_ )
     {
         if( thread_->hasBW() && bw_ == NULL )
-            bw_ = new LogitechDevice( true );
+            bw_ = new LogitechOutputDevice( true );
 
         if( !thread_->hasBW() && bw_ != NULL )
         {
@@ -168,7 +168,7 @@ int LH_LgLcdMan::notify(int code,void *param)
         }
 
         if( thread_->hasQVGA() && qvga_ == NULL )
-            qvga_ = new LogitechDevice( false );
+            qvga_ = new LogitechOutputDevice( false );
 
         if( !thread_->hasQVGA() && qvga_ != NULL )
         {

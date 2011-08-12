@@ -55,17 +55,16 @@
 # endif
 #endif
 
-class LogitechDevice : public LH_QtOutputDevice
+class LogitechOutputDevice : public LH_QtOutputDevice
 {
     Q_OBJECT
     bool opened_;
     bool bw_; // if true a BW device, else QVGA
     unsigned long buttonState_;
-    // LH_LgLcdMan *drv_;
 
 public:
-    LogitechDevice( bool bw );
-    ~LogitechDevice();
+    LogitechOutputDevice( bool bw );
+    ~LogitechOutputDevice();
 
     const char *input_name(const char *devid, int item);
 

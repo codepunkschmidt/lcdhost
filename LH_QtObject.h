@@ -55,7 +55,6 @@ public:
 #ifndef QT_NO_DEBUG
     bool clean_init_;
 #endif
-
     LH_QtObject( lh_object *p, QObject *parent = 0);
     LH_QtObject( lh_object *p, const char *ident, QObject *parent = 0);
     ~LH_QtObject();

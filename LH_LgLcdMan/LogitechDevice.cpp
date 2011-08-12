@@ -41,7 +41,7 @@
 #include "EventLgLcdNotification.h"
 #include "LogitechDevice.h"
 
-LogitechDevice::LogitechDevice( bool bw )
+LogitechOutputDevice::LogitechOutputDevice( bool bw )
     : LH_QtOutputDevice( bw ? "LH_LgLcdMan:BW" : "LH_LgLcdMan:QVGA",
           bw ? 160 : 320,
           bw ? 43 : 240,
@@ -51,18 +51,16 @@ LogitechDevice::LogitechDevice( bool bw )
     opened_ = false;
     bw_ = bw;
     buttonState_ = 0;
-
-    if( bw_ ) setObjectName( QObject::tr("Logitech B/W LCD") );
-    else setObjectName( QObject::tr("Logitech QVGA LCD") );
+    setTitle( bw_ ? "Logitech B/W LCD" : "Logitech QVGA LCD" );
     return;
 }
 
-LogitechDevice::~LogitechDevice()
+LogitechOutputDevice::~LogitechOutputDevice()
 {
     if( opened() ) close();
 }
 
-const char *LogitechDevice::input_name(const char *devid, int n)
+const char *LogitechOutputDevice::input_name(const char *devid, int n)
 {
     switch(n)
     {
@@ -82,10 +80,9 @@ const char *LogitechDevice::input_name(const char *devid, int n)
     case 0x4000: return "Menu";
     }
     return 0;
-    // return LH_QtObject::input_name(devid,n);
 }
 
-void LogitechDevice::setButtonState( unsigned long button )
+void LogitechOutputDevice::setButtonState( unsigned long button )
 {
     if( buttonState_ != button )
     {
@@ -117,7 +114,7 @@ void LogitechDevice::setButtonState( unsigned long button )
     return;
 }
 
-const char* LogitechDevice::render_qimage(QImage *p_image)
+const char* LogitechOutputDevice::render_qimage(QImage *p_image)
 {
     if( p_image == NULL ) return NULL;
     if( bw_ ) drv()->setBW( *p_image );
@@ -125,7 +122,7 @@ const char* LogitechDevice::render_qimage(QImage *p_image)
     return NULL;
 }
 
-const char *LogitechDevice::close()
+const char *LogitechOutputDevice::close()
 {
     if( bw_ ) drv()->setBW( QImage() );
     else drv()->setQVGA( QImage() );
@@ -133,12 +130,12 @@ const char *LogitechDevice::close()
     return NULL;
 }
 
-const char* LogitechDevice::get_backlight(lh_device_backlight*)
+const char* LogitechOutputDevice::get_backlight(lh_device_backlight*)
 {
     return "get_backlight not implemented";
 }
 
-const char* LogitechDevice::set_backlight(lh_device_backlight*)
+const char* LogitechOutputDevice::set_backlight(lh_device_backlight*)
 {
     return "set_backlight not implemented";
 }

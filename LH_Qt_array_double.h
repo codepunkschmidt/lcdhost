@@ -21,6 +21,12 @@ public:
         return ((double*)item_.data.b.p)[index];
     }
 
+    double at(int index, double defaultValue) const
+    {
+        if( index < 0 || index >= size() ) return defaultValue;
+        return ((double*)item_.data.b.p)[index];
+    }
+
     void setAt( int index, double value )
     {
         Q_ASSERT( index >= 0 );

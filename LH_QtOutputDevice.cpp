@@ -34,11 +34,12 @@
 
 #include <QDebug>
 #include "LH_QtOutputDevice.h"
+#include "LH_QtPlugin.h"
 
 /**
   Device stubs.
   */
-#define RECAST(o) reinterpret_cast<LH_QtDevice*>(o)
+#define RECAST(o) reinterpret_cast<LH_QtOutputDevice*>(o)
 
 static const char* obj_open(lh_output_device*obj)
 {

@@ -17,8 +17,7 @@ public:
 
     void setup_change()
     {
-        getString();
-        list_ = str_.split(QChar(0));
+        list_ = QString::fromUtf8( (const char*) item_.data.b.p ).split(QChar(0));
         LH_QtSetupItem::setup_change();
     }
 

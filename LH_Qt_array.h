@@ -2,59 +2,40 @@
 #define LH_QT_ARRAY_H
 
 #include "LH_QtSetupItem.h"
-#include <QString>
 
 class LH_Qt_array : public LH_QtSetupItem
 {
-    QStringList list_;
-
 public:
     LH_Qt_array( LH_QtObject *parent, const char *ident, int size = 0, int flags = 0, lh_setup_type subtype = lh_type_array_qint64 )
-        : LH_QtSetupItem( parent, ident, subtype, flags ), list_()
+        : LH_QtSetupItem( parent, ident, subtype, flags )
     {
         resize( size );
         memset( data_array_.data(), 0, data_array_.size()  );
     }
 
-    virtual void setup_change()
-    {
-        getString();
-        list_ = str_.split(QChar(0));
-        LH_QtSetupItem::setup_change();
-    }
-
-    void resize( int size )
+    virtual void resize( int size )
     {
         Q_ASSERT( item_.type & lh_type_array );
         Q_ASSERT( size >= 0 );
-        if( item_.type == lh_type_array_string )
+
+        if( item_.type == lh_type_array_qint64 ) size *= sizeof(qint64);
+        else if( item_.type == lh_type_array_double ) size *= sizeof(double);
+        if( size > 0 )
         {
-            while ( list_.count() > size )
-                list_.removeLast();
-            while ( list_.count() < size )
-                list_.append("");
-            setArray(list_.join(QChar(0)).toUtf8());
+            data_array_.resize( size );
+            item_.data.b.p = data_array_.data();
+            item_.data.b.n = data_array_.size();
         }
         else
         {
-            if( item_.type == lh_type_array_qint64 ) size *= sizeof(qint64);
-            else if( item_.type == lh_type_array_double ) size *= sizeof(double);
-            if( size > 0 )
-            {
-                data_array_.resize( size );
-                item_.data.b.p = data_array_.data();
-                item_.data.b.n = data_array_.size();
-            }
-            else
-            {
-                data_array_.clear();
-                item_.data.b.p = 0;
-                item_.data.b.n = 0;
-            }
+            data_array_.clear();
+            item_.data.b.p = 0;
+            item_.data.b.n = 0;
         }
+
     }
 
-    int size() const
+    virtual int size() const
     {
         if( item_.type == lh_type_array_qint64 )
         {
@@ -66,18 +47,7 @@ public:
             Q_ASSERT( !(item_.data.b.n % sizeof(double)) );
             return item_.data.b.n / sizeof(double);
         }
-        if( item_.type == lh_type_array_string )
-        {
-            return list_.count();
-        }
         return 0;
-    }
-
-    QString stringAt(int index) const
-    {
-        Q_ASSERT( index >= 0 );
-        Q_ASSERT( index < list_.length() );
-        return list_[index];
     }
 
     qint64 intMin() const

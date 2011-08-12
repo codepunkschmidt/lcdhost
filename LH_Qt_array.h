@@ -6,12 +6,21 @@
 
 class LH_Qt_array : public LH_QtSetupItem
 {
+    QStringList list_;
+
 public:
     LH_Qt_array( LH_QtObject *parent, const char *ident, int size = 0, int flags = 0, lh_setup_type subtype = lh_type_array_qint64 )
-        : LH_QtSetupItem( parent, ident, subtype, flags )
+        : LH_QtSetupItem( parent, ident, subtype, flags ), list_()
     {
         resize( size );
         memset( data_array_.data(), 0, data_array_.size()  );
+    }
+
+    virtual void setup_change()
+    {
+        getString();
+        list_ = str_.split(QChar(0));
+        LH_QtSetupItem::setup_change();
     }
 
     void resize( int size )
@@ -20,12 +29,11 @@ public:
         Q_ASSERT( size >= 0 );
         if( item_.type == lh_type_array_string )
         {
-            QStringList _list = QString::fromUtf8( (const char*) item_.data.b.p ).split(QChar(0));
-            while ( _list.count() > size )
-                _list.removeLast();
-            while ( _list.count() < size )
-                _list.append("");
-            setArray(_list.join(QChar(0)).toUtf8());
+            while ( list_.count() > size )
+                list_.removeLast();
+            while ( list_.count() < size )
+                list_.append("");
+            setArray(list_.join(QChar(0)).toUtf8());
         }
         else
         {
@@ -60,17 +68,16 @@ public:
         }
         if( item_.type == lh_type_array_string )
         {
-            return QString::fromUtf8( (const char*) item_.data.b.p ).split(QChar(0)).count();
+            return list_.count();
         }
         return 0;
     }
 
     QString stringAt(int index) const
     {
-        QStringList _list = QString::fromUtf8( (const char*) item_.data.b.p ).split(QChar(0));
         Q_ASSERT( index >= 0 );
-        Q_ASSERT( index < _list.length() );
-        return _list[index];
+        Q_ASSERT( index < list_.length() );
+        return list_[index];
     }
 
     qint64 intMin() const

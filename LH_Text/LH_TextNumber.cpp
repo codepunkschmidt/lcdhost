@@ -41,10 +41,25 @@ const char *LH_TextNumber::userInit()
     if( const char *err = LH_Text::userInit() ) return err;
     bytes_ = false;
     setup_text_->setFlag( LH_FLAG_READONLY, true );
+
     setup_value_ = new LH_Qt_double(this,"Value",0,LH_FLAG_AUTORENDER);
     setup_value_->setHelp("Link a data source to this value using the button on the left.");
+
+    setup_showleft_ = new LH_Qt_bool(this,"Show what's left",false,LH_FLAG_AUTORENDER|LH_FLAG_FIRST|LH_FLAG_HIDDEN);
+    setup_showleft_->setHelp(
+                "<p>By default, the value is shown as-is. If this box is selected, the difference"
+                "between the maximum and the current value is shown.</p>"
+                );
+
+    setup_showmax_ = new LH_Qt_bool(this,"Show maximum",false,LH_FLAG_AUTORENDER|LH_FLAG_FIRST|LH_FLAG_HIDDEN);
+    setup_showmax_->setHelp(
+                "<p>By default, the value is shown as-is. If this box is selected, the"
+                "maximum value is shown.</p>"
+                );
+
     setup_bits_ = new LH_Qt_bool(this,"Bits instead of bytes",false,LH_FLAG_AUTORENDER|LH_FLAG_FIRST|LH_FLAG_HIDDEN);
     setup_bits_->setHelp("<p>If this is selected, the value will be shown in bits rather than bytes.</p>");
+
     setup_showsuffix_ = new LH_Qt_bool(this,"Show multiplier",true,LH_FLAG_AUTORENDER|LH_FLAG_FIRST);
     setup_showunits_ = new LH_Qt_bool(this,"Show units",true,LH_FLAG_AUTORENDER|LH_FLAG_FIRST);
     setup_scale_ = new LH_Qt_QStringList(this,"Scale",
@@ -55,12 +70,29 @@ const char *LH_TextNumber::userInit()
 
 bool LH_TextNumber::makeText()
 {
-    double scale = 1.0;
-    if( setup_bits_->value() ) scale = 8.0;
+    double max;
+    double value;
+
+    max = setup_value_->max();
+
+    if( setup_showleft_->value() ) value = max - setup_value_->value();
+    else value = setup_value_->value();
+
+    if( setup_bits_->value() )
+    {
+        value *= 8.0;
+        max *= 8.0;
+    }
+
+    if( setup_showmax_->value() )
+    {
+        value = max;
+    }
+
     return setNum(
-                setup_value_->value()*scale,
+                value,
                 setup_scale_->index(),
                 setup_showsuffix_->value(),
-                setup_value_->max()*scale,
+                max,
                 bytes_);
 }

@@ -39,10 +39,13 @@
 class LH_TextMemPhysicalFree : public LH_TextNumber
 {
 public:
-    LH_TextMemPhysicalFree() : LH_TextNumber()
+    const char *userInit()
     {
+        if( const char *err = LH_TextNumber::userInit() ) return err;
         setBytes(true);
-        setup_value_->setLink("/system/memory/physical/free");
+        setShowLeft(true);
+        setup_value_->setLink("/system/memory/physical");
+        return 0;
     }
 
     static lh_class *classInfo()

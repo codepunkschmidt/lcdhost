@@ -41,6 +41,7 @@
 #include <QPainter>
 
 #include "LH_Bar.h"
+#include "../LH_Qt_array.h"
 
 static inline uint PREMUL(uint x) {
     uint a = x >> 24;
@@ -130,6 +131,44 @@ double LH_Bar::boundedValue(double value)
     Q_ASSERT( value <= 1.0 );
 
     return value;
+}
+
+void LH_Bar::draw()
+{
+    LH_QtSetupItem *from = qobject_cast<LH_QtSetupItem *>(sender());
+    if( from == 0 ) return;
+
+    if( from->type() & lh_type_array )
+    {
+        LH_Qt_array *item = static_cast<LH_Qt_array*>(from);
+        QVector<double> values;
+        for( int i=0; i<item->size(); ++i )
+            values.append( item->doubleAt(i) );
+        setMin( item->doubleMin() );
+        setMax( item->doubleMax() );
+        drawList( values );
+        return;
+    }
+
+    if( from->type() == lh_type_integer )
+    {
+        LH_Qt_int *item = static_cast<LH_Qt_int *>(from);
+        setMin( item->min() );
+        setMax( item->max() );
+        drawSingle( item->value() );
+        return;
+    }
+
+    if( from->type() == lh_type_double )
+    {
+        LH_Qt_double *item = static_cast<LH_Qt_double*>(from);
+        setMin( item->min() );
+        setMax( item->max() );
+        drawSingle( item->value() );
+        return;
+    }
+
+    return;
 }
 
 void LH_Bar::draw_bar( double value, int pos, int total )

@@ -87,7 +87,6 @@ public:
     bool setMin( qreal r ); // return true if rendering needed
     bool setMax( qreal r ); // return true if rendering needed
 
-
     void drawSingle( double value )
     {
         cf_source_notify("Value", QString::number(boundedValue(value)));
@@ -111,6 +110,7 @@ public slots:
     void changeType();
     void changeDiscrete();
     void changeFile();
+    void draw();
 
 };
 

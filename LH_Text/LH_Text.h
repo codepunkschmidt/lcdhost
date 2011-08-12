@@ -91,6 +91,23 @@ public:
         Tera
     } NumberMode;
 
+    LH_Text() :
+        LH_QtCFInstance(),
+        scrollposx_(0),
+        scrollposy_(0),
+        richtext_(false),
+        setup_text_(0),
+        setup_font_(0),
+        setup_fontresize_(0),
+        setup_pencolor_(0),
+        setup_bgcolor_(0),
+        setup_horizontal_(0),
+        setup_vertical_(0),
+        setup_scrollrate_(0),
+        setup_scrollstep_(0),
+        setup_scrollgap_(0)
+    {}
+
     const char *userInit();
 
     int polling();

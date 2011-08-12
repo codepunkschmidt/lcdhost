@@ -148,7 +148,7 @@ public slots:
     void setValue( bool );
     void setValue( int );
     void setValue( const QColor& );
-    void setValue( qlonglong );
+    void setValue( qint64 );
     void setValue( double );
     void setValue( void * );
     void setValue( const QString& );

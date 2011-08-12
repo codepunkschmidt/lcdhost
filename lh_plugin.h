@@ -95,6 +95,7 @@ typedef unsigned long long quint64; /* 64 bit unsigned */
 #define LH_NOTE_NET         0x00000008 /* network load data updated */
 #define LH_NOTE_DEVICE      0x00000010 /* output device has changed */
 #define LH_NOTE_WARNING     0x00000020 /* warnings, param: LH_WARNING_xxx (cast param to int) */
+#define LH_NOTE_TITLE       0x00000040 /* title has been changed, param is NULL, obj.title ptr changed */
 
 #define LH_WARNING_DUPLICATE_SOURCE 1
 
@@ -373,7 +374,7 @@ typedef struct lh_object_t
 
     /* the identity of an object is set by LCDHost for plugins and layout items */
     /* for setup items, layout classes and devices, it is set by the plugin. */
-    /* an ident may not contain any of the following characters: '/', '<', '>' */
+    /* an ident may not contain any of the following characters: '/', '\', '"' '<', '>' */
     char ident[LH_MAX_IDENT]; /* ASCIIZ, must be unique among siblings */
 
     /* the title of an object may be any UTF-8 string. the pointer may be NULL. */

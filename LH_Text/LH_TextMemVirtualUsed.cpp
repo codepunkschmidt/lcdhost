@@ -39,10 +39,12 @@
 class LH_TextMemVirtualUsed : public LH_TextNumber
 {
 public:
-    LH_TextMemVirtualUsed()
+    const char *userInit()
     {
+        if( const char *err = LH_TextNumber::userInit() ) return err;
         setBytes(true);
-        setup_value_->setLink("/system/memory/virtual/used");
+        setup_value_->setLink("/system/memory/virtual");
+        return 0;
     }
 
     static lh_class *classInfo()

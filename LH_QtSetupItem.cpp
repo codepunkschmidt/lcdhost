@@ -286,7 +286,7 @@ void LH_QtSetupItem::setValue( const QColor& c )
     }
 }
 
-void LH_QtSetupItem::setValue( qlonglong ll )
+void LH_QtSetupItem::setValue( qint64 ll )
 {
     if( ! (item_.type & lh_type_integer) )
     {

@@ -52,14 +52,14 @@
 #include "LH_LgLcdThread.h"
 
 
-class LogitechDevice;
+class LogitechOutputDevice;
 
 class LH_LgLcdMan : public LH_QtPlugin
 {
     Q_OBJECT
     LH_LgLcdThread *thread_;
-    LogitechDevice *bw_;
-    LogitechDevice *qvga_;
+    LogitechOutputDevice *bw_;
+    LogitechOutputDevice *qvga_;
 
 public:
     LH_LgLcdMan() : LH_QtPlugin(), thread_(NULL), bw_(NULL), qvga_(NULL) {}

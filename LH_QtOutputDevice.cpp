@@ -76,24 +76,14 @@ static const char* obj_close(lh_output_device*obj)
     return RECAST(obj->obj.ref)->close();
 }
 
-LH_QtOutputDevice::LH_QtOutputDevice( const char *devid, int w, int h, int d, bool noauto ) :
-    LH_QtObject( &lh_dev_.obj, LH_QtPlugin::instance() )
+LH_QtOutputDevice::LH_QtOutputDevice( const char *ident, int w, int h, int d, bool noauto ) :
+    LH_QtObject( &lh_dev_.obj, ident, LH_QtPlugin::instance() )
 {
     lh_dev_.size = sizeof(lh_output_device);
-    memset( lh_dev_.obj.ident, 0, sizeof(lh_dev_.obj.ident) );
-
-    if( devid )
-    {
-        int devidlen = strlen(devid);
-        if( devidlen >= LH_MAX_IDENT ) devidlen = LH_MAX_IDENT;
-        memcpy( lh_dev_.obj.ident, devid, devidlen );
-    }
-
     lh_dev_.width = w;
     lh_dev_.height = h;
     lh_dev_.depth = d;
     lh_dev_.noauto = noauto ? 1 : 0;
-
     lh_dev_.obj_open = obj_open;
     lh_dev_.obj_render_qimage = obj_render_qimage;
     lh_dev_.obj_render_argb32 = obj_render_argb32;
@@ -109,5 +99,6 @@ LH_QtOutputDevice::LH_QtOutputDevice( const char *devid, int w, int h, int d, bo
 LH_QtOutputDevice::~LH_QtOutputDevice()
 {
     callback( lh_cb_destroy );
-    memset( &lh_dev_, 0, sizeof(lh_output_device) );
+    memset( &lh_dev_, 0, sizeof(lh_dev_) );
+    return;
 }

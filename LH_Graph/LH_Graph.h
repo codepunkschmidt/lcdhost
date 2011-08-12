@@ -88,18 +88,24 @@ class LH_Graph : public LH_QtInstance
 
     QList< QList<double> >linkedValues;
     bool useLinkedValueAverage_;
+    double linkedValueMultiplier_;
 protected:
     bool graph_empty_;
     QList<customUnit> customUnits;
 
     LH_Qt_QStringList *setup_fg_type_;
     LH_Qt_QStringList *setup_bg_type_;
+    LH_Qt_QFileInfo *setup_bg_image_;
     LH_Qt_QStringList *setup_orientation_;
     LH_Qt_QStringList *setup_line_selection_;
+
+    LH_Qt_QTextEdit *setup_line_configs_;
     LH_Qt_QColor *setup_pencolor_;
     LH_Qt_QColor *setup_fillcolor1_;
     LH_Qt_QColor *setup_fillcolor2_;
-    LH_Qt_QTextEdit *setup_line_configs_;
+    LH_Qt_QFileInfo *setup_fg_image_;
+    LH_Qt_int *setup_fg_alpha_;
+
     LH_Qt_QColor *setup_bgcolor_;
     LH_Qt_int *setup_max_samples_;
     LH_Qt_int *setup_sample_rate_;
@@ -109,6 +115,7 @@ protected:
     LH_Qt_double *setup_max_;
     LH_Qt_double *setup_min_;
     LH_Qt_array_double *setup_linked_values_;
+
     LH_Qt_QStringList *setup_units_;
 
     LH_Qt_bool *setup_auto_scale_y_max_;
@@ -122,9 +129,6 @@ protected:
     LH_Qt_QColor *setup_label_color_;
     LH_Qt_QColor *setup_label_shadow_;
 
-    LH_Qt_QFileInfo *setup_fg_image_;
-    LH_Qt_QFileInfo *setup_bg_image_;
-    LH_Qt_int *setup_fg_alpha_;
 
 public:
     LH_Graph( double defaultMin = 0, double defaultMax = 0 );
@@ -144,6 +148,7 @@ public:
 
     void addLine(QString name);
     int lineCount();
+    void setLineCount(int);
     void clearLines();
     void setLines(QStringList names) {clearLines(); for(int i=0; i<names.length(); i++) addLine(names[i]);}
 
@@ -178,6 +183,8 @@ public:
 
     void setUseLinkedValueAverage(bool val) { useLinkedValueAverage_ = val; }
     bool useLinkedValueAverage() { return useLinkedValueAverage_; }
+    void setLinkedValueMultiplier(double val) { linkedValueMultiplier_ = val; }
+    double linkedValueMultiplier() { return linkedValueMultiplier_; }
 public slots:
     void updateDescText();
     void changeMaxSamples();

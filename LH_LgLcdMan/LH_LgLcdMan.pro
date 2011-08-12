@@ -9,7 +9,7 @@ SOURCES += \
     ../LH_QtInstance.cpp \
     ../LH_QtObject.cpp \
     ../LH_QtSetupItem.cpp \
-    ../LH_QtDevice.cpp \
+    ../LH_QtOutputDevice.cpp \
     ../wow64.cpp \
     LH_LgLcdMan.cpp \
     LogitechDevice.cpp \
@@ -23,7 +23,7 @@ HEADERS += \
     ../LH_QtInstance.h \
     ../LH_QtObject.h \
     ../LH_QtSetupItem.h \
-    ../LH_QtDevice.h \
+    ../LH_QtOutputDevice.h \
     ../wow64.h \
     LH_LgLcdMan.h \
     LogitechDevice.h \

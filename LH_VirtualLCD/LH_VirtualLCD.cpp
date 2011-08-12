@@ -35,7 +35,7 @@
 #include <QFile>
 #include <QDebug>
 
-#include "../LH_QtDevice.h"
+#include "../LH_QtOutputDevice.h"
 #include "LH_VirtualLCD.h"
 #include "../LH_Qt_QImage.h"
 

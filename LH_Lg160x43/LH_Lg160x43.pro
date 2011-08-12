@@ -10,7 +10,7 @@ SOURCES += \
     ../LH_QtObject.cpp \
     ../LH_QtInstance.cpp \
     ../LH_QtSetupItem.cpp \
-    ../LH_QtDevice.cpp \
+    ../LH_QtOutputDevice.cpp \
     ../wow64.cpp \
     LH_Lg160x43.cpp \
     Lg160x43Device.cpp
@@ -21,7 +21,7 @@ HEADERS += \
     ../LH_QtObject.h \
     ../LH_QtInstance.h \
     ../LH_QtSetupItem.h \
-    ../LH_QtDevice.h \
+    ../LH_QtOutputDevice.h \
     ../wow64.h \
     LH_Lg160x43.h \
     Lg160x43Device.h

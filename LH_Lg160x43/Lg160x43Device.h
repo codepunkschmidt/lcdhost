@@ -1,7 +1,7 @@
 #ifndef LG160X43DEVICE_H
 #define LG160X43DEVICE_H
 
-#include "../LH_QtDevice.h"
+#include "../LH_QtOutputDevice.h"
 #include "hidapi.h"
 
 class Lg160x43Device : public LH_QtOutputDevice

@@ -5,7 +5,7 @@
 #include "Lg320x240Device.h"
 
 Lg320x240Device::Lg320x240Device( libusb_device *dev, libusb_device_descriptor *dd )
-    : LH_QtDevice(0,0,0,0,0)
+    : LH_QtOutputDevice(0,0,0,0,0)
 {
     Q_UNUSED( dd );
     Q_ASSERT( dev != NULL );

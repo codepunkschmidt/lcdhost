@@ -4,7 +4,7 @@
 #include "../LH_QtDevice.h"
 #include "libusb.h"
 
-class Lg320x240Device : public LH_QtDevice
+class Lg320x240Device : public LH_QtOutputDevice
 {
     Q_OBJECT
 

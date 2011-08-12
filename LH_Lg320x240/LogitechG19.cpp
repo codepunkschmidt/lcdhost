@@ -3,7 +3,7 @@
 #include "LogitechG19.h"
 
 LogitechG19::LogitechG19( libusb_device *usbdev, libusb_device_descriptor *dd )
-    : LH_QtDevice("LH_Lg320x240:G19",320,240,32,
+    : LH_QtOutputDevice("LH_Lg320x240:G19",320,240,32,
 #ifdef Q_WS_WIN
           true
 #else

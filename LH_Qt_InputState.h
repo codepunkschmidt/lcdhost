@@ -44,12 +44,6 @@ public:
         : LH_Qt_QString( parent, ident, value, flags, lh_type_string_inputstate )
     {
     }
-
-    virtual void setup_change()
-    {
-        emit input( item_.param.input.flags, item_.param.input.value );
-        LH_Qt_QString::setup_change();
-    }
 };
 
 #endif // LH_QT_INPUTSTATE_H

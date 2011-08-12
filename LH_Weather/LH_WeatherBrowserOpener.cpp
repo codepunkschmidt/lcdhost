@@ -60,7 +60,7 @@ const char *LH_WeatherBrowserOpener::userInit()
     setup_browser_ = new LH_Qt_InputState(this,("Open in browser"),QString(),LH_FLAG_AUTORENDER);
     setup_browser_->setHelp("Defining a key here will allow you to open the forecast in your browser for more details");
     setup_browser_->setOrder(-4);
-    connect( setup_browser_, SIGNAL(input(QString,int,int)), this, SLOT(openBrowser(QString,int,int)) );
+    connect( setup_browser_, SIGNAL(input(int,int)), this, SLOT(openBrowser(int,int)) );
     hide();
     return NULL;
 }

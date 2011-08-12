@@ -88,6 +88,8 @@ LH_QtObject::LH_QtObject( lh_object *p, const char *ident, QObject *parent ) : Q
         {
             if( *p == '<' ) *p = '(';
             if( *p == '/' ) *p = '|';
+            if( *p == '\\' ) *p = '|';
+            if( *p == '\"' ) *p = '\'';
             if( *p == '>' ) *p = ')';
         }
 

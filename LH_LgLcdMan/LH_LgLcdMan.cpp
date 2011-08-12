@@ -135,7 +135,7 @@ LH_LgLcdMan::~LH_LgLcdMan()
     if( thread_ )
     {
         thread_->timeToDie();
-        if( !thread_->wait(1000) )
+        if( !thread_->wait(2500) )
         {
             qDebug() << "LH_LgLcdMan: Logitech driver thread not responding, terminating it";
             thread_->terminate();

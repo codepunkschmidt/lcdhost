@@ -43,7 +43,8 @@ public:
     {
         if( const char *err = LH_TextNumber::userInit() ) return err;
         setBytes(true);
-        setup_value_->setLink("/system/memory/physical/total");
+        setShowMax(true);
+        setup_value_->setLink("/system/memory/physical");
         return 0;
     }
 

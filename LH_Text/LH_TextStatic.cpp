@@ -17,8 +17,6 @@ public:
             "StaticText",
             "Text",
             -1, -1,
-            
-            
         };
 
         if( classinfo.width == -1 )

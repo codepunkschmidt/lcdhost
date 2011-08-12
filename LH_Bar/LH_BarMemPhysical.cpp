@@ -46,10 +46,8 @@ public:
     {
         if( const char *err = LH_Bar::userInit() ) return err;
         link_mem_phys_ = new LH_Qt_int(this,"MemPhys",0,LH_FLAG_HIDDEN|LH_FLAG_NOSAVE);
-        link_mem_phys_->setLink("/system/mem/physical/load");
-        connect( link_mem_phys_, SIGNAL(change(qint64)), this, SLOT(drawSingle(qreal)) );
-        setMin(0.0);
-        setMax(1000.0);
+        link_mem_phys_->setLink("/system/memory/physical");
+        connect( link_mem_phys_, SIGNAL(changed()), this, SLOT(draw()) );
         return 0;
     }
 

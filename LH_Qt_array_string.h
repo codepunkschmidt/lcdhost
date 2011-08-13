@@ -56,6 +56,7 @@ public:
             list_[index] = value;
             setArray(list_.join(QChar(0)).toUtf8());
             refreshData();
+            emit(set());
         }
     }
 

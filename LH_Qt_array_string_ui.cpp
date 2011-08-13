@@ -57,7 +57,7 @@ void LH_Qt_array_string_ui::arrayValuesChanged() {
         if(ui_type_ == lh_type_string)
             ((LH_Qt_QString*)ui_)->setValue(this->at(uiIndex_));
         if(ui_type_ == lh_type_string_filename)
-            ((LH_Qt_QFileInfo*)ui_)->setValue(QFileInfo());
+            ((LH_Qt_QFileInfo*)ui_)->setValue(QFileInfo(this->at(uiIndex_)));
         ui_->refreshData();
         updatingUI_ = false;
     }

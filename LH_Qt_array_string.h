@@ -4,13 +4,13 @@
 #include "LH_Qt_array.h"
 #include <QString>
 
-class LH_Qt_array_string : public LH_Qt_array
+class LH_Qt_array_string : public LH_QtSetupItem
 {
     QStringList list_;
 
 public:
     LH_Qt_array_string( LH_QtObject *parent, const char *ident, int size = 0, int flags = 0 )
-        : LH_Qt_array( parent, ident, lh_type_array_string, flags ), list_()
+        : LH_QtSetupItem( parent, ident, lh_type_array_string, flags ), list_()
     {
         resize( size );
     }

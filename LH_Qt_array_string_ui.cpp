@@ -71,6 +71,5 @@ void LH_Qt_array_string_ui::uiValueChanged(){
             this->setAt(uiIndex_, ((LH_Qt_QString*)ui_)->value());
         if(ui_type_ == lh_type_string_filename)
             this->setAt(uiIndex_, ((LH_Qt_QFileInfo*)ui_)->value().filePath());
-
     }
 }

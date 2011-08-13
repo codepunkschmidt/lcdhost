@@ -1008,27 +1008,19 @@ void LH_Graph::syncLineDataArrays()
     }*/
 }
 
-void LH_Graph::resizeDataArray(LH_Qt_array* ary, int newSize, QVariant defaultValue)
+void LH_Graph::resizeDataArray(LH_Qt_array_int_ui* ary, int newSize, qint64 defaultValue)
 {
     int oldSize = ary->size();
-    Q_UNUSED(defaultValue);
     ary->resize(newSize);
 
-    bool ok = false;
     while(oldSize<newSize)
-    {
-        if(ary->type()==lh_type_array_qint64)
-        {
-            qint64 val = defaultValue.toLongLong(&ok);
-            qDebug() << val;
-            if(ok)
-                dynamic_cast<LH_Qt_array_int*>(ary)->setAt(oldSize, val);
-        }
-        if(ary->type()==lh_type_array_string)
-        {
-            QString val = defaultValue.toString();
-            dynamic_cast<LH_Qt_array_string*>(ary)->setAt(oldSize, val);
-        }
-        oldSize++;
-    }
+        ary->setAt(oldSize++, defaultValue);
+}
+void LH_Graph::resizeDataArray(LH_Qt_array_string_ui* ary, int newSize, QString defaultValue)
+{
+    int oldSize = ary->size();
+    ary->resize(newSize);
+
+    while(oldSize<newSize)
+        ary->setAt(oldSize++, defaultValue);
 }

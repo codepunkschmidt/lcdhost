@@ -131,7 +131,8 @@ protected:
     LH_Qt_QColor *setup_label_shadow_;
 
     void syncLineDataArrays();
-    void resizeDataArray(LH_Qt_array* ary, int newSize, QVariant defaultValue);
+    void resizeDataArray(LH_Qt_array_int_ui* ary, int newSize, qint64 defaultValue);
+    void resizeDataArray(LH_Qt_array_string_ui* ary, int newSize, QString defaultValue);
 
 public:
     LH_Graph( double defaultMin = 0, double defaultMax = 0 );

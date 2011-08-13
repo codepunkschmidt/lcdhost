@@ -78,6 +78,5 @@ void LH_Qt_array_int_ui::uiValueChanged()
             this->setAt(uiIndex_, ((LH_Qt_int*)ui_)->value());
         if(ui_type_ == lh_type_integer_color)
             this->setAt(uiIndex_, ((LH_Qt_QColor*)ui_)->value().rgba());
-
     }
 }

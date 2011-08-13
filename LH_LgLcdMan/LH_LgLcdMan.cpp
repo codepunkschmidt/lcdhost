@@ -41,9 +41,23 @@
 #include "LH_LgLcdMan.h"
 #include "LH_LgLcdLegacyThread.h"
 #include "LH_LgLcdCallbackThread.h"
-#include "EventLgLcdNotification.h"
-#include "EventLgLcdButton.h"
-#include "LogitechDevice.h"
+
+#ifdef Q_WS_WIN
+# ifndef UNICODE
+#  error ("This isn't going to work")
+# endif
+# include "windows.h"
+# include "../wow64.h"
+# include "win/lglcd.h"
+#endif
+
+#ifdef Q_WS_MAC
+# include "mac/lgLcdError.h"
+# include "mac/lgLcd.h"
+# ifndef ERROR_FILE_NOT_FOUND
+#  define ERROR_FILE_NOT_FOUND 2
+# endif
+#endif
 
 LH_PLUGIN(LH_LgLcdMan)
 
@@ -122,10 +136,7 @@ const char *LH_LgLcdMan::userInit()
 #endif
 
     if( thread_ )
-    {
         thread_->start();
-        qDebug() << "LH_LgLcdMan started worker thread";
-    }
 
     return NULL;
 }
@@ -134,7 +145,7 @@ LH_LgLcdMan::~LH_LgLcdMan()
 {
     if( thread_ )
     {
-        thread_->timeToDie();
+        thread_->quit();
         if( !thread_->wait(2500) )
         {
             qDebug() << "LH_LgLcdMan: Logitech driver thread not responding, terminating it";
@@ -149,98 +160,4 @@ LH_LgLcdMan::~LH_LgLcdMan()
     }
     return;
 }
-
-int LH_LgLcdMan::notify(int code,void *param)
-{
-    Q_UNUSED(param);
-
-    if( code && !(code&LH_NOTE_SECOND) ) return LH_NOTE_SECOND;
-
-    if( thread_ )
-    {
-        if( thread_->hasBW() && bw_ == NULL )
-            bw_ = new LogitechOutputDevice( true );
-
-        if( !thread_->hasBW() && bw_ != NULL )
-        {
-            delete bw_;
-            bw_ = NULL;
-        }
-
-        if( thread_->hasQVGA() && qvga_ == NULL )
-            qvga_ = new LogitechOutputDevice( false );
-
-        if( !thread_->hasQVGA() && qvga_ != NULL )
-        {
-            delete qvga_;
-            qvga_ = NULL;
-        }
-    }
-
-    return LH_NOTE_SECOND;
-}
-
-const char* LH_LgLcdMan::lglcd_Err( int result, const char *filename, unsigned line )
-{
-    static char uk_err_buf[64];
-
-    if( result == ERROR_SUCCESS ) return NULL;
-
-    switch( result )
-    {
-#ifdef ERROR_FAILED
-    case ERROR_FAILED:                  return "Failed.";
-#endif
-
-#ifdef Q_WS_WIN
-    case RPC_S_SERVER_UNAVAILABLE:	return "Logitech LCD subsystem is not available.";
-    case ERROR_OLD_WIN_VERSION:		return "Attempted to initialize for Windows 9x.";
-    case ERROR_NO_SYSTEM_RESOURCES:	return "Not enough system resources.";
-    case ERROR_ALREADY_INITIALIZED:	return "lgLcdInit() has been called before.";
-    case ERROR_SERVICE_NOT_ACTIVE:	return "lgLcdInit() has not been called yet.";
-    case ERROR_FILE_NOT_FOUND:		return "LCDMon is not running on the system.";
-#endif
-
-    case ERROR_ACCESS_DENIED:           return "Access denied. LCDHost is likely disabled in the Logitech LCD Manager.";
-    case ERROR_CALL_NOT_IMPLEMENTED:    return "Call not implemented.";
-    case ERROR_LOCK_FAILED:             return "Lock failed.";
-    case ERROR_DEVICE_NOT_CONNECTED:    return "Device not connected.";
-    case ERROR_INTERNAL_ERROR:          return "Logitech driver internal error.";
-    case ERROR_TIMEOUT:                 return "Timeout.";
-    case RPC_S_PROTOCOL_ERROR:          return "Protocol error.";
-    case ERROR_NO_MORE_ITEMS:		return "There are no more devices to be enumerated.";
-    case ERROR_ALREADY_EXISTS:		return "Already exists: Can't connect or open twice.";
-    case ERROR_INVALID_PARAMETER:	return "Invalid parameter.";
-    case RPC_X_WRONG_PIPE_VERSION:	return "LCDMon does not understand the protocol.";
-    }
-
-#ifdef Q_WS_WIN
-    LPWSTR lpMsgBuf;
-    FormatMessageW(FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_FROM_SYSTEM,
-                   NULL, result, MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT),
-                   (LPWSTR) &lpMsgBuf, 0, NULL);
-    qWarning( "LH_LgLcdMan: Unknown LCD error '%ls' (%x)\n", lpMsgBuf, result );
-    LocalFree(lpMsgBuf);
-#else
-    qWarning( "LH_LgLcdMan: %s(%d) Unknown LCD error %x\n", filename, line, result );
-#endif
-
-    qsnprintf(uk_err_buf, sizeof(uk_err_buf), "Error %d", result);
-    return uk_err_buf;
-}
-
-void LH_LgLcdMan::customEvent( QEvent * e )
-{
-    if( e->type() == EventLgLcdButton::type() )
-    {
-        EventLgLcdButton *be = static_cast<EventLgLcdButton*>(e);
-        if( be->bw && bw_ ) bw_->setButtonState( be->buttons );
-        if( !be->bw && qvga_ ) qvga_->setButtonState( be->buttons );
-        return;
-    }
-    Q_ASSERT(0);
-}
-
-////////////////////////////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////////////////////////
 

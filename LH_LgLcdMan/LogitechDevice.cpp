@@ -32,112 +32,90 @@
   POSSIBILITY OF SUCH DAMAGE.
   */
 
-#include <QDebug>
 #include <QCoreApplication>
-#include <QEvent>
-#include <QString>
-#include <QFile>
-
-#include "EventLgLcdNotification.h"
 #include "LogitechDevice.h"
+#include "EventLgLcdButton.h"
 
-LogitechOutputDevice::LogitechOutputDevice( bool bw )
-    : LH_QtOutputDevice( bw ? "LH_LgLcdMan:BW" : "LH_LgLcdMan:QVGA",
+#ifdef Q_WS_WIN
+DWORD WINAPI LogitechDevice::LH_LogitechButtonCB(int device, DWORD dwButtons, const PVOID pContext)
+#endif
+#ifdef Q_WS_MAC
+unsigned long LogitechDevice::LH_LogitechButtonCB(int device, unsigned long dwButtons, const void* pContext)
+#endif
+{
+    LogitechDevice *ld = reinterpret_cast<LogitechDevice*>( (void*) pContext );
+    Q_ASSERT( device != LGLCD_INVALID_DEVICE );
+    if( ld && ld->indev_ )
+        ld->indev_->setButtonState(dwButtons);
+    return 1;
+}
+
+LogitechDevice::LogitechDevice( bool bw, LogitechManager *parent ) :
+    LH_QtOutputDevice( bw ? "LH_LgLcdMan:BW" : "LH_LgLcdMan:QVGA",
           bw ? 160 : 320,
           bw ? 43 : 240,
           bw ? 1 : 32,
-          false )
+          false, parent ),
+    bw_(bw),
+    indev_(0)
 {
-    opened_ = false;
-    bw_ = bw;
-    buttonState_ = 0;
     setTitle( bw_ ? "Logitech B/W LCD" : "Logitech QVGA LCD" );
-    return;
+    indev_ = new LogitechInputDevice(
+                bw_ ? "LH_LgLcdMan:BW:Keys":
+                      "LH_LgLcdMan:QVGA:Keys",
+                lh_df_keyboard );
+    indev_->setTitle( title() );
 }
 
-LogitechOutputDevice::~LogitechOutputDevice()
+LogitechDevice::~LogitechDevice()
 {
-    if( opened() ) close();
-}
-
-const char *LogitechOutputDevice::input_name(const char *devid, int n)
-{
-    switch(n)
+    if( indev_ )
     {
-    case 0:
-        if( bw_ ) return "Logitech B/W LCD";
-        return "Logitech QVGA LCD";
-    case 0x0001: return "Softbutton 0";
-    case 0x0002: return "Softbutton 1";
-    case 0x0004: return "Softbutton 2";
-    case 0x0008: return "Softbutton 3";
-    case 0x0100: return "Left";
-    case 0x0200: return "Right";
-    case 0x0400: return "Ok";
-    case 0x0800: return "Cancel";
-    case 0x1000: return "Up";
-    case 0x2000: return "Down";
-    case 0x4000: return "Menu";
+        delete indev_;
+        indev_ = 0;
     }
-    return 0;
 }
 
-void LogitechOutputDevice::setButtonState( unsigned long button )
+const char* LogitechDevice::render_qimage(QImage *p_image)
 {
-    if( buttonState_ != button )
+    if( p_image == NULL || p_image->isNull() )
+        return 0;
+
+    if( bw_ )
     {
-        for( unsigned long bit=0; bit<32; ++bit )
+        if( p_image->width() != 160 || p_image->height() != 43 )
+            return "invalid image size";
+
+        bm_.bmp_mono.hdr.Format = LGLCD_BMP_FORMAT_160x43x1;
+        for( int y=0; y<43; ++y )
         {
-            unsigned long mask = 1<<bit;
-            if( (button&mask) != (buttonState_&mask) )
+            for( int x=0; x<160; ++x )
             {
-                lh_input di;
-                strncpy( di.ident, lh_dev()->obj.ident, sizeof(di.ident) );
-                di.ident[sizeof(di.ident)-1] = 0;
-                di.item = bit;
-                di.flags = lh_df_button;
-                if( button & mask )
-                {
-                    di.flags |= lh_df_down;
-                    di.value = 0xFFFF;
-                }
-                else
-                {
-                    di.flags |= lh_df_up;
-                    di.value = 0x0;
-                }
-                callback( lh_cb_input, (void*) &di );
+                Q_ASSERT( (size_t)(y*160+x) < sizeof(bm_.bmp_mono.pixels) );
+                bm_.bmp_mono.pixels[y*160 + x] = ( qGray( p_image->pixel(x,y) ) > 128) ? 0xFF : 0x00;
             }
         }
-        buttonState_ = button;
     }
-    return;
+    else
+    {
+        Q_ASSERT( p_image->numBytes() == sizeof( bm_.bmp_qvga32.pixels ) );
+        bm_.bmp_qvga32.hdr.Format = LGLCD_BMP_FORMAT_QVGAx32;
+        memcpy( bm_.bmp_qvga32.pixels,
+    #ifdef Q_WS_MAC
+                p_image->rgbSwapped().bits(),
+    #else
+                p_image->bits(),
+    #endif
+                sizeof( bm_.bmp_qvga32.pixels ) );
+    }
+
+    if( device() != LGLCD_INVALID_DEVICE && bm_.hdr.Format )
+    {
+        if( lgLcdUpdateBitmap( device(), &bm_.hdr, LGLCD_PRIORITY_NORMAL ) != ERROR_SUCCESS )
+        {
+            close();
+        }
+    }
+
+    return 0;
 }
-
-const char* LogitechOutputDevice::render_qimage(QImage *p_image)
-{
-    if( p_image == NULL ) return NULL;
-    if( bw_ ) drv()->setBW( *p_image );
-    else drv()->setQVGA( *p_image );
-    return NULL;
-}
-
-const char *LogitechOutputDevice::close()
-{
-    if( bw_ ) drv()->setBW( QImage() );
-    else drv()->setQVGA( QImage() );
-    opened_  = false;
-    return NULL;
-}
-
-const char* LogitechOutputDevice::get_backlight(lh_device_backlight*)
-{
-    return "get_backlight not implemented";
-}
-
-const char* LogitechOutputDevice::set_backlight(lh_device_backlight*)
-{
-    return "set_backlight not implemented";
-}
-
-

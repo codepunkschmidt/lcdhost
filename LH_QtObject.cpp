@@ -95,8 +95,23 @@ LH_QtObject::LH_QtObject( lh_object *p, const char *ident, QObject *parent ) : Q
 
         if( strcmp( ident, p_obj_->ident ) )
         {
-            qWarning() << parent->metaObject()->className()
-                       << parent->objectName()
+            QString where;
+            if( parent )
+            {
+                if( parent->metaObject() )
+                {
+                    where.append( parent->metaObject()->className() );
+                    where.append(':');
+                }
+                where.append( parent->objectName() );
+                where.append(' ');
+            }
+            if( metaObject() )
+            {
+                where.append( metaObject()->className() );
+                where.append(' ');
+            }
+            qWarning() << where
                        << QString(p_obj_->ident)
                        << "ident changed";
         }

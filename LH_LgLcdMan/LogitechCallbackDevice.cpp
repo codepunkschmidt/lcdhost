@@ -1,5 +1,5 @@
 /**
-  \file     LH_LgLcdLegacyThread.h
+  \file     LogitechCallbackDevice.cpp
   \author   Johan Lindh <johan@linkdata.se>
   \legalese Copyright (c) 2009-2011, Johan Lindh
 
@@ -32,17 +32,48 @@
   POSSIBILITY OF SUCH DAMAGE.
   */
 
-#ifndef LH_LGLCDLEGACYTHREAD_H
-#define LH_LGLCDLEGACYTHREAD_H
+#include <QDebug>
+#include <QCoreApplication>
+#include <QString>
 
-#include "LH_LgLcdThread.h"
+#include "LogitechCallbackDevice.h"
+#include "EventLgLcdButton.h"
 
-class LH_LgLcdLegacyThread : public LH_LgLcdThread
+LogitechCallbackDevice::LogitechCallbackDevice( bool bw, LogitechCallbackManager *parent ) :
+    LogitechDevice( bw, parent )
 {
-    Q_OBJECT
-public:
-    explicit LH_LgLcdLegacyThread(QObject *parent = 0) : LH_LgLcdThread(parent) {}
-    void run();
-};
+    cxt_.connection = LGLCD_INVALID_CONNECTION;
+    cxt_.deviceType = bw ? LGLCD_DEVICE_BW : LGLCD_DEVICE_QVGA;
+    cxt_.onSoftbuttonsChanged.softbuttonsChangedCallback = LH_LogitechButtonCB;
+    cxt_.onSoftbuttonsChanged.softbuttonsChangedContext = this;
+    cxt_.device = LGLCD_INVALID_DEVICE;
+    return;
+}
 
-#endif // LH_LGLCDLEGACYTHREAD_H
+LogitechCallbackDevice::~LogitechCallbackDevice()
+{
+    close();
+}
+
+const char* LogitechCallbackDevice::open()
+{
+    if( cxt_.device == LGLCD_INVALID_DEVICE )
+    {
+        Q_ASSERT( cxt_.onSoftbuttonsChanged.softbuttonsChangedContext == this );
+        cxt_.connection = parent()->connection();
+        if( LCD_ERR( lgLcdOpenByType(&cxt_) ) )
+            lgLcdSetAsLCDForegroundApp(cxt_.device,LGLCD_LCD_FOREGROUND_APP_YES);
+    }
+    return 0;
+}
+
+const char *LogitechCallbackDevice::close()
+{
+    if( cxt_.device != LGLCD_INVALID_DEVICE )
+    {
+        lgLcdClose( cxt_.device );
+        cxt_.device = LGLCD_INVALID_DEVICE;
+    }
+    return 0;
+}
+

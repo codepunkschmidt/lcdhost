@@ -1,5 +1,5 @@
 /**
-  \file     LH_LgLcdLegacyThread.h
+  \file     LogitechCallbackDevice.h
   \author   Johan Lindh <johan@linkdata.se>
   \legalese Copyright (c) 2009-2011, Johan Lindh
 
@@ -32,17 +32,27 @@
   POSSIBILITY OF SUCH DAMAGE.
   */
 
-#ifndef LH_LGLCDLEGACYTHREAD_H
-#define LH_LGLCDLEGACYTHREAD_H
+#ifndef LOGITECHCALLBACKDEVICE_H
+#define LOGITECHCALLBACKDEVICE_H
 
-#include "LH_LgLcdThread.h"
+#include "LH_LgLcdMan.h"
+#include "LogitechCallbackManager.h"
+#include "LogitechDevice.h"
 
-class LH_LgLcdLegacyThread : public LH_LgLcdThread
+class LogitechCallbackDevice : public LogitechDevice
 {
     Q_OBJECT
+    lgLcdOpenByTypeContext cxt_;
+
 public:
-    explicit LH_LgLcdLegacyThread(QObject *parent = 0) : LH_LgLcdThread(parent) {}
-    void run();
+    LogitechCallbackDevice( bool bw, LogitechCallbackManager *parent );
+    ~LogitechCallbackDevice();
+
+    const char *input_name(int item);
+
+    int device() const { return cxt_.device; }
+    const char* open();
+    const char* close();
 };
 
-#endif // LH_LGLCDLEGACYTHREAD_H
+#endif // LOGITECHCALLBACKDEVICE_H

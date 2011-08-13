@@ -1,5 +1,5 @@
 /**
-  \file     LH_QtDevice.h
+  \file     LH_QtOutputDevice.h
   \author   Johan Lindh <johan@linkdata.se>
   \legalese Copyright (c) 2009-2011 Johan Lindh
 
@@ -50,10 +50,8 @@ class LH_QtOutputDevice : public LH_QtObject
     lh_output_device lh_dev_;
 
 public:
-    LH_QtOutputDevice( const char *ident, int w, int h, int d, bool noauto );
+    LH_QtOutputDevice( const char *ident, int w, int h, int d, bool noauto, QObject *parent = 0 );
     virtual ~LH_QtOutputDevice();
-
-    LH_QtObject *parent() const { return static_cast<LH_QtObject *>(LH_QtObject::parent()); }
 
     lh_output_device *lh_dev() { return &lh_dev_; }
 

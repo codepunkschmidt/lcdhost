@@ -1,5 +1,5 @@
 /**
-  \file     LogitechDevice.cpp
+  \file     LogitechCallbackDevice.cpp
   \author   Johan Lindh <johan@linkdata.se>
   \legalese Copyright (c) 2009-2011, Johan Lindh
 
@@ -36,10 +36,10 @@
 #include <QCoreApplication>
 #include <QString>
 
-#include "LogitechOutputDevice.h"
+#include "LogitechCallbackDevice.h"
 #include "EventLgLcdButton.h"
 
-LogitechOutputDevice::LogitechOutputDevice( bool bw, LogitechDeviceManager *parent ) :
+LogitechCallbackDevice::LogitechCallbackDevice( bool bw, LogitechCallbackManager *parent ) :
     LogitechDevice( bw, parent )
 {
     cxt_.connection = LGLCD_INVALID_CONNECTION;
@@ -50,12 +50,12 @@ LogitechOutputDevice::LogitechOutputDevice( bool bw, LogitechDeviceManager *pare
     return;
 }
 
-LogitechOutputDevice::~LogitechOutputDevice()
+LogitechCallbackDevice::~LogitechCallbackDevice()
 {
     close();
 }
 
-const char *LogitechOutputDevice::input_name(int n)
+const char *LogitechCallbackDevice::input_name(int n)
 {
     switch(n)
     {
@@ -75,7 +75,7 @@ const char *LogitechOutputDevice::input_name(int n)
 }
 
 
-const char* LogitechOutputDevice::open()
+const char* LogitechCallbackDevice::open()
 {
     if( cxt_.device == LGLCD_INVALID_DEVICE )
     {
@@ -87,7 +87,7 @@ const char* LogitechOutputDevice::open()
     return 0;
 }
 
-const char *LogitechOutputDevice::close()
+const char *LogitechCallbackDevice::close()
 {
     if( cxt_.device != LGLCD_INVALID_DEVICE )
     {

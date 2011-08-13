@@ -29,4 +29,8 @@ HEADERS += \
     ../LH_QtNetwork.h \
     LH_Graph.h \
     ../LH_QtInstance.h \
-    ../LH_Qt_array_double.h
+    ../LH_Qt_array_double.h \
+    ../LH_Qt_array_int.h \
+    ../LH_Qt_array_int_ui.h \
+    ../LH_Qt_array_string.h \
+    ../LH_Qt_array_string_ui.h

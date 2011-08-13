@@ -624,6 +624,9 @@ void LH_QtCFInstance::cf_menu(QString s)
 
 void LH_QtCFInstance::setRuleItemMenu(bool Enable_Up, bool Enable_Down, bool Enable_Delete)
 {
+    Q_UNUSED(Enable_Up);
+    Q_UNUSED(Enable_Down);
+    Q_UNUSED(Enable_Delete);
 #ifdef FIXME
     bool atTop = setup_cf_rules_->value()==0;
     bool atBottom = setup_cf_rules_->value()==setup_cf_rules_->list().count()-1;

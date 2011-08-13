@@ -35,8 +35,9 @@
 #ifndef LOGITECHDEVICE_H
 #define LOGITECHDEVICE_H
 
-#include "LH_LgLcdMan.h"
 #include "../LH_QtOutputDevice.h"
+#include "LogitechInputDevice.h"
+#include "LogitechManager.h"
 
 #ifdef Q_WS_WIN
 # ifndef UNICODE
@@ -55,32 +56,38 @@
 # endif
 #endif
 
-class LogitechOutputDevice : public LH_QtOutputDevice
+class LogitechDevice : public LH_QtOutputDevice
 {
     Q_OBJECT
-    bool opened_;
     bool bw_; // if true a BW device, else QVGA
-    unsigned long buttonState_;
+    LogitechInputDevice *indev_;
+
+protected:
+    lgLcdBitmap bm_;
 
 public:
-    LogitechOutputDevice( bool bw );
-    ~LogitechOutputDevice();
+    explicit LogitechDevice( bool bw, LogitechManager *parent );
+    ~LogitechDevice();
 
-    const char *input_name(const char *devid, int item);
+    LogitechManager *parent() const
+    {
+        return reinterpret_cast<LogitechManager*>(LH_QtOutputDevice::parent());
+    }
 
-    // LH_LgLcdMan* drv() const { return drv_; }
-    const char* open() { opened_ = true; return NULL; }
-    const char* render_qimage(QImage*);
-    int buttons() { return (int) buttonState_; }
-    const char* get_backlight(lh_device_backlight*);
-    const char* set_backlight(lh_device_backlight*);
-    const char* close();
+    bool bw() const { return bw_; }
 
-    bool opened() const { return opened_; }
+    virtual int device() const { return LGLCD_INVALID_DEVICE; }
 
-    LH_LgLcdMan *drv() const { return static_cast<LH_LgLcdMan *>(parent()); }
-    unsigned long buttonState() const { return buttonState_; }
-    void setButtonState( unsigned long ul );
+    const char* render_qimage(QImage *p_image);
+    const char* get_backlight(lh_device_backlight*) { return 0; }
+    const char* set_backlight(lh_device_backlight*) { return 0; }
+
+#ifdef Q_WS_WIN
+    static DWORD WINAPI LH_LogitechButtonCB(int device, DWORD dwButtons, const PVOID pContext);
+#endif
+#ifdef Q_WS_MAC
+    static unsigned long LH_LogitechButtonCB(int device, unsigned long dwButtons, const void* pContext);
+#endif
 };
 
 #endif // LOGITECHDEVICE_H

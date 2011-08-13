@@ -62,7 +62,7 @@ void LH_Qt_array_int_ui::arrayValuesChanged()
         if (ui_type_ == lh_type_integer && !fixedRange_)
             ((LH_Qt_int*)ui_)->setMinMax(this->min(),this->max());
         if(ui_type_ == lh_type_integer)
-            ;//((LH_Qt_int*)ui_)->setValue((this->at(uiIndex_))); // causes assert failure!
+            ((LH_Qt_int*)ui_)->setValue((this->at(uiIndex_))); // causes assert failure!
         if(ui_type_ == lh_type_integer_color)
             ((LH_Qt_QColor*)ui_)->setValue(QColor::fromRgba(this->at(uiIndex_)));
         updatingUI_ = false;

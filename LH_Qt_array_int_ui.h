@@ -12,8 +12,6 @@ class LH_Qt_array_int_ui : public LH_Qt_array_int
 
     int uiIndex_;
     LH_QtSetupItem *ui_;
-    bool updatingUI_;
-    lh_setup_type ui_type_;
 
     bool fixedRange_;
 

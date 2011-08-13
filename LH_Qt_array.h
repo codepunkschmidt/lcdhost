@@ -13,7 +13,7 @@ public:
         memset( data_array_.data(), 0, data_array_.size()  );
     }
 
-    virtual void resize( int size )
+    void resize( int size )
     {
         Q_ASSERT( item_.type & lh_type_array );
         Q_ASSERT( size >= 0 );
@@ -32,10 +32,9 @@ public:
             item_.data.b.p = 0;
             item_.data.b.n = 0;
         }
-
     }
 
-    virtual int size() const
+    int size() const
     {
         if( item_.type == lh_type_array_qint64 )
         {

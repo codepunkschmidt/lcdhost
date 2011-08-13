@@ -47,6 +47,7 @@ static inline uint PREMUL(uint x)
 
 const char *LH_Dial::userInit()
 {
+    qDebug() << "LH_Dial::userInit() 1";
     if( const char *err = LH_QtInstance::userInit() ) return err;
 
     min_ = max_ = 0.0;
@@ -81,6 +82,8 @@ const char *LH_Dial::userInit()
 
     setup_face_ticks_ = new LH_Qt_bool(this,"Show Ticks",false,LH_FLAG_AUTORENDER);
     setup_face_ticks_->setHelp( "<p>Whether to overlay marks denoting significant points along the dial.</p>");
+
+    qDebug() << "LH_Dial::userInit() 2";
 
     connect( setup_face_style_, SIGNAL(changed()), this, SLOT(changeFaceStyle()));
 
@@ -125,6 +128,8 @@ const char *LH_Dial::userInit()
     setup_needle_configs_->setHelp( "<p>This text field stores the configuration data for each individual needle and should not be edited manually.</p>");
     setup_needle_configs_->setOrder(100);
 
+    qDebug() << "LH_Dial::userInit() 3";
+
     addNeedle("Default");
     connect( setup_type_, SIGNAL(changed()), this, SLOT(changeType()));
     connect( setup_needle_selection_, SIGNAL(changed()), this, SLOT(changeSelectedNeedle()) );
@@ -135,17 +140,22 @@ const char *LH_Dial::userInit()
     connect( setup_needle_gap_, SIGNAL(changed()), this, SLOT(updateSelectedNeedle()) );
     connect( setup_needle_image_, SIGNAL(changed()), this, SLOT(updateSelectedNeedle()) );
 
+    qDebug() << "LH_Dial::userInit() 4";
+
     ticks.fullCircle.append(tickObject(20, 1, 0.05, 0.90));
     ticks.fullCircle.append(tickObject(10, 2, 0.15, 0.80));
     ticks.semiCircle.append(tickObject(21, 1, 0.05, 0.90));
     ticks.semiCircle.append(tickObject(11, 2, 0.15, 0.80));
     ticks.quarterCircle.append(tickObject(11, 1, 0.05, 0.90));
     ticks.quarterCircle.append(tickObject(3, 2, 0.15, 0.80));
+    qDebug() << "LH_Dial::userInit() 5";
 
     changeType();
     changeSelectedNeedle();
     changeFaceStyle();
     changeNeedleStyle();
+    qDebug() << "LH_Dial::userInit() 6";
+
     return 0;
 }
 

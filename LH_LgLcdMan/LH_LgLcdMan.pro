@@ -21,7 +21,8 @@ SOURCES += \
     LogitechLegacyDevice.cpp \
     LogitechDevice.cpp \
     LogitechCallbackDevice.cpp \
-    LogitechCallbackManager.cpp
+    LogitechCallbackManager.cpp \
+    LogitechInputDevice.cpp
 
 HEADERS += \
     ../lh_plugin.h \
@@ -43,7 +44,8 @@ HEADERS += \
     LogitechLegacyDevice.h \
     LogitechDevice.h \
     LogitechCallbackDevice.h \
-    LogitechCallbackManager.h
+    LogitechCallbackManager.h \
+    LogitechInputDevice.h
 
 win32:LIBS += $$PWD/win/lglcd.lib
 macx:LIBS += $$PWD/mac/liblgLcd.a -framework CoreFoundation

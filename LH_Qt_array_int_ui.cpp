@@ -2,7 +2,6 @@
 
 void LH_Qt_array_int_ui::init(lh_setup_type ui_type, int uiFlags, bool _fixedRange, qint64 min, qint64 max )
 {
-    ui_type_ = ui_type;
     fixedRange_ = _fixedRange;
     ui_ = NULL;
     QString uiIdent = QString("%1__ui__").arg(ident());
@@ -17,7 +16,6 @@ void LH_Qt_array_int_ui::init(lh_setup_type ui_type, int uiFlags, bool _fixedRan
 
     ui_->setTitle(ident());
     uiIndex_ = 0;
-    updatingUI_ = false;
 
     connect(this, SIGNAL(changed()), this, SLOT(arrayValuesChanged()));
     connect(this, SIGNAL(set()), this, SLOT(arrayValuesChanged()));
@@ -56,27 +54,26 @@ void LH_Qt_array_int_ui::setTitle( const QString &s )
 
 void LH_Qt_array_int_ui::arrayValuesChanged()
 {
-    if (uiIndex_>=0 && uiIndex_ < this->size())
+    if (uiIndex_>=0 && uiIndex_ < size())
     {
-        updatingUI_ = true;
-        if (ui_type_ == lh_type_integer && !fixedRange_)
-            ((LH_Qt_int*)ui_)->setMinMax(this->min(),this->max());
-        if(ui_type_ == lh_type_integer)
-            ((LH_Qt_int*)ui_)->setValue((this->at(uiIndex_)));
-        if(ui_type_ == lh_type_integer_color)
-            ((LH_Qt_QColor*)ui_)->setValue(QColor::fromRgba(this->at(uiIndex_)));
-        updatingUI_ = false;
+        ui_->blockSignals(true);
+        if (ui_->type() == lh_type_integer && !fixedRange_)
+            reinterpret_cast<LH_Qt_int*>(ui_)->setMinMax(min(),max());
+        if(ui_->type() == lh_type_integer)
+            reinterpret_cast<LH_Qt_int*>(ui_)->setValue(at(uiIndex_));
+        if(ui_->type() == lh_type_integer_color)
+            reinterpret_cast<LH_Qt_QColor*>(ui_)->setValue(QColor::fromRgba(at(uiIndex_)));
+        ui_->blockSignals(false);
     }
 }
 
 void LH_Qt_array_int_ui::uiValueChanged()
 {
-    if (updatingUI_) return;
-    if (uiIndex_>=0 && uiIndex_ < this->size())
+    if (uiIndex_>=0 && uiIndex_ < size())
     {
-        if(ui_type_ == lh_type_integer)
-            this->setAt(uiIndex_, ((LH_Qt_int*)ui_)->value());
-        if(ui_type_ == lh_type_integer_color)
-            this->setAt(uiIndex_, ((LH_Qt_QColor*)ui_)->value().rgba());
+        if(ui_->type() == lh_type_integer)
+            setAt(uiIndex_, reinterpret_cast<LH_Qt_int*>(ui_)->value());
+        if(ui_->type() == lh_type_integer_color)
+            setAt(uiIndex_, reinterpret_cast<LH_Qt_QColor*>(ui_)->value().rgba());
     }
 }

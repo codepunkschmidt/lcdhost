@@ -45,12 +45,8 @@ unsigned long LogitechDevice::LH_LogitechButtonCB(int device, unsigned long dwBu
 {
     LogitechDevice *ld = reinterpret_cast<LogitechDevice*>( (void*) pContext );
     Q_ASSERT( device != LGLCD_INVALID_DEVICE );
-    if( ld )
-        QCoreApplication::postEvent(
-                ld,
-                new EventLgLcdButton(dwButtons),
-                Qt::HighEventPriority
-                );
+    if( ld && ld->indev_ )
+        ld->indev_->setButtonState(dwButtons);
     return 1;
 }
 
@@ -61,17 +57,23 @@ LogitechDevice::LogitechDevice( bool bw, LogitechManager *parent ) :
           bw ? 1 : 32,
           false, parent ),
     bw_(bw),
-    buttonState_(0),
     indev_(0)
 {
     setTitle( bw_ ? "Logitech B/W LCD" : "Logitech QVGA LCD" );
-    indev_ = new LogitechInputDevice( ident(), lh_df_keyboard );
+    indev_ = new LogitechInputDevice(
+                bw_ ? "LH_LgLcdMan:BW:Keys":
+                      "LH_LgLcdMan:QVGA:Keys",
+                lh_df_keyboard );
     indev_->setTitle( title() );
 }
 
 LogitechDevice::~LogitechDevice()
 {
-    if( indev_ ) delete indev_;
+    if( indev_ )
+    {
+        delete indev_;
+        indev_ = 0;
+    }
 }
 
 const char* LogitechDevice::render_qimage(QImage *p_image)
@@ -117,47 +119,3 @@ const char* LogitechDevice::render_qimage(QImage *p_image)
 
     return 0;
 }
-
-void LogitechDevice::setButtonState( unsigned long button )
-{
-    if( buttonState_ != button )
-    {
-        for( unsigned long bit=0; bit<32; ++bit )
-        {
-            unsigned long mask = 1<<bit;
-            if( (button&mask) != (buttonState_&mask) )
-            {
-                lh_input di;
-                strncpy( di.ident, lh_dev()->obj.ident, sizeof(di.ident) );
-                di.ident[sizeof(di.ident)-1] = 0;
-                di.item = bit;
-                di.flags = lh_df_button;
-                if( button & mask )
-                {
-                    di.flags |= lh_df_down;
-                    di.value = 0xFFFF;
-                }
-                else
-                {
-                    di.flags |= lh_df_up;
-                    di.value = 0x0;
-                }
-                callback( lh_cb_input, (void*) &di );
-            }
-        }
-        buttonState_ = button;
-    }
-    return;
-}
-
-void LogitechDevice::customEvent(QEvent *event)
-{
-    if( event->type() == EventLgLcdButton::type() )
-    {
-        EventLgLcdButton *be = static_cast<EventLgLcdButton*>(event);
-        setButtonState( be->buttons );
-        return;
-    }
-    LH_QtOutputDevice::customEvent(event);
-}
-

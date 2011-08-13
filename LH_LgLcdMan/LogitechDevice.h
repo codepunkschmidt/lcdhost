@@ -60,7 +60,6 @@ class LogitechDevice : public LH_QtOutputDevice
 {
     Q_OBJECT
     bool bw_; // if true a BW device, else QVGA
-    unsigned long buttonState_;
     LogitechInputDevice *indev_;
 
 protected:
@@ -82,12 +81,6 @@ public:
     const char* render_qimage(QImage *p_image);
     const char* get_backlight(lh_device_backlight*) { return 0; }
     const char* set_backlight(lh_device_backlight*) { return 0; }
-
-    void customEvent(QEvent *);
-
-    int buttons() { return (int) buttonState_; }
-    unsigned long buttonState() const { return buttonState_; }
-    void setButtonState( unsigned long ul );
 
 #ifdef Q_WS_WIN
     static DWORD WINAPI LH_LogitechButtonCB(int device, DWORD dwButtons, const PVOID pContext);

@@ -119,7 +119,7 @@ const char *LH_Graph::userInit()
     setup_line_fillcolor2_ = new LH_Qt_array_int_ui(this,"Area color (end)",0,LH_FLAG_AUTORENDER | LH_FLAG_HIDDEN, lh_type_integer_color);
     setup_line_fillcolor2_->setHelp( "<p>The color used to fill the area between the line and the axis, at the axis.</p>");
 
-    setup_line_image_ = new LH_Qt_array_string_ui(this, "Fill Image", 0, LH_FLAG_AUTORENDER | LH_FLAG_HIDDEN, lh_type_string);
+    setup_line_image_ = new LH_Qt_array_string_ui(this, "Fill Image", 0, LH_FLAG_AUTORENDER | LH_FLAG_HIDDEN, lh_type_string_filename);
     setup_line_image_->setHelp( "<p>This image is used to create the foreground, filling the area between the line and the axis.</p>");
     setup_line_image_opacity_ = new LH_Qt_array_int_ui(this,"Fill Image Opacity", 1, 0, 255, LH_FLAG_AUTORENDER | LH_FLAG_HIDDEN);
     setup_line_image_opacity_->setHelp( "<p>This value affects the opacity of the fill image.</p>");

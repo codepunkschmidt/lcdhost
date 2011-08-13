@@ -36,17 +36,14 @@
 #define LH_QT_QFILEINFO_H
 
 #include <QFileInfo>
-#include <QByteArray>
 #include <QDir>
 #include "LH_Qt_QString.h"
 
 class LH_Qt_QFileInfo : public LH_Qt_QString
 {
-    QFileInfo fi_;
-
 public:
-    LH_Qt_QFileInfo( LH_QtObject *parent, const char *ident, const QFileInfo& value, int flags = 0 )
-        : LH_Qt_QString( parent, ident, value.filePath(), flags, lh_type_string_filename ), fi_(value)
+    LH_Qt_QFileInfo( LH_QtObject *parent, const char *ident, QFileInfo value = QFileInfo(), int flags = 0 )
+        : LH_Qt_QString( parent, ident, value.filePath(), flags, lh_type_string_filename )
     {
         return;
     }
@@ -54,28 +51,18 @@ public:
     virtual void setup_change()
     {
         getString();
-        fi_ = QFileInfo( str_ );
-        emit change( fi_ );
+        emit change( QFileInfo( str_ ) );
         LH_QtSetupItem::setup_change();
     }
 
-    QFileInfo value()
+    QFileInfo value() const
     {
-        if( fi_.isRelative() )
-        {
-            QDir dir( dir_layout() );
-            return QFileInfo( dir, fi_.filePath() );
-        }
-        return fi_;
+        return QFileInfo( QDir( dir_layout() ), str_ );
     }
 
-    void setValue(const QFileInfo &fi)
+    void setValue(const QFileInfo& fi)
     {
-        if( fi != fi_ )
-        {
-            fi_ = fi;
-            setValue( fi.filePath() );
-        }
+        LH_Qt_QString::setValue( fi.filePath() );
     }
 };
 

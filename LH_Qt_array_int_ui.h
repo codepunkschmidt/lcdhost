@@ -44,6 +44,7 @@ public:
 
 public slots:
     void arrayValuesChanged();
+                ((LH_Qt_int*)ui_)->setValue((this->at(uiIndex_))); // causes assert failure!
 
     void uiValueChanged();
 

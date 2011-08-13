@@ -963,11 +963,11 @@ void LH_Graph::addCustomUnits(QString caption, QString text, double divisor)
 void LH_Graph::syncLineDataArrays()
 {
     int _lineCount = lineCount();
-    setup_line_pencolor_->resize(_lineCount, Qt::black);
-    setup_line_fillcolor1_->resize(_lineCount, Qt::green);
-    setup_line_fillcolor2_->resize(_lineCount, Qt::red);
-    setup_line_image_->resize(_lineCount, "");
-    setup_line_image_opacity_->resize(_lineCount, 255);
+    setup_line_pencolor_->resize(_lineCount);
+    setup_line_fillcolor1_->resize(_lineCount);
+    setup_line_fillcolor2_->resize(_lineCount);
+    setup_line_image_->resize(_lineCount);
+    setup_line_image_opacity_->resize(_lineCount);
 
     qDebug() << "line.count: " <<_lineCount;
     /*

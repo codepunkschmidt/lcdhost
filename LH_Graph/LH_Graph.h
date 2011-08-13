@@ -39,6 +39,8 @@
 #include "../LH_Qt_QFont.h"
 #include "../LH_Qt_QFileInfo.h"
 #include "../LH_Qt_array_double.h"
+#include "../LH_Qt_array_int_ui.h"
+#include "../LH_Qt_array_string_ui.h"
 #include "QList"
 #include "QHash"
 
@@ -72,7 +74,6 @@ class LH_Graph : public LH_QtInstance
     QSize img_size_;
     QImage bgImg_;
     QHash<int,QImage> fgImgs_;
-    void reload_images();
 
     QList< QList<double> > values_;
     QVector<int> cacheCount_;
@@ -99,12 +100,11 @@ protected:
     LH_Qt_QStringList *setup_orientation_;
     LH_Qt_QStringList *setup_line_selection_;
 
-    LH_Qt_QTextEdit *setup_line_configs_;
-    LH_Qt_QColor *setup_pencolor_;
-    LH_Qt_QColor *setup_fillcolor1_;
-    LH_Qt_QColor *setup_fillcolor2_;
-    LH_Qt_QFileInfo *setup_fg_image_;
-    LH_Qt_int *setup_fg_alpha_;
+    LH_Qt_array_int_ui *setup_line_pencolor_;
+    LH_Qt_array_int_ui *setup_line_fillcolor1_;
+    LH_Qt_array_int_ui *setup_line_fillcolor2_;
+    LH_Qt_array_string_ui *setup_line_image_;
+    LH_Qt_array_int_ui *setup_line_image_opacity_;
 
     LH_Qt_QColor *setup_bgcolor_;
     LH_Qt_int *setup_max_samples_;
@@ -129,10 +129,10 @@ protected:
     LH_Qt_QColor *setup_label_color_;
     LH_Qt_QColor *setup_label_shadow_;
 
+    void syncLineDataArrays();
 
 public:
     LH_Graph( double defaultMin = 0, double defaultMax = 0 );
-    ~LH_Graph();
 
     const char *userInit();
     int notify(int code,void* param);
@@ -191,11 +191,9 @@ public slots:
     void changeSampleRate();
     void changeType();
     void changeSelectedLine();
-    void updateSelectedLine();
     void updateLabelSelection();
     void updateLimitControls();
-    void updateFGImage();
-    void updateBGImage();
+    void reloadImages();
     void newLinkedValue();
     void changeUnits();
 };

@@ -18,7 +18,9 @@ SOURCES += \
     LH_GraphMemVirtual.cpp \
     LH_GraphNetIn.cpp \
     LH_GraphNetOut.cpp \
-    ../LH_QtInstance.cpp
+    ../LH_QtInstance.cpp \
+    ../LH_Qt_array_int_ui.cpp \
+    ../LH_Qt_array_string_ui.cpp
 	
 HEADERS += \
     LH_QtPlugin_Graph.h \

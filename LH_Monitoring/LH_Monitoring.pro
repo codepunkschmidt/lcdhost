@@ -60,6 +60,8 @@ SOURCES += \
     ../LH_Bar/LH_Bar.cpp \
     ../LH_Dial/LH_Dial.cpp \
     ../LH_QtInstance.cpp \
+    ../LH_Qt_array_int_ui.cpp \
+    ../LH_Qt_array_string_ui.cpp \
     LH_QImage/logo_blob.c \
     LH_QImage/LH_QImage.cpp \
     LH_AidaWriter.cpp \

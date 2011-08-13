@@ -963,11 +963,11 @@ void LH_Graph::addCustomUnits(QString caption, QString text, double divisor)
 void LH_Graph::syncLineDataArrays()
 {
     int _lineCount = lineCount();
-    setup_line_pencolor_->resize(_lineCount, Qt::black);
-    setup_line_fillcolor1_->resize(_lineCount, Qt::green);
-    setup_line_fillcolor2_->resize(_lineCount, Qt::red);
-    setup_line_image_->resize(_lineCount, "");
-    setup_line_image_opacity_->resize(_lineCount, 255);
+    resizeDataArray(setup_line_pencolor_, _lineCount, QColor(Qt::black).rgba() );
+    resizeDataArray(setup_line_fillcolor1_, _lineCount, QColor(Qt::green).rgba());
+    resizeDataArray(setup_line_fillcolor2_, _lineCount, QColor(Qt::red).rgba());
+    resizeDataArray(setup_line_image_, _lineCount, "");
+    resizeDataArray(setup_line_image_opacity_, _lineCount, 255);
 
     qDebug() << "line.count: " <<_lineCount;
     /*
@@ -1006,4 +1006,29 @@ void LH_Graph::syncLineDataArrays()
         setup_line_image_->setAt( lineID, config.at(12));
         setup_line_image_opacity_->setAt(lineID, config.at(13).toInt());
     }*/
+}
+
+void LH_Graph::resizeDataArray(LH_Qt_array* ary, int newSize, QVariant defaultValue)
+{
+    int oldSize = ary->size();
+    Q_UNUSED(defaultValue);
+    ary->resize(newSize);
+
+    bool ok = false;
+    while(oldSize<newSize)
+    {
+        if(ary->type()==lh_type_array_qint64)
+        {
+            qint64 val = defaultValue.toLongLong(&ok);
+            qDebug() << val;
+            if(ok)
+                dynamic_cast<LH_Qt_array_int*>(ary)->setAt(oldSize, val);
+        }
+        if(ary->type()==lh_type_array_string)
+        {
+            QString val = defaultValue.toString();
+            dynamic_cast<LH_Qt_array_string*>(ary)->setAt(oldSize, val);
+        }
+        oldSize++;
+    }
 }

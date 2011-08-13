@@ -18,6 +18,8 @@ HEADERS += \
     ../LH_Bar/LH_Bar.h \
     ../LH_Dial/LH_Dial.h \
     ../LH_QtInstance.h \
+    ../LH_Qt_array_int_ui.h \
+    ../LH_Qt_array_string_ui.h \
     ../lh_plugin.h \
     LH_QImage/LH_QImage.h \
     LH_AidaWriter.h \

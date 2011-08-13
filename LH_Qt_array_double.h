@@ -32,6 +32,7 @@ public:
         Q_ASSERT( index >= 0 );
         Q_ASSERT( index < size() );
         ((double*)item_.data.b.p)[index] = value;
+        emit(set());
     }
 };
 

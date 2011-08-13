@@ -186,6 +186,7 @@ const char *LH_Graph::userInit()
     connect( setup_linked_values_, SIGNAL(changed()), this, SLOT(newLinkedValue()) );
     connect( setup_units_, SIGNAL(changed()), this, SLOT(changeUnits()));
     connect( setup_line_image_, SIGNAL(changed()), this, SLOT(reloadImages()));
+    connect( setup_line_image_, SIGNAL(set()), this, SLOT(reloadImages()));
 
     connect( this, SIGNAL(initialized()), this, SLOT(updateDescText()));
 
@@ -317,14 +318,13 @@ void LH_Graph::drawSingle( int lineID )
     if (lineID>=lineCount()) return;
 
     if (isDebug) qDebug() << "graph: draw line: begin " << lineID;
-    QColor penColor = QColor();
-    QColor fillColor1 = QColor();
-    QColor fillColor2 = QColor();
-    QString fgImgPath = "";
-    int fgImgAlpha = 255;
 
     //get the colours required for this line & it's fill area
-    loadColors(lineID, penColor, fillColor1, fillColor2, fgImgPath, fgImgAlpha);
+    QColor penColor = QColor::fromRgba(setup_line_pencolor_->at(lineID,0));
+    QColor fillColor1 = QColor::fromRgba(setup_line_fillcolor1_->at(lineID,0));
+    QColor fillColor2 = QColor::fromRgba(setup_line_fillcolor2_->at(lineID,0));
+    QString fgImgPath = setup_line_image_->at(lineID,"");
+    int fgImgAlpha = setup_line_image_opacity_->at(lineID,255);
 
     QPainter painter;
 
@@ -733,50 +733,6 @@ void LH_Graph::addValue(double value, int lineID )
     if (isDebug) qDebug() << "graph: add value: end ";
 }
 
-void LH_Graph::loadColors(int lineID, QColor& penColor, QColor& fillColor1, QColor& fillColor2, QString& fgImgPath, int& fgImgAlpha)
-{
-    if (isDebug) qDebug() << "graph: load colours: begin " << lineID;
-
-    penColor.setRgba(setup_line_pencolor_->at(lineID,0));
-    fillColor1.setRgba(setup_line_fillcolor1_->at(lineID,0));
-    fillColor2.setRgba(setup_line_fillcolor2_->at(lineID,0));
-    fgImgPath = setup_line_image_->at(lineID,"");
-    fgImgAlpha = setup_line_image_opacity_->at(lineID,255);
-
-    if (isDebug) qDebug() << "graph: load colours: end ";
-}
-
-QString LH_Graph::buildColorConfig()
-{
-
-    QStringList config = QStringList();
-
-    int lineID = setup_line_selection_->index();
-
-    QColor penColor = QColor::fromRgba(setup_line_pencolor_->at(lineID, QColor(Qt::black).rgba()) );
-    config.append(QString::number(penColor.red()));
-    config.append(QString::number(penColor.green()));
-    config.append(QString::number(penColor.blue()));
-    config.append(QString::number(penColor.alpha()));
-
-    QColor fillColor1 = QColor::fromRgba(setup_line_fillcolor1_->at(lineID, QColor(Qt::green).rgba()) );
-    config.append(QString::number(fillColor1.red()));
-    config.append(QString::number(fillColor1.green()));
-    config.append(QString::number(fillColor1.blue()));
-    config.append(QString::number(fillColor1.alpha()));
-
-    QColor fillColor2 = QColor::fromRgba(setup_line_fillcolor2_->at(lineID, QColor(Qt::red).rgba()) );
-    config.append(QString::number(fillColor2.red()));
-    config.append(QString::number(fillColor2.green()));
-    config.append(QString::number(fillColor2.blue()));
-    config.append(QString::number(fillColor2.alpha()));
-
-    config.append(setup_line_image_->at(lineID,""));
-    config.append(QString::number(setup_line_image_opacity_->at(lineID,255)));
-
-    return config.join(",");
-}
-
 void LH_Graph::changeMaxSamples()
 {
     len_ = setup_max_samples_->value();
@@ -827,16 +783,8 @@ void LH_Graph::changeType()
 
 void LH_Graph::changeSelectedLine()
 {
-    QColor penColor = QColor();
-    QColor fillColor1 = QColor();
-    QColor fillColor2 = QColor();
-    QString fgImgPath = "";
-    int fgImgAlpha = 255;
-
     if (setup_line_selection_->index() >= lineCount()) setup_line_selection_->setValue(lineCount()-1);
     if (setup_line_selection_->index() < 0) setup_line_selection_->setValue(0);
-
-    loadColors(setup_line_selection_->index(), penColor, fillColor1, fillColor2, fgImgPath, fgImgAlpha);
 
     setup_line_pencolor_->setEditIndex(setup_line_selection_->index());
     setup_line_fillcolor1_->setEditIndex(setup_line_selection_->index());
@@ -910,17 +858,10 @@ void LH_Graph::reloadImages()
 
     for(int lineID=0;lineID<lineCount(); lineID++)
     {
-        QColor penColor = QColor();
-        QColor fillColor1 = QColor();
-        QColor fillColor2 = QColor();
-        QString fgImgPath = "";
-        int fgImgAlpha = 255;
-
-        loadColors(lineID, penColor, fillColor1, fillColor2, fgImgPath, fgImgAlpha);
-
+        QFileInfo fgImg( QDir( dir_layout() ), setup_line_image_->at(lineID,""));
         fgImgs_.remove(lineID);
-        if(QFileInfo(fgImgPath).isFile())
-            fgImgs_.insert(lineID, QImage(fgImgPath).scaled(w,h));
+        if(fgImg.isFile())
+            fgImgs_.insert(lineID, QImage(fgImg.filePath()).scaled(w,h));
     }
 }
 

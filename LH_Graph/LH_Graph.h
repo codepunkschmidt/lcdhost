@@ -164,9 +164,6 @@ public:
     void addValue(double value, int lineID = 0);
     void addValues(QVector<double> values ) { for( int i=0; i<values.size(); ++i ) addValue( values.at(i), i ); }
 
-    void loadColors(int lineID, QColor& penColor, QColor& fillColor1, QColor& fillColor2, QString& fgImgPath, int& fgImgAlpha);
-    QString buildColorConfig();
-
     void findDataBounds();
     void addText(QPainter& painter, QRect rect, int flags, QString text);
     void addText(QPainter& painter, QRect rect, int flags, QString text, int Xmod, int Ymod);

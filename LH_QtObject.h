@@ -63,8 +63,8 @@ public:
     lh_object *obj() const { return p_obj_; }
     const char *ident() const { return p_obj_->ident; }
 
-    void setTitle(const char *s = 0);
-    void setTitle( const QString& );
+    virtual void setTitle(const char *s = 0);
+    virtual void setTitle( const QString& );
     QString title() const { return QString::fromUtf8(p_obj_->title); }
 
     void callback( lh_callbackcode_t code, void *param = 0 ) const

@@ -94,14 +94,14 @@ public:
     const char *link() const { return link_array_.constData(); }
     bool isSource() const { return item_.states & LH_STATE_SOURCE; }
     bool isSink() const { return !link_array_.isEmpty() && !isSource(); }
-    void setHelp(const QString& s);
+    virtual void setHelp(const QString& s);
     const char *help() const { return help_array_.constData(); }
     void setLinkFilter( const char * );
     const char *linkFilter() { return filter_array_.constData(); }
     int flags() const { return item_.flags; }
     bool hasFlag( int f ) const { return (item_.flags & f) ? true : false; }
     void setFlags( int f ) { if( item_.flags != f ) { item_.flags = f; refreshMeta(); } }
-    void setFlag( int f, bool state ); // set individual flag(s) on or off
+    virtual void setFlag( int f, bool state ); // set individual flag(s) on or off
 
     void setMin( double );
     void setMax( double );

@@ -1,5 +1,5 @@
 /**
-  \file     LH_QtDevice.h
+  \file     LH_QtOutputDevice.h
   \author   Johan Lindh <johan@linkdata.se>
   \legalese Copyright (c) 2009-2011 Johan Lindh
 

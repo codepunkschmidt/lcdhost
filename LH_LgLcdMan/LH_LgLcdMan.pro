@@ -16,12 +16,12 @@ SOURCES += \
     LH_LgLcdLegacyThread.cpp \
     LH_LgLcdCallbackThread.cpp \
     LH_LgLcdThread.cpp \
-    LogitechOutputDevice.cpp \
-    LogitechDeviceManager.cpp \
     LogitechLegacyManager.cpp \
     LogitechManager.cpp \
     LogitechLegacyDevice.cpp \
-    LogitechDevice.cpp
+    LogitechDevice.cpp \
+    LogitechCallbackDevice.cpp \
+    LogitechCallbackManager.cpp
 
 HEADERS += \
     ../lh_plugin.h \
@@ -38,12 +38,12 @@ HEADERS += \
     EventLgLcdButton.h \
     LH_LgLcdCallbackThread.h \
     LH_LgLcdThread.h \
-    LogitechOutputDevice.h \
-    LogitechDeviceManager.h \
     LogitechLegacyManager.h \
     LogitechManager.h \
     LogitechLegacyDevice.h \
-    LogitechDevice.h
+    LogitechDevice.h \
+    LogitechCallbackDevice.h \
+    LogitechCallbackManager.h
 
 win32:LIBS += $$PWD/win/lglcd.lib
 macx:LIBS += $$PWD/mac/liblgLcd.a -framework CoreFoundation

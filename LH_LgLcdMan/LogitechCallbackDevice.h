@@ -1,5 +1,5 @@
 /**
-  \file     LogitechDevice.h
+  \file     LogitechCallbackDevice.h
   \author   Johan Lindh <johan@linkdata.se>
   \legalese Copyright (c) 2009-2011, Johan Lindh
 
@@ -32,21 +32,21 @@
   POSSIBILITY OF SUCH DAMAGE.
   */
 
-#ifndef LOGITECHOUTPUTDEVICE_H
-#define LOGITECHOUTPUTDEVICE_H
+#ifndef LOGITECHCALLBACKDEVICE_H
+#define LOGITECHCALLBACKDEVICE_H
 
 #include "LH_LgLcdMan.h"
-#include "LogitechDeviceManager.h"
+#include "LogitechCallbackManager.h"
 #include "LogitechDevice.h"
 
-class LogitechOutputDevice : public LogitechDevice
+class LogitechCallbackDevice : public LogitechDevice
 {
     Q_OBJECT
     lgLcdOpenByTypeContext cxt_;
 
 public:
-    LogitechOutputDevice( bool bw, LogitechDeviceManager *parent );
-    ~LogitechOutputDevice();
+    LogitechCallbackDevice( bool bw, LogitechCallbackManager *parent );
+    ~LogitechCallbackDevice();
 
     const char *input_name(int item);
 
@@ -55,4 +55,4 @@ public:
     const char* close();
 };
 
-#endif // LOGITECHOUTPUTDEVICE_H
+#endif // LOGITECHCALLBACKDEVICE_H

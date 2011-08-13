@@ -47,6 +47,7 @@ public:
     ~LH_QtInputDevice();
 
     lh_input_device *lh_dev() { return &lh_dev_; }
+    int flags() const { return lh_dev_.flags; }
 
     virtual const char* open() { return NULL; }
     virtual const char* input_name(int /*item*/) { return NULL; }

@@ -1,16 +1,16 @@
 #ifndef LH_QT_ARRAY_STRING_H
 #define LH_QT_ARRAY_STRING_H
 
-#include "LH_QtSetupItem.h"
+#include "LH_Qt_array.h"
 #include <QString>
 
-class LH_Qt_array_string : public LH_QtSetupItem
+class LH_Qt_array_string : public LH_Qt_array
 {
     QStringList list_;
 
 public:
     LH_Qt_array_string( LH_QtObject *parent, const char *ident, int size = 0, int flags = 0 )
-        : LH_QtSetupItem( parent, ident, lh_type_array_string, flags ), list_()
+        : LH_Qt_array( parent, ident, lh_type_array_string, flags ), list_()
     {
         resize( size );
     }

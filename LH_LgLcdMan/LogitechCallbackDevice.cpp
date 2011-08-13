@@ -55,26 +55,6 @@ LogitechCallbackDevice::~LogitechCallbackDevice()
     close();
 }
 
-const char *LogitechCallbackDevice::input_name(int n)
-{
-    switch(n)
-    {
-    case 0x0001: return "Softbutton 0";
-    case 0x0002: return "Softbutton 1";
-    case 0x0004: return "Softbutton 2";
-    case 0x0008: return "Softbutton 3";
-    case 0x0100: return "Left";
-    case 0x0200: return "Right";
-    case 0x0400: return "Ok";
-    case 0x0800: return "Cancel";
-    case 0x1000: return "Up";
-    case 0x2000: return "Down";
-    case 0x4000: return "Menu";
-    }
-    return 0;
-}
-
-
 const char* LogitechCallbackDevice::open()
 {
     if( cxt_.device == LGLCD_INVALID_DEVICE )

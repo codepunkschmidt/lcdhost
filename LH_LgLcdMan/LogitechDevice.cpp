@@ -65,7 +65,7 @@ LogitechDevice::LogitechDevice( bool bw, LogitechManager *parent ) :
     indev_(0)
 {
     setTitle( bw_ ? "Logitech B/W LCD" : "Logitech QVGA LCD" );
-    indev_ = new LH_QtInputDevice( ident(), lh_df_keyboard );
+    indev_ = new LogitechInputDevice( ident(), lh_df_keyboard );
     indev_->setTitle( title() );
 }
 

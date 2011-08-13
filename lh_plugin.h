@@ -463,7 +463,10 @@ enum lh_device_flag
     lh_df_keyboard    = 0x1000,
     lh_df_mouse       = 0x2000,
     lh_df_joystick    = 0x4000,
-    lh_df_other       = 0x8000
+    lh_df_other       = 0x8000,
+
+    lh_df_state       = 0x0FFF,
+    lh_df_device      = 0xF000
 };
 
 /**

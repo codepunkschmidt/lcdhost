@@ -36,7 +36,7 @@
 #define LOGITECHDEVICE_H
 
 #include "../LH_QtOutputDevice.h"
-#include "../LH_QtInputDevice.h"
+#include "LogitechInputDevice.h"
 #include "LogitechManager.h"
 
 #ifdef Q_WS_WIN
@@ -61,7 +61,7 @@ class LogitechDevice : public LH_QtOutputDevice
     Q_OBJECT
     bool bw_; // if true a BW device, else QVGA
     unsigned long buttonState_;
-    LH_QtInputDevice *indev_;
+    LogitechInputDevice *indev_;
 
 protected:
     lgLcdBitmap bm_;

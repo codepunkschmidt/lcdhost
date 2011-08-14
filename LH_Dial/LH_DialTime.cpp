@@ -82,8 +82,6 @@ lh_class *LH_DialTime::classInfo()
         "SystemTimeDial",
         "Time (Dial)",
         48,48
-        
-        
     };
 
     return &classInfo;

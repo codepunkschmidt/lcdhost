@@ -29,7 +29,7 @@
 class LH_GraphNetIn : public LH_Graph
 {
 public:
-    virtual const char *userInit()
+    const char *userInit()
     {
         if( const char *err = LH_Graph::userInit() ) return err;
 
@@ -41,8 +41,8 @@ public:
         setup_linked_values_->setLink("/system/net/in/rate");
         setup_max_->setLink("/system/net/in/max");
 
-        setMin(0.0);
-        setMax(1000);
+        setMin(0);
+        setMax(1);
         setYUnit("kb/s");
         return 0;
     }
@@ -60,7 +60,6 @@ public:
 
         return &classInfo;
     }
-
 };
 
 LH_PLUGIN_CLASS(LH_GraphNetIn)

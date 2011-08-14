@@ -45,20 +45,36 @@ static inline uint PREMUL(uint x)
     return x;
 }
 
-const char *LH_Dial::userInit()
+LH_Dial::~LH_Dial()
 {
-    if( const char *err = LH_QtInstance::userInit() ) return err;
-
-    min_ = max_ = 0.0;
+    min(0);
+    max(0);
     polling_on_ = false;
     isClock = false;
 
     faceImage_ = new QImage();
 
+    for(int i = 0; i<needleImage_.count(); i++)
+        delete needleImage_[i];
+    useLinkedValueAverage_ = false;
+    linkedValueMultiplier_ = 1;
+
+    ticks.fullCircle.append(tickObject(20, 1, 0.05, 0.90));
+    ticks.fullCircle.append(tickObject(10, 2, 0.15, 0.80));
+    ticks.semiCircle.append(tickObject(21, 1, 0.05, 0.90));
+    ticks.semiCircle.append(tickObject(11, 2, 0.15, 0.80));
+    ticks.quarterCircle.append(tickObject(11, 1, 0.05, 0.90));
+    ticks.quarterCircle.append(tickObject(3, 2, 0.15, 0.80));
+}
+
+const char *LH_Dial::userInit()
+{
+    if( const char *err = LH_QtInstance::userInit() ) return err;
+
     setup_type_ = new LH_Qt_QStringList(this, "Dial Type", QStringList()<<"Full Circle"<<"Semi-Circle"<<"Quarter Circle", LH_FLAG_AUTORENDER);
     setup_type_->setHelp( "<p>The dial's shape.</p>");
 
-    setup_orientation_ = new LH_Qt_QStringList(this,"Orientation",QStringList()<<"N/A", LH_FLAG_AUTORENDER | LH_FLAG_HIDDEN);
+    setup_orientation_ = new LH_Qt_QStringList(this,"Orientation",QStringList()<<"N/A"<<"Left"<<"Top"<<"Right"<<"Bottom"<<"Bottom Left"<<"Top Left"<<"Top Right"<<"Bottom Right", LH_FLAG_AUTORENDER | LH_FLAG_HIDDEN);
     setup_orientation_->setHelp( "<p>The orientation of the dial (does not apply to circular dials).</p>");
 
     setup_bgcolor_ = new LH_Qt_QColor(this,"Background color",Qt::transparent,LH_FLAG_AUTORENDER);
@@ -83,6 +99,10 @@ const char *LH_Dial::userInit()
     setup_face_ticks_->setHelp( "<p>Whether to overlay marks denoting significant points along the dial.</p>");
 
     connect( setup_face_style_, SIGNAL(changed()), this, SLOT(changeFaceStyle()));
+
+    setup_max_ = new LH_Qt_double(this, "Dial Max",0,-99999999,99999999, LH_FLAG_AUTORENDER | LH_FLAG_HIDDEN);
+    setup_min_ = new LH_Qt_double(this, "Dial Min",1000,-99999999,99999999, LH_FLAG_AUTORENDER | LH_FLAG_HIDDEN);
+    setup_linked_values_ = new LH_Qt_array_double(this,"Linked Value",0,LH_FLAG_NOSAVE);
 
     setup_needles_reverse_ = new LH_Qt_bool(this, "Reverse Needles", false, LH_FLAG_AUTORENDER);
     setup_needles_reverse_->setHelp( "<p>By default all needles move clockwise; this setting changes that to anti-clockwise.</p>"
@@ -126,7 +146,7 @@ const char *LH_Dial::userInit()
     setup_needle_configs_->setOrder(100);
 
     addNeedle("Default");
-    connect( setup_type_, SIGNAL(changed()), this, SLOT(changeType()));
+    connect( setup_linked_values_, SIGNAL(changed()), this, SLOT(newLinkedValue()) );
     connect( setup_needle_selection_, SIGNAL(changed()), this, SLOT(changeSelectedNeedle()) );
     connect( setup_needle_style_, SIGNAL(changed()), this, SLOT(updateSelectedNeedle()) );
     connect( setup_needle_color_, SIGNAL(changed()), this, SLOT(updateSelectedNeedle()) );
@@ -134,26 +154,19 @@ const char *LH_Dial::userInit()
     connect( setup_needle_length_, SIGNAL(changed()), this, SLOT(updateSelectedNeedle()) );
     connect( setup_needle_gap_, SIGNAL(changed()), this, SLOT(updateSelectedNeedle()) );
     connect( setup_needle_image_, SIGNAL(changed()), this, SLOT(updateSelectedNeedle()) );
-
-    ticks.fullCircle.append(tickObject(20, 1, 0.05, 0.90));
-    ticks.fullCircle.append(tickObject(10, 2, 0.15, 0.80));
-    ticks.semiCircle.append(tickObject(21, 1, 0.05, 0.90));
-    ticks.semiCircle.append(tickObject(11, 2, 0.15, 0.80));
-    ticks.quarterCircle.append(tickObject(11, 1, 0.05, 0.90));
-    ticks.quarterCircle.append(tickObject(3, 2, 0.15, 0.80));
-
-    changeType();
-    changeSelectedNeedle();
-    changeFaceStyle();
-    changeNeedleStyle();
+    connect( setup_needle_image_, SIGNAL(changed()), this, SLOT(updateSelectedNeedle()) );
+    connect( this, SIGNAL(initialized()), this, SLOT(initializeDefaults()) );
 
     return 0;
 }
 
-LH_Dial::~LH_Dial()
+void LH_Dial::initializeDefaults()
 {
-    for(int i = 0; i<needleImage_.count(); i++)
-        delete needleImage_[i];
+    changeType(true);
+    changeSelectedNeedle();
+    changeFaceStyle();
+    changeNeedleStyle();
+    connect( setup_type_, SIGNAL(changed()), this, SLOT(changeType()));
 }
 
 void LH_Dial::addNeedle(QString name)
@@ -200,17 +213,52 @@ int LH_Dial::needleCount()
     return setup_needle_selection_->list().count();
 }
 
+void LH_Dial::setNeedleCount(int count)
+{
+    if(count <= 0)
+        return;
+    if(count == setup_needle_selection_->list().count())
+        return;
+    QStringList names;
+    for(int i = 0; i<count;)
+        names.append(QString("Needle #%1").arg(++i));
+    setNeedles(names);
+}
+
+double LH_Dial::max()
+{
+    if (setup_min_->value() < setup_max_->value())
+        return setup_max_->value();
+    else
+        return setup_min_->value()+1;
+}
+double LH_Dial::max(double val)
+{
+    setup_max_->setValue(val);
+    return max();
+}
+
+double LH_Dial::min()
+{
+    return setup_min_->value();
+}
+double LH_Dial::min(double val)
+{
+    setup_min_->setValue(val);
+    return min();
+}
+
 bool LH_Dial::setMin( qreal r )
 {
-    if( min_ == r ) return false;
-    min_ = r;
+    if( min() == r ) return false;
+    min(r);
     return true;
 }
 
 bool LH_Dial::setMax( qreal r )
 {
-    if( max_ == r ) return false;
-    max_ = r;
+    if( max() == r ) return false;
+    max(r);
     return true;
 }
 
@@ -622,20 +670,20 @@ bool LH_Dial::setVal(qreal value, int i, bool repoll )
 {
     if(i >= needle_val_.count()) return repoll;
 
-    if(value < min_) value = min_;
-    if(value > max_) value = max_;
+    if(value < min()) value = min();
+    if(value > max()) value = max();
     if(needle_val_[i] != value)
     {
         needle_val_[i] = value;
-        if(isClock && (needle_pos_[i] != max_ && needle_pos_[i] != min_) && (needle_val_[i] == min_ || needle_val_[i] == max_) ) {
-            needle_pos_[i] -= max_;
-            needle_val_[i] = min_;
+        if(isClock && (needle_pos_[i] != max() && needle_pos_[i] != min()) && (needle_val_[i] == min() || needle_val_[i] == max()) ) {
+            needle_pos_[i] -= max();
+            needle_val_[i] = min();
         }
         needle_step_[i] = (needle_val_[i] - needle_pos_[i])/8;
         // minimum step is 0.5 degrees, otherwise rendering is very inefficient
         if(needle_step_[i]!=0)
-            if(qAbs(needle_step_[i])<(max_-min_)/360/2)
-                needle_step_[i] = (max_-min_)/360/2 * (qAbs(needle_step_[i]) / needle_step_[i]);
+            if(qAbs(needle_step_[i])<(max()-min())/360/2)
+                needle_step_[i] = (max()-min())/360/2 * (qAbs(needle_step_[i]) / needle_step_[i]);
         repoll = true;
     }
     if(!polling_on_ && repoll && i==needleCount()-1)
@@ -713,7 +761,7 @@ void LH_Dial::drawDial()
                     needle_step_[i] = 0;
                 }
             }
-            qreal angle = maxDegrees() * (needle_pos_[i]-min_) / (max_-min_);
+            qreal angle = maxDegrees() * (needle_pos_[i]-min()) / (max()-min());
             int needleStyle;
             QImage needleImage = getNeedle(i, angle, needleStyle);
             if( !setup_needles_reverse_->value() )
@@ -739,6 +787,43 @@ int LH_Dial::polling()
     return 0;
 }
 
+int LH_Dial::notify(int n, void *p)
+{
+    Q_UNUSED(p);
+    if(setup_linked_values_->link()==NULL)
+        return 0;
+    else
+    {
+        if(n&LH_NOTE_SECOND)
+        {
+            double totalTotal = 0;
+            if(useLinkedValueAverage_)
+                setNeedleCount(1);
+            else
+                setNeedleCount(linkedValues.count());
+            for(int n=0; n<linkedValues.count(); n++)
+            {
+                double total = 0;
+                foreach(double d, linkedValues[n])
+                    total += d;
+                if(linkedValues[n].count()!=0)
+                    total/=linkedValues[n].count();
+                if(!useLinkedValueAverage_)
+                    setVal(total, n);
+                else
+                    totalTotal += total;
+                linkedValues[n].clear();
+            }
+            if(linkedValues.count()!=0)
+                totalTotal/=linkedValues.count();
+            if(useLinkedValueAverage_)
+                setVal(totalTotal);
+            requestRender();
+        }
+        return LH_NOTE_SECOND;
+    }
+}
+
 QImage *LH_Dial::render_qimage( int w, int h )
 {
     if( LH_QtInstance::initImage(w,h) == NULL ) return NULL;
@@ -747,13 +832,10 @@ QImage *LH_Dial::render_qimage( int w, int h )
     return image_;
 }
 
-void LH_Dial::changeType()
+void LH_Dial::changeType(bool preserveOrientation)
 {
-    int selVal = setup_orientation_->index();
-    if(selVal<0)selVal=0;
-
     setup_orientation_->setFlag(LH_FLAG_HIDDEN, setup_type_->index()==0 );
-    int idx = setup_orientation_->index();
+    QString val = setup_orientation_->value();
     setup_orientation_->list().clear();
     switch(setup_type_->index())
     {
@@ -773,13 +855,12 @@ void LH_Dial::changeType()
         setup_orientation_->list().append("Bottom Right");
         break;
     }
-    if(idx>=setup_orientation_->list().count())
-        idx = setup_orientation_->list().count()-1;
     setup_orientation_->refreshList();
-    setup_orientation_->setIndex(idx);
-
-    if(selVal>=setup_orientation_->list().count()) selVal = setup_orientation_->list().count()-1;
-    setup_orientation_->setValue(selVal);
+    //qDebug() << "changeType: " << ident() << ": " << setup_type_->value() << " pres. orient.:" << preserveOrientation << " : " << val;
+    //if(preserveOrientation)
+        setup_orientation_->setValue(val);
+    //else
+    //    setup_orientation_->setIndex(0);
 }
 
 void LH_Dial::changeFaceStyle()
@@ -899,3 +980,19 @@ void LH_Dial::updateSelectedNeedle()
 
     setup_needle_configs_->setValue(configs.join("~"));
 }
+
+void LH_Dial::newLinkedValue()
+{
+    while(linkedValues.count()<setup_linked_values_->size())
+        linkedValues.append( QList<double>() );
+    while(linkedValues.count()>setup_linked_values_->size())
+        linkedValues.removeLast();
+
+    for(int n=0; n<setup_linked_values_->size(); n++)
+    {
+        double val = setup_linked_values_->at(n);
+        linkedValues[n].append(val * linkedValueMultiplier_);
+    }
+    callback(lh_cb_notify);
+}
+

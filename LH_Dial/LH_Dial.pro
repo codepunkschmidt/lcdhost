@@ -20,7 +20,7 @@ SOURCES += \
     LH_DialMemVirtual.cpp \
     LH_DialMemPhysical.cpp \
     LH_DialTime.cpp \
-    LH_DialTest.cpp \
+    #LH_DialTest.cpp \
     ../LH_QtInstance.cpp
 	
 HEADERS += \

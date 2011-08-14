@@ -179,7 +179,7 @@ const char *LH_CursorController::userInit()
 
 void LH_CursorController::initialiseLinking()
 {
-    if(this->ident() != "Preview")
+    if( QString("Preview") != ident() )
     {
         setup_link_postback_->setLink("Cursors/Postback");
         setup_link_postback_->refreshData();

@@ -1,6 +1,6 @@
 #include "LH_Qt_array_string_ui.h"
 
-void LH_Qt_array_string_ui::init(lh_setup_type ui_type, int uiFlags, QStringList items )
+void LH_Qt_array_string_ui::init(lh_setup_type ui_type, int uiFlags )
 {
     uiIndex_ = 0;
     if(ui_type == lh_type_string)
@@ -8,7 +8,7 @@ void LH_Qt_array_string_ui::init(lh_setup_type ui_type, int uiFlags, QStringList
     if(ui_type == lh_type_string_filename)
         ui_ = new LH_Qt_QFileInfo(parent(), QString("%1__ui__").arg(ident()).toUtf8(),QFileInfo(), uiFlags );
     if(ui_type == lh_type_string_list)
-        ui_ = new LH_Qt_QStringList(parent(), QString("%1__ui__").arg(ident()).toUtf8(), items, uiFlags );
+        ui_ = new LH_Qt_QStringList(parent(), QString("%1__ui__").arg(ident()).toUtf8(), list(), uiFlags );
 
     Q_ASSERT(ui_ != NULL);
 

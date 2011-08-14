@@ -54,7 +54,12 @@
 #include "../LH_Qt_QStringList.h"
 #include "../LH_Qt_QSlider.h"
 
-class LH_Text : public LH_QtCFInstance
+class LH_Text:
+#ifdef LH_CF
+    public LH_QtCFInstance
+#else
+    public LH_QtInstance
+#endif
 {
     Q_OBJECT
     QTextDocument doc_;
@@ -92,7 +97,11 @@ public:
     } NumberMode;
 
     LH_Text() :
+    #ifdef LH_CF
         LH_QtCFInstance(),
+    #else
+        LH_QtInstance(),
+    #endif
         scrollposx_(0),
         scrollposy_(0),
         richtext_(false),

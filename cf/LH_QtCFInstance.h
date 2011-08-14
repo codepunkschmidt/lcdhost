@@ -54,6 +54,7 @@
 #include "../LH_Qt_QFileInfo.h"
 #include "../LH_Qt_QSlider.h"
 #include "../LH_Qt_int.h"
+#include "../LH_Qt_html.h"
 
 #include "cf_sources_targets.h"
 
@@ -131,9 +132,9 @@ protected:
     LH_Qt_QTextEdit   *setup_cf_XML_;
     LH_Qt_QStringList *setup_cf_rules_;
 
-    LH_Qt_QString     *setup_cf_menu1_;
-    LH_Qt_QString     *setup_cf_menu2_;
-    LH_Qt_QString     *setup_cf_menu3_;
+    LH_Qt_html        *setup_cf_menu1_;
+    LH_Qt_html        *setup_cf_menu2_;
+    LH_Qt_html        *setup_cf_menu3_;
 
     void cf_source_notify(QString name, QString value, int index = 0, int count = 1);
 
@@ -142,6 +143,7 @@ protected:
     void add_cf_target(LH_QtSetupItem *si, bool hide = false);
 
     void cf_set_rules(QString rulesXML, bool enable_cf = true);
+    void cf_move_rule(bool up);
 public:
     LH_Qt_QStringList *setup_cf_source_;
     LH_Qt_QStringList *setup_cf_source_mode_;
@@ -203,8 +205,6 @@ protected slots:
     void cf_rule_edited();
     void cf_copy_rules();
     void cf_paste_rules();
-    void cf_move_rule_up();
-    void cf_move_rule_down();
     void cf_menu(QString);
 };
 

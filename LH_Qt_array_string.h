@@ -5,15 +5,15 @@
 #include <QStringList>
 #include "LH_Qt_array.h"
 
-class LH_Qt_array_string : public LH_QtSetupItem
+class LH_Qt_array_string : public LH_Qt_array
 {
     QStringList list_;
 
 public:
-    LH_Qt_array_string( LH_QtObject *parent, const char *ident, int size = 0, int flags = 0 )
-        : LH_QtSetupItem( parent, ident, lh_type_array_string, flags )
+    LH_Qt_array_string( LH_QtObject *parent, const char *ident, const QStringList& value = QStringList(), int flags = 0 )
+        : LH_Qt_array( parent, ident, flags, lh_type_array_string )
     {
-        resize( size );
+        copy( value );
     }
 
     void setup_change()
@@ -25,24 +25,15 @@ public:
         LH_QtSetupItem::setup_change();
     }
 
-    void resize(int size)
+    void resize(int size, const QString& defaultValue = QString() )
     {
         if( list_.size() != size )
         {
             while( list_.size() > size ) list_.removeLast();
-            while( list_.size() < size ) list_.append(QString());
+            while( list_.size() < size ) list_.append(defaultValue);
             setArray(list_.join(QChar(0)).toUtf8());
             refreshData();
         }
-    }
-
-    void resize(int size, QString defaultValue)
-    {
-        int oldSize = list_.size();
-        resize(size);
-
-        while(oldSize<size)
-            setAt(oldSize++, defaultValue);
     }
 
     int size() const
@@ -65,7 +56,7 @@ public:
             list_[index] = value;
             setArray(list_.join(QChar(0)).toUtf8());
             refreshData();
-            emit(set());
+            emit set();
         }
     }
 
@@ -80,6 +71,14 @@ public:
     {
         return list_;
     }
+
+    qint64 intMin() const { return 0; }
+    qint64 intMax() const { return 0; }
+    qint64 intAt(int index) const { return list_.at(index).toInt(); }
+    double doubleMin() const { return 0.0; }
+    double doubleMax() const { return 0.0; }
+    double doubleAt(int index) const { return list_.at(index).toDouble(); }
+    QString stringAt(int index) const { return at(index); }
 };
 
 #endif // LH_QT_ARRAY_STRING_H

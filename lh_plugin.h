@@ -288,7 +288,7 @@ typedef enum lh_setup_type_t
     lh_type_array_png, /* allows the display of a PNG image */
     lh_type_array_qint64 = (lh_type_array|lh_type_integer), /* no UI - store an array of qint64 in buffer */
     lh_type_array_double = (lh_type_array|lh_type_double), /* no UI - store an array of doubles in buffer */
-    lh_type_array_string, /* no UI - data is a list of NUL-delimited UTF-8 strings */
+    lh_type_array_string = (lh_type_array|lh_type_string), /* no UI - data is a list of NUL-delimited UTF-8 strings */
 
     lh_type_last /* marks last used value */
 } lh_setup_type;

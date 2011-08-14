@@ -14,14 +14,14 @@ class LH_Qt_array_string_ui : public LH_Qt_array_string
     LH_Qt_QString *ui_;
     int uiIndex_;
 
-    void init(lh_setup_type ui_type, int uiFlags, QStringList items );
+    void init(lh_setup_type ui_type, int uiFlags );
 
 public:
-    LH_Qt_array_string_ui( LH_QtObject *parent, const char *ident, int size = 0, int flags = 0, lh_setup_type ui_type = lh_type_string, QStringList items = QStringList())
-        : LH_Qt_array_string( parent, ident, size, flags | LH_FLAG_HIDDEN ),
+    LH_Qt_array_string_ui( LH_QtObject *parent, const char *ident, const QStringList& value = QStringList(), int flags = 0, lh_setup_type ui_type = lh_type_string )
+        : LH_Qt_array_string( parent, ident, value, flags | LH_FLAG_HIDDEN ),
         ui_(0)
     {
-        init( ui_type, LH_FLAG_NOSAVE | LH_FLAG_NOSINK | LH_FLAG_NOSOURCE | flags, items);
+        init( ui_type, LH_FLAG_NOSAVE | LH_FLAG_NOSINK | LH_FLAG_NOSOURCE | flags );
     }
 
     void setEditIndex(int index);

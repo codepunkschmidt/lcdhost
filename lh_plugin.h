@@ -300,7 +300,7 @@ typedef enum lh_setup_type_t
 #define LH_FLAG_FIRST       0x0010 /* Used with LH_QtSetupItem's - Same as calling setOrder(-1) */
 #define LH_FLAG_LAST        0x0020 /* Used with LH_QtSetupItem's - Same as calling setOrder(1) */
 #define LH_FLAG_NOSAVE      0x0040 /* Setup item won't be saved to or loaded from layout */
-#define LH_FLAG_BLANKTITLE  0x0080 /* Setup item title is not shown in GUI (blank space is shown) */
+#define LH_FLAG_INDENTTITLE 0x0080 /* Setup item title is indented */
 #define LH_FLAG_NOSOURCE    0x0100 /* Setup item must not be used as a data source */
 #define LH_FLAG_NOSINK      0x0200 /* Setup item must not be used as a data sink */
 #define LH_FLAG_HIDETITLE   0x0400 /* Setup item title is not shown in GUI (all space to value) */
@@ -308,6 +308,8 @@ typedef enum lh_setup_type_t
 #define LH_FLAG_MIN         0x1000 /* Limit UI numeric input to the min value given in params */
 #define LH_FLAG_MAX         0x2000 /* Limit UI numeric input to the max value given in params */
 #define LH_FLAG_MINMAX      0x3000 /* Limit UI numeric input to the min and max value given in params */
+
+#define LH_FLAG_BLANKTITLE  0x0480 /* Setup item title is not shown in GUI (blank space is shown) */
 
 #define LH_STATE_SOURCE     0x0001 /* Setup item is a data source */
 

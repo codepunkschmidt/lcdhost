@@ -34,6 +34,26 @@ public:
         }
     }
 
+    void intResize(int newSize, qint64 defaultValue)
+    {
+        int oldSize = size();
+        resize(newSize);
+
+        while(oldSize<newSize)
+            ((qint64*)item_.data.b.p)[oldSize++] = defaultValue;
+        emit(set());
+    }
+
+    void doubleResize(int newSize, double defaultValue)
+    {
+        int oldSize = size();
+        resize(newSize);
+
+        while(oldSize<newSize)
+            ((double*)item_.data.b.p)[oldSize++] = defaultValue;
+        emit(set());
+    }
+
     int size() const
     {
         if( item_.type == lh_type_array_qint64 )

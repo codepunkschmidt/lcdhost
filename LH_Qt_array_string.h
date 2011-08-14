@@ -36,6 +36,15 @@ public:
         }
     }
 
+    void resize(int size, QString defaultValue)
+    {
+        int oldSize = list_.size();
+        resize(size);
+
+        while(oldSize<size)
+            setAt(oldSize++, defaultValue);
+    }
+
     int size() const
     {
         return list_.size();

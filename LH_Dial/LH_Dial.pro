@@ -21,7 +21,9 @@ SOURCES += \
     LH_DialMemPhysical.cpp \
     LH_DialTime.cpp \
     #LH_DialTest.cpp \
-    ../LH_QtInstance.cpp
+    ../LH_QtInstance.cpp \
+    ../LH_Qt_array_int_ui.cpp \
+    ../LH_Qt_array_string_ui.cpp
 	
 HEADERS += \
     LH_QtPlugin_Dial.h \
@@ -33,4 +35,10 @@ HEADERS += \
     ../LH_QtMemory.h \
     LH_Dial.h \
     LH_DialTime.h \
-    ../LH_QtInstance.h
+    ../LH_QtInstance.h \
+    ../LH_Qt_array_int_ui.h \
+    ../LH_Qt_array_string.h \
+    ../LH_Qt_array.h \
+    ../LH_Qt_array_double.h \
+    ../LH_Qt_array_int.h \
+    ../LH_Qt_array_string_ui.h

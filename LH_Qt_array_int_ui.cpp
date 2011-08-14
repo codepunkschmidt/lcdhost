@@ -52,6 +52,39 @@ void LH_Qt_array_int_ui::setTitle( const QString &s )
     ui_->setTitle(s);
 }
 
+
+void LH_Qt_array_int_ui::setMin( double d)
+{
+    LH_Qt_array_int::setMin(d);
+    ui_->setMin(d);
+}
+void LH_Qt_array_int_ui::setMax( double d)
+{
+    LH_Qt_array_int::setMax(d);
+    ui_->setMax(d);
+}
+void LH_Qt_array_int_ui::setMinMax( double a, double b)
+{
+    LH_Qt_array_int::setMinMax(a,b);
+    ui_->setMinMax(a,b);
+}
+
+void LH_Qt_array_int_ui::setMin( qint64 n)
+{
+    LH_Qt_array_int::setMin(n);
+    ui_->setMin(n);
+}
+void LH_Qt_array_int_ui::setMax( qint64 n)
+{
+    LH_Qt_array_int::setMax(n);
+    ui_->setMax(n);
+}
+void LH_Qt_array_int_ui::setMinMax( qint64 a, qint64 b)
+{
+    LH_Qt_array_int::setMinMax(a,b);
+    ui_->setMinMax(a,b);
+}
+
 void LH_Qt_array_int_ui::arrayValuesChanged()
 {
     if (uiIndex_>=0 && uiIndex_ < size())

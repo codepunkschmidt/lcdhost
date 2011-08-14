@@ -34,11 +34,23 @@ public:
 
     void setFlag(int f, bool state);
 
-    virtual void setHelp(const QString& s);
+    void setHelp(const QString& s);
 
     void setTitle(const char *s = 0);
 
     void setTitle( const QString &s );
+
+    void setMin( double );
+    void setMax( double );
+    void setMinMax( double, double );
+
+    void setMin( qint64 );
+    void setMax( qint64 );
+    void setMinMax( qint64, qint64 );
+
+    void setMin( int n ) { setMin( (qint64)n ); }
+    void setMax( int n ) { setMax( (qint64)n ); }
+    void setMinMax( int a, int b ) { setMinMax( (qint64)a, (qint64)b ); }
 
 public slots:
     void arrayValuesChanged();

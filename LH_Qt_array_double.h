@@ -34,6 +34,11 @@ public:
         ((double*)item_.data.b.p)[index] = value;
         emit(set());
     }
+
+    void resize(int newSize, double defaultValue)
+    {
+        doubleResize(newSize, defaultValue);
+    }
 };
 
 #endif // LH_QT_ARRAY_DOUBLE_H

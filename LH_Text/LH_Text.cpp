@@ -61,7 +61,11 @@ static inline uint PREMUL(uint x) {
 
 const char *LH_Text::userInit()
 {
+#ifdef LH_CF
     if( const char *err = LH_QtCFInstance::userInit() ) return err;
+#else
+    if( const char *err = LH_QtInstance::userInit() ) return err;
+#endif
 
     richtext_ = false;
 
@@ -123,10 +127,12 @@ const char *LH_Text::userInit()
 
     scrollposx_ = scrollposy_ = 0;
 
+#ifdef LH_CF
     add_cf_source(setup_text_);
     add_cf_target(setup_pencolor_);
     add_cf_target(setup_bgcolor_);
     add_cf_target(setup_font_);
+#endif
 
     font_ = setup_font_->value();
     textimage_ = makeImage();
@@ -512,7 +518,11 @@ int LH_Text::notify(int code,void* param)
         makeTextImage();
         requestRender();
     }
-    return LH_NOTE_DEVICE | LH_QtCFInstance::notify(code,param);;
+#ifdef LH_CF
+    return LH_NOTE_DEVICE | LH_QtCFInstance::notify(code,param);
+#else
+    return LH_NOTE_DEVICE | LH_QtInstance::notify(code,param);
+#endif
 }
 
 /**

@@ -58,7 +58,11 @@ static inline uint PREMUL(uint x) {
 
 const char *LH_Bar::userInit()
 {
+#ifdef LH_CF
     if( const char *err = LH_QtCFInstance::userInit() ) return err;
+#else
+    if( const char *err = LH_QtInstance::userInit() ) return err;
+#endif
 
     uchar *data = (uchar[4]){255,0,0,0};
     bar_img_emptyMask_ = QImage(data,1,1,QImage::Format_ARGB32);
@@ -108,12 +112,14 @@ const char *LH_Bar::userInit()
 
     changeType();
 
+#ifdef LH_CF
     add_cf_source("Value");
     add_cf_target(setup_pencolor1_);
     add_cf_target(setup_pencolor2_);
     add_cf_target(setup_file_);
     add_cf_target(setup_file_bg_);
     add_cf_target(setup_bgcolor_);
+#endif
     return 0;
 }
 

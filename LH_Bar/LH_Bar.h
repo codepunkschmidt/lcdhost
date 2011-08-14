@@ -49,7 +49,12 @@
 #include "../LH_Qt_double.h"
 #include "../LH_Qt_int.h"
 
-class LH_Bar : public LH_QtCFInstance
+class LH_Bar :
+#ifdef LH_CF
+    public LH_QtCFInstance
+#else
+    public LH_QtInstance
+#endif
 {
     Q_OBJECT
 
@@ -89,14 +94,18 @@ public:
 
     void drawSingle( double value )
     {
+#ifdef LH_CF
         cf_source_notify("Value", QString::number(boundedValue(value)));
+#endif
         draw_bar(value);
     }
 
     void drawList( const double *values, int total )
     {
+#ifdef LH_CF
         for( int i=0; i<total; ++i )
             cf_source_notify("Value", QString::number(boundedValue(values[i])), i, total);
+#endif
         for( int i=0; i<total; ++i )
             draw_bar( values[i], i, total );
     }

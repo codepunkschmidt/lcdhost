@@ -365,7 +365,6 @@ bool cf_rule_action_property::setTargetValue(LH_QtCFInstance* sender, cf_target_
         file = QFileInfo(value_);
         if(!file.isFile())
             file = QFileInfo(QString("%1%2").arg(sender->dir_layout()).arg(value_));
-
         if(file.isFile())
             if(((LH_Qt_QFileInfo*)target)->value() != file )
             {

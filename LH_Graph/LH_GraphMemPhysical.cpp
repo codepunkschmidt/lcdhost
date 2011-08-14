@@ -25,7 +25,6 @@
   */
 
 #include "LH_Graph.h"
-#include "../LH_Qt_int.h"
 
 class LH_GraphMemPhysical : public LH_Graph
 {
@@ -37,8 +36,8 @@ public:
         setup_linked_values_->setLink("/system/memory/physical/used");
         setup_max_->setLink("/system/memory/physical/total");
 
-        setMin(0.0);
-        setMax(1000.0);
+        setMin(0);
+        setMax(1000);
         setYUnit("GB", 1024 * 1024 * 1024);
         return 0;
     }
@@ -53,6 +52,7 @@ public:
             "Physical memory used (Graph)",
             48,48
         };
+
         return &classInfo;
     }
 };

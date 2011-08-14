@@ -24,19 +24,23 @@
   */
 
 #include "LH_Dial.h"
-#include "../LH_QtCPU.h"
 
 class LH_DialCPUAverage : public LH_Dial
 {
-    LH_QtCPU *cpu_;
-
 public:
     const char *userInit()
     {
         if( const char *err = LH_Dial::userInit() ) return err;
-        cpu_ = new LH_QtCPU(this);
-        setMin(0.0);
-        setMax(10000.0);
+
+        setUseLinkedValueAverage(true);
+        setLinkedValueMultiplier(0.01);
+        setup_linked_values_->setLink("/system/cpu/coreloads");
+        setup_linked_values_->refreshData();
+
+        setMin(0);
+        setMax(100);
+        //setYUnit("%");
+
         return 0;
     }
 
@@ -53,13 +57,6 @@ public:
 
         return &classInfo;
     }
-
-    int notify(int n, void *p)
-    {
-        setVal( cpu_->averageload() );
-        return LH_NOTE_CPU|LH_Dial::notify(n,p);
-    }
-
 };
 
 LH_PLUGIN_CLASS(LH_DialCPUAverage)

@@ -58,8 +58,6 @@ public:
             "TestDial",
             "Test Dial",
             48,48
-            
-            
         };
 
         return &classInfo;

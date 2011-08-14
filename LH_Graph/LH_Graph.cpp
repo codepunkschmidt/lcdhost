@@ -58,6 +58,7 @@ LH_Graph::LH_Graph( double defaultMin, double defaultMax )
     divisorY_ = 1;
     unitText_ = "";
     useLinkedValueAverage_ = false;
+    linkedValueMultiplier_ = 1;
     return;
 }
 
@@ -685,7 +686,10 @@ int LH_Graph::notify(int n, void *p)
         if(n&LH_NOTE_SECOND)
         {
             double totalTotal = 0;
-            setLineCount(linkedValues.count());
+            if(useLinkedValueAverage_)
+                setLineCount(1);
+            else
+                setLineCount(linkedValues.count());
             for(int n=0; n<linkedValues.count(); n++)
             {
                 double total = 0;
@@ -875,9 +879,7 @@ void LH_Graph::newLinkedValue()
     for(int n=0; n<setup_linked_values_->size(); n++)
     {
         double val = setup_linked_values_->at(n);
-        //val *= linkedValueMultiplier_;
         linkedValues[n].append(val * linkedValueMultiplier_);
-        //qDebug() << linkedValueMultiplier_ << "*" << val << " = " << val * linkedValueMultiplier_;
     }
     callback(lh_cb_notify);
 }

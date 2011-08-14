@@ -25,8 +25,6 @@
   */
 
 #include "LH_Graph.h"
-#include "QDebug"
-#include "../LH_QtCPU.h"
 
 class LH_GraphCPUHistogram : public LH_Graph
 {
@@ -39,7 +37,7 @@ public:
         setup_linked_values_->setLink("/system/cpu/coreloads");
         setup_linked_values_->refreshData();
 
-        setMin(0.0);
+        setMin(0);
         setMax(100);
         setYUnit("%");
 

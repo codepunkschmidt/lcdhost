@@ -29,15 +29,15 @@
 class LH_GraphMemVirtual : public LH_Graph
 {
 public:
-    virtual const char *userInit()
+    const char *userInit()
     {
         if( const char *err = LH_Graph::userInit() ) return err;
 
         setup_linked_values_->setLink("/system/memory/virtual/used");
         setup_max_->setLink("/system/memory/virtual/total");
 
-        setMin(0.0);
-        setMax(1000.0);
+        setMin(0);
+        setMax(1000);
         setYUnit("GB", 1024 * 1024 * 1024);
         return 0;
     }
@@ -52,6 +52,7 @@ public:
             "Virtual memory used (Graph)",
             48,48
         };
+
         return &classInfo;
     }
 };

@@ -132,24 +132,13 @@ const char *LH_CursorController::userInit()
     connect(setup_virtual_keys_, SIGNAL(change(QString)), this, SLOT(virtualKeyPress(QString)) );
 #endif
 
-    setup_link_json_data_ = new LH_Qt_QString(this, "Cursor Data", "", LH_FLAG_NOSAVE | LH_FLAG_NOSINK | LH_FLAG_READONLY | LH_FLAG_HIDDEN);
-    connect(setup_link_json_data_,SIGNAL(duplicateSource()),this,SLOT(changeSourceLink()));
-    setup_link_json_data_->setLink("Cursors/Primary Cursor", true);
-    setup_link_json_data_->setLinkFilter("Cursors");
-    setup_link_json_data_->refreshData();
-
+    setup_link_json_data_ = new LH_Qt_QString(this, "Cursor Data", "", LH_FLAG_NOSAVE | LH_FLAG_NOSINK /*| LH_FLAG_READONLY | LH_FLAG_HIDDEN*/);
     setup_link_postback_ = new LH_Qt_QString(this, "Cursor Postback", "", LH_FLAG_NOSAVE | LH_FLAG_NOSOURCE | LH_FLAG_READONLY | LH_FLAG_HIDDEN);
-    setup_link_postback_->setLink("Cursors/Postback");
-    setup_link_postback_->setLinkFilter("CursorPostback");
-    setup_link_postback_->refreshData();
-
     setup_link_current_pos = new LH_Qt_QString(this, "Cursor Position", "", LH_FLAG_NOSAVE | LH_FLAG_NOSINK | LH_FLAG_READONLY | LH_FLAG_HIDDEN);
-    setup_link_current_pos->setLink("Cursors/Primary Cursor/Cursor Position", true);
-    setup_link_current_pos->refreshData();
-
     setup_link_selected_pos = new LH_Qt_QString(this, "Selected Position", "", LH_FLAG_NOSAVE | LH_FLAG_NOSINK | LH_FLAG_READONLY | LH_FLAG_HIDDEN);
-    setup_link_selected_pos->setLink("Cursors/Primary Cursor/Selected Position", true);
-    setup_link_selected_pos->refreshData();
+
+    setup_link_postback_->setLinkFilter("CursorPostback");
+    setup_link_json_data_->setLinkFilter("Cursors");
 
     setup_cursor_active_ = new LH_Qt_bool(this, "Active", cursor_data_.active, LH_FLAG_NOSAVE | LH_FLAG_NOSINK | LH_FLAG_READONLY | LH_FLAG_HIDDEN);
     setup_cursor_sel_x_ = new LH_Qt_int(this, "X (Selected)", cursor_data_.x, LH_FLAG_NOSAVE | LH_FLAG_NOSINK | LH_FLAG_READONLY | LH_FLAG_HIDDEN);
@@ -166,6 +155,8 @@ const char *LH_CursorController::userInit()
     connect(setup_cursor_sel_y_, SIGNAL(changed()), this, SLOT(changeCursorData()));
     connect(setup_cursor_x_, SIGNAL(changed()), this, SLOT(changeCursorData()));
     connect(setup_cursor_y_, SIGNAL(changed()), this, SLOT(changeCursorData()));
+
+    connect(this, SIGNAL(initialized()), this, SLOT(initialiseLinking()));
 
     updateLocation(0,0);
     hide();
@@ -184,6 +175,27 @@ const char *LH_CursorController::userInit()
 #endif
 
     return NULL;
+}
+
+void LH_CursorController::initialiseLinking()
+{
+    if(this->ident() != "Preview")
+    {
+        setup_link_postback_->setLink("Cursors/Postback");
+        setup_link_postback_->refreshData();
+
+        connect(setup_link_json_data_,SIGNAL(duplicateSource()),this,SLOT(changeSourceLink()));
+        if(QString(setup_link_json_data_->link())=="")
+        {
+            setup_link_json_data_->setLink("Cursors/Primary Cursor", true);
+            setup_link_current_pos->setLink("Cursors/Primary Cursor/Cursor Position", true);
+            setup_link_selected_pos->setLink("Cursors/Primary Cursor/Selected Position", true);
+            setup_link_json_data_->refreshData();
+            setup_link_current_pos->refreshData();
+            setup_link_selected_pos->refreshData();
+        }
+
+    }
 }
 
 void LH_CursorController::doMoveUp(int flags,int value)
@@ -497,8 +509,11 @@ void LH_CursorController::changeSourceLink()
     setup_link_json_data_->setLink(newLink.toUtf8(), true);
     setup_link_current_pos->setLink(QString("%1/Cursor Position").arg(newLink).toUtf8(), true);
     setup_link_selected_pos->setLink(QString("%1/Selected Position").arg(newLink).toUtf8(), true);
+    setup_link_json_data_->refreshData();
+    setup_link_current_pos->refreshData();
+    setup_link_selected_pos->refreshData();
 
-    qDebug() << "LH_Cursor: Changed link from " << linkName << " to " << newLink;
+    qDebug() << "LH_Cursor: Changed link from " << linkName << " to " << newLink << ": Confirmation = " << setup_link_json_data_->link();
 }
 
 void LH_CursorController::updateLinkData()

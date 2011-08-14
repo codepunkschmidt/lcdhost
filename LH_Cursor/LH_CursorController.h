@@ -115,6 +115,7 @@ public slots:
     void processPostback();
     void changeSourceLink();
     void changeCursorData();
+    void initialiseLinking();
 
 #ifdef ENABLE_VIRTUAL_CURSOR_KEYS
     void virtualKeyPress(QString);

@@ -34,6 +34,11 @@ public:
         ((qint64*)item_.data.b.p)[index] = value;
         emit(set());
     }
+
+    void resize(int newSize, qint64 defaultValue)
+    {
+        intResize(newSize, defaultValue);
+    }
 };
 
 #endif // LH_QT_ARRAY_INT_H

@@ -99,8 +99,8 @@ protected:
     LH_Qt_QStringList *setup_bg_type_;
     LH_Qt_QFileInfo *setup_bg_image_;
     LH_Qt_QStringList *setup_orientation_;
-    LH_Qt_QStringList *setup_line_selection_;
 
+    LH_Qt_QStringList *setup_line_selection_;
     LH_Qt_array_int_ui *setup_line_pencolor_;
     LH_Qt_array_int_ui *setup_line_fillcolor1_;
     LH_Qt_array_int_ui *setup_line_fillcolor2_;
@@ -131,8 +131,6 @@ protected:
     LH_Qt_QColor *setup_label_shadow_;
 
     void syncLineDataArrays();
-    void resizeDataArray(LH_Qt_array_int_ui* ary, int newSize, qint64 defaultValue);
-    void resizeDataArray(LH_Qt_array_string_ui* ary, int newSize, QString defaultValue);
 
 public:
     LH_Graph( double defaultMin = 0, double defaultMax = 0 );

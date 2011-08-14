@@ -103,17 +103,17 @@ public:
     void setFlags( int f ) { if( item_.flags != f ) { item_.flags = f; refreshMeta(); } }
     virtual void setFlag( int f, bool state ); // set individual flag(s) on or off
 
-    void setMin( double );
-    void setMax( double );
-    void setMinMax( double, double );
+    virtual void setMin( double );
+    virtual void setMax( double );
+    virtual void setMinMax( double, double );
 
-    void setMin( qint64 );
-    void setMax( qint64 );
-    void setMinMax( qint64, qint64 );
+    virtual void setMin( qint64 );
+    virtual void setMax( qint64 );
+    virtual void setMinMax( qint64, qint64 );
 
-    void setMin( int n ) { setMin( (qint64)n ); }
-    void setMax( int n ) { setMax( (qint64)n ); }
-    void setMinMax( int a, int b ) { setMinMax( (qint64)a, (qint64)b ); }
+    virtual void setMin( int n ) { setMin( (qint64)n ); }
+    virtual void setMax( int n ) { setMax( (qint64)n ); }
+    virtual void setMinMax( int a, int b ) { setMinMax( (qint64)a, (qint64)b ); }
 
     void setList( const QByteArray& list );
     QByteArray& list() { return list_array_; } // call refreshList() if you modify it

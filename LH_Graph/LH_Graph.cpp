@@ -906,64 +906,10 @@ void LH_Graph::addCustomUnits(QString caption, QString text, double divisor)
 void LH_Graph::syncLineDataArrays()
 {
     int _lineCount = lineCount();
-    resizeDataArray(setup_line_pencolor_, _lineCount, QColor(Qt::black).rgba() );
-    resizeDataArray(setup_line_fillcolor1_, _lineCount, QColor(Qt::green).rgba());
-    resizeDataArray(setup_line_fillcolor2_, _lineCount, QColor(Qt::red).rgba());
-    resizeDataArray(setup_line_image_, _lineCount, "");
-    resizeDataArray(setup_line_image_opacity_, _lineCount, 255);
-
-    qDebug() << "line.count: " <<_lineCount;
-    /*
-    QStringList configs = setup_line_configs_->value().split('~',QString::SkipEmptyParts);
-
-    for(int lineID = 0; lineID < configs.length() && lineID < _lineCount; lineID++)
-    {
-        QString configString = configs.at(lineID);
-        QStringList config = configString.split(',');
-        qDebug() << "line["<< lineID <<"].config: " <<configString;
-
-        QColor penColor;
-        penColor.setRed(QString(config.at(0)).toInt());
-        penColor.setGreen(QString(config.at(1)).toInt());
-        penColor.setBlue(QString(config.at(2)).toInt());
-        penColor.setAlpha(QString(config.at(3)).toInt());
-        setup_line_pencolor_->setAt(lineID, penColor.rgba());
-        qDebug() << "line["<< lineID <<"].color: " <<penColor.rgba();
-
-        QColor fillColor1;
-        fillColor1.setRed(QString(config.at(4)).toInt());
-        fillColor1.setGreen(QString(config.at(5)).toInt());
-        fillColor1.setBlue(QString(config.at(6)).toInt());
-        fillColor1.setAlpha(QString(config.at(7)).toInt());
-        setup_line_fillcolor1_->setAt(lineID, fillColor1.rgba());
-        qDebug() << "line["<< lineID <<"].fill[1]: " <<fillColor1.rgba();
-
-        QColor fillColor2;
-        fillColor2.setRed(QString(config.at(8)).toInt());
-        fillColor2.setGreen(QString(config.at(9)).toInt());
-        fillColor2.setBlue(QString(config.at(10)).toInt());
-        fillColor2.setAlpha(QString(config.at(11)).toInt());
-        setup_line_fillcolor2_->setAt(lineID, fillColor2.rgba());
-        qDebug() << "line["<< lineID <<"].fill[2]: " <<fillColor2.rgba();
-
-        setup_line_image_->setAt( lineID, config.at(12));
-        setup_line_image_opacity_->setAt(lineID, config.at(13).toInt());
-    }*/
+    setup_line_pencolor_->resize(_lineCount, QColor(Qt::black).rgba() );
+    setup_line_fillcolor1_->resize(_lineCount, QColor(Qt::green).rgba());
+    setup_line_fillcolor2_->resize(_lineCount, QColor(Qt::red).rgba());
+    setup_line_image_->resize(_lineCount, "");
+    setup_line_image_opacity_->resize(_lineCount, 255);
 }
 
-void LH_Graph::resizeDataArray(LH_Qt_array_int_ui* ary, int newSize, qint64 defaultValue)
-{
-    int oldSize = ary->size();
-    ary->resize(newSize);
-
-    while(oldSize<newSize)
-        ary->setAt(oldSize++, defaultValue);
-}
-void LH_Graph::resizeDataArray(LH_Qt_array_string_ui* ary, int newSize, QString defaultValue)
-{
-    int oldSize = ary->size();
-    ary->resize(newSize);
-
-    while(oldSize<newSize)
-        ary->setAt(oldSize++, defaultValue);
-}

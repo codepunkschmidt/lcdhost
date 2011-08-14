@@ -1,11 +1,14 @@
 #include "LH_Qt_array_string_ui.h"
 
-void LH_Qt_array_string_ui::init(lh_setup_type ui_type, int uiFlags )
+void LH_Qt_array_string_ui::init(lh_setup_type ui_type, int uiFlags, QStringList items )
 {
+    uiIndex_ = 0;
     if(ui_type == lh_type_string)
         ui_ = new LH_Qt_QString(parent(), QString("%1__ui__").arg(ident()).toUtf8(),"", uiFlags );
     if(ui_type == lh_type_string_filename)
         ui_ = new LH_Qt_QFileInfo(parent(), QString("%1__ui__").arg(ident()).toUtf8(),QFileInfo(), uiFlags );
+    if(ui_type == lh_type_string_list)
+        ui_ = new LH_Qt_QStringList(parent(), QString("%1__ui__").arg(ident()).toUtf8(), items, uiFlags );
 
     Q_ASSERT(ui_ != NULL);
 
@@ -17,6 +20,26 @@ void LH_Qt_array_string_ui::init(lh_setup_type ui_type, int uiFlags )
 
     connect(this, SIGNAL(changed()), this, SLOT(arrayValuesChanged()));
     connect(this, SIGNAL(set()), this, SLOT(arrayValuesChanged()));
+}
+
+int LH_Qt_array_string_ui::indexAt(int i)
+{
+    if(ui_->type()!=lh_type_string_list)
+        return -1;
+    return (reinterpret_cast<LH_Qt_QStringList*>(ui_)->list().indexOf( at(i) ));
+}
+
+int LH_Qt_array_string_ui::currentIndex()
+{
+    if(ui_->type()!=lh_type_string_list)
+        return -1;
+    return (reinterpret_cast<LH_Qt_QStringList*>(ui_)->index());
+}
+
+void LH_Qt_array_string_ui::setCurrentIndex(int i)
+{
+    if(ui_->type()==lh_type_string_list)
+        (reinterpret_cast<LH_Qt_QStringList*>(ui_)->setIndex( i ));
 }
 
 void LH_Qt_array_string_ui::setEditIndex(int index)

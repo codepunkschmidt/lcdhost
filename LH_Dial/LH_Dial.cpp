@@ -114,9 +114,9 @@ const char *LH_Dial::userInit()
     setup_needle_selection_ = new LH_Qt_QStringList(this,"Selected Needle",QStringList(),LH_FLAG_NOSAVE);
     setup_needle_selection_->setHelp( "<p>Select a needle here and configure it below. Seperate settings are stored for each needle.</p>");
 
-    setup_needle_style_ = new LH_Qt_array_string_ui(this, "Needle Style",
-                                                    QStringList()<<"Line"<<"Image [Needle Only]"<<"Image [Full Face] (Full Circle Only)",
-                                                    LH_FLAG_AUTORENDER|LH_FLAG_NOSAVE, lh_type_string_list
+    setup_needle_style_ = new LH_Qt_array_string_ui(this, "Needle Style", QStringList(),
+                                                    LH_FLAG_AUTORENDER|LH_FLAG_NOSAVE, lh_type_string_list,
+                                                    QStringList()<<"Line"<<"Image [Needle Only]"<<"Image [Full Face] (Full Circle Only)"
                                                     );
     setup_needle_style_->setHelp( "<p>How the selected needle should be drawn.</p>"
                                   "<p>Needle images can be created in one of two ways:<ul>"

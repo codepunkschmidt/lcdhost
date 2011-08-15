@@ -97,6 +97,7 @@ typedef unsigned long long quint64; /* 64 bit unsigned */
 #define LH_NOTE_WARNING     0x00000020 /* warnings, param: LH_WARNING_xxx (cast param to int) */
 #define LH_NOTE_TITLE       0x00000040 /* title has been changed, param is NULL, obj.title ptr changed */
 #define LH_NOTE_INPUT       0x00000080 /* input to a lh_type_input_xxx setup item, param: lh_input* */
+#define LH_NOTE_INITIALIZED 0x00000100 /* object and all it's children have completed obj_init() ok */
 
 #define LH_WARNING_DUPLICATE_SOURCE 1
 
@@ -309,7 +310,7 @@ typedef enum lh_setup_type_t
 #define LH_FLAG_MAX         0x2000 /* Limit UI numeric input to the max value given in params */
 #define LH_FLAG_MINMAX      0x3000 /* Limit UI numeric input to the min and max value given in params */
 
-#define LH_FLAG_BLANKTITLE  0x0480 /* Setup item title is not shown in GUI (blank space is shown) */
+#define LH_FLAG_BLANKTITLE  (LH_FLAG_INDENTTITLE|LH_FLAG_HIDETITLE) /* Setup item title is not shown in GUI (blank space is shown) */
 
 #define LH_STATE_SOURCE     0x0001 /* Setup item is a data source */
 

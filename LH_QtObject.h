@@ -87,7 +87,7 @@ public:
     // These implement the lh_object functions. If you reimplement them, make sure
     // to call the base class copy of them and preserve or modify the return value.
     virtual int polling() { return 0; }
-    virtual int notify( int, void * ) { return 0; }
+    virtual int notify( int, void * );
 
     // Deprecated. Move userTerm() code to destructor.
     virtual int userTerm() { Q_ASSERT(0); return 0; }
@@ -107,7 +107,7 @@ public slots:
     void requestPolling() const { callback( lh_cb_polling, NULL ); }
 
 signals:
-    void initialized(); // emitted once userInit() completes
+    void initialized(); // emitted once userInit() completes OK for this and all child objects
 };
 
 #endif // LH_QTOBJECT_H

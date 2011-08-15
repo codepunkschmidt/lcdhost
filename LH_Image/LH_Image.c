@@ -246,7 +246,8 @@ static void image_delete( lh_layout_class *cls, lh_layout_item *obj )
     Q_UNUSED(cls);
     lh_image *img = (void*) obj;
     if( img->blob ) free( img->blob );
-    img->setup_filename.obj.cb( img->setup_filename.obj.cb_id, lh_cb_destroy, 0 );
+    if( img->setup_filename.obj.cb_id )
+        img->setup_filename.obj.cb( img->setup_filename.obj.cb_id, lh_cb_destroy, 0 );
     memset( img, 0, sizeof(lh_image) );
     free( img );
     return;

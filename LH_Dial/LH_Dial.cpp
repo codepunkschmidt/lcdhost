@@ -45,7 +45,30 @@ static inline uint PREMUL(uint x)
     return x;
 }
 
-LH_Dial::~LH_Dial()
+LH_Dial::LH_Dial():
+    faceImage_(0),
+    isClock(false),
+    setup_type_(0),
+    setup_orientation_(0),
+    setup_needles_reverse_(0),
+    setup_needles_smooth_(0),
+    setup_max_(0),
+    setup_min_(0),
+    setup_linked_values_(0),
+    setup_bgcolor_(0),
+    setup_face_style_(0),
+    setup_face_pencolor_(0),
+    setup_face_fillcolor1_(0),
+    setup_face_fillcolor2_(0),
+    setup_face_image_(0),
+    setup_face_ticks_(0),
+    setup_needle_selection_(0),
+    setup_needle_style_(0),
+    setup_needle_color_(0),
+    setup_needle_thickness_(0),
+    setup_needle_length_(0),
+    setup_needle_gap_(0),
+    setup_needle_image_(0)
 {
     min(0);
     max(0);
@@ -65,6 +88,13 @@ LH_Dial::~LH_Dial()
     ticks.semiCircle.append(tickObject(11, 2, 0.15, 0.80));
     ticks.quarterCircle.append(tickObject(11, 1, 0.05, 0.90));
     ticks.quarterCircle.append(tickObject(3, 2, 0.15, 0.80));
+
+}
+
+LH_Dial::~LH_Dial()
+{
+    for(int i = 0; i<needleImage_.count(); i++)
+        delete needleImage_[i];
 }
 
 const char *LH_Dial::userInit()
@@ -482,7 +512,6 @@ QImage LH_Dial::getNeedle(int needleID, qreal degrees, int& needleStyle)
         delete needleImage_[needleID];
 
         QFileInfo f(QDir( dir_layout() ), needleImagePath);
-        qDebug() << "needleImagePath: " << needleImagePath << " : " << f.isFile();
         if(needleStyle == 1 && f.isFile())
         {
             QImage needle_img(f.absoluteFilePath());

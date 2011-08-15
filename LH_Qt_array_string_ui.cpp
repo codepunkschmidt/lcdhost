@@ -78,7 +78,10 @@ void LH_Qt_array_string_ui::arrayValuesChanged()
     if( uiIndex_>=0 && uiIndex_ < size() )
     {
         ui_->blockSignals(true);
-        ui_->setValue( at(uiIndex_) );
+        if(ui_->type() == lh_type_string_filename)
+            reinterpret_cast<LH_Qt_QFileInfo*>(ui_)->setValue( QFileInfo( QDir( dir_layout() ), at(uiIndex_) ) );
+        else
+            ui_->setValue( at(uiIndex_) );
         ui_->blockSignals(false);
     }
 }

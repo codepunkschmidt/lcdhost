@@ -47,24 +47,8 @@ static inline uint PREMUL(uint x)
 
 LH_Dial::~LH_Dial()
 {
-    min(0);
-    max(0);
-    polling_on_ = false;
-    isClock = false;
-
-    faceImage_ = new QImage();
-
     for(int i = 0; i<needleImage_.count(); i++)
         delete needleImage_[i];
-    useLinkedValueAverage_ = false;
-    linkedValueMultiplier_ = 1;
-
-    ticks.fullCircle.append(tickObject(20, 1, 0.05, 0.90));
-    ticks.fullCircle.append(tickObject(10, 2, 0.15, 0.80));
-    ticks.semiCircle.append(tickObject(21, 1, 0.05, 0.90));
-    ticks.semiCircle.append(tickObject(11, 2, 0.15, 0.80));
-    ticks.quarterCircle.append(tickObject(11, 1, 0.05, 0.90));
-    ticks.quarterCircle.append(tickObject(3, 2, 0.15, 0.80));
 }
 
 const char *LH_Dial::userInit()

@@ -70,6 +70,18 @@ LH_Dial::LH_Dial():
     setup_needle_gap_(0),
     setup_needle_image_(0)
 {
+}
+
+LH_Dial::~LH_Dial()
+{
+    for(int i = 0; i<needleImage_.count(); i++)
+        delete needleImage_[i];
+}
+
+const char *LH_Dial::userInit()
+{
+    if( const char *err = LH_QtInstance::userInit() ) return err;
+
     min(0);
     max(0);
     polling_on_ = false;
@@ -88,18 +100,6 @@ LH_Dial::LH_Dial():
     ticks.semiCircle.append(tickObject(11, 2, 0.15, 0.80));
     ticks.quarterCircle.append(tickObject(11, 1, 0.05, 0.90));
     ticks.quarterCircle.append(tickObject(3, 2, 0.15, 0.80));
-
-}
-
-LH_Dial::~LH_Dial()
-{
-    for(int i = 0; i<needleImage_.count(); i++)
-        delete needleImage_[i];
-}
-
-const char *LH_Dial::userInit()
-{
-    if( const char *err = LH_QtInstance::userInit() ) return err;
 
     setup_type_ = new LH_Qt_QStringList(this, "Dial Type", QStringList()<<"Full Circle"<<"Semi-Circle"<<"Quarter Circle", LH_FLAG_AUTORENDER);
     setup_type_->setHelp( "<p>The dial's shape.</p>");

@@ -54,7 +54,6 @@ lh_class *LH_NowPlayingEmulator::classInfo()
         "NowPlayingEmulator",
         "Now Playing Emulator (Text)",
         -1, -1,
-        
     };
 
     if( classInfo.width == -1 )
@@ -71,8 +70,9 @@ lh_class *LH_NowPlayingEmulator::classInfo()
 #endif
 }
 
-LH_NowPlayingEmulator::LH_NowPlayingEmulator()
+const char *LH_NowPlayingEmulator::userInit()
 {
+    if( const char *err = LH_Text::userInit() ) return err;
     setup_text_->setFlag(LH_FLAG_HIDDEN, true);
     setup_text_->setFlag(LH_FLAG_NOSAVE, true);
     setup_font_->setFlag(LH_FLAG_HIDDEN, true);
@@ -90,6 +90,8 @@ LH_NowPlayingEmulator::LH_NowPlayingEmulator()
     setup_artist_  = new LH_Qt_QString(this,"Artist Name","Artist");
     setup_track_   = new LH_Qt_QString(this,"Track Name","Track");
     setup_album_   = new LH_Qt_QString(this,"Album Name","Album");
+
+    return 0;
 }
 
 LH_NowPlayingEmulator::~LH_NowPlayingEmulator()

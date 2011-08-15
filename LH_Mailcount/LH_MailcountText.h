@@ -16,7 +16,8 @@ class LH_MailcountText: public LH_Text
     LH_Qt_int *hide_limit_;
 
 public:
-    LH_MailcountText();
+    LH_MailcountText() : LH_Text(), email_count_(0), hide_limit_(0) {}
+    const char *userInit();
     static lh_class *classInfo();
 
 public slots:

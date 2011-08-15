@@ -52,13 +52,11 @@ class LH_NowPlayingBar : public LH_Bar
     int value_;
     bool setValue(int val,int max);
 
-protected:
-
 public:
-    LH_NowPlayingBar();
+    LH_NowPlayingBar() : LH_Bar(), value_(0) {}
+    const char *userInit();
 
     static lh_class *classInfo();
-
     QImage *render_qimage( int w, int h );
 
 public slots:

@@ -57,7 +57,16 @@ protected:
     void sendMessage(bool enabled);
 
 public:
-    LH_NowPlayingEmulator();
+    LH_NowPlayingEmulator() :
+        LH_Text(),
+        setup_player_(0),
+        setup_enabled_(0),
+        setup_artist_(0),
+        setup_track_(0),
+        setup_album_(0)
+    {}
+
+    const char *userInit();
     ~LH_NowPlayingEmulator();
 
     int notify(int code, void *param);

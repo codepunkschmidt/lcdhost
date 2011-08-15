@@ -84,6 +84,22 @@ protected:
 
 
 public:
+    LH_Bar() :
+        min_(0),
+        max_(0),
+        setup_type_(0),
+        setup_file_(0),
+        setup_file_bg_(0),
+        setup_masking_(0),
+        setup_file_endMask_(0),
+        setup_pencolor1_(0),
+        setup_pencolor2_(0),
+        setup_bgcolor_(0),
+        setup_direction_(0),
+        setup_spacing_(0),
+        setup_discrete_(0),
+        setup_discrete_count_(0)
+    {}
     const char *userInit();
     QImage *render_qimage( int w, int h );
 

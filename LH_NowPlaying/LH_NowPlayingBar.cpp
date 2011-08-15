@@ -39,13 +39,13 @@
 
 LH_PLUGIN_CLASS(LH_NowPlayingBar)
 
-LH_NowPlayingBar::LH_NowPlayingBar()
+const char *LH_NowPlayingBar::userInit()
 {
+    if( const char *err = LH_Bar::userInit() ) return err;
     connect( currentTrack, SIGNAL(changed()), this, SLOT(refresh_pos()) );
     setMin(0);
     setValue(0,1);
-
-    return;
+    return 0;
 }
 
 lh_class *LH_NowPlayingBar::classInfo()

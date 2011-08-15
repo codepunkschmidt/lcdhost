@@ -134,6 +134,32 @@ protected:
 
     void setNeedleVisibility(bool visible, int index = 0);
 public:    
+    LH_Dial() :
+        faceImage_(0),
+        isClock(false),
+        setup_type_(0),
+        setup_orientation_(0),
+        setup_needles_reverse_(0),
+        setup_needles_smooth_(0),
+        setup_max_(0),
+        setup_min_(0),
+        setup_linked_values_(0),
+        setup_bgcolor_(0),
+        setup_face_style_(0),
+        setup_face_pencolor_(0),
+        setup_face_fillcolor1_(0),
+        setup_face_fillcolor2_(0),
+        setup_face_image_(0),
+        setup_face_ticks_(0),
+        setup_needle_selection_(0),
+        setup_needle_style_(0),
+        setup_needle_color_(0),
+        setup_needle_thickness_(0),
+        setup_needle_length_(0),
+        setup_needle_gap_(0),
+        setup_needle_image_(0)
+    {}
+
     ~LH_Dial();
     const char *userInit();
 

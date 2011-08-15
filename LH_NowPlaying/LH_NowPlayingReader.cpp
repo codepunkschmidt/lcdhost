@@ -61,7 +61,7 @@ void LH_NowPlayingReader::refresh()
         }
         if(!validArtwork)
         {
-            currentTrack->clearArtwork();
+            clearArtwork();
             updatedArtwork = get_folder_artwork(newInfo, artworkCachePath_, cachedArtwork_);
             cachedArtwork_.album = newInfo.album;
             cachedArtwork_.artist = newInfo.artist;
@@ -76,9 +76,9 @@ void LH_NowPlayingReader::refresh()
         }
     }
 
-    if(!playerFound_ && currentTrack->artworkFileName()!="")
+    if(!playerFound_ && artworkFileName()!="")
     {
-        currentTrack->clearArtwork();
+        clearArtwork();
         updatedArtwork = true;
     }
     if(updatedArtwork)
@@ -131,4 +131,23 @@ bool LH_NowPlayingReader::storeInfo(TrackInfo newInfo)
 
     info_ = newInfo;
     return dirty;
+}
+
+void LH_NowPlayingReader::clearArtwork()
+{
+    /*
+    qDebug() << "Clean up requested: " << cachedArtwork_.fileName;
+    if(cachedArtwork_.fileName!="" && QFile::exists(cachedArtwork_.fileName))
+        qDebug() << "Clean up suceeded: " << QFile::remove(cachedArtwork_.fileName);
+    else
+        qDebug() << "Clean up skipped";
+    */
+    if(cachedArtwork_.fileName!="" && QFile::exists(cachedArtwork_.fileName))
+    {
+        #ifdef Q_OS_WIN
+            SetFileAttributes((LPCTSTR)cachedArtwork_.fileName.utf16(), 0);
+        #endif
+        QFile::remove(cachedArtwork_.fileName);
+    }
+    cachedArtwork_ = (artworkDescription){amNone, "","","",""};
 }

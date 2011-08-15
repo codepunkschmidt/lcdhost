@@ -27,6 +27,8 @@ public:
     void setEditIndex(int index);
     int indexAt(int i);
 
+    LH_Qt_QString* ui() { return ui_; }
+
     int currentIndex();
     void setCurrentIndex(int i);
 

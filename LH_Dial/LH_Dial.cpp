@@ -144,7 +144,6 @@ const char *LH_Dial::userInit()
                                                      LH_FLAG_AUTORENDER | LH_FLAG_HIDDEN |LH_FLAG_NOSAVE,
                                                      lh_type_string_filename);
     setup_needle_image_->setHelp( "<p>Image file to load and use for this needle (see \"Needle Style\" for more information about how the image will be used).</p>");
-    connect( setup_needle_style_, SIGNAL(changed()), this, SLOT(changeNeedleStyle()));
 
     addNeedle("Default");
     connect( setup_linked_values_, SIGNAL(changed()), this, SLOT(newLinkedValue()) );
@@ -161,6 +160,7 @@ void LH_Dial::initializeDefaults()
     changeFaceStyle();
     changeNeedleStyle();
     connect( setup_type_, SIGNAL(changed()), this, SLOT(changeType()));
+    connect( setup_needle_style_->ui(), SIGNAL(changed()), this, SLOT(changeNeedleStyle()));
 }
 
 void LH_Dial::addNeedle(QString name)
@@ -481,7 +481,8 @@ QImage LH_Dial::getNeedle(int needleID, qreal degrees, int& needleStyle)
     {
         delete needleImage_[needleID];
 
-        QFileInfo f(needleImagePath);
+        QFileInfo f(QDir( dir_layout() ), needleImagePath);
+        qDebug() << "needleImagePath: " << needleImagePath << " : " << f.isFile();
         if(needleStyle == 1 && f.isFile())
         {
             QImage needle_img(f.absoluteFilePath());
@@ -861,12 +862,12 @@ void LH_Dial::changeNeedleStyle()
 {
     if(setup_needle_style_->currentIndex()==2 && setup_type_->index()!=0)
         setup_needle_style_->setCurrentIndex(1);
-    int needleID = setup_needle_style_->currentIndex();
-    setup_needle_color_->setFlag(LH_FLAG_HIDDEN, needleID!=0);
-    setup_needle_thickness_->setFlag(LH_FLAG_HIDDEN, needleID!=0);
-    setup_needle_length_->setFlag(LH_FLAG_HIDDEN, needleID!=0);
-    setup_needle_gap_->setFlag(LH_FLAG_HIDDEN, needleID!=0);
-    setup_needle_image_->setFlag(LH_FLAG_HIDDEN, needleID==0);
+    int needleStyle = setup_needle_style_->currentIndex();
+    setup_needle_color_->setFlag(LH_FLAG_HIDDEN, needleStyle!=0);
+    setup_needle_thickness_->setFlag(LH_FLAG_HIDDEN, needleStyle!=0);
+    setup_needle_length_->setFlag(LH_FLAG_HIDDEN, needleStyle!=0);
+    setup_needle_gap_->setFlag(LH_FLAG_HIDDEN, needleStyle!=0);
+    setup_needle_image_->setFlag(LH_FLAG_HIDDEN, needleStyle==0);
 }
 
 void LH_Dial::changeSelectedNeedle()

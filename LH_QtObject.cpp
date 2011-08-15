@@ -150,7 +150,6 @@ const char *LH_QtObject::init()
         qWarning() << metaObject()->className() << objectName() << "did not complete userInit() chain";
 #endif
 
-    if( retv == 0 ) emit initialized();
     return retv;
 }
 
@@ -159,6 +158,15 @@ const char *LH_QtObject::userInit()
 #ifndef QT_NO_DEBUG
     clean_init_ = true;
 #endif
+    return 0;
+}
+
+int LH_QtObject::notify( int code, void * )
+{
+    if( code & LH_NOTE_INITIALIZED )
+    {
+        emit initialized();
+    }
     return 0;
 }
 

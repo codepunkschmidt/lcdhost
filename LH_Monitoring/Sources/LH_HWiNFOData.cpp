@@ -58,22 +58,22 @@ bool LH_HWiNFOData::getData(float& value, QString& text, QString& units)
             if (ui_->count(mon_type) == 0)
                 loadTypesList(hwinfoMemory);
 
-            if(ui_->value(mon_type)!=-1)
+            if(ui_->index(mon_type)!=-1)
             {
-                if (ui_->value(mon_type) != listedType_)
+                if (ui_->index(mon_type) != listedType_)
                 {
-                    listedType_ = ui_->value(mon_type);
+                    listedType_ = ui_->index(mon_type);
                     listedGroup_ = -1;
                     loadGroupsList(hwinfoMemory);
                 }
-                if(ui_->value(mon_group)!=-1)
+                if(ui_->index(mon_group)!=-1)
                 {
                     int max = -1;
-                    HWiNFO_SENSORS_READING_LIST *list = getList(hwinfoMemory->Sensors[sensor_indexes_.value(ui_->value(mon_group))], max);
+                    HWiNFO_SENSORS_READING_LIST *list = getList(hwinfoMemory->Sensors[sensor_indexes_.value(ui_->index(mon_group))], max);
 
-                    if (ui_->value(mon_group) != listedGroup_)
+                    if (ui_->index(mon_group) != listedGroup_)
                     {
-                        listedGroup_ = ui_->value(mon_group);
+                        listedGroup_ = ui_->index(mon_group);
                         loadItemsList(list, max);
                     }
 
@@ -131,7 +131,7 @@ HWiNFO_SENSORS_READING_LIST *LH_HWiNFOData::getList(HWiNFO_SENSORS_SENSOR_ENTRY 
 
 void LH_HWiNFOData::getSelectedValue(HWiNFO_SENSORS_READING_LIST *list, float& value, QString& text, QString& units)
 {
-    int index = ui_->value(mon_item);
+    int index = ui_->index(mon_item);
 
     value = list[index].Value;
     text = QString::number(value);
@@ -178,7 +178,7 @@ void LH_HWiNFOData::loadTypesList(_HWiNFO_SENSORS_SHARED_MEM* hwinfoMemory)
     if(hasOthr) ui_->append( mon_type, "Other" );
 
     ui_->refresh(mon_type);
-    ui_->setValue(mon_type, ui_->setup_value_type_index_->value());
+    ui_->setIndex(mon_type, ui_->setup_value_type_index_->value());
     ui_->setReadonly(mon_type, ui_->count(mon_type)==0);
 }
 
@@ -216,7 +216,7 @@ void LH_HWiNFOData::loadGroupsList(_HWiNFO_SENSORS_SHARED_MEM *hwinfoMemory)
         }
     }
     ui_->refresh(mon_group);
-    ui_->setValue(mon_group, ui_->setup_value_group_index_->value(), true);
+    ui_->setIndex(mon_group, ui_->setup_value_group_index_->value(), true);
     ui_->setReadonly(mon_group, ui_->count(mon_group)==0);
 }
 
@@ -245,6 +245,6 @@ void LH_HWiNFOData::loadItemsList(HWiNFO_SENSORS_READING_LIST *list, int max)
         }
     }
     ui_->refresh(mon_item);
-    ui_->setValue(mon_item, ui_->setup_value_item_index_->value(), true);
+    ui_->setIndex(mon_item, ui_->setup_value_item_index_->value(), true);
     ui_->setReadonly(mon_item, ui_->count(mon_item)==0);
 }

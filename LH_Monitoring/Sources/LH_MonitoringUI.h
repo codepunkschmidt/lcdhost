@@ -95,10 +95,10 @@ public:
     void refresh(int);
     void setReadonly(int, bool);
     QString at(ui_mon_entry_type, int);
-    int value(ui_mon_entry_type);
+    int index(ui_mon_entry_type);
     QString valueText(ui_mon_entry_type);
     int count(ui_mon_entry_type);
-    void setValue(ui_mon_entry_type, int, bool fix=false);
+    void setIndex(ui_mon_entry_type, int, bool fix=false);
 
     bool applyOffset();
     bool applyFormat();

@@ -192,7 +192,7 @@ QString LH_MonitoringUI::at(ui_mon_entry_type et, int i)
     return "";
 }
 
-int LH_MonitoringUI::value(ui_mon_entry_type et)
+int LH_MonitoringUI::index(ui_mon_entry_type et)
 {
     switch(et)
     {
@@ -243,24 +243,24 @@ int LH_MonitoringUI::count(ui_mon_entry_type et)
     return -1;
 }
 
-void LH_MonitoringUI::setValue(ui_mon_entry_type et, int i, bool fix)
+void LH_MonitoringUI::setIndex(ui_mon_entry_type et, int i, bool fix)
 {
     switch(et)
     {
     case mon_type:
         if(fix && i>=setup_value_type_->list().length())
             i = setup_value_type_->list().length()-1;
-        return setup_value_type_->setValue(i);
+        return setup_value_type_->setIndex(i);
         break;
     case mon_group:
         if(fix && i>=setup_value_group_->list().length())
             i = setup_value_group_->list().length()-1;
-        return setup_value_group_->setValue(i);
+        return setup_value_group_->setIndex(i);
         break;
     case mon_item:
         if(fix && i>=setup_value_item_->list().length())
             i = setup_value_item_->list().length()-1;
-        return setup_value_item_->setValue(i);
+        return setup_value_item_->setIndex(i);
         break;
     }
 }

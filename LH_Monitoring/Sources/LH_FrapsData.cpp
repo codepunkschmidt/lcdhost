@@ -42,7 +42,7 @@ bool LH_FrapsData::getData(float& value, QString& text, QString& units)
             //setup_FPS_->setValue("Needs Fraps 1.9C or later!");
             resultVal = false;
         } else {
-            if(ui_->value(mon_item) == -1)
+            if(ui_->index(mon_item) == -1)
             {
                 //setup_FPS_->setValue("No option selected");
                 resultVal = false;

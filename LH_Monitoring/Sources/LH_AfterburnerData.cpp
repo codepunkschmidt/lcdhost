@@ -307,7 +307,7 @@ void LH_AfterburnerData::loadTypesList(MAHM_SHARED_MEMORY_HEADER* MAHMHeader)
 
         ui_->refresh(mon_type);
         ui_->setIndex();
-        ui_->loadItemsList(ui_->value(mon_type));
+        ui_->loadItemsList(ui_->index(mon_type));
     }
 }
 

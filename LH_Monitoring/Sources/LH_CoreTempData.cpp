@@ -78,7 +78,7 @@ int LH_CoreTempData::getThreshMax()
 bool LH_CoreTempData::getData(float& value, QString& text, QString& units)
 {
     int count;
-    return getData(value, text, units, count, ui_->value(mon_item));
+    return getData(value, text, units, count, ui_->index(mon_item));
 }
 bool LH_CoreTempData::getData(float& value, QString& text, QString& units, int index)
 {
@@ -219,8 +219,8 @@ void LH_CoreTempData::getSelectedValue(CTMemory* ctmemory, float& value, QString
     }
 
     //really a bad place to put these but...
-    if(is_avg_!=-2)     is_avg_ = (ui_->value(mon_item)==sel_id_avg_);
-    if(sel_id_all_!=-2) is_group_ = (ui_->value(mon_item)==sel_id_all_);
+    if(is_avg_!=-2)     is_avg_ = (ui_->index(mon_item)==sel_id_avg_);
+    if(sel_id_all_!=-2) is_group_ = (ui_->index(mon_item)==sel_id_all_);
 
     return ;
 }
@@ -248,6 +248,6 @@ void LH_CoreTempData::loadSensorList(int count, QString type)
     }
 
     ui_->refresh(mon_item);
-    ui_->setValue(mon_item, ui_->setup_value_item_index_->value());
+    ui_->setIndex(mon_item, ui_->setup_value_item_index_->value());
 }
 

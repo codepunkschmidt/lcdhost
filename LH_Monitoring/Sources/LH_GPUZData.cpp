@@ -90,5 +90,5 @@ void LH_GPUZData::loadTypesList(GPUZ_SH_MEM* gpuzMemory)
             ui_->append( mon_type, sensorName );
     }
     ui_->refresh(mon_type);
-    ui_->setValue(mon_type, ui_->setup_value_type_index_->value());
+    ui_->setIndex(mon_type, ui_->setup_value_type_index_->value());
 }

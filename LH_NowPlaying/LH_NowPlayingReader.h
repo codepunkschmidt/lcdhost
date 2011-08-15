@@ -32,28 +32,8 @@ public:
 
     TrackInfo info() { return info_; }
     bool playerFound() { return playerFound_; }
-    QString artworkFileName()
-    {
-        return cachedArtwork_.fileName;
-    }
-    void clearArtwork()
-    {
-        /*
-        qDebug() << "Clean up requested: " << cachedArtwork_.fileName;
-        if(cachedArtwork_.fileName!="" && QFile::exists(cachedArtwork_.fileName))
-            qDebug() << "Clean up suceeded: " << QFile::remove(cachedArtwork_.fileName);
-        else
-            qDebug() << "Clean up skipped";
-        */
-        if(cachedArtwork_.fileName!="" && QFile::exists(cachedArtwork_.fileName))
-        {
-            #ifdef Q_OS_WIN
-                SetFileAttributes((LPCTSTR)cachedArtwork_.fileName.utf16(), 0);
-            #endif
-            QFile::remove(cachedArtwork_.fileName);
-        }
-        cachedArtwork_ = (artworkDescription){amNone, "","","",""};
-    }
+    QString artworkFileName() { return cachedArtwork_.fileName; }
+    void clearArtwork();
 
     void refresh();
     void run();

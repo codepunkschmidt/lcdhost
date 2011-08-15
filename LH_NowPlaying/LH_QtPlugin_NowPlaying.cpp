@@ -152,6 +152,7 @@ const char *LH_QtPlugin_NowPlaying::userInit()
 {
     if( const char *err = LH_QtPlugin::userInit() ) return err;
     currentTrack = new LH_NowPlayingReader(this);
+    currentTrack->run();
     return NULL;
 }
 

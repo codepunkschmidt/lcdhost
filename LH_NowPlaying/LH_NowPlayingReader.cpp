@@ -1,7 +1,7 @@
 #include "LH_NowPlayingReader.h"
 #include <QBasicTimer>
 
-LH_NowPlayingReader* currentTrack;
+LH_NowPlayingReader* currentTrack = 0;
 
 //----------------------------------------------------------------------------------------------------------
 

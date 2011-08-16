@@ -151,9 +151,10 @@ char __lcdhostplugin_xml[] =
 const char *LH_QtPlugin_NowPlaying::userInit()
 {
     if( const char *err = LH_QtPlugin::userInit() ) return err;
+    return "too unstable";
     currentTrack = new LH_NowPlayingReader(this);
     currentTrack->run();
-    return NULL;
+    return 0;
 }
 
 LH_QtPlugin_NowPlaying::~LH_QtPlugin_NowPlaying()

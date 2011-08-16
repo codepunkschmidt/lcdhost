@@ -128,6 +128,8 @@ LH_QtObject::LH_QtObject( lh_object *p, const char *ident, QObject *parent ) : Q
 
 LH_QtObject::~LH_QtObject()
 {
+    Q_ASSERT( p_obj_ );
+    memset( p_obj_, 0, sizeof(lh_object) );
 }
 
 const char *LH_QtObject::init()

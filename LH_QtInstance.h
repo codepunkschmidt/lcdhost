@@ -86,6 +86,7 @@ public:
 
     virtual QString dir_layout() const
     {
+        Q_ASSERT( li_.layout.dir );
         return QString::fromUtf8( li_.layout.dir );
     }
 

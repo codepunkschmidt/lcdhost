@@ -227,7 +227,7 @@ extern "C" int lh_lua_print(lua_State *L)
     return 0; // no return values
 }
 
-LH_Lua::LH_Lua(QObject *parent) : QObject( parent )
+LH_Lua::LH_Lua(QObject *parent) : LH_QtObject( &obj_, "LH_Lua", parent )
 {
     QString lua_cpath;
     QString lua_path;

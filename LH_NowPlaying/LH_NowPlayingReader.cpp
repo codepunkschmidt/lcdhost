@@ -1,29 +1,50 @@
-#include "LH_NowPlayingReader.h"
+
 #include <QBasicTimer>
-
-LH_NowPlayingReader* currentTrack = 0;
-
-//----------------------------------------------------------------------------------------------------------
+#include <QTimerEvent>
+#include "../LH_QtPlugin.h"
+#include "LH_NowPlayingReader.h"
 
 bool get_itunes_info(TrackInfo &ti, QString artworkPath, artworkDescription &cachedArtwork, bool &updatedArtwork);
 bool get_winamp_info(TrackInfo &ti);
 bool get_msn_compat_info(struct TrackInfo &ti);
-
 void close_itunes_connection();
 
-//----------------------------------------------------------------------------------------------------------
+LH_NowPlayingReader *LH_NowPlayingReader::instance_ = 0;
 
-void LH_NowPlayingReader::run()
+LH_NowPlayingReader::LH_NowPlayingReader(QObject *parent) :
+    LH_QtObject( &obj_, "LH_NowPlayingReader", parent ),
+    playerFound_(false)
 {
-    QBasicTimer timer;
-    timer.start(500,this);
-    exec();
+    memset( &info_, 0, sizeof(info_) );
+    memset( &cachedArtwork_, 0, sizeof(cachedArtwork_) );
+
+    // get the data directory. we will save a temporary "art.jpg" file
+    // here whilst it is valid. When the album changes or the plugin is
+    // unloaded this file is automatically cleaned up.
+    artworkCachePath_ = LH_QtPlugin::instance()->dir_data();
+    Q_ASSERT( artworkCachePath_.endsWith('/') );
+    instance_ = this;
+    timer_.start(500,this);
+    return;
+}
+
+LH_NowPlayingReader::~LH_NowPlayingReader()
+{
+    instance_ = 0;
+    timer_.stop();
     close_itunes_connection();
 }
 
-void LH_NowPlayingReader::timerEvent(QTimerEvent *)
+//----------------------------------------------------------------------------------------------------------
+
+void LH_NowPlayingReader::timerEvent(QTimerEvent *event)
 {
-    refresh();
+    if( event->timerId() == timer_.timerId() )
+    {
+        refresh();
+        return;
+    }
+    QObject::timerEvent(event);
 }
 
 void LH_NowPlayingReader::refresh()

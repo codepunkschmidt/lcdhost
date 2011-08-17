@@ -5,11 +5,7 @@ DEFINES += LG320x240_LIBRARY
 include(../Plugins.pri)
 include(../USB.pri)
 
-SOURCES += \
-    ../LH_QtPlugin.cpp \
-    ../LH_QtObject.cpp \
-    ../LH_QtInstance.cpp \
-    ../LH_QtSetupItem.cpp \
+SOURCES += $$PLUGIN_SOURCES \
     ../LH_QtOutputDevice.cpp \
     ../wow64.cpp \
     LH_Lg320x240.cpp \
@@ -17,12 +13,7 @@ SOURCES += \
     LogitechG19Thread.cpp \
     LogitechG19.cpp
 
-HEADERS += \
-    ../lh_plugin.h \
-    ../LH_QtPlugin.h \
-    ../LH_QtObject.h \
-    ../LH_QtInstance.h \
-    ../LH_QtSetupItem.h \
+HEADERS += $$PLUGIN_HEADERS \
     ../LH_QtOutputDevice.h \
     ../wow64.h \
     LH_Lg320x240.h \

@@ -6,17 +6,9 @@ win32:LIBS += -L"C:/Program Files/Microsoft SDKs/Windows/v7.0/Lib" -lpsapi
 
 include(../Plugins.pri)
 
-SOURCES += \
-    ../LH_QtPlugin.cpp \
-    ../LH_QtObject.cpp \
-    ../LH_QtSetupItem.cpp \
-    ../LH_QtInstance.cpp \
+SOURCES += $$PLUGIN_SOURCES \
     LH_QtPlugin_LCoreReboot.cpp
 
-HEADERS += \
-    ../LH_QtPlugin.h \
-    ../LH_QtObject.h \
-    ../LH_QtSetupItem.h \
-    ../LH_QtInstance.h \
+HEADERS += $$PLUGIN_HEADERS \
     LH_QtPlugin_LCoreReboot.h
 

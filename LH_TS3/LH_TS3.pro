@@ -6,11 +6,7 @@ QT += network
 include(../Plugins.pri)
 include(../CF/cf.pri)
 
-SOURCES += \
-    ../LH_QtPlugin.cpp \
-    ../LH_QtObject.cpp \
-    ../LH_QtSetupItem.cpp \
-    ../LH_QtInstance.cpp \
+SOURCES += $$PLUGIN_SOURCES \
     ../LH_QtNetwork.cpp \
     LH_QtPlugin_TS3.cpp \
     ../LH_Monitoring/LH_QImage/logo_blob.c \
@@ -23,12 +19,8 @@ SOURCES += \
     LH_TS3NicknameText.cpp \
     LH_TS3ChannelNameText.cpp
 
-HEADERS += \
-    ../LH_QtPlugin.h \
-    ../LH_QtObject.h \
-    ../LH_QtSetupItem.h \
+HEADERS += $$PLUGIN_HEADERS \
     ../LH_QtNetwork.h \
-    ../LH_QtInstance.h \
     LH_QtPlugin_TS3.h \
     LH_TS3_ClientList.h \
     LH_TS3_ChannelList.h \

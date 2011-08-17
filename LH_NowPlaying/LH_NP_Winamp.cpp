@@ -49,8 +49,7 @@
 #include <QRegExp>
 #include <windows.h>
 #include "wa_ipc.h"
-
-#include "LH_QtPlugin_NowPlaying.h"
+#include "LH_NowPlayingReader.h"
 
 static HWND hWnd;
 static HANDLE hProcess;

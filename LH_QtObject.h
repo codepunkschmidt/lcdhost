@@ -110,4 +110,18 @@ signals:
     void initialized(); // emitted once userInit() completes OK for this and all child objects
 };
 
+/**
+  Support class for automatic registration of static LCDHost objects.
+  */
+typedef void (*lh_load_function)(LH_QtObject *);
+class LH_QtLoader
+{
+    static LH_QtLoader *first_;
+    LH_QtLoader *next_;
+    lh_load_function func_;
+public:
+    LH_QtLoader( lh_load_function f ) : next_(first_), func_(f) { first_ = this; }
+    static void load(LH_QtObject *p) { for(LH_QtLoader *l=first_; l; l=l->next_) l->func_(p); }
+};
+
 #endif // LH_QTOBJECT_H

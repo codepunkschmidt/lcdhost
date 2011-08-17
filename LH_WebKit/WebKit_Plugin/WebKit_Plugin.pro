@@ -7,12 +7,7 @@ DEFINES += LH_WEBKIT_LIBRARY
 include(../../Plugins.pri)
 include(../../CF/CF.pri)
 
-SOURCES += \
-    ../../lh_plugin.c \
-    ../../LH_QtPlugin.cpp \
-    ../../LH_QtInstance.cpp \
-    ../../LH_QtObject.cpp \
-    ../../LH_QtSetupItem.cpp \
+SOURCES += $$PLUGIN_SOURCES \
     ../WebKitCommand.cpp \
     ../../LH_Text/LH_Text.cpp \
     LH_QtPlugin_WebKit.cpp \
@@ -25,12 +20,7 @@ SOURCES += \
     LH_RSSInterface.cpp \
     LH_RSSBody.cpp
 
-HEADERS += \
-    ../../lh_plugin.h \
-    ../../LH_QtPlugin.h \
-    ../../LH_QtInstance.h \
-    ../../LH_QtObject.h \
-    ../../LH_QtSetupItem.h \
+HEADERS += $$PLUGIN_HEADERS \
     ../WebKitCommand.h \
     ../../LH_Text/LH_Text.h \
     LH_QtPlugin_WebKit.h \

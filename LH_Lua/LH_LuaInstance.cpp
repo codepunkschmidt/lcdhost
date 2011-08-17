@@ -903,7 +903,7 @@ const char *LH_LuaInstance::userInit()
     int old_top = lua_gettop(L);
 #endif
 
-    if( alc_ == 0 ) return "can't find associated Lua class";
+    if( parent() == 0 ) return "can't find associated Lua class";
 
     // Create the 'self' table
     lua_newtable(L); // 1 self
@@ -914,7 +914,7 @@ const char *LH_LuaInstance::userInit()
     lua_newtable(L); // 3
     lua_rawset(L,-3); // 1
     lua_pushliteral(L,"module"); // 2
-    alc_->lua_pushmodule(); // 3
+    parent()->lua_pushmodule(); // 3
     lua_rawset(L,-3); // 1
     lua_pushliteral(L,"callback"); // 2
     lua_pushvalue(L,-2); // 3 copy of self
@@ -964,13 +964,13 @@ const char *LH_LuaInstance::userInit()
         else
         {
             // module.obj_new caused an error
-            qDebug() << "LH_Lua:" << alc_->id() << "obj_new() failed:" << lua_tostring(L,-1);
+            qDebug() << "LH_Lua:" << parent()->objectName() << "obj_new() failed:" << lua_tostring(L,-1);
             lua_pop(L,1);
         }
     }
     else
     {
-        qDebug() << "LH_Lua:" << alc_->id() << "has no obj_new()";
+        qDebug() << "LH_Lua:" << parent()->objectName() << "has no obj_new()";
     }
 
     Q_ASSERT( lua_gettop(L) == old_top );
@@ -1007,8 +1007,6 @@ LH_LuaInstance::~LH_LuaInstance()
     ref_ = LUA_NOREF;
 
     if( blob_ ) { free( blob_ ); blob_ = NULL; }
-    alc_ = NULL;
-
     Q_ASSERT( lua_gettop(L) == old_top );
     L = NULL;
 }
@@ -1103,7 +1101,7 @@ int LH_LuaInstance::width( int forheight )
 #ifndef QT_NO_DEBUG
     int old_top = lua_gettop(L);
 #endif
-    int retv = alc_->classInfo()->width;
+    int retv = parent()->width();
     if( lua_pushfunction("obj_width") )
     {
         push(this);
@@ -1129,7 +1127,7 @@ int LH_LuaInstance::height( int forwidth )
 #ifndef QT_NO_DEBUG
     int old_top = lua_gettop(L);
 #endif
-    int retv = alc_->classInfo()->height;
+    int retv = parent()->height();
     if( lua_pushfunction("obj_height") )
     {
         push(this);
@@ -1209,14 +1207,14 @@ QImage *LH_LuaInstance::render_qimage( int w, int h )
                                 return image_;
                             }
                             else qDebug("LH_Lua: %ls: a %dx%d ARGB32 image is %d bytes, not %d",
-                                        (wchar_t*) alc_->filename().utf16(), iw,ih,image_->byteCount(), (int)len);
+                                        (wchar_t*) parent()->filename().utf16(), iw,ih,image_->byteCount(), (int)len);
                         }
                     }
             }
             else
             {
                 if( !lua_isnil(L,-3) )
-                    qDebug() << "LH_Lua:" << alc_->filename() << "obj_render_argb32() returned a" << lua_typename(L,lua_type(L,-3) ) << lua_objlen(L,-3);
+                    qDebug() << "LH_Lua:" << parent()->filename() << "obj_render_argb32() returned a" << lua_typename(L,lua_type(L,-3) ) << lua_objlen(L,-3);
                 lua_pop(L,3);
                 pop();
             }
@@ -1296,7 +1294,7 @@ bool LH_LuaInstance::lua_pushfunction(const char *funcname)
 #ifndef QT_NO_DEBUG
     int old_top = lua_gettop(L);
 #endif
-    alc_->lua_pushmodule();
+    parent()->lua_pushmodule();
     lua_pushstring(L,funcname);
     lua_rawget(L,-2); // fetch the function
     lua_replace(L,-2);

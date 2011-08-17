@@ -1,5 +1,7 @@
-#include "LH_NowPlayingAlbumArt.h"
 #include <QDebug>
+
+#include "LH_NowPlayingAlbumArt.h"
+#include "LH_NowPlayingReader.h"
 
 LH_PLUGIN_CLASS(LH_NowPlayingAlbumArt)
 

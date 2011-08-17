@@ -3,6 +3,7 @@
 
 #include <QObject>
 #include <QFileInfo>
+#include "../LH_QtObject.h"
 
 #define LUADIR "lua"
 
@@ -17,10 +18,11 @@ extern "C" {
 #endif
 }
 
-class LH_Lua : public QObject
+class LH_Lua : public LH_QtObject
 {
     Q_OBJECT
 
+    lh_object obj_;
     lua_State *L;
     QString luadir_;
 

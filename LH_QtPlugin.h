@@ -59,7 +59,7 @@ class LH_QtPlugin : public LH_QtObject
     lh_object obj_;
 
 public:
-    LH_QtPlugin(lh_callback_t cb = 0, void* cb_id = 0);
+    LH_QtPlugin();
     ~LH_QtPlugin();
 
     virtual const char *userInit();
@@ -71,20 +71,10 @@ public slots:
 
 /**
   This macro creates the required exported functions
-  for your LH_QtPlugin descendant if you're not using
-  the callback information in the constructor.
+  for your LH_QtPlugin.
   */
 #define LH_PLUGIN(classname) \
-    EXPORT lh_object *lh_create(lh_callback_t, void *) { return (new classname())->obj(); } \
-    EXPORT void lh_destroy( lh_object *obj ) { delete reinterpret_cast<classname*>(obj->ref); }
-
-/**
-  This macro creates the required exported functions
-  for your LH_QtPlugin descendant if you are using
-  the callback information in the constructor.
-  */
-#define LH_PLUGIN_CB(classname) \
-    EXPORT lh_object *lh_create(lh_callback_t cb, void *cb_id) { return (new classname(cb,cb_id))->obj(); } \
+    EXPORT lh_object *lh_create() { return (new classname())->obj(); } \
     EXPORT void lh_destroy( lh_object *obj ) { delete reinterpret_cast<classname*>(obj->ref); }
 
 #endif // LH_QTPLUGIN_H

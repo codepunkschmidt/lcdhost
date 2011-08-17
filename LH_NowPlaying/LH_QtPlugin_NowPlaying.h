@@ -39,16 +39,17 @@
 #define LH_QTPLUGIN_NOWPLAYING_H
 
 #include "../LH_QtPlugin.h"
-#include "LH_NowPlayingReader.h"
-#include <QDebug>
+#include "LH_NowPlayingThread.h"
 
 #define VERSION 2.21
 
 class LH_QtPlugin_NowPlaying : public LH_QtPlugin
 {
     Q_OBJECT
+    LH_NowPlayingThread *thread_;
 
 public:
+    LH_QtPlugin_NowPlaying() : LH_QtPlugin(), thread_(0) {}
     ~LH_QtPlugin_NowPlaying();
     const char *userInit();
 };

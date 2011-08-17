@@ -7,11 +7,7 @@ DEFINES += LH_CURSOR_LIBRARY
 include(../Plugins.pri)
 include(../cf/cf.pri)
 
-HEADERS += \
-    ../LH_QtSetupItem.h \
-    ../LH_QtObject.h \
-    ../LH_QtPlugin.h \
-    ../LH_QtInstance.h \
+HEADERS += $$PLUGIN_HEADERS \
     ../LH_Qt_QFileInfo.h \
 #    ../LH_Monitoring/LH_QImage/LH_QImage.h \
     ../LH_Decor/LH_Rectangle.h \
@@ -26,11 +22,7 @@ HEADERS += \
 #    LH_CursorAction.h \
     actionType.h
 
-SOURCES += \
-    ../LH_QtSetupItem.cpp \
-    ../LH_QtObject.cpp \
-    ../LH_QtPlugin.cpp \
-    ../LH_QtInstance.cpp \
+SOURCES += $$PLUGIN_SOURCES \
 #    ../LH_Monitoring/LH_QImage/logo_blob.c \
 #    ../LH_Monitoring/LH_QImage/LH_QImage.cpp \
     ../LH_Decor/LH_Rectangle.cpp \

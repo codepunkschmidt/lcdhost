@@ -5,12 +5,7 @@ DEFINES += LH_TEXT_LIBRARY
 include(../Plugins.pri)
 include(../CF/CF.pri)
 
-SOURCES += \
-    ../lh_plugin.c \
-    ../LH_QtPlugin.cpp \
-    ../LH_QtInstance.cpp \
-    ../LH_QtObject.cpp \
-    ../LH_QtSetupItem.cpp \
+SOURCES += $$PLUGIN_SOURCES \
     ../LH_QtCPU.cpp \
     LH_QtPlugin_Text.cpp \
     LH_Text.cpp \
@@ -30,12 +25,7 @@ SOURCES += \
     LH_TextStatic.cpp \
     LH_TextCPUCoreLoad.cpp
 
-HEADERS += \
-    ../lh_plugin.h \
-    ../LH_QtPlugin.h \
-    ../LH_QtInstance.h \
-    ../LH_QtObject.h \
-    ../LH_QtSetupItem.h \
+HEADERS += $$PLUGIN_HEADERS \
     ../LH_QtCPU.h \
     LH_QtPlugin_Text.h \
     LH_Text.h \

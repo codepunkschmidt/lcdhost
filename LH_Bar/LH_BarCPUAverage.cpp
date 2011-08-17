@@ -62,8 +62,6 @@ public:
             "SystemCPUAverageBar",
             "Average Load (Bar)",
             48,48
-            
-            
         };
 
         return &classInfo;

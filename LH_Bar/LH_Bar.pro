@@ -5,10 +5,7 @@ DEFINES += LH_BAR_LIBRARY
 include(../Plugins.pri)
 include(../CF/CF.pri)
 
-SOURCES += \
-    ../LH_QtPlugin.cpp \
-    ../LH_QtObject.cpp \
-    ../LH_QtSetupItem.cpp \
+SOURCES += $$PLUGIN_SOURCES \
     ../LH_QtCPU.cpp \
     ../LH_QtNetwork.cpp \
     LH_QtPlugin_Bar.cpp \
@@ -18,15 +15,10 @@ SOURCES += \
     LH_BarMemPhysical.cpp \
     LH_BarMemVirtual.cpp \
     LH_BarCPUAverage.cpp \
-    LH_BarCPUHistogram.cpp \
-    ../LH_QtInstance.cpp
+    LH_BarCPUHistogram.cpp
 
-HEADERS += \
-    ../LH_QtPlugin.h \
-    ../LH_QtObject.h \
-    ../LH_QtSetupItem.h \
+HEADERS += $$PLUGIN_HEADERS \
     ../LH_QtCPU.h \
     ../LH_QtNetwork.h \
     LH_QtPlugin_Bar.h \
-    LH_Bar.h \
-    ../LH_QtInstance.h
+    LH_Bar.h

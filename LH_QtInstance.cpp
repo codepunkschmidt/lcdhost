@@ -63,12 +63,12 @@ static void * obj_render_qimage(lh_layout_item *obj,int w,int h)
     return RECAST(obj->obj.ref)->render_qimage(w,h);
 }
 
-LH_QtInstance::LH_QtInstance( lh_callback_t cb, void* cb_id )
-    : LH_QtObject(&li_.obj,LH_QtPlugin::instance()), image_(0)
+LH_QtInstance::LH_QtInstance( LH_QtLayoutClass *parent ) // lh_callback_t cb, void* cb_id )
+    : LH_QtObject(&li_.obj,parent), image_(0)
 {
     li_.size = sizeof(lh_layout_item);
-    li_.obj.cb = cb;
-    li_.obj.cb_id = cb_id;
+    li_.obj.cb = 0;
+    li_.obj.cb_id = 0;
     li_.obj_prerender = obj_prerender;
     li_.obj_width = obj_width;
     li_.obj_height = obj_height;

@@ -41,8 +41,6 @@
 
 #include "../LH_Monitoring/LH_QImage/LH_QImage.h"
 
-#include "LH_QtPlugin_NowPlaying.h"
-
 class LH_NowPlayingStatusImage : public LH_QImage
 {
     Q_OBJECT

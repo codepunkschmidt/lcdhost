@@ -50,15 +50,16 @@ class LH_LuaInstance : public LH_QtInstance
 
     static QStack<LH_LuaInstance*> *stack_;
 
-    LH_LuaClass *alc_;
     lua_State *L;
     lh_blob *blob_;
     int ref_; // reference to 'self' in the registry
 
 public:
-    LH_LuaInstance( LH_LuaClass *alc, lh_callback_t cb, void *cb_id )
-        : LH_QtInstance( cb, cb_id ), alc_(alc), L(alc->luaState()), blob_(0), ref_(LUA_NOREF) {}
+    LH_LuaInstance( LH_LuaClass *alc )
+        : LH_QtInstance( alc ), L(alc->luaState()), blob_(0), ref_(LUA_NOREF) {}
     ~LH_LuaInstance();
+
+    LH_LuaClass *parent() const { return static_cast<LH_LuaClass *>(LH_QtInstance::parent()); }
 
     void lua_pushself() { lua_rawgeti(L, LUA_REGISTRYINDEX, ref_); }
     bool lua_pushfunction(const char *funcname);

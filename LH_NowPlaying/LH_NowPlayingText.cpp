@@ -35,6 +35,7 @@
   **/
 
 #include "LH_NowPlayingText.h"
+#include "LH_NowPlayingReader.h"
 
 LH_PLUGIN_CLASS(LH_NowPlayingText)
 

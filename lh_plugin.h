@@ -649,7 +649,7 @@ typedef struct lh_layout_class_t
     int height;
 
     /* functions */
-    lh_layout_item* (*obj_layout_item_create)(struct lh_layout_class_t*,lh_callback_t,void*); /**< create a new layout item */
+    lh_layout_item* (*obj_layout_item_create)(struct lh_layout_class_t*); /**< create a new layout item */
     void (*obj_layout_item_destroy)(struct lh_layout_class_t*,lh_layout_item*); /**< destroy this layout item */
 } lh_layout_class;
 
@@ -657,7 +657,7 @@ typedef struct lh_layout_class_t
 class lh_plugin_calltable
 {
 public:
-    lh_object* (*lh_create)( lh_callback_t, void* );
+    lh_object* (*lh_create)();
     void (*lh_destroy) (lh_object*);
 };
 #endif

@@ -43,8 +43,6 @@
 
 #include "../LH_Bar/LH_Bar.h"
 
-#include "LH_QtPlugin_NowPlaying.h"
-
 class LH_NowPlayingBar : public LH_Bar
 {
     Q_OBJECT

@@ -34,8 +34,8 @@
 
   **/
 
+#include <QtDebug>
 #include "LH_QtPlugin_NowPlaying.h"
-#include <QFileInfo>
 
 LH_PLUGIN(LH_QtPlugin_NowPlaying)
 
@@ -151,18 +151,26 @@ char __lcdhostplugin_xml[] =
 const char *LH_QtPlugin_NowPlaying::userInit()
 {
     if( const char *err = LH_QtPlugin::userInit() ) return err;
-    return "too unstable";
-    currentTrack = new LH_NowPlayingReader(this);
-    currentTrack->run();
+    thread_ = new LH_NowPlayingThread(this);
     return 0;
 }
 
 LH_QtPlugin_NowPlaying::~LH_QtPlugin_NowPlaying()
 {
-    if( currentTrack )
+    if( thread_ )
     {
-        currentTrack->quit();
-        currentTrack->wait();
+        thread_->quit();
+        if( !thread_->wait(1000) )
+        {
+            qCritical() << "LH_QtPlugin_NowPlaying: worker thread unresponsive, terminating it";
+            thread_->terminate();
+        }
+        if( !thread_->wait(4000) )
+        {
+            qCritical() << "LH_QtPlugin_NowPlaying: worker won't terminate";
+        }
+        delete thread_;
+        thread_ = 0;
     }
     return;
 }

@@ -39,18 +39,9 @@
 #include <QImage>
 
 #include "LH_QtObject.h"
+#include "LH_QtLayoutClass.h"
 
-typedef lh_layout_item *(*obj_layout_item_create_t)(lh_layout_class*,lh_callback_t,void*);
-typedef void (*obj_layout_item_destroy_t)(lh_layout_class*,lh_layout_item *);
-typedef struct lh_class_t
-{
-    int size; /* sizeof(lh_class) */
-    const char *path;
-    const char *ident;
-    const char *title;
-    int width;
-    int height;
-} lh_class;
+class LH_QtPlugin;
 
 /**
   Base class for LCDHost layout classes and layout items using Qt.
@@ -69,9 +60,13 @@ protected:
     QImage *image_;
 
 public:
-    LH_QtInstance( lh_callback_t cb = 0 , void* cb_id = 0 );
+    LH_QtInstance( LH_QtLayoutClass *parent = 0 );
     ~LH_QtInstance();
 
+    // supporting argumentless constructors and auto-registrating layout classes
+    lh_layout_item *layoutItem(LH_QtLayoutClass *qlc) { setParent(qlc); return &li_; }
+
+    LH_QtLayoutClass *parent() const { return static_cast<LH_QtLayoutClass *>(LH_QtObject::parent()); }
     bool isMonochrome() const { return li_.layout.depth == 1; }
 
     lh_layout_item *item() { return &li_; }
@@ -99,52 +94,20 @@ public:
 };
 
 /**
-  Automatic registration of LCDHost layout classes written using this
-  framework. You can also manually register/deregister classes using
-  the callback.
-  */
-class LH_QtLayoutClassLoader
-{
-public:
-    static LH_QtLayoutClassLoader *first_;
-    LH_QtLayoutClassLoader *next_;
-    lh_layout_class cls_;
-    LH_QtLayoutClassLoader(
-        const lh_class *classinfo,
-        obj_layout_item_create_t fc,
-        obj_layout_item_destroy_t fd );
-};
-
-/**
-  This macro creates the required functions and object to allow
+  This macro creates the required things to allow
   automatic registration of layout classes. Note that using this
   macro requires a static classInfo() method that returns a
-  statically allocated lh_class structure pointer. This version
-  is for classes that use default constructors without the callback
-  information immediately available.
+  statically allocated lh_class structure pointer.
   */
-#define LH_PLUGIN_CLASS(classname)  \
-    lh_layout_item *_lh_##classname##_layout_item_create(lh_layout_class*,lh_callback_t,void*) \
-    { return (new classname())->item(); } \
-    void _lh_##classname##_layout_item_destroy(lh_layout_class*,lh_layout_item*li) \
-    { delete reinterpret_cast<classname*>(li->obj.ref); } \
-    LH_QtLayoutClassLoader _lh_##classname##_loader ( \
-        classname::classInfo(), \
-        _lh_##classname##_layout_item_create, \
-        _lh_##classname##_layout_item_destroy );
-
-/**
-  This macro is for plugin layout classes that use the callback
-  information constructor.
-  */
-#define LH_PLUGIN_CLASS_CB(classname)  \
-    lh_layout_item *_lh_##classname##_layout_item_create(lh_layout_class*,lh_callback_t cb,void*cb_id) \
-    { return (new classname(cb,cb_id))->item(); } \
-    void _lh_##classname##_layout_item_destroy(lh_layout_class*,lh_layout_item*li) \
-    { delete reinterpret_cast<classname*>(li->obj.ref); } \
-    LH_QtLayoutClassLoader _lh_##classname##_loader ( \
-        classname::classInfo(), \
-        _lh_##classname##_layout_item_create, \
-        _lh_##classname##_layout_item_destroy );
+#define LH_PLUGIN_CLASS(classname) \
+    class lh_layout_class_##classname : public LH_QtLayoutClass { \
+    public: lh_layout_class_##classname( const lh_class *cls, LH_QtObject *parent ) : \
+    LH_QtLayoutClass(cls,parent) {} \
+    lh_layout_item *layout_item_create() { return (new classname())->layoutItem(this); } \
+    void layout_item_destroy(lh_layout_item *li) { delete reinterpret_cast<classname*>(li->obj.ref); } \
+    }; \
+    static void lh_load_##classname(LH_QtObject *parent) { \
+        new lh_layout_class_##classname( classname::classInfo(), parent ); } \
+    LH_QtLoader lh_qtloader_##classname(lh_load_##classname);
 
 #endif // LH_QTINSTANCE_H

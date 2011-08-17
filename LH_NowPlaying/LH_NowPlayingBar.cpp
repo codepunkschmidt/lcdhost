@@ -36,6 +36,7 @@
   **/
 
 #include "LH_NowPlayingBar.h"
+#include "LH_NowPlayingReader.h"
 
 LH_PLUGIN_CLASS(LH_NowPlayingBar)
 

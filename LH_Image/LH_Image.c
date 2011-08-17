@@ -212,7 +212,7 @@ static const lh_blob * image_render_blob(lh_layout_item *obj,int w,int h)
 /**
   image_new() allocates a new instance of this class and returns it.
   */
-static lh_layout_item* image_new( lh_layout_class *cls, lh_callback_t cb, void *cb_id )
+static lh_layout_item* image_new( lh_layout_class *cls )
 {
     lh_image *img;
     Q_UNUSED(cls);
@@ -222,8 +222,6 @@ static lh_layout_item* image_new( lh_layout_class *cls, lh_callback_t cb, void *
     {
         memset( img, 0, sizeof(lh_image) );
         img->item_.obj.size = sizeof( lh_object );
-        img->item_.obj.cb = cb;
-        img->item_.obj.cb_id = cb_id;
         img->item_.obj.obj_init = image_init;
         img->item_.obj.obj_notify = image_notify;
 
@@ -322,10 +320,8 @@ static lh_object image_plugin =
 # define EXPORT
 #endif
 
-EXPORT lh_object *lh_create( lh_callback_t cb, void *cb_id )
+EXPORT lh_object *lh_create()
 {
-    image_plugin.cb = cb;
-    image_plugin.cb_id = cb_id;
     return &image_plugin;
 }
 

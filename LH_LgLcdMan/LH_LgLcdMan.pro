@@ -4,11 +4,7 @@ DEFINES += LGLCDMAN_LIBRARY
 
 include(../Plugins.pri)
 
-SOURCES += \
-    ../LH_QtPlugin.cpp \
-    ../LH_QtInstance.cpp \
-    ../LH_QtObject.cpp \
-    ../LH_QtSetupItem.cpp \
+SOURCES += $$PLUGIN_SOURCES \
     ../LH_QtOutputDevice.cpp \
     ../LH_QtInputDevice.cpp \
     ../wow64.cpp \
@@ -24,12 +20,7 @@ SOURCES += \
     LogitechCallbackManager.cpp \
     LogitechInputDevice.cpp
 
-HEADERS += \
-    ../lh_plugin.h \
-    ../LH_QtPlugin.h \
-    ../LH_QtInstance.h \
-    ../LH_QtObject.h \
-    ../LH_QtSetupItem.h \
+HEADERS += $$PLUGIN_HEADERS \
     ../LH_QtOutputDevice.h \
     ../LH_QtInputDevice.h \
     ../wow64.h \

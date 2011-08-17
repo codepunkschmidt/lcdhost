@@ -7,11 +7,7 @@ include(../Plugins.pri)
 # We don't want warnings from 3rd party C code
 QMAKE_CFLAGS_WARN_ON = -w
 
-SOURCES += \
-    ../LH_QtPlugin.cpp \
-    ../LH_QtInstance.cpp \
-    ../LH_QtObject.cpp \
-    ../LH_QtSetupItem.cpp \
+SOURCES += $$PLUGIN_SOURCES \
     LH_QtPlugin_Lua.cpp \
     LH_LuaClass.cpp \
     LH_LuaInstance.cpp \
@@ -20,11 +16,7 @@ SOURCES += \
     LH_LuaThread.cpp \
     LH_Lua.cpp
 	
-HEADERS += \
-    ../LH_QtPlugin.h \
-    ../LH_QtInstance.h \
-    ../LH_QtObject.h \
-    ../LH_QtSetupItem.h \
+HEADERS += $$PLUGIN_HEADERS \
     LH_QtPlugin_Lua.h \
     LH_LuaClass.h \
     LH_LuaInstance.h \

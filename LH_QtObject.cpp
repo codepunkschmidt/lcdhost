@@ -39,6 +39,8 @@
 
 #define RECAST(obj) reinterpret_cast<LH_QtObject*>(obj)
 
+LH_QtLoader *LH_QtLoader::first_ = 0;
+
 static const char *obj_init( lh_object *obj )
 {
     return RECAST(obj->ref)->init();
@@ -54,7 +56,9 @@ static int obj_notify( lh_object *obj, int code, void *param )
     return RECAST(obj->ref)->notify(code,param);
 }
 
-LH_QtObject::LH_QtObject( lh_object *p, QObject *parent ) : QObject( parent ), p_obj_(p)
+LH_QtObject::LH_QtObject( lh_object *p, QObject *parent ) :
+    QObject( parent ),
+    p_obj_(p)
 #ifndef QT_NO_DEBUG
   ,clean_init_(false)
 #endif
@@ -68,7 +72,9 @@ LH_QtObject::LH_QtObject( lh_object *p, QObject *parent ) : QObject( parent ), p
     p_obj_->obj_polling = obj_polling;
 }
 
-LH_QtObject::LH_QtObject( lh_object *p, const char *ident, QObject *parent ) : QObject( parent ), p_obj_(p)
+LH_QtObject::LH_QtObject( lh_object *p, const char *ident, QObject *parent ) :
+    QObject( parent ),
+    p_obj_(p)
 #ifndef QT_NO_DEBUG
   ,clean_init_(false)
 #endif
@@ -174,17 +180,23 @@ int LH_QtObject::notify( int code, void * )
 
 void LH_QtObject::setTitle(const char *s)
 {
-    title_array_ = QByteArray(s);
-    p_obj_->title = title_array_.data();
-    callback( lh_cb_title_refresh );
+    if( s )
+    {
+        title_array_ = QByteArray(s);
+        p_obj_->title = title_array_.data();
+        callback( lh_cb_title_refresh );
+    }
     return;
 }
 
 void LH_QtObject::setTitle(const QString& s)
 {
-    title_array_ = s.toUtf8();
-    p_obj_->title = title_array_.data();
-    callback( lh_cb_title_refresh );
+    if( !s.isEmpty() )
+    {
+        title_array_ = s.toUtf8();
+        p_obj_->title = title_array_.data();
+        callback( lh_cb_title_refresh );
+    }
     return;
 }
 

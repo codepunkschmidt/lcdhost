@@ -351,7 +351,7 @@ static void lh_self_item_data_getvalue(lua_State *L, LH_LuaSetupItem* item, int 
     {
     case 1:
         Q_ASSERT( !strcmp("title",lh_self_item_data_key[where]));
-        lua_pushstring(L,item->obj()->title);
+        lua_pushstring(L,item->title());
         break;
     case 2:
         Q_ASSERT( !strcmp("type",lh_self_item_data_key[where]));

@@ -45,33 +45,19 @@
 class LH_QtObject : public QObject
 {
     Q_OBJECT
-
     lh_object *p_obj_;
-
-protected:
+    bool clean_init_;
     QByteArray title_array_;
 
 public:
-#ifndef QT_NO_DEBUG
-    bool clean_init_;
-#endif
-    LH_QtObject( lh_object *p, QObject *parent = 0);
-    LH_QtObject( lh_object *p, const char *ident, QObject *parent = 0);
+    LH_QtObject( lh_object *p, const char *ident = 0, QObject *parent = 0 );
     ~LH_QtObject();
 
     bool isValid() const { return p_obj_ && (p_obj_->size == sizeof(lh_object)) && p_obj_->cb && p_obj_->cb_id; }
-    lh_object *obj() const { return p_obj_; }
     const char *ident() const { return p_obj_->ident; }
+    const char *title() const { return p_obj_->title; }
 
-    virtual void setTitle(const char *s = 0);
-    virtual void setTitle( const QString& );
-    QString title() const { return QString::fromUtf8(p_obj_->title); }
-
-    void callback( lh_callbackcode_t code, void *param = 0 ) const
-    {
-        if( p_obj_->cb && p_obj_->cb_id )
-            p_obj_->cb( p_obj_->cb_id, code, param );
-    }
+    void callback( lh_callbackcode_t code, void *param = 0 ) const;
 
     // This gets called by LCDHost when the corresponding UI elements
     // have been created, layout information is available (if this
@@ -89,24 +75,24 @@ public:
     virtual int polling() { return 0; }
     virtual int notify( int, void * );
 
-    // Deprecated. Move userTerm() code to destructor.
-    virtual int userTerm() { Q_ASSERT(0); return 0; }
-
-    // Convenience wrappers
-    void show() const { int b = 0; callback( lh_cb_sethidden, (void*)&b ); }
-    void hide() const { int b = 1; callback( lh_cb_sethidden, (void*)&b ); }
-    void setVisible( bool b ) const { int notb = !b; callback( lh_cb_sethidden, (void*)&notb ); }
-
     virtual QString dir_layout() const;
     QString dir_binaries() const;
     QString dir_plugins() const;
     QString dir_data() const;
 
+    static const char *callbackName( lh_callbackcode code );
+
 public slots:
-    void requestRender() const { callback( lh_cb_render, NULL ); }
-    void requestPolling() const { callback( lh_cb_polling, NULL ); }
+    void setTitle( const char * );
+    void setTitle( QString );
+    void requestRender() const { callback( lh_cb_render ); }
+    void requestPolling() const { callback( lh_cb_polling ); }
+    void show() const { int b = 0; callback( lh_cb_sethidden, (void*)&b ); }
+    void hide() const { int b = 1; callback( lh_cb_sethidden, (void*)&b ); }
+    void setVisible( bool b ) const { int notb = !b; callback( lh_cb_sethidden, (void*)&notb ); }
 
 signals:
+    void titleChanged( const char * );
     void initialized(); // emitted once userInit() completes OK for this and all child objects
 };
 
@@ -121,7 +107,7 @@ class LH_QtLoader
     lh_load_function func_;
 public:
     LH_QtLoader( lh_load_function f ) : next_(first_), func_(f) { first_ = this; }
-    static void load(LH_QtObject *p) { for(LH_QtLoader *l=first_; l; l=l->next_) l->func_(p); }
+    static void load( LH_QtObject *parent );
 };
 
 #endif // LH_QTOBJECT_H

@@ -35,8 +35,6 @@
 #include <QtDebug>
 #include "LH_QtPlugin.h"
 
-LH_SIGNATURE();
-
 LH_QtPlugin *LH_QtPlugin::instance_ = 0;
 
 LH_QtPlugin::LH_QtPlugin() :

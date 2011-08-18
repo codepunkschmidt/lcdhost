@@ -64,7 +64,7 @@ public:
     ~LH_QtInstance();
 
     // supporting argumentless constructors and auto-registrating layout classes
-    lh_layout_item *layoutItem(LH_QtLayoutClass *qlc) { setParent(qlc); return &li_; }
+    lh_layout_item& layoutItem(LH_QtLayoutClass *qlc) { setParent(qlc); return li_; }
 
     LH_QtLayoutClass *parent() const { return static_cast<LH_QtLayoutClass *>(LH_QtObject::parent()); }
     bool isMonochrome() const { return li_.layout.depth == 1; }
@@ -103,7 +103,7 @@ public:
     class lh_layout_class_##classname : public LH_QtLayoutClass { \
     public: lh_layout_class_##classname( const lh_class *cls, LH_QtObject *parent ) : \
     LH_QtLayoutClass(cls,parent) {} \
-    lh_layout_item *layout_item_create() { return (new classname())->layoutItem(this); } \
+    lh_layout_item *layout_item_create() { return &(new classname())->layoutItem(this); } \
     void layout_item_destroy(lh_layout_item *li) { delete reinterpret_cast<classname*>(li->obj.ref); } \
     }; \
     static void lh_load_##classname(LH_QtObject *parent) { \

@@ -1,8 +1,7 @@
 #include "LH_Qt_array_string_ui.h"
 
-void LH_Qt_array_string_ui::init(lh_setup_type ui_type, int uiFlags, QStringList listItems )
+void LH_Qt_array_string_ui::init(lh_setup_type ui_type, int uiFlags, const QStringList& listItems )
 {
-    uiIndex_ = 0;
     if(ui_type == lh_type_string)
         ui_ = new LH_Qt_QString(parent(), QString("%1__ui__").arg(ident()).toUtf8(),"", uiFlags );
     if(ui_type == lh_type_string_filename)
@@ -10,16 +9,14 @@ void LH_Qt_array_string_ui::init(lh_setup_type ui_type, int uiFlags, QStringList
     if(ui_type == lh_type_string_list)
         ui_ = new LH_Qt_QStringList(parent(), QString("%1__ui__").arg(ident()).toUtf8(), listItems, uiFlags );
 
-    Q_ASSERT(ui_ != NULL);
+    Q_ASSERT( ui_ );
 
-    if( ui_ )
-    {
-        ui_->setTitle(ident());
-        connect(ui_, SIGNAL(changed()), this, SLOT(uiValueChanged()));
-    }
-
-    connect(this, SIGNAL(changed()), this, SLOT(arrayValuesChanged()));
-    connect(this, SIGNAL(set()), this, SLOT(arrayValuesChanged()));
+    connect( this, SIGNAL(titleChanged(const char*)), ui_, SLOT(setTitle(const char*)) );
+    connect( this, SIGNAL(helpChanged(const char*)), ui_, SLOT(setHelp(const char*)) );
+    connect( this, SIGNAL(changed()), this, SLOT(arrayValuesChanged()) );
+    connect( this, SIGNAL(set()), this, SLOT(arrayValuesChanged()) );
+    connect( ui_, SIGNAL(changed()), this, SLOT(uiValueChanged()) );
+    ui_->setTitle( title() );
 }
 
 int LH_Qt_array_string_ui::indexAt(int i)
@@ -53,24 +50,6 @@ void LH_Qt_array_string_ui::setFlag(int f, bool state)
     if(f != LH_FLAG_HIDDEN)
         LH_Qt_array_string::setFlag(f, state);
     ui_->setFlag(f, state);
-}
-
-void LH_Qt_array_string_ui::setHelp(const QString& s)
-{
-    LH_Qt_array_string::setHelp(s);
-    ui_->setHelp(s);
-}
-
-void LH_Qt_array_string_ui::setTitle(const char *s)
-{
-    LH_Qt_array_string::setTitle(s);
-    ui_->setTitle(s);
-}
-
-void LH_Qt_array_string_ui::setTitle( const QString &s )
-{
-    LH_Qt_array_string::setTitle(s);
-    ui_->setTitle(s);
 }
 
 void LH_Qt_array_string_ui::arrayValuesChanged()

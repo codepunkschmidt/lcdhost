@@ -1,7 +1,7 @@
 /**
   \file     LH_QtObject.cpp
   \author   Johan Lindh <johan@linkdata.se>
-  \legalese Copyright (c) 2009-2011, Johan Lindh
+  \legalese Copyright (c) 2009-2011:
 
   All rights reserved.
 
@@ -33,13 +33,16 @@
   */
 
 #include <QDebug>
-#include <QTextStream>
 #include "LH_QtObject.h"
-#include "LH_QtSetupItem.h"
 
 #define RECAST(obj) reinterpret_cast<LH_QtObject*>(obj)
 
 LH_QtLoader *LH_QtLoader::first_ = 0;
+void LH_QtLoader::load( LH_QtObject *parent )
+{
+    for( LH_QtLoader *l=first_; l; l=l->next_ )
+        if( l->func_ ) l->func_(parent);
+}
 
 static const char *obj_init( lh_object *obj )
 {
@@ -56,36 +59,21 @@ static int obj_notify( lh_object *obj, int code, void *param )
     return RECAST(obj->ref)->notify(code,param);
 }
 
-LH_QtObject::LH_QtObject( lh_object *p, QObject *parent ) :
-    QObject( parent ),
-    p_obj_(p)
-#ifndef QT_NO_DEBUG
-  ,clean_init_(false)
-#endif
-{
-    Q_ASSERT( p_obj_ );
-    memset( p_obj_, 0, sizeof(lh_object) );
-    p_obj_->size = sizeof(lh_object);
-    p_obj_->ref = this;
-    p_obj_->obj_init = obj_init;
-    p_obj_->obj_notify = obj_notify;
-    p_obj_->obj_polling = obj_polling;
-}
-
 LH_QtObject::LH_QtObject( lh_object *p, const char *ident, QObject *parent ) :
     QObject( parent ),
-    p_obj_(p)
-#ifndef QT_NO_DEBUG
-  ,clean_init_(false)
-#endif
+    p_obj_( p ),
+    clean_init_( false )
 {
-    Q_ASSERT( p_obj_ );
+    // You must *not* create LH_QtObject children before init()
+    Q_ASSERT( qobject_cast<LH_QtObject*>(parent) ? qobject_cast<LH_QtObject*>(parent)->isValid() : true );
+
     memset( p_obj_, 0, sizeof(lh_object) );
     p_obj_->size = sizeof(lh_object);
     p_obj_->ref = this;
     p_obj_->obj_init = obj_init;
     p_obj_->obj_notify = obj_notify;
     p_obj_->obj_polling = obj_polling;
+    p_obj_->title = title_array_.constData();
 
     if( ident )
     {
@@ -104,19 +92,13 @@ LH_QtObject::LH_QtObject( lh_object *p, const char *ident, QObject *parent ) :
             QString where;
             if( parent )
             {
-                if( parent->metaObject() )
-                {
-                    where.append( parent->metaObject()->className() );
-                    where.append(':');
-                }
+                where.append( parent->metaObject()->className() );
+                where.append(':');
                 where.append( parent->objectName() );
                 where.append(' ');
             }
-            if( metaObject() )
-            {
-                where.append( metaObject()->className() );
-                where.append(' ');
-            }
+            where.append( metaObject()->className() );
+            where.append(' ');
             qWarning() << where
                        << QString(p_obj_->ident)
                        << "ident changed";
@@ -124,80 +106,69 @@ LH_QtObject::LH_QtObject( lh_object *p, const char *ident, QObject *parent ) :
     }
     else
     {
-        QByteArray ba = QString("%1:%2").arg(parent->objectName()).arg((qptrdiff)this,0,36).toAscii();
-        ba.truncate( LH_MAX_IDENT-1 );
-        strncpy( p_obj_->ident, ba.constData(), sizeof(p_obj_->ident)-1 );
+        qsnprintf( p_obj_->ident, sizeof(p_obj_->ident)-1,
+                   "0x%08X", (qptrdiff)this );
     }
-
     setObjectName( QString::fromAscii(p_obj_->ident) );
 }
 
 LH_QtObject::~LH_QtObject()
 {
-    Q_ASSERT( p_obj_ );
-    memset( p_obj_, 0, sizeof(lh_object) );
+    p_obj_ = 0;
+}
+
+void LH_QtObject::callback( lh_callbackcode code, void *param ) const
+{
+    if( isValid() )
+    {
+        p_obj_->cb( p_obj_->cb_id, code, param );
+        return;
+    }
+    qCritical() << "Invalid" << metaObject()->className() << objectName()
+                << "is trying to use" << callbackName(code);
+    return;
 }
 
 const char *LH_QtObject::init()
 {
-    const char *retv = 0;
-
-    Q_ASSERT( isValid() );
+    const char *retv;
     setObjectName( QString::fromAscii(p_obj_->ident) );
-
-#ifndef QT_NO_DEBUG
-    // Make sure there's no children yet, as constructor should be 'clean'
-    if( children().count() )
-        qWarning() << metaObject()->className() << objectName() << "has children before init()";
-#endif
-
     retv = userInit();
-
-#ifndef QT_NO_DEBUG
     if( !clean_init_ )
-        qWarning() << metaObject()->className() << objectName() << "did not complete userInit() chain";
-#endif
-
+    {
+        qCritical() << metaObject()->className() << objectName()
+                    << "did not complete userInit() chain";
+    }
     return retv;
 }
 
 const char *LH_QtObject::userInit()
 {
-#ifndef QT_NO_DEBUG
     clean_init_ = true;
-#endif
     return 0;
 }
 
 int LH_QtObject::notify( int code, void * )
 {
-    if( code & LH_NOTE_INITIALIZED )
-    {
-        emit initialized();
-    }
+    if( code & LH_NOTE_INITIALIZED ) emit initialized();
     return 0;
 }
 
-void LH_QtObject::setTitle(const char *s)
+void LH_QtObject::setTitle( const char *newtitle )
 {
-    if( s )
+    if( newtitle && title_array_ != newtitle )
     {
-        title_array_ = QByteArray(s);
-        p_obj_->title = title_array_.data();
-        callback( lh_cb_title_refresh );
+        title_array_ = newtitle;
+        p_obj_->title = title_array_.constData();
+        if( isValid() ) callback( lh_cb_title_refresh );
+        emit titleChanged( title() );
     }
     return;
 }
 
-void LH_QtObject::setTitle(const QString& s)
+void LH_QtObject::setTitle( QString newtitle )
 {
-    if( !s.isEmpty() )
-    {
-        title_array_ = s.toUtf8();
-        p_obj_->title = title_array_.data();
-        callback( lh_cb_title_refresh );
-    }
-    return;
+    setTitle( newtitle.toUtf8().constData() );
 }
 
 QString LH_QtObject::dir_layout() const
@@ -211,31 +182,49 @@ QString LH_QtObject::dir_binaries() const
 {
     const char *p = 0;
     callback( lh_cb_dir_binaries, &p );
-    return QString::fromUtf8(p);
+    return p ? QString::fromUtf8(p) : QString();
 }
 
 QString LH_QtObject::dir_plugins() const
 {
     const char *p = 0;
     callback( lh_cb_dir_plugins, &p );
-    return QString::fromUtf8(p);
+    return p ? QString::fromUtf8(p) : QString();
 }
 
 QString LH_QtObject::dir_data() const
 {
     const char *p = 0;
     callback( lh_cb_dir_data, &p );
-    return QString::fromUtf8(p);
+    return p ? QString::fromUtf8(p) : QString();
 }
 
-#if 0
-const char *LH_QtObject::input_name( const char *devid, int item )
+const char *LH_QtObject::callbackName( lh_callbackcode code )
 {
-    static QByteArray ary;
-    if( devid == 0 ) return 0;
-    if( item == 0 ) return devid;
-    QTextStream s(&ary);
-    s << devid << '/' << forcesign << item;
-    return ary.constData();
+    switch(code)
+    {
+    case lh_cb_utf8_to_local8bit: return "lh_cb_utf8_to_local8bit";
+    case lh_cb_load_layout: return "lh_cb_load_layout";
+    case lh_cb_dir_binaries: return "lh_cb_dir_binaries";
+    case lh_cb_dir_plugins: return "lh_cb_dir_plugins";
+    case lh_cb_dir_data: return "lh_cb_dir_data";
+    case lh_cb_unload: return "lh_cb_unload";
+    case lh_cb_reload: return "lh_cb_reload";
+    case lh_cb_log: return "lh_cb_log";
+    case lh_cb_polling: return "lh_cb_polling";
+    case lh_cb_notify: return "lh_cb_notify";
+    case lh_cb_title_refresh: return "lh_cb_title_refresh";
+    case lh_cb_setup_create: return "lh_cb_setup_create";
+    case lh_cb_output_create: return "lh_cb_output_create";
+    case lh_cb_input_create: return "lh_cb_input_create";
+    case lh_cb_class_create: return "lh_cb_class_create";
+    case lh_cb_input: return "lh_cb_input";
+    case lh_cb_destroy: return "lh_cb_destroy";
+    case lh_cb_setup_refresh_meta: return "lh_cb_setup_refresh_meta";
+    case lh_cb_setup_refresh_data: return "lh_cb_setup_refresh_data";
+    case lh_cb_render: return "lh_cb_render";
+    case lh_cb_sethidden: return "lh_cb_sethidden";
+    case lh_cb_unused: return "lh_cb_unused";
+    }
+    return "(unknown callback)";
 }
-#endif

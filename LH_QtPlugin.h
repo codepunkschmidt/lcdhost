@@ -46,10 +46,6 @@
 
 /**
   Base class for Qt-based LCDHost shared libraries.
-  As of alpha 17, the LH_QtPlugin object is no longer a global
-  C++ object, rather it is created dynamically in lh_create()
-  and destroyed in lh_destroy(). These two functions are
-  defined when you use the LH_PLUGIN(classname) macro.
   */
 class LH_QtPlugin : public LH_QtObject
 {
@@ -62,6 +58,7 @@ public:
     LH_QtPlugin();
     ~LH_QtPlugin();
 
+    lh_object& pluginObject() { return obj_; }
     virtual const char *userInit();
     static LH_QtPlugin *instance() { return instance_; }
 
@@ -70,11 +67,13 @@ public slots:
 };
 
 /**
-  This macro creates the required exported functions
-  for your LH_QtPlugin.
+  This macro creates the required things
+  for your LH_QtPlugin descendant to be
+  recognized as a LCDHost plugin.
   */
 #define LH_PLUGIN(classname) \
-    EXPORT lh_object *lh_create() { return (new classname())->obj(); } \
+    LH_SIGNATURE(); \
+    EXPORT lh_object *lh_create() { return &(new classname())->pluginObject(); } \
     EXPORT void lh_destroy( lh_object *obj ) { delete reinterpret_cast<classname*>(obj->ref); }
 
 #endif // LH_QTPLUGIN_H

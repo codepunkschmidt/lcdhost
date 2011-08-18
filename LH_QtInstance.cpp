@@ -64,7 +64,7 @@ static void * obj_render_qimage(lh_layout_item *obj,int w,int h)
 }
 
 LH_QtInstance::LH_QtInstance( LH_QtLayoutClass *parent ) // lh_callback_t cb, void* cb_id )
-    : LH_QtObject(&li_.obj,parent), image_(0)
+    : LH_QtObject(&li_.obj,0,parent), image_(0)
 {
     li_.size = sizeof(lh_layout_item);
     li_.obj.cb = 0;

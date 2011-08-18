@@ -51,11 +51,6 @@ LH_QtSetupItem::LH_QtSetupItem( LH_QtObject *parent, const char *ident, lh_setup
     : LH_QtObject( &item_.obj, ident, parent )
 
 {
-    Q_ASSERT( parent != NULL );
-
-    if( !parent->isValid() )
-        qCritical() << parent->metaObject()->className() << "creates setup items before init()";
-
     if( ident )
     {
         // check for ident warnings
@@ -77,11 +72,10 @@ LH_QtSetupItem::LH_QtSetupItem( LH_QtObject *parent, const char *ident, lh_setup
                        << "added LH_FLAG_HIDETITLE";
         }
 
-        // set default title
-        title_array_ = QByteArray(ident);
-        if( title_array_.startsWith('^') ) title_array_.remove(0,1);
-        if( title_array_.startsWith('~') ) title_array_.remove(0,1);
-        item_.obj.title = title_array_.data();
+        // set a default title
+        const char *title = ident;
+        while( *title == '^' || *title == '~' ) ++ title;
+        setTitle( title );
     }
     else
     {
@@ -156,31 +150,6 @@ void LH_QtSetupItem::setup_change()
     return;
 }
 
-void LH_QtSetupItem::setFlag( int f, bool state )
-{
-    if( state )
-    {
-        if( (item_.flags & f) == f ) return;
-        item_.flags |= f;
-    }
-    else
-    {
-        if( !(item_.flags & f) ) return;
-        item_.flags &= ~f;
-    }
-    refreshMeta();
-    return;
-}
-
-void LH_QtSetupItem::setOrder( int n )
-{
-    if( item_.order != n )
-    {
-        item_.order = n;
-        refreshMeta();
-    }
-}
-
 void LH_QtSetupItem::setLink(const char *s, bool issource)
 {
     item_.states &= ~LH_STATE_SOURCE;
@@ -227,20 +196,48 @@ void LH_QtSetupItem::setLinkFilter( const char *s )
     return;
 }
 
-void LH_QtSetupItem::setHelp(const QString& s)
+void LH_QtSetupItem::setHelp( const char *s )
 {
-    if( s.isEmpty() )
+    if( s && help_array_ != s )
     {
-        help_array_.clear();
-        item_.help = 0;
+        help_array_ = s;
+        item_.help = help_array_.constData();
+        refreshMeta();
+        emit helpChanged( help() );
     }
-    else
+}
+
+void LH_QtSetupItem::setHelp( QString s )
+{
+    setHelp( s.toUtf8().constData() );
+}
+
+void LH_QtSetupItem::setFlags( int f )
+{
+    if( flags() != f )
     {
-        help_array_ = s.toUtf8();
-        item_.help = help_array_.data();
+        item_.flags = f;
+        refreshMeta();
+        emit flagsChanged( flags() );
     }
-    refreshMeta();
+}
+
+void LH_QtSetupItem::setFlag( int f, bool state )
+{
+    int newflags = flags() & ~f;
+    if( state ) newflags |= f;
+    setFlags( newflags );
     return;
+}
+
+void LH_QtSetupItem::setOrder( int neworder )
+{
+    if( order() != neworder )
+    {
+        item_.order = neworder;
+        refreshMeta();
+        emit orderChanged( order() );
+    }
 }
 
 void LH_QtSetupItem::setValue( bool b )

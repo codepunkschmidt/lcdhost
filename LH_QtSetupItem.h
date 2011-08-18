@@ -94,14 +94,12 @@ public:
     const char *link() const { return link_array_.constData(); }
     bool isSource() const { return item_.states & LH_STATE_SOURCE; }
     bool isSink() const { return !link_array_.isEmpty() && !isSource(); }
-    virtual void setHelp(const QString& s);
     const char *help() const { return help_array_.constData(); }
     void setLinkFilter( const char * );
     const char *linkFilter() { return filter_array_.constData(); }
     int flags() const { return item_.flags; }
-    bool hasFlag( int f ) const { return (item_.flags & f) ? true : false; }
-    void setFlags( int f ) { if( item_.flags != f ) { item_.flags = f; refreshMeta(); } }
-    virtual void setFlag( int f, bool state ); // set individual flag(s) on or off
+    bool hasFlag( int f ) const { return flags() & f; }
+    void setFlag( int f, bool state ); // set individual flag(s) on or off
 
     virtual void setMin( double );
     virtual void setMax( double );
@@ -119,13 +117,14 @@ public:
     QByteArray& list() { return list_array_; } // call refreshList() if you modify it
     void refreshList();
 
-    // data
     lh_setup_item *item() { return &item_; }
     lh_setup_type type() const { return item_.type; }
     int order() const { return item_.order; }
-    void setOrder( int n );
 
 signals:
+    void helpChanged( const char * );
+    void flagsChanged( int );
+    void orderChanged( int );
     void change( bool );
     void change( qint64 );
     void change( double );
@@ -139,6 +138,10 @@ signals:
     void duplicateSource();
 
 public slots:
+    void setHelp( QString );
+    void setHelp( const char * );
+    void setFlags( int );
+    void setOrder( int n );
     void setVisible( bool b ) { setFlag( LH_FLAG_HIDDEN, !b ); }
     void setHidden( bool b ) { setFlag( LH_FLAG_HIDDEN, b ); }
     void setReadonly( bool b ) { setFlag( LH_FLAG_READONLY, b ); }

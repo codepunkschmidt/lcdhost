@@ -10,7 +10,7 @@ class LH_Qt_array_int_ui : public LH_Qt_array_int
 {
     Q_OBJECT
 
-    LH_QtSetupItem *ui_;
+    LH_Qt_int *ui_;
     int uiIndex_;
 
     void init(lh_setup_type ui_type, int uiFlags, qint64 min = 0, qint64 max = 0 );

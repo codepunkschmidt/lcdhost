@@ -41,8 +41,9 @@ class LH_Qt_int : public LH_QtSetupItem
 {
 public:
     LH_Qt_int( LH_QtObject *parent, const char *ident, qint64 value, qint64 min, qint64 max, int flags = 0, lh_setup_type subtype = lh_type_integer )
-        : LH_QtSetupItem( parent, ident, subtype, flags|LH_FLAG_MINMAX )
+        : LH_QtSetupItem( parent, ident, subtype, flags )
     {
+        Q_ASSERT( ((flags&LH_FLAG_MINMAX)==LH_FLAG_MINMAX) ? min <= max : true );
         item_.data.i = value;
         item_.param.i.min = min;
         item_.param.i.max = max;

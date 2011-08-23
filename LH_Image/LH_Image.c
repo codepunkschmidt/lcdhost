@@ -275,7 +275,6 @@ static lh_layout_class image_class =
     image_delete
 };
 
-
 static const char *image_plugin_init( lh_object *o )
 {
     o->cb( o->cb_id, lh_cb_class_create, &image_class );
@@ -328,7 +327,8 @@ EXPORT lh_object *lh_create()
 EXPORT void lh_destroy( lh_object *o )
 {
     Q_UNUSED(o);
-    image_class.obj.cb( image_class.obj.cb_id, lh_cb_destroy, 0 );
+    if( image_class.obj.cb && image_class.obj.cb_id )
+        image_class.obj.cb( image_class.obj.cb_id, lh_cb_destroy, 0 );
     return;
 }
 

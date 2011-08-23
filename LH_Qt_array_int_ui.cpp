@@ -75,7 +75,10 @@ void LH_Qt_array_int_ui::arrayValuesChanged()
     if( uiIndex_>=0 && uiIndex_ < size() )
     {
         ui_->blockSignals(true);
-        if( ui_->flags() & LH_FLAG_MINMAX ) ui_->setMinMax( min(), max() );
+        if( flags()&LH_FLAG_MIN ) ui_->setMin( min() );
+        else ui_->setFlag( LH_FLAG_MIN, false );
+        if( flags()&LH_FLAG_MAX ) ui_->setMax( max() );
+        else ui_->setFlag( LH_FLAG_MAX, false );
         ui_->setValue( at(uiIndex_) );
         ui_->blockSignals(false);
     }

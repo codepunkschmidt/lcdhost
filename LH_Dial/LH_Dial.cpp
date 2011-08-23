@@ -126,7 +126,7 @@ const char *LH_Dial::userInit()
     setup_needle_selection_->setHelp( "<p>Select a needle here and configure it below. Seperate settings are stored for each needle.</p>");
 
     setup_needle_style_ = new LH_Qt_array_string_ui(this, "Needle Style", QStringList(),
-                                                    LH_FLAG_AUTORENDER|LH_FLAG_NOSAVE, lh_type_string_list,
+                                                    LH_FLAG_AUTORENDER, lh_type_string_list,
                                                     QStringList()<<"Line"<<"Image [Needle Only]"<<"Image [Full Face] (Full Circle Only)"
                                                     );
     setup_needle_style_->setHelp( "<p>How the selected needle should be drawn.</p>"
@@ -139,21 +139,19 @@ const char *LH_Dial::userInit()
                                   "<br/>The needle is assumed to be in the vertical position and will be rotated around the image's <i>center point</i> as required.</li>"
                                   "</ul></p>");
 
-    setup_needle_color_ = new LH_Qt_array_int_ui(this,"Needle Color",0,LH_FLAG_AUTORENDER|LH_FLAG_NOSAVE, lh_type_integer_color);
+    setup_needle_color_ = new LH_Qt_array_int_ui(this,"Needle Color",0,LH_FLAG_AUTORENDER, lh_type_integer_color);
     setup_needle_color_->setHelp( "<p>The colour used do draw \"Line\" needles.</p>");
 
-    setup_needle_thickness_ = new LH_Qt_array_int_ui(this,"Needle Thickness",0,1,20,LH_FLAG_AUTORENDER|LH_FLAG_NOSAVE|LH_FLAG_NOSAVE);
+    setup_needle_thickness_ = new LH_Qt_array_int_ui(this,"Needle Thickness",0,1,20,LH_FLAG_AUTORENDER);
     setup_needle_thickness_->setHelp( "<p>The colour used do draw \"Line\" needles.</p>");
 
-    setup_needle_length_ = new LH_Qt_array_int_ui(this,"Needle Length (%)",0,0,100,LH_FLAG_AUTORENDER|LH_FLAG_NOSAVE|LH_FLAG_NOSAVE);
+    setup_needle_length_ = new LH_Qt_array_int_ui(this,"Needle Length (%)",0,0,100,LH_FLAG_AUTORENDER);
     setup_needle_length_->setHelp( "<p>The needle's length as a percentage of the dial's radius.</p>");
 
-    setup_needle_gap_ = new LH_Qt_array_int_ui(this,"Needle Gap (%)",0,0,100,LH_FLAG_AUTORENDER|LH_FLAG_NOSAVE);
+    setup_needle_gap_ = new LH_Qt_array_int_ui(this,"Needle Gap (%)",0,0,100,LH_FLAG_AUTORENDER);
     setup_needle_gap_->setHelp( "<p>The gap between the center of the dial and the needle's start as a percentage of the dial's radius.</p>");
 
-    setup_needle_image_ = new LH_Qt_array_string_ui( this, "Needle Image", QStringList(),
-                                                     LH_FLAG_AUTORENDER | LH_FLAG_HIDDEN |LH_FLAG_NOSAVE,
-                                                     lh_type_string_filename);
+    setup_needle_image_ = new LH_Qt_array_string_ui( this, "Needle Image", QStringList(), LH_FLAG_AUTORENDER | LH_FLAG_HIDDEN, lh_type_string_filename);
     setup_needle_image_->setHelp( "<p>Image file to load and use for this needle (see \"Needle Style\" for more information about how the image will be used).</p>");
 
     min(0);

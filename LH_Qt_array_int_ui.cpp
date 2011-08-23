@@ -88,9 +88,6 @@ void LH_Qt_array_int_ui::uiValueChanged()
 {
     if( uiIndex_>=0 && uiIndex_ < size() )
     {
-        if(ui_->type() == lh_type_integer)
-            setAt(uiIndex_, reinterpret_cast<LH_Qt_int*>(ui_)->value());
-        if(ui_->type() == lh_type_integer_color)
-            setAt(uiIndex_, reinterpret_cast<LH_Qt_QColor*>(ui_)->value().rgba());
+        setAt( uiIndex_, ui_->value() );
     }
 }

@@ -151,6 +151,7 @@ const char *LH_QtObject::userInit()
 int LH_QtObject::notify( int code, void * )
 {
     if( code & LH_NOTE_INITIALIZED ) emit initialized();
+    if( code & LH_NOTE_TITLE ) emit titleChanged( title() );
     return 0;
 }
 

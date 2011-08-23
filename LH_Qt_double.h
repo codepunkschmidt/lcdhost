@@ -41,8 +41,9 @@ class LH_Qt_double : public LH_QtSetupItem
 {
 public:
     LH_Qt_double( LH_QtObject *parent, const char *ident, double value, double min, double max, int flags = 0 )
-        : LH_QtSetupItem( parent, ident, lh_type_double, flags|LH_FLAG_MINMAX )
+        : LH_QtSetupItem( parent, ident, lh_type_double, flags )
     {
+        Q_ASSERT( ((flags&LH_FLAG_MINMAX)==LH_FLAG_MINMAX) ? min <= max : true );
         item_.data.d = value;
         item_.param.d.min = min;
         item_.param.d.max = max;

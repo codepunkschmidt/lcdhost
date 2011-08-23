@@ -31,6 +31,7 @@ public:
     void fill( int pos = 0, qint64 v = 0 )
     {
         for( int i=pos; i<size(); ++i ) data()[i] = v;
+        refreshData();
         emit set();
     }
 
@@ -54,6 +55,7 @@ public:
         Q_ASSERT( index >= 0 );
         Q_ASSERT( index < size() );
         data()[index] = value;
+        refreshData();
         emit set();
     }
 

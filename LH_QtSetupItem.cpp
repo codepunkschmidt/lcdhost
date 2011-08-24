@@ -446,7 +446,7 @@ void LH_QtSetupItem::setMinMax( qint64 min, qint64 max )
     if( item_.param.i.min != min || item_.param.i.max != max ||
             (item_.flags&LH_FLAG_MINMAX) != LH_FLAG_MINMAX )
     {
-        Q_ASSERT( min < max );
+        Q_ASSERT( min <= max );
         item_.flags |= LH_FLAG_MINMAX;
         item_.param.i.min = min;
         item_.param.i.max = max;
@@ -479,7 +479,7 @@ void LH_QtSetupItem::setMinMax( double min, double max )
     if( item_.param.d.min != min || item_.param.d.max != max ||
             (item_.flags&LH_FLAG_MINMAX) != LH_FLAG_MINMAX )
     {
-        Q_ASSERT( min < max );
+        Q_ASSERT( min <= max );
         item_.flags |= LH_FLAG_MINMAX;
         item_.param.d.min = min;
         item_.param.d.max = max;

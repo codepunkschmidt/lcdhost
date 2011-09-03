@@ -112,7 +112,7 @@ lh_class *LH_NowPlayingStatusImage::classInfo()
 
 void LH_NowPlayingStatusImage::setup_item_changed()
 {
-    setup_custom_->setFlag(LH_FLAG_HIDDEN, setup_item_->index()!=8);
+    setup_custom_->setHidden( setup_item_->index()!=8);
     refresh_value();
 }
 

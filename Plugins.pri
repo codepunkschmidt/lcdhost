@@ -38,6 +38,9 @@ unix:!macx {
 DESTDIR = $$LCDHOST_PLUGINS
 
 PLUGIN_SOURCES = \
+    $$PWD/lh_plugin.c \
+    $$PWD/LH_Variant.cpp \
+    $$PWD/LH_QtVariant.cpp \
     $$PWD/LH_QtObject.cpp \
     $$PWD/LH_QtPlugin.cpp \
     $$PWD/LH_QtLayoutClass.cpp \
@@ -46,6 +49,8 @@ PLUGIN_SOURCES = \
 
 PLUGIN_HEADERS += \
     $$PWD/lh_plugin.h \
+    $$PWD/LH_Variant.h \
+    $$PWD/LH_QtVariant.h \
     $$PWD/LH_QtObject.h \
     $$PWD/LH_QtPlugin.h \
     $$PWD/LH_QtLayoutClass.h \

@@ -126,7 +126,7 @@ const char *LH_Dial::userInit()
     setup_needle_selection_->setHelp( "<p>Select a needle here and configure it below. Seperate settings are stored for each needle.</p>");
 
     setup_needle_style_ = new LH_Qt_array_string_ui(this, "Needle Style", QStringList(),
-                                                    LH_FLAG_AUTORENDER, lh_type_string_list,
+                                                    LH_FLAG_AUTORENDER, lh_type_string_dropdownbox,
                                                     QStringList()<<"Line"<<"Image [Needle Only]"<<"Image [Full Face] (Full Circle Only)"
                                                     );
     setup_needle_style_->setHelp( "<p>How the selected needle should be drawn.</p>"
@@ -139,7 +139,7 @@ const char *LH_Dial::userInit()
                                   "<br/>The needle is assumed to be in the vertical position and will be rotated around the image's <i>center point</i> as required.</li>"
                                   "</ul></p>");
 
-    setup_needle_color_ = new LH_Qt_array_int_ui(this,"Needle Color",0,LH_FLAG_AUTORENDER, lh_type_integer_color);
+    setup_needle_color_ = new LH_Qt_array_int_ui(this,"Needle Color",0,LH_FLAG_AUTORENDER, lh_type_color);
     setup_needle_color_->setHelp( "<p>The colour used do draw \"Line\" needles.</p>");
 
     setup_needle_thickness_ = new LH_Qt_array_int_ui(this,"Needle Thickness",0,1,20,LH_FLAG_AUTORENDER);
@@ -193,8 +193,7 @@ void LH_Dial::initializeDefaults()
 
 void LH_Dial::addNeedle(QString name)
 {
-    setup_needle_selection_->list().append(name);
-    setup_needle_selection_->refreshList();
+    setup_needle_selection_->appendToList(name);
     needle_pos_.append(0);
     needle_val_.append(0);
     needle_step_.append(1);
@@ -202,15 +201,14 @@ void LH_Dial::addNeedle(QString name)
     needleCode_.append("");
     needleImage_.append( new QImage() );
 
-    setup_needle_selection_->setFlag(LH_FLAG_HIDDEN, setup_needle_selection_->list().count()==1);
+    setup_needle_selection_->setHidden( setup_needle_selection_->list().count()==1);
     setup_needle_selection_->setValue(0);
     syncNeedleDataArrays();
 }
 
 void LH_Dial::clearNeedles()
 {
-    setup_needle_selection_->list().clear();
-    setup_needle_selection_->refreshList();
+    setup_needle_selection_->clearList();
     needle_pos_.clear();
     needle_val_.clear();
     needle_step_.clear();
@@ -219,7 +217,7 @@ void LH_Dial::clearNeedles()
     for(int i = 0; i<needleImage_.count(); i++)
         delete needleImage_[i];
     needleImage_.clear();
-    setup_needle_selection_->setFlag(LH_FLAG_HIDDEN, false);
+    setup_needle_selection_->setHidden( false);
 }
 
 int LH_Dial::needleCount()
@@ -480,7 +478,7 @@ QImage LH_Dial::getNeedle(int needleID, qreal degrees, int& needleStyle)
             break;
         }
         break;
-    case 2: //quarter circle            
+    case 2: //quarter circle
         relW = (setup_needles_reverse_->value()? h : w);
         relH = (setup_needles_reverse_->value()? w : h);
         break;
@@ -803,7 +801,7 @@ int LH_Dial::polling()
 int LH_Dial::notify(int n, void *p)
 {
     Q_UNUSED(p);
-    if(setup_linked_values_->link()==NULL)
+    if(setup_linked_values_->linkPath()==NULL)
         return 0;
     else
     {
@@ -847,28 +845,24 @@ QImage *LH_Dial::render_qimage( int w, int h )
 
 void LH_Dial::changeType(bool preserveOrientation)
 {
-    setup_orientation_->setFlag(LH_FLAG_HIDDEN, setup_type_->index()==0 );
+    setup_orientation_->setHidden( setup_type_->index()==0 );
     QString val = setup_orientation_->value();
-    setup_orientation_->list().clear();
     switch(setup_type_->index())
     {
     case 0: //full circle
-        setup_orientation_->list().append("N/A");
+        setup_orientation_->setList( QStringList("N/A") );
         break;
     case 1: //semi-circle
-        setup_orientation_->list().append("Left");
-        setup_orientation_->list().append("Top");
-        setup_orientation_->list().append("Right");
-        setup_orientation_->list().append("Bottom");
+        setup_orientation_->setList(
+                    QStringList() << "Left" << "Top" << "Right" << "Bottom"
+                    );
         break;
     case 2: //full circle
-        setup_orientation_->list().append("Bottom Left");
-        setup_orientation_->list().append("Top Left");
-        setup_orientation_->list().append("Top Right");
-        setup_orientation_->list().append("Bottom Right");
+        setup_orientation_->setList(
+                    QStringList() << "Bottom Left" << "Top Left" << "Top Right" << "Bottom Right"
+                    );
         break;
     }
-    setup_orientation_->refreshList();
     //qDebug() << "changeType: " << ident() << ": " << setup_type_->value() << " pres. orient.:" << preserveOrientation << " : " << val;
     //if(preserveOrientation)
         setup_orientation_->setValue(val);
@@ -878,11 +872,11 @@ void LH_Dial::changeType(bool preserveOrientation)
 
 void LH_Dial::changeFaceStyle()
 {
-    setup_face_pencolor_->setFlag(LH_FLAG_HIDDEN, setup_face_style_->index()==0 || setup_face_style_->index()==3);
-    setup_face_fillcolor1_->setFlag(LH_FLAG_HIDDEN, setup_face_style_->index()!=2);
-    setup_face_fillcolor2_->setFlag(LH_FLAG_HIDDEN, setup_face_style_->index()!=2);
-    setup_face_ticks_->setFlag(LH_FLAG_HIDDEN, setup_face_style_->index()==0 || setup_face_style_->index()==3);
-    setup_face_image_->setFlag(LH_FLAG_HIDDEN, setup_face_style_->index()!=3);
+    setup_face_pencolor_->setHidden( setup_face_style_->index()==0 || setup_face_style_->index()==3);
+    setup_face_fillcolor1_->setHidden( setup_face_style_->index()!=2);
+    setup_face_fillcolor2_->setHidden( setup_face_style_->index()!=2);
+    setup_face_ticks_->setHidden( setup_face_style_->index()==0 || setup_face_style_->index()==3);
+    setup_face_image_->setHidden( setup_face_style_->index()!=3);
 }
 
 void LH_Dial::changeNeedleStyle()
@@ -890,11 +884,11 @@ void LH_Dial::changeNeedleStyle()
     if(setup_needle_style_->currentIndex()==2 && setup_type_->index()!=0)
         setup_needle_style_->setCurrentIndex(1);
     int needleStyle = setup_needle_style_->currentIndex();
-    setup_needle_color_->setFlag(LH_FLAG_HIDDEN, needleStyle!=0);
-    setup_needle_thickness_->setFlag(LH_FLAG_HIDDEN, needleStyle!=0);
-    setup_needle_length_->setFlag(LH_FLAG_HIDDEN, needleStyle!=0);
-    setup_needle_gap_->setFlag(LH_FLAG_HIDDEN, needleStyle!=0);
-    setup_needle_image_->setFlag(LH_FLAG_HIDDEN, needleStyle==0);
+    setup_needle_color_->setHidden( needleStyle!=0);
+    setup_needle_thickness_->setHidden( needleStyle!=0);
+    setup_needle_length_->setHidden( needleStyle!=0);
+    setup_needle_gap_->setHidden( needleStyle!=0);
+    setup_needle_image_->setHidden( needleStyle==0);
 }
 
 void LH_Dial::changeSelectedNeedle()

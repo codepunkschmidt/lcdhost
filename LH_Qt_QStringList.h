@@ -40,54 +40,53 @@
 
 /*
   Supports the following setup types:
-    lh_type_integer_list
-    lh_type_integer_listbox
+    lh_type_string_dropdownbox
+    lh_type_string_listbox
     lh_type_string_combobox
   */
 
 class LH_Qt_QStringList : public LH_Qt_QString
 {
-    QStringList list_;
-
 public:
     LH_Qt_QStringList( LH_QtObject *parent, const char *ident, const QStringList& list, int flags = 0,
-                       lh_setup_type subtype = lh_type_string_list  )
+                       lh_meta_type subtype = lh_type_string_combobox  )
         : LH_Qt_QString( parent, ident, list.isEmpty()?QString():list.first(), flags, subtype )
     {
-        list_ = list;
-        setList( list_.join("\n").toUtf8() );
-    }
-    
-    QStringList& list()
-    {
-        return list_;
+        setOther( list );
     }
 
-    void refreshList()
+    // const because modifying will have no effect on the underlying data
+    // change the code to modify a copy and then use setList(), or use appendToList() or clearList()
+    const QStringList list() const
     {
-        setList( list_.join("\n").toUtf8() );
-        refreshMeta();
+        return other().toStringList();
+    }
+
+    void clearList()
+    {
+        setOther(QStringList());
+    }
+
+    void appendToList( const QString& s )
+    {
+        QStringList sl(list());
+        sl.append(s);
+        setOther(sl);
+    }
+
+    void setList( const QStringList& sl )
+    {
+        setOther(sl);
     }
 
     int index() const
     {
-        return list_.indexOf(str_);
+        return list().indexOf( value() );
     }
 
-    void setValue( int n )
+    void setIndex( int idx )
     {
-        setIndex(n);
-    }
-
-    void setValue( const QString& s )
-    {
-        LH_Qt_QString::setValue( s );
-    }
-
-    void setIndex(int idx)
-    {
-        if( idx<0 || idx>=list_.size() ) setValue( QString() );
-        else setValue( list_.at(idx) );
+        LH_Qt_QString::setValue( list().at(idx) );
     }
 };
 

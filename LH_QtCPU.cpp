@@ -38,7 +38,7 @@
 
 LH_QtCPU::LH_QtCPU( LH_QtInstance *parent ) : QObject( parent )
 {
-    link_coreloads_ = new LH_Qt_array_int( parent, "Core loads", 0, LH_FLAG_HIDDEN|LH_FLAG_NOSAVE );
+    link_coreloads_ = new LH_Qt_array_int( parent, "Core loads", 0, lh_meta_sink );
     Q_ASSERT( link_coreloads_->size() == 0 );
     link_coreloads_->setLink("/system/cpu/coreloads");
     connect( link_coreloads_, SIGNAL(changed()), this, SLOT(gotData()) );

@@ -51,30 +51,26 @@ public:
         sender->setup_cf_source_->setValue( source_ );
         sender->setup_cf_source_mode_->setValue( mode_ );
 
-        sender->setup_cf_testValue1_->setFlag(LH_FLAG_HIDDEN, false);
+        sender->setup_cf_testValue1_->setHidden( false);
 
-        bool v1vis = (!sender->setup_cf_testValue1_->hasFlag(LH_FLAG_HIDDEN)) || (!sender->setup_cf_testValue1_List_->hasFlag(LH_FLAG_HIDDEN));
+        bool v1vis = (!sender->setup_cf_testValue1_->isHidden()) || (!sender->setup_cf_testValue1_List_->isHidden());
         LH_Qt_QStringList* source_List;
 
         switch((mode_=="Value"? sources[source_]->type() : lh_type_string))
         {
-        case lh_type_string_list:
+        case lh_type_string_dropdownbox:
         case lh_type_string_listbox:
-            sender->setup_cf_testValue1_List_->list().clear();
             source_List = (LH_Qt_QStringList*)sources[source_]->obj();
+            sender->setup_cf_testValue1_List_->setList(source_List->list());
 
-            for(int i=0; i<source_List->list().length(); i++ )
-                sender->setup_cf_testValue1_List_->list().append(source_List->list().at(i));
-            sender->setup_cf_testValue1_List_->refreshList();
-
-            sender->setup_cf_testValue1_->setFlag(LH_FLAG_HIDDEN, true);
-            sender->setup_cf_testValue1_List_->setFlag(LH_FLAG_HIDDEN, !v1vis);
+            sender->setup_cf_testValue1_->setHidden( true);
+            sender->setup_cf_testValue1_List_->setHidden( !v1vis);
 
             sender->setup_cf_testValue1_List_->setValue( values(0) );
             break;
         default:
-            sender->setup_cf_testValue1_->setFlag(LH_FLAG_HIDDEN, !v1vis);
-            sender->setup_cf_testValue1_List_->setFlag(LH_FLAG_HIDDEN, true);
+            sender->setup_cf_testValue1_->setHidden( !v1vis);
+            sender->setup_cf_testValue1_List_->setHidden( true);
 
             sender->setup_cf_testValue1_->setValue( values(0) );
             break;

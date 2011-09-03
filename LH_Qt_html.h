@@ -6,10 +6,10 @@
 class LH_Qt_html : public LH_Qt_QString
 {
 public:
-    LH_Qt_html( LH_QtObject *parent, const char *htmltext, int flags = 0 ) :
-        LH_Qt_QString( parent, 0, QString(), flags|LH_FLAG_HIDEVALUE|LH_FLAG_NOSAVE, lh_type_string_htmllink )
+    LH_Qt_html( LH_QtObject *parent, const char *htmltext, int flags = lh_meta_default ) :
+        LH_Qt_QString( parent, 0, QString(), flags, lh_type_string_htmllink )
     {
-        setTitle( htmltext );
+        setOther( htmltext );
         return;
     }
 };

@@ -96,22 +96,22 @@ void LH_MonitoringUI::reset(ui_mode_type mode)
 
 void LH_MonitoringUI::showOffset(bool b)
 {
-    setup_value_offset_->setFlag(LH_FLAG_HIDDEN, !b);
+    setup_value_offset_->setHidden( !b);
 }
 
 void LH_MonitoringUI::showFormat(bool b)
 {
-    setup_value_format_->setFlag(LH_FLAG_HIDDEN, !b);
+    setup_value_format_->setHidden( !b);
 }
 
 void LH_MonitoringUI::setVisible(int et, bool b)
 {
     if((et & mon_type)==mon_type)
-        setup_value_type_->setFlag(LH_FLAG_HIDDEN, !b);
+        setup_value_type_->setHidden( !b);
     if((et & mon_group)==mon_group)
-        setup_value_group_->setFlag(LH_FLAG_HIDDEN, !b);
+        setup_value_group_->setHidden( !b);
     if((et & mon_item)==mon_item)
-        setup_value_item_->setFlag(LH_FLAG_HIDDEN, !b);
+        setup_value_item_->setHidden( !b);
 }
 
 void LH_MonitoringUI::clear(int et)
@@ -381,7 +381,7 @@ void LH_MonitoringUI::changeGroupSelection()
             setup_value_item_name_->setValue("");
             ((LH_Aida64Data*)data_)->updateLists();
             changeItemSelection();
-            setup_value_item_->setFlag(LH_FLAG_HIDDEN, (setup_value_item_->list().count()<=1) );
+            setup_value_item_->setHidden( (setup_value_item_->list().count()<=1) );
         }
         break;
     }

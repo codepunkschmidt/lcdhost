@@ -35,40 +35,21 @@
 #ifndef LH_QT_QFONT_H
 #define LH_QT_QFONT_H
 
-#include <QFont>
-#include "LH_Qt_QString.h"
+#include "LH_QtSetupItem.h"
 
-class LH_Qt_QFont : public LH_Qt_QString
+class LH_Qt_QFont : public LH_QtSetupItem
 {
-    QFont font_;
-
 public:
-    LH_Qt_QFont( LH_QtObject *parent, const char *ident, const QFont& value, int flags = 0 )
-        : LH_Qt_QString( parent, ident, value.toString(), flags, lh_type_string_font ), font_(value)
+    LH_Qt_QFont( LH_QtObject *parent, const char *ident, const QFont& value, int flags = lh_meta_default )
+        : LH_QtSetupItem( parent, ident, lh_type_font, flags )
     {
+        setValue( value );
         return;
-    }
-
-    virtual void setup_change()
-    {
-        getString();
-        font_.fromString( str_ );
-        emit change( font_ );
-        LH_QtSetupItem::setup_change();
     }
 
     QFont value() const
     {
-        return font_;
-    }
-
-    void setValue(const QFont& f)
-    {
-        if( f != font_ )
-        {
-            font_ = f;
-            setValue( font_.toString() );
-        }
+        return qVariantValue<QFont>(LH_QtSetupItem::value());
     }
 };
 

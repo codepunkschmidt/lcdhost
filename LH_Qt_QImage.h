@@ -40,26 +40,17 @@
 
 class LH_Qt_QImage : public LH_QtSetupItem
 {
-    QImage image_;
-
 public:
-    LH_Qt_QImage( LH_QtObject *parent, const char *ident, const QImage& value, int flags = 0 )
-        : LH_QtSetupItem( parent, ident, lh_type_pointer_qimage, flags ), image_(value)
+    LH_Qt_QImage( LH_QtObject *parent, const char *ident, const QImage& value, int flags = lh_meta_default )
+        : LH_QtSetupItem( parent, ident, lh_type_pointer_qimage, flags )
     {
-        item_.param.p = (void*)&image_;
+        setValue( value );
         return;
     }
 
-    const QImage& value() const
+    const QImage value() const
     {
-        return image_;
-    }
-
-    void setValue(const QImage &img)
-    {
-        image_ = img;
-        refreshData();
-        emit set();
+        return qVariantValue<QImage>(value());
     }
 };
 

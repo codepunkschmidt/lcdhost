@@ -37,32 +37,21 @@
 
 #include <QFileInfo>
 #include <QDir>
-#include "LH_Qt_QString.h"
+#include "LH_QtSetupItem.h"
 
-class LH_Qt_QFileInfo : public LH_Qt_QString
+class LH_Qt_QFileInfo : public LH_QtSetupItem
 {
 public:
-    LH_Qt_QFileInfo( LH_QtObject *parent, const char *ident, QFileInfo value = QFileInfo(), int flags = 0 )
-        : LH_Qt_QString( parent, ident, value.filePath(), flags, lh_type_string_filename )
+    LH_Qt_QFileInfo( LH_QtObject *parent, const char *ident, QFileInfo value = QFileInfo(), int flags = lh_meta_default )
+        : LH_QtSetupItem( parent, ident, lh_type_string_filename, flags )
     {
+        setValue( value.filePath() );
         return;
-    }
-
-    virtual void setup_change()
-    {
-        getString();
-        emit change( QFileInfo( str_ ) );
-        LH_QtSetupItem::setup_change();
     }
 
     QFileInfo value() const
     {
-        return QFileInfo( QDir( dir_layout() ), str_ );
-    }
-
-    void setValue(const QFileInfo& fi)
-    {
-        LH_Qt_QString::setValue( fi.filePath() );
+        return QFileInfo( QDir( dir_layout() ), LH_QtSetupItem::value().toString() );
     }
 };
 

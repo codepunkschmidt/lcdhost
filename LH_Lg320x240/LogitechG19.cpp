@@ -132,15 +132,15 @@ int LogitechG19::buttons()
                 lh_input di;
                 strcpy( di.ident, lh_dev()->obj.ident );
                 di.item = bit;
-                di.flags = lh_df_button;
+                di.flags = lh_input_button;
                 if( button & mask )
                 {
-                    di.flags |= lh_df_down;
+                    di.flags |= lh_input_pressed;
                     di.value = 0xFFFF;
                 }
                 else
                 {
-                    di.flags |= lh_df_up;
+                    di.flags |= lh_input_released;
                     di.value = 0x0;
                 }
                 callback( lh_cb_input, (void*) &di );

@@ -35,14 +35,15 @@
 #ifndef LH_QT_INPUTSTATE_H
 #define LH_QT_INPUTSTATE_H
 
-#include "LH_Qt_QString.h"
+#include "LH_QtSetupItem.h"
 
-class LH_Qt_InputState : public LH_Qt_QString
+class LH_Qt_InputState : public LH_QtSetupItem
 {
 public:
-    LH_Qt_InputState( LH_QtObject *parent, const char *ident, const QString& value, int flags = 0 )
-        : LH_Qt_QString( parent, ident, value, flags, lh_type_string_inputstate )
+    LH_Qt_InputState( LH_QtObject *parent, const char *ident, const QString& value, int flags = lh_meta_default )
+        : LH_QtSetupItem( parent, ident, lh_type_input_state, flags )
     {
+        setValue(value);
     }
 };
 

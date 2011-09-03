@@ -98,15 +98,15 @@ typedef struct _lh_image_s
   item is changed since we only have one. To illustrate self-unloading,
   if the filename equals 'unload', we request unloading.
   */
-static void image_setup_change( lh_setup_item *obj )
+static void image_value_changed( lh_setup_item *obj )
 {
     lh_image *img = (void*) obj->obj.ref;
     if( img )
     {
-        if( !strcmp( (char*)obj->data.b.p, "unload" ) )
+        if( !strcmp( (char*)obj->data.value.data.b.p, "unload" ) )
         {
-            strcpy( (char*)obj->data.b.p, "was-unloaded" );
-            obj->obj.cb( obj->obj.cb_id, lh_cb_setup_refresh_data, 0 );
+            strcpy( (char*)obj->data.value.data.b.p, "was-unloaded" );
+            obj->obj.cb( obj->obj.cb_id, lh_cb_setup_refresh_value, 0 );
             obj->obj.cb( obj->obj.cb_id, lh_cb_unload, "Filename was 'unload'." );
         }
         else
@@ -133,11 +133,12 @@ static const char *image_init(lh_object *obj)
     img->setup_filename.obj.ref = img;
     img->setup_filename.size = sizeof(lh_setup_item);
     strcpy( img->setup_filename.obj.ident, "Filename");
-    img->setup_filename.type = lh_type_string_filename;
-    img->setup_filename.data.b.p = img->filename;
-    img->setup_filename.data.b.n = sizeof(img->filename);
-    img->setup_filename.flags = 0;
-    img->setup_filename.obj_setup_change = image_setup_change;
+    img->setup_filename.meta.type = lh_type_string_filename;
+    img->setup_filename.meta.flags = lh_meta_default;
+    img->setup_filename.data.value.fmt = lh_format_string;
+    img->setup_filename.data.value.data.b.p = img->filename;
+    img->setup_filename.data.value.data.b.n = sizeof(img->filename);
+    img->setup_filename.obj_value_changed = image_value_changed;
     img->item_.obj.cb( img->item_.obj.cb_id, lh_cb_setup_create, &img->setup_filename );
 
     return 0;
@@ -265,6 +266,7 @@ static lh_layout_class image_class =
         0, /* obj_init */
         0, /* obj_polling */
         0, /* obj_notify */
+        0, /* obj_realloc */
         "StaticImage", /* ident */
         "Image" /* title */
     },
@@ -295,6 +297,7 @@ static lh_object image_plugin =
     image_plugin_init, /* to register our single class */
     0, /* obj_polling */
     0, /* obj_notify */
+    0, /* obj_realloc */
     {}, /* ident */
     "Image", /* title */
 };

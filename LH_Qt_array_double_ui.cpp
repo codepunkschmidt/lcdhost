@@ -1,6 +1,6 @@
 #include "LH_Qt_array_double_ui.h"
 
-void LH_Qt_array_double_ui::init(lh_setup_type ui_type, int uiFlags, bool _fixedRange, double min, double max )
+void LH_Qt_array_double_ui::init(lh_meta_type ui_type, int uiFlags, bool _fixedRange, double min, double max )
 {
     fixedRange_ = _fixedRange;
     ui_ = NULL;

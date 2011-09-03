@@ -6,39 +6,47 @@
 class LH_Qt_array : public LH_QtSetupItem
 {
 public:
-    LH_Qt_array( LH_QtObject *parent, const char *ident, int flags = 0, lh_setup_type subtype = lh_type_array )
-        : LH_QtSetupItem( parent, ident, subtype, flags )
+    LH_Qt_array( LH_QtObject *parent, const char *ident, int flags = lh_meta_default )
+        : LH_QtSetupItem( parent, ident, lh_type_array, flags )
+    { }
+
+    int size() const
     {
+        return value().toList().size();
     }
 
-    virtual int size() const
+    void resize( int newsize, const QVariant& v = QVariant() )
     {
-        return data_array_.size();
+        QVariantList vl = value().toList();
+        while( vl.size() < newsize ) vl.append(v);
+        while( vl.size() > newsize ) vl.removeLast();
+        setValue(vl);
     }
 
-    void resize( int size )
+    QVariant at( int index, const QVariant& def = QVariant() ) const
     {
-        if( size > 0 )
-        {
-            data_array_.resize( size );
-            item_.data.b.p = data_array_.data();
-            item_.data.b.n = data_array_.size();
-        }
-        else
-        {
-            data_array_.clear();
-            item_.data.b.p = 0;
-            item_.data.b.n = 0;
-        }
+        QVariantList vl = value().toList();
+        if( index < 0 || index >= vl.size() ) return def;
+        return vl.at(index);
     }
 
-    virtual qint64 intMin() const { return 0; }
-    virtual qint64 intMax() const { return 0; }
-    virtual qint64 intAt(int) const { return 0; }
-    virtual double doubleMin() const { return 0.0; }
-    virtual double doubleMax() const { return 0.0; }
-    virtual double doubleAt(int) const { return 0.0; }
-    virtual QString stringAt(int) const { return QString(); }
+    void setAt( int index, const QVariant& v )
+    {
+        QVariantList vl = value().toList();
+        if( index < 0 || index >= vl.size() ) return;
+        vl[index] = v;
+        setValue(vl);
+    }
+
+    long long intMin() const { return minimum().toLongLong(); }
+    long long intMax() const { return maximum().toLongLong(); }
+
+    double doubleMin() const { return minimum().toDouble(); }
+    double doubleMax() const { return maximum().toDouble(); }
+
+    long long intAt(int index) const { return at(index).toLongLong(); }
+    double doubleAt(int index) const { return at(index).toDouble(); }
+    QString stringAt(int index) const { return at(index).toString(); }
 };
 
 #endif // LH_QT_ARRAY_H

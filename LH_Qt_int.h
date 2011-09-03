@@ -40,30 +40,25 @@
 class LH_Qt_int : public LH_QtSetupItem
 {
 public:
-    LH_Qt_int( LH_QtObject *parent, const char *ident, qint64 value, qint64 min, qint64 max, int flags = 0, lh_setup_type subtype = lh_type_integer )
+    LH_Qt_int( LH_QtObject *parent, const char *ident, long long value, long long min, long long max, int flags = 0, lh_meta_type subtype = lh_type_integer )
         : LH_QtSetupItem( parent, ident, subtype, flags )
     {
-        Q_ASSERT( ((flags&LH_FLAG_MINMAX)==LH_FLAG_MINMAX) ? min <= max : true );
-        item_.data.i = value;
-        item_.param.i.min = min;
-        item_.param.i.max = max;
+        setValue(value);
+        setMinimum( min );
+        setMaximum( max );
     }
 
-    LH_Qt_int( LH_QtObject *parent, const char *ident, qint64 value, int flags = 0, lh_setup_type subtype = lh_type_integer )
+    LH_Qt_int( LH_QtObject *parent, const char *ident, long long value = 0, int flags = 0, lh_meta_type subtype = lh_type_integer )
         : LH_QtSetupItem( parent, ident, subtype, flags )
     {
-        item_.data.i = value;
+        setValue(value);
     }
 
-    virtual void setup_change()
-    {
-        emit change( item_.data.i );
-        LH_QtSetupItem::setup_change();
-    }
-
-    qint64 value() const { return item_.data.i; }
-    qint64 min() const { return item_.param.i.min; }
-    qint64 max() const { return item_.param.i.max; }
+    int value() const { return LH_QtSetupItem::value().toInt(); }
+    int min() const { return LH_QtSetupItem::minimum().toInt(); }
+    int max() const { return LH_QtSetupItem::maximum().toInt(); }
+    void setMin( int v ) { setMinimum(v); }
+    void setMax( int v ) { setMaximum(v); }
 };
 
 #endif // LH_QT_INT_H

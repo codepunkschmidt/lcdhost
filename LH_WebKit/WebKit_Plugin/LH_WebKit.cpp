@@ -323,9 +323,9 @@ void LH_WebKit::readyRead()
 
 void LH_WebKit::reparse()
 {
-    setup_regexp_->setFlag(LH_FLAG_HIDDEN, !setup_parse_->value());
-    setup_regexp_lazy_->setFlag(LH_FLAG_HIDDEN, !setup_parse_->value());
-    setup_template_->setFlag(LH_FLAG_HIDDEN, !setup_parse_->value());
+    setup_regexp_->setHidden( !setup_parse_->value());
+    setup_regexp_lazy_->setHidden( !setup_parse_->value());
+    setup_template_->setHidden( !setup_parse_->value());
     sent_html_ = false;
     sendData(false);
     requestRender();

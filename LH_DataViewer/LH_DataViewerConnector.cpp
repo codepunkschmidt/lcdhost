@@ -39,8 +39,8 @@ lh_class *LH_DataViewerConnector::classInfo()
         "DataViewerConnector",
         "Data Connector",
         -1, -1,
-        
-        
+
+
     };
 
     if( classInfo.width == -1 )
@@ -68,7 +68,7 @@ const char *LH_DataViewerConnector::userInit()
     QStringList langs = listLanguages();
     qDebug() << "languages: " << langs.count() << ": " << langs.join(",");
     setup_language_ = new LH_Qt_QStringList(this,"Language",langs, LH_FLAG_AUTORENDER);
-    setup_language_->setFlag(LH_FLAG_HIDDEN, langs.length()<=1);
+    setup_language_->setHidden( langs.length()<=1);
     connect( setup_language_, SIGNAL(changed()), this, SLOT(languageFileChanged()) );
 
     setup_map_file_ = new LH_Qt_QFileInfo(this,"Data Map",QFileInfo(), LH_FLAG_AUTORENDER );
@@ -330,7 +330,7 @@ void LH_DataViewerConnector::mapFileChanged()
                         QString value = item.section('=',1,-1).trimmed();
                         if(property=="type")
                             sourceType_ = (value.toLower()=="xml"? source_type_XML : (value.toLower()=="ini"? source_type_INI : source_type_TXT)); else
-                        if(property=="delimited")                        
+                        if(property=="delimited")
                             isDelimited_ = (value.toLower()=="true" || value.toLower()=="yes" || value.toLower()=="1"); else
                         if(property=="delimiter")
                         {

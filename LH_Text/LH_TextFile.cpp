@@ -82,12 +82,12 @@ void LH_TextFile::checkFile()
     if( !setup_file_->value().isFile() )
     {
         setup_text_->setValue(("No such file."));
-        setup_text_->setFlag(LH_FLAG_HIDDEN,false);
+        setup_text_->setHidden(false);
         return;
     }
     else
     {
-        setup_text_->setFlag(LH_FLAG_HIDDEN,true);
+        setup_text_->setHidden(true);
     }
 
     if( !last_read_.isValid() || setup_file_->value().lastModified() > last_read_ )

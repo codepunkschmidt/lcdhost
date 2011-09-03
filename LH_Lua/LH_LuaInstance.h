@@ -40,8 +40,10 @@
 
 #include "../LH_QtPlugin.h"
 #include "../LH_QtInstance.h"
+#include "LH_LuaVariant.h"
 #include "LH_LuaClass.h"
 
+class LH_QtSetupItem;
 class LH_LuaSetupItem;
 
 class LH_LuaInstance : public LH_QtInstance
@@ -55,16 +57,13 @@ class LH_LuaInstance : public LH_QtInstance
     int ref_; // reference to 'self' in the registry
 
 public:
-    LH_LuaInstance( LH_LuaClass *alc )
-        : LH_QtInstance( alc ), L(alc->luaState()), blob_(0), ref_(LUA_NOREF) {}
+    LH_LuaInstance( LH_LuaClass *alc );
     ~LH_LuaInstance();
 
     LH_LuaClass *parent() const { return static_cast<LH_LuaClass *>(LH_QtInstance::parent()); }
 
     void lua_pushself() { lua_rawgeti(L, LUA_REGISTRYINDEX, ref_); }
     bool lua_pushfunction(const char *funcname);
-
-    void setup_change( LH_LuaSetupItem *item );
 
     const char *userInit();
     int polling();
@@ -79,6 +78,12 @@ public:
     static void push( LH_LuaInstance *inst ) { if( stack_ == 0 ) stack_ = new QStack<LH_LuaInstance*>(); stack_->push(inst); }
     static LH_LuaInstance *top() { return ( stack_ ? stack_->top() : 0); }
     static void pop() { if( stack_ ) stack_->pop(); }
+
+public slots:
+    void valueChanged( const LH_QtSetupItem& );
+    void minimumChanged( const LH_QtSetupItem& );
+    void maximumChanged( const LH_QtSetupItem& );
+    void otherChanged( const LH_QtSetupItem& );
 };
 
 #endif // LH_LUAINSTANCE_H

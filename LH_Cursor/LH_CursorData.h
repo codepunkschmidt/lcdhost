@@ -173,7 +173,7 @@ public:
 
     void postback(LH_Qt_QString *setup_json_postback_, LH_Qt_QString *setup_json_data_)
     {
-        QString key = setup_json_data_->link();
+        QString key = setup_json_data_->linkPath();
         if(postback_data.contains(key))
             postback_data.remove(key);
         postback_data.insert(key, serialize());

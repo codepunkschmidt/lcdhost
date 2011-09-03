@@ -35,8 +35,8 @@ lh_class *LH_QuickAction::classInfo()
         "QuickAction",
         "Quick Action",
         48,48
-        
-        
+
+
     };
 
     return &classInfo;
@@ -107,7 +107,7 @@ void LH_QuickAction::doFire(int flags,int value)
 
 void LH_QuickAction::changeTimeout()
 {
-    setup_countdown_->setFlag(LH_FLAG_HIDDEN, !setup_enable_timeout_->value());
+    setup_countdown_->setHidden( !setup_enable_timeout_->value());
     counter_ = setup_timeout_->value();
 
     if(setup_enable_timeout_->value()) {

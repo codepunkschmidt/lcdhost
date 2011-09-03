@@ -200,7 +200,7 @@ void LH_QtPlugin_TorrentMon::finishedWebUI(QNetworkReply* reply)
     {
         if( reply->error() == QNetworkReply::NoError && reply->attribute(QNetworkRequest::HttpStatusCodeAttribute) == 200 )
         {
-            setup_webui_status_->setFlag(LH_FLAG_HIDDEN, true);
+            setup_webui_status_->setVisible(false);
             QString response = QString(reply->readAll());
             if(response.startsWith("<html>"))
             {
@@ -260,7 +260,7 @@ void LH_QtPlugin_TorrentMon::finishedWebUI(QNetworkReply* reply)
                     setup_webui_status_->setHelp("Unable to aqcuire WebUI data: " + reply->errorString());
                     break;
             }
-            setup_webui_status_->setFlag(LH_FLAG_HIDDEN, false);
+            setup_webui_status_->setHidden( false);
         }
         reply->deleteLater();
         reply = NULL;

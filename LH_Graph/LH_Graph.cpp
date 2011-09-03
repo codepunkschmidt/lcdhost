@@ -113,11 +113,11 @@ const char *LH_Graph::userInit()
     setup_line_selection_ = new LH_Qt_QStringList(this,"Selected Line",QStringList());
     setup_line_selection_->setHelp( "<p>Select a line here and configure it below. Seperate settings are stored for each line.</p>");
 
-    setup_line_pencolor_ = new LH_Qt_array_int_ui(this,"Line color",0,LH_FLAG_AUTORENDER, lh_type_integer_color);
+    setup_line_pencolor_ = new LH_Qt_array_int_ui(this,"Line color",0,LH_FLAG_AUTORENDER, lh_type_color);
     setup_line_pencolor_->setHelp( "<p>The colour used do draw the line.</p>");
-    setup_line_fillcolor1_ = new LH_Qt_array_int_ui(this,"Area color (start)",0,LH_FLAG_AUTORENDER | LH_FLAG_HIDDEN, lh_type_integer_color);
+    setup_line_fillcolor1_ = new LH_Qt_array_int_ui(this,"Area color (start)",0,LH_FLAG_AUTORENDER | LH_FLAG_HIDDEN, lh_type_color);
     setup_line_fillcolor1_->setHelp( "<p>The color used to fill the area between the line and the axis, at the furthest point from the axis (this color is only truely visible when the graph is full).</p>");
-    setup_line_fillcolor2_ = new LH_Qt_array_int_ui(this,"Area color (end)",0,LH_FLAG_AUTORENDER | LH_FLAG_HIDDEN, lh_type_integer_color);
+    setup_line_fillcolor2_ = new LH_Qt_array_int_ui(this,"Area color (end)",0,LH_FLAG_AUTORENDER | LH_FLAG_HIDDEN, lh_type_color);
     setup_line_fillcolor2_->setHelp( "<p>The color used to fill the area between the line and the axis, at the axis.</p>");
 
     setup_line_image_ = new LH_Qt_array_string_ui(this, "Fill Image", QStringList(),
@@ -613,13 +613,14 @@ void LH_Graph::addText(QPainter& painter, QRect rect, int flags, QString text, i
 
 void LH_Graph::addLine(QString name)
 {
-    setup_line_selection_->list().append(name);
-    setup_line_selection_->refreshList();
+    QStringList sl(setup_line_selection_->list());
+    sl.append(name);
+    setup_line_selection_->setList( sl );
     cacheCount_.append(0);
     cacheVal_.append(0);
     values_.append( QList<double>() );
 
-    setup_line_selection_->setFlag(LH_FLAG_HIDDEN, setup_line_selection_->list().count()==1);
+    setup_line_selection_->setHidden( setup_line_selection_->list().count()==1);
     setup_line_selection_->setValue(0);
     syncLineDataArrays();
 }
@@ -638,17 +639,16 @@ void LH_Graph::setLineCount(int count)
     QStringList names;
     for(int i = 0; i<count;)
         names.append(QString("Line #%1").arg(++i));
-    setLines(names);    
+    setLines(names);
 }
 
 void LH_Graph::clearLines()
 {
-    setup_line_selection_->list().clear();
-    setup_line_selection_->refreshList();
+    setup_line_selection_->setList( QStringList() );
     cacheCount_.clear();
     cacheVal_.clear();
     values_.clear();
-    setup_line_selection_->setFlag(LH_FLAG_HIDDEN, false);
+    setup_line_selection_->setHidden( false);
     syncLineDataArrays();
 }
 
@@ -680,7 +680,7 @@ void LH_Graph::setYUnit( QString str, double divisor )
 int LH_Graph::notify(int n, void *p)
 {
     Q_UNUSED(p);
-    if(setup_linked_values_->link()==NULL)
+    if(setup_linked_values_->linkPath()==NULL)
         return 0;
     else
     {
@@ -777,13 +777,13 @@ void LH_Graph::updateDescText()
 
 void LH_Graph::changeType()
 {
-    setup_line_fillcolor1_->setFlag(LH_FLAG_HIDDEN, (setup_fg_type_->index()!=1));
-    setup_line_fillcolor2_->setFlag(LH_FLAG_HIDDEN, (setup_fg_type_->index()!=1));
-    setup_line_image_->setFlag(LH_FLAG_HIDDEN, (setup_fg_type_->index()!=2));
-    setup_line_image_opacity_->setFlag(LH_FLAG_HIDDEN, (setup_fg_type_->index()!=2));
+    setup_line_fillcolor1_->setHidden( (setup_fg_type_->index()!=1));
+    setup_line_fillcolor2_->setHidden( (setup_fg_type_->index()!=1));
+    setup_line_image_->setHidden( (setup_fg_type_->index()!=2));
+    setup_line_image_opacity_->setHidden( (setup_fg_type_->index()!=2));
 
-    setup_bgcolor_->setFlag(LH_FLAG_HIDDEN, (setup_bg_type_->index()!=1));
-    setup_bg_image_->setFlag(LH_FLAG_HIDDEN, (setup_bg_type_->index()!=2));
+    setup_bgcolor_->setHidden( (setup_bg_type_->index()!=1));
+    setup_bg_image_->setHidden( (setup_bg_type_->index()!=2));
 }
 
 void LH_Graph::changeSelectedLine()
@@ -800,12 +800,12 @@ void LH_Graph::changeSelectedLine()
 
 void LH_Graph::updateLabelSelection()
 {
-    setup_hide_when_empty_->setFlag(LH_FLAG_HIDDEN, !(setup_show_y_max_->value() | setup_show_y_min_->value()));
-    setup_show_real_limits_->setFlag(LH_FLAG_HIDDEN, !(setup_show_y_max_->value() | setup_show_y_min_->value()));
-    setup_y_labels_right_->setFlag(LH_FLAG_HIDDEN, !(setup_show_y_max_->value() | setup_show_y_min_->value()));
-    setup_label_font_->setFlag(LH_FLAG_HIDDEN, !(setup_show_y_max_->value() | setup_show_y_min_->value()));
-    setup_label_color_->setFlag(LH_FLAG_HIDDEN, !(setup_show_y_max_->value() | setup_show_y_min_->value()));
-    setup_label_shadow_->setFlag(LH_FLAG_HIDDEN, !(setup_show_y_max_->value() | setup_show_y_min_->value()));
+    setup_hide_when_empty_->setHidden( !(setup_show_y_max_->value() | setup_show_y_min_->value()));
+    setup_show_real_limits_->setHidden( !(setup_show_y_max_->value() | setup_show_y_min_->value()));
+    setup_y_labels_right_->setHidden( !(setup_show_y_max_->value() | setup_show_y_min_->value()));
+    setup_label_font_->setHidden( !(setup_show_y_max_->value() | setup_show_y_min_->value()));
+    setup_label_color_->setHidden( !(setup_show_y_max_->value() | setup_show_y_min_->value()));
+    setup_label_shadow_->setHidden( !(setup_show_y_max_->value() | setup_show_y_min_->value()));
 }
 
 void LH_Graph::clear(double newMin, double newMax, bool newGrow)
@@ -839,11 +839,11 @@ bool LH_Graph::setUserDefinableLimits(bool v)
 
 void LH_Graph::updateLimitControls()
 {
-    setup_max_grow_->setFlag(LH_FLAG_HIDDEN, !userDefinableLimits_);
+    setup_max_grow_->setHidden( !userDefinableLimits_);
     setup_max_grow_->setFlag(LH_FLAG_READONLY, !userDefinableLimits_);
-    setup_max_->setFlag(LH_FLAG_HIDDEN, !userDefinableLimits_);
+    setup_max_->setHidden( !userDefinableLimits_);
     setup_max_->setFlag(LH_FLAG_READONLY, !userDefinableLimits_ || canGrow());
-    setup_min_->setFlag(LH_FLAG_HIDDEN, !userDefinableLimits_);
+    setup_min_->setHidden( !userDefinableLimits_);
     setup_min_->setFlag(LH_FLAG_READONLY, !userDefinableLimits_);
 }
 
@@ -897,11 +897,12 @@ void LH_Graph::changeUnits()
 void LH_Graph::addCustomUnits(QString caption, QString text, double divisor)
 {
     customUnits.append((customUnit){text, divisor});
-    setup_units_->list().append(caption);
-    setup_units_->refreshList();
+    QStringList sl(setup_units_->list());
+    sl.append(caption);
+    setup_units_->setList(sl);
     if(setup_units_->index()==-1)
         setup_units_->setIndex(0);
-    setup_units_->setFlag(LH_FLAG_HIDDEN, false);
+    setup_units_->setHidden( false);
 }
 
 void LH_Graph::syncLineDataArrays()

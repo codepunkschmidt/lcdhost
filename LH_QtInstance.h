@@ -91,6 +91,11 @@ public:
         Q_ASSERT(!"You must reimplement classInfo()");
         return 0;
     }
+
+public slots:
+    void show() const { int b = 0; callback( lh_cb_sethidden, (void*)&b ); }
+    void hide() const { int b = 1; callback( lh_cb_sethidden, (void*)&b ); }
+    void setVisible( bool b ) const { int notb = !b; callback( lh_cb_sethidden, (void*)&notb ); }
 };
 
 /**

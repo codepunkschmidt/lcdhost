@@ -48,7 +48,7 @@ QStack<LH_LuaInstance*> *LH_LuaInstance::stack_ = 0;
 static const char *lh_self_item_data_key[] =
 {
     NULL,
-    "name", "type", "data", "help", "flags", "list", "min", "max", "order"
+    "title", "type", "flags", "order", "help", "data", "min", "max", "other"
 };
 
 #define MAXWHERE ((int)(sizeof(lh_self_item_data_key)/sizeof(const char *))-1)
@@ -86,60 +86,6 @@ extern "C" int lh_lcdhost_callback(lua_State *L)
     return 0;
 }
 
-// expect type string at stack top
-static void lh_settype_setup_item( lua_State *L, LH_LuaSetupItem *item )
-{
-    const char *t = lua_tostring(L,-1);
-    item->item()->type = lh_type_none;
-    switch( *t )
-    {
-    case 'i': // integer, inputstate, inputvalue, image
-        if( !strcmp(t,"integer") ) item->item()->type = lh_type_integer;
-        else if( !strcmp(t,"inputstate") ) item->item()->type = lh_type_string_inputstate;
-        else if( !strcmp(t,"inputvalue") ) item->item()->type = lh_type_string_inputvalue;
-        else if( !strcmp(t,"image") ) item->item()->type = lh_type_array_png;
-        break;
-    case 'd': // double
-        if( !strcmp(t,"double") ) item->item()->type = lh_type_double;
-        break;
-    case 'f': // fraction, font, filename
-        if( !strcmp(t,"font") ) item->item()->type = lh_type_string_font;
-        else if( !strcmp(t,"fraction") ) item->item()->type = lh_type_double;
-        else if( !strcmp(t,"filename") ) item->item()->type = lh_type_string_filename;
-        break;
-    case 'c': // color
-        if( !strcmp(t,"color") )
-        {
-            item->item()->type = lh_type_integer_color;
-            item->item()->data.i = QColor(Qt::black).rgba();
-        }
-        break;
-    case 's': // slider, string, script
-        if( !strcmp(t,"string") ) item->item()->type = lh_type_string;
-        else if( !strcmp(t,"slider") ) item->item()->type = lh_type_integer_slider;
-        else if( !strcmp(t,"script") ) item->item()->type = lh_type_string_script;
-        break;
-    case 'p': // progress
-        if( !strcmp(t,"progress") ) item->item()->type = lh_type_integer_progress;
-        break;
-    case 'l': // list
-        if( !strcmp(t,"list") ) item->item()->type = lh_type_string_list;
-        if( !strcmp(t,"listbox") ) item->item()->type = lh_type_string_listbox;
-        break;
-    case 'b':
-        if( !strcmp(t,"boolean") ) item->item()->type = lh_type_integer_boolean;
-        if( !strcmp(t,"button") ) item->item()->type = lh_type_string_button;
-        break;
-    }
-    if( item->item()->type == lh_type_none )
-    {
-        lua_pushstring(L,"setup item type unrecognized");
-        lua_error(L);
-    }
-    memset( & item->item()->param, 0, sizeof(lh_setup_param) );
-}
-
-
 static void lh_self_item_data_setvalue(lua_State *L, LH_LuaSetupItem* item, int where)
 {
 #ifndef QT_NO_DEBUG
@@ -158,179 +104,53 @@ static void lh_self_item_data_setvalue(lua_State *L, LH_LuaSetupItem* item, int 
         break;
     case 2:
         Q_ASSERT( !strcmp("type",lh_self_item_data_key[where]));
-        lh_settype_setup_item( L, item );
+        item->setType( lua_tostring(L,-1) );
         break;
     case 3:
-        Q_ASSERT( !strcmp("data",lh_self_item_data_key[where]));
-        switch( item->item()->type )
-        {
-        case lh_type_none:
-        case lh_type_last:
-            lua_pushstring(L,"setup item has no 'type' set");
-            lua_error(L);
-            break;
-        case lh_type_integer:
-        case lh_type_integer_slider:
-        case lh_type_integer_progress:
-            item->setValue( (qlonglong) lua_tointeger(L,-1) );
-            break;
-        case lh_type_integer_color:
-            if( lua_isnumber(L,-1) )
-            {
-                item->setValue( (qlonglong) lua_tointeger(L,-1) );
-            }
-            else if( lua_isstring(L,-1) )
-            {
-                QColor col( lua_tostring(L,-1) );
-                item->setValue( (qlonglong) col.rgba() );
-            }
-            else
-                item->setValue( (qlonglong) QColor(Qt::black).rgba() );
-            break;
-        case lh_type_integer_boolean:
-            item->setValue( (bool) lua_toboolean(L,-1) );
-            break;
-        case lh_type_double:
-            item->setValue( lua_tonumber(L,-1) );
-            break;
-        case lh_type_string:
-        case lh_type_string_combobox:
-        case lh_type_string_htmllink:
-        case lh_type_string_button:
-        case lh_type_string_script:
-        case lh_type_string_filename:
-        case lh_type_string_font:
-        case lh_type_string_inputstate:
-        case lh_type_string_inputvalue:
-        case lh_type_array_png:
-        case lh_type_string_list:
-        case lh_type_string_listbox:
-            {
-                size_t len = 0;
-                const char *str = lua_tolstring( L, -1, &len );
-                item->setValue( str, len );
-            }
-            break;
-        case lh_type_pointer_qimage:
-            Q_ASSERT(0);
-            break;
-        case lh_type_pointer:
-
-        case lh_type_array:
-        case lh_type_array_string:
-        case lh_type_array_qint64:
-        case lh_type_array_double:
-            Q_ASSERT(0);
-            break;
-        }
-        break;
-    case 4:
-        Q_ASSERT( !strcmp("help",lh_self_item_data_key[where]));
-        item->setHelp( QString::fromUtf8(lua_tostring(L,-1)) );
-        break;
-    case 5:
         Q_ASSERT( !strcmp("flags",lh_self_item_data_key[where]));
         if( lua_isstring(L,-1) )
         {
             const char *str = lua_tostring(L,-1);
             int len = strlen(str);
-            int flags = 0;
+            int flags = lh_meta_default;
             for( int i=0; i<len; i++ )
             {
                 switch( str[i] )
                 {
-                case 'r': flags |= LH_FLAG_READONLY; break;
-                case 'h': flags |= LH_FLAG_HIDDEN; break;
-                case 'f': flags |= LH_FLAG_FOCUS; break;
-                case 'a': flags |= LH_FLAG_AUTORENDER; break;
-                case '<':
-                    flags |= LH_FLAG_FIRST;
-                    item->setOrder(-1);
-                    break;
-                case '>':
-                    flags |= LH_FLAG_LAST;
-                    item->setOrder(1);
-                    break;
+                case 'r': flags &= ~lh_meta_enabled; break;
+                case 'h': flags &= ~lh_meta_visible; break;
+                case 'f': flags |= lh_meta_focus; break;
+                case 'a': flags |= lh_meta_autorender; break;
+                case '<': item->setOrder(-1); break;
+                case '>': item->setOrder(+1); break;
                 }
             }
             item->setFlags( flags );
         }
         break;
+    case 4:
+        Q_ASSERT( !strcmp("order",lh_self_item_data_key[where]));
+        item->setOrder( (int) lua_tonumber(L,-1) );
+        break;
+    case 5:
+        Q_ASSERT( !strcmp("help",lh_self_item_data_key[where]));
+        item->setHelp( QString::fromUtf8(lua_tostring(L,-1)) );
+        break;
     case 6:
-        Q_ASSERT( !strcmp("list",lh_self_item_data_key[where]) );
-        if( item->item()->type != lh_type_string_list &&
-            item->item()->type != lh_type_string_listbox )
-        {
-            lua_pushstring(L,"must set 'type' to \"list\" or \"listbox\" before setting 'list'");
-            lua_error(L);
-            break;
-        }
-
-        if( lua_isstring(L,-1) )
-        {
-            size_t len = 0;
-            const char *str = lua_tolstring(L,-1,&len);
-            item->setList( QByteArray::fromRawData(str,(int)len) );
-            item->refreshMeta();
-            break;
-        }
-
-        if( lua_istable(L,-1) )
-        {
-            item->list().clear();
-            lua_pushnil(L);
-            while(lua_next(L, -2))
-            {
-                size_t len = 0;
-                const char *str = lua_tolstring(L,-1,&len);
-                QByteArray ary(str,(int)len);
-                ary.replace('\n',' ');
-                if( !item->list().isEmpty() ) item->list().append('\n');
-                item->list().append(ary);
-                lua_pop(L, 1);
-            }
-            item->refreshList();
-        }
+        Q_ASSERT( !strcmp("data",lh_self_item_data_key[where]));
+        item->setValue( LH_LuaVariant(L) );
         break;
     case 7:
         Q_ASSERT( !strcmp("min",lh_self_item_data_key[where]));
-        if( item->item()->type == lh_type_integer ||
-            item->item()->type == lh_type_integer_slider ||
-            item->item()->type == lh_type_integer_progress )
-        {
-            item->item()->param.i.min = lua_tointeger(L,-1);
-        }
-        else if( item->item()->type == lh_type_double )
-        {
-            item->item()->param.d.min = lua_tonumber(L,-1);
-        }
-        else
-        {
-            lua_pushstring(L,"must set 'type' to \"int\", \"slider\", \"progress\" or \"fraction\" before setting 'min'");
-            lua_error(L);
-        }
+        item->setMinimum( LH_LuaVariant(L) );
         break;
     case 8:
         Q_ASSERT( !strcmp("max",lh_self_item_data_key[where]));
-        if( item->item()->type == lh_type_integer ||
-            item->item()->type == lh_type_integer_slider ||
-            item->item()->type == lh_type_integer_progress )
-        {
-            item->item()->param.i.max = lua_tointeger(L,-1);
-        }
-        else if( item->item()->type == lh_type_double )
-        {
-            item->item()->param.d.max = lua_tonumber(L,-1);
-        }
-        else
-        {
-            lua_pushstring(L,"must set 'type' to \"int\", \"slider\", \"progress\" or \"fraction\" before setting 'max'");
-            lua_error(L);
-        }
+        item->setMaximum( LH_LuaVariant(L) );
         break;
     case 9:
-        Q_ASSERT( !strcmp("order",lh_self_item_data_key[where]));
-        item->setOrder( (int) lua_tonumber(L,-1) );
+        Q_ASSERT( !strcmp("other",lh_self_item_data_key[where]) );
+        item->setOther( LH_LuaVariant(L) );
         break;
     }
 
@@ -355,170 +175,47 @@ static void lh_self_item_data_getvalue(lua_State *L, LH_LuaSetupItem* item, int 
         break;
     case 2:
         Q_ASSERT( !strcmp("type",lh_self_item_data_key[where]));
-        switch( item->item()->type )
-        {
-        case lh_type_none:
-        case lh_type_last:
-            lua_pushstring(L,"invalid");
-            break;
-        case lh_type_integer:
-            lua_pushstring(L,"integer");
-            break;
-        case lh_type_double:
-            lua_pushstring(L,"double");
-            break;
-        case lh_type_integer_color:
-            lua_pushstring(L,"color");
-            break;
-        case lh_type_integer_slider:
-            lua_pushstring(L,"slider");
-            break;
-        case lh_type_integer_progress:
-            lua_pushstring(L,"progress");
-            break;
-        case lh_type_string_list:
-            lua_pushstring(L,"list");
-            break;
-        case lh_type_string_listbox:
-            lua_pushstring(L,"listbox");
-            break;
-        case lh_type_integer_boolean:
-            lua_pushstring(L,"boolean");
-            break;
-        case lh_type_string_combobox:
-            lua_pushstring(L,"combobox");
-            break;
-        case lh_type_string:
-        case lh_type_string_htmllink:
-        case lh_type_string_script:
-            lua_pushstring(L,"string");
-            break;
-        case lh_type_string_button:
-            lua_pushstring(L,"button");
-            break;
-        case lh_type_string_filename:
-            lua_pushstring(L,"filename");
-            break;
-        case lh_type_string_font:
-            lua_pushstring(L,"font");
-            break;
-        case lh_type_string_inputstate:
-            lua_pushstring(L,"inputstate");
-            break;
-        case lh_type_string_inputvalue:
-            lua_pushstring(L,"inputvalue");
-            break;
-        case lh_type_array_png:
-            lua_pushstring(L,"image");
-            break;
-        case lh_type_pointer:
-        case lh_type_pointer_qimage:
-            lua_pushstring(L,"pointer");
-            break;
-        case lh_type_array:
-        case lh_type_array_string:
-        case lh_type_array_qint64:
-        case lh_type_array_double:
-            lua_pushstring(L,"array");
-            break;
-        }
+        lua_pushstring(L,item->typeName());
         break;
-    case 3:
-        Q_ASSERT( !strcmp("data",lh_self_item_data_key[where]));
-        switch( item->item()->type )
-        {
-        case lh_type_none:
-        case lh_type_last:
-            lua_pushnil(L);
-            break;
-        case lh_type_integer:
-        case lh_type_integer_color:
-        case lh_type_integer_slider:
-        case lh_type_integer_progress:
-            lua_pushinteger(L,item->item()->data.i);
-            break;
-        case lh_type_integer_boolean:
-            lua_pushboolean(L,item->item()->data.i);
-            break;
-        case lh_type_double:
-            lua_pushnumber(L,item->item()->data.d);
-            break;
-        case lh_type_string:
-        case lh_type_string_combobox:
-        case lh_type_string_htmllink:
-        case lh_type_string_button:
-        case lh_type_string_script:
-        case lh_type_string_font:
-        case lh_type_string_filename:
-        case lh_type_string_inputstate:
-        case lh_type_string_inputvalue:
-        case lh_type_array_png:
-        case lh_type_string_list:
-        case lh_type_string_listbox:
-            lua_pushlstring(L, (const char*) item->item()->data.b.p, item->item()->data.b.n );
-            break;
-        case lh_type_pointer:
-        case lh_type_pointer_qimage:
-        case lh_type_array:
-        case lh_type_array_string:
-        case lh_type_array_qint64:
-        case lh_type_array_double:
-            Q_ASSERT(0);
-            break;
-        }
-        break;
-    case 4: // help
-        Q_ASSERT( !strcmp("help",lh_self_item_data_key[where]));
-        lua_pushstring(L,item->item()->help );
-        break;
-    case 5: // flags
+    case 3: // flags
         Q_ASSERT( !strcmp("flags",lh_self_item_data_key[where]));
-        if( item->item()->flags )
         {
             QByteArray ary;
-            if( item->item()->flags & LH_FLAG_READONLY ) ary.append('r');
-            if( item->item()->flags & LH_FLAG_HIDDEN ) ary.append('h');
-            if( item->item()->flags & LH_FLAG_FOCUS ) ary.append('f');
-            if( item->item()->flags & LH_FLAG_AUTORENDER ) ary.append('a');
-            if( item->item()->flags & LH_FLAG_FIRST || item->order() == -1 ) ary.append('<');
-            if( item->item()->flags & LH_FLAG_LAST || item->order() == 1 ) ary.append('>');
-            lua_pushstring(L,ary.constData());
+            if( item->isReadonly() ) ary.append('r');
+            if( item->isHidden() ) ary.append('h');
+            if( item->isFocusable() ) ary.append('f');
+            if( item->isAutorendering() ) ary.append('a');
+            if( item->order() == -1 ) ary.append('<');
+            if( item->order() == 1 ) ary.append('>');
+            if( ary.size() ) lua_pushlstring(L,ary.constData(),ary.size());
+            else lua_pushnil(L);
         }
-        else
-            lua_pushnil(L);
         break;
-    case 6: // list
-        Q_ASSERT( !strcmp("list",lh_self_item_data_key[where]));
-        if( (item->item()->type == lh_type_string_list || item->item()->type == lh_type_string_listbox)
-            && item->item()->param.list )
-            lua_pushstring(L,item->item()->param.list);
-        else
-            lua_pushnil(L);
+    case 4: // order
+        Q_ASSERT( !strcmp("order",lh_self_item_data_key[where]));
+        if( item->order() ) lua_pushnumber(L,item->order());
+        else lua_pushnil(L);
+        break;
+    case 5: // help
+        Q_ASSERT( !strcmp("help",lh_self_item_data_key[where]));
+        if( item->hasHelp() ) lua_pushstring( L, item->help() );
+        else lua_pushnil(L);
+        break;
+    case 6:
+        Q_ASSERT( !strcmp("data",lh_self_item_data_key[where]));
+        LH_LuaVariant(item->value()).push(L);
         break;
     case 7: // min
         Q_ASSERT( !strcmp("min",lh_self_item_data_key[where]));
-        if( item->item()->type == lh_type_integer ||
-            item->item()->type == lh_type_integer_slider ||
-            item->item()->type == lh_type_integer_progress )
-            lua_pushnumber(L,item->item()->param.i.min);
-        else
-            lua_pushnil(L);
+        LH_LuaVariant(item->minimum()).push(L);
         break;
     case 8: // max
         Q_ASSERT( !strcmp("max",lh_self_item_data_key[where]));
-        if( item->item()->type == lh_type_integer ||
-            item->item()->type == lh_type_integer_slider ||
-            item->item()->type == lh_type_integer_progress )
-            lua_pushnumber(L,item->item()->param.i.max);
-        else
-            lua_pushnil(L);
+        LH_LuaVariant(item->maximum()).push(L);
         break;
-    case 9: // order
-        Q_ASSERT( !strcmp("order",lh_self_item_data_key[where]));
-        if( item->order() )
-            lua_pushnumber(L,item->order());
-        else
-            lua_pushnil(L);
+    case 9: // other
+        Q_ASSERT( !strcmp("other",lh_self_item_data_key[where]));
+        LH_LuaVariant(item->other()).push(L);
         break;
     default:
         lua_pushnil(L);
@@ -977,6 +674,14 @@ const char *LH_LuaInstance::userInit()
     return 0;
 }
 
+LH_LuaInstance::LH_LuaInstance( LH_LuaClass *alc ) :
+    LH_QtInstance( alc ),
+    L(alc->luaState()),
+    blob_(0),
+    ref_(LUA_NOREF)
+{
+}
+
 LH_LuaInstance::~LH_LuaInstance()
 {
 #ifndef QT_NO_DEBUG
@@ -1269,26 +974,6 @@ lh_blob *LH_LuaInstance::render_blob( int w, int h )
     return NULL;
 }
 
-
-void LH_LuaInstance::setup_change( LH_LuaSetupItem *item )
-{
-#ifndef QT_NO_DEBUG
-    int old_top = lua_gettop(L);
-#endif
-    if( lua_pushfunction("obj_setup_change") )
-    {
-        lua_pushself();
-        lua_pushstring(L,item->ident());
-        if( lua_pcall(L,2,0,0) )
-        {
-            qDebug() << "LH_Lua:" << lua_tostring(L,-1);
-            lua_pop(L,1);
-        }
-    }
-    Q_ASSERT( lua_gettop(L) == old_top );
-    return;
-}
-
 bool LH_LuaInstance::lua_pushfunction(const char *funcname)
 {
 #ifndef QT_NO_DEBUG
@@ -1306,4 +991,80 @@ bool LH_LuaInstance::lua_pushfunction(const char *funcname)
     lua_pop(L,1);
     Q_ASSERT( lua_gettop(L) == old_top );
     return false;
+}
+
+void LH_LuaInstance::valueChanged( const LH_QtSetupItem& item )
+{
+#ifndef QT_NO_DEBUG
+    int old_top = lua_gettop(L);
+#endif
+    if( lua_pushfunction("obj_value_changed") )
+    {
+        lua_pushself();
+        lua_pushstring(L,item.ident());
+        if( lua_pcall(L,2,0,0) )
+        {
+            qDebug() << "LH_Lua:" << lua_tostring(L,-1);
+            lua_pop(L,1);
+        }
+    }
+    Q_ASSERT( lua_gettop(L) == old_top );
+    return;
+}
+
+void LH_LuaInstance::minimumChanged( const LH_QtSetupItem& item )
+{
+#ifndef QT_NO_DEBUG
+    int old_top = lua_gettop(L);
+#endif
+    if( lua_pushfunction("obj_minimum_changed") )
+    {
+        lua_pushself();
+        lua_pushstring(L,item.ident());
+        if( lua_pcall(L,2,0,0) )
+        {
+            qDebug() << "LH_Lua:" << lua_tostring(L,-1);
+            lua_pop(L,1);
+        }
+    }
+    Q_ASSERT( lua_gettop(L) == old_top );
+    return;
+}
+
+void LH_LuaInstance::maximumChanged( const LH_QtSetupItem& item )
+{
+#ifndef QT_NO_DEBUG
+    int old_top = lua_gettop(L);
+#endif
+    if( lua_pushfunction("obj_maximum_changed") )
+    {
+        lua_pushself();
+        lua_pushstring(L,item.ident());
+        if( lua_pcall(L,2,0,0) )
+        {
+            qDebug() << "LH_Lua:" << lua_tostring(L,-1);
+            lua_pop(L,1);
+        }
+    }
+    Q_ASSERT( lua_gettop(L) == old_top );
+    return;
+}
+
+void LH_LuaInstance::otherChanged( const LH_QtSetupItem& item )
+{
+#ifndef QT_NO_DEBUG
+    int old_top = lua_gettop(L);
+#endif
+    if( lua_pushfunction("obj_other_changed") )
+    {
+        lua_pushself();
+        lua_pushstring(L,item.ident());
+        if( lua_pcall(L,2,0,0) )
+        {
+            qDebug() << "LH_Lua:" << lua_tostring(L,-1);
+            lua_pop(L,1);
+        }
+    }
+    Q_ASSERT( lua_gettop(L) == old_top );
+    return;
 }

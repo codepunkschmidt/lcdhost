@@ -60,7 +60,7 @@ const char *LH_CursorRectangle::userInit()
     setup_json_data_ = new LH_Qt_QString(this, "Cursor Data", "", LH_FLAG_NOSAVE | LH_FLAG_NOSOURCE | LH_FLAG_LAST /*| LH_FLAG_READONLY | LH_FLAG_HIDEVALUE*/);
     setup_json_data_->setLink("Cursors/Primary Cursor");
     setup_json_data_->setLinkFilter("Cursors");
-    setup_json_data_->refreshData();
+    setup_json_data_->refreshValue();
 
     setup_cursor_state_ = new LH_Qt_QStringList( this, ("Cursor State"), QStringList()<<"OFF"<<"OFF_SEL"<<"ON"<<"ON_SEL", LH_FLAG_NOSAVE|LH_FLAG_NOSINK|LH_FLAG_NOSOURCE|LH_FLAG_READONLY | LH_FLAG_FIRST );
 
@@ -132,5 +132,5 @@ bool LH_CursorRectangle::updateState()
 
 void LH_CursorRectangle::changeLayoutTrigger()
 {
-    setup_layout_->setFlag(LH_FLAG_HIDDEN, !setup_layout_trigger_->value());
+    setup_layout_->setHidden( !setup_layout_trigger_->value());
 }

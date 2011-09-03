@@ -1,5 +1,5 @@
 /**
-  \file     LH_Qt_float.h
+  \file     LH_Qt_double.h
   \author   Johan Lindh <johan@linkdata.se>
   \legalese Copyright (c) 2009-2011, Johan Lindh
 
@@ -32,32 +32,32 @@
   POSSIBILITY OF SUCH DAMAGE.
   */
 
-#ifndef LH_QT_FLOAT_H
-#define LH_QT_FLOAT_H
+#ifndef LH_QT_DOUBLE_H
+#define LH_QT_DOUBLE_H
 
+#include <float.h>
 #include "LH_QtSetupItem.h"
 
 class LH_Qt_double : public LH_QtSetupItem
 {
 public:
-    LH_Qt_double( LH_QtObject *parent, const char *ident, double value, double min, double max, int flags = 0 )
+    LH_Qt_double( LH_QtObject *parent, const char *ident, double value, double min, double max, int flags = lh_meta_default )
         : LH_QtSetupItem( parent, ident, lh_type_double, flags )
     {
-        Q_ASSERT( ((flags&LH_FLAG_MINMAX)==LH_FLAG_MINMAX) ? min <= max : true );
-        item_.data.d = value;
-        item_.param.d.min = min;
-        item_.param.d.max = max;
-    }
+        setValue(value);
+        setMinimum( min );
+        setMaximum( max );
+   }
 
-    LH_Qt_double( LH_QtObject *parent, const char *ident, double value, int flags = 0 )
+    LH_Qt_double( LH_QtObject *parent, const char *ident, double value = 0.0, int flags = lh_meta_default )
         : LH_QtSetupItem( parent, ident, lh_type_double, flags )
     {
-        item_.data.d = value;
+        setValue(value);
     }
 
-    double value() const { return item_.data.d; }
-    double min() const { return item_.param.d.min; }
-    double max() const { return item_.param.d.max; }
+    double value() const { return LH_QtSetupItem::value().toDouble(); }
+    double min() const { return LH_QtSetupItem::minimum().toDouble(); }
+    double max() const { return LH_QtSetupItem::maximum().toDouble(); }
 };
 
-#endif // LH_QT_FLOAT_H
+#endif // LH_QT_DOUBLE_H

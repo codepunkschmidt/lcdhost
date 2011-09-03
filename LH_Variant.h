@@ -1,5 +1,5 @@
 /**
-  \file     LH_Qt_QProgressBar.h
+  \file     LH_Variant.h
   \author   Johan Lindh <johan@linkdata.se>
   \legalese Copyright (c) 2009-2011, Johan Lindh
 
@@ -32,18 +32,49 @@
   POSSIBILITY OF SUCH DAMAGE.
   */
 
-#ifndef LH_QT_QPROGRESSBAR_H
-#define LH_QT_QPROGRESSBAR_H
+#ifndef LH_VARIANT_H
+#define LH_VARIANT_H
 
-#include "LH_Qt_int.h"
+#include <QVariant>
+#include <QMetaType>
+#include "lh_plugin.h"
 
-class LH_Qt_QProgressBar : public LH_Qt_int
+Q_DECLARE_METATYPE(lh_input)
+
+/**
+  Extends the normal QVariant to be aware of LCDHost data types
+  and how they're converted to and from QString and lh_variant.
+  */
+
+class LH_Variant : public QVariant
 {
 public:
-    LH_Qt_QProgressBar( LH_QtObject *parent, const char *ident, int value, int min, int max, int flags = lh_meta_default )
-        : LH_Qt_int( parent, ident, value, min, max, flags, lh_type_integer_progress )
+    LH_Variant() :
+        QVariant()
+    { }
+
+    LH_Variant( const LH_Variant& other ) :
+        QVariant(other)
+    { }
+
+    LH_Variant( const QVariant& val ) :
+        QVariant(val)
+    { }
+
+    LH_Variant( const lh_variant& lhv ) :
+        QVariant()
     {
+        read(lhv);
     }
+
+    void fromString( const QString& s );
+    QString toString() const;
+
+    bool read( const lh_variant& lhv );
+    void write( lh_variant& lhv ) const;
+
+    static const char *lh_formatname( lh_format fmt );
+    static QVariant::Type variantType( lh_format fmt );
 };
 
-#endif // LH_QT_QPROGRESSBAR_H
+#endif // LH_VARIANT_H

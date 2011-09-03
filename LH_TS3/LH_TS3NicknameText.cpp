@@ -16,10 +16,10 @@ public:
     {
         if( const char *err = LH_Text::userInit() ) return err;
         setup_text_->setFlag(LH_FLAG_READONLY, true);
-        setup_text_->setFlag(LH_FLAG_HIDDEN, true);
+        setup_text_->setVisible(false);
         setText("");
         setup_text_->setLink("Monitoring/3rdParty/TeamSpeak3/Nickname");
-        setup_text_->refreshData();
+        setup_text_->refreshValue();
         return 0;
     }
 

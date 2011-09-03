@@ -27,7 +27,7 @@ public:
 
         setup_talking_ = new LH_Qt_QString(this, "Talking", "", LH_FLAG_HIDDEN | LH_FLAG_READONLY | LH_FLAG_NOSAVE | LH_FLAG_NOSOURCE | LH_FLAG_AUTORENDER);
         setup_talking_->setLink("Monitoring/3rdParty/TeamSpeak3/Talking");
-        setup_talking_->refreshData();
+        setup_talking_->refreshValue();
 
         add_cf_target(setup_image_file_);
         add_cf_source(setup_talking_);

@@ -40,23 +40,16 @@
 class LH_Qt_QString : public LH_QtSetupItem
 {
 public:
-    LH_Qt_QString( LH_QtObject *parent, const char *ident, const QString& value, int flags = 0, lh_setup_type subtype = lh_type_string )
+    LH_Qt_QString( LH_QtObject *parent, const char *ident, const QString& value, int flags = 0, lh_meta_type subtype = lh_type_string )
         : LH_QtSetupItem( parent, ident, subtype, flags )
     {
-        setString( value );
+        setValue( value );
         return;
     }
 
-    virtual void setup_change()
+    QString value() const
     {
-        getString();
-        emit change( str_ );
-        LH_QtSetupItem::setup_change();
-    }
-
-    const QString& value() const
-    {
-        return str_;
+        return LH_QtSetupItem::value().toString();
     }
 };
 

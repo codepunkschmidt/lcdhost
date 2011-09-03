@@ -72,10 +72,10 @@ QString actionType::generateXML(bool enabled, QString desc, QStringList paramVal
 
 void actionType::displayParameter(int id, LH_Qt_QString *desc_, LH_Qt_QString *str_, LH_Qt_int *int_, LH_Qt_QFileInfo *file_, cursorData cd, QDomElement e)
 {
-    desc_->setFlag(LH_FLAG_HIDDEN, (parameters.count()<id+1));
-    str_->setFlag(LH_FLAG_HIDDEN,  (parameters.count()<id+1) || (parameters[id].type != aptString));
-    int_->setFlag(LH_FLAG_HIDDEN,  (parameters.count()<id+1) || (parameters[id].type != aptInteger));
-    file_->setFlag(LH_FLAG_HIDDEN, (parameters.count()<id+1) || (parameters[id].type != aptFile));
+    desc_->setHidden( (parameters.count()<id+1));
+    str_->setHidden(  (parameters.count()<id+1) || (parameters[id].type != aptString));
+    int_->setHidden(  (parameters.count()<id+1) || (parameters[id].type != aptInteger));
+    file_->setHidden( (parameters.count()<id+1) || (parameters[id].type != aptFile));
 
     if (parameters.count()>=id+1)
     {

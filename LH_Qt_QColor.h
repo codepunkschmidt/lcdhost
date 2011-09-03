@@ -35,25 +35,20 @@
 #ifndef LH_QT_QCOLOR_H
 #define LH_QT_QCOLOR_H
 
-#include "LH_Qt_int.h"
+#include "LH_QtSetupItem.h"
 
-class LH_Qt_QColor : public LH_Qt_int
+class LH_Qt_QColor : public LH_QtSetupItem
 {
 public:
-    LH_Qt_QColor( LH_QtObject *parent, const char *ident, const QColor& value, int flags = 0 )
-        : LH_Qt_int( parent, ident, value.rgba(), flags, lh_type_integer_color )
+    LH_Qt_QColor( LH_QtObject *parent, const char *ident, const QColor& value, int flags = lh_meta_default )
+        : LH_QtSetupItem( parent, ident, lh_type_color, flags )
     {
-    }
-
-    virtual void setup_change()
-    {
-        emit change( QColor::fromRgba(item_.data.i) );
-        LH_Qt_int::setup_change();
+        setValue( value );
     }
 
     QColor value() const
     {
-        return QColor::fromRgba(item_.data.i);
+        return qVariantValue<QColor>(LH_QtSetupItem::value());
     }
 };
 

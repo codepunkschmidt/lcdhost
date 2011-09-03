@@ -14,7 +14,8 @@ SOURCES += $$PLUGIN_SOURCES \
     luaXT.cpp \
     LH_LuaSetupItem.cpp \
     LH_LuaThread.cpp \
-    LH_Lua.cpp
+    LH_Lua.cpp \
+    LH_LuaVariant.cpp
 	
 HEADERS += $$PLUGIN_HEADERS \
     LH_QtPlugin_Lua.h \
@@ -22,7 +23,8 @@ HEADERS += $$PLUGIN_HEADERS \
     LH_LuaInstance.h \
     LH_LuaSetupItem.h \
     LH_LuaThread.h \
-    LH_Lua.h
+    LH_Lua.h \
+    LH_LuaVariant.h
 
 
 macx {
@@ -182,3 +184,5 @@ unix:!macx {
 
 # Lua cairo
 SOURCES += lua-cairo/lcairo.c
+
+

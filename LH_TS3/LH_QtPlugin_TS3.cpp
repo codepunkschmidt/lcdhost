@@ -71,27 +71,27 @@ const char *LH_QtPlugin_TS3::userInit()
 
     setup_nickname_ = new LH_Qt_QString(this, "Nickname", "", LH_FLAG_HIDDEN | LH_FLAG_READONLY | LH_FLAG_NOSAVE | LH_FLAG_NOSINK);
     setup_nickname_->setLink("Monitoring/3rdParty/TeamSpeak3/Nickname", true);
-    setup_nickname_->refreshData();
+    setup_nickname_->refreshValue();
 
     setup_talking_ = new LH_Qt_QString(this, "Talking", "", LH_FLAG_HIDDEN | LH_FLAG_READONLY | LH_FLAG_NOSAVE | LH_FLAG_NOSINK);
     setup_talking_->setLink("Monitoring/3rdParty/TeamSpeak3/Talking", true);
-    setup_talking_->refreshData();
+    setup_talking_->refreshValue();
 
     setup_channelname_ = new LH_Qt_QString(this, "Channel", "", LH_FLAG_HIDDEN | LH_FLAG_READONLY | LH_FLAG_NOSAVE | LH_FLAG_NOSINK);
     setup_channelname_->setLink("Monitoring/3rdParty/TeamSpeak3/Channel Name",true);
-    setup_channelname_->refreshData();
+    setup_channelname_->refreshValue();
 
     setup_connection_status_ = new LH_Qt_QStringList(this, "Connection Status", QStringList() << "Not Running" << "Not Connected" << "Connected", LH_FLAG_HIDDEN | LH_FLAG_READONLY | LH_FLAG_NOSAVE | LH_FLAG_NOSINK );
     setup_connection_status_->setLink("Monitoring/3rdParty/TeamSpeak3/Connection Status",true);
-    setup_connection_status_->refreshData();
+    setup_connection_status_->refreshValue();
 
     setup_microphone_status_ = new LH_Qt_QStringList(this, "Microphone Status", QStringList() << "N/A" << "None" << "Muted" << "Active", LH_FLAG_HIDDEN | LH_FLAG_READONLY | LH_FLAG_NOSAVE | LH_FLAG_NOSINK );
     setup_microphone_status_->setLink("Monitoring/3rdParty/TeamSpeak3/Microphone Status",true);
-    setup_microphone_status_->refreshData();
+    setup_microphone_status_->refreshValue();
 
     setup_speakers_status_   = new LH_Qt_QStringList(this, "Speaker Status"   , QStringList() << "N/A" << "None" << "Muted" << "Active", LH_FLAG_HIDDEN | LH_FLAG_READONLY | LH_FLAG_NOSAVE | LH_FLAG_NOSINK );
     setup_speakers_status_->setLink("Monitoring/3rdParty/TeamSpeak3/Speaker Status",true);
-    setup_speakers_status_->refreshData();
+    setup_speakers_status_->refreshValue();
 
     connect(setup_nickname_, SIGNAL(changed()), this, SLOT(updateMyDetails()));
     connect(socket_, SIGNAL(connected()), this, SLOT(TS3Connected()));

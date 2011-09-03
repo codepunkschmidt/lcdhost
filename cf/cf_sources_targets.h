@@ -33,7 +33,7 @@ public:
     }
 
     LH_QtSetupItem* obj() { return obj_; }
-    lh_setup_type type() { return (obj_==NULL? lh_type_none : obj_->type()); }
+    lh_meta_type type() { return (obj_==NULL? lh_type_none : obj_->type()); }
     QString name() { return name_; }
 
     QString value(QString mode, int i = 0)
@@ -118,23 +118,7 @@ public:
         if(obj_!=NULL)
         {
             index = 0;
-            switch(obj_->type())
-            {
-            case lh_type_string:
-            case lh_type_string_list:
-            case lh_type_string_listbox:
-                value = ((LH_Qt_QString*)obj_)->value();
-                break;
-            case lh_type_integer:
-                value = QString::number(((LH_Qt_int*)obj_)->value());
-                break;
-            case lh_type_integer_boolean:
-                value = (((LH_Qt_bool*)obj_)->value()? "true" : "false");
-                break;
-            default:
-                qWarning() << "Unhandled cf source type: " << obj_->type();
-                return "";
-            }
+            value = obj_->value().toString();
         }
 
         bool result = false;

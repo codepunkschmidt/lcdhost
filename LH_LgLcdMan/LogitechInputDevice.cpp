@@ -20,15 +20,15 @@ void LogitechInputDevice::setButtonState( unsigned long button )
             if( (button&mask) != (buttonState_&mask) )
             {
                 input_.item = mask;
-                input_.flags = flags() | lh_df_button;
+                input_.flags = flags() | lh_input_button;
                 if( button & mask )
                 {
-                    input_.flags |= lh_df_down;
+                    input_.flags |= lh_input_pressed;
                     input_.value = 0xFFFF;
                 }
                 else
                 {
-                    input_.flags |= lh_df_up;
+                    input_.flags |= lh_input_released;
                     input_.value = 0x0;
                 }
                 callback( lh_cb_input, (void*) &input_ );

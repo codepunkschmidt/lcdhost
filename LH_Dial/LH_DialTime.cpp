@@ -63,7 +63,7 @@ const char *LH_DialTime::userInit()
     addNeedle("Minute Hand");
     addNeedle("Second Hand");
 
-    setup_type_->setFlag(LH_FLAG_HIDDEN, true);
+    setup_type_->setVisible(false);
     setup_type_->setValue(0);
 
     ticks.fullCircle.clear();
@@ -116,9 +116,9 @@ int LH_DialTime::notify(int n, void *p)
 
 void LH_DialTime::changeManualAdjust()
 {
-    setup_adjust_seconds_->setFlag(LH_FLAG_HIDDEN, !setup_manual_adjust_->value());
-    setup_adjust_minutes_->setFlag(LH_FLAG_HIDDEN, !setup_manual_adjust_->value());
-    setup_adjust_hours_->setFlag(LH_FLAG_HIDDEN, !setup_manual_adjust_->value());
+    setup_adjust_seconds_->setHidden( !setup_manual_adjust_->value());
+    setup_adjust_minutes_->setHidden( !setup_manual_adjust_->value());
+    setup_adjust_hours_->setHidden( !setup_manual_adjust_->value());
 }
 void LH_DialTime::changeManualSeconds()
 {

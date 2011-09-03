@@ -1,12 +1,12 @@
 #include "LH_Qt_array_string_ui.h"
 
-void LH_Qt_array_string_ui::init(lh_setup_type ui_type, int uiFlags, const QStringList& listItems )
+void LH_Qt_array_string_ui::init(lh_meta_type ui_type, int uiFlags, const QStringList& listItems )
 {
     if(ui_type == lh_type_string)
         ui_ = new LH_Qt_QString(parent(), QString("%1__ui__").arg(ident()).toUtf8(),"", uiFlags );
     if(ui_type == lh_type_string_filename)
         ui_ = new LH_Qt_QFileInfo(parent(), QString("%1__ui__").arg(ident()).toUtf8(),QFileInfo(), uiFlags );
-    if(ui_type == lh_type_string_list)
+    if(ui_type == lh_type_string_dropdownbox)
         ui_ = new LH_Qt_QStringList(parent(), QString("%1__ui__").arg(ident()).toUtf8(), listItems, uiFlags );
 
     Q_ASSERT( ui_ );
@@ -21,21 +21,21 @@ void LH_Qt_array_string_ui::init(lh_setup_type ui_type, int uiFlags, const QStri
 
 int LH_Qt_array_string_ui::indexAt(int i)
 {
-    if(ui_->type()!=lh_type_string_list)
+    if(ui_->type()!=lh_type_string_dropdownbox)
         return -1;
     return (reinterpret_cast<LH_Qt_QStringList*>(ui_)->list().indexOf( at(i) ));
 }
 
 int LH_Qt_array_string_ui::currentIndex()
 {
-    if(ui_->type()!=lh_type_string_list)
+    if(ui_->type()!=lh_type_string_dropdownbox)
         return -1;
     return (reinterpret_cast<LH_Qt_QStringList*>(ui_)->index());
 }
 
 void LH_Qt_array_string_ui::setCurrentIndex(int i)
 {
-    if(ui_->type()==lh_type_string_list)
+    if(ui_->type()==lh_type_string_dropdownbox)
         (reinterpret_cast<LH_Qt_QStringList*>(ui_)->setIndex( i ));
 }
 

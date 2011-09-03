@@ -9,11 +9,8 @@ class LH_LuaSetupItem : public LH_QtSetupItem
     Q_OBJECT
 
 public:
-    LH_LuaSetupItem( LH_LuaInstance *parent, const char *id )
-        : LH_QtSetupItem( parent, id, lh_type_none, 0 ) {}
-
+    LH_LuaSetupItem( LH_LuaInstance *parent, const char *id );
     LH_LuaInstance *parent() const { return static_cast<LH_LuaInstance *>(LH_QtSetupItem::parent()); }
-    virtual void setup_change();
 };
 
 #endif // LH_LUASETUPITEM_H

@@ -63,7 +63,7 @@ LogitechDevice::LogitechDevice( bool bw, LogitechManager *parent ) :
     indev_ = new LogitechInputDevice(
                 bw_ ? "LH_LgLcdMan:BW:Keys":
                       "LH_LgLcdMan:QVGA:Keys",
-                lh_df_keyboard );
+                lh_input_keyboard );
     indev_->setTitle( title() );
 }
 

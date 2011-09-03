@@ -87,9 +87,6 @@ public slots:
     void setTitle( QString );
     void requestRender() const { callback( lh_cb_render ); }
     void requestPolling() const { callback( lh_cb_polling ); }
-    void show() const { int b = 0; callback( lh_cb_sethidden, (void*)&b ); }
-    void hide() const { int b = 1; callback( lh_cb_sethidden, (void*)&b ); }
-    void setVisible( bool b ) const { int notb = !b; callback( lh_cb_sethidden, (void*)&notb ); }
 
 signals:
     void titleChanged( const char * );

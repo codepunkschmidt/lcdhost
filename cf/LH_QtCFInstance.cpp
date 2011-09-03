@@ -69,10 +69,10 @@ void LH_QtCFInstance::cf_initialize()
     if (cf_initialized_)
         return;
     else
-    {        
+    {
         rule_dirty_ = false;
 
-        int LH_FLAG_UI = LH_FLAG_NOSAVE | LH_FLAG_NOSOURCE | LH_FLAG_NOSINK ;
+        const int LH_FLAG_UI = lh_meta_enabled | lh_meta_show;
 
         cf_initialized_ = true;
         cf_rule_editing_ = None;
@@ -209,16 +209,17 @@ void LH_QtCFInstance::add_cf_source(QString name, LH_QtSetupItem* si, bool atEnd
     if(sources_.contains(name))
         return;
 
+    QStringList sl = setup_cf_source_->list();
     if(atEnd || sources_.count() == 0)
-        setup_cf_source_->list().append(name);
+        sl.append(name);
     else
     {
-        setup_cf_source_->list().insert(cf_source_list_pos, name);
+        sl.insert(cf_source_list_pos, name);
         cf_source_list_pos++;
     }
 
     sources_.insert(new cf_source(this, name, si));
-    setup_cf_source_->refreshList();
+    setup_cf_source_->setList(sl);
 
     if(si==NULL)
         watching_non_setup_item_ = true;
@@ -241,32 +242,33 @@ void LH_QtCFInstance::add_cf_target(LH_QtSetupItem *si, bool hide)
 void LH_QtCFInstance::add_cf_target(LH_QtSetupItem *si, bool hide, bool atEnd)
 {
     if(hide)
-        si->setFlag(LH_FLAG_HIDDEN, true);
+        si->setHidden( true);
 
     cf_initialize();
 
+    QStringList sl( setup_cf_target_->list() );
     if(atEnd || targets_.length()==0)
     {
         targets_.append(si);
-        setup_cf_target_->list().append(si->ident());
+        sl.append(si->ident());
     }
     else
     {
         targets_.insert(cf_target_list_pos, si);
-        setup_cf_target_->list().insert(cf_target_list_pos, si->ident());
+        sl.insert(cf_target_list_pos, si->ident());
         cf_target_list_pos++;
     }
-    setup_cf_target_->refreshList();
+    setup_cf_target_->setList(sl);
 }
 
 void LH_QtCFInstance::cf_enabled_changed()
 {
-    setup_cf_rules_->setFlag(LH_FLAG_HIDDEN, !setup_cf_enabled_->value());
+    setup_cf_rules_->setHidden( !setup_cf_enabled_->value());
 
-    setup_cf_menu1_->setFlag(LH_FLAG_HIDDEN, !setup_cf_enabled_->value());
-    setup_cf_menu2_->setFlag(LH_FLAG_HIDDEN, !setup_cf_enabled_->value());
+    setup_cf_menu1_->setHidden( !setup_cf_enabled_->value());
+    setup_cf_menu2_->setHidden( !setup_cf_enabled_->value());
 
-    setup_cf_state_->setFlag(LH_FLAG_HIDDEN, !setup_cf_enabled_->value());
+    setup_cf_state_->setHidden( !setup_cf_enabled_->value());
 
     cf_set_edit_controls_visibility();
 
@@ -279,14 +281,14 @@ void LH_QtCFInstance::cf_set_edit_controls_visibility(cf_rule_edit_mode editMode
     if(editMode!=Default)
         cf_rule_editing_ = editMode;
 
-    setup_cf_source_->setFlag(LH_FLAG_HIDDEN, !setup_cf_enabled_->value() || cf_rule_editing_==None);
-    setup_cf_test_->setFlag(LH_FLAG_HIDDEN, !setup_cf_enabled_->value() || cf_rule_editing_==None);
+    setup_cf_source_->setHidden( !setup_cf_enabled_->value() || cf_rule_editing_==None);
+    setup_cf_test_->setHidden( !setup_cf_enabled_->value() || cf_rule_editing_==None);
     if(!setup_cf_enabled_->value() || cf_rule_editing_==None)
     {
-        setup_cf_testValue1_->setFlag(LH_FLAG_HIDDEN, true);
-        setup_cf_testValue1_List_->setFlag(LH_FLAG_HIDDEN, true);
+        setup_cf_testValue1_->setHidden( true);
+        setup_cf_testValue1_List_->setHidden( true);
     }
-    setup_cf_target_->setFlag(LH_FLAG_HIDDEN, !setup_cf_enabled_->value() || cf_rule_editing_==None);
+    setup_cf_target_->setHidden( !setup_cf_enabled_->value() || cf_rule_editing_==None);
 
     setRuleItemMenu(cf_rule_editing_==Existing,cf_rule_editing_==Existing,cf_rule_editing_==Existing);
     setRuleEditMenu(setup_cf_enabled_->value() && cf_rule_editing_!=None, rule_dirty_, true);
@@ -300,44 +302,39 @@ void LH_QtCFInstance::cf_source_changed()
 {
     if (setup_cf_source_->index()>=0)
     {
-        setup_cf_source_mode_->setFlag(LH_FLAG_HIDDEN, !setup_cf_enabled_->value() || cf_rule_editing_==None );
+        setup_cf_source_mode_->setHidden( !setup_cf_enabled_->value() || cf_rule_editing_==None );
 
-        lh_setup_type source_type = (setup_cf_source_mode_->value()=="Value"? sources_[setup_cf_source_->value()]->type() : lh_type_string);
-        bool v1vis = (!setup_cf_testValue1_->hasFlag(LH_FLAG_HIDDEN)) || (!setup_cf_testValue1_List_->hasFlag(LH_FLAG_HIDDEN));
-        bool isList = source_type==lh_type_string_list || source_type==lh_type_string_listbox;
-        setup_cf_testValue1_->setFlag(LH_FLAG_HIDDEN, (!isList? !v1vis : true));
-        setup_cf_testValue1_List_->setFlag(LH_FLAG_HIDDEN, (isList? !v1vis : true));
+        lh_meta_type source_type = (setup_cf_source_mode_->value()=="Value"? sources_[setup_cf_source_->value()]->type() : lh_type_string);
+        bool v1vis = (!setup_cf_testValue1_->isHidden()) || (!setup_cf_testValue1_List_->isHidden());
+        bool isList = source_type==lh_type_string_dropdownbox || source_type==lh_type_string_listbox;
+        setup_cf_testValue1_->setHidden( (!isList? !v1vis : true));
+        setup_cf_testValue1_List_->setHidden( (isList? !v1vis : true));
 
         if(isList)
         {
             LH_Qt_QStringList* source_List = (LH_Qt_QStringList*)sources_[setup_cf_source_->value()]->obj();
-            setup_cf_testValue1_List_->list().clear();
-            for(int i=0; i<source_List->list().length(); i++ )
-                setup_cf_testValue1_List_->list().append(source_List->list().at(i));
-            setup_cf_testValue1_List_->refreshList();
+            setup_cf_testValue1_List_->setList(source_List->list());
         }
 
-        setup_cf_source_mode_->list().clear();
         if( sources_.contains(setup_cf_source_->value()) )
-            setup_cf_source_mode_->list().append(sources_[setup_cf_source_->value()]->getModes());
-        setup_cf_source_mode_->refreshList();
+            setup_cf_source_mode_->setList(sources_[setup_cf_source_->value()]->getModes());
     }
 }
 
 void LH_QtCFInstance::cf_target_changed()
 {
     if( !targets_.contains(setup_cf_target_->value()) ) return;
-    lh_setup_type targetType = targets_[setup_cf_target_->value()]->type();
+    lh_meta_type targetType = targets_[setup_cf_target_->value()]->type();
 
-    if(targetType==lh_type_string_listbox) targetType=lh_type_string_list;
+    if(targetType==lh_type_string_listbox) targetType=lh_type_string_dropdownbox;
 
     setup_cf_newValue_Color_->setFlag( LH_FLAG_HIDDEN, !setup_cf_enabled_->value() || targetType!=setup_cf_newValue_Color_->type() || cf_rule_editing_==None);
     setup_cf_newValue_Font_->setFlag(  LH_FLAG_HIDDEN, !setup_cf_enabled_->value() || targetType!=setup_cf_newValue_Font_->type()  || cf_rule_editing_==None);
-    setup_cf_newValue_String_->setFlag(LH_FLAG_HIDDEN, !setup_cf_enabled_->value() || targetType!=setup_cf_newValue_String_->type()|| cf_rule_editing_==None);
+    setup_cf_newValue_String_->setHidden( !setup_cf_enabled_->value() || targetType!=setup_cf_newValue_String_->type()|| cf_rule_editing_==None);
     setup_cf_newValue_Bool_->setFlag(  LH_FLAG_HIDDEN, !setup_cf_enabled_->value() || targetType!=setup_cf_newValue_Bool_->type()  || cf_rule_editing_==None);
     setup_cf_newValue_Int_->setFlag(   LH_FLAG_HIDDEN, !setup_cf_enabled_->value() || targetType!=setup_cf_newValue_Int_->type()   || cf_rule_editing_==None);
     setup_cf_newValue_File_->setFlag(  LH_FLAG_HIDDEN, !setup_cf_enabled_->value() || targetType!=setup_cf_newValue_File_->type()  || cf_rule_editing_==None);
-    setup_cf_newValue_Slider_->setFlag(LH_FLAG_HIDDEN, !setup_cf_enabled_->value() || targetType!=setup_cf_newValue_Slider_->type()|| cf_rule_editing_==None);
+    setup_cf_newValue_Slider_->setHidden( !setup_cf_enabled_->value() || targetType!=setup_cf_newValue_Slider_->type()|| cf_rule_editing_==None);
     setup_cf_newValue_List_->setFlag(  LH_FLAG_HIDDEN, !setup_cf_enabled_->value() || targetType!=setup_cf_newValue_List_->type()  || cf_rule_editing_==None);
 
     if(targetType==setup_cf_newValue_Slider_->type())
@@ -348,22 +345,19 @@ void LH_QtCFInstance::cf_target_changed()
     }
     if(targetType==setup_cf_newValue_List_->type())
     {
-        setup_cf_newValue_List_->list().clear();
         LH_Qt_QStringList* target = (LH_Qt_QStringList*)targets_[setup_cf_target_->value()];
-        for(int i=0; i<target->list().length(); i++ )
-            setup_cf_newValue_List_->list().append(target->list().at(i));
-        setup_cf_newValue_List_->refreshList();
+        setup_cf_newValue_List_->setList(target->list());
     }
 }
 
 void LH_QtCFInstance::cf_condition_changed()
 {
     QString conditionText = setup_cf_test_->value();
-    lh_setup_type source_type = (setup_cf_source_mode_->value()=="Value"? sources_[setup_cf_source_->value()]->type() : lh_type_string);
-    bool isList = source_type==lh_type_string_list || source_type==lh_type_string_listbox;
-    setup_cf_testValue1_->setFlag(LH_FLAG_HIDDEN, (isList? true : !setup_cf_enabled_->value() || cf_rule_editing_==None));
-    setup_cf_testValue1_List_->setFlag(LH_FLAG_HIDDEN, (!isList? true : !setup_cf_enabled_->value() || cf_rule_editing_==None));
-    setup_cf_testValue2_->setFlag(LH_FLAG_HIDDEN, !setup_cf_enabled_->value() || !conditionText.contains("etween") || cf_rule_editing_==None);
+    lh_meta_type source_type = (setup_cf_source_mode_->value()=="Value"? sources_[setup_cf_source_->value()]->type() : lh_type_string);
+    bool isList = source_type==lh_type_string_dropdownbox || source_type==lh_type_string_listbox;
+    setup_cf_testValue1_->setHidden( (isList? true : !setup_cf_enabled_->value() || cf_rule_editing_==None));
+    setup_cf_testValue1_List_->setHidden( (!isList? true : !setup_cf_enabled_->value() || cf_rule_editing_==None));
+    setup_cf_testValue2_->setHidden( !setup_cf_enabled_->value() || !conditionText.contains("etween") || cf_rule_editing_==None);
 }
 
 void LH_QtCFInstance::cf_cancel_edit_rule()
@@ -380,15 +374,16 @@ void LH_QtCFInstance::cf_XML_changed()
 
     int selIndex = setup_cf_rules_->index();
     if(cf_rule_editing_!=Existing) selIndex = -1;
-    setup_cf_rules_->list().clear();
+
+    QStringList sl;
     for(uint i=0; i<root.childNodes().length(); i++)
     {
         cf_rule rule(root.childNodes().at(i));
-        setup_cf_rules_->list().append(rule.description());
+        sl.append(rule.description());
     }
-    setup_cf_rules_->refreshList();    
+    setup_cf_rules_->setList(sl);
     setup_cf_rules_->setIndex(selIndex);
-    setup_cf_rules_->setFlag(LH_FLAG_HIDDEN, !setup_cf_enabled_->value());
+    setup_cf_rules_->setHidden( !setup_cf_enabled_->value());
     cf_apply_rules();
 }
 
@@ -563,7 +558,7 @@ void LH_QtCFInstance::cf_source_notify(QString name, QString value, int index, i
 {
     sources_[name]->setValue(value, index);
     if(index==count-1)
-        cf_apply_rules(false);    
+        cf_apply_rules(false);
 }
 
 void LH_QtCFInstance::cf_save_rule()
@@ -620,7 +615,7 @@ void LH_QtCFInstance::setRuleItemMenu(bool Enable_Up, bool Enable_Down, bool Ena
 
 void LH_QtCFInstance::setRuleEditMenu(bool visible, bool Enable_Save, bool Enable_Cancel)
 {
-    setup_cf_menu3_->setFlag(LH_FLAG_HIDDEN, !visible);
+    setup_cf_menu3_->setHidden( !visible);
     setup_cf_menu3_->setTitle(
                 menu_area.arg("right").arg(
                     menu_txt.arg(Enable_Save?   "on" : "off").arg(Enable_Save?   "a" : "span").arg("save").arg("&nbsp;Save&nbsp;") +

@@ -40,14 +40,14 @@
 class LH_Qt_InputValue : public LH_Qt_QString
 {
 public:
-    LH_Qt_InputValue( LH_QtObject *parent, const QString& name, const QString& value, int flags = 0 )
+    LH_Qt_InputValue( LH_QtObject *parent, const QString& name, const QString& value, int flags = lh_meta_default )
         : LH_Qt_QString( parent, name, value, flags, lh_type_string_inputvalue )
     {
     }
 
     virtual void setup_change()
     {
-        emit input( item_.param.input.flags, item_.param.input.value );
+        emit input( item_.data.param.input.flags, item_.data.param.input.value );
         LH_Qt_QString::setup_change();
     }
 };

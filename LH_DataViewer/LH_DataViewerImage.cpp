@@ -46,8 +46,8 @@ lh_class *LH_DataViewerImage::classInfo()
         "DataViewerImage",
         "Data Image",
         -1, -1,
-        
-        
+
+
     };
 
     return &classinfo;
@@ -152,12 +152,12 @@ void LH_DataViewerImage::fileChanged()
     if( !setup_file_->value().isFile() )
     {
         setup_text_->setValue(("No such file."));
-        setup_text_->setFlag(LH_FLAG_HIDDEN,false);
+        setup_text_->setHidden(false);
         return;
     }
     else
     {
-        setup_text_->setFlag(LH_FLAG_HIDDEN,true);
+        setup_text_->setHidden(true);
         QFile file( setup_file_->value().filePath() );
 
         if( file.open( QIODevice::ReadOnly) )
@@ -198,7 +198,7 @@ void LH_DataViewerImage::fileChanged()
             updateImage(true);
         } else {
             setup_text_->setValue(("Unable to open file."));
-            setup_text_->setFlag(LH_FLAG_HIDDEN,false);
+            setup_text_->setHidden(false);
             return;
         }
     }

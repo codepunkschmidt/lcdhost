@@ -72,7 +72,7 @@ public:
     int tpPermille() const;
 
     void smoothingOrder(int n) { setup_smoothing_->setOrder(n); }
-    void smoothingHidden(bool hide) { setup_smoothing_->setFlag(LH_FLAG_HIDDEN, hide); }
+    void smoothingHidden(bool hide) { setup_smoothing_->setHidden( hide); }
 
 public slots:
     void addInRate(qint64);

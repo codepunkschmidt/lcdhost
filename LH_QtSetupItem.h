@@ -38,125 +38,186 @@
 #include <QObject>
 #include <QString>
 #include <QByteArray>
+#include <QVariant>
 #include <QColor>
 #include <QFont>
 #include <QFileInfo>
+#include <QImage>
+#include <QStringList>
 
+#include "LH_QtVariant.h"
 #include "LH_QtObject.h"
+
+/* compatibility with A18 */
+/* from A19, having no flags disables an item completely, in A18 some where negating flags */
+/* using lh_meta_default in A19 has the same effect as setting flags to zero in A18 */
+/* LH_FLAG_MIN, LH_FLAG_MAX and LH_FLAG_MINMAX are no longer applicable, use hasMinimum() if needed */
+#define LH_FLAG_READONLY    (lh_meta_flag_unused<<0)
+#define LH_FLAG_HIDDEN      (lh_meta_flag_unused<<1)
+#define LH_FLAG_FOCUS       (lh_meta_flag_unused<<2)
+#define LH_FLAG_AUTORENDER  (lh_meta_flag_unused<<3)
+#define LH_FLAG_FIRST       (lh_meta_flag_unused<<4)
+#define LH_FLAG_LAST        (lh_meta_flag_unused<<5)
+#define LH_FLAG_NOSAVE      (lh_meta_flag_unused<<6)
+#define LH_FLAG_INDENTTITLE (lh_meta_flag_unused<<7)
+#define LH_FLAG_NOSOURCE    (lh_meta_flag_unused<<8)
+#define LH_FLAG_NOSINK      (lh_meta_flag_unused<<9)
+#define LH_FLAG_HIDETITLE   (lh_meta_flag_unused<<10)
+#define LH_FLAG_HIDEVALUE   (lh_meta_flag_unused<<11)
+#define LH_FLAG_MIN         (lh_meta_flag_unused<<12)
+#define LH_FLAG_MAX         (lh_meta_flag_unused<<13)
+#define LH_FLAG_MINMAX      (LH_FLAG_MIN|LH_FLAG_MAX)
+#define LH_FLAG_BLANKTITLE  (LH_FLAG_HIDETITLE|LH_FLAG_INDENTTITLE)
 
 class LH_QtSetupItem : public LH_QtObject
 {
     Q_OBJECT
 
-    QByteArray link_array_;
+    lh_setup_item item_;
     QByteArray help_array_;
-    QByteArray filter_array_;
-    QByteArray list_array_;
+    QByteArray link_path_array_;
+    QByteArray link_filter_array_;
+
+    void emitSpecific();
+    void buffer_resize( lh_buffer *buf, int needed );
 
 protected:
-    QString str_; // string helper
-    QByteArray data_array_;
-    lh_setup_item item_;
-
-    void setArray( const QByteArray& a )
-    {
-        data_array_ = a;
-        item_.data.b.p = data_array_.data();
-        item_.data.b.n = data_array_.size();
-    }
-
-    void setString( const QString& s )
-    {
-        str_ = s;
-        setArray( str_.toUtf8() );
-    }
-
-    void getString()
-    {
-        str_ = QString::fromUtf8( (const char*) item_.data.b.p );
-    }
+    LH_QtVariant value_;
+    LH_QtVariant min_;
+    LH_QtVariant max_;
+    LH_QtVariant other_;
 
 public:
-    LH_QtSetupItem( LH_QtObject *parent, const char *ident, lh_setup_type type, int flags );
+    LH_QtSetupItem( LH_QtObject *parent, const char *ident, lh_meta_type type = lh_type_none, int flags = lh_meta_default );
     ~LH_QtSetupItem();
 
     LH_QtObject *parent() const { return static_cast<LH_QtObject *>(LH_QtObject::parent()); }
 
+    const lh_setup_item& item() const { return item_; }
+    const lh_setup_meta& meta() const { return item().meta; }
+    const lh_setup_data& data() const { return item().data; }
+    const lh_setup_link& link() const { return item().link; }
+
     int notify( int note, void *param );
-    void setup_resize( size_t needed );
-    virtual void setup_change(); // virtual to allow subclasses to update derived object caches
+
+    void value_changed();
+    void param_changed();
+    void link_changed();
 
     void refreshMeta() { callback( lh_cb_setup_refresh_meta, 0 ); }
-    void refreshData() { callback( lh_cb_setup_refresh_data, 0 ); }
+    void refreshLink() { callback( lh_cb_setup_refresh_link, 0 ); }
+    void refreshValue() { callback( lh_cb_setup_refresh_value, 0 ); }
+    void refreshParam() { callback( lh_cb_setup_refresh_param, 0 ); }
 
     // metadata
-    void setLink(const char * s,bool is_source = false);
-    const char *link() const { return link_array_.constData(); }
-    bool isSource() const { return item_.states & LH_STATE_SOURCE; }
-    bool isSink() const { return !link_array_.isEmpty() && !isSource(); }
+    lh_meta_type type() const { return meta().type; }
+    const char *typeName() const { return lh_meta_type_to_name( type() ); }
+    int flags() const { return meta().flags; }
+    int order() const { return meta().order; }
     const char *help() const { return help_array_.constData(); }
-    void setLinkFilter( const char * );
-    const char *linkFilter() { return filter_array_.constData(); }
-    int flags() const { return item_.flags; }
     bool hasFlag( int f ) const { return flags() & f; }
     void setFlag( int f, bool state ); // set individual flag(s) on or off
+    // setFlags() is a slot
+    // setOrder() is a slot
+    // setHelp() is a slot
 
-    virtual void setMin( double );
-    virtual void setMax( double );
-    virtual void setMinMax( double, double );
+    void setType( lh_meta_type );
+    void setType( const char *name ) { setType( lh_name_to_meta_type(name) ); }
 
-    virtual void setMin( qint64 );
-    virtual void setMax( qint64 );
-    virtual void setMinMax( qint64, qint64 );
+    bool hasHelp() const { return !help_array_.isEmpty(); }
+    bool hasMinimum() const { return !min_.isNull(); }
+    bool hasMaximum() const { return !max_.isNull(); }
+    bool hasMinMax() const { return hasMinimum() && hasMinimum(); }
 
-    virtual void setMin( int n ) { setMin( (qint64)n ); }
-    virtual void setMax( int n ) { setMax( (qint64)n ); }
-    virtual void setMinMax( int a, int b ) { setMinMax( (qint64)a, (qint64)b ); }
+    bool isVisible() const { return flags()&lh_meta_show; }
+    bool isHidden() const { return !isVisible(); }
+    bool isWriteable() const { return flags()&lh_meta_enabled; }
+    bool isReadonly() const { return !isWriteable(); }
+    bool isSaving() const { return flags()&lh_meta_save; }
+    bool isAutorendering() const { return flags()&lh_meta_autorender; }
+    bool isFocusable() const { return flags()&lh_meta_focus; }
 
-    void setList( const QByteArray& list );
-    QByteArray& list() { return list_array_; } // call refreshList() if you modify it
-    void refreshList();
+    const LH_QtVariant& value() const { return value_; }
+    const LH_QtVariant& minimum() const { return min_; }
+    const LH_QtVariant& maximum() const { return max_; }
+    const LH_QtVariant& other() const { return other_; }
 
-    lh_setup_item *item() { return &item_; }
-    lh_setup_type type() const { return item_.type; }
-    int order() const { return item_.order; }
+    void setMinMax( const QVariant& min, const QVariant& max )
+    {
+        setMinimum(min);
+        setMaximum(max);
+    }
+
+    // link
+    const char *linkPath() const { return link_path_array_.constData(); }
+    const char *linkFilter() const { return link_filter_array_.constData(); }
+    int linkFlags() const { return item_.link.flags; }
+    bool isSource() const { return item_.link.path && item_.link.flags&lh_link_source; }
+    bool isSink() const { return item_.link.path && !item_.link.flags&lh_link_source; }
+
+    void setLinkFilter( const char *filter = 0 );
 
 signals:
-    void helpChanged( const char * );
-    void flagsChanged( int );
-    void orderChanged( int );
-    void change( bool );
-    void change( qint64 );
-    void change( double );
-    void change( QString );
-    void change( QColor );
-    void change( QFont );
-    void change( QFileInfo );
-    void changed(); // changed from LCDHost
-    void set(); // set programatically using setValue()
-    void input( int, int );
+    // these signals are emitted when LCDHost changes data
+    void valueChanged( const LH_QtSetupItem& );
+    void minimumChanged( const LH_QtSetupItem& );
+    void maximumChanged( const LH_QtSetupItem& );
+    void otherChanged( const LH_QtSetupItem& );
+    void linkChanged( const LH_QtSetupItem& );
+
+    // these signals are sent when receiving corresponding notifications from LCDHost
     void duplicateSource();
+    void input( int, int );
+
+    // these signals are emitted when data is set programatically
+    void flagsSet( int );
+    void orderSet( int );
+    void helpSet( const char * );
+    void valueSet( const QVariant& );
+    void paramSet();
+    void linkSet( const char *path, int flags, const char *filter );
+
+    // these signals are emitted on changes either from LCDHost or programatically
+    void boolChanged( bool );
+    void intChanged( int );
+    void colorChanged( QColor );
+    void doubleChanged( double );
+    void stringChanged( QString );
+    void fontChanged( QFont );
+    void imageChanged( QImage );
 
 public slots:
-    void setHelp( QString );
-    void setHelp( const char * );
     void setFlags( int );
     void setOrder( int n );
-    void setVisible( bool b ) { setFlag( LH_FLAG_HIDDEN, !b ); }
-    void setHidden( bool b ) { setFlag( LH_FLAG_HIDDEN, b ); }
-    void setReadonly( bool b ) { setFlag( LH_FLAG_READONLY, b ); }
-    void setWriteable( bool b ) { setFlag( LH_FLAG_READONLY, !b ); }
-    void setSaving( bool b ) { setFlag( LH_FLAG_NOSAVE, !b ); }
+    void setHelp( const QString& );
+    void setHelp( const char * );
 
-    void setValue( bool );
-    void setValue( int );
-    void setValue( const QColor& );
-    void setValue( qint64 );
-    void setValue( double );
-    void setValue( void * );
-    void setValue( const QString& );
-    void setValue( const QByteArray& );
-    void setValue( const char *, int len = -1 );
+    void setVisible( bool b ) { setFlag( lh_meta_visible, b ); }
+    void setHidden( bool b ) { setVisible(!b); }
+    void setReadonly( bool b ) { setFlag( lh_meta_enabled, !b ); }
+    void setWriteable( bool b ) { setReadonly(!b); }
+    void setSaving( bool b ) { setFlag( lh_meta_save, b ); }
+
+    void setValue( const QVariant& v );
+    void setValue( bool b ) { setValue( qVariantFromValue(b) ); }
+    void setValue( int i ) { setValue( qVariantFromValue(i) ); }
+    void setValue( long long ll ) { setValue( qVariantFromValue(ll) ); }
+    void setValue( double d ) { setValue( qVariantFromValue(d) ); }
+    void setValue( void *p ) { setValue( qVariantFromValue(p) ); }
+    void setValue( const QString& s ) { setValue( qVariantFromValue(s) ); }
+    void setValue( const QByteArray& ba ) { setValue( qVariantFromValue(ba) ); }
+    void setValue( const QColor& c ) { setValue( qVariantFromValue(c) ); }
+    void setValue( const QImage& img ) { setValue( qVariantFromValue(img) ); }
+    void setValue( const QFont& f ) { setValue( qVariantFromValue(f) ); }
+    void setValue( const char *s, int n = -1 ) { setValue( QByteArray(s,n) ); }
+    void setValue( const QFileInfo& fi ) { setValue( fi.filePath() ); }
+
+    void setMinimum( const QVariant& );
+    void setMaximum( const QVariant& );
+    void setOther( const QVariant& );
+
+    void setLink( const char *path = 0, int flags = 0, const char *filter = 0 );
+
 };
 
 #endif // LH_QTSETUPITEM_H

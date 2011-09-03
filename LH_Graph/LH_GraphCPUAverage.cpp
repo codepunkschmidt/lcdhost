@@ -36,7 +36,7 @@ public:
         setUseLinkedValueAverage(true);
         setLinkedValueMultiplier(0.01);
         setup_linked_values_->setLink("/system/cpu/coreloads");
-        setup_linked_values_->refreshData();
+        setup_linked_values_->refreshValue();
 
         setMin(0);
         setMax(100);

@@ -1,6 +1,6 @@
 #include "LH_Qt_array_int_ui.h"
 
-void LH_Qt_array_int_ui::init(lh_setup_type ui_type, int uiFlags, qint64 min, qint64 max )
+void LH_Qt_array_int_ui::init(lh_meta_type ui_type, int uiFlags, qint64 min, qint64 max )
 {
     QString uiIdent = QString("%1__ui__").arg(ident());
     if( ui_type == lh_type_integer )
@@ -10,7 +10,7 @@ void LH_Qt_array_int_ui::init(lh_setup_type ui_type, int uiFlags, qint64 min, qi
         else
             ui_ = new LH_Qt_int(parent(), uiIdent.toUtf8(), 0, uiFlags );
     }
-    else if( ui_type == lh_type_integer_color )
+    else if( ui_type == lh_type_color )
         ui_ = new LH_Qt_QColor(parent(), uiIdent.toUtf8(), QColor::fromRgba(0), uiFlags );
 
     Q_ASSERT( ui_ );
@@ -39,12 +39,12 @@ void LH_Qt_array_int_ui::setFlag(int f, bool state)
 void LH_Qt_array_int_ui::setMin( double d)
 {
     LH_Qt_array_int::setMin(d);
-    ui_->setMin(d);
+    ui_->setMinimum(d);
 }
 void LH_Qt_array_int_ui::setMax( double d)
 {
     LH_Qt_array_int::setMax(d);
-    ui_->setMax(d);
+    ui_->setMaximum(d);
 }
 void LH_Qt_array_int_ui::setMinMax( double a, double b)
 {
@@ -55,13 +55,13 @@ void LH_Qt_array_int_ui::setMinMax( double a, double b)
 void LH_Qt_array_int_ui::setMin( qint64 n)
 {
     LH_Qt_array_int::setMin(n);
-    ui_->setMin(n);
+    ui_->setMinimum(n);
 }
 
 void LH_Qt_array_int_ui::setMax( qint64 n)
 {
     LH_Qt_array_int::setMax(n);
-    ui_->setMax(n);
+    ui_->setMaximum(n);
 }
 
 void LH_Qt_array_int_ui::setMinMax( qint64 a, qint64 b)
@@ -75,9 +75,9 @@ void LH_Qt_array_int_ui::arrayValuesChanged()
     if( uiIndex_>=0 && uiIndex_ < size() )
     {
         ui_->blockSignals(true);
-        if( flags()&LH_FLAG_MIN ) ui_->setMin( min() );
+        if( flags()&LH_FLAG_MIN ) ui_->setMinimum( min() );
         else ui_->setFlag( LH_FLAG_MIN, false );
-        if( flags()&LH_FLAG_MAX ) ui_->setMax( max() );
+        if( flags()&LH_FLAG_MAX ) ui_->setMaximum( max() );
         else ui_->setFlag( LH_FLAG_MAX, false );
         ui_->setValue( at(uiIndex_) );
         ui_->blockSignals(false);

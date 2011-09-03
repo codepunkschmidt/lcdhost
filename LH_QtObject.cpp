@@ -119,6 +119,7 @@ LH_QtObject::~LH_QtObject()
 
 void LH_QtObject::callback( lh_callbackcode code, void *param ) const
 {
+    Q_ASSERT( p_obj_ );
     if( isValid() )
     {
         p_obj_->cb( p_obj_->cb_id, code, param );
@@ -209,6 +210,8 @@ const char *LH_QtObject::callbackName( lh_callbackcode code )
     case lh_cb_dir_binaries: return "lh_cb_dir_binaries";
     case lh_cb_dir_plugins: return "lh_cb_dir_plugins";
     case lh_cb_dir_data: return "lh_cb_dir_data";
+    case lh_cb_qvariant_to_data: return "lh_cb_qvariant_to_data";
+    case lh_cb_data_to_qvariant: return "lh_cb_data_to_qvariant";
     case lh_cb_unload: return "lh_cb_unload";
     case lh_cb_reload: return "lh_cb_reload";
     case lh_cb_log: return "lh_cb_log";
@@ -222,7 +225,9 @@ const char *LH_QtObject::callbackName( lh_callbackcode code )
     case lh_cb_input: return "lh_cb_input";
     case lh_cb_destroy: return "lh_cb_destroy";
     case lh_cb_setup_refresh_meta: return "lh_cb_setup_refresh_meta";
-    case lh_cb_setup_refresh_data: return "lh_cb_setup_refresh_data";
+    case lh_cb_setup_refresh_link: return "lh_cb_setup_refresh_link";
+    case lh_cb_setup_refresh_param: return "lh_cb_setup_refresh_param";
+    case lh_cb_setup_refresh_value: return "lh_cb_setup_refresh_data";
     case lh_cb_render: return "lh_cb_render";
     case lh_cb_sethidden: return "lh_cb_sethidden";
     case lh_cb_unused: return "lh_cb_unused";

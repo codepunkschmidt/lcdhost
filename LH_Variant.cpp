@@ -212,6 +212,8 @@ bool LH_Variant::read( const lh_variant& lhv )
 
 void LH_Variant::write( lh_variant& lhv ) const
 {
+    Q_UNUSED(lhv);
+    // Q_ASSERT(0);
 }
 
 QVariant::Type LH_Variant::variantType( lh_format fmt )

@@ -845,6 +845,8 @@ QImage *LH_Dial::render_qimage( int w, int h )
 
 void LH_Dial::changeType(bool preserveOrientation)
 {
+    Q_UNUSED(preserveOrientation);
+
     setup_orientation_->setHidden( setup_type_->index()==0 );
     QString val = setup_orientation_->value();
     switch(setup_type_->index())

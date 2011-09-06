@@ -37,6 +37,20 @@ unix:!macx {
 
 DESTDIR = $$LCDHOST_PLUGINS
 
+PLUGIN_SOURCES = \
+    $$PWD/lh_plugin.c \
+    $$PWD/LH_QtObject.cpp \
+    $$PWD/LH_QtPlugin.cpp \
+    $$PWD/LH_QtInstance.cpp \
+    $$PWD/LH_QtSetupItem.cpp
+
+PLUGIN_HEADERS += \
+    $$PWD/lh_plugin.h \
+    $$PWD/LH_QtObject.h \
+    $$PWD/LH_QtPlugin.h \
+    $$PWD/LH_QtInstance.h \
+    $$PWD/LH_QtSetupItem.h
+
 contains( TEMPLATE, lib ) {
     exists($$PWD/../lcdhost-private.pem) {
         QMAKE_POST_LINK = \

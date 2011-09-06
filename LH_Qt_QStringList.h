@@ -62,6 +62,12 @@ public:
         return list_;
     }
 
+    void setList( const QStringList& newlist )
+    {
+        list_ = newlist;
+        refreshList();
+    }
+
     void refreshList()
     {
         encodedlist_ = list_.join("\t").toUtf8();
@@ -71,6 +77,11 @@ public:
     }
 
     int value() const
+    {
+        return item_.data.i;
+    }
+
+    int index() const
     {
         return item_.data.i;
     }
@@ -87,7 +98,7 @@ public:
         LH_QtSetupItem::setup_change();
     }
 
-    void setValue(int i)
+    void setIndex(int i)
     {
         if( i < -1 ) i = -1;
         if( i >= list_.size() ) i = list_.size();
@@ -97,6 +108,11 @@ public:
             refresh();
             emit set();
         }
+    }
+
+    void setValue(int i)
+    {
+        setIndex(i);
     }
 
     void setValue(QString str)

@@ -1,10 +1,9 @@
 This directory and all it's contents are 
-maintained by Johan "SirReal" Lindh.
+maintained by Johan Lindh <johan@linkdata.se>
 
 Do *NOT* commit changes to this directory.
 If you find a bug or need a feature/change,
 submit an issue in the issue tracker, and
-label it with "SirReal".
+label it with "linkdata".
 
 http://code.google.com/p/lcdhost/issues/list
-

@@ -59,9 +59,7 @@
 # endif
 #endif
 
-LH_PLUGIN(LH_LgLcdMan)
-
-char __lcdhostplugin_xml[] =
+LH_PLUGIN(LH_LgLcdMan) =
 "<?xml version=\"1.0\"?>"
 "<lcdhostplugin>"
   "<id>LgLcdMan</id>"

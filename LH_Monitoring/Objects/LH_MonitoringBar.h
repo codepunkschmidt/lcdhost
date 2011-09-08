@@ -2,7 +2,7 @@
 #define LH_MONITORINGBAR_H
 
 #include "../Sources/LH_MonitoringUI.h"
-#include "../LH_Qt_int.h"
+#include "LH_Qt_int.h"
 #include "../LH_Bar/LH_Bar.h"
 
 class LH_MonitoringBar : public LH_Bar

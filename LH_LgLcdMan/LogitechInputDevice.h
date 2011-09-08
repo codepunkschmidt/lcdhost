@@ -1,7 +1,7 @@
 #ifndef LOGITECHINPUTDEVICE_H
 #define LOGITECHINPUTDEVICE_H
 
-#include "../LH_QtInputDevice.h"
+#include "LH_QtInputDevice.h"
 
 class LogitechInputDevice : public LH_QtInputDevice
 {

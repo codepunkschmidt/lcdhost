@@ -2,12 +2,10 @@ TARGET = LH_Bar
 TEMPLATE = lib
 DEFINES += LH_BAR_LIBRARY
 
-include(../Plugins.pri)
-include(../CF/CF.pri)
+include(../linkdata/LCDHost.pri)
+include(../codeleap/ConditionalFormatting.pri)
 
-SOURCES += $$PLUGIN_SOURCES \
-    ../LH_QtCPU.cpp \
-    ../LH_QtNetwork.cpp \
+SOURCES += \
     LH_QtPlugin_Bar.cpp \
     LH_Bar.cpp \
     LH_BarNetIn.cpp \
@@ -17,8 +15,6 @@ SOURCES += $$PLUGIN_SOURCES \
     LH_BarCPUAverage.cpp \
     LH_BarCPUHistogram.cpp
 
-HEADERS += $$PLUGIN_HEADERS \
-    ../LH_QtCPU.h \
-    ../LH_QtNetwork.h \
+HEADERS += \
     LH_QtPlugin_Bar.h \
     LH_Bar.h

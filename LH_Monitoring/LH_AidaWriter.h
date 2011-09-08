@@ -2,7 +2,7 @@
 #define LH_AODAWRITER_H
 
 #include "../LH_Text/LH_Text.h"
-#include "../LH_Qt_QTextEdit.h"
+#include "LH_Qt_QTextEdit.h"
 
 #ifdef Q_WS_WIN
 # include <windows.h>

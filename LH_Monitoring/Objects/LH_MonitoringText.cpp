@@ -32,7 +32,7 @@
 #include <QRegExp>
 
 #include "LH_MonitoringText.h"
-#include "../LH_Qt_html.h"
+#include "LH_Qt_html.h"
 
 LH_PLUGIN_CLASS(LH_MonitoringText)
 
@@ -45,7 +45,7 @@ lh_class *LH_MonitoringText::classInfo()
         STRINGIZE(COMMON_OBJECT_NAME)"Text",
         STRINGIZE(COMMON_OBJECT_NAME)" (Text)",
         -1, -1,
-        
+
     };
 
     if( classInfo.width == -1 )

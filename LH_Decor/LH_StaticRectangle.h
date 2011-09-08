@@ -37,11 +37,11 @@
 #ifndef LH_STATICRECTANGLE_H
 #define LH_STATICRECTANGLE_H
 
-#include "../LH_QtPlugin.h"
+#include "LH_QtPlugin.h"
 #include "LH_Rectangle.h"
-#include "../LH_Qt_bool.h"
-#include "../LH_Qt_QSlider.h"
-#include "../LH_Qt_QColor.h"
+#include "LH_Qt_bool.h"
+#include "LH_Qt_QSlider.h"
+#include "LH_Qt_QColor.h"
 
 class LH_StaticRectangle : public LH_Rectangle
 {
@@ -56,8 +56,8 @@ public:
             "StaticRectangle",
             "Rounded rectangle",
             48,48
-            
-            
+
+
         };
 
         return &classInfo;

@@ -26,17 +26,17 @@
 #ifndef LH_DIAL_H
 #define LH_DIAL_H
 
-#include "../LH_QtInstance.h"
-#include "../LH_Qt_QColor.h"
-#include "../LH_Qt_QStringList.h"
-#include "../LH_Qt_QSlider.h"
-#include "../LH_Qt_QFileInfo.h"
-#include "../LH_Qt_bool.h"
-#include "../LH_Qt_int.h"
-#include "../LH_Qt_array_double.h"
-#include "../LH_Qt_double.h"
-#include "../LH_Qt_array_string_ui.h"
-#include "../LH_Qt_array_int_ui.h"
+#include "LH_QtInstance.h"
+#include "LH_Qt_QColor.h"
+#include "LH_Qt_QStringList.h"
+#include "LH_Qt_QSlider.h"
+#include "LH_Qt_QFileInfo.h"
+#include "LH_Qt_bool.h"
+#include "LH_Qt_int.h"
+#include "LH_Qt_array_double.h"
+#include "LH_Qt_double.h"
+#include "LH_Qt_array_string_ui.h"
+#include "LH_Qt_array_int_ui.h"
 
 #include <QList>
 #include <QStringList>
@@ -133,7 +133,7 @@ protected:
     LH_Qt_array_string_ui* setup_needle_image_;
 
     void setNeedleVisibility(bool visible, int index = 0);
-public:    
+public:
     LH_Dial();
     ~LH_Dial();
     const char *userInit();

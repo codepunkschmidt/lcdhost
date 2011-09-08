@@ -4,14 +4,13 @@ QT += network \
     xml
 DEFINES += LH_CURSOR_LIBRARY
 
-include(../Plugins.pri)
-include(../cf/cf.pri)
+include(../linkdata/LCDHost.pri)
+include(../codeleap/ConditionalFormatting.pri)
+include(../codeleap/json.pri)
 
-HEADERS += $$PLUGIN_HEADERS \
-    ../LH_Qt_QFileInfo.h \
+HEADERS += \
 #    ../LH_Monitoring/LH_QImage/LH_QImage.h \
     ../LH_Decor/LH_Rectangle.h \
-    ../json.h \
     LH_QtPlugin_Cursor.h \
     LH_CursorData.h \
     LH_CursorController.h \
@@ -22,11 +21,10 @@ HEADERS += $$PLUGIN_HEADERS \
 #    LH_CursorAction.h \
     actionType.h
 
-SOURCES += $$PLUGIN_SOURCES \
+SOURCES += \
 #    ../LH_Monitoring/LH_QImage/logo_blob.c \
 #    ../LH_Monitoring/LH_QImage/LH_QImage.cpp \
     ../LH_Decor/LH_Rectangle.cpp \
-    ../json.cpp \
     LH_QtPlugin_Cursor.cpp \
     LH_CursorData.cpp \
     LH_CursorController.cpp \

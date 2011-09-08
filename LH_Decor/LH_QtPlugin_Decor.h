@@ -37,7 +37,7 @@
 #ifndef LH_QTPLUGIN_DECOR_H
 #define LH_QTPLUGIN_DECOR_H
 
-#include "../LH_QtPlugin.h"
+#include "LH_QtPlugin.h"
 
 class LH_QtPlugin_Decor : public LH_QtPlugin
 {

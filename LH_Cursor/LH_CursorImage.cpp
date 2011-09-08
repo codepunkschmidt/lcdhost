@@ -34,7 +34,7 @@
 #include <QHash>
 
 // #include <windows.h>
-#include "../LH_Qt_QStringList.h"
+#include "LH_Qt_QStringList.h"
 
 LH_PLUGIN_CLASS(LH_CursorImage)
 
@@ -47,8 +47,8 @@ lh_class *LH_CursorImage::classInfo()
         "CursorImage",
         "Cursor Image",
         48,48
-        
-        
+
+
     };
 
     return &classInfo;

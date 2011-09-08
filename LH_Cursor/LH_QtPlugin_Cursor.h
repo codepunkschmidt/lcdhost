@@ -25,7 +25,7 @@
 #ifndef LH_QTPLUGIN_CURSOR_H
 #define LH_QTPLUGIN_CURSOR_H
 
-#include "../LH_QtPlugin.h"
+#include "LH_QtPlugin.h"
 
 #define VERSION 1.02
 

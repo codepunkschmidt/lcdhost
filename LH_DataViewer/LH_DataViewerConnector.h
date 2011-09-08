@@ -30,11 +30,11 @@
 #include <QHash>
 
 #include "../LH_Text/LH_Text.h"
-#include "../LH_Qt_QFileInfo.h"
-#include "../LH_Qt_QString.h"
-#include "../LH_Qt_QStringList.h"
-#include "../LH_Qt_int.h"
-#include "../LH_Qt_QTextEdit.h"
+#include "LH_Qt_QFileInfo.h"
+#include "LH_Qt_QString.h"
+#include "LH_Qt_QStringList.h"
+#include "LH_Qt_int.h"
+#include "LH_Qt_QTextEdit.h"
 
 // #include <stdio.h>
 // #include <windows.h>

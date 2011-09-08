@@ -1,7 +1,7 @@
 #ifndef LH_DATAVIEWERDATA_H
 #define LH_DATAVIEWERDATA_H
 
-#include "../LH_Qt_QString.h"
+#include "LH_Qt_QString.h"
 
 #include <QStringList>
 #include <QDateTime>
@@ -11,7 +11,7 @@
 // #include <stdio.h>
 // #include <windows.h>
 
-#include <LH_DataViewerDataTypes.h>
+#include "LH_DataViewerDataTypes.h"
 extern dataNode* rootNode;
 extern sharedCollection* sharedData;
 

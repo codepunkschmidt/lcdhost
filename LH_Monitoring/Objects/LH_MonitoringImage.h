@@ -26,7 +26,7 @@
 #define LH_MONITORINGIMAGE_H
 
 #include "../LH_QImage/LH_QImage.h"
-#include "../LH_Qt_QString.h"
+#include "LH_Qt_QString.h"
 
 #include "../Sources/LH_MonitoringUI.h"
 

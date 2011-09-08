@@ -40,10 +40,10 @@
 #endif
 
 #include "hidapi.h"
-#include "../LH_QtOutputDevice.h"
+#include "LH_QtOutputDevice.h"
 #include "LH_Lg160x43.h"
 #include "Lg160x43Device.h"
-#include "../LH_Qt_QImage.h"
+#include "LH_Qt_QImage.h"
 
 LH_PLUGIN(LH_QtPlugin_Lg160x43)
 

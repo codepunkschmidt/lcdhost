@@ -3,7 +3,7 @@
 
 #include <QObject>
 #include <QFileInfo>
-#include "../LH_QtObject.h"
+#include "LH_QtObject.h"
 
 #define LUADIR "lua"
 

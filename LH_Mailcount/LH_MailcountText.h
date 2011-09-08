@@ -5,9 +5,9 @@
 #include <QImage>
 
 #include "../LH_Text/LH_Text.h"
-#include "../LH_Qt_QString.h"
-#include "../LH_Qt_int.h"
-#include "../LH_Qt_bool.h"
+#include "LH_Qt_QString.h"
+#include "LH_Qt_int.h"
+#include "LH_Qt_bool.h"
 
 class LH_MailcountText: public LH_Text
 {

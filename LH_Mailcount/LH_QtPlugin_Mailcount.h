@@ -2,9 +2,9 @@
 #define LH_QTPLUGIN_MAILCOUNT_H
 
 #include <QTime>
-#include "../LH_QtPlugin.h"
-#include "../LH_Qt_QString.h"
-#include "../LH_Qt_int.h"
+#include "LH_QtPlugin.h"
+#include "LH_Qt_QString.h"
+#include "LH_Qt_int.h"
 
 class LH_QtPlugin_Mailcount : public LH_QtPlugin
 {

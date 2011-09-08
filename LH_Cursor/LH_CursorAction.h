@@ -25,14 +25,14 @@
 #ifndef LH_CURSORACTION_H
 #define LH_CURSORACTION_H
 
-#include "../LH_QtInstance.h"
-#include "../LH_Qt_QString.h"
-#include "../LH_Qt_QStringList.h"
-#include "../LH_Qt_InputState.h"
-#include "../LH_Qt_QTextEdit.h"
-#include "../LH_Qt_QFileInfo.h"
-#include "../LH_Qt_int.h"
-#include "../LH_Qt_bool.h"
+#include "LH_QtInstance.h"
+#include "LH_Qt_QString.h"
+#include "LH_Qt_QStringList.h"
+#include "LH_Qt_InputState.h"
+#include "LH_Qt_QTextEdit.h"
+#include "LH_Qt_QFileInfo.h"
+#include "LH_Qt_int.h"
+#include "LH_Qt_bool.h"
 
 #include "LH_CursorData.h"
 #include "actionType.h"

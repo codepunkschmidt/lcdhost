@@ -35,7 +35,7 @@
 #ifndef LH_VIRTUALLCD_H
 #define LH_VIRTUALLCD_H
 
-#include "../LH_QtPlugin.h"
+#include "LH_QtPlugin.h"
 
 class LH_QtPlugin_VirtualLCD : public LH_QtPlugin
 {

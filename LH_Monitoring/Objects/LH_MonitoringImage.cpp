@@ -33,8 +33,8 @@
 #include <QRegExp>
 #include <QHash>
 
-#include "../LH_Qt_QStringList.h"
-#include "../LH_Qt_html.h"
+#include "LH_Qt_QStringList.h"
+#include "LH_Qt_html.h"
 
 LH_PLUGIN_CLASS(LH_MonitoringImage)
 
@@ -47,7 +47,7 @@ lh_class *LH_MonitoringImage::classInfo()
         STRINGIZE(COMMON_OBJECT_NAME)"Image",
         STRINGIZE(COMMON_OBJECT_NAME)" (Image)",
         48,48
-        
+
     };
 
     return &classInfo;

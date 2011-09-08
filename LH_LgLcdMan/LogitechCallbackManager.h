@@ -37,29 +37,6 @@
 
 #include "LogitechManager.h"
 
-#ifdef Q_WS_WIN
-# ifndef UNICODE
-#  error ("This isn't going to work")
-# endif
-# include "windows.h"
-# include "../wow64.h"
-# include "win/lglcd.h"
-#endif
-
-#ifdef Q_WS_MAC
-# include "mac/lgLcdError.h"
-# include "mac/lgLcd.h"
-# ifndef ERROR_FILE_NOT_FOUND
-#  define ERROR_FILE_NOT_FOUND 2
-# endif
-# ifndef ERROR_PIPE_NOT_CONNECTED
-#  define ERROR_PIPE_NOT_CONNECTED 2
-# endif
-# ifndef LGLCD_DEVICE_FAMILY_ALL
-#  define LGLCD_DEVICE_FAMILY_ALL 0xFF
-# endif
-#endif
-
 class LogitechCallbackDevice;
 
 class LogitechCallbackManager : public LogitechManager

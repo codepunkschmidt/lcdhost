@@ -2,14 +2,14 @@ TARGET = LH_LgBacklight
 TEMPLATE = lib
 DEFINES += LGBACKLIGHT_LIBRARY
 
-include(../Plugins.pri)
-include(../HID.pri)
+include(../linkdata/LCDHost.pri)
+include(../linkdata/hidapi.pri)
 
-SOURCES += $$PLUGIN_SOURCES \
+SOURCES += \
     LH_LgBacklight.cpp \
     LgBacklightDevice.cpp
 
-HEADERS += $$PLUGIN_HEADERS \
+HEADERS += \
     LH_LgBacklight.h\
     LgBacklightDevice.h
 

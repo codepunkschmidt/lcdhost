@@ -35,7 +35,7 @@
   */
 
 #include "LH_Bar.h"
-#include "../LH_QtCPU.h"
+#include "LH_QtCPU.h"
 
 class LH_BarCPUHistogram : public LH_Bar
 {

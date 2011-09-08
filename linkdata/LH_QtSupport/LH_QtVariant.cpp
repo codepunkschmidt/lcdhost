@@ -4,7 +4,7 @@
 
 LH_QtVariant::LH_QtVariant( lh_variant& lhv, LH_QtObject *parent ) :
     QObject(parent),
-    LH_Variant(),
+    LH_QVariant(),
     lhv_(lhv)
 {
     memset(&lhv_,0,sizeof(lh_variant));
@@ -21,10 +21,10 @@ void LH_QtVariant::setFormat( lh_format fmt )
 
 void LH_QtVariant::read()
 {
-    LH_Variant::read(lhv_);
+    LH_QVariant::read(lhv_);
 }
 
 void LH_QtVariant::write() const
 {
-    LH_Variant::write(lhv_);
+    LH_QVariant::write(lhv_);
 }

@@ -4,10 +4,10 @@ QT += network \
     xml
 DEFINES += LH_WEBKIT_LIBRARY
 
-include(../../Plugins.pri)
-include(../../CF/CF.pri)
+include(../../linkdata/LCDHost.pri)
+include(../../codeleap/ConditionalFormatting.pri)
 
-SOURCES += $$PLUGIN_SOURCES \
+SOURCES += \
     ../WebKitCommand.cpp \
     ../../LH_Text/LH_Text.cpp \
     LH_QtPlugin_WebKit.cpp \
@@ -20,7 +20,7 @@ SOURCES += $$PLUGIN_SOURCES \
     LH_RSSInterface.cpp \
     LH_RSSBody.cpp
 
-HEADERS += $$PLUGIN_HEADERS \
+HEADERS += \
     ../WebKitCommand.h \
     ../../LH_Text/LH_Text.h \
     LH_QtPlugin_WebKit.h \

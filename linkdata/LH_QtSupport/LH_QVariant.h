@@ -1,5 +1,5 @@
 /**
-  \file     LH_QtPlugin.cpp
+  \file     LH_QVariant.h
   \author   Johan Lindh <johan@linkdata.se>
   \legalese Copyright (c) 2009-2011, Johan Lindh
 
@@ -32,32 +32,49 @@
   POSSIBILITY OF SUCH DAMAGE.
   */
 
-#include <QtDebug>
-#include "LH_QtPlugin.h"
+#ifndef LH_QVARIANT_H
+#define LH_QVARIANT_H
 
-LH_QtPlugin *LH_QtPlugin::instance_ = 0;
+#include <QVariant>
+#include <QMetaType>
+#include "lh_plugin.h"
 
-LH_QtPlugin::LH_QtPlugin() :
-    LH_QtObject(&obj_)
+Q_DECLARE_METATYPE(lh_input)
+
+/**
+  Extends the normal QVariant to be aware of LCDHost data types
+  and how they're converted to and from QString and lh_variant.
+  */
+
+class LH_QVariant : public QVariant
 {
-    Q_ASSERT( instance_ == 0 );
-    instance_ = this;
-}
+public:
+    LH_QVariant() :
+        QVariant()
+    { }
 
-LH_QtPlugin::~LH_QtPlugin()
-{
-    Q_ASSERT( instance_ == this );
-    instance_ = 0;
-}
+    LH_QVariant( const LH_QVariant& other ) :
+        QVariant(other)
+    { }
 
-const char *LH_QtPlugin::userInit()
-{
-    if( const char *err = LH_QtObject::userInit() ) return err;
-    LH_QtLoader::load(this);
-    return 0;
-}
+    LH_QVariant( const QVariant& val ) :
+        QVariant(val)
+    { }
 
-void LH_QtPlugin::requestReload( const char *msg )
-{
-    callback( lh_cb_reload, (void*) msg );
-}
+    LH_QVariant( const lh_variant& lhv ) :
+        QVariant()
+    {
+        read(lhv);
+    }
+
+    void fromString( const QString& s );
+    QString toString() const;
+
+    bool read( const lh_variant& lhv );
+    void write( lh_variant& lhv ) const;
+
+    static const char *lh_formatname( lh_format fmt );
+    static QVariant::Type variantType( lh_format fmt );
+};
+
+#endif // LH_QVARIANT_H

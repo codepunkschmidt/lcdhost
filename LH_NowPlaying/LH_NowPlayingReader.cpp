@@ -1,7 +1,7 @@
 
 #include <QBasicTimer>
 #include <QTimerEvent>
-#include "../LH_QtPlugin.h"
+#include "LH_QtPlugin.h"
 #include "LH_NowPlayingReader.h"
 
 bool get_itunes_info(TrackInfo &ti, QString artworkPath, artworkDescription &cachedArtwork, bool &updatedArtwork);

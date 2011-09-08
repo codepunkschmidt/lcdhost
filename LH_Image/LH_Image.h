@@ -36,7 +36,7 @@
 #ifndef LH_IMAGE_H
 #define LH_IMAGE_H
 
-#include "../lh_plugin.h"
+#include "lh_plugin.h"
 #define VERSION "0.0.1"
 
 #endif // LH_IMAGE_H

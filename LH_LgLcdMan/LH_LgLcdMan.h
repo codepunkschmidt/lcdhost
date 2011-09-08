@@ -47,7 +47,7 @@
 #ifndef LH_LGLCDMAN_H
 #define LH_LGLCDMAN_H
 
-#include "../LH_QtPlugin.h"
+#include "LH_QtPlugin.h"
 #include "LH_LgLcdThread.h"
 
 class LH_LgLcdMan : public LH_QtPlugin

@@ -7,7 +7,7 @@
 #include <QFileInfo>
 #include <QBasicTimer>
 
-#include "../LH_QtObject.h"
+#include "LH_QtObject.h"
 #include "utils.h"
 
 class LH_NowPlayingReader : public LH_QtObject

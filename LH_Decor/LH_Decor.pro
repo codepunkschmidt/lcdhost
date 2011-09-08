@@ -2,15 +2,15 @@ TARGET = LH_Decor
 TEMPLATE = lib
 DEFINES += LH_DECOR_LIBRARY
 
-include(../Plugins.pri)
-include(../CF/CF.pri)
+include(../linkdata/LCDHost.pri)
+include(../codeleap/ConditionalFormatting.pri)
 
-SOURCES += $$PLUGIN_SOURCES \
+SOURCES += \
     LH_QtPlugin_Decor.cpp \
     LH_Rectangle.cpp \
     LH_Background.cpp
 
-HEADERS += $$PLUGIN_HEADERS \
+HEADERS +=\
     LH_QtPlugin_Decor.h \
     LH_Rectangle.h \
     LH_Background.h \

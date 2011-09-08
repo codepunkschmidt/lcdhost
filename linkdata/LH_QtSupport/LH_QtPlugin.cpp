@@ -1,7 +1,7 @@
 /**
-  \file     LH_QtPlugin.h
+  \file     LH_QtPlugin.cpp
   \author   Johan Lindh <johan@linkdata.se>
-  \legalese Copyright (c) 2009-2011 Johan Lindh
+  \legalese Copyright (c) 2009-2011, Johan Lindh
 
   All rights reserved.
 
@@ -32,48 +32,39 @@
   POSSIBILITY OF SUCH DAMAGE.
   */
 
-#ifndef LH_QTPLUGIN_H
-#define LH_QTPLUGIN_H
+#include <QtDebug>
+#include "LH_QtPlugin.h"
 
-#include <QtGlobal>
-#include <QObject>
+LH_QtPlugin *LH_QtPlugin::instance_ = 0;
 
-#include "LH_QtObject.h"
-
-#ifndef EXPORT
-# define EXPORT extern "C" Q_DECL_EXPORT
-#endif
-
-/**
-  Base class for Qt-based LCDHost shared libraries.
-  */
-class LH_QtPlugin : public LH_QtObject
+LH_QtPlugin::LH_QtPlugin() :
+    LH_QtObject(&obj_)
 {
-    Q_OBJECT
+    Q_ASSERT( instance_ == 0 );
+    instance_ = this;
+}
 
-    static LH_QtPlugin *instance_;
-    lh_object obj_;
+LH_QtPlugin::LH_QtPlugin(QObject *parent) :
+    LH_QtObject(&obj_,0,parent)
+{
+    Q_ASSERT( instance_ == 0 );
+    instance_ = this;
+}
 
-public:
-    LH_QtPlugin();
-    ~LH_QtPlugin();
+LH_QtPlugin::~LH_QtPlugin()
+{
+    Q_ASSERT( instance_ == this );
+    instance_ = 0;
+}
 
-    lh_object& pluginObject() { return obj_; }
-    virtual const char *userInit();
-    static LH_QtPlugin *instance() { return instance_; }
+const char *LH_QtPlugin::userInit()
+{
+    if( const char *err = LH_QtObject::userInit() ) return err;
+    LH_QtLoader::load(this);
+    return 0;
+}
 
-public slots:
-    void requestReload( const char *msg = 0 );
-};
-
-/**
-  This macro creates the required things
-  for your LH_QtPlugin descendant to be
-  recognized as a LCDHost plugin.
-  */
-#define LH_PLUGIN(classname) \
-    LH_SIGNATURE(); \
-    EXPORT lh_object *lh_create() { return &(new classname())->pluginObject(); } \
-    EXPORT void lh_destroy( lh_object *obj ) { delete reinterpret_cast<classname*>(obj->ref); }
-
-#endif // LH_QTPLUGIN_H
+void LH_QtPlugin::requestReload( const char *msg )
+{
+    callback( lh_cb_reload, (void*) msg );
+}

@@ -2,8 +2,8 @@
 #define LH_MONITORINGTEXT_H
 
 #include "../LH_Text/LH_Text.h"
-#include "../LH_Qt_int.h"
-#include "../LH_Qt_double.h"
+#include "LH_Qt_int.h"
+#include "LH_Qt_double.h"
 #include <QFontMetrics>
 #include "../Sources/LH_MonitoringUI.h"
 

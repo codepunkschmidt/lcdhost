@@ -25,11 +25,11 @@
 #ifndef LH_QTPLUGIN_TS3_H
 #define LH_QTPLUGIN_TS3_H
 
-#include "../LH_QtPlugin.h"
-#include "../LH_Qt_QString.h"
-#include "../LH_Qt_bool.h"
-#include "../LH_Qt_html.h"
-#include "../LH_Qt_QStringList.h"
+#include "LH_QtPlugin.h"
+#include "LH_Qt_QString.h"
+#include "LH_Qt_bool.h"
+#include "LH_Qt_html.h"
+#include "LH_Qt_QStringList.h"
 
 #include "LH_TS3_ChannelList.h"
 #include "LH_TS3_ClientList.h"

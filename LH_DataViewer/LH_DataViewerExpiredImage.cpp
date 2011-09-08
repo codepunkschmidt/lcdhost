@@ -32,7 +32,7 @@
 #include <QHash>
 
 #include "LH_DataViewerExpiredImage.h"
-#include "../LH_Qt_QStringList.h"
+#include "LH_Qt_QStringList.h"
 
 LH_PLUGIN_CLASS(LH_DataViewerExpiredImage)
 
@@ -45,8 +45,8 @@ lh_class *LH_DataViewerExpiredImage::classInfo()
         "DataViewerExpiredImage",
         "Data Expired Image",
         -1, -1,
-        
-        
+
+
     };
 
     return &classinfo;

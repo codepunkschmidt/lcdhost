@@ -38,7 +38,7 @@
 #define LH_TEXTNUMBER_H
 
 #include "LH_Text.h"
-#include "../LH_Qt_double.h"
+#include "LH_Qt_double.h"
 
 class LH_TextNumber : public LH_Text
 {

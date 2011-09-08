@@ -2,12 +2,12 @@ TARGET = LH_Lua
 TEMPLATE = lib
 DEFINES += LH_LUA_LIBRARY
 
-include(../Plugins.pri)
+include(../linkdata/LCDHost.pri)
 
 # We don't want warnings from 3rd party C code
 QMAKE_CFLAGS_WARN_ON = -w
 
-SOURCES += $$PLUGIN_SOURCES \
+SOURCES += \
     LH_QtPlugin_Lua.cpp \
     LH_LuaClass.cpp \
     LH_LuaInstance.cpp \
@@ -16,8 +16,10 @@ SOURCES += $$PLUGIN_SOURCES \
     LH_LuaThread.cpp \
     LH_Lua.cpp \
     LH_LuaVariant.cpp
-	
-HEADERS += $$PLUGIN_HEADERS \
+
+INCLUDEPATH += $$PWD
+
+HEADERS += \
     LH_QtPlugin_Lua.h \
     LH_LuaClass.h \
     LH_LuaInstance.h \
@@ -132,7 +134,7 @@ DEFINES += \
     CAIRO_HAS_INTERPRETER=1 \
     CAIRO_HAS_SYMBOL_LOOKUP=0
 
-HEADERS += cairo.h cairo-deprecated.h ../cairo-version.h
+HEADERS += $$CAIRO_DIR/cairo.h $$CAIRO_DIR/cairo-deprecated.h cairo-version.h
 SOURCES += \
     cairo-analysis-surface.c cairo-arc.c cairo-array.c cairo-atomic.c \
     cairo-base64-stream.c cairo-base85-stream.c cairo-bentley-ottmann.c \

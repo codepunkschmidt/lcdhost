@@ -23,7 +23,7 @@
  **/
 
 #include "LH_CursorController.h"
-#include "../json.h"
+#include "json.h"
 
 #include "QDebug"
 

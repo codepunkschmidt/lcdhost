@@ -37,7 +37,7 @@
 
 #include <QFileInfo>
 
-#include "../LH_QtPlugin.h"
+#include "LH_QtPlugin.h"
 #include "LH_LuaThread.h"
 
 class LH_QtPlugin_Lua : public LH_QtPlugin

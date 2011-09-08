@@ -7,8 +7,8 @@
 #include <QVariant>
 #include <QVariantMap>
 #include <QDateTime>
-#include "../json.h"
-#include "../LH_Qt_QString.h"
+#include "json.h"
+#include "LH_Qt_QString.h"
 
 extern QHash<QString, QString> postback_data;
 

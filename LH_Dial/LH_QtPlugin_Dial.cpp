@@ -25,9 +25,7 @@
 
 #include "LH_QtPlugin_Dial.h"
 
-LH_PLUGIN(LH_QtPlugin_Dial)
-
-char __lcdhostplugin_xml[] =
+LH_PLUGIN(LH_QtPlugin_Dial) =
 "<?xml version=\"1.0\"?>"
 "<lcdhostplugin>"
   "<id>Dial</id>"

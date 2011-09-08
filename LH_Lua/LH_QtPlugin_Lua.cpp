@@ -43,9 +43,7 @@
 
 #include "LH_QtPlugin_Lua.h"
 
-LH_PLUGIN(LH_QtPlugin_Lua)
-
-char __lcdhostplugin_xml[] =
+LH_PLUGIN(LH_QtPlugin_Lua) =
 "<?xml version=\"1.0\"?>"
 "<lcdhostplugin>"
   "<id>Lua</id>"

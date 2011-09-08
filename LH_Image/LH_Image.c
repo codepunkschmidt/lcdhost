@@ -54,9 +54,8 @@ inline void qUnused(T &x) { (void)x; }
 # endif
 #endif
 
-LH_SIGNATURE();
-
-char __lcdhostplugin_xml[] =
+lh_signature lh_image_signature = LH_SIGNATURE_BLANK;
+char lh_image_xml[] =
 "<?xml version=\"1.0\"?>"
 "<lcdhostplugin>"
   "<id>Image</id>"

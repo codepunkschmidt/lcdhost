@@ -39,9 +39,7 @@
 #include "LH_VirtualLCD.h"
 #include "LH_Qt_QImage.h"
 
-LH_PLUGIN(LH_QtPlugin_VirtualLCD)
-
-char __lcdhostplugin_xml[] =
+LH_PLUGIN(LH_QtPlugin_VirtualLCD) =
 "<?xml version=\"1.0\"?>"
 "<lcdhostplugin>"
   "<id>Virtual LCD</id>"

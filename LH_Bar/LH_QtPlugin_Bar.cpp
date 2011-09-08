@@ -36,9 +36,7 @@
 
 #include "LH_QtPlugin_Bar.h"
 
-LH_PLUGIN(LH_QtPlugin_Bar)
-
-char __lcdhostplugin_xml[] =
+LH_PLUGIN(LH_QtPlugin_Bar) =
 "<?xml version=\"1.0\"?>"
 "<lcdhostplugin>"
   "<id>Bar</id>"

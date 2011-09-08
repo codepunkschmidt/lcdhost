@@ -46,9 +46,7 @@
 #include "Lg320x240Device.h"
 #include "LH_Qt_QImage.h"
 
-LH_PLUGIN(LH_Lg320x240)
-
-char __lcdhostplugin_xml[] =
+LH_PLUGIN(LH_Lg320x240) =
 "<?xml version=\"1.0\"?>"
 "<lcdhostplugin>"
   "<id>Lg320x240</id>"

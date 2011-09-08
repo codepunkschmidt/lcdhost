@@ -26,9 +26,7 @@
 
 #include "LH_QtPlugin_TS3.h"
 
-LH_PLUGIN(LH_QtPlugin_TS3)
-
-char __lcdhostplugin_xml[] =
+LH_PLUGIN(LH_QtPlugin_TS3) =
 "<?xml version=\"1.0\"?>"
 "<lcdhostplugin>"
   "<id>TS3</id>"
@@ -109,7 +107,7 @@ int LH_QtPlugin_TS3::notify( int code, void *param )
 {
     if( code & LH_NOTE_SECOND && server_action_ == sa_disconnected  && tryConnectTimer_.elapsed() >= 5000)
         openConnection();
-    return LH_NOTE_SECOND;
+    return LH_NOTE_SECOND|LH_QtPlugin::notify(code,param);
 }
 
 void LH_QtPlugin_TS3::openConnection()

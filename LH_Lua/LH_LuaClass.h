@@ -40,7 +40,7 @@
 #include <QFileInfo>
 
 #include "LH_Lua.h"
-#include "../LH_QtLayoutClass.h"
+#include "LH_QtLayoutClass.h"
 
 #define LUA_MAGIC "wf7bFprtNhNGS6XKjmrc"
 

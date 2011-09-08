@@ -1,7 +1,7 @@
 #ifndef LH_RIVAWRITER_H
 #define LH_RIVAWRITER_H
 
-#include "../LH_QtInstance.h"
+#include "LH_QtInstance.h"
 
 #ifdef Q_WS_WIN
 # include <windows.h>

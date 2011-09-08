@@ -39,7 +39,7 @@
 #include <QTime>
 
 #include "LH_Text.h"
-#include "../LH_Qt_int.h"
+#include "LH_Qt_int.h"
 
 class LH_TextCPULoad : public LH_Text
 {

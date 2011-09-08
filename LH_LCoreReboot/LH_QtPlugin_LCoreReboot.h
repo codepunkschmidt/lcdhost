@@ -25,8 +25,8 @@
 #ifndef LH_QTPLUGIN_LCOREREBOOT_H
 #define LH_QTPLUGIN_LCOREREBOOT_H
 
-#include "../LH_QtPlugin.h"
-#include "../LH_Qt_QString.h"
+#include "LH_QtPlugin.h"
+#include "LH_Qt_QString.h"
 
 #define VERSION 1.00
 

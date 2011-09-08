@@ -2,11 +2,10 @@ TARGET = LH_Text
 TEMPLATE = lib
 DEFINES += LH_TEXT_LIBRARY
 
-include(../Plugins.pri)
-include(../CF/CF.pri)
+include(../linkdata/LCDHost.pri)
+include(../codeleap/ConditionalFormatting.pri)
 
-SOURCES += $$PLUGIN_SOURCES \
-    ../LH_QtCPU.cpp \
+SOURCES += \
     LH_QtPlugin_Text.cpp \
     LH_Text.cpp \
     LH_TextTime.cpp \
@@ -25,8 +24,7 @@ SOURCES += $$PLUGIN_SOURCES \
     LH_TextStatic.cpp \
     LH_TextCPUCoreLoad.cpp
 
-HEADERS += $$PLUGIN_HEADERS \
-    ../LH_QtCPU.h \
+HEADERS += \
     LH_QtPlugin_Text.h \
     LH_Text.h \
     LH_TextFile.h \

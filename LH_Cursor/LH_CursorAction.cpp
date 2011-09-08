@@ -23,7 +23,7 @@
   */
 
 #include "LH_CursorAction.h"
-#include "../LH_QtPlugin.h"
+#include "LH_QtPlugin.h"
 #include <QProcess>
 #include <QDesktopServices>
 
@@ -40,8 +40,8 @@ lh_class *LH_CursorAction::classInfo()
         "CursorAction",
         "Cursor Action",
         48,48
-        
-        
+
+
     };
     return &classInfo;
 }

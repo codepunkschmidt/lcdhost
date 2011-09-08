@@ -25,7 +25,7 @@
   */
 
 #include "LH_MonitoringDial.h"
-#include "../LH_Qt_html.h"
+#include "LH_Qt_html.h"
 
 LH_PLUGIN_CLASS(LH_MonitoringDial)
 
@@ -38,7 +38,7 @@ lh_class *LH_MonitoringDial::classInfo()
         STRINGIZE(COMMON_OBJECT_NAME)"Dial",
         STRINGIZE(COMMON_OBJECT_NAME)" (Dial)",
         48,48
-        
+
     };
 
     return &classInfo;

@@ -2,12 +2,10 @@ TARGET = LH_LgLcdMan
 TEMPLATE = lib
 DEFINES += LGLCDMAN_LIBRARY
 
-include(../Plugins.pri)
+include(../linkdata/LCDHost.pri)
 
-SOURCES += $$PLUGIN_SOURCES \
-    ../LH_QtOutputDevice.cpp \
-    ../LH_QtInputDevice.cpp \
-    ../wow64.cpp \
+win32:SOURCES += \
+    wow64.cpp \
     LH_LgLcdMan.cpp \
     LH_LgLcdLegacyThread.cpp \
     LH_LgLcdCallbackThread.cpp \
@@ -20,10 +18,8 @@ SOURCES += $$PLUGIN_SOURCES \
     LogitechCallbackManager.cpp \
     LogitechInputDevice.cpp
 
-HEADERS += $$PLUGIN_HEADERS \
-    ../LH_QtOutputDevice.h \
-    ../LH_QtInputDevice.h \
-    ../wow64.h \
+win32:HEADERS += \
+    wow64.h \
     LH_LgLcdMan.h \
     EventLgLcdNotification.h \
     LH_LgLcdLegacyThread.h \
@@ -38,7 +34,8 @@ HEADERS += $$PLUGIN_HEADERS \
     LogitechCallbackManager.h \
     LogitechInputDevice.h
 
-win32:LIBS += $$PWD/win/lglcd.lib
-macx:LIBS += $$PWD/mac/liblgLcd.a -framework CoreFoundation
 
 RESOURCES += LgLcdManResources.qrc
+
+win32:LIBS += $$PWD/win/lglcd.lib
+# macx:LIBS += $$PWD/mac/liblgLcd.a -framework CoreFoundation

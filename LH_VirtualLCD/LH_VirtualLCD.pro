@@ -2,14 +2,12 @@ TARGET = LH_VirtualLCD
 TEMPLATE = lib
 DEFINES += LH_VIRTUALLCD_LIBRARY
 
-include(../Plugins.pri)
+include(../linkdata/LCDHost.pri)
 
-SOURCES += $$PLUGIN_SOURCES \
-    ../LH_QtOutputDevice.cpp \
+SOURCES += \
     LH_VirtualLCD.cpp
 
-HEADERS += $$PLUGIN_HEADERS \
-    ../LH_QtOutputDevice.h \
+HEADERS += \
     LH_VirtualLCD.h
 
 RESOURCES += LH_VirtualLCD.qrc

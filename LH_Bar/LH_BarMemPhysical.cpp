@@ -35,7 +35,7 @@
   */
 
 #include "LH_Bar.h"
-#include "../LH_Qt_int.h"
+#include "LH_Qt_int.h"
 
 class LH_BarMemPhysical : public LH_Bar
 {

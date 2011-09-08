@@ -5,22 +5,17 @@ DEFINES += COMMON_OBJECT_NAME="Monitoring"
 DEFINES += MONITORING_FOLDER="System"
 QT += xml
 
-include(../Plugins.pri)
-include(../cf/cf.pri)
+0 { # disabled until Triscopic is ready to attack the A20+ changes
+
+include(../linkdata/LCDHost.pri)
+include(../codeleap/cf/cf.pri)
 
 HEADERS += \
-    LH_QtPlugin_Monitoring.h \
-    ../LH_QtPlugin.h \
-    ../LH_QtSetupItem.h \
-    ../LH_QtObject.h \
     ../LH_Graph/LH_Graph.h \
     ../LH_Text/LH_Text.h \
     ../LH_Bar/LH_Bar.h \
     ../LH_Dial/LH_Dial.h \
-    ../LH_QtInstance.h \
-    ../LH_Qt_array_int_ui.h \
-    ../LH_Qt_array_string_ui.h \
-    ../lh_plugin.h \
+    LH_QtPlugin_Monitoring.h \
     LH_QImage/LH_QImage.h \
     LH_AidaWriter.h \
     LH_RivaWriter.h \
@@ -53,17 +48,11 @@ HEADERS += \
     Sources/LH_HWiNFOData.h
 
 SOURCES += \
-    LH_QtPlugin_Monitoring.cpp \
-    ../LH_QtPlugin.cpp \
-    ../LH_QtSetupItem.cpp \
-    ../LH_QtObject.cpp \
     ../LH_Graph/LH_Graph.cpp \
     ../LH_Text/LH_Text.cpp \
     ../LH_Bar/LH_Bar.cpp \
     ../LH_Dial/LH_Dial.cpp \
-    ../LH_QtInstance.cpp \
-    ../LH_Qt_array_int_ui.cpp \
-    ../LH_Qt_array_string_ui.cpp \
+    LH_QtPlugin_Monitoring.cpp \
     LH_QImage/logo_blob.c \
     LH_QImage/LH_QImage.cpp \
     LH_AidaWriter.cpp \
@@ -88,3 +77,4 @@ SOURCES += \
     Sources/LH_HWiNFOData.cpp
 
 RESOURCES +=
+}

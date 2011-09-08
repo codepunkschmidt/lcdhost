@@ -42,7 +42,7 @@
 #include <QTime>
 
 #include "LH_Text.h"
-#include "../../LH_Qt_QStringList.h"
+#include "LH_Qt_QStringList.h"
 
 typedef struct core_temp_shared_data
 {

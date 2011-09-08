@@ -2,17 +2,13 @@ TARGET = LH_Lg160x43
 TEMPLATE = lib
 DEFINES += LG160X43_LIBRARY
 
-include(../Plugins.pri)
-include(../HID.pri)
+include(../linkdata/LCDHost.pri)
+include(../linkdata/hidapi.pri)
 
-SOURCES += $$PLUGIN_SOURCES \
-    ../LH_QtOutputDevice.cpp \
-    ../wow64.cpp \
+SOURCES += \
     LH_Lg160x43.cpp \
     Lg160x43Device.cpp
 
-HEADERS += $$PLUGIN_HEADERS \
-    ../LH_QtOutputDevice.h \
-    ../wow64.h \
+HEADERS += \
     LH_Lg160x43.h \
     Lg160x43Device.h

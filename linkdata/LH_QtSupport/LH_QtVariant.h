@@ -2,18 +2,18 @@
 #define LH_QTVARIANT_H
 
 #include <QObject>
-#include "LH_Variant.h"
+#include "LH_QVariant.h"
 
 class LH_QtObject;
 
 /**
-  Wraps a lh_variant with a LH_Variant and handles
+  Wraps a lh_variant with a LH_QVariant and handles
   updates to and from it. If you don't set a parent
   LH_QtObject, it won't be able to resize the data
   area.
   */
 
-class LH_QtVariant : public QObject, public LH_Variant
+class LH_QtVariant : public QObject, public LH_QVariant
 {
     lh_variant& lhv_;
 

@@ -1,13 +1,9 @@
 TARGET = LH_Image
 TEMPLATE = lib
 DEFINES += LH_IMAGE_LIBRARY
+QT -= core gui
 
-include(../Plugins.pri)
+include(../linkdata/LCDHost.pri)
 
-SOURCES += \
-    LH_Image.c \
-    ../lh_plugin.c
-
-HEADERS += \
-    LH_Image.h \
-    ../lh_plugin.h
+SOURCES += LH_Image.c
+HEADERS += LH_Image.h

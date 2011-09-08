@@ -26,7 +26,7 @@
 #include <QPainter>
 
 #include "LH_CursorRectangle.h"
-#include "../LH_Qt_html.h"
+#include "LH_Qt_html.h"
 
 LH_PLUGIN_CLASS(LH_CursorRectangle)
 

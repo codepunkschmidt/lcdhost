@@ -25,7 +25,7 @@
   */
 
 #include "LH_Dial.h"
-#include "../LH_Qt_double.h"
+#include "LH_Qt_double.h"
 
 class LH_DialTest : public LH_Dial
 {

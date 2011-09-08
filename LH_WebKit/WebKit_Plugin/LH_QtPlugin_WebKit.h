@@ -41,8 +41,8 @@
 #include <QNetworkAccessManager>
 #include <QNetworkReply>
 #include <QUrl>
-#include "../../LH_QtPlugin.h"
-#include "../../LH_Qt_QString.h"
+#include "LH_QtPlugin.h"
+#include "LH_Qt_QString.h"
 
 class LH_QtPlugin_WebKit : public LH_QtPlugin
 {

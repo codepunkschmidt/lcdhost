@@ -38,8 +38,8 @@
 #include <QImage>
 #include <QStack>
 
-#include "../LH_QtPlugin.h"
-#include "../LH_QtInstance.h"
+#include "LH_QtPlugin.h"
+#include "LH_QtInstance.h"
 #include "LH_LuaVariant.h"
 #include "LH_LuaClass.h"
 

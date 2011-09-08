@@ -26,13 +26,12 @@
 #ifndef LH_QTPLUGIN_TORRENTMON_H
 #define LH_QTPLUGIN_TORRENTMON_H
 
-#include "../LH_QtPlugin.h"
-#include "../LH_Qt_bool.h"
-#include "../LH_Qt_QString.h"
-#include "../LH_Qt_html.h"
-#include "../LH_Qt_QFileInfo.h"
-
-#include "../json.h"
+#include "LH_QtPlugin.h"
+#include "LH_Qt_bool.h"
+#include "LH_Qt_QString.h"
+#include "LH_Qt_html.h"
+#include "LH_Qt_QFileInfo.h"
+#include "json.h"
 
 #include <QXmlQuery>
 #include <QXmlResultItems>

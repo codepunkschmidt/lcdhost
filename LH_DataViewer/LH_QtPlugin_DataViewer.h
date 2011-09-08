@@ -26,7 +26,7 @@
 #ifndef LH_QTPLUGIN_DATAVIEWER_H
 #define LH_QTPLUGIN_DATAVIEWER_H
 
-#include "../LH_QtPlugin.h"
+#include "LH_QtPlugin.h"
 
 #define VERSION 1.03
 

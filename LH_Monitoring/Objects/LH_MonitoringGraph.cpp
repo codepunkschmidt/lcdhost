@@ -25,7 +25,7 @@
   */
 
 #include "LH_MonitoringGraph.h"
-#include "../LH_Qt_html.h"
+#include "LH_Qt_html.h"
 
 LH_PLUGIN_CLASS(LH_MonitoringGraph)
 
@@ -38,7 +38,7 @@ lh_class *LH_MonitoringGraph::classInfo()
         STRINGIZE(COMMON_OBJECT_NAME)"Graph",
         STRINGIZE(COMMON_OBJECT_NAME)" (Graph)",
         48,48
-        
+
     };
 
     return &classInfo;

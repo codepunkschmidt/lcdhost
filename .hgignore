@@ -1,6 +1,2 @@
 syntax: glob
 *.user
-*.orig
-*.?pre?
-moc_*.*
-*.o

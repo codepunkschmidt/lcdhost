@@ -7,14 +7,14 @@
 #include <QtXml>
 #include <QObject>
 
-#include "../LH_Qt_bool.h"
-#include "../LH_Qt_int.h"
-#include "../LH_Qt_QString.h"
-#include "../LH_Qt_QStringList.h"
-#include "../LH_Qt_QTextEdit.h"
-#include "../LH_Qt_QColor.h"
-#include "../LH_Qt_QFont.h"
-#include "../LH_Qt_QFileInfo.h"
+#include "LH_Qt_bool.h"
+#include "LH_Qt_int.h"
+#include "LH_Qt_QString.h"
+#include "LH_Qt_QStringList.h"
+#include "LH_Qt_QTextEdit.h"
+#include "LH_Qt_QColor.h"
+#include "LH_Qt_QFont.h"
+#include "LH_Qt_QFileInfo.h"
 
 #include "LH_QtCFInstance.h"
 

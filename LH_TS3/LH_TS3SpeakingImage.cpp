@@ -2,7 +2,7 @@
 #define LH_TS3SPEAKINGIMAGE_H
 
 #include "../LH_Monitoring/LH_QImage/LH_QImage.h"
-#include "../LH_Qt_QStringList.h"
+#include "LH_Qt_QStringList.h"
 
 class LH_TS3SpeakingImage : public LH_QImage
 {

@@ -7,7 +7,7 @@
 #include <QFontMetrics>
 
 #include "../LH_Text/LH_Text.h"
-#include "../LH_Qt_QString.h"
+#include "LH_Qt_QString.h"
 
 class LH_TS3SpeakingText : public LH_Text
 {

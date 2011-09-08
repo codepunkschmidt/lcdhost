@@ -38,16 +38,16 @@
 #ifndef LH_BAR_H
 #define LH_BAR_H
 
-#include "../LH_QtPlugin.h"
-#include "../CF/LH_QtCFInstance.h"
-#include "../LH_Qt_QColor.h"
-#include "../LH_Qt_QStringList.h"
-#include "../LH_Qt_QSlider.h"
-#include "../LH_Qt_QFileInfo.h"
-#include "../LH_Qt_bool.h"
-#include "../LH_Qt_array_double.h"
-#include "../LH_Qt_double.h"
-#include "../LH_Qt_int.h"
+#include "LH_QtPlugin.h"
+#include "LH_QtCFInstance.h"
+#include "LH_Qt_QColor.h"
+#include "LH_Qt_QStringList.h"
+#include "LH_Qt_QSlider.h"
+#include "LH_Qt_QFileInfo.h"
+#include "LH_Qt_bool.h"
+#include "LH_Qt_array_double.h"
+#include "LH_Qt_double.h"
+#include "LH_Qt_int.h"
 
 class LH_Bar :
 #ifdef LH_CF

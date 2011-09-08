@@ -12,21 +12,21 @@ extern "C" {
 #endif
 }
 
-#include "../LH_Variant.h"
+#include "LH_QVariant.h"
 
-class LH_LuaVariant : public LH_Variant
+class LH_LuaVariant : public LH_QVariant
 {
 public:
     LH_LuaVariant() :
-        LH_Variant()
+        LH_QVariant()
     { }
 
     LH_LuaVariant( const LH_LuaVariant& other ) :
-        LH_Variant(other)
+        LH_QVariant(other)
     { }
 
-    LH_LuaVariant( const LH_Variant& val ) :
-        LH_Variant(val)
+    LH_LuaVariant( const LH_QVariant& val ) :
+        LH_QVariant(val)
     { }
 
     LH_LuaVariant( lua_State *L );

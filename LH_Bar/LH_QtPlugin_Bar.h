@@ -37,7 +37,7 @@
 #ifndef LH_QTPLUGIN_BAR_H
 #define LH_QTPLUGIN_BAR_H
 
-#include "../LH_QtPlugin.h"
+#include "LH_QtPlugin.h"
 
 class LH_QtPlugin_Bar : public LH_QtPlugin
 {

@@ -38,7 +38,7 @@
 #ifndef LH_QTPLUGIN_NOWPLAYING_H
 #define LH_QTPLUGIN_NOWPLAYING_H
 
-#include "../LH_QtPlugin.h"
+#include "LH_QtPlugin.h"
 #include "LH_NowPlayingThread.h"
 
 #define VERSION 2.21

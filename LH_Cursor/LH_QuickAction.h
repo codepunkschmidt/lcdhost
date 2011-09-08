@@ -27,11 +27,11 @@
 
 #include <QTimer>
 
-#include "../LH_QtInstance.h"
-#include "../LH_Qt_InputState.h"
-#include "../LH_Qt_QFileInfo.h"
-#include "../LH_Qt_bool.h"
-#include "../LH_Qt_int.h"
+#include "LH_QtInstance.h"
+#include "LH_Qt_InputState.h"
+#include "LH_Qt_QFileInfo.h"
+#include "LH_Qt_bool.h"
+#include "LH_Qt_int.h"
 
 class LH_QuickAction: public LH_QtInstance
 {

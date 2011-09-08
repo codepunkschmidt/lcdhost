@@ -36,7 +36,7 @@
 #include <QDateTime>
 #include <QDir>
 
-#include "../LH_QtObject.h"
+#include "LH_QtObject.h"
 #include "LH_LuaClass.h"
 #include "LH_LuaInstance.h"
 

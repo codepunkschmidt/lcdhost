@@ -1,0 +1,10 @@
+This directory contains the base classes to 
+build LCDHost plugins using Qt.
+
+Do *NOT* commit changes to this directory.
+If you find a bug or need a feature/change,
+submit an issue in the issue tracker, and
+label it with "SirReal".
+
+http://code.google.com/p/lcdhost/issues/list
+

@@ -1,0 +1,229 @@
+This is the top level directory for the open source parts of LCDHost.
+
+It contains everything needed to build LCDHost plugins, with some
+extra attention to doing it using Qt. By default, simply opening the
+Plugins.pro file in Qt Creator should let you build unsigned versions
+all of the plugins. Some plugins may not build correctly on all
+platforms though, or build but provide only limited features.
+
+*********************************************************************
+*** What NOT to change
+*********************************************************************
+
+Do *NOT* commit files at the top level, such as altering existing
+files (this README or Plugins.pro) or adding new ones at the
+repository top level. The top level directory should only contain
+those two versioned files and subdirectories. You may of course add
+any *un*versioned files anywhere. Just be very careful not to add them
+to the repository by mistake.
+
+Do *NOT* commit to the LCDHost project's committers private
+directories. Create a issue on the issue tracker about any bugs or
+problems that they need to adress, and label the issue appropriately.
+
+http://code.google.com/p/lcdhost/issues/list
+
+The private directories and their maintainers are:
+	linkdata/ - maintained by Johan "SirReal" Lindh
+	codeleap/ - maintained by Andy "Triscopic" Bridges
+
+*********************************************************************
+*** Keeping your code and building inside the repository
+*********************************************************************
+
+It's fine to keep your code in a subdirectory of the repository root.
+In fact, it simplifies things a lot. Just read the "What NOT to
+change" bit above again.
+
+If you prefer to keep your source code closed, you can do that too
+while still keeping it inside the repository root. Just don't add it
+to the repository. It's that simple.
+
+*********************************************************************
+*** How to build a LCDHost plugin with Qt Creator
+*********************************************************************
+
+You should already have cloned the repository so you can work on it.
+See http://code.google.com/p/lcdhost/source/checkout if you need help.
+
+By custom, and to trivially identify them as probable LCDHost plugins,
+we start all plugin projects with 'LH_'. So, assuming you want to call
+your plugin 'MyLCDHostPlugin', we'll call the project
+LH_MyLCDHostPlugin.
+
+*** Creating a skeleton C++ shared library with Qt Creator
+
+We'll create a skeleton C++ shared library project with our chosen
+project name. We'll assume that is "LH_MyLCDHostPlugin" here. In Qt
+Creator, select the menu item File -> New file or Project.
+
+In the "New" dialog, choose the Project template "Other Project" from
+the upper left list. Then select "C++ Library" from the right hand
+list. Click "Choose".
+
+The "C++ Library" dialog prompts for the type of library, it's name
+and it's location. Select "Shared Library", enter "LH_MyLCDHostPlugin"
+for the name (or whatever you entered into that line in Custom.pri).
+For "Create in", select the directory where this file and the
+Custom.pri file is. Don't worry, this is under source control, so even
+if you mess up you can clean up afterwards. Click "Next".
+
+You now get a "Target setup" dialog. Not much to do here. You may want
+to have "Use Shadow Building" checked, or Qt will clutter up the
+repository filesystem with it's generated Makefiles and other
+intermediate files. Make sure "Desktop" is checked. Let it create
+build configurations as it's suggesting. Click "Next".
+
+You now get to "Select Required Modules". For all LCDHost plugins
+written with Qt, you'll need QtCore and QtGui. QtCore is already
+checked for you. Check QtGui. Anything else requires you to know what
+the respective Qt modules do, so leave them unchecked unless you're a
+Qt professional. WARNING: Do *NOT* include QtWebKit. It's not suitable
+for use in a threaded environment. If you need render webpages, you
+should be using LH_WebKit. When done, click "Next".
+
+The new dialog allows you to confirm and make last adjustments to
+class and file names. Click "Next".
+
+The "Project Management" dialog may be your first indication that
+you're working within a mercurial repository. Here, you'll need to
+change the "Add to project" box so it reads "None". (Unless you're a
+committer on the project, but then, why are you reading this?). Then
+click "Finish".
+
+You now have a skeleton project capable of building a multiplatform
+generic shared library. It doesn't do anything, and isn't recognized
+by LCDHost as a possible plugin, but it's a start, and all you've had
+to do is click some buttons!
+
+*** Building multiple plugins using Plugins.pro
+
+This step is optional, but you might as well read it, or you'll get
+confused if you accidentally build using Plugins.pro.
+
+Usually, you don't want to build all the plugins. It takes a long
+time, and you very likely already have them. Therefore Plugins.pro
+looks for an unversioned file called 'Custom.pri' in the top level
+directory. If found, it expects it to define a variable called
+'BUILD_PLUGINS', which is a list of the plugins that should be built,
+in order.
+
+It's OK to create Custom.pri (and really any file) in the top level
+directory as long as you don't add it to version control. So just use
+any text editor, and should the question pop up if you want to add it
+to version control, just say No.
+
+In the same directory as Plugins.pro, create a text file named
+"Custom.pri" containing the single line:
+
+	BUILD_PLUGINS = LH_MyLCDHostPlugin
+
+*** Creating a LH_QtPlugin descendant with Qt Creator
+
+Now you need to add in the LCDHost bits. First, add this line to your
+LH_MyLCDHostPlugin.pro file, after the "DEFINES +=
+LH_MYLCDHOSTPLUGIN_LIBRARY" line but before "SOURCES +=
+LH_MyLCDHostPlugin.cpp"
+
+	include(../Plugins.pri)
+
+This will pull in the basic header files, include paths, sources and
+libraries needed to build a LCDHost plugin. Next you need to create a
+C++ class that inherits from LH_QtPlugin. So let's do that.
+
+In Qt Creator, select the menu item File -> New file or Project. From
+the lower left list "Files and Classes", select "C++". In the right
+hand list, select "C++ Class". Click "Choose...".
+
+For the class name, you can pick anything you like, but other plugins
+usually follow the convention "LH_QtPlugin_MyLCDHostPlugin". For "Base
+class", enter LH_QtPlugin. For "Type information", select "Inherits
+QObject".
+
+Examine the generated values for "Header file", "Source file". Change
+them if you prefer a different naming scheme (upper/lowercase etc).
+Closely examine the value for "Path". Qt Creator sometimes get
+confused about where to put things, but it should point to the newly
+created "LH_MyLCDHostPlugin" subdirectory under the checked out
+repository root. Click "Next".
+
+The "Project Management" dialog is here again! This time though, it
+should be spot on. We want "Add to project" to read
+"LH_MyLCDHostPlugin.pro" and "Add to version control" to be whichever
+VCS you're using, probably "Mercurial" if you checked out with hg.
+Make a final check on the file names and where they're going to be
+created, and then click "Finish".
+
+Next, we need to modify the newly created header so it includes the
+base class. Add the line
+
+	#include "LH_QtPlugin.h"
+	
+before the line
+
+	class LH_QtPlugin_MyLCDHostPlugin : public LH_QtPlugin
+
+At this point the code should compile. It won't be recognized by
+LCDHost as a valid plugin yet - there's a bit more to that.
+
+*** Adding the plugin XML data.
+
+This step is required no matter what platform or method you use to
+create shared libraries to be used as LCDHost plugins. LCDHost
+requires a plain XML document embedded in the library. This XML is
+documented in lh_plugin.h, but for our sample use:
+
+  char __lcdhostplugin_xml[] =
+  "<?xml version=\"1.0\"?>"
+  "<lcdhostplugin>"
+    "<id>MyLCDHostPlugin</id>"
+    "<rev>" STRINGIZE(REVISION) "</rev>"
+    "<api>" STRINGIZE(LH_API_MAJOR) "." STRINGIZE(LH_API_MINOR) "</api>"
+    "<ver>" "r" STRINGIZE(REVISION) "</ver>"
+    "<versionurl></versionurl>"
+    "<author>My Name</author>"
+    "<homepageurl>http://my.home.page</homepageurl>"
+    "<logourl></logourl>"
+    "<shortdesc>"
+    "What my plugin does"
+    "</shortdesc>"
+    "<longdesc>"
+    "Detailed instructions and help"
+    "</longdesc>"
+  "</lcdhostplugin>";
+
+Copy and paste that into the end of LH_QtPlugin_MyLCDHostPlugin.cpp.
+At this point it should compile and be recognized by LCDHost as a
+possible plugin. It won't load though. For that, we need to export the
+required plugin functions.
+
+*** Exporting the lh_create() and lh_destroy() functions
+
+Next we need to create the required shared library exports so that
+LCDHost will be ablto to load it as a plugin. There's a simple macro
+for that. The macro goes into the implementation file, NOT the header
+file. So at the end of LH_QtPlugin_MyLCDHostPlugin.cpp add the line
+
+	LH_PLUGIN(LH_QtPlugin_MyLCDHostPlugin)
+	
+This has three effects. First, it creates an blank signature area that
+you can later fill in with SignPlugin if you choose. (You can automate
+this procedure, see linkdata/SignPlugin.pri). While a plugin is valid
+without having a signature area, it is strongly recommended to have
+one. For platforms beside C/C++, see it's binary format definition in
+lh_plugin.h.
+
+The second thing it does is define and export the lh_create() and
+lh_destroy() functions. While lh_destroy() is optional, it is strongly
+recommended. The macro simply has lh_create() use the C++ new operator
+to instantiate your class and returns it's lh_object* to LCDHost, and
+similarly maps lh_destroy() to delete the instance when asked to.
+
+That's it. You now have a bare bones LCDHost plugin. LCDHost will
+recognize it and load/unload it. It doesn't actually provide any
+features, but that's for another README.
+
+*** Further reading
+
+For pure C plugins, examine LH_Image.
+For Qt C++ plugins, examine LH_Text.

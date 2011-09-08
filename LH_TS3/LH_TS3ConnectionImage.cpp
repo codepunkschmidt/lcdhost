@@ -2,7 +2,7 @@
 #define LH_TS3CONNECTIONIMAGE_H
 
 #include "../LH_Monitoring/LH_QImage/LH_QImage.h"
-#include "../LH_Qt_QStringList.h"
+#include "LH_Qt_QStringList.h"
 
 class LH_TS3ConnectionImage : public LH_QImage
 {

@@ -33,8 +33,8 @@
 #include <QSharedMemory>
 
 #include "LH_WeatherImage.h"
-#include "../LH_Qt_QStringList.h"
-#include "../LH_Qt_html.h"
+#include "LH_Qt_QStringList.h"
+#include "LH_Qt_html.h"
 
 LH_PLUGIN_CLASS(LH_WeatherImage)
 
@@ -47,8 +47,8 @@ lh_class *LH_WeatherImage::classInfo()
         "WeatherImage",
         "Weather Image",
         -1, -1,
-        
-        
+
+
     };
 
     return &classinfo;

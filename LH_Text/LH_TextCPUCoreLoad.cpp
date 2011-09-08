@@ -39,8 +39,8 @@
 #include <QTime>
 
 #include "LH_Text.h"
-#include "../LH_QtCPU.h"
-#include "../LH_Qt_int.h"
+#include "LH_QtCPU.h"
+#include "LH_Qt_int.h"
 
 class LH_TextCPUCoreLoad : public LH_Text
 {

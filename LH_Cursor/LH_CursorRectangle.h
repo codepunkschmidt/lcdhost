@@ -27,11 +27,11 @@
 #define LH_CURSORRECTANGLE_H
 
 #include "../LH_Decor/LH_Rectangle.h"
-#include "../LH_Qt_bool.h"
-#include "../LH_Qt_QSlider.h"
-#include "../LH_Qt_QColor.h"
-#include "../LH_Qt_QString.h"
-#include "../LH_Qt_QFileInfo.h"
+#include "LH_Qt_bool.h"
+#include "LH_Qt_QSlider.h"
+#include "LH_Qt_QColor.h"
+#include "LH_Qt_QString.h"
+#include "LH_Qt_QFileInfo.h"
 
 #include "LH_CursorData.h"
 

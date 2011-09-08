@@ -1,7 +1,7 @@
 /**
-  \file     LH_Variant.h
+  \file     LH_QtPlugin.h
   \author   Johan Lindh <johan@linkdata.se>
-  \legalese Copyright (c) 2009-2011, Johan Lindh
+  \legalese Copyright (c) 2009-2011 Johan Lindh
 
   All rights reserved.
 
@@ -32,49 +32,49 @@
   POSSIBILITY OF SUCH DAMAGE.
   */
 
-#ifndef LH_VARIANT_H
-#define LH_VARIANT_H
+#ifndef LH_QTPLUGIN_H
+#define LH_QTPLUGIN_H
 
-#include <QVariant>
-#include <QMetaType>
-#include "lh_plugin.h"
+#include <QtGlobal>
+#include <QObject>
 
-Q_DECLARE_METATYPE(lh_input)
+#include "LH_QtObject.h"
+
+#ifndef EXPORT
+# define EXPORT extern "C" Q_DECL_EXPORT
+#endif
 
 /**
-  Extends the normal QVariant to be aware of LCDHost data types
-  and how they're converted to and from QString and lh_variant.
+  Base class for Qt-based LCDHost shared libraries.
   */
-
-class LH_Variant : public QVariant
+class LH_QtPlugin : public LH_QtObject
 {
+    Q_OBJECT
+
+    static LH_QtPlugin *instance_;
+    lh_object obj_;
+
 public:
-    LH_Variant() :
-        QVariant()
-    { }
+    LH_QtPlugin();
+    LH_QtPlugin( QObject *parent );
+    ~LH_QtPlugin();
 
-    LH_Variant( const LH_Variant& other ) :
-        QVariant(other)
-    { }
+    lh_object& pluginObject() { return obj_; }
+    virtual const char *userInit();
+    static LH_QtPlugin *instance() { return instance_; }
 
-    LH_Variant( const QVariant& val ) :
-        QVariant(val)
-    { }
-
-    LH_Variant( const lh_variant& lhv ) :
-        QVariant()
-    {
-        read(lhv);
-    }
-
-    void fromString( const QString& s );
-    QString toString() const;
-
-    bool read( const lh_variant& lhv );
-    void write( lh_variant& lhv ) const;
-
-    static const char *lh_formatname( lh_format fmt );
-    static QVariant::Type variantType( lh_format fmt );
+public slots:
+    void requestReload( const char *msg = 0 );
 };
 
-#endif // LH_VARIANT_H
+/**
+  This macro creates the required things
+  for your LH_QtPlugin descendant to be
+  recognized as a LCDHost plugin.
+  */
+#define LH_PLUGIN(classname) \
+    LH_SIGNATURE(); \
+    EXPORT lh_object *lh_create() { return &(new classname())->pluginObject(); } \
+    EXPORT void lh_destroy( lh_object *obj ) { delete reinterpret_cast<classname*>(obj->ref); }
+
+#endif // LH_QTPLUGIN_H

@@ -3,9 +3,9 @@
 
 #include "../LH_Dial/LH_Dial.h"
 
-#include "../LH_QtPlugin.h"
-#include "../LH_Qt_int.h"
-#include "../LH_Qt_QString.h"
+#include "LH_QtPlugin.h"
+#include "LH_Qt_int.h"
+#include "LH_Qt_QString.h"
 
 #include "LH_DataViewerData.h"
 

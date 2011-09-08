@@ -4,18 +4,11 @@ QT += network \
     xml
 DEFINES += LH_WEATHER_LIBRARY
 
-include(../Plugins.pri)
-include(../CF/cf.pri)
+include(../linkdata/LCDHost.pri)
+include(../codeleap/ConditionalFormatting.pri)
+include(../codeleap/GoogleTranslator.pri)
 
-exists(../TranslationAPIKey.h) {
-    DEFINES += GOOGLETRANSLATOR
-    SOURCES += ../GoogleTranslator.cpp
-    HEADERS += ../TranslationAPIKey.h ../GoogleTranslator.h
-} else {
-    error("Missing TranslationAPIKey.h")
-}
-
-SOURCES += $$PLUGIN_SOURCES \
+SOURCES += \
     ../LH_Text/LH_Text.cpp \
     LH_WeatherStructs.cpp \
     LH_QtPlugin_Weather.cpp \
@@ -23,7 +16,8 @@ SOURCES += $$PLUGIN_SOURCES \
     LH_WeatherImage.cpp \
     LH_WeatherData.cpp \
     LH_WeatherBrowserOpener.cpp
-HEADERS += $$PLUGIN_HEADERS \
+    
+HEADERS += \
     ../LH_Text/LH_Text.h \
     LH_QtPlugin_Weather.h \
     LH_WeatherText.h \

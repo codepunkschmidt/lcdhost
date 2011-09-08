@@ -41,7 +41,7 @@
 #include <QPainter>
 
 #include "LH_Bar.h"
-#include "../LH_Qt_array.h"
+#include "LH_Qt_array.h"
 
 static inline uint PREMUL(uint x) {
     uint a = x >> 24;

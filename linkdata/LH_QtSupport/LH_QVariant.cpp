@@ -1,5 +1,5 @@
 /**
-  \file     LH_Variant.cpp
+  \file     LH_QVariant.cpp
   \author   Johan Lindh <johan@linkdata.se>
   \legalese Copyright (c) 2009-2011, Johan Lindh
 
@@ -36,9 +36,9 @@
 #include <QColor>
 #include <QImage>
 #include <QFont>
-#include "LH_Variant.h"
+#include "LH_QVariant.h"
 
-void LH_Variant::fromString( const QString& s )
+void LH_QVariant::fromString( const QString& s )
 {
     if( type() == QVariant::Color )
     {
@@ -103,7 +103,7 @@ void LH_Variant::fromString( const QString& s )
     return;
 }
 
-QString LH_Variant::toString() const
+QString LH_QVariant::toString() const
 {
     if( type() == QVariant::Color )
     {
@@ -158,7 +158,7 @@ QString LH_Variant::toString() const
     return QVariant::toString();
 }
 
-bool LH_Variant::read( const lh_variant& lhv )
+bool LH_QVariant::read( const lh_variant& lhv )
 {
     switch( lhv.fmt )
     {
@@ -189,7 +189,7 @@ bool LH_Variant::read( const lh_variant& lhv )
                 int count = lhv.data.b.n/sizeof(lh_variant);
                 while( count-- )
                 {
-                    vl.append( LH_Variant(*v) );
+                    vl.append( LH_QVariant(*v) );
                     ++ v;
                 }
             }
@@ -210,13 +210,13 @@ bool LH_Variant::read( const lh_variant& lhv )
     return true;
 }
 
-void LH_Variant::write( lh_variant& lhv ) const
+void LH_QVariant::write( lh_variant& lhv ) const
 {
     Q_UNUSED(lhv);
     // Q_ASSERT(0);
 }
 
-QVariant::Type LH_Variant::variantType( lh_format fmt )
+QVariant::Type LH_QVariant::variantType( lh_format fmt )
 {
     switch( fmt )
     {

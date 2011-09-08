@@ -36,7 +36,7 @@
 
 #include <QDebug>
 #include "LH_TextNumber.h"
-#include "../LH_Qt_int.h"
+#include "LH_Qt_int.h"
 
 class LH_TextNetInbound : public LH_TextNumber
 {

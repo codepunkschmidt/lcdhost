@@ -2,7 +2,7 @@
 #define LH_LUASETUPITEM_H
 
 #include "LH_LuaInstance.h"
-#include "../LH_QtSetupItem.h"
+#include "LH_QtSetupItem.h"
 
 class LH_LuaSetupItem : public LH_QtSetupItem
 {

@@ -2,7 +2,7 @@ TARGET = LH_LgLcdMan
 TEMPLATE = lib
 DEFINES += LGLCDMAN_LIBRARY
 
-include(../linkdata/LCDHost.pri)
+include(../linkdata/linkdata.pri)
 
 win32:SOURCES += \
     wow64.cpp \

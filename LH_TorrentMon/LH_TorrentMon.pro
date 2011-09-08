@@ -4,9 +4,10 @@ DEFINES += LH_TORRENTMON_LIBRARY
 QT += xml \
       xmlpatterns \
       network
+CONFIG += json
 
-include(../linkdata/LCDHost.pri)
-include(../codeleap/json.pri)
+include(../linkdata/linkdata.pri)
+include(../codeleap/codeleap.pri)
 
 HEADERS += \
     LH_QtPlugin_TorrentMon.h \

@@ -2,9 +2,10 @@ TARGET = LH_NowPlaying
 TEMPLATE = lib
 QT += network xml
 DEFINES += LH_NOWPLAYING_LIBRARY
+CONFIG += conditionalformatting
 
-include(../linkdata/LCDHost.pri)
-include(../codeleap/ConditionalFormatting.pri)
+include(../linkdata/linkdata.pri)
+include(../codeleap/codeleap.pri)
 
 win32:CONFIG  += qaxcontainer
 

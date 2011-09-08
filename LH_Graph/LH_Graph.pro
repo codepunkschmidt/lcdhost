@@ -1,9 +1,10 @@
 TARGET = LH_Graph
 TEMPLATE = lib
 DEFINES += LH_GRAPH_LIBRARY
+CONFIG += codeleapui
 
-include(../linkdata/LCDHost.pri)
-include(../codeleap/codeleap_UI.pri)
+include(../linkdata/linkdata.pri)
+include(../codeleap/codeleap.pri)
 
 SOURCES += \
     LH_QtPlugin_Graph.cpp \

@@ -3,10 +3,10 @@ TEMPLATE = lib
 QT += network \
     xml
 DEFINES += LH_WEATHER_LIBRARY
+CONFIG += conditionalformatting googletranslator
 
-include(../linkdata/LCDHost.pri)
-include(../codeleap/ConditionalFormatting.pri)
-include(../codeleap/GoogleTranslator.pri)
+include(../linkdata/linkdata.pri)
+include(../codeleap/codeleap.pri)
 
 SOURCES += \
     ../LH_Text/LH_Text.cpp \

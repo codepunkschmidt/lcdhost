@@ -21,11 +21,11 @@ CONFIG += ordered
 # below that simply tries to build all available plugins.
 
 # Custom.pri is also the correct place to set
-# the defines that "linkdata/LCDHost.pri" uses
+# the defines that "linkdata/linkdata.pri" uses
 # when signing a plugin, unless you happen to be a regular 
 # committer and have the keys automatically checked for.
 
-# Read "linkdata/LCDHost.pri" for more details.
+# Read "linkdata/linkdata.pri" for more details.
 
 exists(Custom.pri) {
     include(Custom.pri)

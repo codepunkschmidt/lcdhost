@@ -3,7 +3,7 @@ TEMPLATE = app
 QT += webkit network
 CONFIG -= app_bundle
 
-include(../../linkdata/LCDHost.pri)
+include(../../linkdata/linkdata.pri)
 DESTDIR = $$LCDHOST_BINARIES
 
 SOURCES += \

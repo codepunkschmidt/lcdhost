@@ -2,9 +2,10 @@ TARGET = LH_TS3
 TEMPLATE = lib
 DEFINES += LH_GRAPH_LIBRARY
 QT += network
+CONFIG += conditionalformatting
 
-include(../linkdata/LCDHost.pri)
-include(../codeleap/ConditionalFormatting.pri)
+include(../linkdata/linkdata.pri)
+include(../codeleap/codeleap.pri)
 
 SOURCES += \
     ../LH_Monitoring/LH_QImage/logo_blob.c \

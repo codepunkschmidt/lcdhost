@@ -1,9 +1,10 @@
 TARGET = LH_Text
 TEMPLATE = lib
 DEFINES += LH_TEXT_LIBRARY
+CONFIG += conditionalformatting
 
-include(../linkdata/LCDHost.pri)
-include(../codeleap/ConditionalFormatting.pri)
+include(../linkdata/linkdata.pri)
+include(../codeleap/codeleap.pri)
 
 SOURCES += \
     LH_QtPlugin_Text.cpp \

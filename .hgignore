@@ -1,2 +1,2 @@
-syntax: glob
-*.user
+Plugins.pro.user
+Custom.pri

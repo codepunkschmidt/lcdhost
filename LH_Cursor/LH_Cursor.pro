@@ -1,12 +1,11 @@
 TARGET = LH_Cursor
 TEMPLATE = lib
-QT += network \
-    xml
+QT += network xml
 DEFINES += LH_CURSOR_LIBRARY
+CONFIG += conditionalformatting json
 
-include(../linkdata/LCDHost.pri)
-include(../codeleap/ConditionalFormatting.pri)
-include(../codeleap/json.pri)
+include(../linkdata/linkdata.pri)
+include(../codeleap/codeleap.pri)
 
 HEADERS += \
 #    ../LH_Monitoring/LH_QImage/LH_QImage.h \

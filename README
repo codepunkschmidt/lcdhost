@@ -125,7 +125,7 @@ LH_MyLCDHostPlugin.pro file, after the "DEFINES +=
 LH_MYLCDHOSTPLUGIN_LIBRARY" line but before "SOURCES +=
 LH_MyLCDHostPlugin.cpp"
 
-	include(../Plugins.pri)
+	include(../linkdata/linkdata.pri)
 
 This will pull in the basic header files, include paths, sources and
 libraries needed to build a LCDHost plugin. Next you need to create a

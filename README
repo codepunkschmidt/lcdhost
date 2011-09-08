@@ -10,12 +10,17 @@ platforms though, or build but provide only limited features.
 *** What NOT to change
 *********************************************************************
 
-Do *NOT* commit files at the top level, such as altering existing
-files (this README or Plugins.pro) or adding new ones at the
-repository top level. The top level directory should only contain
-those two versioned files and subdirectories. You may of course add
-any *un*versioned files anywhere. Just be very careful not to add them
-to the repository by mistake.
+Do *NOT* commit files at the top level, such as altering or removing 
+existing files or adding new ones. The top level directory should 
+only contain "Plugins.pro", this "README" and ".hgignore".
+
+You may of course add any *un*versioned files anywhere. Just be very 
+careful not to add them to the repository by mistake.
+
+If you want to add your own plugin subdirectory to the repository,
+that's fine as long as it compiles cleanly on both OS/X and Windows.
+If you can't test on either of those, see LH_LCoreReboot.pro for an
+example on how to limit a plugin to a single architecture.
 
 Do *NOT* commit to the LCDHost project's committers private
 directories. Create a issue on the issue tracker about any bugs or
@@ -42,6 +47,8 @@ to the repository. It's that simple.
 *********************************************************************
 *** How to build a LCDHost plugin with Qt Creator
 *********************************************************************
+
+  * This section is a work in progress. *
 
 You should already have cloned the repository so you can work on it.
 See http://code.google.com/p/lcdhost/source/checkout if you need help.

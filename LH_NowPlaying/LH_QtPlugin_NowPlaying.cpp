@@ -37,9 +37,7 @@
 #include <QtDebug>
 #include "LH_QtPlugin_NowPlaying.h"
 
-LH_PLUGIN(LH_QtPlugin_NowPlaying)
-
-char __lcdhostplugin_xml[] =
+LH_PLUGIN(LH_QtPlugin_NowPlaying) =
 "<?xml version=\"1.0\"?>"
 "<lcdhostplugin>"
   "<id>Now Playing</id>"

@@ -18,9 +18,7 @@ static HANDLE hShell32Dll = (HANDLE)0;
 static SHGetUnreadMailCountW_t SHGetUnreadMailCountW = NULL;
 #endif
 
-LH_PLUGIN(LH_QtPlugin_Mailcount)
-
-char __lcdhostplugin_xml[] =
+LH_PLUGIN(LH_QtPlugin_Mailcount) =
 "<?xml version=\"1.0\"?>"
 "<lcdhostplugin>"
   "<id>Mailcount</id>"

@@ -44,9 +44,7 @@
 #include "LH_QtPlugin_WebKit.h"
 #include "../WebKitCommand.h"
 
-LH_PLUGIN(LH_QtPlugin_WebKit)
-
-char __lcdhostplugin_xml[] =
+LH_PLUGIN(LH_QtPlugin_WebKit) =
 "<?xml version=\"1.0\"?>"
 "<lcdhostplugin>"
   "<id>WebKit</id>"

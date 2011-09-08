@@ -45,9 +45,7 @@
 #include "Lg160x43Device.h"
 #include "LH_Qt_QImage.h"
 
-LH_PLUGIN(LH_QtPlugin_Lg160x43)
-
-char __lcdhostplugin_xml[] =
+LH_PLUGIN(LH_QtPlugin_Lg160x43) =
 "<?xml version=\"1.0\"?>"
 "<lcdhostplugin>"
   "<id>Lg160x43</id>"

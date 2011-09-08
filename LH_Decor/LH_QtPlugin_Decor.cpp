@@ -36,9 +36,7 @@
   
 #include "LH_QtPlugin_Decor.h"
 
-LH_PLUGIN(LH_QtPlugin_Decor)
-
-char __lcdhostplugin_xml[] =
+LH_PLUGIN(LH_QtPlugin_Decor) =
 "<?xml version=\"1.0\"?>"
 "<lcdhostplugin>"
   "<id>Decor</id>"

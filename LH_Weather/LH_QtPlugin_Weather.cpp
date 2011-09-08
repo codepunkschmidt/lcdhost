@@ -34,9 +34,7 @@
 #include <QDateTime>
 #include <QNetworkProxy>
 
-LH_PLUGIN(LH_QtPlugin_Weather)
-
-char __lcdhostplugin_xml[] =
+LH_PLUGIN(LH_QtPlugin_Weather) =
 "<?xml version=\"1.0\"?>"
 "<lcdhostplugin>"
   "<id>Weather</id>"

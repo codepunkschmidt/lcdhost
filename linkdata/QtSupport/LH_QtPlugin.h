@@ -68,13 +68,32 @@ public slots:
 };
 
 /**
-  This macro creates the required things
-  for your LH_QtPlugin descendant to be
-  recognized as a LCDHost plugin.
+  This macro creates the required things for your LH_QtPlugin
+  descendant to be recognized as a LCDHost plugin. Sample usage:
+
+    LH_PLUGIN(MyPlugin) =
+      "<?xml version=\"1.0\"?>"
+      "<lcdhostplugin>"
+        "<id>MyPlugin</id>"
+        "<rev>" STRINGIZE(REVISION) "</rev>"
+        "<api>" STRINGIZE(LH_API_MAJOR) "." STRINGIZE(LH_API_MINOR) "</api>"
+        "<ver>" "r" STRINGIZE(REVISION) "</ver>"
+        "<versionurl>http://where.version.info.is.kept/</versionurl>"
+        "<author>My Name</author>"
+        "<homepageurl>My Homepage</homepageurl>"
+        "<logourl></logourl>"
+        "<shortdesc>"
+        "ONE_LINE_DESCRIPTION"
+        "</shortdesc>"
+        "<longdesc>"
+        "MULTI_LINE_DESCRIPTION"
+        "</longdesc>"
+      "</lcdhostplugin>";
   */
 #define LH_PLUGIN(classname) \
-    LH_SIGNATURE(); \
     EXPORT lh_object *lh_create() { return &(new classname())->pluginObject(); } \
-    EXPORT void lh_destroy( lh_object *obj ) { delete reinterpret_cast<classname*>(obj->ref); }
+    EXPORT void lh_destroy( lh_object *obj ) { delete reinterpret_cast<classname*>(obj->ref); } \
+    Q_DECL_EXPORT lh_signature lh_##classname##_signature = LH_SIGNATURE_BLANK; \
+    Q_DECL_EXPORT char lh_##classname##_xml[]
 
 #endif // LH_QTPLUGIN_H

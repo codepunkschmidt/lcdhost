@@ -10,9 +10,7 @@
 
 #include <math.h>
 
-LH_PLUGIN(LH_QtPlugin_TorrentMon)
-
-char __lcdhostplugin_xml[] =
+LH_PLUGIN(LH_QtPlugin_TorrentMon) =
 "<?xml version=\"1.0\"?>"
 "<lcdhostplugin>"
   "<id>Torrent Monitoring</id>"

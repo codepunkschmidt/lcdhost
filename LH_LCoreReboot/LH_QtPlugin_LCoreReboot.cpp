@@ -37,27 +37,24 @@
 #include <QProcess>
 #include <QFileInfo>
 
-LH_PLUGIN(LH_QtPlugin_LCoreReboot)
-
-char __lcdhostplugin_xml[] =
-"<?xml version=\"1.0\"?>"
-"<lcdhostplugin>"
-  "<id>LCoreReboot</id>"
-  "<rev>" STRINGIZE(REVISION) "</rev>"
-  "<api>" STRINGIZE(LH_API_MAJOR) "." STRINGIZE(LH_API_MINOR) "</api>"
-  "<ver>" STRINGIZE(VERSION) "\nr" STRINGIZE(REVISION) "</ver>"
-  "<versionurl>http://www.linkdata.se/lcdhost/version.php?arch=$ARCH</versionurl>"
-  "<author>Andy \"Triscopic\" Bridges</author>"
-  "<homepageurl><a href=\"http://www.codeleap.co.uk\">CodeLeap</a></homepageurl>"
-  "<logourl></logourl>"
-  "<shortdesc>"
-  "Reboots the Logitech Gaming Software"
-  "</shortdesc>"
-  "<longdesc>"
-    "<p>Reboots the Logitech Gaming Software</p>"
-"</longdesc>"
-"</lcdhostplugin>";
-
+LH_PLUGIN(LH_QtPlugin_LCoreReboot) =
+    "<?xml version=\"1.0\"?>"
+    "<lcdhostplugin>"
+      "<id>LCoreReboot</id>"
+      "<rev>" STRINGIZE(REVISION) "</rev>"
+      "<api>" STRINGIZE(LH_API_MAJOR) "." STRINGIZE(LH_API_MINOR) "</api>"
+      "<ver>" STRINGIZE(VERSION) "\nr" STRINGIZE(REVISION) "</ver>"
+      "<versionurl>http://www.linkdata.se/lcdhost/version.php?arch=$ARCH</versionurl>"
+      "<author>Andy \"Triscopic\" Bridges</author>"
+      "<homepageurl><a href=\"http://www.codeleap.co.uk\">CodeLeap</a></homepageurl>"
+      "<logourl></logourl>"
+      "<shortdesc>"
+      "Reboots the Logitech Gaming Software"
+      "</shortdesc>"
+      "<longdesc>"
+        "<p>Reboots the Logitech Gaming Software</p>"
+    "</longdesc>"
+    "</lcdhostplugin>";
 
 #ifdef Q_WS_WIN
 static inline QString GetFullProcessImageName(HANDLE h)

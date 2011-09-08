@@ -35,25 +35,30 @@
 /**
   These are the entry points for LCDHost plugins. Normal sequence is:
 
-  1.  LCDHost examines the plugin file for build info XML and signature.
-  2.  Either the user decides to load the plugin or it's set to auto load
-  3.  LCDHost has the operating system load the shared library
-  4.  lh_create() is called, requires non-NULL lh_object* return
-      The pointer must remain valid until lh_destroy() returns.
-  5.  obj_init() is called, returns NULL or error message
+  1.  If the plugin has a signature area, integrity is checked.
+  2.  LCDHost examines the plugin's embedded XML document.
+  3.  Either the user decides to load the plugin or it's set to auto load
+  4.  LCDHost has the operating system load the shared library
+  5.  \c lh_create() is called returning the plugin's \c lh_object*
+  6.  \c obj_init() is called if it is provided by the plugin's \c lh_object*
     * at this point, barring errors, the plugin is considered loaded
     * when the user decides to unload the plugin or LCDHost shuts down:
-  6.  lh_destroy() is called
-  7.  LCDHost has the operating system unload the shared library
+  7.  \c lh_destroy() is called if it's provided by the plugin
+  8.  LCDHost has the operating system unload the shared library
 
-  lh_object *lh_create( lh_callback_t, void* )
+  lh_object *lh_create()
     Create the plugin object and return a lh_object pointer.
     LCDHost will provide this pointer when calling the functions
-    in lh_object structure. Return NULL on error.
+    in lh_object structure. Return NULL on error. The returned
+    pointer must remain valid until lh_destroy() returns.
 
   void lh_destroy( lh_object *obj )
     Free resources associated with 'obj'. The shared library is about to be
-    removed from memory.
+    removed from memory. While this function is optional, it's
+    recommended to use it to free up resources used by the plugin
+    in an orderly fashion. Once lh_destroy() is completed, it's no
+    longer safe for any of the plugin code to execute. Take care
+    to join or terminate any threads you've started.
 
   */
 
@@ -100,62 +105,69 @@
 
 
 /**
-  All plugins must embed an XML document containing build information.
-  The document must be readable from the plugin shared library using
-  standard binary file I/O. The document must contain the maintag
-  <lcdhostplugin>. LCDHost will search the shared library for the
-  string '<lcdhostplugin>' and then check to see that it's a correctly
-  formed XML document. Encoding must be UTF-8. There must be only one
-  copy of the string '<lcdhostplugin>' in the shared library.
+    All plugins must embed an XML document containing build information.
+    The document must be readable from the plugin shared library using
+    standard binary file I/O. The document must contain the maintag
+    <lcdhostplugin>. LCDHost will search the shared library for the
+    string '<lcdhostplugin>' and then check to see that it's a correctly
+    formed XML document. Encoding must be UTF-8. There must be only one
+    copy of the string '<lcdhostplugin>' in the shared library.
 
-  Sample C code to embed the document, copy, paste and modify to suit.
-  Note that you could also embed the document using other methods.
+    Note that the XML data needs to kept in the library. If
+    it's not marked as an export, and not referenced anywhere,
+    smart linkers are liable to simply remove it.
 
+    Sample C code to embed the document, copy, paste and modify to suit.
+    Note that you could also embed the document using other methods.
 
-  char __lcdhostplugin_xml[] =
-  "<?xml version=\"1.0\"?>"
-  "<lcdhostplugin>"
-    "<id>NAME</id>"
-    "<rev>" STRINGIZE(REVISION) "</rev>"
-    "<api>" STRINGIZE(LH_API_MAJOR) "." STRINGIZE(LH_API_MINOR) "</api>"
-    "<ver>" "r" STRINGIZE(REVISION) "</ver>"
-    "<versionurl>http://www.linkdata.se/lcdhost/version.php?arch=$ARCH</versionurl>"
-    "<author>Johan \"SirReal\" Lindh</author>"
-    "<homepageurl><a href=\"http://www.linkdata.se/software/lcdhost\">Link Data Stockholm</a></homepageurl>"
-    "<logourl></logourl>"
-    "<shortdesc>"
-    "ONE_LINE_DESCRIPTION"
-    "</shortdesc>"
-    "<longdesc>"
-    "MULTI_LINE_DESCRIPTION"
-    "</longdesc>"
-  "</lcdhostplugin>";
+      char __lcdhostplugin_xml[] =
+      "<?xml version=\"1.0\"?>"
+      "<lcdhostplugin>"
+        "<id>NAME</id>"
+        "<rev>" STRINGIZE(REVISION) "</rev>"
+        "<api>" STRINGIZE(LH_API_MAJOR) "." STRINGIZE(LH_API_MINOR) "</api>"
+        "<ver>" "r" STRINGIZE(REVISION) "</ver>"
+        "<versionurl>http://www.linkdata.se/lcdhost/version.php?arch=$ARCH</versionurl>"
+        "<author>Johan \"SirReal\" Lindh</author>"
+        "<homepageurl><a href=\"http://www.linkdata.se/software/lcdhost\">Link Data Stockholm</a></homepageurl>"
+        "<logourl></logourl>"
+        "<shortdesc>"
+        "ONE_LINE_DESCRIPTION"
+        "</shortdesc>"
+        "<longdesc>"
+        "MULTI_LINE_DESCRIPTION"
+        "</longdesc>"
+      "</lcdhostplugin>";
 
+    'versionurl' is the version information URL. It replaces $ID to <id>,
+    $ARCH to the current architecture and $REV to <rev>.
+    This URL should return a text/xml document like the following sample:
 
-  'versionurl' is the version information URL. It replaces $ID to <id>,
-  $ARCH to the current architecture and $REV to <rev>.
-  This URL should return a text/xml document like the following sample:
+    <lhver arch="win32" url="http://lcdhost.googlecode.com/files/$ID_$ARCH_R$REV.zip">
+    <f id="LH_Text" r="6" />
+    </lhver>
 
-  <lhver arch="win32" url="http://lcdhost.googlecode.com/files/$ID_$ARCH_R$REV.zip">
-   <f id="LH_Text" r="6" />
-  </lhver>
+    The 'lhver' element contains default attribute values for 'f' elements.
+    The 'url' attribute expands the same parameters as the version url.
 
-  The 'lhver' element contains default attribute values for 'f' elements.
-  The 'url' attribute expands the same parameters as the version url.
+    A 'f' element may contain the following attributes:
+    'id'        The plain filename, without system prefix or suffixes
+    'arch'      The architecture (ex, 'win32', 'mac32' or 'lin64d')
+    'r'         The revision number
+    'url'       The download URL
+    'api'       The API versions in the form 'major.minor'
 
-  A 'f' element may contain the following attributes:
-  'id'        The plain filename, without system prefix or suffixes
-  'arch'      The architecture (ex, 'win32', 'mac32' or 'lin64d')
-  'r'         The revision number
-  'url'       The download URL
-  'api'       The API versions in the form 'major.minor'
+    There may be any number of 'f' elements.
 
-  There may be any number of 'f' elements.
-
-  The document will be cached, so if several plugins refer to the same URL,
-  the cached copy will be used. The cache is cleared intermittently.
+    The document will be cached, so if several plugins refer to the same URL,
+    the cached copy will be used. The cache is cleared intermittently.
   */
 
+/**
+  Utility macro to be able to use the value of numeric
+  preprocessor macros as strings.
+  \sa http://stackoverflow.com/questions/2751870/how-exactly-does-the-double-stringize-trick-work
+  */
 #ifndef STRINGIZE
 # define STRINGIZE_(x) #x
 # define STRINGIZE(x) STRINGIZE_(x)
@@ -329,25 +341,39 @@ typedef enum lh_meta_flag_t
 typedef void (*lh_callback_t)( void* cb_id, lh_callbackcode code, void *param );
 
 /**
-    Definition of signature area
+    Definition of the signature area
     The signature area is optional by highly recommended.
-*/
+    Note that the signature needs to kept in the library. If
+    it's not marked as an export, and not referenced anywhere,
+    smart linkers are liable to simply remove it.
 
+    \sa LH_EMPTY_SIGNATURE
+*/
 typedef struct lh_signature_t
 {
-    char marker[16]; /* unique series to allow finding the sig */
-    char sign[256]; /* 2048-bit RSA signature of the shared plugin's SHA-1 digest, PKCS1 padded */
-    char url[128]; /* URL to the public key */
-    int size; /* sizeof(lh_signature) */
+    char marker[16]; /**< \sa LH_SIGNATURE_MARKER */
+    char sign[256]; /**< 2048-bit RSA signature of the shared plugin's SHA-1 digest, PKCS1 padded */
+    char url[128]; /**< URL to the public key */
+    int size; /**< sizeof(lh_signature) */
 } lh_signature;
 
+/**
+    Signature marker so SignPlugin can find it
+    \sa lh_signature
+*/
 #define LH_SIGNATURE_MARKER {7,98,120,242,114,174,176,97,178,246,229,116,243,34,2,92}
 
-/* Declare a signature area - don't mess with the constants, */
-/* they're there so that SignPlugin can find the right spot. */
-#define LH_SIGNATURE() lh_signature _lh_plugin_signature = { LH_SIGNATURE_MARKER, {0}, {0}, sizeof(lh_signature) }
+/**
+    Define a blank signature area
+    \sa lh_signature
+*/
+#define LH_SIGNATURE_BLANK { LH_SIGNATURE_MARKER, {0}, {0}, sizeof(lh_signature) }
 
-#define LH_MAX_IDENT            64     /* Maximum lh_object identifier length, including nul terminator */
+/**
+    Maximum lh_object.ident size, including nul terminator
+    \sa lh_object
+*/
+#define LH_MAX_IDENT            64
 
 /**
   A plugin-managed memory buffer. If it needs to be resized,
@@ -395,7 +421,6 @@ typedef struct lh_object_t
 /**
   Stores metadata about the setup item. This is never saved by LCDHost,
   and must be provided by the plugin on creation of the \c lh_setup_item.
-  Once created, \c lh_setup_meta.type must not be changed.
   */
 typedef struct lh_setup_meta_t
 {
@@ -404,7 +429,6 @@ typedef struct lh_setup_meta_t
     int order; /**< ordering of setup item in the UI, lower values first */
     const char *help; /**< short UTF-8 HTML help text shown as icon with tooltip, may be NULL */
 } lh_setup_meta;
-
 
 /**
   Stores variable data for lh_setup_data.value and lh_setup_data.param.

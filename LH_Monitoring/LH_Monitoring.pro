@@ -7,7 +7,7 @@ QT += xml
 
 0 { # disabled until Triscopic is ready to attack the A20+ changes
 
-include(../linkdata/LCDHost.pri)
+include(../linkdata/linkdata.pri)
 include(../codeleap/cf/cf.pri)
 
 HEADERS += \

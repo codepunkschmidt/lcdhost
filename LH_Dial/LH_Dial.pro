@@ -1,9 +1,10 @@
 TARGET = LH_Dial
 TEMPLATE = lib
 DEFINES += LH_DIAL_LIBRARY
+CONFIG += codeleapui
 
-include(../linkdata/LCDHost.pri)
-include(../codeleap/codeleap_UI.pri)
+include(../linkdata/linkdata.pri)
+include(../codeleap/codeleap.pri)
 
 SOURCES += \
     LH_QtPlugin_Dial.cpp \

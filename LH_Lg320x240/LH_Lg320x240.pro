@@ -1,9 +1,9 @@
 TARGET = LH_Lg320x240
 TEMPLATE = lib
 DEFINES += LG320x240_LIBRARY
+CONFIG += libusb
 
-include(../linkdata/LCDHost.pri)
-include(../linkdata/libusb.pri)
+include(../linkdata/linkdata.pri)
 
 SOURCES += \
     LH_Lg320x240.cpp \

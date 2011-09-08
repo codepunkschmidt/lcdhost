@@ -1,8 +1,10 @@
 #
-# LCDHost.pri
+# linkdata.pri
 #
 # This defines the commonly used values, paths and actions
-# for LCDHost plugins.
+# for LCDHost plugins. It also supports the qmake CONFIG
+# values 'hidapi' and 'libusb', which will pull in those
+# libraries, respectively.
 #
 # Johan Lindh <johan@linkdata.se> is the sole maintainer of this
 # file and all the files in this directory and subdirectories.
@@ -42,7 +44,7 @@ HEADERS += $$LH_LINKDATA_DIR/lh_plugin.h
 SOURCES += $$LH_LINKDATA_DIR/lh_plugin.c
 
 # Qt support files
-LH_QT_SUPPORT_DIR = $$LH_LINKDATA_DIR/LH_QtSupport
+LH_QT_SUPPORT_DIR = $$LH_LINKDATA_DIR/QtSupport
 
 LH_QT_SUPPORT_HEADERS = \
     $$LH_QT_SUPPORT_DIR/LH_QVariant.h \
@@ -117,6 +119,62 @@ CHANGESET_REVISION = $$system(hg log -l 1 --template {node}/{rev} $$_PRO_FILE_PW
     DEFINES += REVISION=$$REVISION
 } else {
     message("can't get revision data for" $$_PRO_FILE_PWD_)
+}
+
+# Check for hidapi in CONFIG
+hidapi {
+    # We don't want warnings from 3rd party C code
+    QMAKE_CFLAGS_WARN_ON = -w
+
+    LH_HIDAPI_DIR = $$LH_LINKDATA_DIR/hidapi
+    INCLUDEPATH += $$LH_HIDAPI_DIR
+    HEADERS += $$LH_HIDAPI_DIR/hidapi.h
+
+    win32 {
+            SOURCES += $$LH_HIDAPI_DIR/win/hid.cpp
+            LIBS += -lsetupapi
+    }
+
+    macx {
+            SOURCES += $$LH_HIDAPI_DIR/osx/hid.c
+            LIBS += -framework CoreFoundation -framework IOKit
+    }
+
+    unix:!macx {
+            SOURCES += $$LH_HIDAPI_DIR/lin/hid.c
+            LIBS += -ludev
+    }
+}
+
+# Check for libusb in CONFIG
+libusb {
+    # We don't want warnings from 3rd party C code
+    QMAKE_CFLAGS_WARN_ON = -w
+
+    LH_LIBUSB_DIR = $$LH_LINKDATA_DIR/libusb
+    INCLUDEPATH += $$LH_LIBUSB_DIR
+    HEADERS += $$LH_LIBUSB_DIR/libusb.h
+    SOURCES += $$LH_LIBUSB_DIR/core.c $$LH_LIBUSB_DIR/descriptor.c $$LH_LIBUSB_DIR/io.c $$LH_LIBUSB_DIR/sync.c
+
+    win32 {
+            DEFINES += OS_WINDOWS
+            SOURCES += \
+                $$LH_LIBUSB_DIR/os/windows_usb.c \
+                $$LH_LIBUSB_DIR/os/threads_windows.c \
+                $$LH_LIBUSB_DIR/os/poll_windows.c
+            LIBS += -lole32 -lsetupapi -lcfgmgr32
+    }
+
+    macx {
+            DEFINES += OS_DARWIN THREADS_POSIX HAVE_SYS_TIME_H HAVE_POLL_H
+            SOURCES += $$LH_LIBUSB_DIR/os/darwin_usb.c
+            LIBS += -framework CoreFoundation -framework IOKit
+    }
+
+    unix:!macx {
+            DEFINES += OS_LINUX THREADS_POSIX HAVE_SYS_TIME_H HAVE_POLL_H
+            SOURCES += $$LH_LIBUSB_DIR/os/linux_usbfs.c
+    }
 }
 
 # Sign plugins

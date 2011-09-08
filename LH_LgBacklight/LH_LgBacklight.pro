@@ -1,9 +1,9 @@
 TARGET = LH_LgBacklight
 TEMPLATE = lib
 DEFINES += LGBACKLIGHT_LIBRARY
+CONFIG += hidapi
 
-include(../linkdata/LCDHost.pri)
-include(../linkdata/hidapi.pri)
+include(../linkdata/linkdata.pri)
 
 SOURCES += \
     LH_LgBacklight.cpp \

@@ -3,7 +3,7 @@ TEMPLATE = lib
 DEFINES += LG320x240_LIBRARY
 CONFIG += libusb
 
-include(../linkdata/linkdata.pri)
+load(../PluginsConfig.prf)
 
 SOURCES += \
     LH_Lg320x240.cpp \

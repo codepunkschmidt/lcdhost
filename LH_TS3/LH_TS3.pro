@@ -4,7 +4,7 @@ DEFINES += LH_GRAPH_LIBRARY
 QT += network
 CONFIG += conditionalformatting
 
-include(../linkdata/linkdata.pri)
+load(../PluginsConfig.prf)
 include(../codeleap/codeleap.pri)
 
 SOURCES += \

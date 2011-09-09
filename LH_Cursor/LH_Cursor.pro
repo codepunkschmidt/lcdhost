@@ -4,7 +4,7 @@ QT += network xml
 DEFINES += LH_CURSOR_LIBRARY
 CONFIG += conditionalformatting json
 
-include(../linkdata/linkdata.pri)
+load(../PluginsConfig.prf)
 include(../codeleap/codeleap.pri)
 
 HEADERS += \

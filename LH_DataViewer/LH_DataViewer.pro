@@ -5,7 +5,7 @@ DEFINES += LH_DATAVIEWER_LIBRARY
 
 0 { # disabled until Triscopic is ready to attack the A20+ changes
 
-include(../linkdata/linkdata.pri)
+load(../PluginsConfig.prf)
 include(../codeleap/ConditionalFormatting.pri)
 
 SOURCES += \

@@ -2,7 +2,7 @@ TARGET = LH_Lua
 TEMPLATE = lib
 DEFINES += LH_LUA_LIBRARY
 
-include(../linkdata/linkdata.pri)
+load(../PluginsConfig.prf)
 
 # We don't want warnings from 3rd party C code
 QMAKE_CFLAGS_WARN_ON = -w

@@ -3,18 +3,33 @@ This is the top level directory for the open source parts of LCDHost.
 It contains everything needed to build LCDHost plugins, with some
 extra attention to doing it using Qt. By default, simply opening the
 Plugins.pro file in Qt Creator should let you build unsigned versions
-all of the plugins. Some plugins may not build correctly on all
-platforms though, or build but provide only limited features.
+all of the plugins.
+
+Some plugins may not build on all platforms, or build but provide 
+only limited features.
+
+*********************************************************************
+*** Do I really need all this stuff?
+*********************************************************************
+
+No. Technically you don't need any of it. Simply adhering to the
+interface specified in "linkdata/lh_plugin.h" will let you build a
+LCDHost plugin with any tool that lets you make a shared library.
+
+The reasonable minimum to get if you use the Qt SDK is the
+"Plugins.pro" and the "linkdata" subdirectory.
+
+The Qt SDK may be found at http://qt.nokia.com/products/qt-sdk
 
 *********************************************************************
 *** What NOT to change
 *********************************************************************
 
-Do *NOT* commit files at the top level, such as altering or removing 
-existing files or adding new ones. The top level directory should 
-only contain "Plugins.pro", this "README" and ".hgignore".
+Do *NOT* commit files at the top level, such as altering or removing
+existing files or adding new ones. The top level directory should only
+contain this "README", "Plugins.pro" and ".hgignore".
 
-You may of course add any *un*versioned files anywhere. Just be very 
+You may of course add any *un*versioned files anywhere. Just be very
 careful not to add them to the repository by mistake.
 
 If you want to add your own plugin subdirectory to the repository,
@@ -22,18 +37,18 @@ that's fine as long as it compiles cleanly on both OS/X and Windows.
 If you can't test on either of those, see LH_LCoreReboot.pro for an
 example on how to limit a plugin to a single architecture.
 
-Do *NOT* commit to the LCDHost project's committers private
-directories. Create a issue on the issue tracker about any bugs or
-problems that they need to adress, and label the issue appropriately.
+Do *NOT* commit to the project members private directories. Create a
+issue on the issue tracker about any bugs or problems that they need
+to adress, and label the issue appropriately.
 
 http://code.google.com/p/lcdhost/issues/list
 
 The private directories and their maintainers are:
-	linkdata/ - maintained by Johan "SirReal" Lindh
-	codeleap/ - maintained by Andy "Triscopic" Bridges
+	linkdata/ - maintained by Johan Lindh <johan@linkdata.se>
+	codeleap/ - maintained by Andy Bridges <andy@bridgesuk.com>
 
 *********************************************************************
-*** Keeping your code and building inside the repository
+*** Keeping your code inside the repository
 *********************************************************************
 
 It's fine to keep your code in a subdirectory of the repository root.
@@ -42,7 +57,45 @@ change" bit above again.
 
 If you prefer to keep your source code closed, you can do that too
 while still keeping it inside the repository root. Just don't add it
-to the repository. It's that simple.
+to the LCDHost repository.
+
+*********************************************************************
+*** Configuring your build preferences
+*********************************************************************
+
+You must create a file named "PluginsConfig.prf" in the top level
+repository directory. This is fine as it's both in ".hgignore" and
+you're not going to add it to the repository.
+
+This file will be included by "Plugins.pro" to set the LH_PLUGINS_LIST
+variable that decides which plugins to build. It will also be included
+by the plugin project files, so you should configure any extra build
+steps there as well.
+
+If PluginsConfig.prf does not exist, Plugins.pro will create a default
+one for you.
+
+Sample contents to build and sign a single plugin on Windows, assuming
+that the private key file is at c:/Users/UserName/private.pem and the
+public key can be downloaded from http://my.website/public.pem:
+
+    LH_PLUGINS_LIST = MyPlugin
+    SIGNATURE_PRIVATE_FILE = c:/Users/UserName/private.pem
+    SIGNATURE_PUBLIC_URL = http://my.website/public.pem
+    load($$PWD/linkdata/PluginsBase.prf)
+    include($$PWD/linkdata/SignPlugin.pri)
+
+*********************************************************************
+*** Building inside the repository
+*********************************************************************
+
+While possible, it tends to clutter up the filesystem and the output
+of "hg status". The former is traditionally handled using build
+targets named "clean", "mrproper" and other silly things. The latter
+is usually handled by putting more and more glob's into ".hgignore".
+
+Personally, I prefer to use Qt Creator's "Shadow Build" option,
+which leaves the repository alone while building.
 
 *********************************************************************
 *** How to build a LCDHost plugin with Qt Creator
@@ -103,38 +156,36 @@ generic shared library. It doesn't do anything, and isn't recognized
 by LCDHost as a possible plugin, but it's a start, and all you've had
 to do is click some buttons!
 
-*** Building multiple plugins using Plugins.pro
+*** Configuring your build
 
 This step is optional, but you might as well read it, or you'll get
 confused if you accidentally build using Plugins.pro.
 
 Usually, you don't want to build all the plugins. It takes a long
 time, and you very likely already have them. Therefore Plugins.pro
-looks for an unversioned file called 'Custom.pri' in the top level
-directory. If found, it expects it to define a variable called
-'BUILD_PLUGINS', which is a list of the plugins that should be built,
-in order.
+looks for a file called "PluginsConfig.prf". It expects it to define a
+variable called "LH_PLUGINS_LIST", which is a list of the plugins that
+should be built, in order.
 
-It's OK to create Custom.pri (and really any file) in the top level
-directory as long as you don't add it to version control. So just use
-any text editor, and should the question pop up if you want to add it
-to version control, just say No.
+In the directory with Plugins.pro, create a text file named
+"PluginsConfig.prf" containing the text
 
-In the same directory as Plugins.pro, create a text file named
-"Custom.pri" containing the single line:
-
-	BUILD_PLUGINS = LH_MyLCDHostPlugin
+	LH_PLUGINS_LIST = LH_MyLCDHostPlugin
+	load($$PWD/linkdata/PluginsBase.prf)
 
 *** Creating a LH_QtPlugin descendant with Qt Creator
 
 Now you need to add in the LCDHost bits. First, add this line to your
-LH_MyLCDHostPlugin.pro file, after the "DEFINES +=
-LH_MYLCDHOSTPLUGIN_LIBRARY" line but before "SOURCES +=
-LH_MyLCDHostPlugin.cpp"
+LH_MyLCDHostPlugin.pro file, after the 
+"DEFINES += LH_MYLCDHOSTPLUGIN_LIBRARY" line but before 
+"SOURCES += LH_MyLCDHostPlugin.cpp"
 
-	include(../linkdata/linkdata.pri)
+	load(../PluginsConfig.prf)
 
-This will pull in the basic header files, include paths, sources and
+This tells qmake to first try including the PluginsConfig.prf file we
+just made.
+
+This should pull in the basic header files, include paths, sources and
 libraries needed to build a LCDHost plugin. Next you need to create a
 C++ class that inherits from LH_QtPlugin. So let's do that.
 
@@ -173,14 +224,16 @@ before the line
 At this point the code should compile. It won't be recognized by
 LCDHost as a valid plugin yet - there's a bit more to that.
 
-*** Adding the plugin XML data.
+*** Adding the LCDHost plugin specific bits
 
-This step is required no matter what platform or method you use to
-create shared libraries to be used as LCDHost plugins. LCDHost
-requires a plain XML document embedded in the library. This XML is
-documented in lh_plugin.h, but for our sample use:
+Next we need to add the embedded XML document that identifies this as
+a LCDHost plugin, and create the required shared library exports so
+that LCDHost will be able to to load it as a plugin. There's a simple
+macro for all this. The macro goes into the implementation file, NOT
+the header file. So add this text to the end of
+LH_QtPlugin_MyLCDHostPlugin.cpp:
 
-  char __lcdhostplugin_xml[] =
+  LH_PLUGIN(LH_QtPlugin_MyLCDHostPlugin) =
   "<?xml version=\"1.0\"?>"
   "<lcdhostplugin>"
     "<id>MyLCDHostPlugin</id>"
@@ -199,20 +252,6 @@ documented in lh_plugin.h, but for our sample use:
     "</longdesc>"
   "</lcdhostplugin>";
 
-Copy and paste that into the end of LH_QtPlugin_MyLCDHostPlugin.cpp.
-At this point it should compile and be recognized by LCDHost as a
-possible plugin. It won't load though. For that, we need to export the
-required plugin functions.
-
-*** Exporting the lh_create() and lh_destroy() functions
-
-Next we need to create the required shared library exports so that
-LCDHost will be ablto to load it as a plugin. There's a simple macro
-for that. The macro goes into the implementation file, NOT the header
-file. So at the end of LH_QtPlugin_MyLCDHostPlugin.cpp add the line
-
-	LH_PLUGIN(LH_QtPlugin_MyLCDHostPlugin)
-	
 This has three effects. First, it creates an blank signature area that
 you can later fill in with SignPlugin if you choose. (You can automate
 this procedure, see linkdata/SignPlugin.pri). While a plugin is valid
@@ -225,6 +264,9 @@ lh_destroy() functions. While lh_destroy() is optional, it is strongly
 recommended. The macro simply has lh_create() use the C++ new operator
 to instantiate your class and returns it's lh_object* to LCDHost, and
 similarly maps lh_destroy() to delete the instance when asked to.
+
+Third, it embeds the required XML document into the plugin. Without
+that, LCDHost won't recognize it as a valid plugin.
 
 That's it. You now have a bare bones LCDHost plugin. LCDHost will
 recognize it and load/unload it. It doesn't actually provide any

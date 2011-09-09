@@ -5,7 +5,7 @@ QT += network \
 DEFINES += LH_WEBKIT_LIBRARY
 CONFIG += conditionalformatting
 
-include(../../linkdata/linkdata.pri)
+load(../../PluginsConfig.prf)
 include(../../codeleap/codeleap.pri)
 
 SOURCES += \

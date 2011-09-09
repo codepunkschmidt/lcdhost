@@ -1,11 +1,10 @@
 TARGET = LH_Weather
 TEMPLATE = lib
-QT += network \
-    xml
+QT += network xml
 DEFINES += LH_WEATHER_LIBRARY
 CONFIG += conditionalformatting googletranslator
 
-include(../linkdata/linkdata.pri)
+load(../PluginsConfig.prf)
 include(../codeleap/codeleap.pri)
 
 SOURCES += \

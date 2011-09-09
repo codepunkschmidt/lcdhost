@@ -1,2 +1,4 @@
 Plugins.pro.user
-Custom.pri
+PluginsConfig.prf
+Debug/
+Release/

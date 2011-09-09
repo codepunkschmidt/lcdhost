@@ -3,7 +3,7 @@ TEMPLATE = lib
 DEFINES += LH_DIAL_LIBRARY
 CONFIG += codeleapui
 
-include(../linkdata/linkdata.pri)
+load(../PluginsConfig.prf)
 include(../codeleap/codeleap.pri)
 
 SOURCES += \

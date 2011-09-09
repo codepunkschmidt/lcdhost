@@ -2,7 +2,7 @@ TARGET = LH_VirtualLCD
 TEMPLATE = lib
 DEFINES += LH_VIRTUALLCD_LIBRARY
 
-include(../linkdata/linkdata.pri)
+load(../PluginsConfig.prf)
 
 SOURCES += \
     LH_VirtualLCD.cpp

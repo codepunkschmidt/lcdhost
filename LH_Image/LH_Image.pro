@@ -3,7 +3,7 @@ TEMPLATE = lib
 DEFINES += LH_IMAGE_LIBRARY
 QT -= core gui
 
-include(../linkdata/linkdata.pri)
+load(../PluginsConfig.prf)
 
 SOURCES += LH_Image.c
 HEADERS += LH_Image.h

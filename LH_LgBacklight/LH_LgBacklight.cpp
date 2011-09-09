@@ -79,7 +79,7 @@ const char *LH_LgBacklight::userInit()
     rescanbutton_ = new LH_Qt_QString( this, "Rescan",tr("Reload to scan for new devices"),
                                        LH_FLAG_LAST|LH_FLAG_HIDETITLE|LH_FLAG_NOSAVE|LH_FLAG_NOSOURCE|LH_FLAG_NOSINK,
                                        lh_type_string_button );
-    connect( rescanbutton_, SIGNAL(changed()), this, SLOT(wantRescan()) );
+    // connect( rescanbutton_, SIGNAL(valueChanged(LH_QtSetupItem)), this, SLOT(wantRescan()) );
 
     scan();
     return NULL;

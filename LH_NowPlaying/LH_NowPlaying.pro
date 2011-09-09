@@ -2,11 +2,11 @@ TARGET = LH_NowPlaying
 TEMPLATE = lib
 DEFINES += LH_NOWPLAYING_LIBRARY
 
+load(../PluginsConfig.prf)
+
 win32 {
     QT += network xml
-    CONFIG += conditionalformatting
-    CONFIG += qaxcontainer
-    include(../linkdata/linkdata.pri)
+    CONFIG += qaxcontainer conditionalformatting
     include(../codeleap/codeleap.pri)
 
     # We don't want warnings from 3rd party C code

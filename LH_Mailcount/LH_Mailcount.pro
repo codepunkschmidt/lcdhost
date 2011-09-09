@@ -3,7 +3,7 @@ TEMPLATE = lib
 DEFINES += LH_MAILCOUNT_LIBRARY
 CONFIG += conditionalformatting
 
-include(../linkdata/linkdata.pri)
+load(../PluginsConfig.prf)
 include(../codeleap/codeleap.pri)
 
 SOURCES += \

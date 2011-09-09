@@ -120,7 +120,7 @@ public:
     bool richtext() const { return richtext_; }
     QImage& textimage() { return textimage_; }
     bool prepareForRender(int w, int h);
-    bool monochrome() const { return state() ? state()->dev_depth < 2 : false; }
+    bool monochrome() const { return state() ? state()->dev_depth == 1 : false; }
 
     static QImage makeImage(int w = 1, int h = 1)
     {

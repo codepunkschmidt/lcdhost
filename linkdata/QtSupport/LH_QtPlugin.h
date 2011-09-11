@@ -93,7 +93,7 @@ public slots:
 #define LH_PLUGIN(classname) \
     EXPORT lh_object *lh_create() { return &(new classname())->pluginObject(); } \
     EXPORT void lh_destroy( lh_object *obj ) { delete reinterpret_cast<classname*>(obj->ref); } \
-    Q_DECL_EXPORT lh_signature lh_##classname##_signature = LH_SIGNATURE_BLANK; \
-    Q_DECL_EXPORT char lh_##classname##_xml[]
+    lh_signature lh_##classname##_signature = LH_SIGNATURE_BLANK; \
+    char lh_##classname##_xml[]
 
 #endif // LH_QTPLUGIN_H

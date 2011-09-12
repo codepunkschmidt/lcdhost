@@ -3,6 +3,4 @@
 #
 
 TEMPLATE = subdirs
-SUBDIRS =
-
-# this space intentionally left blank
+SUBDIRS = # this space intentionally left blank

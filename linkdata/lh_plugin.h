@@ -65,6 +65,15 @@
 #ifndef LH_PLUGIN_H
 #define LH_PLUGIN_H
 
+#ifdef __cplusplus
+# ifdef QT_CORE_LIB
+#  include <QVariant>
+   typedef struct lh_variant_t lh_variant;
+   void qVariantSetValue( QVariant&, const lh_variant& );
+   bool operator>>( const QVariant&, lh_variant& lhv );
+# endif
+#endif
+
 #define LH_API_MAJOR 6
 #define LH_API_MINOR 0
 #define LH_DEVICE_MAXBUTTONS 32
@@ -431,7 +440,7 @@ typedef struct lh_setup_meta_t
 } lh_setup_meta;
 
 /**
-  Stores variable data for lh_setup_data.value and lh_setup_data.param.
+  Stores variable data for lh_setup_item.value and lh_setup_param.min/max/other
   \sa lh_format
   */
 typedef struct lh_variant_t
@@ -444,6 +453,21 @@ typedef struct lh_variant_t
         void *p; /**< \sa lh_store_pointer */
         lh_buffer b; /**< \sa lh_store_buffer */
     } data;
+#ifdef __cplusplus
+# ifdef QT_CORE_LIB
+    operator QVariant() const
+    {
+        QVariant v;
+        qVariantSetValue(v,*this);
+        return v;
+    }
+    lh_variant_t& operator =( const QVariant& v )
+    {
+        v >> *this;
+        return *this;
+    }
+# endif
+#endif
 } lh_variant;
 
 /**
@@ -459,22 +483,6 @@ typedef struct lh_setup_param_t
     lh_variant max;
     lh_variant other;
 } lh_setup_param;
-
-/**
-  Stores the value and parameters of a setup item.
-
-  Parameter data is used to control UI elements or to provide
-  rendering hints. They are not enforced by LCDHost, but UI elements
-  will respect them where applicable.
-
-  \c value will be saved and restored if \c lh_meta_save_value is set.
-  \c param will be saved and restored if \c lh_meta_save_param is set.
-  */
-typedef struct lh_setup_data_t
-{
-    lh_variant value; /**< value \sa lh_variant */
-    lh_setup_param param; /**< parameters \sa lh_setup_param */
-} lh_setup_data;
 
 /**
   Stores flags for \c lh_setup_link.
@@ -516,32 +524,15 @@ typedef struct lh_setup_item_t
     int size; /**< sizeof(lh_setup_item) */
 
     lh_setup_meta meta;
-    lh_setup_data data;
+    lh_setup_param param; /**< parameters \sa lh_setup_param */
+    lh_variant value; /**< value \sa lh_variant */
     lh_setup_link link;
 
     /* plugin exported functions, may be NULL */
-    void (*obj_value_changed)(struct lh_setup_item_t*); /**< \c data.value has been changed by LCDHost */
     void (*obj_param_changed)(struct lh_setup_item_t*); /**< \c data.param has been changed by LCDHost */
+    void (*obj_value_changed)(struct lh_setup_item_t*); /**< \c data.value has been changed by LCDHost */
     void (*obj_link_changed)(struct lh_setup_item_t*); /**< \c link has been changed by LCDHost */
 } lh_setup_item;
-
-/**
-  These structures are used with the \c lh_cb_data_to_qvariant and
-  \c lh_cb_qvariant_to_data callbacks. Only available if you're
-  using Qt and C++. Also, while these may seem tempting to use,
-  note that QVariant might as well be called QInvariant, as they
-  are only useful to pass data around, they cannot modify their data.
-  */
-typedef struct lh_data_to_qvariant_t
-{
-    const lh_setup_data *data;
-    void *qvariant;
-} lh_data_to_qvariant;
-typedef struct lh_qvariant_to_data_t
-{
-    const void *qvariant;
-    lh_setup_data *data;
-} lh_qvariant_to_data;
 
 /**
   If the backlight of an output device is supported, this

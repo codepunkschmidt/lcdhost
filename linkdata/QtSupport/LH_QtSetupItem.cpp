@@ -56,10 +56,10 @@ static void obj_link_changed( lh_setup_item *obj )
 
 LH_QtSetupItem::LH_QtSetupItem( LH_QtObject *parent, const char *ident, lh_meta_type type, int flags ) :
     LH_QtObject( &item_.obj, ident, parent ),
-    value_( item_.data.value, this ),
-    min_( item_.data.param.min, this ),
-    max_( item_.data.param.max, this ),
-    other_( item_.data.param.other, this )
+    value_( item_.value, this ),
+    min_( item_.param.min, this ),
+    max_( item_.param.max, this ),
+    other_( item_.param.other, this )
 {
     // handle A18 flags
     Q_ASSERT( flags >= 0 );
@@ -140,7 +140,8 @@ LH_QtSetupItem::LH_QtSetupItem( LH_QtObject *parent, const char *ident, lh_meta_
     item_.meta.order = ((flags&lh_meta_first)?-1:0) + ((flags&lh_meta_last)?+1:0);
     item_.meta.help = 0;
 
-    memset( &item_.data, 0, sizeof(item_.data) );
+    memset( &item_.value, 0, sizeof(item_.value) );
+    memset( &item_.param, 0, sizeof(item_.param) );
     memset( &item_.link, 0, sizeof(lh_setup_link) );
 
     item_.obj_value_changed = obj_value_changed;

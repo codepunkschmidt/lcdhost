@@ -14,19 +14,19 @@ extern "C" {
 
 #include "LH_QVariant.h"
 
-class LH_LuaVariant : public LH_QVariant
+class LH_LuaVariant : public QVariant
 {
 public:
     LH_LuaVariant() :
-        LH_QVariant()
+        QVariant()
     { }
 
     LH_LuaVariant( const LH_LuaVariant& other ) :
-        LH_QVariant(other)
+        QVariant(other)
     { }
 
-    LH_LuaVariant( const LH_QVariant& val ) :
-        LH_QVariant(val)
+    LH_LuaVariant( const QVariant& val ) :
+        QVariant(val)
     { }
 
     LH_LuaVariant( lua_State *L );

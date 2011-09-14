@@ -13,7 +13,7 @@ class LH_QtObject;
   area.
   */
 
-class LH_QtVariant : public QObject, public LH_QVariant
+class LH_QtVariant : public QObject, public QVariant
 {
     lh_variant& lhv_;
 

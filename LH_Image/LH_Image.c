@@ -101,9 +101,9 @@ static void image_value_changed( lh_setup_item *obj )
     lh_image *img = (void*) obj->obj.ref;
     if( img )
     {
-        if( !strcmp( (char*)obj->data.value.data.b.p, "unload" ) )
+        if( !strcmp( (char*)obj->value.data.b.p, "unload" ) )
         {
-            strcpy( (char*)obj->data.value.data.b.p, "was-unloaded" );
+            strcpy( (char*)obj->value.data.b.p, "was-unloaded" );
             obj->obj.cb( obj->obj.cb_id, lh_cb_setup_refresh_value, 0 );
             obj->obj.cb( obj->obj.cb_id, lh_cb_unload, "Filename was 'unload'." );
         }
@@ -133,9 +133,9 @@ static const char *image_init(lh_object *obj)
     strcpy( img->setup_filename.obj.ident, "Filename");
     img->setup_filename.meta.type = lh_type_string_filename;
     img->setup_filename.meta.flags = lh_meta_default;
-    img->setup_filename.data.value.fmt = lh_format_string;
-    img->setup_filename.data.value.data.b.p = img->filename;
-    img->setup_filename.data.value.data.b.n = sizeof(img->filename);
+    img->setup_filename.value.fmt = lh_format_string;
+    img->setup_filename.value.data.b.p = img->filename;
+    img->setup_filename.value.data.b.n = sizeof(img->filename);
     img->setup_filename.obj_value_changed = image_value_changed;
     img->item_.obj.cb( img->item_.obj.cb_id, lh_cb_setup_create, &img->setup_filename );
 

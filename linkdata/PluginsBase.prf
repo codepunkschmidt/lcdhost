@@ -27,10 +27,13 @@ CHANGESET_REVISION = $$system($$quote(hg log -l 1 --template {node}/{rev} $$_PRO
     DEFINES += REVISION=$$REVISION
 }
 
-# The core files always go in
-INCLUDEPATH += $$PWD
-HEADERS += $$PWD/lh_plugin.h
-SOURCES += $$PWD/lh_plugin.c
+# The core files always go in, but guard against duplicate inclusion
+!contains(CONFIG,lh_plugin) {
+    CONFIG += lh_plugin
+    INCLUDEPATH += $$PWD
+    HEADERS += $$PWD/lh_plugin.h
+    SOURCES += $$PWD/lh_plugin.c
+}
 
 # Qt support files
 LH_QT_SUPPORT_DIR = $$PWD/QtSupport
@@ -84,16 +87,12 @@ LH_QT_SUPPORT_SOURCES = \
     $$LH_QT_SUPPORT_DIR/LH_QtSetupItem.cpp \
     $$LH_QT_SUPPORT_DIR/LH_QtVariant.cpp
 
-# Add Qt support files as needed
-contains( QT, core ) {
+# Add Qt support files if needed
+contains(QT,core):!contains(CONFIG,lh_qtsupport) {
+    CONFIG += lh_qtsupport
     INCLUDEPATH += $$LH_QT_SUPPORT_DIR
-    contains( TEMPLATE, lib ) {
-        HEADERS += $$LH_QT_SUPPORT_HEADERS
-        SOURCES += $$LH_QT_SUPPORT_SOURCES
-    } else {
-        HEADERS += $$LH_QT_SUPPORT_DIR/LH_QVariant.h
-        SOURCES += $$LH_QT_SUPPORT_DIR/LH_QVariant.cpp
-    }
+    HEADERS += $$LH_QT_SUPPORT_HEADERS
+    SOURCES += $$LH_QT_SUPPORT_SOURCES
 }
 
 # Support the 'hidapi' CONFIG setting

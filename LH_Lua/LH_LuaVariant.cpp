@@ -1,7 +1,7 @@
 #include "LH_LuaVariant.h"
 
-LH_LuaVariant::LH_LuaVariant( lua_State *L )
-    : LH_QVariant()
+LH_LuaVariant::LH_LuaVariant( lua_State *L ) :
+    QVariant()
 {
     switch( lua_type(L,-1) )
     {
@@ -18,7 +18,7 @@ LH_LuaVariant::LH_LuaVariant( lua_State *L )
         {
             size_t len = 0;
             const char *str = lua_tolstring( L, -1, &len );
-            LH_QVariant::fromString( QString::fromUtf8(str, len) );
+            QString::fromUtf8(str, len) >> *this;
         }
         break;
     case LUA_TTABLE:
@@ -53,12 +53,12 @@ void LH_LuaVariant::push( lua_State *L )
     }
     if( type() == QVariant::LongLong || type() == QVariant::Int )
     {
-        lua_pushinteger(L,LH_QVariant::toLongLong());
+        lua_pushinteger(L,toLongLong());
         return;
     }
     if( type() == QVariant::Double )
     {
-        lua_pushnumber(L,LH_QVariant::toDouble());
+        lua_pushnumber(L,toDouble());
         return;
     }
     if( type() == QVariant::List || type() == QVariant::StringList )
@@ -66,7 +66,7 @@ void LH_LuaVariant::push( lua_State *L )
         Q_ASSERT(0);
         return;
     }
-    const QByteArray ba( LH_QVariant::toString().toUtf8() );
+    const QByteArray ba( toString().toUtf8() );
     lua_pushlstring(L,ba.constData(),ba.size());
     return;
 }

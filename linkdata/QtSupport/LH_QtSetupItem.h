@@ -94,9 +94,8 @@ public:
     LH_QtObject *parent() const { return static_cast<LH_QtObject *>(LH_QtObject::parent()); }
 
     const lh_setup_item& item() const { return item_; }
-    const lh_setup_meta& meta() const { return item().meta; }
-    const lh_setup_data& data() const { return item().data; }
-    const lh_setup_link& link() const { return item().link; }
+    const lh_setup_meta& meta() const { return item_.meta; }
+    const lh_setup_link& link() const { return item_.link; }
 
     int notify( int note, void *param );
 

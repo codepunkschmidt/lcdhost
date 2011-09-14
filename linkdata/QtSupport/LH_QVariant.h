@@ -35,46 +35,85 @@
 #ifndef LH_QVARIANT_H
 #define LH_QVARIANT_H
 
+/**
+  Extends the normal QVariant to be aware of LCDHost data types
+  and how they're converted to and from QString, lh_variant and
+  XML streams.
+  */
+
 #include <QVariant>
 #include <QMetaType>
 #include "lh_plugin.h"
 
 Q_DECLARE_METATYPE(lh_input)
 
+class QXmlStreamWriter;
+class QXmlStreamReader;
+
 /**
-  Extends the normal QVariant to be aware of LCDHost data types
-  and how they're converted to and from QString and lh_variant.
+  Returns true if a QVariant can be read from the XML stream
+  in LCDHost format.
   */
+bool operator>( const QXmlStreamReader& reader, const QVariant& obj );
 
-class LH_QVariant : public QVariant
-{
-public:
-    LH_QVariant() :
-        QVariant()
-    { }
+/**
+  Reads a QVariant from the XML stream in LCDHost format.
+  */
+QXmlStreamReader& operator>>( QXmlStreamReader& reader, QVariant& obj );
 
-    LH_QVariant( const LH_QVariant& other ) :
-        QVariant(other)
-    { }
+/**
+  Writes a QVariant to an XML stream in LCDHost format.
+  */
+QXmlStreamWriter& operator<<( QXmlStreamWriter& writer, const QVariant& obj );
 
-    LH_QVariant( const QVariant& val ) :
-        QVariant(val)
-    { }
+/**
+  Converts LCDHost formatted string data into QVariant,
+  preserving the QVariant data type. If the QVariant
+  does not have a data type set, it will be set to
+  QVariant::String.
 
-    LH_QVariant( const lh_variant& lhv ) :
-        QVariant()
-    {
-        read(lhv);
-    }
+  "LCDHost formatting" means the string data is
+  whitespace separated. Embedded whitespace
+  is escaped.
 
-    void fromString( const QString& s );
-    QString toString() const;
+  Returns the number of characters used from the
+  string, or zero in case of error.
+  */
+int operator>>( const QString&, QVariant& );
 
-    bool read( const lh_variant& lhv );
-    void write( lh_variant& lhv ) const;
+/**
+  \sa int operator>>( const QString&, QVariant& )
 
-    static const char *lh_formatname( lh_format fmt );
-    static QVariant::Type variantType( lh_format fmt );
-};
+  This function will remove used characters from the
+  beginning of the string and return a reference
+  to the string.
+  */
+QString& operator>>( QString& s, QVariant& v );
+
+/**
+  Converts a QVariant into LCDHost formatted string
+  data. Appends to the given string and returns a
+  reference to it.
+  */
+QString& operator<<( QString&, const QVariant& );
+
+/**
+  Writes a QVariant into a lh_variant structure.
+  Returns true if successful.
+  */
+bool operator>>( const QVariant&, lh_variant& lhv );
+
+/**
+  Returns the QVariant::Type used to store the
+  lh_format given.
+  */
+QVariant::Type lh_varianttype( lh_format fmt );
+
+/**
+  Reads a lh_variant structure and sets the
+  QVariant accordingly. This will change the
+  QVariant::Type as needed.
+  */
+void qVariantSetValue( QVariant&, const lh_variant& );
 
 #endif // LH_QVARIANT_H

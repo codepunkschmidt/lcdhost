@@ -13,12 +13,12 @@ LH_RSSInterface::LH_RSSInterface(LH_QtObject* parent)
     url_ = getDefaultURL();
     setup_url_ = new LH_Qt_QString(parent,"URL",url_);
     setup_url_->setOrder(-1);
-    connect( setup_url_, SIGNAL(changed()), this, SLOT(changeURL()));
+    connect( setup_url_, SIGNAL(valueChanged()), this, SLOT(changeURL()));
 
     setup_method_ = NULL;
 
     setup_delay_ = new LH_Qt_QSlider(parent,("Switch delay"),5,1,10);
-    connect( setup_delay_, SIGNAL(changed()), this, SLOT(changeDelay()) );
+    connect( setup_delay_, SIGNAL(valueChanged()), this, SLOT(changeDelay()) );
 
     setup_browser_ = new LH_Qt_InputState(parent,("Open in browser"),QString(),LH_FLAG_AUTORENDER);
     connect( setup_browser_, SIGNAL(input(int,int)), this, SLOT(openBrowser(int,int)) );
@@ -30,11 +30,11 @@ LH_RSSInterface::LH_RSSInterface(LH_QtObject* parent)
     connect( setup_next_, SIGNAL(input(int,int)), this, SLOT(nextHeadline(int,int)) );
 
     setup_refresh_ = new LH_Qt_int(parent,("Refresh (minutes)"),5);
-    connect( setup_refresh_, SIGNAL(changed()), this, SLOT(changeRefresh()) );
+    connect( setup_refresh_, SIGNAL(valueChanged()), this, SLOT(changeRefresh()) );
 
     setup_modify_ = new LH_Qt_int(parent,("Modify Visible"),0,-20,20);
     setup_modify_->setHelp("Use this to display a different item from the one that is currently active: set it to 1 for the \"next\" item, \"-1\" for the previous item, etc.");
-    connect( setup_modify_, SIGNAL(changed()), this, SLOT(reemitChanged()) );
+    connect( setup_modify_, SIGNAL(valueChanged()), this, SLOT(reemitChanged()) );
 
     connectRSS();
     emit changed();

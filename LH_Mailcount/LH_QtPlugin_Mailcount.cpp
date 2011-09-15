@@ -56,7 +56,7 @@ const char *LH_QtPlugin_Mailcount::userInit()
     manual_adjust_ = new LH_Qt_int(this,("Manual adjustment"),0);
     manual_adjust_->setHelp("If the number of mails reported by the system is "
                             "always wrong by a fixed amount, you may adjust for it here.");
-    connect( manual_adjust_, SIGNAL(changed()), this, SLOT(getUnreadMailcount()) );
+    connect( manual_adjust_, SIGNAL(valueChanged()), this, SLOT(getUnreadMailcount()) );
 
 #ifdef Q_WS_WIN
     hShell32Dll = LoadLibraryW( L"SHELL32.DLL" );

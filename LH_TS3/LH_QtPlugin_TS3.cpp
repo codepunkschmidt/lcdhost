@@ -63,7 +63,7 @@ const char *LH_QtPlugin_TS3::userInit()
     /*setup_nickname_expression_ = new LH_Qt_QString(this, "Nickname Epression", "", LH_FLAG_NOSINK | LH_FLAG_NOSOURCE);
     setup_nickname_expression_->setTitle("Nickname:");
     setup_nickname_expression_->setHelp("Entering your nickname will enable the plugin to acquire additional information about your status.<br/><br/>Note that this field is actually a Regular Expression, so you can have it match multiple possible names. The first match it finds will be the one it uses.");
-    connect(setup_nickname_expression_, SIGNAL(changed()), this, SLOT(updateMyDetails()));*/
+    connect(setup_nickname_expression_, SIGNAL(valueChanged()), this, SLOT(updateMyDetails()));*/
 
     setup_user_detail_ = new LH_Qt_html(this, "", LH_FLAG_NOSINK | LH_FLAG_NOSOURCE );
 
@@ -91,7 +91,7 @@ const char *LH_QtPlugin_TS3::userInit()
     setup_speakers_status_->setLink("Monitoring/3rdParty/TeamSpeak3/Speaker Status",true);
     setup_speakers_status_->refreshValue();
 
-    connect(setup_nickname_, SIGNAL(changed()), this, SLOT(updateMyDetails()));
+    connect(setup_nickname_, SIGNAL(valueChanged()), this, SLOT(updateMyDetails()));
     connect(socket_, SIGNAL(connected()), this, SLOT(TS3Connected()));
     connect(socket_, SIGNAL(disconnected()), this, SLOT(TS3Disconnected()));
     connect(socket_, SIGNAL(readyRead()), this, SLOT(TS3DataReceived()));

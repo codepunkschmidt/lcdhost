@@ -109,7 +109,7 @@ const char *LH_Dial::userInit()
     setup_face_ticks_ = new LH_Qt_bool(this,"Show Ticks",false,LH_FLAG_AUTORENDER);
     setup_face_ticks_->setHelp( "<p>Whether to overlay marks denoting significant points along the dial.</p>");
 
-    connect( setup_face_style_, SIGNAL(changed()), this, SLOT(changeFaceStyle()));
+    connect( setup_face_style_, SIGNAL(valueChanged()), this, SLOT(changeFaceStyle()));
 
     setup_max_ = new LH_Qt_double(this, "Dial Max",0,-99999999,99999999, LH_FLAG_AUTORENDER | LH_FLAG_HIDDEN);
     setup_min_ = new LH_Qt_double(this, "Dial Min",1000,-99999999,99999999, LH_FLAG_AUTORENDER | LH_FLAG_HIDDEN);
@@ -174,8 +174,8 @@ const char *LH_Dial::userInit()
     ticks.quarterCircle.append(tickObject(3, 2, 0.15, 0.80));
 
     addNeedle("Default");
-    connect( setup_linked_values_, SIGNAL(changed()), this, SLOT(newLinkedValue()) );
-    connect( setup_needle_selection_, SIGNAL(changed()), this, SLOT(changeSelectedNeedle()) );
+    connect( setup_linked_values_, SIGNAL(valueChanged()), this, SLOT(newLinkedValue()) );
+    connect( setup_needle_selection_, SIGNAL(valueChanged()), this, SLOT(changeSelectedNeedle()) );
     connect( this, SIGNAL(initialized()), this, SLOT(initializeDefaults()) );
 
     return 0;
@@ -187,8 +187,8 @@ void LH_Dial::initializeDefaults()
     changeSelectedNeedle();
     changeFaceStyle();
     changeNeedleStyle();
-    connect( setup_type_, SIGNAL(changed()), this, SLOT(changeType()));
-    connect( setup_needle_style_->ui(), SIGNAL(changed()), this, SLOT(changeNeedleStyle()));
+    connect( setup_type_, SIGNAL(valueChanged()), this, SLOT(changeType()));
+    connect( setup_needle_style_->ui(), SIGNAL(valueChanged()), this, SLOT(changeNeedleStyle()));
 }
 
 void LH_Dial::addNeedle(QString name)

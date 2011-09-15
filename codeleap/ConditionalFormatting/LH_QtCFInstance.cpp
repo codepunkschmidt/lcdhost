@@ -96,13 +96,13 @@ void LH_QtCFInstance::cf_initialize()
                         menu_txt.arg("on").arg("a").arg("copy").arg("Copy Rules") +
                         menu_txt.arg("on").arg("a").arg("paste").arg("Paste Rules")
                     ));
-        connect( setup_cf_menu1_, SIGNAL(change(QString)), this, SLOT(cf_menu(QString)) );
+        connect( setup_cf_menu1_, SIGNAL(stringChanged(QString)), this, SLOT(cf_menu(QString)) );
 
         setup_cf_rules_ = new LH_Qt_QStringList(this, "Conditions", QStringList(), LH_FLAG_UI | LH_FLAG_LAST | LH_FLAG_HIDDEN | LH_FLAG_HIDETITLE, lh_type_string_listbox);
 
         setup_cf_menu2_ = new LH_Qt_html(this, 0, LH_FLAG_UI | LH_FLAG_LAST | LH_FLAG_HIDDEN | LH_FLAG_INDENTTITLE );
         setRuleItemMenu(false,false,false);
-        connect( setup_cf_menu2_, SIGNAL(change(QString)), this, SLOT(cf_menu(QString)) );
+        connect( setup_cf_menu2_, SIGNAL(stringChanged(QString)), this, SLOT(cf_menu(QString)) );
 
         setup_cf_source_ = new LH_Qt_QStringList(this, "Source", QStringList(), LH_FLAG_UI | LH_FLAG_LAST | LH_FLAG_HIDDEN);
         setup_cf_source_mode_ = new LH_Qt_QStringList(this, "Value", QStringList(), LH_FLAG_UI | LH_FLAG_LAST | LH_FLAG_HIDDEN);
@@ -133,43 +133,43 @@ void LH_QtCFInstance::cf_initialize()
 
         setup_cf_menu3_ = new LH_Qt_html(this, 0, LH_FLAG_UI | LH_FLAG_LAST | LH_FLAG_HIDDEN | LH_FLAG_INDENTTITLE );
         setRuleEditMenu(false,false,false);
-        connect( setup_cf_menu3_, SIGNAL(change(QString)), this, SLOT(cf_menu(QString)) );
+        connect( setup_cf_menu3_, SIGNAL(stringChanged(QString)), this, SLOT(cf_menu(QString)) );
 
         setup_cf_XML_ = new LH_Qt_QTextEdit(this, "Conditions XML", "<rules/>", LH_FLAG_LAST | LH_FLAG_HIDDEN);
 
-        connect(setup_cf_enabled_,         SIGNAL(changed()), this, SLOT(cf_enabled_changed()));
-        connect(setup_cf_enabled_,         SIGNAL(set()),     this, SLOT(cf_enabled_changed()));
-        connect(setup_cf_source_,          SIGNAL(changed()), this, SLOT(cf_source_changed()));
-        connect(setup_cf_source_,          SIGNAL(set()),     this, SLOT(cf_source_changed()));
-        connect(setup_cf_source_mode_,     SIGNAL(changed()), this, SLOT(cf_source_changed()));
-        connect(setup_cf_test_,            SIGNAL(changed()), this, SLOT(cf_condition_changed()));
-        connect(setup_cf_test_,            SIGNAL(set()),     this, SLOT(cf_condition_changed()));
-        connect(setup_cf_target_,          SIGNAL(changed()), this, SLOT(cf_target_changed()));
-        connect(setup_cf_target_,          SIGNAL(set()),     this, SLOT(cf_target_changed()));
-        connect(setup_cf_XML_,             SIGNAL(changed()), this, SLOT(cf_XML_changed()));
-        connect(setup_cf_rules_,           SIGNAL(changed()), this, SLOT(cf_rules_changed()));
+        connect(setup_cf_enabled_,         SIGNAL(valueChanged()), this, SLOT(cf_enabled_changed()));
+        connect(setup_cf_enabled_,         SIGNAL(valueSet()),     this, SLOT(cf_enabled_changed()));
+        connect(setup_cf_source_,          SIGNAL(valueChanged()), this, SLOT(cf_source_changed()));
+        connect(setup_cf_source_,          SIGNAL(valueSet()),     this, SLOT(cf_source_changed()));
+        connect(setup_cf_source_mode_,     SIGNAL(valueChanged()), this, SLOT(cf_source_changed()));
+        connect(setup_cf_test_,            SIGNAL(valueChanged()), this, SLOT(cf_condition_changed()));
+        connect(setup_cf_test_,            SIGNAL(valueSet()),     this, SLOT(cf_condition_changed()));
+        connect(setup_cf_target_,          SIGNAL(valueChanged()), this, SLOT(cf_target_changed()));
+        connect(setup_cf_target_,          SIGNAL(valueSet()),     this, SLOT(cf_target_changed()));
+        connect(setup_cf_XML_,             SIGNAL(valueChanged()), this, SLOT(cf_XML_changed()));
+        connect(setup_cf_rules_,           SIGNAL(valueChanged()), this, SLOT(cf_rules_changed()));
 
-        connect(setup_cf_state_,           SIGNAL(changed()), this, SLOT(cf_state_value_updated()));
-        connect(setup_cf_state_,           SIGNAL(set()),     this, SLOT(cf_state_value_updated()));
-        connect(setup_cf_visibility_,      SIGNAL(changed()), this, SLOT(cf_update_visibility()));
-        connect(setup_cf_visibility_,      SIGNAL(set()),     this, SLOT(cf_update_visibility()));
+        connect(setup_cf_state_,           SIGNAL(valueChanged()), this, SLOT(cf_state_value_updated()));
+        connect(setup_cf_state_,           SIGNAL(valueSet()),     this, SLOT(cf_state_value_updated()));
+        connect(setup_cf_visibility_,      SIGNAL(valueChanged()), this, SLOT(cf_update_visibility()));
+        connect(setup_cf_visibility_,      SIGNAL(valueSet()),     this, SLOT(cf_update_visibility()));
 
-        connect(setup_cf_source_,          SIGNAL(changed()), this, SLOT(cf_rule_edited()));
-        connect(setup_cf_source_mode_,     SIGNAL(changed()), this, SLOT(cf_rule_edited()));
-        connect(setup_cf_target_,          SIGNAL(changed()), this, SLOT(cf_rule_edited()));
-        connect(setup_cf_test_,            SIGNAL(changed()), this, SLOT(cf_rule_edited()));
-        connect(setup_cf_testValue1_,      SIGNAL(changed()), this, SLOT(cf_rule_edited()));
-        connect(setup_cf_testValue1_List_, SIGNAL(changed()), this, SLOT(cf_rule_edited()));
-        connect(setup_cf_testValue2_,      SIGNAL(changed()), this, SLOT(cf_rule_edited()));
+        connect(setup_cf_source_,          SIGNAL(valueChanged()), this, SLOT(cf_rule_edited()));
+        connect(setup_cf_source_mode_,     SIGNAL(valueChanged()), this, SLOT(cf_rule_edited()));
+        connect(setup_cf_target_,          SIGNAL(valueChanged()), this, SLOT(cf_rule_edited()));
+        connect(setup_cf_test_,            SIGNAL(valueChanged()), this, SLOT(cf_rule_edited()));
+        connect(setup_cf_testValue1_,      SIGNAL(valueChanged()), this, SLOT(cf_rule_edited()));
+        connect(setup_cf_testValue1_List_, SIGNAL(valueChanged()), this, SLOT(cf_rule_edited()));
+        connect(setup_cf_testValue2_,      SIGNAL(valueChanged()), this, SLOT(cf_rule_edited()));
 
-        connect(setup_cf_newValue_Color_,  SIGNAL(changed()), this, SLOT(cf_rule_edited()));
-        connect(setup_cf_newValue_Font_,   SIGNAL(changed()), this, SLOT(cf_rule_edited()));
-        connect(setup_cf_newValue_String_, SIGNAL(changed()), this, SLOT(cf_rule_edited()));
-        connect(setup_cf_newValue_Bool_,   SIGNAL(changed()), this, SLOT(cf_rule_edited()));
-        connect(setup_cf_newValue_Int_,    SIGNAL(changed()), this, SLOT(cf_rule_edited()));
-        connect(setup_cf_newValue_Slider_, SIGNAL(changed()), this, SLOT(cf_rule_edited()));
-        connect(setup_cf_newValue_List_,   SIGNAL(changed()), this, SLOT(cf_rule_edited()));
-        connect(setup_cf_newValue_File_,   SIGNAL(changed()), this, SLOT(cf_rule_edited()));
+        connect(setup_cf_newValue_Color_,  SIGNAL(valueChanged()), this, SLOT(cf_rule_edited()));
+        connect(setup_cf_newValue_Font_,   SIGNAL(valueChanged()), this, SLOT(cf_rule_edited()));
+        connect(setup_cf_newValue_String_, SIGNAL(valueChanged()), this, SLOT(cf_rule_edited()));
+        connect(setup_cf_newValue_Bool_,   SIGNAL(valueChanged()), this, SLOT(cf_rule_edited()));
+        connect(setup_cf_newValue_Int_,    SIGNAL(valueChanged()), this, SLOT(cf_rule_edited()));
+        connect(setup_cf_newValue_Slider_, SIGNAL(valueChanged()), this, SLOT(cf_rule_edited()));
+        connect(setup_cf_newValue_List_,   SIGNAL(valueChanged()), this, SLOT(cf_rule_edited()));
+        connect(setup_cf_newValue_File_,   SIGNAL(valueChanged()), this, SLOT(cf_rule_edited()));
 
         cf_source_list_pos = 0;
         cf_target_list_pos = 0;
@@ -228,8 +228,8 @@ void LH_QtCFInstance::add_cf_source(QString name, LH_QtSetupItem* si, bool atEnd
         sources_[name]->setValue();
         if(si!=setup_cf_state_)
         {
-            connect(si, SIGNAL(changed()), this, SLOT(cf_apply_rules()));
-            connect(si, SIGNAL(set()), this, SLOT(cf_apply_rules()));
+            connect(si, SIGNAL(valueChanged()), this, SLOT(cf_apply_rules()));
+            connect(si, SIGNAL(valueSet()), this, SLOT(cf_apply_rules()));
         }
     }
 }

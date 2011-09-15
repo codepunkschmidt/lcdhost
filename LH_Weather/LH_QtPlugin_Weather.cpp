@@ -89,13 +89,13 @@ const char *LH_QtPlugin_Weather::userInit()
     //setup_languages_->setHelp("<p>Yahoo's Weather API doesn't have multilingual support; the translation is instead done using Google Translate.</p>"
     //                          "<p>Bad translations can be corrected by editing the translation cache located in the LCDHost directory.</p>");
     //setup_language_ = new LH_Qt_QString(this, "Language Code", "en", LH_FLAG_HIDDEN | LH_FLAG_BLANKTITLE);
-    //connect(setup_languages_, SIGNAL(changed()), this, SLOT(selectLanguage()));
-    //connect(setup_language_, SIGNAL(changed()), this, SLOT(setLanguage()));
+    //connect(setup_languages_, SIGNAL(valueChanged()), this, SLOT(selectLanguage()));
+    //connect(setup_language_, SIGNAL(valueChanged()), this, SLOT(setLanguage()));
 
     setup_location_name_ = new LH_Qt_QString(this,"Location",QString("London UK"));
     setup_location_name_->setHelp("The location whose weather you want to display");
     setup_location_name_->setOrder(-5);
-    connect( setup_location_name_, SIGNAL(changed()), this, SLOT(fetchWOEID()));
+    connect( setup_location_name_, SIGNAL(valueChanged()), this, SLOT(fetchWOEID()));
 
     setup_yahoo_woeid_ = new LH_Qt_QString(this,"Y! WOEID",QString("26459500"), LH_FLAG_HIDDEN);
     setup_yahoo_woeid_->setHelp("Internal use only: Yahoo Where On Earth ID");
@@ -125,13 +125,13 @@ const char *LH_QtPlugin_Weather::userInit()
     setup_units_type_ = new LH_Qt_QStringList(this, "Units", unitTypes, 0);
     setup_units_type_->setHelp("Select whether you want metric (European) units or imperial (British Commonwealth & USA)");
     setup_units_type_->setOrder(-1);
-    connect( setup_units_type_, SIGNAL(changed()), this, SLOT(fetch2DayU()) );
+    connect( setup_units_type_, SIGNAL(valueChanged()), this, SLOT(fetch2DayU()) );
 
     setup_method_ = NULL;
 
     setup_refresh_ = new LH_Qt_int(this,("Refresh (minutes)"),5);
     setup_refresh_->setHelp("How long to wait before checking for an update to the feed (in minutes)");
-    connect( setup_refresh_, SIGNAL(changed()), this, SLOT(requestPolling()) );
+    connect( setup_refresh_, SIGNAL(valueChanged()), this, SLOT(requestPolling()) );
 
     //setup_current_url_ = new LH_Qt_QString(this,"Full Weather URL",QString("N/A"),LH_FLAG_READONLY | LH_FLAG_HIDDEN);
     //setup_current_url_->setHelp("Internal use only: URL to the page showing the full forecast");

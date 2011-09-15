@@ -158,11 +158,9 @@ public:
 
 signals:
     // these signals are emitted when LCDHost changes data
-    void valueChanged( const LH_QtSetupItem& );
-    void minimumChanged( const LH_QtSetupItem& );
-    void maximumChanged( const LH_QtSetupItem& );
-    void otherChanged( const LH_QtSetupItem& );
-    void linkChanged( const LH_QtSetupItem& );
+    void paramChanged();
+    void valueChanged();
+    void linkChanged();
 
     // these signals are sent when receiving corresponding notifications from LCDHost
     void duplicateSource();
@@ -172,7 +170,7 @@ signals:
     void flagsSet( int );
     void orderSet( int );
     void helpSet( const char * );
-    void valueSet( const QVariant& );
+    void valueSet();
     void paramSet();
     void linkSet( const char *path, int flags, const char *filter );
 

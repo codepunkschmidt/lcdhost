@@ -52,10 +52,10 @@ const char *LH_DialTime::userInit()
     setup_adjust_hours_->setHelp( "<p>Add or subract hours from the time.</p>");
     setup_adjust_hours_->setOrder(-10);
 
-    connect( setup_manual_adjust_, SIGNAL(changed()), this, SLOT(changeManualAdjust()));
-    connect( setup_adjust_seconds_, SIGNAL(changed()), this, SLOT(changeManualSeconds()));
-    connect( setup_adjust_minutes_, SIGNAL(changed()), this, SLOT(changeManualMinutes()));
-    connect( setup_adjust_hours_, SIGNAL(changed()), this, SLOT(changeManualHours()));
+    connect( setup_manual_adjust_, SIGNAL(valueChanged()), this, SLOT(changeManualAdjust()));
+    connect( setup_adjust_seconds_, SIGNAL(valueChanged()), this, SLOT(changeManualSeconds()));
+    connect( setup_adjust_minutes_, SIGNAL(valueChanged()), this, SLOT(changeManualMinutes()));
+    connect( setup_adjust_hours_, SIGNAL(valueChanged()), this, SLOT(changeManualHours()));
 
 
     clearNeedles();

@@ -44,6 +44,8 @@
 
 class LH_QtNetwork : public QObject
 {
+    Q_OBJECT
+
     LH_QtInstance *parent_;
     LH_Qt_int *link_net_in_rate_;
     LH_Qt_int *link_net_in_max_;
@@ -75,8 +77,8 @@ public:
     void smoothingHidden(bool hide) { setup_smoothing_->setHidden( hide); }
 
 public slots:
-    void addInRate(qint64);
-    void addOutRate(qint64);
+    void addInRate(int);
+    void addOutRate(int);
 };
 
 #endif // LH_QTNETWORK_H

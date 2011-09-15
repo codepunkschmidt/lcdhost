@@ -189,7 +189,7 @@ void LH_QtSetupItem::value_changed()
 {
     if( meta().flags & lh_meta_autorender ) parent()->requestRender();
     value_.read();
-    emit valueChanged( *this );
+    emit valueChanged();
     emitSpecific();
     return;
 }
@@ -200,15 +200,13 @@ void LH_QtSetupItem::param_changed()
     min_.read();
     max_.read();
     other_.read();
-    emit minimumChanged( *this );
-    emit maximumChanged( *this );
-    emit otherChanged( *this );
+    emit paramChanged();
     return;
 }
 
 void LH_QtSetupItem::link_changed()
 {
-    emit linkChanged( *this );
+    emit linkChanged();
     return;
 }
 
@@ -302,7 +300,7 @@ void LH_QtSetupItem::setValue( const QVariant& newvalue )
     value_.setValue(newvalue);
     value_.write();
     refreshValue();
-    emit valueSet( value_ );
+    emit valueSet();
     emitSpecific();
     return;
 }
@@ -313,7 +311,7 @@ void LH_QtSetupItem::setMinimum( const QVariant& newmin )
     min_.setValue(newmin);
     min_.write();
     refreshParam();
-    emit minimumChanged(*this);
+    emit paramSet();
     return;
 }
 
@@ -323,7 +321,7 @@ void LH_QtSetupItem::setMaximum( const QVariant& newmax )
     max_.setValue(newmax);
     max_.write();
     refreshParam();
-    emit maximumChanged(*this);
+    emit paramSet();
     return;
 }
 
@@ -333,6 +331,6 @@ void LH_QtSetupItem::setOther( const QVariant& newother )
     other_.setValue(newother);
     other_.write();
     refreshParam();
-    emit otherChanged(*this);
+    emit paramSet();
     return;
 }

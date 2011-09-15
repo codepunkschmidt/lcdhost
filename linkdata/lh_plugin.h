@@ -68,9 +68,9 @@
 #ifdef __cplusplus
 # ifdef QT_CORE_LIB
 #  include <QVariant>
-   typedef struct lh_variant_t lh_variant;
-   void qVariantSetValue( QVariant&, const lh_variant& );
-   bool operator>>( const QVariant&, lh_variant& lhv );
+    typedef struct lh_variant_t lh_variant;
+    void lh_qvariant_to_variant( const QVariant&, lh_variant& );
+    void lh_variant_to_qvariant( const lh_variant&, QVariant& );
 # endif
 #endif
 
@@ -455,15 +455,15 @@ typedef struct lh_variant_t
     } data;
 #ifdef __cplusplus
 # ifdef QT_CORE_LIB
-    operator QVariant() const
+    inline operator QVariant() const
     {
         QVariant v;
-        qVariantSetValue(v,*this);
+        lh_variant_to_qvariant( *this, v );
         return v;
     }
-    lh_variant_t& operator =( const QVariant& v )
+    inline lh_variant_t& operator =( const QVariant& v )
     {
-        v >> *this;
+        lh_qvariant_to_variant( v, *this );
         return *this;
     }
 # endif

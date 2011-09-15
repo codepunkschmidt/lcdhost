@@ -12,10 +12,10 @@ void LH_Qt_array_string_ui::init(lh_meta_type ui_type, int uiFlags, const QStrin
     Q_ASSERT( ui_ );
 
     connect( this, SIGNAL(titleChanged(const char*)), ui_, SLOT(setTitle(const char*)) );
-    connect( this, SIGNAL(helpChanged(const char*)), ui_, SLOT(setHelp(const char*)) );
-    connect( this, SIGNAL(changed()), this, SLOT(arrayValuesChanged()) );
-    connect( this, SIGNAL(set()), this, SLOT(arrayValuesChanged()) );
-    connect( ui_, SIGNAL(changed()), this, SLOT(uiValueChanged()) );
+    connect( this, SIGNAL(helpSet(const char*)), ui_, SLOT(setHelp(const char*)) );
+    connect( this, SIGNAL(valueChanged()), this, SLOT(arrayValuesChanged()) );
+    connect( this, SIGNAL(valueSet()), this, SLOT(arrayValuesChanged()) );
+    connect( ui_, SIGNAL(valueChanged()), this, SLOT(uiValueChanged()) );
     ui_->setTitle( title() );
 }
 

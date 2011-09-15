@@ -39,12 +39,12 @@ LH_QtNetwork::LH_QtNetwork( LH_QtInstance *parent ) : QObject(parent)
     setup_smoothing_ = new LH_Qt_QSlider(parent,"Smoothing",3,1,10,LH_FLAG_AUTORENDER);
     link_net_in_rate_ = new LH_Qt_int(parent,"NetInRate",0,LH_FLAG_HIDDEN|LH_FLAG_NOSAVE);
     link_net_in_rate_->setLink("/system/net/in/rate");
-    connect(link_net_in_rate_, SIGNAL(change(qint64)), this, SLOT(addInRate(qint64)) );
+    connect(link_net_in_rate_, SIGNAL(intChanged(int)), this, SLOT(addInRate(int)) );
     link_net_in_max_ = new LH_Qt_int(parent,"NetInMax",0,LH_FLAG_HIDDEN|LH_FLAG_NOSAVE);
     link_net_in_max_->setLink("/system/net/in/max");
     link_net_out_rate_ = new LH_Qt_int(parent,"NetOutRate",0,LH_FLAG_HIDDEN|LH_FLAG_NOSAVE);
     link_net_out_rate_->setLink("/system/net/out/rate");
-    connect(link_net_out_rate_, SIGNAL(change(qint64)), this, SLOT(addOutRate(qint64)) );
+    connect(link_net_out_rate_, SIGNAL(intChanged(int)), this, SLOT(addOutRate(int)) );
     link_net_out_max_ = new LH_Qt_int(parent,"NetOutMax",0,LH_FLAG_HIDDEN|LH_FLAG_NOSAVE);
     link_net_out_max_->setLink("/system/net/out/max");
     inrate_.clear();
@@ -57,14 +57,14 @@ LH_QtNetwork::~LH_QtNetwork()
     return;
 }
 
-void LH_QtNetwork::addInRate(qint64 n)
+void LH_QtNetwork::addInRate(int n)
 {
     while( inrate_.size() >= samples() ) inrate_.dequeue();
     inrate_.enqueue(n);
     parent()->requestRender();
 }
 
-void LH_QtNetwork::addOutRate(qint64 n)
+void LH_QtNetwork::addOutRate(int n)
 {
     while( outrate_.size() >= samples() ) outrate_.dequeue();
     outrate_.enqueue(n);

@@ -18,7 +18,7 @@ LH_LuaVariant::LH_LuaVariant( lua_State *L ) :
         {
             size_t len = 0;
             const char *str = lua_tolstring( L, -1, &len );
-            QString::fromUtf8(str, len) >> *this;
+            lh_qstring_to_qvariant( QString::fromUtf8(str, len), *this );
         }
         break;
     case LUA_TTABLE:

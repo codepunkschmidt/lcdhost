@@ -74,14 +74,14 @@ const char *LH_Mailcount::userInit()
     email_count_->setLink("/system/mail/count");
 
     mail_image_ = new LH_Qt_QFileInfo(this,("Mail envelope image"),QFileInfo(),LH_FLAG_NOSOURCE|LH_FLAG_NOSINK|LH_FLAG_AUTORENDER);
-    connect( mail_image_, SIGNAL(changed()), this, SLOT(makeEnvelope()) );
+    connect( mail_image_, SIGNAL(valueChanged()), this, SLOT(makeEnvelope()) );
 
     flashing_ = new LH_Qt_bool(this,("Flash when there is mail"),true,LH_FLAG_AUTORENDER);
-    connect( flashing_, SIGNAL(changed()), this, SLOT(requestPolling()) );
-    connect( flashing_, SIGNAL(changed()), this, SLOT(makeEnvelope()) );
+    connect( flashing_, SIGNAL(valueChanged()), this, SLOT(requestPolling()) );
+    connect( flashing_, SIGNAL(valueChanged()), this, SLOT(makeEnvelope()) );
 
     smoothflash_ = new LH_Qt_bool(this,("Use smooth flashes"),false);
-    connect( smoothflash_, SIGNAL(changed()), this, SLOT(requestPolling()) );
+    connect( smoothflash_, SIGNAL(valueChanged()), this, SLOT(requestPolling()) );
 
     flash_on_ = true;
 

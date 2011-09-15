@@ -73,26 +73,26 @@ const char *LH_Bar::userInit()
     valueTypes.append("Image Crop");
 
     setup_type_ = new LH_Qt_QStringList(this, "Bar Style", valueTypes, LH_FLAG_AUTORENDER);
-    connect( setup_type_, SIGNAL(changed()), this, SLOT(changeType()) );
+    connect( setup_type_, SIGNAL(valueChanged()), this, SLOT(changeType()) );
 
     setup_file_ = new LH_Qt_QFileInfo( this,"Bar Image", QFileInfo(), LH_FLAG_AUTORENDER | LH_FLAG_HIDDEN );
-    connect( setup_file_, SIGNAL(changed()), this, SLOT(changeFile()) );
+    connect( setup_file_, SIGNAL(valueChanged()), this, SLOT(changeFile()) );
 
     valueTypes = QStringList();
     valueTypes.append("None");
     valueTypes.append("Bar Image Transparency");
     valueTypes.append("Custom Image Transparency");
     setup_masking_ = new LH_Qt_QStringList(this, "Masking", valueTypes, LH_FLAG_AUTORENDER | LH_FLAG_HIDDEN);
-    connect( setup_masking_, SIGNAL(changed()), this, SLOT(changeFile()) );
+    connect( setup_masking_, SIGNAL(valueChanged()), this, SLOT(changeFile()) );
 
     setup_file_endMask_ = new LH_Qt_QFileInfo( this, "Transparency Mask", QFileInfo(), LH_FLAG_AUTORENDER | LH_FLAG_HIDDEN );
-    connect( setup_file_endMask_, SIGNAL(changed()), this, SLOT(changeFile()) );
+    connect( setup_file_endMask_, SIGNAL(valueChanged()), this, SLOT(changeFile()) );
 
     setup_pencolor1_ = new LH_Qt_QColor(this,"Bar color (start)",Qt::green,LH_FLAG_AUTORENDER);
     setup_pencolor2_ = new LH_Qt_QColor(this,"Bar color (end)",Qt::red,LH_FLAG_AUTORENDER);
 
     setup_file_bg_ = new LH_Qt_QFileInfo( this,"Bar Background Image", QFileInfo(), LH_FLAG_AUTORENDER | LH_FLAG_HIDDEN );
-    connect( setup_file_bg_, SIGNAL(changed()), this, SLOT(changeFile()) );
+    connect( setup_file_bg_, SIGNAL(valueChanged()), this, SLOT(changeFile()) );
 
     setup_bgcolor_ = new LH_Qt_QColor(this,"Background color",Qt::transparent,LH_FLAG_AUTORENDER);
     setup_direction_ = new LH_Qt_QStringList(this,"Direction",
@@ -104,7 +104,7 @@ const char *LH_Bar::userInit()
     setup_spacing_ = new LH_Qt_QSlider(this,"Spacing",0,0,100,LH_FLAG_AUTORENDER);
 
     setup_discrete_ = new LH_Qt_bool(this,"Discrete Segments",false,LH_FLAG_AUTORENDER);
-    connect( setup_discrete_, SIGNAL(changed()), this, SLOT(changeDiscrete()) );
+    connect( setup_discrete_, SIGNAL(valueChanged()), this, SLOT(changeDiscrete()) );
     setup_discrete_count_ = new LH_Qt_int(this,"Number of Segments",20,LH_FLAG_AUTORENDER | LH_FLAG_READONLY);
 
 

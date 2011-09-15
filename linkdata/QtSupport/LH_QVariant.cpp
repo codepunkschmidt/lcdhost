@@ -40,21 +40,6 @@
 #include <QXmlStreamWriter>
 #include "LH_QVariant.h"
 
-bool operator>( const QXmlStreamReader& reader, const QVariant& v )
-{
-    return false;
-}
-
-QXmlStreamReader& operator>>( QXmlStreamReader& reader, QVariant& v )
-{
-    return reader;
-}
-
-QXmlStreamWriter& operator<<( QXmlStreamWriter& writer, const QVariant& v )
-{
-    return writer;
-}
-
 static bool isHexDigit( const QChar ch )
 {
     return ch.isDigit() || ( ch >= QChar('a') && ch <= QChar('f') );
@@ -112,17 +97,16 @@ static QVariant decode_list( QString::const_iterator& it, QString::const_iterato
         if( *it == mark_list_delim )
         {
             QVariant member;
-            QString::fromRawData(start,(it-start)) >> member;
+            lh_qstring_to_qvariant( QString::fromRawData(start,(it-start)), member );
+            retv.append( member );
             ++ it;
             start = it;
-            retv.append(member);
             continue;
         }
         if( *it == mark_list_start )
         {
             ++ it;
-            QVariant member;
-            member = decode_list(it,end,recurse);
+            QVariant member( decode_list(it,end,recurse) );
             if( recurse ) retv.append( member );
             else retv.append( member.toString() );
         }
@@ -130,20 +114,183 @@ static QVariant decode_list( QString::const_iterator& it, QString::const_iterato
     return retv;
 }
 
-/**
-  Converts LCDHost formatted string data into QVariant,
-  preserving the QVariant data type. If the QVariant
-  does not have a data type set, it will be set to
-  QVariant::String.
+QVariant::Type lh_qvarianttype( lh_format fmt )
+{
+    switch( fmt )
+    {
+    case lh_format_boolean: return QVariant::Bool;
+    case lh_format_color: return QVariant::Color;
+    case lh_store_integer:
+    case lh_format_integer: return QVariant::LongLong;
+    case lh_store_double:
+    case lh_format_double: return QVariant::Double;
+    case lh_store_pointer:
+    case lh_format_pointer: return (QVariant::Type) QMetaType::VoidStar;
+    case lh_format_qimage: return QVariant::Image;
+    case lh_store_buffer:
+    case lh_format_buffer: return QVariant::ByteArray;
+    case lh_format_string: return QVariant::String;
+    case lh_format_input: return (QVariant::Type) qMetaTypeId<lh_input>();
+    case lh_format_png: return QVariant::Image;
+    case lh_format_font: return QVariant::Font;
+    case lh_format_array: return QVariant::List;
 
-  "LCDHost formatting" means the string data is
-  whitespace separated. Embedded whitespace
-  is escaped.
+    case lh_format_none:
+    case lh_format_unused:
+        break;
+    }
 
-  Returns the number of characters used from the
-  string, or zero in case of error.
-  */
-int operator>>( const QString& s, QVariant& v )
+    return QVariant::Invalid;
+}
+
+
+void lh_qvariant_to_variant( const QVariant& v, lh_variant& lhv )
+{
+    return;
+}
+
+void lh_variant_to_qvariant( const lh_variant& lhv, QVariant& v )
+{
+    switch( lhv.fmt )
+    {
+    case lh_format_boolean: v.setValue( (bool) lhv.data.i ); break;
+    case lh_format_color: v.setValue( QColor::fromRgba(lhv.data.i) ); break;
+    case lh_format_integer: v.setValue( lhv.data.i ); break;
+    case lh_format_double: v.setValue( lhv.data.d ); break;
+    case lh_format_pointer: v.setValue( lhv.data.p ); break;
+    case lh_format_qimage: v.setValue( *(QImage*)lhv.data.p ); break;
+    case lh_format_buffer: v.setValue( QByteArray::fromRawData(lhv.data.b.p,lhv.data.b.n) ); break;
+    case lh_format_string: v.setValue( QString::fromUtf8(lhv.data.b.p,lhv.data.b.n) ); break;
+    case lh_format_input: v.setValue( (lh_input&)lhv.data.b.p ); break;
+    case lh_format_png: v.setValue( QImage::fromData(QByteArray::fromRawData(lhv.data.b.p,lhv.data.b.n)) ); break;
+
+    case lh_format_font:
+        {
+            QFont f;
+            f.fromString( QLatin1String(lhv.data.b.p) );
+            v.setValue(f);
+        }
+        break;
+    case lh_format_array:
+        {
+            QVariantList vl;
+            const lh_variant *pv = (const lh_variant *) lhv.data.b.p;
+            if( pv )
+            {
+                int count = lhv.data.b.n/sizeof(lh_variant);
+                while( count-- )
+                {
+                    vl.append( *pv );
+                    ++ pv;
+                }
+            }
+            v.setValue(vl);
+        }
+        break;
+
+    case lh_format_none:
+        v.clear();
+        break;
+
+    default:
+        Q_ASSERT(0);
+        return;
+    }
+
+    Q_ASSERT( v.type() == lh_qvarianttype(lhv.fmt) );
+    return;
+}
+
+int lh_qvariant_to_qstring( const QVariant& v, QString& s )
+{
+    const int orgsize = s.size();
+    if( !s.isEmpty() ) s.append(QChar(' '));
+
+    if( v.type() == QVariant::Bool )
+    {
+    }
+
+    if( v.type() == QVariant::Int || v.type() == QVariant::LongLong )
+    {
+
+    }
+
+    if( v.type() == QVariant::Double )
+    {
+
+    }
+
+    if( v.type() == QVariant::ByteArray )
+    {
+
+    }
+
+    if( v.type() == QVariant::Color )
+    {
+        QString retv;
+        const QColor& c = qVariantValue<QColor>(v);
+
+        if( !c.isValid() )
+        {
+            s.append(QLatin1String("invalid"));
+            return s.size() - orgsize;
+        }
+
+        if( c == QColor(Qt::transparent) )
+        {
+            s.append(QLatin1String("transparent"));
+            return s.size() - orgsize;
+        }
+
+        foreach( const QString& colorName, QColor::colorNames() )
+        {
+            if( c.rgb() == QColor(colorName).rgb() )
+            {
+                retv = colorName;
+                break;
+            }
+        }
+
+        if( retv.isEmpty() ) retv = c.name();
+
+        if( c.alpha() != 255  )
+        {
+            int pct = c.alpha()*100/256;
+            retv.append('@');
+            if( pct*256/100 == c.alpha()  )
+            {
+                retv.append( QString::number( pct ) );
+                retv.append('%');
+            }
+            else
+            {
+                retv.append( QString::number( c.alpha() ) );
+            }
+        }
+
+        s.append(retv);
+        return s.size() - orgsize;
+    }
+
+    if( v.type() == (QVariant::Type) qMetaTypeId<lh_input>() )
+    {
+        QString retv;
+        const lh_input &in = qVariantValue<lh_input>(v);
+        if( *in.ident )
+        {
+            QTextStream ts(&retv,QIODevice::WriteOnly);
+            ts << in.ident << '/' << forcesign << in.item;
+            ts << '/' << noforcesign << hex << in.flags;
+        }
+        s.append(retv);
+        return s.size() - orgsize;
+    }
+
+    s.append(v.toString());
+    return s.size() - orgsize;
+}
+
+int lh_qstring_to_qvariant( const QString& s, QVariant& v )
 {
     int used = 0;
     const QVariant::Type orgtype = v.type();
@@ -160,6 +307,7 @@ int operator>>( const QString& s, QVariant& v )
         sets the number of 'used' characters so we'll
         claim that chunk and any surrounding whitespace.
       */
+
     QString::const_iterator it = s.constBegin();
     while( it != s.constEnd() && it->isSpace() ) ++it;
     const QChar *contentstart = it;
@@ -287,186 +435,39 @@ int operator>>( const QString& s, QVariant& v )
     return used;
 }
 
-QString& operator>>( QString& s, QVariant& v )
+bool operator>( const QXmlStreamReader& reader, const QVariant& )
 {
-    int used = operator>>( (const QString&) s, v );
-    s.remove(0,used);
-    return s;
+    return ( reader.isStartElement() && reader.name() == QLatin1String("value") );
 }
 
-QString& operator<<( QString& s, const QVariant& v )
+QXmlStreamReader& operator>>( QXmlStreamReader& reader, QVariant& v )
 {
-    QString retv;
+    Q_ASSERT( reader > v ); // always check for acceptance before loading!
 
-    if( v.type() == QVariant::Bool )
+    while( !reader.atEnd() )
     {
+        reader.readNext();
 
-    }
-
-    if( v.type() == QVariant::Int || v.type() == QVariant::LongLong )
-    {
-
-    }
-
-    if( v.type() == QVariant::Double )
-    {
-
-    }
-
-    if( v.type() == QVariant::ByteArray )
-    {
-
-    }
-
-    if( v.type() == QVariant::Color )
-    {
-        const QColor& c = qVariantValue<QColor>(v);
-
-        if( !c.isValid() )
+        if( reader.isCharacters() )
         {
-            s.append(QLatin1String("invalid"));
-            return s;
+            QStringRef ref(reader.text());
+            lh_qstring_to_qvariant( QString::fromRawData(ref.unicode(),ref.size()), v );
+            continue;
         }
 
-        if( c == QColor(Qt::transparent) )
-        {
-            s.append(QLatin1String("transparent"));
-            return s;
-        }
-
-        foreach( const QString& colorName, QColor::colorNames() )
-        {
-            if( c.rgb() == QColor(colorName).rgb() )
-            {
-                retv = colorName;
-                break;
-            }
-        }
-
-        if( retv.isEmpty() ) retv = c.name();
-
-        if( c.alpha() != 255  )
-        {
-            int pct = c.alpha()*100/256;
-            retv.append('@');
-            if( pct*256/100 == c.alpha()  )
-            {
-                retv.append( QString::number( pct ) );
-                retv.append('%');
-            }
-            else
-            {
-                retv.append( QString::number( c.alpha() ) );
-            }
-        }
-
-        s.append(retv);
-        return s;
+        if( reader.isEndElement() )
+            return reader;
     }
 
-    if( v.type() == (QVariant::Type) qMetaTypeId<lh_input>() )
-    {
-        const lh_input &in = qVariantValue<lh_input>(v);
-        if( *in.ident )
-        {
-            QTextStream ts(&retv,QIODevice::WriteOnly);
-            ts << in.ident << '/' << forcesign << in.item;
-            ts << '/' << noforcesign << hex << in.flags;
-        }
-        s.append(retv);
-        return s;
-    }
-
-    retv = v.toString();
-    s.append(retv);
-    return s;
+    // Unrecognized XML or premature end-of-stream
+    return reader;
 }
 
-bool operator>>( const QVariant& v, lh_variant& lhv )
+QXmlStreamWriter& operator<<( QXmlStreamWriter& writer, const QVariant& v )
 {
-    Q_UNUSED(v);
-    Q_UNUSED(lhv);
-    // Q_ASSERT(0);
-    return false;
-}
-
-QVariant::Type lh_varianttype( lh_format fmt )
-{
-    switch( fmt )
-    {
-    case lh_format_boolean: return QVariant::Bool;
-    case lh_format_color: return QVariant::Color;
-    case lh_store_integer:
-    case lh_format_integer: return QVariant::LongLong;
-    case lh_store_double:
-    case lh_format_double: return QVariant::Double;
-    case lh_store_pointer:
-    case lh_format_pointer: return (QVariant::Type) QMetaType::VoidStar;
-    case lh_format_qimage: return QVariant::Image;
-    case lh_store_buffer:
-    case lh_format_buffer: return QVariant::ByteArray;
-    case lh_format_string: return QVariant::String;
-    case lh_format_input: return (QVariant::Type) qMetaTypeId<lh_input>();
-    case lh_format_png: return QVariant::Image;
-    case lh_format_font: return QVariant::Font;
-    case lh_format_array: return QVariant::List;
-
-    case lh_format_none:
-    case lh_format_unused:
-        break;
-    }
-
-    return QVariant::Invalid;
-}
-
-void qVariantSetValue( QVariant& v, const lh_variant& lhv )
-{
-    switch( lhv.fmt )
-    {
-    case lh_format_boolean: v.setValue( (bool) lhv.data.i ); break;
-    case lh_format_color: v.setValue( QColor::fromRgba(lhv.data.i) ); break;
-    case lh_format_integer: v.setValue( lhv.data.i ); break;
-    case lh_format_double: v.setValue( lhv.data.d ); break;
-    case lh_format_pointer: v.setValue( lhv.data.p ); break;
-    case lh_format_qimage: v.setValue( *(QImage*)lhv.data.p ); break;
-    case lh_format_buffer: v.setValue( QByteArray::fromRawData(lhv.data.b.p,lhv.data.b.n) ); break;
-    case lh_format_string: v.setValue( QString::fromUtf8(lhv.data.b.p,lhv.data.b.n) ); break;
-    case lh_format_input: v.setValue( (lh_input&)lhv.data.b.p ); break;
-    case lh_format_png: v.setValue( QImage::fromData(QByteArray::fromRawData(lhv.data.b.p,lhv.data.b.n)) ); break;
-
-    case lh_format_font:
-        {
-            QFont f;
-            f.fromString( QLatin1String(lhv.data.b.p) );
-            v.setValue(f);
-        }
-        break;
-    case lh_format_array:
-        {
-            QVariantList vl;
-            const lh_variant *pv = (const lh_variant *) lhv.data.b.p;
-            if( pv )
-            {
-                int count = lhv.data.b.n/sizeof(lh_variant);
-                while( count-- )
-                {
-                    vl.append( *pv );
-                    ++ pv;
-                }
-            }
-            v.setValue(vl);
-        }
-        break;
-
-    case lh_format_none:
-        v.clear();
-        break;
-
-    default:
-        Q_ASSERT(0);
-        return;
-    }
-
-    Q_ASSERT( v.type() == lh_varianttype(lhv.fmt) );
-    return;
+    if( !v.isValid() || v.isNull() ) return writer;
+    writer.writeStartElement( QLatin1String("value") );
+    writer.writeCharacters( lh_qstring_from_qvariant(v) );
+    writer.writeEndElement();
+    return writer;
 }

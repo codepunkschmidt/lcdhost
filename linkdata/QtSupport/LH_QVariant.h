@@ -36,9 +36,8 @@
 #define LH_QVARIANT_H
 
 /**
-  Extends the normal QVariant to be aware of LCDHost data types
-  and how they're converted to and from QString, lh_variant and
-  XML streams.
+  Extends the normal QVariant to be aware of LCDHost
+  data types.
   */
 
 #include <QVariant>
@@ -49,59 +48,56 @@ Q_DECLARE_METATYPE(lh_input)
 
 class QXmlStreamWriter;
 class QXmlStreamReader;
+class QColor;
 
 /**
   Returns the QVariant::Type used to store the
   lh_format given.
   */
-QVariant::Type lh_qvarianttype( lh_format fmt );
+QVariant::Type lh_qvarianttype( lh_data_format fmt );
 
 /**
-  Reads a lh_variant structure and sets the
-  QVariant accordingly. This will change the
-  QVariant::Type as needed.
+  Constructs a QVariant from lh_data_info and a data pointer.
   */
-void lh_variant_to_qvariant( const lh_variant&, QVariant& );
+QVariant lh_qvariant_from_setup_data( const lh_data_info&, const void * );
 
 /**
-  Fills a lh_variant using data from the QVariant.
-  The format of the lh_variant is preserved if set,
-  and the QVariant data will be converted as needed.
-
-  If the lh_variant's lh_format is lh_format_none,
-  this function will make a best-guess on what it
-  should be based on the QVariant.
   */
-void lh_qvariant_to_variant( const QVariant&, lh_variant& );
+void lh_qvariant_to_setup_data( const QVariant&, const lh_data_info&, void * );
 
 /**
-  Attempts to construct LCDHost formatted string
-  data for the given QVariant and appends it to
-  the target string. If the target string is not
-  empty, a single space is appended first.
+  Returns a string representation of a QVariant.
 
-  Returns the number of UNICODE characters added.
-  This may be zero if the QVariant was invalid or
-  can't be encoded as LCDHost string data.
+  This is generally the same as using
+  QVariant::toString(), but will also handle
+  LCDHost specific data types and may produce
+  other results for some data types (like
+  QColor, for which the standard toString()
+  loses alpha channel data).
+
+  Note that QVariant::StringList and
+  QVariant::List can not be accurately
+  represented with an unescaped string, so
+  this function simply returns a null
+  string for them.
   */
-int lh_qvariant_to_qstring( const QVariant&, QString& );
+QString lh_qstring_from_qvariant(const QVariant &v);
 
 /**
-  Converts LCDHost formatted string data into QVariant,
-  preserving the QVariant data type.
+  Converts LCDHost formatted string data into
+  QVariant, preserving the QVariant data type.
 
   If the QVariant does not have a data type set,
   (QVariant::Invalid) this function will make a
   best-guess on the data type, defaulting
   to QVariant::String.
-
-  Returns the number of characters used from the
-  string, or zero in case of error. Note that
-  this function greedily consumes whitespace
-  if a conversion was possible, and the number
-  returned reflects that.
   */
-int lh_qstring_to_qvariant( const QString& s, QVariant& );
+void lh_qstring_to_qvariant(const QString& s, QVariant& );
+
+void lh_qstring_to_qcolor( const QString& s, QColor& c );
+QString lh_qstring_from_qcolor( const QColor& c );
+void lh_qstring_to_lhinput( const QString& s, lh_input& in );
+QString lh_qstring_from_lhinput( const lh_input& in );
 
 /**
   Returns true if a QVariant can be read from the XML stream
@@ -118,82 +114,5 @@ QXmlStreamReader& operator>>( QXmlStreamReader& reader, QVariant& obj );
   Writes a QVariant to an XML stream in LCDHost format.
   */
 QXmlStreamWriter& operator<<( QXmlStreamWriter& writer, const QVariant& obj );
-
-/**
-  Overloads qVariantSetValue() so it can use a lh_variant
-  reference as a parameter.
-
-  \sa lh_variant_to_qvariant()
-  */
-inline void qVariantSetValue( QVariant& v, const lh_variant& lhv )
-{
-    lh_variant_to_qvariant( lhv, v );
-}
-
-/**
-  Converts a QVariant into LCDHost formatted string
-  data. If the QVariant is invalid or can't be
-  stored in LCDHost format, this function returns
-  a null QString.
-
-  \sa lh_qvariant_to_qstring()
-  */
-inline QString lh_qstring_from_qvariant( const QVariant& v )
-{
-    QString s;
-    lh_qvariant_to_qstring( v, s );
-    return s;
-}
-
-/**
-  Converts string data in LCDHost format to a QVariant.
-  If possible, you should provide the QVariant data type.
-
-  \sa lh_qstring_to_qvariant()
-  */
-inline QVariant lh_qvariant_from_qstring( const QString& s, QVariant::Type t = QVariant::Invalid )
-{
-    QVariant v(t);
-    lh_qstring_to_qvariant(s,v);
-    return v;
-}
-
-
-/**
-  Stream LCDHost formatted data from a QString to
-  QVariant.
-
-  This function will remove used characters from the
-  beginning of the string and return a reference
-  to the string. This function greedily consumes
-  whitespace.
-
-  \return A reference to the source string.
-
-  \sa lh_qstring_to_qvariant()
-  */
-inline QString& operator>>( QString& s, QVariant& v )
-{
-    return s.remove(0,lh_qstring_to_qvariant( s, v ));
-}
-
-/**
-  Converts a QVariant into LCDHost formatted string
-  data. If the QVariant is invalid or can't be
-  stored in LCDHost format, this function returns
-  with no action taken.
-
-  If the target string is not empty, a single space
-  is appended first before converting.
-
-  \return A reference to the target string.
-
-  \sa lh_qvariant_to_qstring()
-  */
-inline QString& operator<<( QString& s, const QVariant& v )
-{
-    lh_qvariant_to_qstring( v, s );
-    return s;
-}
 
 #endif // LH_QVARIANT_H

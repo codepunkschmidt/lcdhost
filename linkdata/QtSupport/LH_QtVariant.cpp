@@ -21,10 +21,12 @@ void LH_QtVariant::setFormat( lh_format fmt )
 
 void LH_QtVariant::read()
 {
-    lh_variant_to_qvariant( lhv_, *this );
+    // *static_cast<QVariant*>(this) = lhv_;
+    setValue( lh_qvariant_from_lhvariant( lhv_ ) );
 }
 
 void LH_QtVariant::write() const
 {
-    lh_qvariant_to_variant( *this, lhv_ );
+    // lhv_ = *static_cast<const QVariant*>(this);
+    lh_qvariant_to_lhvariant( *this, lhv_ );
 }

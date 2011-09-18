@@ -135,7 +135,7 @@ LH_QtSetupItem::LH_QtSetupItem( LH_QtObject *parent, const char *ident, lh_meta_
     }
 
     item_.size = sizeof(lh_setup_item);
-    item_.meta.type = type;
+    item_.meta.ui = type;
     item_.meta.flags = flags;
     item_.meta.order = ((flags&lh_meta_first)?-1:0) + ((flags&lh_meta_last)?+1:0);
     item_.meta.help = 0;
@@ -289,7 +289,7 @@ void LH_QtSetupItem::setOrder( int neworder )
 void LH_QtSetupItem::setType( lh_meta_type newtype )
 {
     if( type() == newtype ) return;
-    item_.meta.type = newtype;
+    item_.meta.ui = newtype;
     refreshMeta();
     return;
 }

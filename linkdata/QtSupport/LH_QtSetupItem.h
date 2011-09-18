@@ -109,7 +109,7 @@ public:
     void refreshParam() { callback( lh_cb_setup_refresh_param, 0 ); }
 
     // metadata
-    lh_meta_type type() const { return meta().type; }
+    lh_meta_type type() const { return meta().ui; }
     const char *typeName() const { return lh_meta_type_to_name( type() ); }
     int flags() const { return meta().flags; }
     int order() const { return meta().order; }

@@ -65,15 +65,6 @@
 #ifndef LH_PLUGIN_H
 #define LH_PLUGIN_H
 
-#ifdef __cplusplus
-# ifdef QT_CORE_LIB
-#  include <QVariant>
-    typedef struct lh_variant_t lh_variant;
-    void lh_qvariant_to_variant( const QVariant&, lh_variant& );
-    void lh_variant_to_qvariant( const lh_variant&, QVariant& );
-# endif
-#endif
-
 #define LH_API_MAJOR 6
 #define LH_API_MINOR 0
 #define LH_DEVICE_MAXBUTTONS 32
@@ -203,8 +194,6 @@ typedef enum lh_callbackcode_t
     lh_cb_dir_binaries, /* get the pointer to LCDHost binaries path in UTF-8, param: const char ** */
     lh_cb_dir_plugins, /* get the pointer to LCDHost plugins path in UTF-8, param: const char ** */
     lh_cb_dir_data, /* get the pointer to LCDHost data path in UTF-8, param: const char ** */
-    lh_cb_data_to_qvariant, /* Convert a lh_setup_data.value into a QVariant, param: lh_data_to_qvariant* */
-    lh_cb_qvariant_to_data, /* Convert a QVariant into a lh_setup_data.value, param: lh_qvariant_to_data* */
 
     /* sent from anything */
     lh_cb_unload, /* ask that the plugin be unloaded, param: NULL or const char *message */
@@ -226,87 +215,113 @@ typedef enum lh_callbackcode_t
     /* these remove a plugin created item */
     lh_cb_destroy, /* destroy a setup item, layout class, or device */
 
-    /* sent from lh_setup_item */
-    lh_cb_setup_refresh_meta, /* LCDHost will re-read your setup item's flags, order and help */
-    lh_cb_setup_refresh_link, /* LCDHost will re-read your setup item's link */
-    lh_cb_setup_refresh_param, /* LCDHost will re-read your setup item's param */
-    lh_cb_setup_refresh_value, /* LCDHost will re-read your setup item's data */
-
     /* sent from lh_layout_item */
     lh_cb_render, /* ask for a rendering sequence (prerender/width/height/render), param: NULL */
     lh_cb_sethidden, /* set visibility state for self and children, param int* */
+
+    /* sent from lh_setup_item */
+    lh_cb_setup_refresh_meta, /* LCDHost will re-read your setup item's flags, order and help */
+    lh_cb_setup_refresh_link, /* LCDHost will re-read your setup item's link */
 
     lh_cb_unused
 } lh_callbackcode;
 
 /**
-  These flags are used to indicate how \c lh_variant is
-  formatted and which members of contain valid data.
-  The least significant four bits are reserved for UI
-  selection, and are ignored by \c lh_variant handling.
+  Select the type of data pointed to when passing values.
   */
-typedef enum lh_format_t
+typedef enum lh_data_store_t
 {
-    lh_format_none      = 0,
-
-    /* which member of \c lh_variant is valid */
-    lh_store_integer    = 0x0010, /**< \c long \c long value stored in \c lh_variant.i */
-    lh_store_double     = 0x0020, /**< \c double value stored in \c lh_variant.d */
-    lh_store_pointer    = 0x0040, /**< \c void* stored in \c lh_variant.p */
-    lh_store_buffer     = 0x0080, /**< \c lh_buffer* stored in \c lh_variant.b */
-
-    /* data format enumeration */
-    lh_format_boolean   = 0x0100|lh_store_integer,  /**< \c bool */
-    lh_format_color     = 0x0200|lh_store_integer,  /**< \c AARRGGBB color value */
-    lh_format_integer   = 0x0300|lh_store_integer,  /**< \c long \c long */
-    lh_format_double    = 0x0400|lh_store_double,   /**< \c double */
-    lh_format_pointer   = 0x0500|lh_store_pointer,  /**< \c void* */
-    lh_format_qimage    = 0x0600|lh_store_pointer,  /**< \c QImage* */
-    lh_format_buffer    = 0x0700|lh_store_buffer,   /**< \c char buffer */
-    lh_format_string    = 0x0800|lh_store_buffer,   /**< UTF-8 encoded, NUL terminated string data */
-    lh_format_input     = 0x0900|lh_store_buffer,   /**< \c lh_input */
-    lh_format_png       = 0x0A00|lh_store_buffer,   /**< \c PNG data */
-    lh_format_font      = 0x0B00|lh_store_buffer,   /**< \c QFont::toString() data, ASCII only */
-    lh_format_array     = 0x0C00|lh_store_buffer,   /**< \c lh_variant array */
-
-    lh_format_unused
-} lh_format;
+    lh_store_none = 0,
+    lh_store_longlong, /**< long long* */
+    lh_store_double, /**< double* */
+    lh_store_buffer, /**< lh_buffer* */
+    lh_store_input, /**< lh_input* */
+    lh_store_qvariant, /**< QVariant* */
+    lh_store_unused
+} lh_data_store;
 
 /**
-  These are the setup item types allowed. These dictacte both the kind of UI
-  that should be used and the underlying data type, as well as possible
-  parameter usage.
-  \sa lh_data_flag
+  Indicates how a value is to be interpreted.
+  If the store type is lh_store_qvariant, this
+  may be set to lh_format_none to use the
+  QVariant data type instead.
   */
-typedef enum lh_meta_type_t
+typedef enum lh_data_format_t
 {
-    lh_type_none = 0,
+    lh_format_none = 0,
+    lh_format_integer, /**< long long integer */
+    lh_format_boolean, /**< nonzero is true, zero is false */
+    lh_format_color, /**< 32-bit AARRGGBB color data */
+    lh_format_double, /**< double */
+    lh_format_string, /**< single UTF-8 encoded string */
+    lh_format_stringlist, /**< multiple NUL-separated UTF-8 encoded strings */
+    lh_format_font, /**< UTF-8 encoded font data (using QFont::toString()) */
+    lh_format_png, /**< PNG data */
+    lh_format_input, /**< lh_input */
+    lh_format_unused
+} lh_data_format;
 
-    lh_type_boolean = lh_format_boolean+1, /**< checkbox */
-    lh_type_color = lh_format_color+1, /**< line editor with color picker */
-    lh_type_font = lh_format_font+1, /**< line editor with font picker */
-    lh_type_png = lh_format_png+1, /**< decode PNG data and show the image */
-    lh_type_integer = lh_format_integer+1, /**< line editor with spinbox (optional lh_format_pair: min/max) */
-    lh_type_integer_slider, /**< slider (requires min/max) */
-    lh_type_integer_progress, /**< progress bar (optional min/max) */
-    lh_type_double = lh_format_double+1, /**< line editor with spinbox (optional min/max) */
-    lh_type_string = lh_format_string+1, /**< line editor */
-    lh_type_string_script, /**< multiline text editor */
-    lh_type_string_filename, /**< line editor and file selection dialog (optional lh_type_string: file selection mask) */
-    lh_type_string_button, /**< a button (required lh_type_string: button text) */
-    lh_type_string_htmllink, /**< readonly clicked link text text (required lh_type_string: html to show) */
-    lh_type_string_dropdownbox, /**< dropdown box (required lh_type_array: selectable values) */
-    lh_type_string_listbox, /**< listbox (required lh_type_array: selectable values) */
-    lh_type_string_combobox, /**< combobox (optional lh_type_array: selectable values) */
-    lh_type_pointer = lh_format_pointer+1, /**< no UI - never saved */
-    lh_type_pointer_qimage = lh_format_qimage+1, /**< shows the \c QImage - never saved */
-    lh_type_input_value = lh_format_input+1, /**< readonly text and input selection dialog for button or axis */
-    lh_type_input_state, /**< readonly text and input selection dialog for button state or half-axis */
-    lh_type_buffer = lh_format_buffer+1, /**< no UI - general use data buffer */
-    lh_type_array = lh_format_array+1, /**< no UI - array of lh_variant */
+/**
+  The role of the value in the setup item.
+  */
+typedef enum lh_data_role_t
+{
+    lh_role_value, /**< primary value */
+    lh_role_minimum, /**< primary value lower bound */
+    lh_role_maximum, /**< primary value upper bound */
+    lh_role_list, /**< primary value should be selected from this list */
+    lh_role_source, /**< setup item may be used as a source with this identifier */
+    lh_role_sink, /**< setup item wants data from sources with this identifier */
+    lh_role_unused, /**< first unused role after the predefined ones */
+    lh_role_user = (1<<6), /**< first available user role */
+    lh_role_last = (1<<8)-1 /**< last role available */
+} lh_data_role;
 
-    lh_meta_type_unused /**< marks last used value */
-} lh_meta_type;
+/**
+  This structure combines the role, store and format information
+  into a bitfield structure that's passed by value along with
+  a data pointer when passing values between LCDHost and the plugin.
+  It also contains flags indicating if the value should be saved
+  between sessions, or may be a data source or data sink.
+  */
+typedef struct lh_data_info_t
+{
+    lh_data_role role:8;
+    lh_data_store store:4;
+    lh_data_format format:4;
+    unsigned save:1; /**< should be saved between sessions */
+    unsigned is_source:1; /**< may be used as a data source */
+    unsigned is_sink:1; /**< may be used as a data sink */
+} lh_data_info;
+
+
+/**
+  Selects a setup item's user interface.
+  */
+typedef enum lh_setup_ui_t
+{
+    lh_ui_none = 0,
+
+    lh_ui_checkbox, /**< checkbox */
+    lh_ui_color, /**< line editor with color picker */
+    lh_ui_font, /**< line editor with font picker */
+    lh_ui_image, /**< decode PNG data and show the image */
+    lh_ui_spinbox, /**< line editor with spinbox (optional min/max) */
+    lh_ui_slider, /**< slider (required min/max) */
+    lh_ui_progress, /**< progress bar (optional min/max) */
+    lh_ui_string, /**< line editor */
+    lh_ui_text, /**< multiline text editor */
+    lh_ui_filename, /**< line editor and file selection dialog (optional other: string: file selection mask) */
+    lh_ui_button, /**< a button (required other: string: button text) */
+    lh_ui_htmllink, /**< readonly clicked link text text (required other: string: html to show) */
+    lh_ui_dropdownbox, /**< dropdown box (required other: stringlist: selectable values) */
+    lh_ui_listbox, /**< listbox (required other: stringlist: selectable values) */
+    lh_ui_combobox, /**< combobox (optional other: stringlist: selectable values) */
+    lh_ui_input_value, /**< readonly text and input selection dialog for button or axis */
+    lh_ui_input_state, /**< readonly text and input selection dialog for button state or half-axis */
+
+    lh_setup_ui_unused
+} lh_setup_ui;
 
 /**
   Stores flags for \c lh_setup_meta.
@@ -315,9 +330,9 @@ typedef enum lh_meta_flag_t
 {
     lh_meta_none        = 0,
 
-    lh_meta_save_value  = (1<<0), /**< LCDHost stores value between sessions */
-    lh_meta_save_param  = (1<<1), /**< LCDHost stores params between sessions */
-    lh_meta_save_link   = (1<<2), /**< LCDHost stores link between sessions */
+    lh_meta_save_value  = (1<<0), /**< set the save flag for lh_role_value */
+    lh_meta_save_param  = (1<<1), /**< set the save flag for lh_role_min,max and list */
+    lh_meta_save_link   = (1<<2), /**< set the save flag for lh_role_source and lh_role_sink */
     lh_meta_save = (lh_meta_save_value|lh_meta_save_param|lh_meta_save_link),
 
     lh_meta_show_link   = (1<<3), /**< data link button is shown in UI */
@@ -330,8 +345,8 @@ typedef enum lh_meta_flag_t
     lh_meta_first       = (1<<8), /**< same as setting order to -1 */
     lh_meta_last        = (1<<9), /**< same as setting order to 1 */
 
-    lh_meta_source      = (1<<10), /**< may be used as a data source */
-    lh_meta_sink        = (1<<11), /**< may be used as a data sink */
+    lh_meta_source      = (1<<10), /**< set lh_role_link value, set is_source on other values */
+    lh_meta_sink        = (1<<11), /**< set lh_role_link value, set is_sink on other values */
 
     lh_meta_focus       = (1<<12), /**< wants initial UI focus when parent is selected */
     lh_meta_indent      = (1<<13), /**< indent title or data to match siblings */
@@ -345,9 +360,19 @@ typedef enum lh_meta_flag_t
 } lh_meta_flag;
 
 /**
-  The plugin-to-LCDHost callback.
+  The object plugin-to-LCDHost callback.
   */
 typedef void (*lh_callback_t)( void* cb_id, lh_callbackcode code, void *param );
+
+
+/**
+  Simple data buffer.
+  */
+typedef struct lh_buffer_t
+{
+    const char *p; /**< pointer to buffer data area */
+    int n; /**< size of data stored in buffer data area */
+} lh_buffer;
 
 /**
     Definition of the signature area
@@ -385,17 +410,6 @@ typedef struct lh_signature_t
 #define LH_MAX_IDENT            64
 
 /**
-  A plugin-managed memory buffer. If it needs to be resized,
-  LCDHost may call the owner's obj_realloc() function.
-  */
-typedef struct lh_buffer_t
-{
-    char *p; /**< pointer to buffer data area */
-    int m; /**< size of buffer data area */
-    int n; /**< current size of data stored in buffer data area */
-} lh_buffer;
-
-/**
   The basic LCDHost plugin object structure. This is embedded in all more
   complex structures, but also returned by the exported function lh_create().
   */
@@ -412,7 +426,6 @@ typedef struct lh_object_t
     const char* (*obj_init)(struct lh_object_t*); /**< return error msg or NULL */
     int (*obj_polling)(struct lh_object_t*); /**< return ms to wait before next call, or zero to stop polling */
     int (*obj_notify)(struct lh_object_t*,int,void*); /**< return wanted notification mask, see LH_NOTE_xxx */
-    void (*obj_realloc)(struct lh_object_t*,lh_buffer*,int); /**< request to resize memory buffer (set 'm', change 'p' if needed) */
 
     /* the identity of an object is set by LCDHost for plugins and layout items */
     /* for setup items, layout classes and devices, it is set by the plugin. */
@@ -433,84 +446,29 @@ typedef struct lh_object_t
   */
 typedef struct lh_setup_meta_t
 {
-    lh_meta_type type; /**< setup item type, selects UI and basic data type \sa lh_meta_type */
+    lh_setup_ui ui; /**< setup item UI \sa lh_setup_ui */
     int flags; /**< usually set to \c lh_meta_default \sa lh_meta_flag */
     int order; /**< ordering of setup item in the UI, lower values first */
     const char *help; /**< short UTF-8 HTML help text shown as icon with tooltip, may be NULL */
 } lh_setup_meta;
 
 /**
-  Stores variable data for lh_setup_item.value and lh_setup_param.min/max/other
-  \sa lh_format
-  */
-typedef struct lh_variant_t
-{
-    lh_format fmt; /**< \sa lh_format */
-    union
-    {
-        long long i; /**< \sa lh_store_integer */
-        double d; /**< \sa lh_store_double */
-        void *p; /**< \sa lh_store_pointer */
-        lh_buffer b; /**< \sa lh_store_buffer */
-    } data;
-#ifdef __cplusplus
-# ifdef QT_CORE_LIB
-    inline operator QVariant() const
-    {
-        QVariant v;
-        lh_variant_to_qvariant( *this, v );
-        return v;
-    }
-    inline lh_variant_t& operator =( const QVariant& v )
-    {
-        lh_qvariant_to_variant( v, *this );
-        return *this;
-    }
-# endif
-#endif
-} lh_variant;
-
-/**
-  Parameter data is used to control UI elements or to provide
-  rendering hints. They are not enforced by LCDHost, but UI elements
-  will respect them where applicable.
-
-  Parameters will be saved and restored if \c lh_meta_save_param is set.
-  */
-typedef struct lh_setup_param_t
-{
-    lh_variant min;
-    lh_variant max;
-    lh_variant other;
-} lh_setup_param;
-
-/**
-  Stores flags for \c lh_setup_link.
-  */
-typedef enum lh_link_flag_t
-{
-    lh_link_source      = 0x0001,   /**< link is to be used as a source */
-    lh_link_flag_unused = 0x8000    /**< first unused flag */
-} lh_link_flag;
-
-/**
-  Setup items may be linked together to automatically transfer
-  data changes between them. A setup item may act as a data source,
-  a data sink, or neither. In addition, only setup items whose
-  \c filter match may be linked. Creating multiple data
-  sources with the same link name is allowed, but will cause
-  LH_WARNING_DUPLICATE_SOURCE to be issued using obj_notify().
-  */
-typedef struct lh_setup_link_t
-{
-    const char *path; /**< ASCIIZ, link path, or NULL if neither source nor sink */
-    int flags; /**< \sa lh_link_flag */
-    const char *filter; /**< ASCIIZ, usually NULL */
-} lh_setup_link;
-
-/**
     Setup items are the main information storage for LCDHost plugins,
     and usual way LCDHost and the plugins exchange data.
+
+    Setup items may be linked together to automatically transfer
+    data changes between them. A setup item may act as a data source,
+    a data sink, neither or both.
+
+    A setup item that has it's lh_role_source value set will
+    transfer any values it has with the is_source bit set
+    to all setup items that has the same identifier in their
+    lh_role_sink value, and has value with the same roles
+    and the is_sink bit set.
+
+    Creating multiple data sources with the same link name is
+    allowed, but will cause LH_WARNING_DUPLICATE_SOURCE to be
+    issued using obj_notify().
 
     Note that all members of \c lh_setup_meta must be set, and that
     \c lh_setup_meta.type must not change during the lifetime of the \c lh_setup_item.
@@ -522,16 +480,23 @@ typedef struct lh_setup_item_t
 {
     lh_object obj; /**< \sa lh_object */
     int size; /**< sizeof(lh_setup_item) */
-
     lh_setup_meta meta;
-    lh_setup_param param; /**< parameters \sa lh_setup_param */
-    lh_variant value; /**< value \sa lh_variant */
-    lh_setup_link link;
 
-    /* plugin exported functions, may be NULL */
-    void (*obj_param_changed)(struct lh_setup_item_t*); /**< \c data.param has been changed by LCDHost */
-    void (*obj_value_changed)(struct lh_setup_item_t*); /**< \c data.value has been changed by LCDHost */
-    void (*obj_link_changed)(struct lh_setup_item_t*); /**< \c link has been changed by LCDHost */
+    /**
+      Initialize this to zero, it will be set by LCDHost.
+      When the plugin creates or changes a setup item data value,
+      call this function to inform LCDHost about it.
+      LCDHost will remember the lh_data_info and use the same
+      format when informing you about changes using \c obj_update_data().
+      */
+    void (*cb_refresh_data)(struct lh_setup_item_t*,lh_data_info,const void*);
+
+    /**
+      When LCDHost changes one of the setup items data values,
+      it uses this function to inform the plugin about it.
+      The function pointer may be NULL if you don't need it.
+      */
+    void (*obj_update_data)(struct lh_setup_item_t*,lh_data_info,const void*);
 } lh_setup_item;
 
 /**
@@ -771,10 +736,10 @@ extern "C" {
 /* Utility functions in lh_plugin.c */
 lh_blob *lh_binaryfile_to_blob( const char *filename ); /* Caller must free() the blob */
 void lh_blob_to_headerfile( lh_blob *blob, const char *filename, const char *varname );
-lh_meta_type lh_name_to_meta_type( const char *name );
-const char *lh_meta_type_to_name( const lh_meta_type t );
-lh_format lh_name_to_format(const char *name );
-const char *lh_format_to_name( const lh_format fmt );
+lh_setup_ui lh_name_to_setup_ui( const char *name );
+const char *lh_setup_ui_to_name( const lh_setup_ui t );
+lh_data_format lh_name_to_data_format( const char *name );
+const char *lh_data_format_to_name( lh_data_format fmt );
 
 #ifdef __cplusplus
 }

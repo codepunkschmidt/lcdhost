@@ -9,6 +9,7 @@ include(../Plugins.pri)
 include(../cf.pri)
 
 HEADERS += \
+    $$PLUGIN_HEADERS \
     ../LH_Graph/LH_Graph.h \
     ../LH_Text/LH_Text.h \
     ../LH_Bar/LH_Bar.h \
@@ -46,6 +47,7 @@ HEADERS += \
     Sources/LH_HWiNFOData.h
 
 SOURCES += \
+    $$PLUGIN_SOURCES \
     ../LH_Graph/LH_Graph.cpp \
     ../LH_Text/LH_Text.cpp \
     ../LH_Bar/LH_Bar.cpp \

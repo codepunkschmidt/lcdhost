@@ -8,9 +8,14 @@ LH_PLUGIN_CLASS(LH_RivaWriter)
 
 LH_RivaWriter::LH_RivaWriter()
 {
-    setText("Afterburner >> RivaTuner");
-    setup_text_->setFlags(LH_FLAG_HIDDEN);
     createRivaMemory(0, 0xDEAD);
+}
+
+const char *LH_RivaWriter::userInit()
+{
+    if( const char *err = LH_QtInstance::userInit() ) return err;
+    hide();
+    return 0;
 }
 
 LH_RivaWriter::~LH_RivaWriter()
@@ -27,8 +32,8 @@ lh_class *LH_RivaWriter::classInfo()
         "Test",
         "RivaWriter",
         "RivaTuner DataWriter",
-        48,48,
-        lh_instance_calltable_NULL
+        48,48
+        
     };
 
     return &classInfo;

@@ -26,9 +26,10 @@
 #include <QDebug>
 #include "logo_blob.c"
 
-//LH_PLUGIN_CLASS(LH_QImage)
+/*
+LH_PLUGIN_CLASS(LH_QImage)
 
-/*lh_class *LH_QImage::classInfo()
+lh_class *LH_QImage::classInfo()
 {
     static lh_class classInfo =
     {
@@ -36,17 +37,27 @@
         "Static",
         "StaticImage2",
         "Static Image 2",
-        48,48,
-        lh_object_calltable_NULL,
-        lh_instance_calltable_NULL
+        48,48
+        
+        
     };
     return &classInfo;
-}*/
+}
+*/
 
-LH_QImage::LH_QImage() : LH_QtCFInstance()
+const char *LH_QImage::userInit()
 {
-    setup_image_file_ = new LH_Qt_QFileInfo( this, tr("Image"), QFileInfo(), LH_FLAG_AUTORENDER );
-    setup_show_placeholder_ = new LH_Qt_bool( this, "^Show placholder image when empty", true, LH_FLAG_AUTORENDER );
+    if( const char *err = LH_QtCFInstance::userInit() ) return err;
+    setup_image_file_ = new LH_Qt_QFileInfo( this, ("Image"), QFileInfo(), LH_FLAG_AUTORENDER );
+    setup_show_placeholder_ = new LH_Qt_bool( this, "Show placholder image when empty", true, LH_FLAG_AUTORENDER | LH_FLAG_BLANKTITLE);
+    return 0;
+}
+
+QImage* LH_QImage::getPlaceholder()
+{
+    QImage* image = new QImage();
+    image->loadFromData(_logo_blob_d.data, _logo_blob_d.len);
+    return image;
 }
 
 QImage *LH_QImage::render_qimage(int w, int h)
@@ -60,10 +71,7 @@ QImage *LH_QImage::render_qimage(int w, int h)
     else
     {
         if(setup_show_placeholder_->value())
-        {
-            image_ = new QImage();
-            image_->loadFromData(_logo_blob_d.data, _logo_blob_d.len);
-        }
+            image_ = getPlaceholder();
         else
             image_ = new QImage(w,h,QImage::Format_Invalid);
     }

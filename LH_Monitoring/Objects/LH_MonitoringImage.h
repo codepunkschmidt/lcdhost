@@ -1,8 +1,7 @@
 /**
-  \file     LH_QtPlugin_Text.h
-  \author   Johan Lindh <johan@linkdata.se>
-  \legalese Copyright (c) 2009 Johan Lindh
-
+  \file     LH_MonitoringImage.cpp
+  \author   Andy Bridges <triscopic@codeleap.co.uk>
+  \legalese Copyright (c) 2010 Andy Bridges
     Permission is hereby granted, free of charge, to any person obtaining a copy
     of this software and associated documentation files (the "Software"), to deal
     in the Software without restriction, including without limitation the rights
@@ -23,16 +22,33 @@
 
   */
 
-#ifndef LH_QTPLUGIN_MONITORING_H
-#define LH_QTPLUGIN_MONITORING_H
+#ifndef LH_MONITORINGIMAGE_H
+#define LH_MONITORINGIMAGE_H
 
-#include "../LH_QtPlugin.h"
+#include "../LH_QImage/LH_QImage.h"
+#include "../LH_Qt_QString.h"
 
-#define VERSION 2.00
+#include "../Sources/LH_MonitoringUI.h"
 
-class LH_QtPlugin_Monitoring : public LH_QtPlugin
+class LH_MonitoringImage : public LH_QImage
 {
+    Q_OBJECT
+
+protected:
+    LH_MonitoringUI *ui_;
+    LH_Qt_QString *setup_value_;
+
 public:
+    LH_MonitoringImage();
+    const char *userInit();
+    int notify(int n,void* p);
+    static lh_class *classInfo();
+
+    void updateValue();
+
+public slots:
+    void configChanged()  { updateValue(); }
+
 };
 
-#endif // LH_QTPLUGIN_MONITORING_H
+#endif // LH_MONITORINGIMAGE_H

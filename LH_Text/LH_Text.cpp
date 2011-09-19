@@ -153,6 +153,28 @@ void LH_Text::setRenderHints( QPainter& p )
     }
 }
 
+bool LH_Text::setStyleStrategy()
+{
+    int oldstrat = font_.styleStrategy();
+    int newstrat = oldstrat;
+    if( monochrome() )
+    {
+        newstrat &= ~QFont::PreferAntialias;
+        newstrat |= QFont::NoAntialias;
+    }
+    else
+    {
+        newstrat &= ~QFont::NoAntialias;
+        newstrat |= QFont::PreferAntialias;
+    }
+    if( newstrat != oldstrat )
+    {
+        font_.setStyleStrategy( (QFont::StyleStrategy) newstrat );
+        return true;
+    }
+    return false;
+}
+
 /**
   Create the QImage that contains the text. This may be larger or smaller than the
   target rendering area, and the \c setup_horizontal_ and \c setup_vertical_ values
@@ -187,18 +209,7 @@ void LH_Text::makeTextImage( int forheight )
     }
 
     // Set font antialiasing strategy
-    int strat = font_.styleStrategy();
-    if( monochrome() )
-    {
-        strat &= ~QFont::PreferAntialias;
-        strat |= QFont::NoAntialias;
-    }
-    else
-    {
-        strat &= ~QFont::NoAntialias;
-        strat |= QFont::PreferAntialias;
-    }
-    font_.setStyleStrategy( (QFont::StyleStrategy) strat );
+    setStyleStrategy();
 
     if( richtext_ )
     {
@@ -581,17 +592,18 @@ bool LH_Text::prepareForRender(int w, int h)
     if( (image_ = initImage(w,h)) == NULL ) return false;
     image_->fill( PREMUL( bgcolor().rgba() ) );
 
-    if( richtext_ )
+    if( richtext_ && w != textimage_.width() )
     {
-        if( w != textimage_.width() )
-        {
-            doc_.setTextWidth( w );
-            makeTextImage();
-        }
+        doc_.setTextWidth( w );
+        makeTextImage();
     }
     else if( fontresize() && textimage_.height() != h )
     {
         makeTextImage( h );
+    }
+    else if( setStyleStrategy() )
+    {
+        makeTextImage();
     }
 
     return true;

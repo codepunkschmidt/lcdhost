@@ -121,6 +121,7 @@ public:
     QImage& textimage() { return textimage_; }
     bool prepareForRender(int w, int h);
     bool monochrome() const { return state() ? state()->dev_depth == 1 : false; }
+    bool setStyleStrategy();
 
     static QImage makeImage(int w = 1, int h = 1)
     {

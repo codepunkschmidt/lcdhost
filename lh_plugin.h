@@ -254,7 +254,7 @@ typedef enum lh_setup_type_t
     lh_type_image_qimage, /* allows the display of a QImage in the setup pane static_cast<QImage*>(data.s) */
     lh_type_integer_listbox, /* using listbox, have user select one of the param.list strings */
     lh_type_string_button, /* a clickable button */
-    lh_type_string_html, /* static HTML text, for best effect start the name with '~' to hide it */
+    lh_type_string_htmlhint, /* static HTML text, for best effect start the name with '~' to hide it */
     lh_type_last /* marks last used value */
 } lh_setup_type;
 

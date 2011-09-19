@@ -15,7 +15,7 @@
 # endif
 #endif
 
-class LH_AidaWriter : public LH_Text
+class LH_AidaWriter : public LH_QtInstance
 {
     Q_OBJECT
 
@@ -28,6 +28,7 @@ protected:
 public:
     LH_AidaWriter();
     ~LH_AidaWriter();
+    const char *userInit();
 
     static lh_class *classInfo();
 

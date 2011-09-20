@@ -69,9 +69,7 @@ const char *LH_MonitoringText::userInit()
 
     ui_ = new LH_MonitoringUI(this, mdmAll, false);
 
-    LH_Qt_QString* hr = new LH_Qt_QString(this,("Mon-Data-Rule"), QString(), LH_FLAG_NOSAVE | LH_FLAG_NOSOURCE | LH_FLAG_NOSINK | LH_FLAG_HIDETITLE, lh_type_string_htmlhint );
-    hr->setHelp("<hr>");
-    hr->setOrder(-3);
+    (new LH_Qt_QString(this,("image-hr1"), QString("<hr>"), LH_FLAG_NOSAVE | LH_FLAG_NOSOURCE | LH_FLAG_NOSINK | LH_FLAG_HIDETITLE,lh_type_string_html ))->setOrder(-3);
 
     setup_value_round_ = new LH_Qt_bool(this,"Round",false, LH_FLAG_AUTORENDER);
     setup_value_round_->setHelp( "<p>Round non integer values.</p>");
@@ -93,9 +91,7 @@ const char *LH_MonitoringText::userInit()
     setup_post_text_->setOrder(-3);
     connect( setup_post_text_, SIGNAL(changed()), this, SLOT(updateText()) );
 
-    LH_Qt_QString* hr2 =new LH_Qt_QString(this,("Mon-Props-Rule"), QString(), LH_FLAG_NOSAVE | LH_FLAG_NOSOURCE | LH_FLAG_NOSINK | LH_FLAG_HIDETITLE,lh_type_string_htmlhint );
-    hr2->setHelp("<hr>");
-    hr2->setOrder(-3);
+    (new LH_Qt_QString(this,("image-hr2"), QString("<hr>"), LH_FLAG_NOSAVE | LH_FLAG_NOSOURCE | LH_FLAG_NOSINK | LH_FLAG_HIDETITLE,lh_type_string_html ))->setOrder(-3);
 
     setup_text_->setFlag( LH_FLAG_HIDDEN, true );
     setup_text_->setFlag( LH_FLAG_NOSAVE, true );

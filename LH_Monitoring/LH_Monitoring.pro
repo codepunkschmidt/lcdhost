@@ -6,7 +6,7 @@ DEFINES += MONITORING_FOLDER="System"
 QT += xml
 
 include(../Plugins.pri)
-include(../cf.pri)
+include(../CF/cf.pri)
 
 HEADERS += \
     $$PLUGIN_HEADERS \

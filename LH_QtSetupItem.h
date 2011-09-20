@@ -83,6 +83,9 @@ public:
     int order() const { return order_; }
     void setOrder( int n );
 
+    bool isVisible() const { return !isHidden(); }
+    bool isHidden() const { return flags()&LH_FLAG_HIDDEN; }
+
 signals:
     void changed();
     void change( bool );

@@ -54,9 +54,7 @@ const char *LH_MonitoringBar::userInit()
 
     ui_ = new LH_MonitoringUI(this, mdmNumbers, true);
 
-    LH_Qt_QString* hr1 =new LH_Qt_QString(this,("Bar-hr1"), QString(), LH_FLAG_NOSAVE | LH_FLAG_NOSOURCE | LH_FLAG_NOSINK | LH_FLAG_HIDETITLE,lh_type_string_htmlhint );
-    hr1->setHelp("<hr>");
-    hr1->setOrder(-3);
+    (new LH_Qt_QString(this,("image-hr1"), QString("<hr>"), LH_FLAG_NOSAVE | LH_FLAG_NOSOURCE | LH_FLAG_NOSINK | LH_FLAG_HIDETITLE,lh_type_string_html ))->setOrder(-3);
 
     setup_max_ = new LH_Qt_int(this, "Maximum", 100, 0, 99999);
     setup_max_->setHelp( "<p>The bar's maximum value.</p>");
@@ -68,9 +66,7 @@ const char *LH_MonitoringBar::userInit()
     setup_min_->setOrder(-3);
     connect( setup_min_, SIGNAL(changed()), this, SLOT(updateBounds()) );
 
-    LH_Qt_QString* hr2 =new LH_Qt_QString(this,("Bar-hr2"), QString(), LH_FLAG_NOSAVE | LH_FLAG_NOSOURCE | LH_FLAG_NOSINK | LH_FLAG_HIDETITLE,lh_type_string_htmlhint );
-    hr2->setHelp("<hr>");
-    hr2->setOrder(-3);
+    (new LH_Qt_QString(this,("image-hr2"), QString("<hr>"), LH_FLAG_NOSAVE | LH_FLAG_NOSOURCE | LH_FLAG_NOSINK | LH_FLAG_HIDETITLE,lh_type_string_html ))->setOrder(-3);
 
     updateBounds();
 

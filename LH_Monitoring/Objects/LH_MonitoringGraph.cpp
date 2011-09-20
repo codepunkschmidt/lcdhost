@@ -51,9 +51,7 @@ const char *LH_MonitoringGraph::userInit()
     setUserDefinableLimits(true);
     canGrow(true);
 
-    LH_Qt_QString* hr1 =new LH_Qt_QString(this,("Graph-hr1"), QString(), LH_FLAG_NOSAVE | LH_FLAG_NOSOURCE | LH_FLAG_NOSINK | LH_FLAG_HIDETITLE,lh_type_string_htmlhint );
-    hr1->setHelp("<hr>");
-    hr1->setOrder(-3);
+    (new LH_Qt_QString(this,("image-hr1"), QString("<hr>"), LH_FLAG_NOSAVE | LH_FLAG_NOSOURCE | LH_FLAG_NOSINK | LH_FLAG_HIDETITLE,lh_type_string_html ))->setOrder(-3);
 
     setup_auto_scale_y_max_->setValue(true);
     setup_auto_scale_y_min_->setValue(true);
@@ -65,9 +63,7 @@ const char *LH_MonitoringGraph::userInit()
     setup_append_units_->setOrder(-3);
     connect( setup_append_units_, SIGNAL(changed()), this, SLOT(updateUnits()) );
 
-    LH_Qt_QString* hr2 =new LH_Qt_QString(this,("Graph-hr2"), QString(), LH_FLAG_NOSAVE | LH_FLAG_NOSOURCE | LH_FLAG_NOSINK | LH_FLAG_HIDETITLE,lh_type_string_htmlhint );
-    hr2->setHelp("<hr>");
-    hr2->setOrder(-3);
+    (new LH_Qt_QString(this,("image-hr2"), QString("<hr>"), LH_FLAG_NOSAVE | LH_FLAG_NOSOURCE | LH_FLAG_NOSINK | LH_FLAG_HIDETITLE,lh_type_string_html ))->setOrder(-3);
 
     was_empty_ = true;
 

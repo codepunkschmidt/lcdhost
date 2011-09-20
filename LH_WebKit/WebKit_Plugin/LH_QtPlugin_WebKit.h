@@ -38,7 +38,7 @@
 
 #include <QProcess>
 #include <QTime>
-#include "../LH_QtPlugin.h"
+#include "LH_QtPlugin.h"
 
 class LH_QtPlugin_WebKit : public LH_QtPlugin
 {

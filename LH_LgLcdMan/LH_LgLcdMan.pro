@@ -1,12 +1,12 @@
 TARGET = LH_LgLcdMan
 TEMPLATE = lib
 DEFINES += LGLCDMAN_LIBRARY
+CONFIG += device
 
 include(../Plugins.pri)
 
 SOURCES += \
     $$PLUGIN_SOURCES \
-    ../LH_QtDevice.cpp \
     ../wow64.cpp \
     LH_LgLcdMan.cpp \
     LogitechDevice.cpp \
@@ -16,7 +16,6 @@ SOURCES += \
 
 HEADERS += \
     $$PLUGIN_HEADERS \
-    ../LH_QtDevice.h \
     ../wow64.h \
     LH_LgLcdMan.h \
     LogitechDevice.h \

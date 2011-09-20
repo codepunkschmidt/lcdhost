@@ -42,7 +42,7 @@
 #include <QNetworkAccessManager>
 
 #include "LH_WebKit.h"
-#include "../LH_Qt_QString.h"
+#include "LH_Qt_QString.h"
 
 #define USE_NAM
 

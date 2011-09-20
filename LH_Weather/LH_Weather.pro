@@ -6,14 +6,7 @@ DEFINES += LH_WEATHER_LIBRARY
 
 include(../Plugins.pri)
 include(../CF/CF.pri)
-
-exists(../TranslationAPIKey.h) {
-    DEFINES += GOOGLETRANSLATOR
-    SOURCES += ../GoogleTranslator.cpp
-    HEADERS += ../TranslationAPIKey.h ../GoogleTranslator.h
-} else {
-    error("Missing TranslationAPIKey.h")
-}
+include(../GoogleTranslator/GoogleTranslator.pri)
 
 SOURCES += \
     $$PLUGIN_SOURCES \

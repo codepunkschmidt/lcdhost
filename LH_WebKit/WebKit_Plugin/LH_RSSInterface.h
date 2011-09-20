@@ -9,15 +9,15 @@
 #include <QDateTime>
 #include <QList>
 
-#include "../../LH_Qt_QString.h"
-#include "../../LH_Qt_QSlider.h"
-#include "../../LH_Qt_InputState.h"
-#include "../../LH_Qt_QStringList.h"
-#include "../../LH_Qt_int.h"
+#include "../LH_Qt_QString.h"
+#include "../LH_Qt_QSlider.h"
+#include "../LH_Qt_InputState.h"
+#include "../LH_Qt_QStringList.h"
+#include "../LH_Qt_int.h"
 
 #include <QObject>
 
-#include "../../LH_QtObject.h"
+#include "../LH_QtObject.h"
 #include "LH_RSSFeed.h"
 
 

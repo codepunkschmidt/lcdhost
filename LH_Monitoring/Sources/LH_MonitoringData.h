@@ -2,7 +2,7 @@
 #define LH_MONITORINGDATA_H
 
 #include <QObject>
-#include "../LH_QtObject.h"
+#include "LH_QtObject.h"
 #include <QStringList>
 
 class LH_MonitoringUI;

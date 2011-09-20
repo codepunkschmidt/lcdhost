@@ -40,7 +40,7 @@
 #include <QDateTime>
 
 #include "LH_Text.h"
-#include "../LH_Qt_QFileInfo.h"
+#include "LH_Qt_QFileInfo.h"
 
 class LH_TextFile : public LH_Text
 {

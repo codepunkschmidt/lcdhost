@@ -1,11 +1,11 @@
 #ifndef LH_DATAVIEWERBAR_H
 #define LH_DATAVIEWERBAR_H
 
-#include "../LH_Bar/LH_Bar.h"
+#include "LH_Bar/LH_Bar.h"
 
-#include "../LH_QtPlugin.h"
-#include "../LH_Qt_int.h"
-#include "../LH_Qt_QString.h"
+#include "LH_QtPlugin.h"
+#include "LH_Qt_int.h"
+#include "LH_Qt_QString.h"
 
 #include "LH_DataViewerData.h"
 

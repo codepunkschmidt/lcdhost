@@ -37,11 +37,11 @@
 #ifndef LH_RECTANGLE_H
 #define LH_RECTANGLE_H
 
-#include "../LH_QtPlugin.h"
-#include "../LH_QtInstance.h"
-#include "../LH_Qt_bool.h"
-#include "../LH_Qt_QSlider.h"
-#include "../LH_Qt_QColor.h"
+#include "LH_QtPlugin.h"
+#include "LH_QtInstance.h"
+#include "LH_Qt_bool.h"
+#include "LH_Qt_QSlider.h"
+#include "LH_Qt_QColor.h"
 
 class LH_Rectangle : public LH_QtInstance
 {

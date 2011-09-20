@@ -38,10 +38,10 @@
 #define LH_BACKGROUND_H
 
 #include <QColor>
-#include "../LH_QtPlugin.h"
-#include "../LH_QtInstance.h"
-#include "../LH_Qt_bool.h"
-#include "../LH_Qt_QColor.h"
+#include "LH_QtPlugin.h"
+#include "LH_QtInstance.h"
+#include "LH_Qt_bool.h"
+#include "LH_Qt_QColor.h"
 
 class LH_Background : public LH_QtInstance
 {

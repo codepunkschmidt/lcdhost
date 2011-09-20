@@ -29,9 +29,9 @@
 // #include <tchar.h>
 // #include <stdio.h>
 
-#include "../LH_Text/LH_Text.h"
-#include "../LH_Qt_InputState.h"
-#include "../LH_Qt_QFileInfo.h"
+#include "LH_Text/LH_Text.h"
+#include "LH_Qt_InputState.h"
+#include "LH_Qt_QFileInfo.h"
 
 #include "LH_CursorData.h"
 

@@ -45,14 +45,14 @@
 #include <QFont>
 #include <QSize>
 
-#include "../LH_QtPlugin.h"
-#include "../LH_QtCFInstance.h"
-#include "../LH_Qt_bool.h"
-#include "../LH_Qt_QString.h"
-#include "../LH_Qt_QFont.h"
-#include "../LH_Qt_QColor.h"
-#include "../LH_Qt_QStringList.h"
-#include "../LH_Qt_QSlider.h"
+#include "LH_QtPlugin.h"
+#include "LH_QtCFInstance.h"
+#include "LH_Qt_bool.h"
+#include "LH_Qt_QString.h"
+#include "LH_Qt_QFont.h"
+#include "LH_Qt_QColor.h"
+#include "LH_Qt_QStringList.h"
+#include "LH_Qt_QSlider.h"
 
 class LH_Text : public LH_QtCFInstance
 {

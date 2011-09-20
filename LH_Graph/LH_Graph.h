@@ -27,17 +27,17 @@
 #ifndef LH_GRAPH_H
 #define LH_GRAPH_H
 
-#include "../LH_QtInstance.h"
-#include "../LH_Qt_QColor.h"
-#include "../LH_Qt_QStringList.h"
-#include "../LH_Qt_QString.h"
-#include "../LH_Qt_QSlider.h"
-#include "../LH_Qt_bool.h"
-#include "../LH_Qt_int.h"
-#include "../LH_Qt_float.h"
-#include "../LH_Qt_QTextEdit.h"
-#include "../LH_Qt_QFont.h"
-#include "../LH_Qt_QFileInfo.h"
+#include "LH_QtInstance.h"
+#include "LH_Qt_QColor.h"
+#include "LH_Qt_QStringList.h"
+#include "LH_Qt_QString.h"
+#include "LH_Qt_QSlider.h"
+#include "LH_Qt_bool.h"
+#include "LH_Qt_int.h"
+#include "LH_Qt_float.h"
+#include "LH_Qt_QTextEdit.h"
+#include "LH_Qt_QFont.h"
+#include "LH_Qt_QFileInfo.h"
 #include "QList"
 #include "QHash"
 

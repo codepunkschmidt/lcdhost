@@ -35,7 +35,7 @@
 #ifndef LH_LG320x240_H
 #define LH_LG320x240_H
 
-#include "../LH_QtPlugin.h"
+#include "LH_QtPlugin.h"
 #include "LogitechG19Thread.h"
 #include "LogitechG19.h"
 

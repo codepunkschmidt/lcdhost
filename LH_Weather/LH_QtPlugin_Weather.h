@@ -26,7 +26,7 @@
 #ifndef LH_QTPLUGIN_WEATHER_H
 #define LH_QTPLUGIN_WEATHER_H
 
-#include "../LH_QtPlugin.h"
+#include "LH_QtPlugin.h"
 
 #include <QNetworkAccessManager>
 #include <QNetworkReply>
@@ -38,17 +38,17 @@
 #include <QDateTime>
 #include <QSharedMemory>
 
-#include "../LH_Qt_QString.h"
-#include "../LH_Qt_QSlider.h"
-#include "../LH_Qt_InputState.h"
-#include "../LH_Qt_QStringList.h"
-#include "../LH_Qt_int.h"
-#include "../LH_Qt_QTextEdit.h"
+#include "LH_Qt_QString.h"
+#include "LH_Qt_QSlider.h"
+#include "LH_Qt_InputState.h"
+#include "LH_Qt_QStringList.h"
+#include "LH_Qt_int.h"
+#include "LH_Qt_QTextEdit.h"
 
 #include <stdio.h>
 
 #include "LH_WeatherData.h"
-#include "../GoogleTranslator.h"
+#include "GoogleTranslator.h"
 
 #define VERSION 1.40
 

@@ -33,7 +33,7 @@
 #include <QSharedMemory>
 
 #include "LH_WeatherImage.h"
-#include "../LH_Qt_QStringList.h"
+#include "LH_Qt_QStringList.h"
 
 LH_PLUGIN_CLASS(LH_WeatherImage)
 

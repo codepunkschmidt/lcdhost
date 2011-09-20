@@ -33,7 +33,7 @@
   */
 
 #include "LH_QtCPU.h"
-#include "../lh_plugin.h"
+#include "lh_plugin.h"
 
 LH_QtCPU::LH_QtCPU( LH_QtInstance *parent )
 {

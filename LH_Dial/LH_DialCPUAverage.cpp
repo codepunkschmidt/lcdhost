@@ -24,7 +24,7 @@
   */
 
 #include "LH_Dial.h"
-#include "../LH_QtCPU.h"
+#include "LH_QtCPU.h"
 
 class LH_DialCPUAverage : public LH_Dial
 {

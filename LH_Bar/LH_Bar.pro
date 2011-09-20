@@ -3,13 +3,10 @@ TEMPLATE = lib
 DEFINES += LH_BAR_LIBRARY
 
 include(../Plugins.pri)
-include(../CF.pri)
+include(../CF/CF.pri)
 
 SOURCES += \
-    ../LH_QtPlugin.cpp \
-    ../LH_QtInstance.cpp \
-    ../LH_QtObject.cpp \
-    ../LH_QtSetupItem.cpp \
+    $$PLUGIN_SOURCES \
     ../LH_QtCPU.cpp \
     ../LH_QtNetwork.cpp \
     LH_QtPlugin_Bar.cpp \
@@ -22,10 +19,7 @@ SOURCES += \
     LH_BarCPUHistogram.cpp
 
 HEADERS += \
-    ../LH_QtPlugin.h \
-    ../LH_QtInstance.h \
-    ../LH_QtObject.h \
-    ../LH_QtSetupItem.h \
+    $$PLUGIN_HEADERS \
     ../LH_QtCPU.h \
     ../LH_QtNetwork.h \
     LH_QtPlugin_Bar.h \

@@ -48,7 +48,7 @@
 #define LH_LGLCDMAN_H
 
 #include <QImage>
-#include "../LH_QtPlugin.h"
+#include "LH_QtPlugin.h"
 #include "LH_LgLcdThread.h"
 
 

@@ -26,7 +26,7 @@
 
 #include "LH_Graph.h"
 #include "QDebug"
-#include "../LH_QtCPU.h"
+#include "LH_QtCPU.h"
 
 class LH_GraphCPUHistogram : public LH_Graph
 {

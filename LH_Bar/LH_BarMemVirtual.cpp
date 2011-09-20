@@ -36,7 +36,7 @@
   */
 
 #include "LH_Bar.h"
-#include "../LH_QtNetwork.h"
+#include "LH_QtNetwork.h"
 
 class LH_BarMemVirtual : public LH_Bar
 {

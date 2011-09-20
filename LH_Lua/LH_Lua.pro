@@ -8,20 +8,14 @@ include(../Plugins.pri)
 QMAKE_CFLAGS_WARN_ON = -w
 
 SOURCES += \
-    ../LH_QtPlugin.cpp \
-    ../LH_QtInstance.cpp \
-    ../LH_QtObject.cpp \
-    ../LH_QtSetupItem.cpp \
+    $$PLUGIN_SOURCES \
     LH_QtPlugin_Lua.cpp \
     LH_LuaClass.cpp \
     LH_LuaInstance.cpp \
     luaXT.cpp
 	
 HEADERS += \
-    ../LH_QtPlugin.h \
-    ../LH_QtInstance.h \
-    ../LH_QtObject.h \
-    ../LH_QtSetupItem.h \
+    $$PLUGIN_HEADERS \
     LH_QtPlugin_Lua.h \
     LH_LuaClass.h \
     LH_LuaInstance.h

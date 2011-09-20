@@ -36,7 +36,7 @@
 #include <QPainter>
 #include <QDebug>
 
-#include "../WebKitCommand.h"
+#include "WebKitCommand.h"
 #include "WebKitRequest.h"
 
 WebKitRequest::WebKitRequest( QLocalSocket *sock, WebKitServerWindow *parent ) : QObject(parent), sock_(sock)

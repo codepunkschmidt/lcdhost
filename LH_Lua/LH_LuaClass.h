@@ -38,7 +38,7 @@
 #include <QList>
 #include <QString>
 #include <QFileInfo>
-#include "../LH_QtPlugin.h"
+#include "LH_QtPlugin.h"
 
 #define LUA_MAGIC "wf7bFprtNhNGS6XKjmrc"
 

@@ -35,7 +35,7 @@
 #ifndef LH_LG160X43_H
 #define LH_LG160X43_H
 
-#include "../LH_QtPlugin.h"
+#include "LH_QtPlugin.h"
 
 class LH_Lg160x43 : public LH_QtPlugin
 {

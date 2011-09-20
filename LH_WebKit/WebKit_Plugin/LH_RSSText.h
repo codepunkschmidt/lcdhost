@@ -1,7 +1,7 @@
 #ifndef LH_RSSTEXT_H
 #define LH_RSSTEXT_H
 
-#include "../../LH_Text/LH_Text.h"
+#include "../LH_Text/LH_Text.h"
 #include "LH_RSSInterface.h"
 
 class LH_RSSText : public LH_Text

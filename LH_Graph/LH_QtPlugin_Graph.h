@@ -27,7 +27,7 @@
 #ifndef LH_QTPLUGIN_GRAPH_H
 #define LH_QTPLUGIN_GRAPH_H
 
-#include "../LH_QtPlugin.h"
+#include "LH_QtPlugin.h"
 
 #define VERSION 1.31
 class LH_QtPlugin_Graph : public LH_QtPlugin

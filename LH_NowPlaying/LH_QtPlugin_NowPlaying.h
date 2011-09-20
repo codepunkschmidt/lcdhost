@@ -38,7 +38,7 @@
 #ifndef LH_QTPLUGIN_NOWPLAYING_H
 #define LH_QTPLUGIN_NOWPLAYING_H
 
-#include "../LH_QtPlugin.h"
+#include "LH_QtPlugin.h"
 #include "utils.h"
 #include <QFile>
 #include <QThread>

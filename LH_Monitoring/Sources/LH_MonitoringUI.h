@@ -3,10 +3,10 @@
 
 #include <QObject>
 
-#include "../LH_Qt_QStringList.h"
-#include "../LH_Qt_QString.h"
-#include "../LH_Qt_int.h"
-#include "../LH_Qt_bool.h"
+#include "LH_Qt_QStringList.h"
+#include "LH_Qt_QString.h"
+#include "LH_Qt_int.h"
+#include "LH_Qt_bool.h"
 
 #include "LH_MonitoringData.h"
 

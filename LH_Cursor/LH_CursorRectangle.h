@@ -26,12 +26,12 @@
 #ifndef LH_CURSORRECTANGLE_H
 #define LH_CURSORRECTANGLE_H
 
-#include "../LH_QtInstance.h"
-#include "../LH_Qt_bool.h"
-#include "../LH_Qt_QSlider.h"
-#include "../LH_Qt_QColor.h"
-#include "../LH_Qt_QString.h"
-#include "../LH_Qt_QFileInfo.h"
+#include "LH_QtInstance.h"
+#include "LH_Qt_bool.h"
+#include "LH_Qt_QSlider.h"
+#include "LH_Qt_QColor.h"
+#include "LH_Qt_QString.h"
+#include "LH_Qt_QFileInfo.h"
 
 #include "LH_CursorData.h"
 

@@ -41,7 +41,7 @@
 #include <QTime>
 #include <QRegExp>
 
-#include "../LH_Bar/LH_Bar.h"
+#include "LH_Bar/LH_Bar.h"
 
 #include "LH_QtPlugin_NowPlaying.h"
 

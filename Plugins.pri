@@ -37,21 +37,43 @@ unix:!macx {
 
 DESTDIR = $$LCDHOST_PLUGINS
 
-INCLUDEPATH += $$PWD
+QTSUPPORT = $$PWD/QtSupport
+
+INCLUDEPATH += \
+    $$PWD \
+    $$QTSUPPORT
 
 PLUGIN_SOURCES = \
     $$PWD/lh_plugin.c \
-    $$PWD/LH_QtObject.cpp \
-    $$PWD/LH_QtPlugin.cpp \
-    $$PWD/LH_QtInstance.cpp \
-    $$PWD/LH_QtSetupItem.cpp
+    $$QTSUPPORT/LH_QtObject.cpp \
+    $$QTSUPPORT/LH_QtPlugin.cpp \
+    $$QTSUPPORT/LH_QtInstance.cpp \
+    $$QTSUPPORT/LH_QtSetupItem.cpp
 
 PLUGIN_HEADERS += \
     $$PWD/lh_plugin.h \
-    $$PWD/LH_QtObject.h \
-    $$PWD/LH_QtPlugin.h \
-    $$PWD/LH_QtInstance.h \
-    $$PWD/LH_QtSetupItem.h
+    $$QTSUPPORT/LH_QtObject.h \
+    $$QTSUPPORT/LH_QtPlugin.h \
+    $$QTSUPPORT/LH_QtInstance.h \
+    $$QTSUPPORT/LH_QtSetupItem.h
+
+systemstats {
+    PLUGIN_HEADERS += \
+        $$QTSUPPORT/LH_QtCPU.h  \
+        $$QTSUPPORT/LH_QtNetwork.h
+
+    PLUGIN_SOURCES += \
+        $$QTSUPPORT/LH_QtCPU.cpp \
+        $$QTSUPPORT/LH_QtNetwork.cpp
+}
+
+device {
+    PLUGIN_HEADERS += \
+        $$QTSUPPORT/LH_QtDevice.h
+
+    PLUGIN_SOURCES += \
+        $$QTSUPPORT/LH_QtDevice.cpp
+}
 
 contains( TEMPLATE, lib ) {
     exists($$PWD/../lcdhost-private.pem) {

@@ -1,5 +1,7 @@
 QT += xml
 
+DEFINES += LH_CF
+
 INCLUDEPATH += $$PWD
 
 SOURCES += \

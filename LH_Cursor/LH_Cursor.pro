@@ -9,8 +9,6 @@ include(../CF/CF.pri)
 
 HEADERS += \
     $$PLUGIN_HEADERS \
-    ../LH_Text/LH_Text.h \
-    ../LH_Qt_QFileInfo.h \
     LH_CursorController.h \
     LH_QtPlugin_Cursor.h \
     LH_CursorRectangle.h \
@@ -23,7 +21,6 @@ HEADERS += \
 
 SOURCES += \
     $$PLUGIN_SOURCES \
-    ../LH_Text/LH_Text.cpp \
     LH_CursorController.cpp \
     LH_QtPlugin_Cursor.cpp \
     LH_CursorRectangle.cpp \

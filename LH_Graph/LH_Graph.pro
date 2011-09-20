@@ -1,13 +1,12 @@
 TARGET = LH_Graph
 TEMPLATE = lib
 DEFINES += LH_GRAPH_LIBRARY
+CONFIG += systemstats
 
 include(../Plugins.pri)
 
 SOURCES += \
     $$PLUGIN_SOURCES \
-    ../LH_QtCPU.cpp \
-    ../LH_QtNetwork.cpp \
     LH_QtPlugin_Graph.cpp \
     LH_Graph.cpp \
     LH_GraphCPUAverage.cpp \
@@ -16,9 +15,8 @@ SOURCES += \
     LH_GraphMemVirtual.cpp \
     LH_GraphNetIn.cpp \
     LH_GraphNetOut.cpp
+
 HEADERS += \
-    $$PLUGIN_SOURCES \
-    ../LH_QtCPU.h \
-    ../LH_QtNetwork.h \
+    $$PLUGIN_HEADERS \
     LH_QtPlugin_Graph.h \
     LH_Graph.h

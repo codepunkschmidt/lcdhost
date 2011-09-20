@@ -1,7 +1,7 @@
 #ifndef LOGITECHG19_H
 #define LOGITECHG19_H
 
-#include <../LH_QtDevice.h>
+#include <LH_QtDevice.h>
 #include "libusb.h"
 
 class LogitechG19 : public LH_QtDevice

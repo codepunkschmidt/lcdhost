@@ -1,5 +1,7 @@
 QT += xml
 
+INCLUDEPATH += $$PWD
+
 SOURCES += \
     $$PWD/LH_QtCFInstance.cpp \
     $$PWD/cf_rule.cpp

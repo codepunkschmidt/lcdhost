@@ -5,19 +5,12 @@ DEFINES += LH_VIRTUALLCD_LIBRARY
 include(../Plugins.pri)
 
 SOURCES += \
-    ../LH_QtPlugin.cpp \
-    ../LH_QtInstance.cpp \
-    ../LH_QtObject.cpp \
-    ../LH_QtSetupItem.cpp \
+    $$PLUGIN_SOURCES \
     ../LH_QtDevice.cpp \
     LH_VirtualLCD.cpp
 
 HEADERS += \
-    ../lh_plugin.h \
-    ../LH_QtPlugin.h \
-    ../LH_QtInstance.h \
-    ../LH_QtObject.h \
-    ../LH_QtSetupItem.h \
+    $$PLUGIN_HEADERS \
     ../LH_QtDevice.h \
     LH_VirtualLCD.h
 

@@ -26,14 +26,14 @@
 #ifndef LH_DIAL_H
 #define LH_DIAL_H
 
-#include "../LH_QtInstance.h"
-#include "../LH_Qt_QColor.h"
-#include "../LH_Qt_QStringList.h"
-#include "../LH_Qt_QSlider.h"
-#include "../LH_Qt_QFileInfo.h"
-#include "../LH_Qt_bool.h"
-#include "../LH_Qt_int.h"
-#include "../LH_Qt_QTextEdit.h"
+#include "LH_QtInstance.h"
+#include "LH_Qt_QColor.h"
+#include "LH_Qt_QStringList.h"
+#include "LH_Qt_QSlider.h"
+#include "LH_Qt_QFileInfo.h"
+#include "LH_Qt_bool.h"
+#include "LH_Qt_int.h"
+#include "LH_Qt_QTextEdit.h"
 
 #include <QList>
 #include <QStringList>

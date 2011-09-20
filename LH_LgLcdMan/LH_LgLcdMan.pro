@@ -5,10 +5,7 @@ DEFINES += LGLCDMAN_LIBRARY
 include(../Plugins.pri)
 
 SOURCES += \
-    ../LH_QtPlugin.cpp \
-    ../LH_QtInstance.cpp \
-    ../LH_QtObject.cpp \
-    ../LH_QtSetupItem.cpp \
+    $$PLUGIN_SOURCES \
     ../LH_QtDevice.cpp \
     ../wow64.cpp \
     LH_LgLcdMan.cpp \
@@ -18,11 +15,7 @@ SOURCES += \
     LH_LgLcdThread.cpp
 
 HEADERS += \
-    ../lh_plugin.h \
-    ../LH_QtPlugin.h \
-    ../LH_QtInstance.h \
-    ../LH_QtObject.h \
-    ../LH_QtSetupItem.h \
+    $$PLUGIN_HEADERS \
     ../LH_QtDevice.h \
     ../wow64.h \
     LH_LgLcdMan.h \

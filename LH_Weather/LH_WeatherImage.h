@@ -27,11 +27,11 @@
 
 #include <QtGlobal>
 
-#include "../LH_QtInstance.h"
-#include "../LH_Qt_QString.h"
-#include "../LH_Qt_QStringList.h"
-#include "../LH_Qt_QFileInfo.h"
-#include "../LH_Qt_QTextEdit.h"
+#include "LH_QtInstance.h"
+#include "LH_Qt_QString.h"
+#include "LH_Qt_QStringList.h"
+#include "LH_Qt_QFileInfo.h"
+#include "LH_Qt_QTextEdit.h"
 
 #include "LH_WeatherData.h"
 

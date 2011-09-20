@@ -27,8 +27,8 @@
 
 #include <QtGlobal>
 
-#include "../LH_QtInstance.h"
-#include "../LH_Qt_QFileInfo.h"
+#include "LH_QtInstance.h"
+#include "LH_Qt_QFileInfo.h"
 
 #include "LH_DataViewerData.h"
 

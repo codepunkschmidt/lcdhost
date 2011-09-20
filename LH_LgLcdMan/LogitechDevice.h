@@ -36,7 +36,7 @@
 #define LOGITECHDEVICE_H
 
 #include "LH_LgLcdMan.h"
-#include "../LH_QtDevice.h"
+#include "LH_QtDevice.h"
 
 #ifdef Q_WS_WIN
 # ifndef UNICODE

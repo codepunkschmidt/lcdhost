@@ -4,6 +4,8 @@ QT += webkit network
 CONFIG -= app_bundle
 
 include(../../Plugins.pri)
+INCLUDEPATH += ..
+
 DESTDIR = $$LCDHOST_BINARIES
 
 SOURCES += \

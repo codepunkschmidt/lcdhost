@@ -25,8 +25,8 @@
 #ifndef LH_WeatherBrowserOpener_H
 #define LH_WeatherBrowserOpener_H
 
-#include "../LH_QtInstance.h"
-#include "../LH_Qt_InputState.h"
+#include "LH_QtInstance.h"
+#include "LH_Qt_InputState.h"
 
 #include "LH_WeatherData.h"
 

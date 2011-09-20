@@ -43,7 +43,7 @@
 
 #include "LH_Image.h"
 #include "logo_blob.h"
-#include "../lh_plugin.h"
+#include "lh_plugin.h"
 
 #ifndef Q_UNUSED
 # if defined(Q_CC_INTEL) && !defined(Q_OS_WIN) || defined(Q_CC_RVCT)

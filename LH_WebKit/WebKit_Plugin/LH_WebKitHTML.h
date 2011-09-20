@@ -37,7 +37,7 @@
 #define LH_WEBKITHTML_H
 
 #include "LH_WebKit.h"
-#include "../../LH_Qt_QTextEdit.h"
+#include "../LH_Qt_QTextEdit.h"
 
 class LH_WebKitHTML : public LH_WebKit
 {

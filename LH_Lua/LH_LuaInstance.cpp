@@ -211,7 +211,7 @@ static void lh_self_item_data_setvalue(lua_State *L, lua_setup_item* item, int w
             }
             break;
         case lh_type_string:
-        case lh_type_string_htmlhint:
+        case lh_type_string_html:
         case lh_type_string_button:
         case lh_type_string_script:
         case lh_type_string_filename:
@@ -397,7 +397,7 @@ static void lh_self_item_data_getvalue(lua_State *L, lua_setup_item* item, int w
             lua_pushstring(L,"boolean");
             break;
         case lh_type_string:
-        case lh_type_string_htmlhint:
+        case lh_type_string_html:
         case lh_type_string_script:
             lua_pushstring(L,"string");
             break;
@@ -448,7 +448,7 @@ static void lh_self_item_data_getvalue(lua_State *L, lua_setup_item* item, int w
             lua_pushnumber(L,item->item()->data.f);
             break;
         case lh_type_string:
-        case lh_type_string_htmlhint:
+        case lh_type_string_html:
         case lh_type_string_button:
         case lh_type_string_script:
         case lh_type_string_font:

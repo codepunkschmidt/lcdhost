@@ -5,12 +5,10 @@ DEFINES += LH_DIAL_LIBRARY
 include(../Plugins.pri)
 
 SOURCES += \
-    LH_QtPlugin_Dial.cpp \
-    ../LH_QtPlugin.cpp \
-    ../LH_QtObject.cpp \
-    ../LH_QtSetupItem.cpp \
+    $$PLUGIN_SOURCES \
     ../LH_QtCPU.cpp \
     ../LH_QtNetwork.cpp \
+    LH_QtPlugin_Dial.cpp \
     LH_Dial.cpp \
     LH_DialCPUAverage.cpp \
     LH_DialCPUHistogram.cpp \
@@ -19,16 +17,12 @@ SOURCES += \
     LH_DialMemVirtual.cpp \
     LH_DialMemPhysical.cpp \
     LH_DialTime.cpp \
-    LH_DialTest.cpp \
-    ../LH_QtInstance.cpp
+    LH_DialTest.cpp
 	
 HEADERS += \
-    LH_QtPlugin_Dial.h \
-    ../LH_QtPlugin.h \
-    ../LH_QtObject.h \
-    ../LH_QtSetupItem.h \
+    $$PLUGIN_HEADERS \
     ../LH_QtCPU.h \
     ../LH_QtNetwork.h \
+    LH_QtPlugin_Dial.h \
     LH_Dial.h \
-    LH_DialTime.h \
-    ../LH_QtInstance.h
+    LH_DialTime.h

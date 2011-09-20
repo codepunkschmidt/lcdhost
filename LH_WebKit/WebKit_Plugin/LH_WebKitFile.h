@@ -37,7 +37,7 @@
 #define LH_WEBKITFILE_H
 
 #include "LH_WebKit.h"
-#include "../../LH_Qt_QFileInfo.h"
+#include "../LH_Qt_QFileInfo.h"
 
 class LH_WebKitFile : public LH_WebKit
 {

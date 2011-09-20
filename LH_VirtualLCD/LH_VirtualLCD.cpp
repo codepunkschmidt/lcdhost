@@ -35,9 +35,9 @@
 #include <QFile>
 #include <QDebug>
 
-#include "../LH_QtDevice.h"
+#include "LH_QtDevice.h"
 #include "LH_VirtualLCD.h"
-#include "../LH_Qt_QImage.h"
+#include "LH_Qt_QImage.h"
 
 LH_PLUGIN(LH_VirtualLCD)
 

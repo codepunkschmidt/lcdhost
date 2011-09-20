@@ -25,7 +25,7 @@
   */
 
 #include "LH_Graph.h"
-#include "../LH_QtCPU.h"
+#include "LH_QtCPU.h"
 
 class LH_GraphCPUAverage : public LH_Graph
 {

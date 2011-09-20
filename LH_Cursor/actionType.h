@@ -1,13 +1,13 @@
 #ifndef ACTIONTYPE_H
 #define ACTIONTYPE_H
 
-#include "../LH_Qt_QString.h"
-#include "../LH_Qt_QStringList.h"
-#include "../LH_Qt_InputState.h"
-#include "../LH_Qt_QTextEdit.h"
-#include "../LH_Qt_QFileInfo.h"
-#include "../LH_Qt_int.h"
-#include "../LH_Qt_bool.h"
+#include "LH_Qt_QString.h"
+#include "LH_Qt_QStringList.h"
+#include "LH_Qt_InputState.h"
+#include "LH_Qt_QTextEdit.h"
+#include "LH_Qt_QFileInfo.h"
+#include "LH_Qt_int.h"
+#include "LH_Qt_bool.h"
 
 #include "LH_CursorData.h"
 

@@ -75,6 +75,7 @@ void LH_MonitoringUI::connectChangeEvents()
     }
 
     setup_monitoring_app_->setFlag(LH_FLAG_READONLY, false);
+    setAppSelection();
 
     connect(setup_monitoring_app_, SIGNAL(changed()), this, SLOT(changeAppSelection()) );
     connect(setup_value_type_, SIGNAL(changed()), this, SLOT(changeTypeSelection()) );

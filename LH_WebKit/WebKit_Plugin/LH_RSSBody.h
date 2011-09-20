@@ -2,7 +2,7 @@
 #define LH_RSSBODY_H
 
 #include "LH_WebKit.h"
-#include "../WebKitCommand.h"
+#include "WebKitCommand.h"
 #include "LH_RSSInterface.h"
 
 class LH_RSSBody : public LH_WebKit

@@ -5,16 +5,14 @@ QT += network \
 DEFINES += LH_WEBKIT_LIBRARY
 
 include(../../Plugins.pri)
-include(../../cf.pri)
+include(../../CF/CF.pri)
+
+INCLUDEPATH += ..
 
 SOURCES += \
-    ../../lh_plugin.c \
-    ../../LH_QtPlugin.cpp \
-    ../../LH_QtInstance.cpp \
-    ../../LH_QtObject.cpp \
-    ../../LH_QtSetupItem.cpp \
-    ../WebKitCommand.cpp \
+    $$PLUGIN_SOURCES \
     ../../LH_Text/LH_Text.cpp \
+    ../WebKitCommand.cpp \
     LH_QtPlugin_WebKit.cpp \
     LH_WebKit.cpp \
     LH_WebKitHTML.cpp \
@@ -26,13 +24,9 @@ SOURCES += \
     LH_RSSBody.cpp
 
 HEADERS += \
-    ../../lh_plugin.h \
-    ../../LH_QtPlugin.h \
-    ../../LH_QtInstance.h \
-    ../../LH_QtObject.h \
-    ../../LH_QtSetupItem.h \
-    ../WebKitCommand.h \
+    $$PLUGIN_HEADERS \
     ../../LH_Text/LH_Text.h \
+    ../WebKitCommand.h \
     LH_QtPlugin_WebKit.h \
     LH_WebKit.h \
     LH_WebKitHTML.h \

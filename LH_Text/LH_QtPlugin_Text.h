@@ -37,7 +37,7 @@
 #ifndef LH_QTPLUGIN_TEXT_H
 #define LH_QTPLUGIN_TEXT_H
 
-#include "../LH_QtPlugin.h"
+#include "LH_QtPlugin.h"
 
 class LH_QtPlugin_Text : public LH_QtPlugin
 {

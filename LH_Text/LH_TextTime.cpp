@@ -40,7 +40,7 @@
 #include <QFontMetrics>
 
 #include "LH_Text.h"
-#include "../LH_Qt_QString.h"
+#include "LH_Qt_QString.h"
 
 class LH_TextTime : public LH_Text
 {

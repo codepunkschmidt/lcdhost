@@ -37,6 +37,8 @@ unix:!macx {
 
 DESTDIR = $$LCDHOST_PLUGINS
 
+INCLUDEPATH += $$PWD
+
 PLUGIN_SOURCES = \
     $$PWD/lh_plugin.c \
     $$PWD/LH_QtObject.cpp \

@@ -39,7 +39,7 @@
 
 #include "LH_RSSInterface.h"
 #include "LH_QtPlugin_WebKit.h"
-#include "../WebKitCommand.h"
+#include "WebKitCommand.h"
 
 LH_PLUGIN(LH_QtPlugin_WebKit)
 

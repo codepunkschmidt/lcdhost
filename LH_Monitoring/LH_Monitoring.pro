@@ -8,6 +8,8 @@ QT += xml
 include(../Plugins.pri)
 include(../CF/cf.pri)
 
+INCLUDEPATH += $$PWD/LH_QImage
+
 HEADERS += \
     $$PLUGIN_HEADERS \
     ../LH_Graph/LH_Graph.h \

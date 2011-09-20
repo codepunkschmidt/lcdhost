@@ -40,7 +40,7 @@
 #include <QTime>
 #include <QLibrary>
 
-#include "../LH_QtPlugin.h"
+#include "LH_QtPlugin.h"
 
 #define LUADIR "lua"
 

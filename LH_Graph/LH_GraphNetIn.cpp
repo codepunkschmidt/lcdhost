@@ -25,7 +25,7 @@
   */
 
 #include "LH_Graph.h"
-#include "../LH_QtNetwork.h"
+#include "LH_QtNetwork.h"
 
 class LH_GraphNetIn : public LH_Graph
 {

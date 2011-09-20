@@ -5,17 +5,14 @@ QT += network xml
 DEFINES += LH_NOWPLAYING_LIBRARY
 
 include(../Plugins.pri)
-include(../cf.pri)
+include(../CF/CF.pri)
 
 # We don't want warnings from 3rd party C code
 QMAKE_CFLAGS_WARN_ON = -w
 
-SOURCES += ../lh_plugin.c \
-    ../LH_QtPlugin.cpp \
-    ../LH_QtObject.cpp \
-    ../LH_QtSetupItem.cpp \
+SOURCES += \
+    $$PLUGIN_SOURCES \
     ../LH_Text/LH_Text.cpp \
-    ../LH_QtInstance.cpp \
     ../LH_Bar/LH_Bar.cpp \
     LH_QtPlugin_NowPlaying.cpp \
     LH_NP_iTunes.cpp \
@@ -29,16 +26,13 @@ SOURCES += ../lh_plugin.c \
     disphelper.c \
     LH_NowPlayingAlbumArt.cpp
 
-HEADERS += ../lh_plugin.h \
-    ../LH_QtPlugin.h \
-    ../LH_QtObject.h \
-    ../LH_QtSetupItem.h \
-    LH_QtPlugin_NowPlaying.h \
+HEADERS += \
+    $$PLUGIN_HEADERS \
     ../LH_Text/LH_Text.h \
-    ../LH_QtInstance.h \
+    ../LH_Bar/LH_Bar.h \
+    LH_QtPlugin_NowPlaying.h \
     disphelper.h \
     LH_NowPlayingText.h \
-    ../LH_Bar/LH_Bar.h \
     LH_NowPlayingBar.h \
     wa_ipc.h \
     iTunesCOMInterface.h \

@@ -6,10 +6,7 @@ include(../Plugins.pri)
 include(../USB.pri)
 
 SOURCES += \
-    ../LH_QtPlugin.cpp \
-    ../LH_QtObject.cpp \
-    ../LH_QtInstance.cpp \
-    ../LH_QtSetupItem.cpp \
+    $$PLUGIN_SOURCES \
     ../LH_QtDevice.cpp \
     ../wow64.cpp \
     LH_Lg320x240.cpp \
@@ -18,11 +15,7 @@ SOURCES += \
     LogitechG19.cpp
 
 HEADERS += \
-    ../lh_plugin.h \
-    ../LH_QtPlugin.h \
-    ../LH_QtObject.h \
-    ../LH_QtInstance.h \
-    ../LH_QtSetupItem.h \
+    $$PLUGIN_HEADERS \
     ../LH_QtDevice.h \
     ../wow64.h \
     LH_Lg320x240.h \

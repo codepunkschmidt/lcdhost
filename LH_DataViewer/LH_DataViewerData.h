@@ -1,7 +1,7 @@
 #ifndef LH_DATAVIEWERDATA_H
 #define LH_DATAVIEWERDATA_H
 
-#include "../LH_Qt_QString.h"
+#include "LH_Qt_QString.h"
 
 #include <QStringList>
 #include <QDateTime>

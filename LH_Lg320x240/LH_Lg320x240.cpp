@@ -41,10 +41,10 @@
 #include <windows.h>
 #endif
 
-#include "../LH_QtDevice.h"
+#include "LH_QtDevice.h"
 #include "LH_Lg320x240.h"
 #include "Lg320x240Device.h"
-#include "../LH_Qt_QImage.h"
+#include "LH_Qt_QImage.h"
 
 LH_PLUGIN(LH_Lg320x240)
 

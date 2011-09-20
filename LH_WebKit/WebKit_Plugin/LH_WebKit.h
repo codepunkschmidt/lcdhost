@@ -42,13 +42,13 @@
 
 #include "LH_QtPlugin_WebKit.h"
 
-#include "../../LH_QtPlugin.h"
-#include "../../LH_QtInstance.h"
-#include "../../LH_Qt_QSlider.h"
-#include "../../LH_Qt_QProgressBar.h"
-#include "../../LH_Qt_bool.h"
-#include "../../LH_Qt_QTextEdit.h"
-#include "../WebKitCommand.h"
+#include "../LH_QtPlugin.h"
+#include "../LH_QtInstance.h"
+#include "../LH_Qt_QSlider.h"
+#include "../LH_Qt_QProgressBar.h"
+#include "../LH_Qt_bool.h"
+#include "../LH_Qt_QTextEdit.h"
+#include "WebKitCommand.h"
 
 class LH_ParseThread : public QThread {
     Q_OBJECT

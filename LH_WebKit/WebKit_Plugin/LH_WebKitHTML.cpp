@@ -34,7 +34,7 @@
   */
 
 #include "LH_WebKitHTML.h"
-#include "../WebKitCommand.h"
+#include "WebKitCommand.h"
 
 LH_PLUGIN_CLASS(LH_WebKitHTML)
 

@@ -3,14 +3,10 @@ TEMPLATE = lib
 DEFINES += LH_TEXT_LIBRARY
 
 include(../Plugins.pri)
-include(../CF.pri)
+include(../CF/CF.pri)
 
 SOURCES += \
-    ../lh_plugin.c \
-    ../LH_QtPlugin.cpp \
-    ../LH_QtInstance.cpp \
-    ../LH_QtObject.cpp \
-    ../LH_QtSetupItem.cpp \
+    $$PLUGIN_SOURCES \
     LH_QtPlugin_Text.cpp \
     LH_Text.cpp \
     LH_TextTime.cpp \
@@ -29,11 +25,7 @@ SOURCES += \
     LH_TextStatic.cpp
 
 HEADERS += \
-    ../lh_plugin.h \
-    ../LH_QtPlugin.h \
-    ../LH_QtInstance.h \
-    ../LH_QtObject.h \
-    ../LH_QtSetupItem.h \
+    $$PLUGIN_HEADERS \
     LH_QtPlugin_Text.h \
     LH_Text.h \
     LH_TextFile.h \

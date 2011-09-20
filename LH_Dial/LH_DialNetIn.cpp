@@ -25,7 +25,7 @@
   */
 
 #include "LH_Dial.h"
-#include "../LH_QtNetwork.h"
+#include "LH_QtNetwork.h"
 
 class LH_DialNetIn : public LH_Dial
 {

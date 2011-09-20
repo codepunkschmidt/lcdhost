@@ -43,7 +43,7 @@
 #include <QTime>
 #include <QRegExp>
 
-#include "../LH_Text/LH_Text.h"
+#include "LH_Text/LH_Text.h"
 
 class LH_NowPlayingEmulator : public LH_Text
 {

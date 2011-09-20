@@ -8,7 +8,7 @@
 
 #include "WebKitServerWindow.h"
 #include "EventWebKitHeartbeat.h"
-#include "../WebKitCommand.h"
+#include "WebKitCommand.h"
 
 QString datadir;
 

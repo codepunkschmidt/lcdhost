@@ -1,9 +1,9 @@
 TARGET = LH_Mailcount
 TEMPLATE = lib
 DEFINES += LH_MAILCOUNT_LIBRARY
+CONFIG += cf
 
 include(../Plugins.pri)
-include(../CF/CF.pri)
 
 SOURCES += \
     $$PLUGIN_SOURCES \

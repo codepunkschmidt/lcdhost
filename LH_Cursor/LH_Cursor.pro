@@ -3,9 +3,9 @@ TEMPLATE = lib
 QT += network \
     xml
 DEFINES += LH_CURSOR_LIBRARY
+CONFIG += cf
 
 include(../Plugins.pri)
-include(../CF/CF.pri)
 
 HEADERS += \
     $$PLUGIN_HEADERS \

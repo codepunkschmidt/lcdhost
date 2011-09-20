@@ -75,6 +75,14 @@ device {
         $$QTSUPPORT/LH_QtDevice.cpp
 }
 
+cf {
+    include(codeleap/ConditionalFormatting/ConditionalFormatting.pri)
+}
+
+translator {
+    include(codeleap/GoogleTranslator/GoogleTranslator.pri)
+}
+
 contains( TEMPLATE, lib ) {
     exists($$PWD/../lcdhost-private.pem) {
         QMAKE_POST_LINK = \

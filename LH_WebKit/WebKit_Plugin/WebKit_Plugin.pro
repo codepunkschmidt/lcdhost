@@ -3,9 +3,9 @@ TEMPLATE = lib
 QT += network \
     xml
 DEFINES += LH_WEBKIT_LIBRARY
+CONFIG += cf
 
 include(../../Plugins.pri)
-include(../../CF/CF.pri)
 
 INCLUDEPATH += ..
 

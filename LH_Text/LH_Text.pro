@@ -1,9 +1,9 @@
 TARGET = LH_Text
 TEMPLATE = lib
 DEFINES += LH_TEXT_LIBRARY
+CONFIG += cf
 
 include(../Plugins.pri)
-include(../CF/CF.pri)
 
 SOURCES += \
     $$PLUGIN_SOURCES \

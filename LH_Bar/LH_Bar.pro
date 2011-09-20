@@ -1,10 +1,9 @@
 TARGET = LH_Bar
 TEMPLATE = lib
 DEFINES += LH_BAR_LIBRARY
-CONFIG += systemstats
+CONFIG += cf systemstats
 
 include(../Plugins.pri)
-include(../CF/CF.pri)
 
 HEADERS += \
     $$PLUGIN_HEADERS \

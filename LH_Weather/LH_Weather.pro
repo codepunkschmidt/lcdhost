@@ -3,10 +3,9 @@ TEMPLATE = lib
 QT += network \
     xml
 DEFINES += LH_WEATHER_LIBRARY
+CONFIG += cf translator
 
 include(../Plugins.pri)
-include(../CF/CF.pri)
-include(../GoogleTranslator/GoogleTranslator.pri)
 
 SOURCES += \
     $$PLUGIN_SOURCES \

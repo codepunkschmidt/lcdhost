@@ -3,9 +3,9 @@ TEMPLATE = lib
 CONFIG  += qaxcontainer
 QT += network xml
 DEFINES += LH_NOWPLAYING_LIBRARY
+CONFIG += cf
 
 include(../Plugins.pri)
-include(../CF/CF.pri)
 
 # We don't want warnings from 3rd party C code
 QMAKE_CFLAGS_WARN_ON = -w

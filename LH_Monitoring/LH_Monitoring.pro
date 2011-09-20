@@ -4,9 +4,9 @@ DEFINES += LH_MONITORING_LIBRARY
 DEFINES += COMMON_OBJECT_NAME="Monitoring"
 DEFINES += MONITORING_FOLDER="System"
 QT += xml
+CONFIG += cf
 
 include(../Plugins.pri)
-include(../CF/cf.pri)
 
 INCLUDEPATH += $$PWD/LH_QImage
 

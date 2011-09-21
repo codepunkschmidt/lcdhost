@@ -1,0 +1,43 @@
+systemstats {
+    PLUGIN_HEADERS += \
+        $$QTSUPPORT/LH_QtCPU.h  \
+        $$QTSUPPORT/LH_QtNetwork.h
+
+    PLUGIN_SOURCES += \
+        $$QTSUPPORT/LH_QtCPU.cpp \
+        $$QTSUPPORT/LH_QtNetwork.cpp
+}
+
+device {
+    PLUGIN_HEADERS += \
+        $$QTSUPPORT/LH_QtDevice.h
+
+    PLUGIN_SOURCES += \
+        $$QTSUPPORT/LH_QtDevice.cpp
+}
+
+cf {
+    include($$CODELEAP/ConditionalFormatting/ConditionalFormatting.pri)
+}
+
+translator {
+    include($$CODELEAP/GoogleTranslator/GoogleTranslator.pri)
+}
+
+hid {
+    include($$LINKDATA/hidapi/HID.pri)
+}
+
+usb {
+    include($$LINKDATA/libusb/USB.pri)
+}
+
+wow64 {
+    PLUGIN_HEADERS += \
+        $$LINKDATA/wow64.h
+
+    PLUGIN_SOURCES += \
+        $$LINKDATA/wow64.cpp
+}
+
+

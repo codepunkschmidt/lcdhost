@@ -59,7 +59,7 @@ LH_MonitoringUI::LH_MonitoringUI(LH_QtObject *parent, monitoringDataMode dataMod
     setup_value_format_->setHelp( "<p>Relates to RivaTuner's \"raw data transforming mode\" or Afterburner's \"Formatted Data\".</p><p>(If you don't know what this is, leave it disabled and ignore it.)</p>");
     setup_value_format_->setOrder(-4);
 
-    QTimer::singleShot(1000, this, SLOT(connectChangeEvents()));
+    QTimer::singleShot(5000, this, SLOT(connectChangeEvents()));
 }
 
 void LH_MonitoringUI::connectChangeEvents()
@@ -75,7 +75,6 @@ void LH_MonitoringUI::connectChangeEvents()
     }
 
     setup_monitoring_app_->setFlag(LH_FLAG_READONLY, false);
-    setAppSelection();
 
     connect(setup_monitoring_app_, SIGNAL(changed()), this, SLOT(changeAppSelection()) );
     connect(setup_value_type_, SIGNAL(changed()), this, SLOT(changeTypeSelection()) );

@@ -63,3 +63,20 @@ PLUGIN_HEADERS += \
     $$QTSUPPORT/LH_QtSetupItem.h
 
 load($$PWD/PluginsConfig.prf)
+
+contains( TEMPLATE, lib ) {
+    exists($$PWD/../lcdhost-private.pem) {
+        QMAKE_POST_LINK = \
+            $$LCDHOST_BINARIES/SignPlugin -c -o \
+            $$PWD/../lcdhost-private.pem \
+            http://www.linkdata.se/downloads/software/lcdhost/lcdhost-public.pem \
+            $$DESTDIR/$$TARGET
+    }
+    exists($$PWD/../triscopic-private.pem) {
+        QMAKE_POST_LINK = \
+            $$LCDHOST_BINARIES/SignPlugin -c -o \
+            $$PWD/../triscopic-private.pem \
+            http://www.codeleap.co.uk/lcdhost/public-key \
+            $$DESTDIR/$$TARGET
+    }
+}

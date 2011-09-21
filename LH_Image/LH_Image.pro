@@ -6,8 +6,8 @@ include(../Plugins.pri)
 
 SOURCES += \
     LH_Image.c \
-    ../lh_plugin.c
+    ../linkdata/lh_plugin.c
 
 HEADERS += \
     LH_Image.h \
-    ../lh_plugin.h
+    ../linkdata/lh_plugin.h

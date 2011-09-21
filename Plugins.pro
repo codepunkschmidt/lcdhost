@@ -2,7 +2,7 @@ TARGET = Plugins
 TEMPLATE = subdirs
 CONFIG += ordered
 
-include(SirReal.pri)
-include(Triscopic.pri)
+include($$PWD\linkdata\linkdata.pri)
+include($$PWD\codeleap\codeleap.pri)
 
 SUBDIRS = $$SIRREAL $$TRISCOPIC

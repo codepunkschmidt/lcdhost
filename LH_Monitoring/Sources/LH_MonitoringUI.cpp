@@ -9,7 +9,7 @@ LH_MonitoringUI::LH_MonitoringUI(LH_QtObject *parent, monitoringDataMode dataMod
     mode_ = ui_mode_items;
     initializationState_ = 0;
 
-    int LH_FLAG_SAVEOBJECT_VISIBILITY = LH_FLAG_HIDDEN; //for debugging, set this to LH_FLAG_READONLY
+    int LH_FLAG_SAVEOBJECT_VISIBILITY = LH_FLAG_READONLY; //for debugging, set this to LH_FLAG_READONLY
 
     setup_monitoring_app_ = new LH_Qt_QStringList(parent, "Application", QStringList() << "(Please Select)" << "Aida64" << "ATI Tray Tools" << "Core Temp" << "Fraps" << "GPU-Z" << "HWiNFO" << "HWMonitor + HWMonTray" << "Logitech Monitoring Gadget" << "MSI Afterburner" << "RivaTuner" << "SpeedFan", LH_FLAG_READONLY | LH_FLAG_NOSAVE);
     setup_monitoring_app_->setHelp( "<p>The 3rd party application you are using used to monitor your system.</p>");
@@ -59,7 +59,7 @@ LH_MonitoringUI::LH_MonitoringUI(LH_QtObject *parent, monitoringDataMode dataMod
     setup_value_format_->setHelp( "<p>Relates to RivaTuner's \"raw data transforming mode\" or Afterburner's \"Formatted Data\".</p><p>(If you don't know what this is, leave it disabled and ignore it.)</p>");
     setup_value_format_->setOrder(-4);
 
-    QTimer::singleShot(5000, this, SLOT(connectChangeEvents()));
+    connect(parent, SIGNAL(initialized()), this, SLOT(connectChangeEvents()));
 }
 
 void LH_MonitoringUI::connectChangeEvents()

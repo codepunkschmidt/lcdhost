@@ -60,6 +60,8 @@ public:
     LH_QtObject( LH_QtObject *parent = 0);
     virtual ~LH_QtObject() {}
 
+    LH_QtObject *parent() const { return static_cast<LH_QtObject *>( QObject::parent() ); }
+
     void callback( lh_callbackcode_t code, void *param ) const
     {
         if( cb_ ) cb_( cb_id_, this, code, param );
@@ -85,6 +87,9 @@ public:
     virtual const char *userInit() { return 0; }
     virtual void userTerm() { return; }
 
+    // If all children have completed userInit(), emit initialized()
+    void checkInit();
+
     // Convenience wrappers
     void show() const { int b = 0; callback( lh_cb_sethidden, (void*)&b ); }
     void hide() const { int b = 1; callback( lh_cb_sethidden, (void*)&b ); }
@@ -96,6 +101,9 @@ public:
     static LH_QtPlugin *plugin() { return plugin_; }
 
     static void build_object_calltable( lh_object_calltable *ct );
+
+signals:
+    void initialized();
 
 public slots:
     void requestRebuild() const { callback( lh_cb_setup_rebuild, NULL ); } // call after adding or removing setup items!

@@ -65,10 +65,9 @@ LH_QtCFInstance::LH_QtCFInstance() : LH_QtInstance()
 
 int LH_QtCFInstance::notify(int n,void* p)
 {
-    Q_UNUSED(p);
     if( n&LH_NOTE_SECOND )
         cf_apply_rules();
-    return (watching_non_setup_item_ && setup_cf_enabled_->value()? LH_NOTE_SECOND : 0) | LH_QtInstance::notify(n, p);
+    return LH_QtInstance::notify(n, p) | (watching_non_setup_item_ && setup_cf_enabled_->value()? LH_NOTE_SECOND : 0);
 }
 
 void LH_QtCFInstance::cf_initialize()

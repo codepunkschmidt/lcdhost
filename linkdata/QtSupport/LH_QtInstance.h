@@ -69,8 +69,6 @@ public:
     QImage *image() const { return image_; }
     QImage *initImage(int w, int h);
 
-    virtual int polling() { return 0; }
-    virtual int notify( int, void* ) { return 0; }
     virtual void prerender() {}
     virtual int width( int ) { return -1; }
     virtual int height( int ) { return -1; }

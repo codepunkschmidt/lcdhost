@@ -117,26 +117,13 @@ LH_QtObject::LH_QtObject( LH_QtObject *parent ) : QObject( parent ), cb_(0), cb_
     }
 }
 
-void LH_QtObject::checkInit()
-{
-    for( QObjectList::const_iterator i = children().constBegin(); i != children().constEnd(); ++i )
-    {
-        LH_QtObject *obj = qobject_cast<LH_QtObject *>(*i);
-        if( obj && obj->cb_id_ == 0 ) return;
-    }
-    emit initialized();
-}
-
 const char *LH_QtObject::init( lh_callback_t cb, int cb_id, const char *name, const lh_systemstate* state )
 {
     cb_ = cb;
     cb_id_ = cb_id;
     if( name ) setObjectName( QString::fromUtf8(name) );
     state_ = state;
-    if( const char *err = userInit() ) return err;
-    checkInit();
-    if( parent() ) parent()->checkInit();
-    return 0;
+    return userInit();
 }
 
 lh_setup_item **LH_QtObject::setup_data()
@@ -208,8 +195,9 @@ int LH_QtObject::polling()
 
 int LH_QtObject::notify( int code, void *param )
 {
-    Q_UNUSED(code);
     Q_UNUSED(param);
+    if( !code )
+        emit initialized();
     return 0;
 }
 

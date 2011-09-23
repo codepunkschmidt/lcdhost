@@ -70,13 +70,14 @@ public:
     // These implement the lh_object_callback functions. If you reimplement them, make
     // sure to call the base class copy of them and preserve or modify the return value
     // (if any) to suit.
+    virtual int polling();
+    virtual int notify( int code, void *param );
+
     virtual const char *init( lh_callback_t cb, int cb_id, const char *name, const lh_systemstate* state );
     virtual lh_setup_item **setup_data();
     virtual void setup_resize( lh_setup_item *item, size_t needed );
     virtual void setup_change( lh_setup_item *item );
     virtual void setup_input( lh_setup_item *item, int flags, int value );
-    virtual int polling();
-    virtual int notify( int code, void *param );
     virtual const lh_class **class_list();
     virtual void term();
 
@@ -86,9 +87,6 @@ public:
     // it's work.
     virtual const char *userInit() { return 0; }
     virtual void userTerm() { return; }
-
-    // If all children have completed userInit(), emit initialized()
-    void checkInit();
 
     // Convenience wrappers
     void show() const { int b = 0; callback( lh_cb_sethidden, (void*)&b ); }

@@ -529,7 +529,7 @@ int LH_Text::notify(int code,void* param)
         makeTextImage();
         requestRender();
     }
-    return LH_NOTE_DEVICE | LH_QtCFInstance::notify(code,param);;
+    return LH_QtCFInstance::notify(code,param) | LH_NOTE_DEVICE ;
 }
 
 /**

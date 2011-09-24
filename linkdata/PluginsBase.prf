@@ -28,13 +28,13 @@ CHANGESET_REVISION = $$system($$quote(hg log -l 1 --template {node}/{rev} $$_PRO
 }
 
 lh_plugin {
-    INCLUDEPATH += $$PWD
-    HEADERS += $$PWD/lh_plugin.h
-    SOURCES += $$PWD/lh_plugin.c
     contains(QT,core) {
-        HEADERS += $$PWD/lh_qvariant.h
-        SOURCES += $$PWD/lh_qvariant.c
+        include($$PWD/lh_plugin/lh_plugin.pro)
         CONFIG += lh_qtplugin
+    } else {
+        INCLUDEPATH += $$PWD/lh_plugin
+        HEADERS += $$PWD/lh_plugin/lh_plugin.h
+        SOURCES += $$PWD/lh_plugin/lh_plugin.c
     }
 }
 
@@ -42,13 +42,8 @@ lh_qtplugin {
     LH_QT_SUPPORT_DIR = $$PWD/QtSupport
 
     LH_QT_SUPPORT_HEADERS = \
-        $$LH_QT_SUPPORT_DIR/LH_Qt_array.h \
-        $$LH_QT_SUPPORT_DIR/LH_Qt_array_double.h \
-        $$LH_QT_SUPPORT_DIR/LH_Qt_array_int.h \
-        $$LH_QT_SUPPORT_DIR/LH_Qt_array_string.h \
         $$LH_QT_SUPPORT_DIR/LH_Qt_bool.h \
-        $$LH_QT_SUPPORT_DIR/LH_Qt_double.h \
-        $$LH_QT_SUPPORT_DIR/LH_Qt_html.h \
+        $$LH_QT_SUPPORT_DIR/LH_Qt_float.h \
         $$LH_QT_SUPPORT_DIR/LH_Qt_InputState.h \
         $$LH_QT_SUPPORT_DIR/LH_Qt_InputValue.h \
         $$LH_QT_SUPPORT_DIR/LH_Qt_int.h \
@@ -61,32 +56,22 @@ lh_qtplugin {
         $$LH_QT_SUPPORT_DIR/LH_Qt_QString.h \
         $$LH_QT_SUPPORT_DIR/LH_Qt_QStringList.h \
         $$LH_QT_SUPPORT_DIR/LH_Qt_QTextEdit.h \
-        $$LH_QT_SUPPORT_DIR/LH_QtBuffer.h \
         $$LH_QT_SUPPORT_DIR/LH_QtCPU.h \
-        $$LH_QT_SUPPORT_DIR/LH_QtInputDevice.h \
+        $$LH_QT_SUPPORT_DIR/LH_QtDevice.h \
         $$LH_QT_SUPPORT_DIR/LH_QtInstance.h \
-        $$LH_QT_SUPPORT_DIR/LH_QtLayoutClass.h \
-        $$LH_QT_SUPPORT_DIR/LH_QtMemory.h \
         $$LH_QT_SUPPORT_DIR/LH_QtNetwork.h \
         $$LH_QT_SUPPORT_DIR/LH_QtObject.h \
-        $$LH_QT_SUPPORT_DIR/LH_QtOutputDevice.h \
         $$LH_QT_SUPPORT_DIR/LH_QtPlugin.h \
-        $$LH_QT_SUPPORT_DIR/LH_QtSetupItem.h \
-        $$LH_QT_SUPPORT_DIR/LH_QtVariant.h
+        $$LH_QT_SUPPORT_DIR/LH_QtSetupItem.h
 
     LH_QT_SUPPORT_SOURCES = \
-        $$LH_QT_SUPPORT_DIR/LH_QtBuffer.cpp \
         $$LH_QT_SUPPORT_DIR/LH_QtCPU.cpp \
-        $$LH_QT_SUPPORT_DIR/LH_QtInputDevice.cpp \
+        $$LH_QT_SUPPORT_DIR/LH_QtDevice.cpp \
         $$LH_QT_SUPPORT_DIR/LH_QtInstance.cpp \
-        $$LH_QT_SUPPORT_DIR/LH_QtLayoutClass.cpp \
-        $$LH_QT_SUPPORT_DIR/LH_QtMemory.cpp \
         $$LH_QT_SUPPORT_DIR/LH_QtNetwork.cpp \
         $$LH_QT_SUPPORT_DIR/LH_QtObject.cpp \
-        $$LH_QT_SUPPORT_DIR/LH_QtOutputDevice.cpp \
         $$LH_QT_SUPPORT_DIR/LH_QtPlugin.cpp \
-        $$LH_QT_SUPPORT_DIR/LH_QtSetupItem.cpp \
-        $$LH_QT_SUPPORT_DIR/LH_QtVariant.cpp
+        $$LH_QT_SUPPORT_DIR/LH_QtSetupItem.cpp
 
     INCLUDEPATH += $$LH_QT_SUPPORT_DIR
     HEADERS += $$LH_QT_SUPPORT_HEADERS

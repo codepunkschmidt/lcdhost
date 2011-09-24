@@ -54,7 +54,7 @@
                 Name of the char array variable inside the created headerfile.
 
 */
-void lh_buffer_to_headerfile( const lh_buffer *buffer, const char *filename, const char *varname )
+void lh_buffer_to_headerfile( const lh_buffer_t *buffer, const char *filename, const char *varname )
 {
     unsigned n, m;
     FILE *f;

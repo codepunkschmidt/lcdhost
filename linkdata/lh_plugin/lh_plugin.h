@@ -41,20 +41,20 @@
   2.  LCDHost examines the plugin's embedded XML document.
   3.  Either the user decides to load the plugin or it's set to auto load
   4.  LCDHost has the operating system load the shared library
-  5.  \c lh_create() is called returning the plugin's \c lh_object*
-  6.  \c obj_init() is called if it is provided by the plugin's \c lh_object*
+  5.  \c lh_create() is called returning the plugin's \c lh_object_t*
+  6.  \c obj_init() is called if it is provided by the plugin's \c lh_object_t*
     * at this point, barring errors, the plugin is considered loaded
     * when the user decides to unload the plugin or LCDHost shuts down:
   7.  \c lh_destroy() is called if it's provided by the plugin
   8.  LCDHost has the operating system unload the shared library
 
-  lh_object *lh_create()
-    Create the plugin object and return a lh_object pointer.
+  lh_object_t *lh_create()
+    Create the plugin object and return a lh_object_t pointer.
     LCDHost will provide this pointer when calling the functions
-    in lh_object structure. Return NULL on error. The returned
+    in lh_object_t structure. Return NULL on error. The returned
     pointer must remain valid until lh_destroy() returns.
 
-  void lh_destroy( lh_object *obj )
+  void lh_destroy( lh_object_t *obj )
     Free resources associated with 'obj'. The shared library is about to be
     removed from memory. While this function is optional, it's
     recommended to use it to free up resources used by the plugin
@@ -196,19 +196,16 @@ typedef enum lh_eventcode_t
 #endif
 
 /**
-    Maximum lh_object.ident size, including nul terminator
-    \sa lh_object
+    Maximum lh_object_t.ident size, including nul terminator
+    \sa lh_object_t
 */
 #define LH_MAX_IDENT            64
 
 /**
   Forward declarations of structs and typedefs.
   */
-struct lh_object_t;
-typedef struct lh_object_t lh_object;
-
-struct lh_layout_item_t;
-typedef struct lh_layout_item_t lh_layout_item;
+typedef struct lh_object_t lh_object_t;
+typedef struct lh_layout_item_t lh_layout_item_t;
 
 /**
   Simple data buffer.
@@ -217,7 +214,7 @@ typedef struct lh_buffer_t
 {
     const char *p; /**< pointer to buffer data area */
     int n; /**< size of data stored in buffer data area */
-} lh_buffer;
+} lh_buffer_t;
 
 /**
   Select user interface for a lh_setup_item.
@@ -247,11 +244,11 @@ typedef enum lh_userinterface_t
 
 typedef enum lh_meta_flag_t
 {
-    lh_save = (1<<0), /**< the property should be saved if modified (Qt STORED) */
-    lh_sink = (1<<1), /**< the property may be used as a data sink (Qt WRITE) */
-    lh_source = (1<<2), /**< the property may be used as a data source (Qt SCRIPTABLE) */
-    lh_export = (1<<3), /**< the property is shown in the data link UI (Qt USER) */
-    lh_flag_mask = NEXTBIT(lh_export)-1
+    lh_writeable = (1<<0), /**< the property may written to */
+    lh_designable = (1<<1), /**< the property may be shown in the data-linking UI */
+    lh_scriptable = (1<<2), /**< the property may be used with data linking */
+    lh_stored = (1<<3), /**< the property should be saved if modified by user or data link */
+    lh_flag_mask = NEXTBIT(lh_stored)-1
 } lh_meta_flag;
 
 typedef enum lh_meta_format_t
@@ -263,11 +260,11 @@ typedef enum lh_meta_format_t
     lh_format_color, /**< 32-bit AARRGGBB color data, \c const \c int* */
     lh_format_double, /**< double, \c const \c double* */
     lh_format_local8, /**< null terminated local 8-bit encoded string, \c const \c char* */
-    lh_format_utf8, /**< UTF-8 encoded string, \c const \c lh_buffer* */
-    lh_format_font, /**< UTF-8 encoded font data (using QFont::toString()), \c const \c lh_buffer* */
-    lh_format_input, /**< lh_input, \c const \c lh_buffer* */
-    lh_format_png, /**< PNG data, \c const \c lh_buffer* */
-    lh_format_list, /**< array of lh_property, \c const \c lh_buffer* */
+    lh_format_utf8, /**< UTF-8 encoded string, \c const \c lh_buffer_t* */
+    lh_format_font, /**< UTF-8 encoded font data (using QFont::toString()), \c const \c lh_buffer_t* */
+    lh_format_input, /**< lh_input, \c const \c lh_buffer_t* */
+    lh_format_png, /**< PNG data, \c const \c lh_buffer_t* */
+    lh_format_list, /**< array of lh_property, \c const \c lh_buffer_t* */
     lh_format_unused,
     lh_format_mask = NEXTBIT(lh_format_unused)-1
 } lh_meta_format;
@@ -314,7 +311,7 @@ typedef enum lh_meta_role_t
   */
 
 typedef int lh_meta;
-const lh_meta lh_meta_default = (lh_save|lh_sink|lh_source);
+const lh_meta lh_meta_default = 0;
 
 #define lh_prop_format(meta) ((lh_meta_format)(meta&lh_format_mask))
 #define lh_prop_role(meta) ((lh_meta_role)(meta&lh_role_mask))
@@ -332,9 +329,9 @@ typedef struct lh_property_t
         long long ll;
         double d;
         const char *p;
-        lh_buffer b;
+        lh_buffer_t b;
     } data;
-} lh_property;
+} lh_property_t;
 
 /**
   LCDHost has a number of objects that export their properties
@@ -354,7 +351,7 @@ typedef struct lh_property_t
 /**
   Used with the callback function.
   \sa lh_callback_t
-  \sa lh_object.cb_fn
+  \sa lh_object_t.cb_fn
   */
 typedef enum lh_callbackcode_t
 {
@@ -368,7 +365,7 @@ typedef enum lh_callbackcode_t
     lh_cb_log, /* add an UTF-8 encoded HTML string in the LCDHost log */
     lh_cb_polling, /* ask for a call to the polling function, param: NULL */
 
-    /* sent from a lh_object, these create children of that object */
+    /* sent from a lh_object_t, these create children of that object */
     lh_cb_setup_create, /* create a new setup item, param: lh_setup_item* */
     lh_cb_output_create, /* a new output device have been detected, param: lh_output_device* */
     lh_cb_input_create, /* a new input device have been detected, param: lh_input_device* */
@@ -442,7 +439,7 @@ typedef enum lh_input_flag_t
   */
 typedef struct lh_input_t
 {
-    char ident[LH_MAX_IDENT]; /**< device identity, \sa lh_object.ident */
+    char ident[LH_MAX_IDENT]; /**< device identity, \sa lh_object_t.ident */
     int item; /**< control item identifier, must not be zero */
     int flags; /**< describes kind of control and basic state, \sa lh_input_flag */
     int value; /**< the exact value of the control item */
@@ -484,11 +481,11 @@ typedef struct lh_signature_t
 struct lh_object_t
 {
     /**
-      sizeof(lh_object)
+      sizeof(lh_object_t)
 
-      The \c size member is used to version the lh_object structure.
-      Always initialize it to sizeof(lh_object). When you receive
-      a previously unseen pointer to an lh_object, it's recommended
+      The \c size member is used to version the lh_object_t structure.
+      Always initialize it to sizeof(lh_object_t). When you receive
+      a previously unseen pointer to an lh_object_t, it's recommended
       you check \c size and return an error message if it doesn't
       match.
       */
@@ -557,19 +554,19 @@ struct lh_object_t
       callback ID \c cb_id and callback function pointer \c cb_fn will
       have been set by LCDHost. May be set to NULL if not needed.
 
-      \param obj    The lh_object being initialized.
+      \param obj    The lh_object_t being initialized.
       \return       NULL if the object initialized successfully, or a pointer to an ASCIIZ error text.
       */
-    const char* (*obj_init)( lh_object* obj );
+    const char* (*obj_init)( lh_object_t* obj );
 
     /**
       Called by LCDHost to create or set a primitive property on the object.
       Update your internal property value and return.
 
-      \param obj    The lh_object being modified.
+      \param obj    The lh_object_t being modified.
       \param prop   New property data, \see lh_property
       */
-    void (*obj_set_property)( lh_object* obj, const lh_property* prop );
+    void (*obj_set_property)( lh_object_t* obj, const lh_property_t* prop );
 
     /**
       Polling service function.
@@ -581,7 +578,7 @@ struct lh_object_t
       \param obj    The object.
       \return       Polling interval in milliseconds, or zero to not use polling.
       */
-    int (*obj_polling)(lh_object* obj);
+    int (*obj_polling)(lh_object_t* obj);
 
     /**
       Event notification function.
@@ -591,7 +588,7 @@ struct lh_object_t
       \param event  \see LH_NOTE_xxx defines
       \param param  Use depends on \p event
       */
-    void (*obj_event)( lh_object* obj, lh_eventcode event, const void* param );
+    void (*obj_event)( lh_object_t* obj, lh_eventcode event, const void* param );
 };
 
 /**
@@ -600,7 +597,7 @@ struct lh_object_t
   */
 typedef struct lh_setup_item_t
 {
-    lh_object obj; /**< \sa lh_object */
+    lh_object_t obj; /**< \sa lh_object_t */
     int size; /**< sizeof(lh_setup_item) */
     lh_userinterface ui; /**< user interface */
 } lh_setup_item;
@@ -635,7 +632,7 @@ typedef struct lh_device_backlight_t
   */
 typedef struct lh_output_device_t
 {
-    lh_object obj; /**< \sa lh_object */
+    lh_object_t obj; /**< \sa lh_object_t */
     int size; /**< sizeof(lh_output_device) */
 
     int width; /**< width in pixels */
@@ -682,7 +679,7 @@ typedef struct lh_output_device_t
   */
 typedef struct lh_input_device_t
 {
-    lh_object obj; /**< \sa lh_object */
+    lh_object_t obj; /**< \sa lh_object_t */
     int size; /**< sizeof(lh_input_device) */
 
     int flags; /**< \sa lh_input_flag */
@@ -709,15 +706,15 @@ typedef struct lh_input_device_t
   */
 struct lh_layout_item_t
 {
-    lh_object obj;
+    lh_object_t obj;
     int size; /**< sizeof(lh_layout_item) */
 
     /* functions */
-    void (*obj_prerender)(lh_layout_item*,int); /**< called right before width/height/render_xxx as a notification, param: bitdepth */
-    int (*obj_width)(lh_layout_item*,int); /**< return suggested width given a height (or -1 for default width) */
-    int (*obj_height)(lh_layout_item*,int); /**< return suggested height given a width (or -1 for default height) */
-    const lh_buffer* (*obj_render_buffer)(lh_layout_item*,int,int,int); /**< render object to any image format using width x height x bitdepth */
-    void* (*obj_render_qimage)(lh_layout_item*,int,int,int); /**< render object to QImage using width x height x bitdepth */
+    void (*obj_prerender)(lh_layout_item_t*,int); /**< called right before width/height/render_xxx as a notification, param: bitdepth */
+    int (*obj_width)(lh_layout_item_t*,int); /**< return suggested width given a height (or -1 for default width) */
+    int (*obj_height)(lh_layout_item_t*,int); /**< return suggested height given a width (or -1 for default height) */
+    const lh_buffer_t* (*obj_render_buffer)(lh_layout_item_t*,int,int,int); /**< render object to any image format using width x height x bitdepth */
+    void* (*obj_render_qimage)(lh_layout_item_t*,int,int,int); /**< render object to QImage using width x height x bitdepth */
 };
 
 /**
@@ -741,7 +738,7 @@ struct lh_layout_item_t
   */
 typedef struct lh_layout_class_t
 {
-    lh_object obj;
+    lh_object_t obj;
 
     int size; /* sizeof(lh_layout_class) */
 
@@ -751,16 +748,16 @@ typedef struct lh_layout_class_t
     int height;
 
     /* functions */
-    lh_layout_item* (*obj_layout_item_create)(struct lh_layout_class_t*); /**< create a new layout item */
-    void (*obj_layout_item_destroy)(struct lh_layout_class_t*,lh_layout_item*); /**< destroy this layout item */
+    lh_layout_item_t* (*obj_layout_item_create)(struct lh_layout_class_t*); /**< create a new layout item */
+    void (*obj_layout_item_destroy)(struct lh_layout_class_t*,lh_layout_item_t*); /**< destroy this layout item */
 } lh_layout_class;
 
 #ifdef __cplusplus
 class lh_plugin_calltable
 {
 public:
-    lh_object* (*lh_create)();
-    void (*lh_destroy) (lh_object*);
+    lh_object_t* (*lh_create)();
+    void (*lh_destroy) (lh_object_t*);
 };
 #endif
 
@@ -769,7 +766,7 @@ extern "C" {
 #endif
 
 /* Utility functions in lh_plugin.c */
-void lh_buffer_to_headerfile( const lh_buffer *buffer, const char *filename, const char *varname );
+void lh_buffer_t_to_headerfile( const lh_buffer_t *buffer, const char *filename, const char *varname );
 lh_userinterface lh_name_to_userinterface( const char *name );
 const char *lh_userinterface_to_name( const lh_userinterface ui );
 lh_meta lh_name_to_data_format( const char *name );

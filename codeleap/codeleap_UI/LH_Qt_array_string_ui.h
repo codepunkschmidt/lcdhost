@@ -14,12 +14,12 @@ class LH_Qt_array_string_ui : public LH_Qt_array_string
     LH_QtSetupItem *ui_;
     int uiIndex_;
 
-    void init(lh_meta_type ui_type, int uiFlags, const QStringList& listItems );
+    void init(lh_setup_type ui_type, int uiFlags, const QStringList& listItems );
 
 public:
     LH_Qt_array_string_ui( LH_QtObject *parent, const char *ident,
                            const QStringList& value = QStringList(),
-                           int flags = 0, lh_meta_type ui_type = lh_type_string,
+                           int flags = 0, lh_setup_type ui_type = lh_type_string,
                            const QStringList& listItems = QStringList() )
         : LH_Qt_array_string( parent, ident, value, flags | LH_FLAG_HIDDEN ),
           ui_(0), uiIndex_(0)
@@ -30,7 +30,7 @@ public:
     void setEditIndex(int index);
     int indexAt(int i);
 
-    LH_QtSetupItem *ui() { return ui_; }
+    LH_QtSetupItem *type() { return ui_; }
 
     int currentIndex();
     void setCurrentIndex(int i);

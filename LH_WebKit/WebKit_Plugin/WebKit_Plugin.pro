@@ -3,7 +3,7 @@ TEMPLATE = lib
 QT += network \
     xml
 DEFINES += LH_WEBKIT_LIBRARY
-CONFIG += conditionalformatting
+CONFIG += lh_plugin conditionalformatting
 
 load(../../PluginsConfig.prf)
 include(../../codeleap/codeleap.pri)

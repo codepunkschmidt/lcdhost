@@ -35,16 +35,14 @@
 #ifndef LH_QT_QCOLOR_H
 #define LH_QT_QCOLOR_H
 
-#include "LH_QtSetupItem.h"
+#include "LH_Qt_int.h"
 
-class LH_Qt_QColor : public LH_QtSetupItem
+class LH_Qt_QColor : public LH_Qt_int
 {
 public:
-    LH_Qt_QColor( LH_QtObject *parent, const char *ident, const QColor& value, int flags = lh_meta_default )
-        : LH_QtSetupItem( parent, ident, lh_type_color, flags )
-    {
-        setValue( value );
-    }
+    LH_Qt_QColor( LH_QtObject *parent, const char *ident, const QColor& value, int flags = 0 )
+        : LH_Qt_int( parent, ident, value.rgba(), flags, lh_type_integer_color )
+    { }
 
     QColor value() const
     {

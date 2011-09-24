@@ -2,7 +2,7 @@ TARGET = LH_TS3
 TEMPLATE = lib
 DEFINES += LH_GRAPH_LIBRARY
 QT += network
-CONFIG += conditionalformatting
+CONFIG += lh_plugin conditionalformatting
 
 load(../PluginsConfig.prf)
 include(../codeleap/codeleap.pri)

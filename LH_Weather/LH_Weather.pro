@@ -2,7 +2,7 @@ TARGET = LH_Weather
 TEMPLATE = lib
 QT += network xml
 DEFINES += LH_WEATHER_LIBRARY
-CONFIG += conditionalformatting googletranslator
+CONFIG += lh_plugin conditionalformatting googletranslator
 
 load(../PluginsConfig.prf)
 include(../codeleap/codeleap.pri)

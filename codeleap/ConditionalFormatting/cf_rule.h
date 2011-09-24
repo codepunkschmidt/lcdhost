@@ -58,7 +58,7 @@ public:
 
         switch((mode_=="Value"? sources[source_]->type() : lh_type_string))
         {
-        case lh_type_string_dropdownbox:
+        case lh_type_string_list:
         case lh_type_string_listbox:
             source_List = (LH_Qt_QStringList*)sources[source_]->obj();
             sender->setup_cf_testValue1_List_->setList(source_List->list());

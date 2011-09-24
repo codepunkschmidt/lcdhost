@@ -38,21 +38,18 @@
 #include <QObject>
 #include <QQueue>
 
-#include "lh_plugin.h"
-#include "LH_Qt_int.h"
-#include "LH_Qt_array_int.h"
+#include "LH_QtSetupItem.h"
 #include "LH_QtInstance.h"
-#include "LH_Qt_QSlider.h"
 
 class LH_QtCPU : public QObject
 {
     Q_OBJECT
 
     QQueue<int*> load_;
+    LH_QtSetupItem link_coreloads_;
+    LH_QtSetupItem setup_smoothing_;
 
 protected:
-    LH_Qt_array_int *link_coreloads_;
-    LH_Qt_QSlider *setup_smoothing_;
 
 public:
     explicit LH_QtCPU(LH_QtInstance *parent);
@@ -60,16 +57,16 @@ public:
 
     LH_QtInstance *parent() const { return static_cast<LH_QtInstance *>(QObject::parent()); }
 
-    int count() const { return link_coreloads_->size(); }
-    int min() const { return link_coreloads_->min(); }
-    int max() const { return link_coreloads_->max(); }
-    int samples() { return setup_smoothing_->value() + 1; }
+    int count() const { return link_coreloads_.value().toList().size(); }
+    int min() const { return link_coreloads_.minimum().toInt(); }
+    int max() const { return link_coreloads_.maximum().toInt(); }
+    int samples() { return setup_smoothing_.value().toInt() + 1; }
 
     int coreload(int n); // min() ... max()
     int averageload(); // min() ... max()
 
-    void smoothingOrder(int n) { setup_smoothing_->setOrder(n); }
-    void smoothingHidden(bool hide) { setup_smoothing_->setHidden( hide); }
+    void smoothingOrder(int n) { setup_smoothing_.setOrder(n); }
+    void smoothingHidden(bool hide) { setup_smoothing_.setHidden(hide); }
 
 public slots:
     void gotData();

@@ -34,19 +34,32 @@
 
 #include "LH_QtNetwork.h"
 
-LH_QtNetwork::LH_QtNetwork( LH_QtInstance *parent ) : QObject(parent)
+LH_QtNetwork::LH_QtNetwork( LH_QtInstance *parent ) :
+    QObject(parent),
+    link_net_in_(parent,
+                 "NetIn",
+                 lh::val(0,lh_link_sink),
+                 lh::min(0,lh_link_sink),
+                 lh::max(0,lh_link_sink),
+                 lh::link("/system/network/in")
+                 ),
+    link_net_out_(parent,
+                  "NetOut",
+                  lh::val(0,lh_link_sink),
+                  lh::min(0,lh_link_sink),
+                  lh::max(0,lh_link_sink),
+                  lh::link("/system/network/out")
+                  ),
+    setup_smoothing_(parent,
+                     "Smoothing",
+                     lh::val(3),
+                     lh::min(1),
+                     lh::max(10),
+                     lh_ui_slider|lh_meta_autorender
+                     )
 {
-    setup_smoothing_ = new LH_Qt_QSlider(parent,"Smoothing",3,1,10,LH_FLAG_AUTORENDER);
-    link_net_in_rate_ = new LH_Qt_int(parent,"NetInRate",0,LH_FLAG_HIDDEN|LH_FLAG_NOSAVE);
-    link_net_in_rate_->setLink("/system/net/in/rate");
-    connect(link_net_in_rate_, SIGNAL(intChanged(int)), this, SLOT(addInRate(int)) );
-    link_net_in_max_ = new LH_Qt_int(parent,"NetInMax",0,LH_FLAG_HIDDEN|LH_FLAG_NOSAVE);
-    link_net_in_max_->setLink("/system/net/in/max");
-    link_net_out_rate_ = new LH_Qt_int(parent,"NetOutRate",0,LH_FLAG_HIDDEN|LH_FLAG_NOSAVE);
-    link_net_out_rate_->setLink("/system/net/out/rate");
-    connect(link_net_out_rate_, SIGNAL(intChanged(int)), this, SLOT(addOutRate(int)) );
-    link_net_out_max_ = new LH_Qt_int(parent,"NetOutMax",0,LH_FLAG_HIDDEN|LH_FLAG_NOSAVE);
-    link_net_out_max_->setLink("/system/net/out/max");
+    connect( &link_net_in_, SIGNAL(intChanged(int)), this, SLOT(addInRate(int)) );
+    connect( &link_net_out_, SIGNAL(intChanged(int)), this, SLOT(addOutRate(int)) );
     inrate_.clear();
     outrate_.clear();
     return;
@@ -116,19 +129,21 @@ qint64 LH_QtNetwork::outRate() const
 
 int LH_QtNetwork::inPermille() const
 {
-    if( link_net_in_max_->value() ) return inRate() * 1000 / link_net_in_max_->value();
+    if( !link_net_in_.maximum().isNull() )
+        return inRate() * 1000 / link_net_in_.maximum().toLongLong();
     return 0;
 }
 
 int LH_QtNetwork::outPermille() const
 {
-    if( link_net_out_max_->value() ) return outRate() * 1000 / link_net_out_max_->value();
+    if( !link_net_out_.maximum().isNull() )
+        return outRate() * 1000 / link_net_out_.maximum().toLongLong();
     return 0;
 }
 
 int LH_QtNetwork::tpPermille() const
 {
-    qint64 div = link_net_out_max_->value() + link_net_in_max_->value();
+    qint64 div = link_net_out_.maximum().toLongLong() + link_net_in_.maximum().toLongLong();
     if( div ) return (inRate() + outRate()) * 1000 / div;
     return 0;
 }

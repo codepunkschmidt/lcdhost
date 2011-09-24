@@ -6,8 +6,8 @@
 class LH_Qt_array : public LH_QtSetupItem
 {
 public:
-    LH_Qt_array( LH_QtObject *parent, const char *ident, int flags = lh_meta_default )
-        : LH_QtSetupItem( parent, ident, lh_type_array, flags )
+    LH_Qt_array( LH_QtObject *parent, const char *ident, int metainfo = lh_meta_default )
+        : LH_QtSetupItem( parent, ident, lh::val(QVariantList()), metainfo )
     { }
 
     int size() const

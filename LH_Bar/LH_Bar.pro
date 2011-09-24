@@ -1,7 +1,7 @@
 TARGET = LH_Bar
 TEMPLATE = lib
 DEFINES += LH_BAR_LIBRARY
-CONFIG += conditionalformatting
+CONFIG += lh_plugin conditionalformatting
 
 load(../PluginsConfig.prf)
 include(../codeleap/codeleap.pri)

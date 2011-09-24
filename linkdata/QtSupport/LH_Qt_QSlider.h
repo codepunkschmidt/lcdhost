@@ -40,8 +40,8 @@
 class LH_Qt_QSlider : public LH_Qt_int
 {
 public:
-    LH_Qt_QSlider( LH_QtObject *parent, const char *ident, int value, int min, int max, int flags = lh_meta_default )
-        : LH_Qt_int( parent, ident, value, min, max, flags, lh_type_integer_slider )
+    LH_Qt_QSlider( LH_QtObject *parent, const char *ident, int value, int min, int max, int metainfo = lh_meta_default|lh_ui_slider )
+        : LH_Qt_int( parent, ident, value, min, max, metainfo )
     {
     }
 };

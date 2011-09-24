@@ -2,7 +2,7 @@ TARGET = LH_Cursor
 TEMPLATE = lib
 QT += network xml
 DEFINES += LH_CURSOR_LIBRARY
-CONFIG += conditionalformatting json
+CONFIG += lh_plugin conditionalformatting json
 
 load(../PluginsConfig.prf)
 include(../codeleap/codeleap.pri)

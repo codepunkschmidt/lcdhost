@@ -1,7 +1,7 @@
 TARGET = LH_Decor
 TEMPLATE = lib
 DEFINES += LH_DECOR_LIBRARY
-CONFIG += conditionalformatting
+CONFIG += lh_plugin conditionalformatting
 
 load(../PluginsConfig.prf)
 include(../codeleap/codeleap.pri)

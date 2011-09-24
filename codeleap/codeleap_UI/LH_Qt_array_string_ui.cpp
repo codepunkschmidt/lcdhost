@@ -1,6 +1,6 @@
 #include "LH_Qt_array_string_ui.h"
 
-void LH_Qt_array_string_ui::init(lh_meta_type ui_type, int uiFlags, const QStringList& listItems )
+void LH_Qt_array_string_ui::init(lh_setup_type ui_type, int uiFlags, const QStringList& listItems )
 {
     if(ui_type == lh_type_string)
         ui_ = new LH_Qt_QString(parent(), QString("%1__ui__").arg(ident()).toUtf8(),"", uiFlags );

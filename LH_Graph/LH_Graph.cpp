@@ -113,11 +113,11 @@ const char *LH_Graph::userInit()
     setup_line_selection_ = new LH_Qt_QStringList(this,"Selected Line",QStringList());
     setup_line_selection_->setHelp( "<p>Select a line here and configure it below. Seperate settings are stored for each line.</p>");
 
-    setup_line_pencolor_ = new LH_Qt_array_int_ui(this,"Line color",0,LH_FLAG_AUTORENDER, lh_type_color);
+    setup_line_pencolor_ = new LH_Qt_array_int_ui(this,"Line color",0,LH_FLAG_AUTORENDER, lh_type_integer_color);
     setup_line_pencolor_->setHelp( "<p>The colour used do draw the line.</p>");
-    setup_line_fillcolor1_ = new LH_Qt_array_int_ui(this,"Area color (start)",0,LH_FLAG_AUTORENDER | LH_FLAG_HIDDEN, lh_type_color);
+    setup_line_fillcolor1_ = new LH_Qt_array_int_ui(this,"Area color (start)",0,LH_FLAG_AUTORENDER | LH_FLAG_HIDDEN, lh_type_integer_color);
     setup_line_fillcolor1_->setHelp( "<p>The color used to fill the area between the line and the axis, at the furthest point from the axis (this color is only truely visible when the graph is full).</p>");
-    setup_line_fillcolor2_ = new LH_Qt_array_int_ui(this,"Area color (end)",0,LH_FLAG_AUTORENDER | LH_FLAG_HIDDEN, lh_type_color);
+    setup_line_fillcolor2_ = new LH_Qt_array_int_ui(this,"Area color (end)",0,LH_FLAG_AUTORENDER | LH_FLAG_HIDDEN, lh_type_integer_color);
     setup_line_fillcolor2_->setHelp( "<p>The color used to fill the area between the line and the axis, at the axis.</p>");
 
     setup_line_image_ = new LH_Qt_array_string_ui(this, "Fill Image", QStringList(),

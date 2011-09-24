@@ -40,11 +40,9 @@
 class LH_Qt_QTextEdit : public LH_Qt_QString
 {
 public:
-    LH_Qt_QTextEdit( LH_QtObject *parent, const char *ident, const QString& value, int flags = lh_meta_default )
+    LH_Qt_QTextEdit( LH_QtObject *parent, const char *ident, const QString& value, int flags = 0 )
         : LH_Qt_QString( parent, ident, value, flags, lh_type_string_script )
-    {
-        return;
-    }
+    { }
 };
 
 #endif // LH_QT_QTEXTEDIT_H

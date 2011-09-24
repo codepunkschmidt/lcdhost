@@ -2,7 +2,7 @@ TARGET = LH_TorrentMon
 TEMPLATE = lib
 DEFINES += LH_TORRENTMON_LIBRARY
 QT += xml xmlpatterns network
-CONFIG += json
+CONFIG += lh_plugin json
 
 load(../PluginsConfig.prf)
 include(../codeleap/codeleap.pri)

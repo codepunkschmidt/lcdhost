@@ -250,16 +250,16 @@ cf_rule_action_property::cf_rule_action_property(LH_QtCFInstance *sender, QObjec
     target_ = sender->setup_cf_target_->value();
     switch(sender->targets()[target_]->type())
     {
-    case lh_type_color:
+    case lh_type_integer_color:
         value_ = QString::number(sender->setup_cf_newValue_Color_->value().rgba(), 16).toUpper();
         break;
-    case lh_type_font:
+    case lh_type_string_font:
         value_ = sender->setup_cf_newValue_Font_->value().toString();
         break;
     case lh_type_string:
         value_ = sender->setup_cf_newValue_String_->value();
         break;
-    case lh_type_boolean:
+    case lh_type_integer_boolean:
         value_ = (sender->setup_cf_newValue_Bool_->value()?"true":"false");
         break;
     case lh_type_integer:
@@ -310,7 +310,7 @@ bool cf_rule_action_property::setTargetValue(LH_QtCFInstance* sender, cf_target_
     LH_QtSetupItem* target = targets[target_];
     switch(target->type())
     {
-    case lh_type_color:
+    case lh_type_integer_color:
         if(setPlaceholder)
             target = sender->setup_cf_newValue_Color_;
         color = QColor::fromRgba(value_.toUInt(NULL, 16));
@@ -320,7 +320,7 @@ bool cf_rule_action_property::setTargetValue(LH_QtCFInstance* sender, cf_target_
             if(!setPlaceholder) return true;
         }
         break;
-    case lh_type_font:
+    case lh_type_string_font:
         if(setPlaceholder)
             target = sender->setup_cf_newValue_Font_;
         if(font.fromString(value_))
@@ -339,7 +339,7 @@ bool cf_rule_action_property::setTargetValue(LH_QtCFInstance* sender, cf_target_
             if(!setPlaceholder) return true;
         }
         break;
-    case lh_type_boolean:
+    case lh_type_integer_boolean:
         if(setPlaceholder)
             target = sender->setup_cf_newValue_Bool_;
         b = (value_=="true");

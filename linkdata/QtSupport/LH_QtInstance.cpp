@@ -67,7 +67,7 @@ LH_QtInstance::LH_QtInstance( LH_QtLayoutClass *parent ) // lh_callback_t cb, vo
     : LH_QtObject(&li_.obj,0,parent), image_(0)
 {
     li_.size = sizeof(lh_layout_item);
-    li_.obj.cb = 0;
+    li_.obj.cb_fn = 0;
     li_.obj.cb_id = 0;
     li_.obj_prerender = obj_prerender;
     li_.obj_width = obj_width;

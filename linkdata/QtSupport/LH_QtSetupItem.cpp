@@ -39,78 +39,138 @@
 
 #define RECAST(obj) reinterpret_cast<LH_QtSetupItem*>(obj)
 
-static void obj_value_changed( lh_setup_item *obj )
+static void obj_update_data( lh_setup_item* obj, int datainfo, const void *ptr  )
 {
-    RECAST(obj->obj.ref)->value_changed();
+    RECAST(obj->obj.ref)->update_data( datainfo, ptr );
 }
 
-static void obj_param_changed( lh_setup_item *obj )
-{
-    RECAST(obj->obj.ref)->param_changed();
-}
 
-static void obj_link_changed( lh_setup_item *obj )
-{
-    RECAST(obj->obj.ref)->link_changed();
-}
+#ifdef LH_API5_COMPAT
 
-LH_QtSetupItem::LH_QtSetupItem( LH_QtObject *parent, const char *ident, lh_meta_type type, int flags ) :
-    LH_QtObject( &item_.obj, ident, parent ),
-    value_( item_.value, this ),
-    min_( item_.param.min, this ),
-    max_( item_.param.max, this ),
-    other_( item_.param.other, this )
+void LH_QtSetupItem::api5create( const char *ident, int flags, lh_setup_type type )
 {
-    // handle A18 flags
-    Q_ASSERT( flags >= 0 );
-    if( flags >= lh_meta_flag_unused )
+    int metainfo = lh_meta_default;
+
+    api5flags_ = 0;
+    api5type_ = type;
+
+    setIdent( ident );
+    setFlags( flags );
+
+    switch( type )
     {
-        int newflags = lh_meta_default;
-        if( flags & LH_FLAG_READONLY )      newflags &= ~(lh_meta_enabled);
-        if( flags & LH_FLAG_HIDDEN )        newflags &= ~(lh_meta_visible);
-        if( flags & LH_FLAG_FOCUS)          newflags |=  (lh_meta_focus);
-        if( flags & LH_FLAG_AUTORENDER )    newflags |=  (lh_meta_autorender);
-        if( flags & LH_FLAG_FIRST )         newflags |=  (lh_meta_first);
-        if( flags & LH_FLAG_LAST )          newflags |=  (lh_meta_last);
-        if( flags & LH_FLAG_NOSAVE )        newflags &= ~(lh_meta_save);
-        if( flags & LH_FLAG_INDENTTITLE )   newflags |=  (lh_meta_indent);
-        if( flags & LH_FLAG_NOSOURCE )      newflags &= ~(lh_meta_source);
-        if( flags & LH_FLAG_NOSINK )        newflags &= ~(lh_meta_sink);
-        if( flags & LH_FLAG_HIDETITLE )     newflags &= ~(lh_meta_show_title);
-        if( flags & LH_FLAG_HIDEVALUE )     newflags &= ~(lh_meta_show_value);
+    case lh_type_none:
+
+    case lh_type_integer:
+    case lh_type_integer_boolean:
+    case lh_type_integer_color:
+    case lh_type_integer_slider:
+    case lh_type_integer_progress:
+
+    case lh_type_double:
+
+    case lh_type_string:
+    case lh_type_string_script:
+    case lh_type_string_filename:
+    case lh_type_string_font:
+    case lh_type_string_inputstate:
+    case lh_type_string_inputvalue:
+    case lh_type_string_button:
+    case lh_type_string_htmllink:
+    case lh_type_string_list:
+    case lh_type_string_listbox:
+    case lh_type_string_combobox:
+
+    case lh_type_pointer:
+    case lh_type_pointer_qimage:
+
+    case lh_type_array:
+    case lh_type_array_png:
+    case lh_type_array_qint64:
+    case lh_type_array_double:
+    case lh_type_array_string:
+        Q_ASSERT(0);
+        break;
+    default:
+        Q_ASSERT(0);
+        break;
+    }
+
+    item_.size = sizeof(lh_setup_item);
+    item_.meta.info = metainfo;
+    item_.meta.order = ((metainfo&lh_meta_first)?-1:0) + ((metainfo&lh_meta_last)?+1:0);
+    item_.meta.help = 0;
+    item_.obj_update_data = obj_update_data;
+    parent()->callback( lh_cb_setup_create, &item_ );
+    return;
+}
+
+void LH_QtSetupItem::setFlags( int flags )
+{
+    Q_ASSERT( api5type_ != lh_type_none );
+    if( api5flags_ != flags )
+    {
+        int metaflags = lh_meta_default;
+
+        if( flags & LH_FLAG_READONLY )      metaflags &= ~(lh_meta_enabled);
+        if( flags & LH_FLAG_HIDDEN )        metaflags &= ~(lh_meta_visible);
+        if( flags & LH_FLAG_FOCUS)          metaflags |=  (lh_meta_focus);
+        if( flags & LH_FLAG_AUTORENDER )    metaflags |=  (lh_meta_autorender);
+        if( flags & LH_FLAG_FIRST )         metaflags |=  (lh_meta_first);
+        if( flags & LH_FLAG_LAST )          metaflags |=  (lh_meta_last);
+        if( flags & LH_FLAG_INDENTTITLE )   metaflags |=  (lh_meta_indent);
+        if( flags & LH_FLAG_HIDETITLE )     metaflags &= ~(lh_meta_show_title);
+        if( flags & LH_FLAG_HIDEVALUE )     metaflags &= ~(lh_meta_show_value);
+        /*
+        if( flags & LH_FLAG_NOSAVE )        metainfo &= ~(lh_meta_save);
+        if( flags & LH_FLAG_NOSOURCE )      metainfo &= ~(lh_meta_source);
+        if( flags & LH_FLAG_NOSINK )        metainfo &= ~(lh_meta_sink);
+        */
         if( flags & LH_FLAG_MINMAX )
         {
-            qWarning() << parent->metaObject()->className()
-                       << parent->objectName()
+            qWarning() << parent()->metaObject()->className()
+                       << parent()->objectName()
                        << objectName()
                        << "is using LH_FLAG_MIN/MAX";
         }
-        qWarning() << parent->metaObject()->className()
-                   << parent->objectName()
-                   << objectName()
-                   << "is using A18 flags";
-        flags = newflags;
-    }
-    Q_ASSERT( flags < lh_meta_flag_unused );
 
+        api5flags_ = flags;
+        item_.meta.info = (item_.meta.info&~lh_meta_flag_mask) | metaflags;
+        refreshMeta();
+        emit flagsSet( flags );
+    }
+}
+
+void LH_QtSetupItem::setFlag( int f, bool state )
+{
+    int newflags = flags() & ~f;
+    if( state ) newflags |= f;
+    setFlags( newflags );
+    return;
+}
+
+#endif
+
+void LH_QtSetupItem::setIdent( const char *ident )
+{
     if( ident )
     {
         // check for ident warnings
-        if( *ident == '^' && (flags&lh_meta_show_title) && !(flags&lh_meta_indent) )
+        if( *ident == '^' && (info()&lh_meta_show_title) && !(info()&lh_meta_indent) )
         {
-            flags &= ~lh_meta_show_title;
-            flags |= lh_meta_indent;
-            qWarning() << parent->metaObject()->className()
-                       << parent->objectName()
+            item_.meta.info &= ~lh_meta_show_title;
+            item_.meta.info |= lh_meta_indent;
+            qWarning() << parent()->metaObject()->className()
+                       << parent()->objectName()
                        << objectName()
                        << "removed lh_meta_show_title, added lh_meta_indent";
         }
 
-        if( *ident == '~' && (flags&lh_meta_show_title) )
+        if( *ident == '~' && (info()&lh_meta_show_title) )
         {
-            flags &= ~lh_meta_show_title;
-            qWarning() << parent->metaObject()->className()
-                       << parent->objectName()
+            item_.meta.info &= ~lh_meta_show_title;
+            qWarning() << parent()->metaObject()->className()
+                       << parent()->objectName()
                        << objectName()
                        << "removed lh_meta_show_title";
         }
@@ -124,31 +184,33 @@ LH_QtSetupItem::LH_QtSetupItem( LH_QtObject *parent, const char *ident, lh_meta_
     {
         // auto generated id's for setup items don't make sense
         // if they're stored
-        if( flags&lh_meta_save )
+        if( isSaved() )
         {
-            flags &= ~lh_meta_save;
-            qWarning() << parent->metaObject()->className()
-                       << parent->objectName()
+            qWarning() << parent()->metaObject()->className()
+                       << parent()->objectName()
                        << objectName()
-                       << "removed lh_meta_save";
+                       << "isSaving() with autogenerated id";
         }
     }
+}
 
+void LH_QtSetupItem::create( const char *ident, int metainfo )
+{
+#ifdef LH_API5_COMPAT
+    api5flags_ = 0;
+    api5type_ = lh_type_none;
+#endif
+
+    Q_ASSERT( metainfo >= 0 );
+    Q_ASSERT( metainfo < lh_meta_flag_unused );
+
+    setIdent( ident );
     item_.size = sizeof(lh_setup_item);
-    item_.meta.ui = type;
-    item_.meta.flags = flags;
-    item_.meta.order = ((flags&lh_meta_first)?-1:0) + ((flags&lh_meta_last)?+1:0);
+    item_.meta.info = metainfo;
+    item_.meta.order = ((metainfo&lh_meta_first)?-1:0) + ((metainfo&lh_meta_last)?+1:0);
     item_.meta.help = 0;
-
-    memset( &item_.value, 0, sizeof(item_.value) );
-    memset( &item_.param, 0, sizeof(item_.param) );
-    memset( &item_.link, 0, sizeof(lh_setup_link) );
-
-    item_.obj_value_changed = obj_value_changed;
-    item_.obj_param_changed = obj_param_changed;
-    item_.obj_link_changed = obj_link_changed;
-
-    parent->callback( lh_cb_setup_create, &item_ );
+    item_.obj_update_data = obj_update_data;
+    parent()->callback( lh_cb_setup_create, &item_ );
 }
 
 LH_QtSetupItem::~LH_QtSetupItem()
@@ -157,15 +219,90 @@ LH_QtSetupItem::~LH_QtSetupItem()
     memset( &item_, 0, sizeof(lh_setup_item) );
 }
 
+void LH_QtSetupItem::update_data( const lh_meta prop, const void *ptr )
+{
+    QList<LH_QVariant>::iterator it;
+    for( it = properties_.begin(); it != properties_.end(); ++ it )
+    {
+        if( it->role() == lh_prop_role(prop) )
+        {
+            if( lh_data_format(prop) == lh_format_qvariant )
+                *it = *(const QVariant*)ptr;
+            else
+                *it = lh_qvariant_from_setup_data( prop, ptr );
+            switch( lh_data_role(prop) )
+            {
+            case lh_role_value:
+                emit valueChanged( *it );
+                emitSpecific();
+                break;
+            case lh_role_minimum:
+                emit minimumChanged( *it );
+                break;
+            case lh_role_maximum:
+                emit maximumChanged( *it );
+                break;
+            case lh_role_list:
+                emit listChanged( *it );
+                break;
+            case lh_role_link:
+                emit linkChanged( *it );
+                break;
+            default:
+                emit userChanged( *it );
+                break;
+            }
+            return;
+        }
+    }
+}
+
+const LH_QVariant& LH_QtSetupItem::data( int role ) const
+{
+    QList<LH_QVariant>::const_iterator it;
+    for( it = properties_.constBegin(); it != properties_.constEnd(); ++ it )
+        if( it->role() == role ) return *it;
+    return LH_QVariant::invalid();
+}
+
+bool LH_QtSetupItem::isSaved() const
+{
+    QList<LH_QVariant>::const_iterator it;
+    for( it = properties_.constBegin(); it != properties_.constEnd(); ++ it )
+        if( it->isSaved() ) return true;
+    return false;
+}
+
 void LH_QtSetupItem::emitSpecific()
 {
-    if( value_.type() == QVariant::LongLong || value_.type() == QVariant::Int ) emit intChanged( qVariantValue<int>(value_) );
-    else if( value_.type() == QVariant::String ) emit stringChanged( qVariantValue<QString>(value_) );
-    else if( value_.type() == QVariant::Bool ) emit boolChanged( qVariantValue<bool>(value_) );
-    else if( value_.type() == QVariant::Double ) emit doubleChanged( qVariantValue<double>(value_) );
-    else if( value_.type() == QVariant::Color ) emit colorChanged( qVariantValue<QColor>(value_) );
-    else if( value_.type() == QVariant::Font ) emit fontChanged( qVariantValue<QFont>(value_) );
-    else if( value_.type() == QVariant::Image ) emit imageChanged( qVariantValue<QImage>(value_) );
+    const LH_QVariant& v = value();
+    switch( v.type() )
+    {
+    case QVariant::LongLong:
+    case QVariant::Int:
+        emit intChanged( qVariantValue<int>(v) );
+        break;
+    case QVariant::String:
+        emit stringChanged( qVariantValue<QString>(v) );
+        break;
+    case QVariant::Bool:
+        emit boolChanged( qVariantValue<bool>(v) );
+        break;
+    case QVariant::Double:
+        emit doubleChanged( qVariantValue<double>(v) );
+        break;
+    case QVariant::Color:
+        emit colorChanged( qVariantValue<QColor>(v) );
+        break;
+    case QVariant::Font:
+        emit fontChanged( qVariantValue<QFont>(v) );
+        break;
+    case QVariant::Image:
+        emit imageChanged( qVariantValue<QImage>(v) );
+        break;
+    default:
+        break;
+    }
     return;
 }
 
@@ -183,56 +320,6 @@ int LH_QtSetupItem::notify( int note, void *param )
             emit duplicateSource();
     }
     return LH_NOTE_WARNING|LH_NOTE_INPUT;
-}
-
-void LH_QtSetupItem::value_changed()
-{
-    if( meta().flags & lh_meta_autorender ) parent()->requestRender();
-    value_.read();
-    emit valueChanged();
-    emitSpecific();
-    return;
-}
-
-void LH_QtSetupItem::param_changed()
-{
-    if( meta().flags & lh_meta_autorender ) parent()->requestRender();
-    min_.read();
-    max_.read();
-    other_.read();
-    emit paramChanged();
-    return;
-}
-
-void LH_QtSetupItem::link_changed()
-{
-    emit linkChanged();
-    return;
-}
-
-void LH_QtSetupItem::setLink( const char *path, int flags, const char *filter )
-{
-    if( link_path_array_ != path || item_.link.flags != flags || link_filter_array_ != filter )
-    {
-        link_path_array_ = path;
-        link_filter_array_ = filter;
-        item_.link.path = link_path_array_.isEmpty() ? 0 : link_path_array_.constData();
-        item_.link.filter = link_filter_array_.isEmpty() ? 0 : link_filter_array_.constData();
-        item_.link.flags = flags;
-        refreshLink();
-        emit linkSet( item_.link.path, item_.link.flags, item_.link.filter );
-    }
-    return;
-}
-
-void LH_QtSetupItem::setLinkFilter( const char *filter )
-{
-    if( link_filter_array_ != filter )
-    {
-        link_filter_array_ = filter;
-        item_.link.filter = link_filter_array_.isEmpty() ? 0 : link_filter_array_.constData();
-        refreshLink();
-    }
 }
 
 void LH_QtSetupItem::setHelp( const char *s )
@@ -257,24 +344,6 @@ void LH_QtSetupItem::setHelp( const QString& s )
     setHelp( s.toUtf8().constData() );
 }
 
-void LH_QtSetupItem::setFlags( int f )
-{
-    if( flags() != f )
-    {
-        item_.meta.flags = f;
-        refreshMeta();
-        emit flagsSet( flags() );
-    }
-}
-
-void LH_QtSetupItem::setFlag( int f, bool state )
-{
-    int newflags = flags() & ~f;
-    if( state ) newflags |= f;
-    setFlags( newflags );
-    return;
-}
-
 void LH_QtSetupItem::setOrder( int neworder )
 {
     if( order() != neworder )
@@ -286,51 +355,43 @@ void LH_QtSetupItem::setOrder( int neworder )
     return;
 }
 
-void LH_QtSetupItem::setType( lh_meta_type newtype )
+void LH_QtSetupItem::setProperty( const LH_QVariant& newdata )
 {
-    if( type() == newtype ) return;
-    item_.meta.ui = newtype;
-    refreshMeta();
-    return;
-}
+    QList<LH_QVariant>::iterator it;
+    for( it = properties_.begin(); it != properties_.end(); ++ it )
+    {
+        if( it->role() == newdata.role() )
+        {
+            if( newdata == *it ) return;
+            *it = newdata;
+            break;
+        }
+    }
 
-void LH_QtSetupItem::setValue( const QVariant& newvalue )
-{
-    if( value_ == newvalue ) return;
-    value_.setValue(newvalue);
-    value_.write();
-    refreshValue();
-    emit valueSet();
-    emitSpecific();
-    return;
-}
+    if( it == properties_.end() )
+        properties_.append(newdata);
 
-void LH_QtSetupItem::setMinimum( const QVariant& newmin )
-{
-    if( min_ == newmin ) return;
-    min_.setValue(newmin);
-    min_.write();
-    refreshParam();
-    emit paramSet();
-    return;
-}
+    switch( newdata.role() )
+    {
+    case lh_role_value:
+        emit valueSet(newdata);
+        break;
+    case lh_role_minimum:
+        emit minimumSet(newdata);
+        break;
+    case lh_role_maximum:
+        emit maximumSet(newdata);
+        break;
+    case lh_role_list:
+        emit listSet(newdata);
+        break;
+    case lh_role_link:
+        emit linkSet(newdata);
+        break;
+    case lh_role_user:
+        emit userSet(newdata);
+        break;
+    }
 
-void LH_QtSetupItem::setMaximum( const QVariant& newmax )
-{
-    if( max_ == newmax ) return;
-    max_.setValue(newmax);
-    max_.write();
-    refreshParam();
-    emit paramSet();
-    return;
-}
-
-void LH_QtSetupItem::setOther( const QVariant& newother )
-{
-    if( other_ == newother ) return;
-    other_.setValue(newother);
-    other_.write();
-    refreshParam();
-    emit paramSet();
     return;
 }

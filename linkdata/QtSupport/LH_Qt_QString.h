@@ -40,12 +40,9 @@
 class LH_Qt_QString : public LH_QtSetupItem
 {
 public:
-    LH_Qt_QString( LH_QtObject *parent, const char *ident, const QString& value, int flags = 0, lh_meta_type subtype = lh_type_string )
-        : LH_QtSetupItem( parent, ident, subtype, flags )
-    {
-        setValue( value );
-        return;
-    }
+    LH_Qt_QString( LH_QtObject *parent, const char *ident, const QString& value, int flags = 0, lh_setup_type subtype = lh_type_string ) :
+        LH_QtSetupItem( parent, ident, value, flags, subtype )
+    { }
 
     QString value() const
     {

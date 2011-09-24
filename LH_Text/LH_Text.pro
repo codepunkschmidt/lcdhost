@@ -1,7 +1,7 @@
 TARGET = LH_Text
 TEMPLATE = lib
 DEFINES += LH_TEXT_LIBRARY
-CONFIG += conditionalformatting
+CONFIG += lh_plugin conditionalformatting
 
 load(../PluginsConfig.prf)
 include(../codeleap/codeleap.pri)

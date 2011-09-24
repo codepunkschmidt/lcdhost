@@ -6,7 +6,7 @@ load(../PluginsConfig.prf)
 
 win32 {
     QT += network xml
-    CONFIG += qaxcontainer conditionalformatting
+    CONFIG += lh_plugin qaxcontainer conditionalformatting
     include(../codeleap/codeleap.pri)
 
     # We don't want warnings from 3rd party C code

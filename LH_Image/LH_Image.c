@@ -87,7 +87,7 @@ typedef struct _lh_image_s
 {
     lh_layout_item item_;
     char filename[256];
-    lh_blob *blob;
+    lh_buffer *file_contents;
     lh_setup_item setup_filename;
 } lh_image;
 
@@ -104,8 +104,8 @@ static void image_value_changed( lh_setup_item *obj )
         if( !strcmp( (char*)obj->value.data.b.p, "unload" ) )
         {
             strcpy( (char*)obj->value.data.b.p, "was-unloaded" );
-            obj->obj.cb( obj->obj.cb_id, lh_cb_setup_refresh_value, 0 );
-            obj->obj.cb( obj->obj.cb_id, lh_cb_unload, "Filename was 'unload'." );
+            obj->obj.cb_fn( obj->obj.cb_id, lh_cb_setup_refresh_value, 0 );
+            obj->obj.cb_fn( obj->obj.cb_id, lh_cb_unload, "Filename was 'unload'." );
         }
         else
         {
@@ -114,7 +114,7 @@ static void image_value_changed( lh_setup_item *obj )
                 free( img->blob );
                 img->blob = NULL;
             }
-            img->item_.obj.cb( img->item_.obj.cb_id, lh_cb_render, 0 );
+            img->item_.obj.cb_fn( img->item_.obj.cb_id, lh_cb_render, 0 );
         }
     }
     return;
@@ -137,7 +137,7 @@ static const char *image_init(lh_object *obj)
     img->setup_filename.value.data.b.p = img->filename;
     img->setup_filename.value.data.b.n = sizeof(img->filename);
     img->setup_filename.obj_value_changed = image_value_changed;
-    img->item_.obj.cb( img->item_.obj.cb_id, lh_cb_setup_create, &img->setup_filename );
+    img->item_.obj.cb_fn( img->item_.obj.cb_id, lh_cb_setup_create, &img->setup_filename );
 
     return 0;
 }
@@ -152,7 +152,7 @@ static int image_notify( lh_object *obj, int note, void *param )
     if( img && ((!note) || (note&LH_NOTE_SECOND)) )
     {
         if( img->blob == 0 )
-            img->item_.obj.cb( img->item_.obj.cb_id, lh_cb_render, 0 );
+            img->item_.obj.cb_fn( img->item_.obj.cb_id, lh_cb_render, 0 );
     }
     return LH_NOTE_SECOND;
 }
@@ -174,18 +174,21 @@ static int is_absolute( const char *filename )
   data. Let LCDHost handle B/W color matching and
   sizing issues that may arise.
   */
-static const lh_blob * image_render_blob(lh_layout_item *obj,int w,int h)
+static const lh_buffer * image_render_buffer(lh_layout_item *obj,int w,int h)
 {
-    char *fullname;
-    size_t n;
     lh_image *img = (void*) obj;
 
     Q_UNUSED(w);
     Q_UNUSED(h);
 
-    if( img->blob == NULL )
+    if( img->file_contents->p == &logo_blob || img->file_contents->p == 0 )
     {
-        if( !is_absolute(img->filename) )
+        const char *filename = img->filename;
+        char *fullname = 0;
+        FILE *f = 0;
+        size_t n;
+
+        if( !is_absolute(filename) )
         {
             const char *dir_layout = img->item_.layout.dir;
             if( dir_layout == 0 ) dir_layout = "./";
@@ -195,17 +198,49 @@ static const lh_blob * image_render_blob(lh_layout_item *obj,int w,int h)
             {
                 strcpy( fullname, dir_layout );
                 strcat( fullname, img->filename );
+                filename = fullname;
                 /* convert it from UTF-8 to local 8 bit */
-                img->item_.obj.cb( img->item_.obj.cb_id, lh_cb_utf8_to_local8bit, fullname );
+                img->item_.obj.cb_fn( img->item_.obj.cb_id, lh_cb_utf8_to_local8bit, fullname );
                 img->blob = lh_binaryfile_to_blob( fullname );
-                free( fullname );
             }
         }
-        else
-            img->blob = lh_binaryfile_to_blob( img->filename );
+
+        f = fopen( filename, "rb" );
+        if( f != NULL )
+        {
+            long filesize = 0;
+            if( fseek( f, 0, SEEK_END ) == 0 ) filesize = ftell( f );
+            if( filesize > 0 )
+            {
+                fseek( f, 0, SEEK_SET );
+                img->file_contents->p = malloc( filesize );
+                if( img->file_contents->p )
+                {
+                    if( fread( img->file_contents->p, 1, filesize, f ) != (size_t) filesize )
+                    {
+                        free( img->file_contents->p );
+                        img->file_contents->p = NULL;
+                        img->file_contents->n = 0;
+                    }
+                    else
+                    {
+                        img->file_contents->n = filesize;
+                    }
+                }
+            }
+            fclose( f );
+        }
+
+        if( fullname ) free( fullname );
     }
 
-    return img->blob ? img->blob : logo_blob;
+    if( img->file_contents->p == 0 )
+    {
+        img->file_contents->p = logo_blob;
+        img->file_contents->n = sizeof(logo_blob);
+    }
+
+    return & img->file_contents;
 }
 
 /**
@@ -244,7 +279,7 @@ static void image_delete( lh_layout_class *cls, lh_layout_item *obj )
     lh_image *img = (void*) obj;
     if( img->blob ) free( img->blob );
     if( img->setup_filename.obj.cb_id )
-        img->setup_filename.obj.cb( img->setup_filename.obj.cb_id, lh_cb_destroy, 0 );
+        img->setup_filename.obj.cb_fn( img->setup_filename.obj.cb_id, lh_cb_destroy, 0 );
     memset( img, 0, sizeof(lh_image) );
     free( img );
     return;
@@ -277,7 +312,7 @@ static lh_layout_class image_class =
 
 static const char *image_plugin_init( lh_object *o )
 {
-    o->cb( o->cb_id, lh_cb_class_create, &image_class );
+    o->cb_fn( o->cb_id, lh_cb_class_create, &image_class );
     return 0;
 }
 
@@ -328,8 +363,8 @@ EXPORT lh_object *lh_create()
 EXPORT void lh_destroy( lh_object *o )
 {
     Q_UNUSED(o);
-    if( image_class.obj.cb && image_class.obj.cb_id )
-        image_class.obj.cb( image_class.obj.cb_id, lh_cb_destroy, 0 );
+    if( image_class.obj.cb_fn && image_class.obj.cb_id )
+        image_class.obj.cb_fn( image_class.obj.cb_id, lh_cb_destroy, 0 );
     return;
 }
 

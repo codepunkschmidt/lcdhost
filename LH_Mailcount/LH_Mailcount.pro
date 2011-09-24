@@ -1,7 +1,7 @@
 TARGET = LH_Mailcount
 TEMPLATE = lib
 DEFINES += LH_MAILCOUNT_LIBRARY
-CONFIG += conditionalformatting
+CONFIG += lh_plugin conditionalformatting
 
 load(../PluginsConfig.prf)
 include(../codeleap/codeleap.pri)

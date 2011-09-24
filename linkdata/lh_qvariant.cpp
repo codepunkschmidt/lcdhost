@@ -38,7 +38,7 @@
 #include <QFont>
 #include <QXmlStreamReader>
 #include <QXmlStreamWriter>
-#include "LH_QVariant.h"
+#include "lh_qvariant.h"
 
 static bool isHexDigit( const QChar ch )
 {
@@ -114,19 +114,21 @@ static QVariant decode_list( QString::const_iterator& it, QString::const_iterato
     return retv;
 }
 
-QVariant::Type lh_qvarianttype( lh_data_info info )
+QVariant::Type lh_qvarianttype( lh_meta_format fmt )
 {
-    switch( info & lh_format_mask )
+    switch( fmt )
     {
+    case lh_format_longlong: return QVariant::LongLong;
     case lh_format_boolean: return QVariant::Bool;
     case lh_format_color: return QVariant::Color;
-    case lh_format_integer: return QVariant::LongLong;
+    case lh_format_integer: return QVariant::Int;
     case lh_format_double: return QVariant::Double;
-    case lh_format_string: return QVariant::String;
-    case lh_format_stringlist: return QVariant::StringList;
+    case lh_format_local8: return QVariant::String;
+    case lh_format_utf8: return QVariant::String;
     case lh_format_input: return (QVariant::Type) qMetaTypeId<lh_input>();
     case lh_format_png: return QVariant::Image;
     case lh_format_font: return QVariant::Font;
+    case lh_format_list: return QVariant::List;
     case lh_format_none:
     case lh_format_unused:
         break;
@@ -262,92 +264,6 @@ QString lh_qstring_from_lhinput( const lh_input& in )
         ts << '/' << noforcesign << hex << in.flags;
     }
     return retv;
-}
-
-QVariant lh_qvariant_from_setup_data( const lh_data_info& info, const void *p )
-{
-    if( p == 0 || info.store == lh_store_none || info.format == lh_format_none )
-        return QVariant();
-
-    if( info.store == lh_store_qvariant )
-        return *(const QVariant*)p;
-
-    if( info.store == lh_store_input )
-        return qVariantFromValue( *(const lh_input*)p );
-
-    const lh_buffer *buf = 0;
-    if( info.store == lh_store_buffer )
-    {
-        buf = (const lh_buffer *)p;
-        if( buf->p == 0 || buf->n < 1 ) buf = 0;
-    }
-
-    switch( info.format )
-    {
-    case lh_format_integer:
-        if( info.store == lh_store_longlong ) return qVariantFromValue( *(const long long*)p );
-        if( info.store == lh_store_double ) return qVariantFromValue( (long long) qRound(*(const double*)p) );
-        if( buf ) return qVariantFromValue( QByteArray::fromRawData(buf->p,buf->n).toLongLong() );
-        break;
-
-    case lh_format_boolean:
-        if( info.store == lh_store_longlong ) return qVariantFromValue( *(const long long*)p ? true : false );
-        if( info.store == lh_store_double ) return qVariantFromValue( qFuzzyIsNull(*(const double*)p) );
-        if( buf ) return qVariantFromValue( QVariant(QString::fromUtf8(buf->p,buf->n)).toBool() );
-        break;
-
-    case lh_format_color:
-        if( info.store == lh_store_longlong ) return qVariantFromValue( QColor::fromRgba(*(const long long*)p) );
-        if( info.store == lh_store_double ) return qVariantFromValue( QColor::fromRgba((int) *(const double*)p) );
-        if( buf )
-        {
-            QColor c;
-            lh_qstring_to_qcolor( QString::fromUtf8(buf->p,buf->n), c );
-            return qVariantFromValue(c);
-        }
-        break;
-
-    case lh_format_double:
-        if( info.store == lh_store_longlong ) return qVariantFromValue( (double) *(const long long*)p );
-        if( info.store == lh_store_double ) return qVariantFromValue( *(const double*)p );
-        if( buf ) return qVariantFromValue( QByteArray::fromRawData(buf->p,buf->n).toDouble() );
-        break;
-
-    case lh_format_string:
-        if( info.store == lh_store_longlong ) return qVariantFromValue( QString::number( *(const long long*)p ) );
-        if( info.store == lh_store_double ) return qVariantFromValue( QString::number( *(const double*)p ) );
-        if( buf ) return qVariantFromValue( QString::fromUtf8(buf->p,buf->n) );
-        break;
-
-    case lh_format_stringlist:
-        if( buf ) return qVariantFromValue( QString::fromUtf8(buf->p,buf->n).split(QChar(0)) );
-        break;
-
-    case lh_format_font:
-        if( buf )
-        {
-            QFont f;
-            f.fromString( QString::fromUtf8(buf->p,buf->n) );
-            return qVariantFromValue( f );
-        }
-        break;
-
-    case lh_format_png:
-        if( buf ) return qVariantFromValue( QImage::fromData(QByteArray::fromRawData(buf->p,buf->n) ) );
-        break;
-
-    case lh_format_input:
-        if( buf )
-        {
-            lh_input in;
-            lh_qstring_to_lhinput( QString::fromUtf8(buf->p,buf->n), in );
-            return qVariantFromValue(in);
-        }
-        break;
-    }
-
-    qCritical() << "unhandled format or conversion" << lh_data_format_to_name(info.format);
-    return QVariant();
 }
 
 QString lh_qstring_from_qvariant( const QVariant& v )

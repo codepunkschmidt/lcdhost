@@ -1,7 +1,7 @@
 TARGET = LH_Lg320x240
 TEMPLATE = lib
 DEFINES += LG320x240_LIBRARY
-CONFIG += libusb
+CONFIG += lh_plugin libusb
 
 load(../PluginsConfig.prf)
 

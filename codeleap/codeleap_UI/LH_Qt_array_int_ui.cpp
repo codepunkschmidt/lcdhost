@@ -1,6 +1,6 @@
 #include "LH_Qt_array_int_ui.h"
 
-void LH_Qt_array_int_ui::init(lh_meta_type ui_type, int uiFlags, qint64 min, qint64 max )
+void LH_Qt_array_int_ui::init(lh_setup_type ui_type, int uiFlags, qint64 min, qint64 max )
 {
     QString uiIdent = QString("%1__ui__").arg(ident());
     if( ui_type == lh_type_integer )
@@ -10,7 +10,7 @@ void LH_Qt_array_int_ui::init(lh_meta_type ui_type, int uiFlags, qint64 min, qin
         else
             ui_ = new LH_Qt_int(parent(), uiIdent.toUtf8(), 0, uiFlags );
     }
-    else if( ui_type == lh_type_color )
+    else if( ui_type == lh_type_integer_color )
         ui_ = new LH_Qt_QColor(parent(), uiIdent.toUtf8(), QColor::fromRgba(0), uiFlags );
 
     Q_ASSERT( ui_ );

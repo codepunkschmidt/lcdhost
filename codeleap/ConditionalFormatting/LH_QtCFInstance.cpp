@@ -304,7 +304,7 @@ void LH_QtCFInstance::cf_source_changed()
     {
         setup_cf_source_mode_->setHidden( !setup_cf_enabled_->value() || cf_rule_editing_==None );
 
-        lh_meta_type source_type = (setup_cf_source_mode_->value()=="Value"? sources_[setup_cf_source_->value()]->type() : lh_type_string);
+        int source_type = (setup_cf_source_mode_->value()=="Value"? sources_[setup_cf_source_->value()]->type() : lh_type_string);
         bool v1vis = (!setup_cf_testValue1_->isHidden()) || (!setup_cf_testValue1_List_->isHidden());
         bool isList = source_type==lh_type_string_dropdownbox || source_type==lh_type_string_listbox;
         setup_cf_testValue1_->setHidden( (!isList? !v1vis : true));
@@ -324,7 +324,7 @@ void LH_QtCFInstance::cf_source_changed()
 void LH_QtCFInstance::cf_target_changed()
 {
     if( !targets_.contains(setup_cf_target_->value()) ) return;
-    lh_meta_type targetType = targets_[setup_cf_target_->value()]->type();
+    lh_setup_type targetType = targets_[setup_cf_target_->value()]->type();
 
     if(targetType==lh_type_string_listbox) targetType=lh_type_string_dropdownbox;
 
@@ -353,7 +353,7 @@ void LH_QtCFInstance::cf_target_changed()
 void LH_QtCFInstance::cf_condition_changed()
 {
     QString conditionText = setup_cf_test_->value();
-    lh_meta_type source_type = (setup_cf_source_mode_->value()=="Value"? sources_[setup_cf_source_->value()]->type() : lh_type_string);
+    lh_setup_type source_type = (setup_cf_source_mode_->value()=="Value"? sources_[setup_cf_source_->value()]->type() : lh_type_string);
     bool isList = source_type==lh_type_string_dropdownbox || source_type==lh_type_string_listbox;
     setup_cf_testValue1_->setHidden( (isList? true : !setup_cf_enabled_->value() || cf_rule_editing_==None));
     setup_cf_testValue1_List_->setHidden( (!isList? true : !setup_cf_enabled_->value() || cf_rule_editing_==None));

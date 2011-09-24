@@ -35,13 +35,12 @@
 #include <QtDebug>
 #include "LH_QtCPU.h"
 
-LH_QtCPU::LH_QtCPU( LH_QtInstance *parent ) : QObject( parent )
+LH_QtCPU::LH_QtCPU( LH_QtInstance *parent ) :
+    QObject( parent ),
+    link_coreloads_( parent, "Core loads", lh::val(QVariantList(),lh_link_sink), lh::link("/system/cpu/coreloads") ),
+    setup_smoothing_( parent, "Smoothing", lh::val(3), lh::min(1), lh::max(10), lh_meta_default|lh_ui_slider )
 {
-    link_coreloads_ = new LH_Qt_array_int( parent, "Core loads", 0, lh_meta_sink );
-    Q_ASSERT( link_coreloads_->size() == 0 );
-    link_coreloads_->setLink("/system/cpu/coreloads");
-    connect( link_coreloads_, SIGNAL(valueChanged()), this, SLOT(gotData()) );
-    setup_smoothing_ = new LH_Qt_QSlider( parent,"Smoothing",3,1,10);
+    connect( &link_coreloads_, SIGNAL(valueChanged()), this, SLOT(gotData()) );
     load_.clear();
     return;
 }
@@ -54,13 +53,13 @@ LH_QtCPU::~LH_QtCPU()
 
 void LH_QtCPU::gotData()
 {
-    while( load_.size() > setup_smoothing_->value() ) delete[] load_.takeFirst();
+    while( load_.size() > setup_smoothing_.value().toInt() ) delete[] load_.takeFirst();
     int *newloads = new int[count()];
     for( int i = 0; i<count(); i++ )
     {
-        newloads[i] = link_coreloads_->at(i);
-        Q_ASSERT( newloads[i] >= link_coreloads_->min() );
-        Q_ASSERT( newloads[i] <= link_coreloads_->max() );
+        newloads[i] = link_coreloads_.value().toList().at(i).toInt();
+        Q_ASSERT( newloads[i] >= link_coreloads_.minimum().toInt() );
+        Q_ASSERT( newloads[i] <= link_coreloads_.maximum().toInt() );
     }
     load_.append(newloads);
     parent()->requestRender();
@@ -74,8 +73,8 @@ int LH_QtCPU::coreload(int n)
     for( int i=0; i<load_.size(); ++i )
         retv += load_.at(i)[n];
     retv /= load_.size();
-    Q_ASSERT( retv >= link_coreloads_->min() );
-    Q_ASSERT( retv <= link_coreloads_->max() );
+    Q_ASSERT( retv >= link_coreloads_.minimum().toInt() );
+    Q_ASSERT( retv <= link_coreloads_.maximum().toInt() );
     return retv;
 }
 
@@ -88,8 +87,8 @@ int LH_QtCPU::averageload()
         for( int j=0; j<load_.size(); ++j )
             retv += load_.at(j)[i];
     retv /= (count() * load_.size());
-    Q_ASSERT( retv >= link_coreloads_->min() );
-    Q_ASSERT( retv <= link_coreloads_->max() );
+    Q_ASSERT( retv >= link_coreloads_.minimum().toInt() );
+    Q_ASSERT( retv <= link_coreloads_.maximum().toInt() );
     return retv;
 }
 

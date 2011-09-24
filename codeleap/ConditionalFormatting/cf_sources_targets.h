@@ -33,7 +33,7 @@ public:
     }
 
     LH_QtSetupItem* obj() { return obj_; }
-    lh_meta_type type() { return (obj_==NULL? lh_type_none : obj_->type()); }
+    lh_setup_type type() { return (obj_==NULL? lh_type_none : obj_->type()); }
     QString name() { return name_; }
 
     QString value(QString mode, int i = 0)

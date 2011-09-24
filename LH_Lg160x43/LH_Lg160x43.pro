@@ -1,7 +1,7 @@
 TARGET = LH_Lg160x43
 TEMPLATE = lib
 DEFINES += LG160X43_LIBRARY
-CONFIG += hidapi
+CONFIG += lh_plugin hidapi
 
 load(../PluginsConfig.prf)
 

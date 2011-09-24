@@ -1,7 +1,7 @@
 TARGET = LH_Dial
 TEMPLATE = lib
 DEFINES += LH_DIAL_LIBRARY
-CONFIG += codeleapui
+CONFIG += lh_plugin codeleapui
 
 load(../PluginsConfig.prf)
 include(../codeleap/codeleap.pri)

@@ -139,7 +139,7 @@ const char *LH_Dial::userInit()
                                   "<br/>The needle is assumed to be in the vertical position and will be rotated around the image's <i>center point</i> as required.</li>"
                                   "</ul></p>");
 
-    setup_needle_color_ = new LH_Qt_array_int_ui(this,"Needle Color",0,LH_FLAG_AUTORENDER, lh_type_color);
+    setup_needle_color_ = new LH_Qt_array_int_ui(this,"Needle Color",0,LH_FLAG_AUTORENDER, lh_type_integer_color);
     setup_needle_color_->setHelp( "<p>The colour used do draw \"Line\" needles.</p>");
 
     setup_needle_thickness_ = new LH_Qt_array_int_ui(this,"Needle Thickness",0,1,20,LH_FLAG_AUTORENDER);
@@ -188,7 +188,7 @@ void LH_Dial::initializeDefaults()
     changeFaceStyle();
     changeNeedleStyle();
     connect( setup_type_, SIGNAL(valueChanged()), this, SLOT(changeType()));
-    connect( setup_needle_style_->ui(), SIGNAL(valueChanged()), this, SLOT(changeNeedleStyle()));
+    connect( setup_needle_style_->type(), SIGNAL(valueChanged()), this, SLOT(changeNeedleStyle()));
 }
 
 void LH_Dial::addNeedle(QString name)

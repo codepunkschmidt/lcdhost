@@ -40,11 +40,9 @@
 class LH_Qt_bool : public LH_QtSetupItem
 {
 public:
-    LH_Qt_bool( LH_QtObject *parent, const char *ident, bool value, int flags = lh_meta_default )
-        : LH_QtSetupItem( parent, ident, lh_type_boolean, flags )
-    {
-        setValue(value);
-    }
+    LH_Qt_bool( LH_QtObject *parent, const char *ident, bool value, int metainfo = lh_meta_default|lh_ui_checkbox )
+        : LH_QtSetupItem( parent, ident, lh::val(value), metainfo )
+    { }
 
     bool value() const
     {

@@ -1,5 +1,6 @@
 /**
-  \file     LH_QVariant.h
+  \file     lh_qvariant.h
+  \brief    Extends the normal QVariant to be aware of LCDHost data types.
   \author   Johan Lindh <johan@linkdata.se>
   \legalese Copyright (c) 2009-2011, Johan Lindh
 
@@ -35,11 +36,6 @@
 #ifndef LH_QVARIANT_H
 #define LH_QVARIANT_H
 
-/**
-  Extends the normal QVariant to be aware of LCDHost
-  data types.
-  */
-
 #include <QVariant>
 #include <QMetaType>
 #include "lh_plugin.h"
@@ -52,18 +48,9 @@ class QColor;
 
 /**
   Returns the QVariant::Type used to store the
-  lh_format given.
+  lh_format_xxx embedded in the lh_property given.
   */
-QVariant::Type lh_qvarianttype( lh_data_format fmt );
-
-/**
-  Constructs a QVariant from lh_data_info and a data pointer.
-  */
-QVariant lh_qvariant_from_setup_data( const lh_data_info&, const void * );
-
-/**
-  */
-void lh_qvariant_to_setup_data( const QVariant&, const lh_data_info&, void * );
+QVariant::Type lh_qvarianttype( lh_meta_format fmt );
 
 /**
   Returns a string representation of a QVariant.

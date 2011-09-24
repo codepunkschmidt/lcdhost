@@ -41,71 +41,25 @@
 #include "lh_plugin.h"
 
 /**
-	lh_binaryfile_to_blob()
+        lh_buffer_to_headerfile()
 
-	Reads a file and converts it into a lh_blob structure.
+        Turns a lh_buffer structure into a C/C++ headerfile, suitable for inclusion.
 
-	\param filename
-		Name of the file to load into a blob.
-	\return
-		A pointer to a malloc()'d lh_blob. The caller must
-		free this when done with it.
-*/
-lh_blob *lh_binaryfile_to_blob( const char *filename )
-{
-    lh_blob *blob = NULL;
-    long filesize = 0;
-    FILE *f;
-
-    if( filename == NULL ) return NULL;
-
-    f = fopen( filename, "rb" );
-    if( f != NULL )
-    {
-        if( fseek( f, 0, SEEK_END ) == 0 ) filesize = ftell( f );
-        if( filesize > 0 )
-        {
-            fseek( f, 0, SEEK_SET );
-            blob = malloc( sizeof(lh_blob) + filesize );
-            if( blob )
-            {
-                blob->sign = 0xDEADBEEF;
-                blob->len = filesize;
-                if( fread( & blob->data, 1, filesize, f ) != (size_t) filesize )
-                {
-                    blob->sign = 0;
-                    blob->len = 0;
-                    free( blob );
-                    blob = NULL;
-                }
-            }
-        }
-        fclose( f );
-    }
-
-    return blob;
-}
-
-/**
-	lh_blob_to_headerfile()
-
-	Turns a lh_blob structure into a C/C++ headerfile, suitable for inclusion.
-
-	\param blob
-		The blob to convert.
+        \param buffer
+                The lh_buffer to convert.
 	\param filename
 		Name of the file to write to. Will be created if it doesn't exist,
 		truncated and overwritten if it does exist.
 	\param varname
-		Name of the lh_blob variable inside the created headerfile.
+                Name of the char array variable inside the created headerfile.
 
 */
-void lh_blob_to_headerfile( lh_blob *blob, const char *filename, const char *varname )
+void lh_buffer_to_headerfile( const lh_buffer *buffer, const char *filename, const char *varname )
 {
     unsigned n, m;
     FILE *f;
 
-    if( filename == NULL || blob == NULL ) return;
+    if( filename == NULL || buffer == NULL ) return;
 
     f = fopen( filename, "w" );
     if( f != NULL )
@@ -113,19 +67,16 @@ void lh_blob_to_headerfile( lh_blob *blob, const char *filename, const char *var
         fprintf( f,
                 "/* %s */\n"
                 "\n"
-                "struct _%s_s { const unsigned len; const unsigned sign; const unsigned char data[%u]; };\n"
-                "struct _%s_s const _%s_d = \n"
+                "const char %s[%d] = \n"
                 "{\n"
-                "    %u, 0x%X,\n"
-                "    {\n"
                 "        "
-                "", filename, varname, blob->len, varname, varname, blob->len, blob->sign
+                "", filename, varname, buffer->n
                 );
 
-        for( m=n=0; n<blob->len; n++ )
+        for( m=n=0; n<buffer->n; n++ )
         {
-            m += fprintf( f, "%u", blob->data[n] );
-            if( n<blob->len-1 ) m += fprintf( f, "," );
+            m += fprintf( f, "%u", buffer->p[n] );
+            if( n<buffer->n-1 ) m += fprintf( f, "," );
             if( m > 60 )
             {
                 fprintf( f, "\n        " );
@@ -136,16 +87,14 @@ void lh_blob_to_headerfile( lh_blob *blob, const char *filename, const char *var
         fprintf( f,
                  "\n    }\n"
                  "};\n"
-                 "const void *%s = &_%s_d;\n"
-                 "\n"
                  "/* eof */\n"
-                 "\n", varname, varname );
+                 "\n" );
         fclose( f );
     }
     return;
 }
 
-lh_setup_ui lh_name_to_setup_ui( const char *name )
+lh_userinterface lh_name_to_userinterface( const char *name )
 {
     if( name == 0 || !*name ) return lh_ui_none;
     if( !strcmp("button",name)) return lh_ui_button;
@@ -166,12 +115,12 @@ lh_setup_ui lh_name_to_setup_ui( const char *name )
     if( !strcmp("spinbox",name)) return lh_ui_spinbox;
     if( !strcmp("string",name)) return lh_ui_string;
     if( !strcmp("text",name)) return lh_ui_text;
-    return lh_setup_ui_unused;
+    return lh_ui_none;
 }
 
-const char *lh_setup_ui_to_name( const lh_setup_ui t )
+const char *lh_userinterface_to_name( const lh_userinterface ui )
 {
-    switch( t )
+    switch( ui )
     {
     case lh_ui_none: return "none";
     case lh_ui_checkbox: return "checkbox";
@@ -191,13 +140,13 @@ const char *lh_setup_ui_to_name( const lh_setup_ui t )
     case lh_ui_combobox: return "combobox";
     case lh_ui_input_value: return "input_value";
     case lh_ui_input_state: return "input_state";
-    case lh_setup_ui_unused:
+    case lh_ui_unused:
         break;
     }
     return "(invalid)";
 }
 
-lh_data_format lh_name_to_data_format( const char *name )
+lh_meta lh_name_to_data_format( const char *name )
 {
     if( name == 0 || !*name ) return lh_format_none;
     if( !strcmp("boolean",name)) return lh_format_boolean;
@@ -208,14 +157,15 @@ lh_data_format lh_name_to_data_format( const char *name )
     if( !strcmp("integer",name)) return lh_format_integer;
     if( !strcmp("none",name)) return lh_format_none;
     if( !strcmp("png",name)) return lh_format_png;
-    if( !strcmp("string",name)) return lh_format_string;
-    if( !strcmp("stringlist",name)) return lh_format_stringlist;
+    if( !strcmp("local8",name)) return lh_format_local8;
+    if( !strcmp("utf8",name)) return lh_format_utf8;
+    if( !strcmp("list",name)) return lh_format_list;
     return lh_format_unused;
 }
 
-const char *lh_data_format_to_name( const lh_data_format fmt )
+const char *lh_data_format_to_name( const lh_meta prop )
 {
-    switch( fmt )
+    switch( prop & lh_format_mask )
     {
     case lh_format_boolean:     return "boolean";
     case lh_format_color:       return "color";
@@ -225,8 +175,9 @@ const char *lh_data_format_to_name( const lh_data_format fmt )
     case lh_format_integer:     return "integer";
     case lh_format_none:        return "none";
     case lh_format_png:         return "png";
-    case lh_format_string:      return "string";
-    case lh_format_stringlist:  return "stringlist";
+    case lh_format_local8:      return "local8";
+    case lh_format_utf8:        return "utf8";
+    case lh_format_list:        return "list";
     case lh_format_unused:
         break;
     }

@@ -1,17 +1,14 @@
 #ifndef LH_QT_HTML_H
 #define LH_QT_HTML_H
 
-#include "LH_Qt_QString.h"
+#include "LH_QtSetupItem.h"
 
-class LH_Qt_html : public LH_Qt_QString
+class LH_Qt_html : public LH_QtSetupItem
 {
 public:
-    LH_Qt_html( LH_QtObject *parent, const char *htmltext, int flags = lh_meta_default ) :
-        LH_Qt_QString( parent, 0, QString(), flags, lh_type_string_htmllink )
-    {
-        setOther( htmltext );
-        return;
-    }
+    LH_Qt_html( LH_QtObject *parent, const char *htmltext, int metainfo = lh_meta_default|lh_ui_htmllink ) :
+        LH_QtSetupItem( parent, 0, lh::val(QString()), lh::list(htmltext), metainfo )
+    { }
 };
 
 #endif // LH_QT_HTML_H

@@ -42,12 +42,9 @@
 class LH_Qt_QFileInfo : public LH_QtSetupItem
 {
 public:
-    LH_Qt_QFileInfo( LH_QtObject *parent, const char *ident, QFileInfo value = QFileInfo(), int flags = lh_meta_default )
-        : LH_QtSetupItem( parent, ident, lh_type_string_filename, flags )
-    {
-        setValue( value.filePath() );
-        return;
-    }
+    LH_Qt_QFileInfo( LH_QtObject *parent, const char *ident, QFileInfo value = QFileInfo(), int flags = 0 )
+        : LH_QtSetupItem( parent, ident, lh::val(value.filePath()), flags|lh_meta_default|lh_ui_filename )
+    { }
 
     QFileInfo value() const
     {

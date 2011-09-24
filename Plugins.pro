@@ -43,6 +43,6 @@ isEmpty(LH_PLUGINS_LIST): LH_PLUGINS_LIST=$$files(LH_*)
 
 TARGET = Plugins
 TEMPLATE = subdirs
-CONFIG += ordered
+CONFIG += lh_plugin ordered
 SUBDIRS = linkdata
 SUBDIRS += $$LH_PLUGINS_LIST

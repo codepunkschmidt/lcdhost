@@ -1,7 +1,7 @@
 TARGET = LH_Graph
 TEMPLATE = lib
 DEFINES += LH_GRAPH_LIBRARY
-CONFIG += codeleapui
+CONFIG += lh_plugin codeleapui
 
 load(../PluginsConfig.prf)
 include(../codeleap/codeleap.pri)

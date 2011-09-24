@@ -36,7 +36,7 @@
 #define LH_QT_QSTRINGLIST_H
 
 #include <QStringList>
-#include "LH_Qt_QString.h"
+#include "LH_QtSetupItem.h"
 
 /*
   Supports the following setup types:
@@ -45,38 +45,48 @@
     lh_type_string_combobox
   */
 
-class LH_Qt_QStringList : public LH_Qt_QString
+class LH_Qt_QStringList : public LH_QtSetupItem
 {
 public:
-    LH_Qt_QStringList( LH_QtObject *parent, const char *ident, const QStringList& list, int flags = 0,
-                       lh_meta_type subtype = lh_type_string_combobox  )
-        : LH_Qt_QString( parent, ident, list.isEmpty()?QString():list.first(), flags, subtype )
-    {
-        setOther( list );
-    }
+    LH_Qt_QStringList( LH_QtObject *parent, const char *ident, const QStringList& list,
+                       int a18_flags, int ui )
+        : LH_QtSetupItem( parent, ident, lh::val(list.isEmpty()?QString():list.first()),
+                          lh::list(list), a18_flags|ui )
+    { }
+
+    LH_Qt_QStringList( LH_QtObject *parent, const char *ident, const QStringList& list,
+                       int metainfo = lh_meta_default|lh_ui_combobox  )
+        : LH_QtSetupItem( parent, ident, lh::val(list.isEmpty()?QString():list.first()),
+                          lh::list(list), metainfo )
+    { }
 
     // const because modifying will have no effect on the underlying data
     // change the code to modify a copy and then use setList(), or use appendToList() or clearList()
     const QStringList list() const
     {
-        return other().toStringList();
+        return LH_QtSetupItem::list().toStringList();
+    }
+
+    const QString value() const
+    {
+        return LH_QtSetupItem::value().toString();
     }
 
     void clearList()
     {
-        setOther(QStringList());
+        setList(QStringList());
     }
 
     void appendToList( const QString& s )
     {
         QStringList sl(list());
         sl.append(s);
-        setOther(sl);
+        setList(sl);
     }
 
     void setList( const QStringList& sl )
     {
-        setOther(sl);
+        LH_QtSetupItem::setList(sl);
     }
 
     int index() const
@@ -86,7 +96,7 @@ public:
 
     void setIndex( int idx )
     {
-        LH_Qt_QString::setValue( list().at(idx) );
+        setValue( list().at(idx) );
     }
 };
 

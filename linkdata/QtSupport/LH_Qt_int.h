@@ -40,18 +40,16 @@
 class LH_Qt_int : public LH_QtSetupItem
 {
 public:
-    LH_Qt_int( LH_QtObject *parent, const char *ident, long long value, long long min, long long max, int flags = 0, lh_meta_type subtype = lh_type_integer )
-        : LH_QtSetupItem( parent, ident, subtype, flags )
+    LH_Qt_int( LH_QtObject *parent, const char *ident, long long value, long long min, long long max, int flags = 0, lh_setup_type subtype = lh_type_integer ) :
+        LH_QtSetupItem( parent, ident, value, flags, subtype )
     {
-        setValue(value);
-        setMinimum( min );
-        setMaximum( max );
+        setMinimum(min);
+        setMaximum(max);
     }
 
-    LH_Qt_int( LH_QtObject *parent, const char *ident, long long value = 0, int flags = 0, lh_meta_type subtype = lh_type_integer )
-        : LH_QtSetupItem( parent, ident, subtype, flags )
+    LH_Qt_int( LH_QtObject *parent, const char *ident, long long value = 0, int flags = 0, lh_setup_type subtype = lh_type_integer )
+        : LH_QtSetupItem( parent, ident, value, flags, subtype )
     {
-        setValue(value);
     }
 
     int value() const { return LH_QtSetupItem::value().toInt(); }

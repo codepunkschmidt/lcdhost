@@ -38,50 +38,49 @@
 #include <QObject>
 
 #include "LH_QtObject.h"
+#include "lh_setup.h"
+#include "lh_plugin.h"
 
 /**
   Helper class to manage setup items. Subclass this, mapping the LCDHost setup types to Qt classes.
   */
-class LH_QtSetupItem : public QObject
+class LH_QtSetupItem : public lh_setup
 {
     Q_OBJECT
-    QByteArray name_array_;
-    QByteArray link_array_;
-    int order_;
-    QByteArray help_;
 
 protected:
-    lh_setup_item item_;
+    lh_setup_type api5type_;
+    int api5flags_;
 
 public:
     LH_QtSetupItem( LH_QtObject *parent, QString name, lh_setup_type type, int flags );
 
     LH_QtObject *parent() const { return static_cast<LH_QtObject *>(QObject::parent()); }
 
-    virtual void setup_resize( size_t ) {}
+    // virtual void setup_resize( size_t ) {}
+    // virtual void setup_input( int flags, int value );
+    // void refresh() { parent()->callback( lh_cb_setup_refresh, item() ); }
+
     virtual void setup_change();
-    virtual void setup_input( int flags, int value );
 
-    void refresh() { parent()->callback( lh_cb_setup_refresh, item() ); }
+    lh_setup_type type() const { return api5type_; }
+    int flags() const { return api5flags_; }
+    bool hasFlag( int f ) const { return api5flags_ & f; }
 
-    void setFlags( int f ) { if( item_.flags != f ) { item_.flags = f; refresh(); } }
-    int flags() const { return item_.flags; }
-    void setFlag( int f, bool state ); // set individual flag(s) on or off
-    bool hasFlag( int f ) const { return (item_.flags & f) ? true : false; }
+    void setType( lh_setup_type t );
+    void setFlags( int f );
+    void setFlag( int f, bool state ) { setFlags( (flags()&f)|(state?f:0) ); }
 
-    void setName(QString s);
+    void setName(const QString & s) { setObjectName(s); }
     QString name() const { return objectName(); }
-    void setHelp(QString s);
-    QString help();
     void setLink(QString s);
     QString link();
 
-    lh_setup_item *item() { return &item_; }
+    // lh_setup_item *item() { return &item_; }
 
-    lh_setup_type type() { return item_.type; }
 
-    int order() const { return order_; }
-    void setOrder( int n );
+    // int order() const { return order_; }
+    // void setOrder( int n );
 
     bool isVisible() const { return !isHidden(); }
     bool isHidden() const { return flags()&LH_FLAG_HIDDEN; }
@@ -101,11 +100,6 @@ public slots:
     void setReadonly( bool b ) { setFlag( LH_FLAG_READONLY, b ); }
     void setWriteable( bool b ) { setFlag( LH_FLAG_READONLY, !b ); }
     void setSaving( bool b ) { setFlag( LH_FLAG_NOSAVE, !b ); }
-
-    virtual void setValue( bool ) { emit set(); }
-    virtual void setValue( int ) { emit set(); }
-    virtual void setValue( float ) { emit set(); }
-    virtual void setValue( QString ) { emit set(); }
 };
 
 #endif // LH_QTSETUPITEM_H

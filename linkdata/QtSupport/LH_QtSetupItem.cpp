@@ -34,92 +34,96 @@
 
 #include "LH_QtSetupItem.h"
 
-LH_QtSetupItem::LH_QtSetupItem( LH_QtObject *parent, QString name, lh_setup_type type, int flags ) : QObject( parent )
+LH_QtSetupItem::LH_QtSetupItem( LH_QtObject *parent, QString name, lh_setup_type type, int flags ) :
+    lh_setup( *parent, name, lh_ui_none|lh_meta_default ),
+    api5type_( lh_type_none ),
+    api5flags_( 0 )
 {
-    Q_ASSERT( parent != NULL );
-    memset( &item_, 0, sizeof(item_) );
-    setName(name);
-    order_ = 0;
-    if( flags & LH_FLAG_FIRST ) order_ = -1;
-    if( flags & LH_FLAG_LAST ) order_ = 1;
-    item_.type = type;
-    item_.flags = flags;
+    setType( type );
+    setFlags( flags );
 }
 
-void LH_QtSetupItem::setName(QString s)
+void LH_QtSetupItem::setType( lh_setup_type t )
 {
-    setObjectName(s);
-    name_array_ = s.toUtf8();
-    item_.name = name_array_.constData();
-    return;
-}
+    int newmeta = meta() & lh_ui_flag_mask;
 
-void LH_QtSetupItem::setup_change()
-{
-    emit changed();
-    if( item_.flags & LH_FLAG_AUTORENDER ) parent()->requestRender();
-    return;
-}
-
-void LH_QtSetupItem::setup_input( int flags, int value )
-{
-    emit input( QString(), flags, value );
-    return;
-}
-
-void LH_QtSetupItem::setFlag( int f, bool state )
-{
-    if( state )
+    switch( t )
     {
-        if( (item_.flags & f) == f ) return;
-        item_.flags |= f;
+    case lh_type_none:              newmeta |= lh_ui_none; break;
+    case lh_type_integer:           newmeta |= lh_ui_spinbox; break;
+    case lh_type_integer_boolean:   newmeta |= lh_ui_checkbox; break;
+    case lh_type_integer_color:     newmeta |= lh_ui_color; break;
+    case lh_type_integer_slider:    newmeta |= lh_ui_slider; break;
+    case lh_type_integer_progress:  newmeta |= lh_ui_progress; break;
+    case lh_type_integer_list:      newmeta |= lh_ui_dropdownbox; break;
+    case lh_type_fraction:          newmeta |= lh_ui_spinbox; break;
+    case lh_type_string:            newmeta |= lh_ui_string; break;
+    case lh_type_string_script:     newmeta |= lh_ui_text; break;
+    case lh_type_string_filename:   newmeta |= lh_ui_filename; break;
+    case lh_type_string_font:       newmeta |= lh_ui_font; break;
+    case lh_type_string_inputstate: newmeta |= lh_ui_input_state; break;
+    case lh_type_string_inputvalue: newmeta |= lh_ui_input_value; break;
+    case lh_type_image_png:         newmeta |= lh_ui_image; break;
+    case lh_type_image_qimage:      newmeta |= lh_ui_image; break;
+    case lh_type_integer_listbox:   newmeta |= lh_ui_listbox; break;
+    case lh_type_string_button:     newmeta |= lh_ui_button; break;
+    case lh_type_string_html:       newmeta |= lh_ui_htmllink; break;
+    case lh_type_last:
+    default:
+        Q_ASSERT(0);
+        newmeta |= lh_ui_none;
+        break;
     }
-    else
-    {
-        if( !(item_.flags & f) ) return;
-        item_.flags &= ~f;
-    }
-    parent()->callback(lh_cb_setup_refresh, item() );
-    return;
+
+    setMeta( newmeta );
 }
 
-
-void LH_QtSetupItem::setOrder( int n )
+void LH_QtSetupItem::setFlags( int f )
 {
-    order_ = n;
+    int newmeta = ui() | lh_meta_default;
+
+    if( f & LH_FLAG_READONLY    ) ;
+    if( f & LH_FLAG_HIDDEN      ) ;
+    if( f & LH_FLAG_FOCUS       ) ;
+    if( f & LH_FLAG_AUTORENDER  ) ;
+    if( f & LH_FLAG_FIRST       ) ;
+    if( f & LH_FLAG_LAST        ) ;
+    if( f & LH_FLAG_NOSAVE      ) ;
+    if( f & LH_FLAG_BLANKTITLE  ) ;
+    if( f & LH_FLAG_NOSOURCE    ) ;
+    if( f & LH_FLAG_NOSINK      ) ;
+    if( f & LH_FLAG_HIDETITLE   ) ;
+    if( f & LH_FLAG_HIDEVALUE   ) ;
+
+    setMeta( newmeta );
 }
 
+// Using the '=' and '@' prefixes
 void LH_QtSetupItem::setLink(QString s)
 {
-    if( s.isEmpty() )
+    setPush();
+    setPull();
+    if( s.startsWith('=') )
     {
-        link_array_.clear();
-        item_.link = 0;
+        s.remove(0,1);
+        setPull(s);
     }
-    else
+    else if( s.startsWith('@') )
     {
-        link_array_ = s.toUtf8();
-        item_.link = link_array_.constData();
+        s.remove(0,1);
+        setPush(s);
     }
-    parent()->callback( lh_cb_setup_refresh, item() );
     return;
 }
 
 QString LH_QtSetupItem::link()
 {
-    if( item_.link ) return QString::fromUtf8( item_.link );
+    if( !push().isEmpty() ) return QString('@').append(push());
+    if( !pull().isEmpty() ) return QString('=').append(pull());
     return QString();
 }
 
-void LH_QtSetupItem::setHelp(QString s)
+void LH_QtSetupItem::setup_change()
 {
-    if( s.isEmpty() ) help_.clear();
-    else help_ = s.toUtf8();
-    item_.help = help_.constData();
-    return;
-}
-
-QString LH_QtSetupItem::help()
-{
-    return QString::fromUtf8(help_);
+    emit changed();
 }

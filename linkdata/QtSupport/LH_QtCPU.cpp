@@ -33,87 +33,53 @@
   */
 
 #include "LH_QtCPU.h"
-#include "lh_plugin.h"
 
-LH_QtCPU::LH_QtCPU( LH_QtInstance *parent )
+LH_QtCPU::LH_QtCPU( LH_QtInstance *parent ) :
+    QObject( parent ),
+    setup_smoothing_( *parent, "Smoothing", lh_ui_slider, 3,1,10 ),
+    sink_coreload_( *parent, "Coreloads", "/system/cpu/coreload" )
 {
-    parent_ = parent;
-    setup_smoothing_ = new LH_Qt_QSlider(parent,"Smoothing",3,1,10);
-    load_.clear();
+    connect( &sink_coreload_, SIGNAL(valueChanged(QVariant)), this, SLOT(coreloadChanged(QVariant)) );
     return;
 }
 
 LH_QtCPU::~LH_QtCPU()
 {
-    while( !load_.isEmpty() )
-        delete[] load_.dequeue();
+    load_.clear();
     return;
 }
 
 int LH_QtCPU::count()
 {
-    return state()->cpu_count;
+    return sink_coreload_.value().toList().size();
 }
 
-int LH_QtCPU::notify(int n, void *p)
+void LH_QtCPU::coreloadChanged( const QVariant & v )
 {
-    Q_UNUSED(p);
-
-    if( n & LH_NOTE_CPU )
+    if( v.type() == QVariant::List )
     {
-        lh_cpudata *data;
-
-        while( load_.size() >= samples() )
-            delete[] load_.dequeue();
-
-        data = new lh_cpudata[ state()->cpu_count ];
-        if( data )
-        {
-            memcpy( data, state()->cpu_cores, sizeof(lh_cpudata) * state()->cpu_count );
-            while( load_.size() >= samples() )
-            {
-                lh_cpudata *olddata = load_.dequeue();
-                Q_ASSERT( olddata );
-                if( olddata ) delete[] olddata;
-            }
-            load_.enqueue( data );
-            parent_->requestRender();
-        }
+        load_.enqueue( v.toList() );
+        while( load_.size() >= samples() ) load_.dequeue();
+        parent()->requestRender();
     }
-    return LH_NOTE_CPU;
 }
 
-int LH_QtCPU::load( lh_cpudata *from, lh_cpudata *to )
+int LH_QtCPU::coreload( int core )
 {
-    int retv;
-    if( to->total <= from->total ) return 0;
-    if( to->system < from->system ) return 0;
-    if( to->user < from->user ) return 0;
-    Q_ASSERT( from->total < to->total );
-    retv = (((from->system - to->system)+(from->user - to->user)) * 10000) / (from->total - to->total);
-    if( retv < 0 ) retv = 0;
-    if( retv > 10000 ) retv = 10000;
-    return retv;
-}
-
-int LH_QtCPU::coreload(int n)
-{
-    if( n<0 || n>=count() ) return 0;
-    if( count() < 1 || load_.size() < 2 ) return 0;
-    return load( & load_.first()[n], & load_.last()[n] );
+    const QVariantList & from( load_.first() );
+    const QVariantList & to( load_.last() );
+    if( core < 0 || core >= from.size() || core >= to.size() ) return 0;
+    return ( from.at(core).toInt() + to.at(core).toInt() ) / 2;
 }
 
 int LH_QtCPU::averageload()
 {
+    const QVariantList & from( load_.first() );
+    const QVariantList & to( load_.last() );
     int retv = 0;
-    if( count() < 1 || load_.size() < 2 ) return 0;
-    for( int i = 0; i<count(); i++ )
-    {
-        retv += load( & load_.first()[i], & load_.last()[i] );
-    }
-    retv /= count();
-    Q_ASSERT( retv >= 0 );
-    Q_ASSERT( retv <= 10000 );
+    for( int core = 0; core < from.size(); ++ core )
+        retv += ( from.at(core).toInt() + to.at(core).toInt() ) / 2;
+    retv /= from.size();
     return retv;
 }
 

@@ -114,6 +114,7 @@ static QVariant decode_list( QString::const_iterator& it, QString::const_iterato
     return retv;
 }
 
+#if 0
 QVariant::Type lh_qvarianttype( lh_meta_format fmt )
 {
     switch( fmt )
@@ -135,6 +136,7 @@ QVariant::Type lh_qvarianttype( lh_meta_format fmt )
     }
     return QVariant::Invalid;
 }
+#endif
 
 void lh_qstring_to_qcolor( const QString& s, QColor& c )
 {

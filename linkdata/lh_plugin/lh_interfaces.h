@@ -2,7 +2,7 @@
 #define LH_INTERFACES_H
 
 #include <QtPlugin>
-#include "lh_plugin.h"
+#include "lh_global.h"
 
 class QString;
 class QImage;
@@ -19,7 +19,7 @@ class lh_setup_interface
 {
 public:
     virtual ~lh_setup_interface() {}
-    virtual lh_userinterface lh_setup_ui() = 0;
+    virtual lh_ui_type lh_setup_ui() = 0;
 };
 
 class lh_device_interface

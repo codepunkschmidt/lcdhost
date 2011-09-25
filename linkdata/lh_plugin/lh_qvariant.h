@@ -38,7 +38,7 @@
 
 #include <QVariant>
 #include <QMetaType>
-#include "lh_plugin.h"
+#include "lh_global.h"
 
 Q_DECLARE_METATYPE(lh_input)
 
@@ -50,7 +50,7 @@ class QColor;
   Returns the QVariant::Type used to store the
   lh_format_xxx embedded in the lh_property given.
   */
-QVariant::Type lh_qvarianttype( lh_meta_format fmt );
+// QVariant::Type lh_qvarianttype( lh_meta_format fmt );
 
 /**
   Returns a string representation of a QVariant.

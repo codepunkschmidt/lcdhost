@@ -44,22 +44,17 @@ public:
     LH_Qt_QColor( LH_QtObject *parent, QString name, QColor value, int flags = 0 )
         : LH_QtSetupItem( parent, name, lh_type_integer_color, flags )
     {
-        item_.data.i = value.rgba();
+        LH_QtSetupItem::setValue( value );
     }
 
     QColor value() const
     {
-        return QColor::fromRgba(item_.data.i);
+        return qVariantValue<QColor>( LH_QtSetupItem::value() );
     }
 
-    void setValue(QColor c)
+    void setValue( const QColor & c )
     {
-        if( item_.data.i != (int) c.rgba() )
-        {
-            item_.data.i = c.rgba();
-            refresh();
-            emit set();
-        }
+        LH_QtSetupItem::setValue( c );
     }
 };
 

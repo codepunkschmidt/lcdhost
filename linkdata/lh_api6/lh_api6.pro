@@ -2,7 +2,6 @@
 
 !lh_plugin {
     LH_PLUGIN_SOURCES += \
-        $$PWD/lh_plugin.c \
         $$PWD/lh_qvariant.cpp \
         $$PWD/lh_object.cpp \
         $$PWD/lh_linkable.cpp \
@@ -12,7 +11,6 @@
 
     LH_PLUGIN_HEADERS += \
         $$PWD/lh_global.h \
-        $$PWD/lh_plugin.h \
         $$PWD/lh_interfaces.h \
         $$PWD/lh_qvariant.h \
         $$PWD/lh_object.h \

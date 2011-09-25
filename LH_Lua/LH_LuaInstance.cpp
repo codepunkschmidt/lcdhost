@@ -112,7 +112,7 @@ static void lh_self_item_data_setvalue(lua_State *L, LH_LuaSetupItem* item, int 
         {
             const char *str = lua_tostring(L,-1);
             int len = strlen(str);
-            int flags = lh_meta_default;
+            int flags = lh_ui_default;
             for( int i=0; i<len; i++ )
             {
                 switch( str[i] )

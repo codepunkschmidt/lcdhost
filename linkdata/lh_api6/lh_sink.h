@@ -3,11 +3,14 @@
 
 #include "lh_linkable.h"
 
+namespace lh_api6
+{
+
 /**
-  lh_sink is a convenience class for creating
+  sink is a convenience class for creating
   a data sink that need no UI or to be saved.
   */
-class lh_sink : public lh_linkable
+class sink : public linkable
 {
     Q_OBJECT
 
@@ -17,16 +20,21 @@ class lh_sink : public lh_linkable
     Q_PROPERTY( QVariant maximum READ maximum WRITE setMaximum STORED false )
 
 public:
-    explicit lh_sink( lh_object & parent,
-             const QString & ident,
-             const QString & path,
-             const QVariant & val = QVariant(),
-             const QVariant & min = QVariant(),
-             const QVariant & max = QVariant()
+    explicit sink(
+            object & parent,
+            const QString & ident,
+            const QString & path,
+            const QVariant & val = QVariant(),
+            const QVariant & min = QVariant(),
+            const QVariant & max = QVariant()
             ) :
-        lh_linkable( parent, ident, path, false, val, min, max )
+        linkable( parent, ident, path, false, val, min, max )
     {
     }
 };
+
+} // namespace lh_api6
+
+typedef lh_api6::sink lh_sink;
 
 #endif // LH_SINK_H

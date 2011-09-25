@@ -4,10 +4,13 @@
 #include <QStringList>
 #include "lh_linkable.h"
 
+namespace lh_api6
+{
+
 /**
-  Provides a linkable, saved lh_setup item with optional UI.
+  Provides a linkable, saved setup item with optional UI.
   */
-class lh_setup : public lh_linkable
+class setup : public linkable
 {
     Q_OBJECT
 
@@ -30,14 +33,15 @@ class lh_setup : public lh_linkable
     QStringList list_;
 
 public:
-    explicit lh_setup( lh_object & parent,
-                       const QString & ident,
-                       const int meta,
-                       const QVariant & val = QVariant(),
-                       const QVariant & min = QVariant(),
-                       const QVariant & max = QVariant()
+    explicit setup(
+            object & parent,
+            const QString & ident,
+            const int meta,
+            const QVariant & val = QVariant(),
+            const QVariant & min = QVariant(),
+            const QVariant & max = QVariant()
             ) :
-        lh_linkable( parent, ident, QString(), false, val, min, max ),
+        linkable( parent, ident, QString(), false, val, min, max ),
         meta_( meta ),
         order_( 0 )
     {
@@ -71,5 +75,9 @@ public slots:
     void setHelp( const QString & help );
     void setList( const QStringList & sl );
 };
+
+} // namespace lh_api6
+
+typedef lh_api6::setup lh_setup;
 
 #endif // LH_SETUP_H

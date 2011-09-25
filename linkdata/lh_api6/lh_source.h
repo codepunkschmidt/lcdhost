@@ -3,11 +3,15 @@
 
 #include "lh_linkable.h"
 
+
+namespace lh_api6
+{
+
 /**
-  lh_source is a convenience class for creating
+  source is a convenience class for creating
   a data source that need no UI or to be saved.
   */
-class lh_source : public lh_linkable
+class source : public linkable
 {
     Q_OBJECT
 
@@ -17,20 +21,21 @@ class lh_source : public lh_linkable
     Q_PROPERTY( QVariant maximum READ maximum WRITE setMaximum STORED false )
 
 public:
-    explicit lh_source( lh_object & parent,
-               const QString & ident,
-               const QString & path,
-               const QVariant & val = QVariant(),
-               const QVariant & min = QVariant(),
-               const QVariant & max = QVariant() ) :
-        lh_linkable( parent, ident, path, true, val, min, max )
+    explicit source(
+            object & parent,
+            const QString & ident,
+            const QString & path,
+            const QVariant & val = QVariant(),
+            const QVariant & min = QVariant(),
+            const QVariant & max = QVariant()
+            ) :
+        linkable( parent, ident, path, true, val, min, max )
     {
     }
-
-signals:
-
-public slots:
-
 };
+
+} // namespace lh_api6
+
+typedef lh_api6::source lh_source;
 
 #endif // LH_SOURCE_H

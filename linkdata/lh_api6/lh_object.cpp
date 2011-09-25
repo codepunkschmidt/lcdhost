@@ -33,21 +33,11 @@
   POSSIBILITY OF SUCH DAMAGE.
   */
 
-#include <QMetaProperty>
 #include "lh_object.h"
 
-QString lh_object::lh_object_init( const void *cb_id, lh_callback_t cb_fn )
-{
-    cb_id_ = cb_id;
-    cb_fn_ = cb_fn;
-    return QString();
-}
+using namespace lh_api6;
 
-void lh_object::lh_object_event( lh_eventcode code, void *param )
-{
-}
-
-QString lh_object::ident( const QString& name )
+QString object::ident( const QString& name )
 {
     QString s = name;
     s.truncate(LH_MAX_IDENT-1);

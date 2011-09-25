@@ -1,7 +1,8 @@
 # lh_plugin.pro
 
-!lh_plugin {
-    LH_PLUGIN_SOURCES += \
+lh_api6 {
+    LH_API6_SOURCES += \
+        $$PWD/lh_global.c \
         $$PWD/lh_qvariant.cpp \
         $$PWD/lh_object.cpp \
         $$PWD/lh_linkable.cpp \
@@ -9,7 +10,7 @@
         $$PWD/lh_sink.cpp \
         $$PWD/lh_setup.cpp
 
-    LH_PLUGIN_HEADERS += \
+    LH_API6_HEADERS += \
         $$PWD/lh_global.h \
         $$PWD/lh_interfaces.h \
         $$PWD/lh_qvariant.h \
@@ -20,8 +21,8 @@
         $$PWD/lh_setup.h
 
     INCLUDEPATH += $$PWD
-    SOURCES += $$LH_PLUGIN_SOURCES
-    HEADERS += $$LH_PLUGIN_HEADERS
+    SOURCES += $$LH_API6_SOURCES
+    HEADERS += $$LH_API6_HEADERS
 }
 
 not_lh_plugin {

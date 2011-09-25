@@ -130,7 +130,7 @@ void LH_LgBacklight::scan()
     else
         qDebug() << "LH_LgBacklight: hid_enumerate() failed";
 
-    QString current = devselect_->value();
+    QString current = devselect_->valueText();
     QStringList sl;
     foreach( LgBacklightDevice *d, devs_ )
     {
@@ -160,7 +160,7 @@ void LH_LgBacklight::changeDev()
 {
     foreach( LgBacklightDevice *d, devs_ )
     {
-        if( d->name() == devselect_->value() )
+        if( d->name() == devselect_->valueText() )
         {
             devcolor_->setValue( d->color() );
             break;
@@ -172,7 +172,7 @@ void LH_LgBacklight::changeColor()
 {
     foreach( LgBacklightDevice *d, devs_ )
     {
-        if( d->name() == devselect_->value() )
+        if( d->name() == devselect_->valueText() )
         {
             d->setColor( devcolor_->value() );
             break;
@@ -190,5 +190,5 @@ void LH_LgBacklight::setAllColor()
 
 void LH_LgBacklight::wantRescan()
 {
-    requestReload( "rescan for devices" );
+    lh_request_reload( "rescan for devices" );
 }

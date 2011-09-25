@@ -1,5 +1,5 @@
 /**
-  \file     lh_object.h
+  \file     object.h
   \brief    Implements the LCDHost Qt C++ API.
   \author   Johan Lindh <johan@linkdata.se>
   \legalese Copyright (c) 2009-2011, Johan Lindh
@@ -40,14 +40,17 @@
 #include "lh_interfaces.h"
 #include "lh_qvariant.h"
 
-class lh_object : public QObject
+namespace lh_api6
+{
+
+class object : public QObject, public object_interface
 {
     Q_OBJECT
 
     Q_PROPERTY( QString error READ error )
+    Q_INTERFACES( lh_api6::object_interface )
 
-    const void *cb_id_;
-    lh_callback_t cb_fn_;
+    const lcdhost_interface * lh_if_;
     QString error_;
 
 public:
@@ -59,13 +62,13 @@ public:
       explicitly forbidden to perform costly operations in
       the constructor, it's good practice to do it in \c init().
       */
-    lh_object( const QString & ident = QString(), lh_object * parent = 0 ) :
+    object( const QString & ident = QString(), object * parent = 0 ) :
         QObject( parent ),
-        cb_id_( 0 ),
-        cb_fn_( 0 )
+        lh_if_( 0 )
     {
         setObjectName( ident );
-        if( parent ) parent->callback( lh_cb_new, this );
+        if( parent && parent->lh_if_ )
+            parent->lh_if_->lh_new( this, parent );
         return;
     }
 
@@ -74,11 +77,11 @@ public:
       clean up in an orderly fashion regardless of whether
       \c init() has been called or not.
       */
-    virtual ~lh_object()
+    virtual ~object()
     {
-        callback( lh_cb_delete, this );
-        cb_id_ = 0;
-        cb_fn_ = 0;
+        if( parent() && parent()->lh_if_ )
+            parent()->lh_if_->lh_delete( this );
+        lh_if_ = 0;
         return;
     }
 
@@ -87,16 +90,16 @@ public:
       */
     void setObjectName( const QString & name )
     {
-        QObject::setObjectName( lh_object::ident( name ) );
+        QObject::setObjectName( object::ident( name ) );
         return;
     }
 
     /**
       Override to return lh::object*
       */
-    lh_object *parent() const
+    object *parent() const
     {
-        return static_cast<lh_object*>( QObject::parent() );
+        return static_cast<object*>( QObject::parent() );
     }
 
     /**
@@ -121,23 +124,36 @@ public:
         error_ = err;
     }
 
-    int callback( lh_callbackcode code, void *param = 0 ) const
+    // object_interface
+
+    bool lh_init( const lcdhost_interface *lh_if )
     {
-        return ( cb_fn_ && cb_id_ ) ? cb_fn_( cb_id_, code, param ) : 0;
+        lh_if_ = lh_if;
+        return init();
     }
 
-    // lh_object_interface
-    QString lh_object_init( const void *cb_id, lh_callback_t cb_fn );
-    void lh_object_event( lh_eventcode code, void *param );
+    QString lh_error() const
+    {
+        return error_;
+    }
+
+    void lh_event_initialized()
+    {
+        return;
+    }
 
     /**
       Alters an object name so that it conforms
-      to the rules set for lh_object.ident.
+      to the rules set for object.ident.
       */
     static QString ident( const QString& name );
 
 signals:
     void titleChanged( const QString & title );
 };
+
+} // namespace lh_api6
+
+typedef lh_api6::object lh_object;
 
 #endif // LH_OBJECT_H

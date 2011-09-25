@@ -34,9 +34,9 @@ lh_api6 {
 
 # API 5
 lh_plugin {
-    INCLUDEPATH += $$PWD/api5
-    HEADERS += $$PWD/api5/lh_plugin.h
-    SOURCES += $$PWD/api5/lh_plugin.c
+    INCLUDEPATH += $$PWD/lh_api5
+    HEADERS += $$PWD/lh_api5/lh_plugin.h
+    SOURCES += $$PWD/lh_api5/lh_plugin.c
     contains(QT,core) {
         CONFIG += lh_qtplugin
     }
@@ -44,7 +44,7 @@ lh_plugin {
 
 # API 5
 lh_qtplugin {
-    LH_QT_SUPPORT_DIR = $$PWD/api5
+    LH_QT_SUPPORT_DIR = $$PWD/lh_api5
 
     LH_QT_SUPPORT_HEADERS = \
         $$LH_QT_SUPPORT_DIR/LH_Qt_bool.h \

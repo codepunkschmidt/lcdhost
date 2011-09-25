@@ -27,19 +27,24 @@ CHANGESET_REVISION = $$system($$quote(hg log -l 1 --template {node}/{rev} $$_PRO
     DEFINES += REVISION=$$REVISION
 }
 
+# API 6
+lh_api6 {
+    INCLUDEPATH += $$PWD/api6
+}
+
+# API 5
 lh_plugin {
+    INCLUDEPATH += $$PWD/api5
+    HEADERS += $$PWD/api5/lh_plugin.h
+    SOURCES += $$PWD/api5/lh_plugin.c
     contains(QT,core) {
-        include($$PWD/lh_plugin/lh_plugin.pro)
         CONFIG += lh_qtplugin
-    } else {
-        INCLUDEPATH += $$PWD/lh_plugin
-        HEADERS += $$PWD/lh_plugin/lh_plugin.h
-        SOURCES += $$PWD/lh_plugin/lh_plugin.c
     }
 }
 
+# API 5
 lh_qtplugin {
-    LH_QT_SUPPORT_DIR = $$PWD/QtSupport
+    LH_QT_SUPPORT_DIR = $$PWD/api5
 
     LH_QT_SUPPORT_HEADERS = \
         $$LH_QT_SUPPORT_DIR/LH_Qt_bool.h \
@@ -73,7 +78,6 @@ lh_qtplugin {
         $$LH_QT_SUPPORT_DIR/LH_QtPlugin.cpp \
         $$LH_QT_SUPPORT_DIR/LH_QtSetupItem.cpp
 
-    INCLUDEPATH += $$LH_QT_SUPPORT_DIR
     HEADERS += $$LH_QT_SUPPORT_HEADERS
     SOURCES += $$LH_QT_SUPPORT_SOURCES
 }

@@ -35,7 +35,7 @@
 #include "LH_QtSetupItem.h"
 
 LH_QtSetupItem::LH_QtSetupItem( LH_QtObject *parent, QString name, lh_setup_type type, int flags ) :
-    lh_setup( *parent, name, lh_ui_none|lh_meta_default ),
+    lh_setup( *parent, name, lh_ui_none|lh_ui_default ),
     api5type_( lh_type_none ),
     api5flags_( 0 )
 {
@@ -80,7 +80,7 @@ void LH_QtSetupItem::setType( lh_setup_type t )
 
 void LH_QtSetupItem::setFlags( int f )
 {
-    int newmeta = ui() | lh_meta_default;
+    int newmeta = ui() | lh_ui_default;
 
     if( f & LH_FLAG_READONLY    ) ;
     if( f & LH_FLAG_HIDDEN      ) ;

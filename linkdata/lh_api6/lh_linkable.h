@@ -3,14 +3,17 @@
 
 #include "lh_object.h"
 
+namespace lh_api6
+{
+
 /**
-  lh_linkable provides the basic data linking
+  linkable provides the basic data linking
   functionality, and storage for the value, minimum and
   maximum properties. Those three are the ones transferred
   when data linking. Note that this object doesn't save
   itself between sessions, nor does it provide an UI.
   */
-class lh_linkable : public lh_object
+class linkable : public object
 {
     Q_OBJECT
 
@@ -21,15 +24,15 @@ class lh_linkable : public lh_object
     QVariant maximum_;
 
 public:
-    lh_linkable( lh_object & parent,
-                 const QString & ident,
-                 const QString & path = QString(),
-                 bool is_source = false,
-                 const QVariant & val = QVariant(),
-                 const QVariant & min = QVariant(),
-                 const QVariant & max = QVariant()
-                 ) :
-        lh_object( ident, & parent ),
+    linkable( object & parent,
+              const QString & ident,
+              const QString & path = QString(),
+              bool is_source = false,
+              const QVariant & val = QVariant(),
+              const QVariant & min = QVariant(),
+              const QVariant & max = QVariant()
+              ) :
+        object( ident, & parent ),
         push_( is_source ? path : QString() ),
         pull_( is_source ? QString() : path ),
         value_( val ),
@@ -60,5 +63,9 @@ public slots:
     void setMinimum( const QVariant & v );
     void setMaximum( const QVariant & v );
 };
+
+} // namespace lh_api6
+
+typedef lh_api6::linkable lh_linkable;
 
 #endif // LH_LINKABLE_H

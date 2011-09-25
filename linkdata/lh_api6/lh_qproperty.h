@@ -5,22 +5,22 @@
 
 class QObject;
 
-void lh_set_qproperty( const lh_meta meta, const void *data, QObject& );
-lh_meta lh_meta_from_qproperty( const QObject&, const lh_meta_role role );
-lh_meta lh_meta_from_qproperty( const QObject&, const char *name );
+void lh_set_qproperty( const lh_ui meta, const void *data, QObject& );
+lh_ui lh_meta_from_qproperty( const QObject&, const lh_meta_role role );
+lh_ui lh_meta_from_qproperty( const QObject&, const char *name );
 
 /**
   Constructs a lh_property from a QVariant. Obeys the meta
   format if given. The caller needs to free the lh_property
   with lh_property_free() once done with it.
   */
-lh_property *lh_property_from_qvariant( const QVariant&, lh_meta meta = lh_format_none );
+lh_property *lh_property_from_qvariant( const QVariant&, lh_ui meta = lh_format_none );
 
 /**
   These are syntactic sugar to allow setting properties in constructors
   and passing properties as parameters in general.
   */
-namespace lh
+namespace lh_api6
 {
     class property : public QVariant
     {
@@ -28,7 +28,7 @@ namespace lh
         const int meta_;
 
     public:
-        inline property( const QVariant& value, const int meta = lh_meta_default ) :
+        inline property( const QVariant& value, const int meta = lh_ui_default ) :
             QVariant( value ), meta_(meta)
         { }
         property( const QObject& obj, const char *name );
@@ -39,7 +39,7 @@ namespace lh
     class val : public property
     {
     public:
-        inline val( const QVariant& value, const int meta = lh_meta_default ) :
+        inline val( const QVariant& value, const int meta = lh_ui_default ) :
             property( value, lh_role_value|meta )
         { }
     };

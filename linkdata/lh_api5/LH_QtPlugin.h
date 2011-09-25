@@ -36,6 +36,7 @@
 #define LH_QTPLUGIN_H
 
 #include <QtGlobal>
+#include <QtPlugin>
 #include <QObject>
 
 #include "LH_QtObject.h"
@@ -58,18 +59,15 @@ class LH_QtPlugin : public LH_QtObject
 public:
 };
 
+#define LH_SIGNATURE()
+
 /**
   This macro creates the required exported functions
   for your LH_QtPlugin descendant.
   */
 #define LH_PLUGIN(classname) \
-    EXPORT void *lh_create() \
-    { \
-        classname *the_plugin = 0; \
-        the_plugin = new classname; \
-        LH_QtObject::set_plugin( the_plugin ); \
-        return reinterpret_cast<void*>(the_plugin); \
-    } \
-    EXPORT void lh_destroy( void *ref ) { delete reinterpret_cast<classname*>(ref); }
+    Q_EXPORT_PLUGIN2(classname,classname) \
+    lh_signature lh_##classname##_signature = LH_SIGNATURE_BLANK; \
+    char lh_##classname##_xml[]
 
 #endif // LH_QTPLUGIN_H

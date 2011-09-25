@@ -86,8 +86,6 @@
 # define STRINGIZE(x) STRINGIZE_(x)
 #endif
 
-#define LH_MAX_IDENT            64
-
 #ifndef LH_ALIGN_LEFT
 # define LH_ALIGN_LEFT       0
 # define LH_ALIGN_CENTER     1
@@ -109,35 +107,13 @@
 #endif
 
 /**
-  Event types.
+  Trivial buffer.
   */
-typedef enum lh_eventcode_t
+typedef struct lh_buffer_t
 {
-    lh_event_none = 0,
-
-    /**
-      The output device the layout is attached to has been changed.
-      */
-    lh_event_changed_output,
-
-    /**
-      The object's 'link' property and one or more properties exported
-      with \c lh_link_source duplicate preexisting data sources with
-      the same 'link' value and exported property roles.
-      */
-    lh_event_duplicate_link_source,
-
-    /**
-      Device input matching the 'value' property received, param: const lh_input*
-      */
-    lh_event_input,
-
-    /**
-      The object and all it's children have completed obj_init() ok.
-      */
-    lh_event_initialized,
-    lh_event_unused
-} lh_eventcode;
+    int n;
+    const char *p;
+} lh_buffer_t;
 
 /**
   User interface flags for setup items.
@@ -182,51 +158,11 @@ typedef enum lh_ui_type_t
     lh_ui_type_mask = ~(lh_ui_none-1)
 } lh_ui_type;
 
-const int lh_meta_default = (lh_ui_stored|lh_ui_visible|lh_ui_enabled|lh_ui_source|lh_ui_sink);
-typedef int lh_meta;
+const int lh_ui_default = (lh_ui_stored|lh_ui_visible|lh_ui_enabled|lh_ui_source|lh_ui_sink);
 
-/**
-  Used with the callback function.
-  \sa lh_callback_t
-  \sa lh_object_t.cb_fn
-  */
-typedef enum lh_callbackcode_t
-{
-    /* does not require a callback id */
-    lh_cb_load_layout, /* request loading of a new layout, param: UTF-8 encoded file name relative to data path */
+#ifndef LH_MAX_IDENT
 
-    /* sent from anything */
-    lh_cb_set_property, /**< A primitive property has changed, param: \c const \c lh_property* */
-    lh_cb_unload, /* ask that the plugin be unloaded, param: NULL or const char *message */
-    lh_cb_reload, /* request the plugin reloaded, param: NULL or const char *message */
-    lh_cb_log, /* add an UTF-8 encoded HTML string in the LCDHost log */
-    lh_cb_polling, /* ask for a call to the polling function, param: NULL */
-
-    /* sent from a lh_object_t, these create children of that object */
-    lh_cb_setup_create, /* create a new setup item, param: lh_setup_item* */
-    lh_cb_output_create, /* a new output device have been detected, param: lh_output_device* */
-    lh_cb_input_create, /* a new input device have been detected, param: lh_input_device* */
-    lh_cb_class_create, /* a new layout class is available, param: lh_layout_class* */
-
-    /* may be sent from any object, but usually sent from input devices */
-    lh_cb_input, /* an input device state has changed, param is pointer to lh_input */
-
-    lh_cb_new, /* a lh::object derived item is being constructed, param: lh::object* */
-    lh_cb_delete, /* a lh::object is being deleted, param: lh::object* */
-
-    /* these remove a plugin created item */
-    lh_cb_destroy, /* destroy a setup item, layout class, or device */
-
-    /* sent from lh_layout_item */
-    lh_cb_render, /* ask for a rendering sequence (prerender/width/height/render), param: NULL */
-
-    lh_cb_unused
-} lh_callbackcode;
-
-/**
-  Plugin-to-LCDHost callback function type.
-  */
-typedef int (*lh_callback_t)( const void *cb_id, lh_callbackcode code, void *param );
+#define LH_MAX_IDENT 64
 
 /**
   The input flags are used to describe an input device
@@ -282,6 +218,22 @@ typedef struct lh_input_t
     int value; /**< the exact value of the control item */
 } lh_input;
 
+#endif /* LH_MAX_IDENT */
+
+#ifndef LH_SIGNATURE_MARKER
+
+/**
+    Signature marker so SignPlugin can find it
+    \sa lh_signature
+*/
+#define LH_SIGNATURE_MARKER {7,98,120,242,114,174,176,97,178,246,229,116,243,34,2,92}
+
+/**
+    Define a blank signature area
+    \sa lh_signature
+*/
+#define LH_SIGNATURE_BLANK { LH_SIGNATURE_MARKER, {0}, {0}, sizeof(lh_signature) }
+
 /**
     Definition of the signature area
     The signature area is optional by highly recommended.
@@ -299,29 +251,12 @@ typedef struct lh_signature_t
     int size; /**< sizeof(lh_signature) */
 } lh_signature;
 
-/**
-    Signature marker so SignPlugin can find it
-    \sa lh_signature
-*/
-#define LH_SIGNATURE_MARKER {7,98,120,242,114,174,176,97,178,246,229,116,243,34,2,92}
-
-/**
-    Define a blank signature area
-    \sa lh_signature
-*/
-#define LH_SIGNATURE_BLANK { LH_SIGNATURE_MARKER, {0}, {0}, sizeof(lh_signature) }
-#define LH_SIGNATURE() lh_signature _lh_plugin_signature = { LH_SIGNATURE_MARKER, {0}, {0}, sizeof(lh_signature) }
-
-typedef struct lh_buffer_t
-{
-    int n;
-    const char *p;
-} lh_buffer_t;
+#endif /* LH_SIGNATURE_MARKER */
 
 #ifdef __cplusplus
 extern "C" {
 #endif
-/* Utility functions in lh_plugin.c */
+/* Utility functions in lh_global.c */
 void lh_buffer_t_to_headerfile( const lh_buffer_t *buffer, const char *filename, const char *varname );
 lh_ui_type lh_name_to_userinterface( const char *name );
 const char *lh_userinterface_to_name( const lh_ui_type ui );
@@ -329,4 +264,4 @@ const char *lh_userinterface_to_name( const lh_ui_type ui );
 }
 #endif
 
-#endif // LH_GLOBAL_H
+#endif /* LH_GLOBAL_H */

@@ -86,8 +86,8 @@ signals:
     void initialized();
 
 public slots:
-    void requestRender() const { callback( lh_cb_render, NULL ); }
-    void requestPolling() const { callback( lh_cb_polling, NULL ); }
+    void requestPolling() const { lh_request_polling(); }
+    void requestRender() const { lh_request_render(); }
 };
 
 #endif // LH_QTOBJECT_H

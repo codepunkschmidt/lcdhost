@@ -36,35 +36,41 @@
 #define LH_QTNETWORK_H
 
 #include <QQueue>
-#include "lh_plugin.h"
 #include "LH_QtInstance.h"
-#include "LH_Qt_QSlider.h"
+#include "lh_sink.h"
+#include "lh_setup.h"
 
-class LH_QtNetwork
+class LH_QtNetwork : public QObject
 {
-    LH_QtInstance *parent_;
-    QQueue<lh_netdata*> data_;
+    QQueue<long long> netin_;
+    QQueue<long long> netout_;
+
+    void smoothingOrder(int n) { }
+    void smoothingHidden(bool hide) {  }
 
 protected:
-    LH_Qt_QSlider *setup_smoothing_;
+    lh_setup setup_smoothing_;
+    lh_sink sink_netin_;
+    lh_sink sink_netout_;
 
 public:
     explicit LH_QtNetwork( LH_QtInstance *parent );
     ~LH_QtNetwork();
 
-    int notify(int n, void *p);
+    LH_QtInstance *parent() const { return static_cast<LH_QtInstance *>(QObject::parent()); }
 
-    const lh_systemstate *state() const { return parent_->state(); }
+    int samples() { return setup_smoothing_.value().toInt() + 1; }
 
-    int samples() const { return setup_smoothing_->value() + 1; }
-    qint64 inRate() const;
-    qint64 outRate() const;
+    long long inRate() const;
+    long long outRate() const;
     int inPermille() const;
     int outPermille() const;
     int tpPermille() const;
 
-    void smoothingOrder(int n) { setup_smoothing_->setOrder(n); }
-    void smoothingHidden(bool hide) { setup_smoothing_->setFlag(LH_FLAG_HIDDEN, hide); }
+public slots:
+    void netInChanged( const QVariant & );
+    void netOutChanged( const QVariant & );
+
 };
 
 #endif // LH_QTNETWORK_H

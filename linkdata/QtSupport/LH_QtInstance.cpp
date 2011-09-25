@@ -35,44 +35,12 @@
 #include <QDebug>
 #include "LH_QtInstance.h"
 
-LH_QtClassLoader *LH_QtClassLoader::first_ = NULL;
-static const lh_class **classlist_ = NULL;
-static QList<lh_layout_class> *manual_list_ = NULL;
-
 #define RECAST(obj) reinterpret_cast<LH_QtInstance*>(obj)
 static void obj_prerender(void *obj) { RECAST(obj)->prerender(); }
 static int obj_width(void *obj,int h) { return RECAST(obj)->width(h); }
 static int obj_height(void *obj,int w) { return RECAST(obj)->height(w); }
-static const lh_blob * obj_render_blob(void *obj,int w,int h) { return RECAST(obj)->render_blob(w,h); }
 static void * obj_render_qimage(void *obj,int w,int h) { return RECAST(obj)->render_qimage(w,h); }
 static void obj_delete(void *obj) { delete RECAST(obj); }
-
-void LH_QtInstance::build_instance_calltable( lh_instance_calltable *ct, lh_class_factory_t cf )
-{
-    if( ct )
-    {
-        ct->size = sizeof(lh_instance_calltable);
-        ct->obj_new = cf;
-        ct->obj_prerender = obj_prerender;
-        ct->obj_width = obj_width;
-        ct->obj_height = obj_height;
-        ct->obj_render_blob = obj_render_blob;
-        ct->obj_render_qimage = obj_render_qimage;
-        ct->obj_delete = obj_delete;
-    }
-    return;
-}
-
-void LH_QtInstance::term()
-{
-    if( image_ )
-    {
-        delete image_;
-        image_ = NULL;
-    }
-    LH_QtObject::term();
-    return;
-}
 
 /**
   Basic QImage handling. Call this at the start of
@@ -100,6 +68,7 @@ QImage *LH_QtInstance::initImage(int w, int h)
     return image_;
 }
 
+#if 0
 /**
   Return the autoregistered classes.
 */
@@ -178,3 +147,4 @@ void lh_remove_class( lh_class *p )
             manual_list_->removeAt(i), i=0;
 }
 
+#endif

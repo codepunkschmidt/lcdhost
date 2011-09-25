@@ -38,22 +38,14 @@
 #include <QtGlobal>
 #include <QImage>
 
-#include "LH_QtPlugin.h"
 #include "LH_QtObject.h"
 #include "LH_QtPlugin.h"
+#include "lh_plugin.h"
 
 #ifndef EXPORT
 # define EXPORT extern "C" Q_DECL_EXPORT
 #endif
 
-/**
-  Base class for LCDHost plugin classes using Qt. For normal use, the macro
-  LH_PLUGIN_CLASS(classname) will export the class from the implementation
-  file (not from the header file!).
-
-  See LH_Lua for an example on how to handle dynamically creating and
-  removing classes.
-  */
 class LH_QtInstance : public LH_QtObject
 {
     Q_OBJECT
@@ -62,9 +54,15 @@ protected:
     QImage *image_;
 
 public:
-    LH_QtInstance( LH_QtObject *parent = 0 ) : LH_QtObject(parent), image_(0) {}
+    LH_QtInstance( LH_QtObject * parent = 0 ) :
+        LH_QtObject( parent ),
+        image_( 0 )
+    {}
 
-    virtual void term();
+    ~LH_QtInstance()
+    {
+        if( image_ ) delete image_;
+    }
 
     QImage *image() const { return image_; }
     QImage *initImage(int w, int h);
@@ -72,11 +70,7 @@ public:
     virtual void prerender() {}
     virtual int width( int ) { return -1; }
     virtual int height( int ) { return -1; }
-    virtual lh_blob *render_blob( int, int ) { return NULL; }
     virtual QImage *render_qimage( int, int ) { return NULL; }
-
-    static void build_instance_calltable( lh_instance_calltable *ct, lh_class_factory_t cf );
-    static const lh_class **auto_class_list();
 
     /** You MUST reimplement this in your classes if you use the class loader and macros below */
     static lh_class *classInfo() { Q_ASSERT(!"classInfo() not reimplemented"); return NULL; }
@@ -90,7 +84,7 @@ public:
   */
 #define LH_PLUGIN_CLASS(classname)  \
     classname *_lh_##classname##_factory(const lh_class *) { return new classname; } \
-    lh_class *_lh_##classname##_info() { return classname::classInfo(); } \
+    lh_layout_class_t *_lh_##classname##_info() { return classname::classInfo(); } \
     LH_QtClassLoader _lh_##classname##_loader( _lh_##classname##_info, reinterpret_cast<lh_class_factory_t>(_lh_##classname##_factory) );
 
 #endif // LH_QTINSTANCE_H

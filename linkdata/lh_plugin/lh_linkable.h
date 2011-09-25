@@ -3,21 +3,6 @@
 
 #include "lh_object.h"
 
-class lh_val : public QVariant
-{
-public: lh_val( const QVariant & v ) : QVariant( v ) { }
-};
-
-class lh_min : public QVariant
-{
-public: lh_min( const QVariant & v ) : QVariant( v ) { }
-};
-
-class lh_max : public QVariant
-{
-public: lh_max( const QVariant & v ) : QVariant( v ) { }
-};
-
 /**
   lh_linkable provides the basic data linking
   functionality, and storage for the value, minimum and
@@ -29,39 +14,51 @@ class lh_linkable : public lh_object
 {
     Q_OBJECT
 
-    bool is_source_;
-    QString link_;
+    QString push_;
+    QString pull_;
     QVariant value_;
     QVariant minimum_;
     QVariant maximum_;
 
 public:
-    lh_linkable( const QString & ident, lh_object * parent = 0 ) :
-        lh_object( ident, parent ),
-        is_source_( false )
-    {}
+    lh_linkable( lh_object & parent,
+                 const QString & ident,
+                 const QString & path = QString(),
+                 bool is_source = false,
+                 const QVariant & val = QVariant(),
+                 const QVariant & min = QVariant(),
+                 const QVariant & max = QVariant()
+                 ) :
+        lh_object( ident, & parent ),
+        push_( is_source ? path : QString() ),
+        pull_( is_source ? QString() : path ),
+        value_( val ),
+        minimum_( min ),
+        maximum_( max )
+    {
+    }
 
-    lh_linkable( const QString & ident, const QString & path, bool is_source, lh_object * parent = 0 ) :
-        lh_object( ident, parent ),
-        is_source_( is_source ),
-        link_( path )
-    {}
-
+    const QString & push() const { return push_; }
+    const QString & pull() const { return pull_; }
     const QVariant & value() const { return value_; }
     const QVariant & minimum() const { return minimum_; }
     const QVariant & maximum() const { return maximum_; }
-    const QString & link() const { return link_; }
-    bool isSource() const { return !link_.isEmpty() && is_source_; }
-    bool isSink() const { return !link_.isEmpty() && !is_source_; }
+    bool isSource() const { return !push_.isEmpty(); }
+    bool isSink() const { return !pull_.isEmpty(); }
+
+signals:
+    void pushChanged( const QString & );
+    void pullChanged( const QString & );
+    void valueChanged( const QVariant & );
+    void minimumChanged( const QVariant & );
+    void maximumChanged( const QVariant & );
 
 public slots:
+    void setPush( const QString & path = QString() );
+    void setPull( const QString & path = QString() );
     void setValue( const QVariant & v );
     void setMinimum( const QVariant & v );
     void setMaximum( const QVariant & v );
-    void setLink( const QString & path, bool is_source = false );
-    void setSource( bool b ) { setLink( link_, b ); }
-    void setSource( const QString & path ) { setLink( path, true ); }
-    void setSink( const QString & path ) { setLink( path, false ); }
 };
 
 #endif // LH_LINKABLE_H

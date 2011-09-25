@@ -40,29 +40,28 @@
 
 class LH_Qt_QStringList : public LH_QtSetupItem
 {
+    int index_;
     QStringList list_;
-    QByteArray encodedlist_;
 
 public:
 	// Reasonable subtypes:
 	//  lh_type_integer_list - Yields a dropdown box
 	//  lh_type_integer_listbox - Yields a listbox
 
-    LH_Qt_QStringList( LH_QtObject *parent, QString name, QStringList value, int flags = 0, lh_setup_type subtype = lh_type_integer_list  )
-        : LH_QtSetupItem( parent, name, subtype, flags )
+    LH_Qt_QStringList( LH_QtObject *parent, QString name, const QStringList & list, int flags = 0, lh_setup_type subtype = lh_type_integer_list  ) :
+        LH_QtSetupItem( parent, name, subtype, flags ),
+        index_( 0 ),
+        list_( list )
     {
-        list_ = value;
-        encodedlist_ = list_.join("\t").toUtf8();
-        item_.param.list = encodedlist_.constData();
-        item_.data.i = 0;
+        LH_QtSetupItem::setList( list_ );
     }
     
-    QStringList& list()
+    QStringList & list()
     {
         return list_;
     }
 
-    void setList( const QStringList& newlist )
+    void setList( const QStringList & newlist )
     {
         list_ = newlist;
         refreshList();
@@ -70,26 +69,23 @@ public:
 
     void refreshList()
     {
-        encodedlist_ = list_.join("\t").toUtf8();
-        item_.param.list = encodedlist_.constData();
-        if( item_.data.i >= list_.size() ) item_.data.i = list_.size() - 1;
-        refresh();
+        LH_QtSetupItem::setList( list_ );
     }
 
     int value() const
     {
-        return item_.data.i;
+        return index_;
     }
 
     int index() const
     {
-        return item_.data.i;
+        return index_;
     }
 
     QString valueText() const
     {
-        if( value() < 0 || value() >= list_.size() ) return QString();
-        return list_.at( value() );
+        if( index_ < 0 || index_ >= list_.size() ) return QString();
+        return list_.at( index_ );
     }
 
     virtual void setup_change()
@@ -98,26 +94,25 @@ public:
         LH_QtSetupItem::setup_change();
     }
 
-    void setIndex(int i)
+    void setIndex( int i )
     {
         if( i < -1 ) i = -1;
-        if( i >= list_.size() ) i = list_.size();
-        if( item_.data.i != i )
+        if( i >= list_.size() ) i = list_.size() - 1;
+        if( index_ != i )
         {
-            item_.data.i = i;
-            refresh();
-            emit set();
+            index_ = i;
+            LH_QtSetupItem::setValue( i >= 0 ? list_.at( index_ ) : QString() );
         }
     }
 
-    void setValue(int i)
+    void setValue( int i )
     {
-        setIndex(i);
+        setIndex( i );
     }
 
-    void setValue(QString str)
+    void setValue( const QString & str )
     {
-        setValue( list_.indexOf(str) );
+        setIndex( list_.indexOf(str) );
     }
 };
 

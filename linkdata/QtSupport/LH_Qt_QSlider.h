@@ -40,37 +40,22 @@
 class LH_Qt_QSlider : public LH_QtSetupItem
 {
 public:
-    LH_Qt_QSlider( LH_QtObject *parent, QString name, int value, int min, int max, int flags = 0 )
-        : LH_QtSetupItem( parent, name, lh_type_integer_slider, flags )
+    LH_Qt_QSlider( LH_QtObject *parent, QString name, int value, int min, int max, int flags = 0 ) :
+        LH_QtSetupItem( parent, name, lh_type_integer_slider, flags )
     {
-        Q_ASSERT( value >= min );
-        Q_ASSERT( value <= max );
-        item_.param.slider.min = min;
-        item_.param.slider.max = max;
-        item_.data.i = value;
+        setValue( value );
+        setMinimum( min );
+        setMaximum( max );
     }
 
     int value() const
     {
-        return item_.data.i;
+        return LH_QtSetupItem::value().toInt();
     }
 
-    void setValue(int i)
+    void setValue( int i )
     {
-        if( item_.data.i != i )
-        {
-            Q_ASSERT( i >= item_.param.slider.min );
-            Q_ASSERT( i <= item_.param.slider.max );
-            item_.data.i = i;
-            refresh();
-            emit set();
-        }
-    }
-
-    virtual void setup_change()
-    {
-        emit change( value() );
-        LH_QtSetupItem::setup_change();
+        LH_QtSetupItem::setValue( i );
     }
 };
 

@@ -48,8 +48,6 @@ class lh_object : public QObject
 
     const void *cb_id_;
     lh_callback_t cb_fn_;
-
-protected:
     QString error_;
 
 public:
@@ -116,6 +114,11 @@ public:
     const QString & error() const
     {
         return error_;
+    }
+
+    void setError( const QString & err )
+    {
+        error_ = err;
     }
 
     int callback( lh_callbackcode code, void *param = 0 ) const

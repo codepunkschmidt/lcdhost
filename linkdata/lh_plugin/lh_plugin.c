@@ -38,7 +38,7 @@
 #include <string.h>
 #include <ctype.h>
 
-#include "lh_plugin.h"
+#include "lh_global.h"
 
 /**
         lh_buffer_to_headerfile()
@@ -94,7 +94,7 @@ void lh_buffer_to_headerfile( const lh_buffer_t *buffer, const char *filename, c
     return;
 }
 
-lh_userinterface lh_name_to_userinterface( const char *name )
+lh_ui_type lh_name_to_userinterface( const char *name )
 {
     if( name == 0 || !*name ) return lh_ui_none;
     if( !strcmp("button",name)) return lh_ui_button;
@@ -118,7 +118,7 @@ lh_userinterface lh_name_to_userinterface( const char *name )
     return lh_ui_none;
 }
 
-const char *lh_userinterface_to_name( const lh_userinterface ui )
+const char *lh_userinterface_to_name( const lh_ui_type ui )
 {
     switch( ui )
     {
@@ -140,12 +140,14 @@ const char *lh_userinterface_to_name( const lh_userinterface ui )
     case lh_ui_combobox: return "combobox";
     case lh_ui_input_value: return "input_value";
     case lh_ui_input_state: return "input_state";
-    case lh_ui_unused:
+    case lh_ui_type_unused:
+    case lh_ui_type_mask:
         break;
     }
     return "(invalid)";
 }
 
+#if 0
 lh_meta lh_name_to_data_format( const char *name )
 {
     if( name == 0 || !*name ) return lh_format_none;
@@ -183,3 +185,4 @@ const char *lh_data_format_to_name( const lh_meta prop )
     }
     return "(invalid)";
 }
+#endif

@@ -38,6 +38,7 @@
 
 LH_QtPlugin *LH_QtObject::plugin_ = 0;
 
+#if 0
 static int compareSetupItems( const LH_QtSetupItem *a, const LH_QtSetupItem *b )
 {
     return a->order() < b->order();
@@ -107,24 +108,25 @@ void LH_QtObject::build_object_calltable( lh_object_calltable *ct )
     }
     return;
 }
+#endif
 
-LH_QtObject::LH_QtObject( LH_QtObject *parent ) : QObject( parent ), cb_(0), cb_id_(0), state_(0)
+LH_QtObject::LH_QtObject( LH_QtObject *parent ) :
+    lh_object( QString(), parent )
 {
-    if( parent )
+}
+
+bool LH_QtObject::init()
+{
+    if( !lh_object::init() ) return false;
+    if( const char *err = userInit() )
     {
-        cb_ = parent->cb_;
-        state_ = parent->state_;
+        setError( err );
+        return false;
     }
+    return true;
 }
 
-const char *LH_QtObject::init( lh_callback_t cb, int cb_id, const char *name, const lh_systemstate* state )
-{
-    cb_ = cb;
-    cb_id_ = cb_id;
-    if( name ) setObjectName( QString::fromUtf8(name) );
-    state_ = state;
-    return userInit();
-}
+#if 0
 
 lh_setup_item **LH_QtObject::setup_data()
 {
@@ -187,6 +189,7 @@ void LH_QtObject::setup_input(lh_setup_item *item, int flags, int value)
     Q_ASSERT(0);
     return;
 }
+#endif
 
 int LH_QtObject::polling()
 {
@@ -199,17 +202,4 @@ int LH_QtObject::notify( int code, void *param )
     if( !code )
         emit initialized();
     return 0;
-}
-
-const lh_class ** LH_QtObject::class_list()
-{
-    return 0;
-}
-
-void LH_QtObject::term()
-{
-    userTerm();
-    cb_ = 0;
-    cb_id_ = 0;
-    state_ = 0;
 }

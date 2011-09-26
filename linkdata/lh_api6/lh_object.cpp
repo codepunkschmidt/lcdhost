@@ -37,6 +37,18 @@
 
 using namespace lh_api6;
 
+bool object::lh_init( const lh_id & id )
+{
+    lh_id_ = id;
+    for( QObjectList::const_iterator i = children().constBegin();
+         i != children().constEnd(); ++ i )
+    {
+        if( lh_object *child = qobject_cast<lh_object *>(*i) )
+            child->lh_create();
+    }
+    return init();
+}
+
 QString object::ident( const QString& name )
 {
     QString s = name;

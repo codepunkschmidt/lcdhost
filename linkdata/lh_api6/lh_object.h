@@ -37,6 +37,8 @@
 #define LH_OBJECT_H
 
 #include <QObject>
+#include <QExplicitlySharedDataPointer>
+#include "lh_id.h"
 #include "lh_interfaces.h"
 #include "lh_qvariant.h"
 
@@ -47,11 +49,11 @@ class object : public QObject, public object_interface
 {
     Q_OBJECT
 
-    Q_PROPERTY( QString error READ error )
+    Q_PROPERTY( QString error READ lh_error STORED false )
     Q_INTERFACES( lh_api6::object_interface )
 
-    const lcdhost_interface * lh_if_;
     QString error_;
+    lh_id lh_id_;
 
 public:
     /**
@@ -63,12 +65,9 @@ public:
       the constructor, it's good practice to do it in \c init().
       */
     object( const QString & ident = QString(), object * parent = 0 ) :
-        QObject( parent ),
-        lh_if_( 0 )
+        QObject( parent )
     {
         setObjectName( ident );
-        if( parent && parent->lh_if_ )
-            parent->lh_if_->lh_new( this, parent );
         return;
     }
 
@@ -79,9 +78,7 @@ public:
       */
     virtual ~object()
     {
-        if( parent() && parent()->lh_if_ )
-            parent()->lh_if_->lh_delete( this );
-        lh_if_ = 0;
+        lh_destroy();
         return;
     }
 
@@ -95,7 +92,7 @@ public:
     }
 
     /**
-      Override to return lh::object*
+      Override to return lh_object *
       */
     object *parent() const
     {
@@ -103,10 +100,37 @@ public:
     }
 
     /**
+      Request that LCDHost create it's corresponding
+      object and call lh_init() on this object. If
+      the current lh_object is already initialized,
+      there is no parent object, or if the parent
+      is not initialized, the call has no effect.
+      */
+    void lh_create()
+    {
+        if( !lh_id_ && parent() && parent()->lh_id_ )
+            parent()->lh_id_->lh_new( this );
+    }
+
+    /**
+      De-register this object with LCDHost. This requests
+      LCDHost to destroy it's corresponding object. If the
+      object is not initialized, the call has no effect.
+      */
+    void lh_destroy()
+    {
+        if( lh_id_ )
+        {
+            lh_id_->lh_delete( this );
+            lh_id_.reset();
+        }
+    }
+
+    /**
       Call the base class implementation of init()
       and only proceed if it returns \c true. Return
       true if you successfully initialized. On error,
-      set the \c error_ member to reflect the problem,
+      set the error message using \c setError(),
       and return \c false.
       */
     virtual bool init()
@@ -114,32 +138,57 @@ public:
         return true;
     }
 
-    const QString & error() const
-    {
-        return error_;
-    }
-
     void setError( const QString & err )
     {
         error_ = err;
     }
 
-    // object_interface
+    // lh_api6::object_interface
 
-    bool lh_init( const lcdhost_interface *lh_if )
-    {
-        lh_if_ = lh_if;
-        return init();
-    }
+    /**
+      Called by LCDHost to provide the LCDHost ID.
+      This is called once the corresponding LCDHost object
+      has been created. Any pre-existing children will have
+      their lh_create() function called. Then the init()
+      function will be called. Don't reimplement this
+      in a subclass unless you know what you're doing.
+      */
+    bool lh_init( const lh_id & id );
 
+    /**
+      Return the object's error string, or an empty
+      string if there is no error condition.
+      */
     QString lh_error() const
     {
         return error_;
     }
 
+    /**
+      Called by LCDHost once this object and all it's
+      children have had been initialized successfully
+      and all stored properties have been set.
+      */
     void lh_event_initialized()
     {
         return;
+    }
+
+    // export lcdhost_interface
+
+    void lh_request_polling() const
+    {
+        if( lh_id_ ) lh_id_->lh_request_polling();
+    }
+
+    void lh_request_render() const
+    {
+        if( lh_id_ ) lh_id_->lh_request_render();
+    }
+
+    void lh_request_reload( const QString & reason ) const
+    {
+        if( lh_id_ ) lh_id_->lh_request_reload( reason );
     }
 
     /**

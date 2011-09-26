@@ -2,7 +2,9 @@
 #define LH_INTERFACES_H
 
 #include <QtPlugin>
+#include <QSharedData>
 #include "lh_global.h"
+#include "lh_id.h"
 
 class QString;
 class QImage;
@@ -10,19 +12,11 @@ class QImage;
 namespace lh_api6
 {
 
-class lcdhost_interface
-{
-public:
-    virtual ~lcdhost_interface() {}
-    virtual void lh_new( QObject * obj, QObject * parent ) const = 0;
-    virtual void lh_delete( QObject * obj ) const = 0;
-};
-
 class object_interface
 {
 public:
     virtual ~object_interface() {}
-    virtual bool lh_init( const lcdhost_interface * lh_if ) = 0;
+    virtual bool lh_init( const id_ptr & id ) = 0;
     virtual QString lh_error() const = 0;
     virtual void lh_event_initialized() = 0;
 };
@@ -81,6 +75,9 @@ public:
 };
 
 }
+
+typedef lh_api6::object_interface lh_object_interface;
+typedef lh_api6::setup_interface lh_setup_interface;
 
 Q_DECLARE_INTERFACE( lh_api6::object_interface, "se.linkdata.lh.object_interface/6.0" )
 Q_DECLARE_INTERFACE( lh_api6::setup_interface, "se.linkdata.lh.setup_interface/6.0" )

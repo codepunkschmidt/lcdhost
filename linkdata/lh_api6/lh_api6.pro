@@ -12,6 +12,7 @@ lh_api6 {
 
     LH_API6_HEADERS += \
         $$PWD/lh_global.h \
+        $$PWD/lh_id.h \
         $$PWD/lh_interfaces.h \
         $$PWD/lh_qvariant.h \
         $$PWD/lh_object.h \
@@ -42,3 +43,4 @@ not_lh_plugin {
         INSTALLS += target
     }
 }
+

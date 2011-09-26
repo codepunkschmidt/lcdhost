@@ -10,7 +10,7 @@ namespace lh_api6
 /**
   Provides a linkable, saved setup item with optional UI.
   */
-class setup : public linkable
+class setup : public linkable, public setup_interface
 {
     Q_OBJECT
 
@@ -26,6 +26,8 @@ class setup : public linkable
     Q_PROPERTY( QVariant minimum READ minimum WRITE setMinimum )
     Q_PROPERTY( QVariant maximum READ maximum WRITE setMaximum )
     Q_PROPERTY( QStringList list READ list WRITE setList STORED false )
+
+    Q_INTERFACES( lh_api6::setup_interface )
 
     int meta_;
     int order_;
@@ -47,6 +49,7 @@ public:
     {
         if( meta_ & lh_ui_first ) -- order_;
         if( meta_ & lh_ui_last ) ++ order_;
+        lh_create();
     }
 
     int meta() const { return meta_; }
@@ -65,6 +68,11 @@ public:
     void setStored( const bool b ) { setFlag( lh_ui_stored, b ); }
     void setEnabled( const bool b ) { setFlag( lh_ui_enabled, b ); }
     void setVisible( const bool b ) { setFlag( lh_ui_visible, b ); }
+
+    // lh_setup_interface
+    lh_ui_type lh_setup_ui() { return ui(); }
+    void lh_event_input( const lh_input * ) {}
+    void lh_event_duplicate_source() {}
 
 signals:
     void metaChanged( const int );

@@ -78,6 +78,8 @@ const char *LH_QtPlugin_TS3::userInit()
     setup_talking_ = new LH_Qt_QString(this, "Talking", "", LH_FLAG_HIDDEN | LH_FLAG_READONLY | LH_FLAG_NOSAVE | LH_FLAG_NOSINK);
     setup_talking_->setLink("@/Monitoring/3rdParty/TeamSpeak3/Talking");//, true);
     //setup_talking_->refreshData();
+    setup_talking_me_ = new LH_Qt_bool(this, "Me Talking", false, LH_FLAG_HIDDEN | LH_FLAG_READONLY | LH_FLAG_NOSAVE | LH_FLAG_NOSINK);
+    setup_talking_me_->setLink("@/Monitoring/3rdParty/TeamSpeak3/Me Talking");//, true);
 
     setup_channelname_ = new LH_Qt_QString(this, "Channel", "", LH_FLAG_HIDDEN | LH_FLAG_READONLY | LH_FLAG_NOSAVE | LH_FLAG_NOSINK);
     setup_channelname_->setLink("@/Monitoring/3rdParty/TeamSpeak3/Channel Name");//,true);
@@ -372,6 +374,7 @@ void LH_QtPlugin_TS3::updateTalking(bool force)
                                         .arg(talkingNames)
                                         .arg(talkingNames==""? "empty" : "talking")
                                         );
+        setup_talking_me_->setValue(speakers_.contains(myclid_));
         emit talkingChanged(talkingNames);
     }
 }

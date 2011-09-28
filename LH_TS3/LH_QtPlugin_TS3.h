@@ -26,7 +26,7 @@
 #define LH_QTPLUGIN_TS3_H
 
 #define TS3_DEBUG_MESSAGES
-#define TS3_USER_DEFINED_UID
+//#define TS3_USER_DEFINED_UID
 
 
 #include "LH_QtPlugin.h"
@@ -94,6 +94,7 @@ protected:
     LH_Qt_QString *setup_connection_details_;
     LH_Qt_QString *setup_talking_;
     LH_Qt_QString *setup_talking_details_;
+    LH_Qt_bool *setup_talking_me_;
 #ifdef TS3_USER_DEFINED_UID
     LH_Qt_QString *setup_nickname_expression_;
 #endif

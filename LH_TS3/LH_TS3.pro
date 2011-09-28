@@ -19,7 +19,8 @@ SOURCES += \
     LH_TS3ConnectionImage.cpp \
     LH_TS3SpeakingText.cpp \
     LH_TS3NicknameText.cpp \
-    LH_TS3ChannelNameText.cpp
+    LH_TS3ChannelNameText.cpp \
+    LH_TS3CombinedStatusImage.cpp
 
 HEADERS += \
     $$PLUGIN_HEADERS \

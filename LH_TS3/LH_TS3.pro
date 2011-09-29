@@ -29,7 +29,8 @@ HEADERS += \
     LH_QtPlugin_TS3.h \
     LH_TS3_ClientList.h \
     LH_TS3_ChannelList.h \
-    LH_TS3MuteImage.h
+    LH_TS3MuteImage.h \
+    LH_TS3CombinedStatusImage.h
 
 RESOURCES += \
      LH_TS3.qrc

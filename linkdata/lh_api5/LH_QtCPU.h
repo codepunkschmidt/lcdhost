@@ -37,8 +37,6 @@
 
 #include <QQueue>
 #include "LH_QtInstance.h"
-#include "lh_sink.h"
-#include "lh_setup.h"
 
 class LH_QtCPU : public QObject
 {

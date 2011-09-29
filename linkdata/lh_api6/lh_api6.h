@@ -1,6 +1,7 @@
 /**
-  \file     LH_QtObject.h
+  \file     lh_api6.h
   \author   Johan Lindh <johan@linkdata.se>
+  \brief    LCDHost plugin API version 6
   \legalese Copyright (c) 2009-2011, Johan Lindh
 
   All rights reserved.
@@ -32,58 +33,44 @@
   POSSIBILITY OF SUCH DAMAGE.
   */
 
-#ifndef LH_QTOBJECT_H
-#define LH_QTOBJECT_H
+#ifndef LH_API6_H
+#define LH_API6_H
 
-#include "lh_api6/lh_api6.h"
+#define LH_API_MAJOR 6
+#define LH_API_MINOR 0
 
-class LH_QtPlugin;
+#ifndef STRINGIZE
+# define STRINGIZE_(x) #x
+# define STRINGIZE(x) STRINGIZE_(x)
+#endif
 
-/**
-  Base class for Qt-based LCDHost plugin objects,
-  such as plugins, layout class instances or devices.
-  */
-class LH_QtObject : public lh_object
-{
-    Q_OBJECT
+#ifdef __cplusplus
 
-    static LH_QtPlugin *plugin_;
+#include "lh_api6/lh_id.h"
+#include "lh_api6/lh_input.h"
+#include "lh_api6/lh_qvariant.h"
+#include "lh_api6/lh_event.h"
+#include "lh_api6/lh_object.h"
+#include "lh_api6/lh_plugin.h"
+#include "lh_api6/lh_linkable.h"
+#include "lh_api6/lh_source.h"
+#include "lh_api6/lh_sink.h"
+#include "lh_api6/lh_setup.h"
 
-    void show() const { }
-    void hide() const { }
-    void setVisible( bool b ) const { }
+typedef lh::api6::id_ptr lh_id;
+typedef lh::api6::input lh_input;
+typedef lh::api6::event::init lh_event_init;
+typedef lh::api6::event::setproperty lh_event_setproperty;
+typedef lh::api6::object lh_object;
+typedef lh::api6::plugin lh_plugin;
+typedef lh::api6::plugin::signature lh_signature;
+typedef lh::api6::linkable lh_linkable;
+typedef lh::api6::source lh_source;
+typedef lh::api6::sink lh_sink;
+typedef lh::api6::setup lh_setup;
+typedef lh::api6::setup::ui_type lh_ui_type;
+typedef lh::api6::setup::ui_flag lh_ui_flag;
 
-    void requestRebuild() const {}
+#endif // __cplusplus
 
-public:
-    LH_QtObject( LH_QtObject *parent = 0);
-    virtual ~LH_QtObject() {}
-
-    LH_QtObject *parent() const { return static_cast<LH_QtObject *>( QObject::parent() ); }
-
-    // These implement the lh_object_callback functions. If you reimplement them, make
-    // sure to call the base class copy of them and preserve or modify the return value
-    // (if any) to suit.
-    virtual int polling();
-    virtual int notify( int code, void *param );
-
-    // You can use these two instead of init() and term(), that way you won't need to
-    // pass on the parameters that init() takes to the ancestor. init() will call
-    // userInit() when it's done and term() will call userTerm() before it does
-    // it's work.
-    bool init();
-    virtual const char *userInit() { return 0; }
-    virtual void userTerm() { return; }
-
-    static void set_plugin( LH_QtPlugin *p ) { plugin_ = p; }
-    static LH_QtPlugin *plugin() { return plugin_; }
-
-signals:
-    void initialized();
-
-public slots:
-    void requestPolling() const { lh_request_polling(); }
-    void requestRender() const { lh_request_render(); }
-};
-
-#endif // LH_QTOBJECT_H
+#endif // LH_API6_H

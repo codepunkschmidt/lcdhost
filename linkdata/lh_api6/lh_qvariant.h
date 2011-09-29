@@ -33,18 +33,19 @@
   POSSIBILITY OF SUCH DAMAGE.
   */
 
-#ifndef LH_QVARIANT_H
-#define LH_QVARIANT_H
+#ifndef LH_API6_LH_QVARIANT_H
+#define LH_API6_LH_QVARIANT_H
 
 #include <QVariant>
 #include <QMetaType>
-#include "lh_global.h"
-
-Q_DECLARE_METATYPE(lh_input)
 
 class QXmlStreamWriter;
 class QXmlStreamReader;
 class QColor;
+
+typedef class lh::api6::input lh_input;
+
+Q_DECLARE_METATYPE(lh_input)
 
 /**
   Returns the QVariant::Type used to store the
@@ -68,7 +69,7 @@ class QColor;
   this function simply returns a null
   string for them.
   */
-QString lh_qstring_from_qvariant(const QVariant &v);
+QString lh_qstring_from_qvariant( const QVariant & v );
 
 /**
   Converts LCDHost formatted string data into
@@ -79,27 +80,26 @@ QString lh_qstring_from_qvariant(const QVariant &v);
   best-guess on the data type, defaulting
   to QVariant::String.
   */
-void lh_qstring_to_qvariant(const QString& s, QVariant& );
-
-void lh_qstring_to_qcolor( const QString& s, QColor& c );
-QString lh_qstring_from_qcolor( const QColor& c );
-void lh_qstring_to_lhinput( const QString& s, lh_input& in );
-QString lh_qstring_from_lhinput( const lh_input& in );
+void lh_qstring_to_qvariant( const QString & s, QVariant & v );
+void lh_qstring_to_qcolor( const QString & s, QColor & c );
+QString lh_qstring_from_qcolor( const QColor & c );
+void lh_qstring_to_lhinput( const QString & s, lh_input & in );
+QString lh_qstring_from_lhinput( const lh_input & in );
 
 /**
   Returns true if a QVariant can be read from the XML stream
   in LCDHost format.
   */
-bool operator>( const QXmlStreamReader& reader, const QVariant& obj );
+bool operator>( const QXmlStreamReader & reader, const QVariant & v );
 
 /**
   Reads a QVariant from the XML stream in LCDHost format.
   */
-QXmlStreamReader& operator>>( QXmlStreamReader& reader, QVariant& obj );
+QXmlStreamReader& operator>>( QXmlStreamReader & reader, QVariant & v );
 
 /**
   Writes a QVariant to an XML stream in LCDHost format.
   */
-QXmlStreamWriter& operator<<( QXmlStreamWriter& writer, const QVariant& obj );
+QXmlStreamWriter& operator<<( QXmlStreamWriter & writer, const QVariant & v );
 
-#endif // LH_QVARIANT_H
+#endif // LH_API6_LH_QVARIANT_H

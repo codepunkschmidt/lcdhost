@@ -36,7 +36,7 @@
 
 LH_QtCPU::LH_QtCPU( LH_QtInstance *parent ) :
     QObject( parent ),
-    setup_smoothing_( *parent, "Smoothing", lh_ui_slider, 3,1,10 ),
+    setup_smoothing_( *parent, "Smoothing", lh_setup::ui_slider, 3,1,10 ),
     sink_coreload_( *parent, "Coreloads", "/system/cpu/coreload" )
 {
     connect( &sink_coreload_, SIGNAL(valueChanged(QVariant)), this, SLOT(coreloadChanged(QVariant)) );

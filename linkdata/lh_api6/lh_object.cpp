@@ -33,30 +33,119 @@
   POSSIBILITY OF SUCH DAMAGE.
   */
 
-#include "lh_object.h"
+#include <QDebug>
+#include "lh_api6/lh_api6.h"
 
-using namespace lh_api6;
+using namespace lh::api6;
 
-bool object::lh_init( const lh_id & id )
+void object::lh_init( const id_ptr & id )
 {
     lh_id_ = id;
-    for( QObjectList::const_iterator i = children().constBegin();
-         i != children().constEnd(); ++ i )
+    error_.clear();
+    if( !lh_id_ ) return;
+
+    lh_id_->lh_bind( *this );
+
+    QObjectList::const_iterator it;
+    for( it = children().constBegin(); it != children().constEnd(); ++ it )
     {
-        if( lh_object *child = qobject_cast<lh_object *>(*i) )
+        if( object *child = qobject_cast<object *>(*it) )
             child->lh_create();
     }
-    return init();
+
+    if( !init() && error_.isEmpty() )
+    {
+        error_ = tr("%1 %2: init() failed")
+                .arg(metaObject()->className())
+                .arg(objectName());
+    }
+
+    lh_id_->lh_init_result( error_ );
+
+    return;
 }
 
-QString object::ident( const QString& name )
+void object::customEvent( QEvent *event )
 {
-    QString s = name;
-    s.truncate(LH_MAX_IDENT-1);
-    s.replace('<','(');
-    s.replace('/','|');
-    s.replace('\\','|');
-    s.replace('\"','\'');
-    s.replace('>',')');
-    return s;
+    switch( (event::type) event->type() )
+    {
+
+    case event::init::type:
+    {
+        event::init *e = static_cast<event::init *>(event);
+        object *dest = 0;
+        if( e->childName().isEmpty() )
+        {
+            // special case for the main plugin object
+            dest = this;
+        }
+        else
+        {
+            QObjectList::const_iterator it;
+            for( it = children().constBegin(); it != children().constEnd(); ++ it )
+            {
+                if( (*it)->objectName() == e->childName() )
+                    dest = qobject_cast<object *>(*it);
+                if( dest ) break;
+            }
+        }
+
+        if( dest )
+        {
+            dest->lh_init( e->id() );
+        }
+        else
+        {
+            qCritical() << metaObject()->className()
+                        << objectName()
+                        << "event_init: no child named"
+                        << e->childName();
+        }
+
+        return;
+    }
+
+    case event::setproperty::type:
+    {
+        event::setproperty *e = static_cast<event::setproperty *>(event);
+        if( !setProperty( e->name(), e->value() ) )
+            qCritical() << metaObject()->className()
+                        << objectName()
+                        << "event_setproperty: failed to set"
+                        << e->name();
+        return;
+    }
+
+    case event::first_type:
+    case event::last_type:
+        break;
+    }
+
+    qCritical() << metaObject()->className()
+                << objectName()
+                << ": unhandled event"
+                << event->type()
+                << event::name( (event::type) event->type() );
+    return;
+}
+
+QString object::ident( const QString & str, const QObject *obj )
+{
+    QString retv(
+                str.simplified()
+                .replace('<','(')
+                .replace('/','|')
+                .replace('>',')')
+                .replace('\"','\'')
+                .replace('\\','|')
+                );
+
+    if( retv.isEmpty() && obj )
+    {
+        retv.append( obj->metaObject()->className() );
+        retv.append( '@' );
+        retv.append( QString::number((qptrdiff)obj,16) );
+    }
+
+    return retv;
 }

@@ -35,7 +35,7 @@
 #include "LH_QtSetupItem.h"
 
 LH_QtSetupItem::LH_QtSetupItem( LH_QtObject *parent, QString name, lh_setup_type type, int flags ) :
-    lh_setup( *parent, name, lh_ui_none|lh_ui_default ),
+    lh_setup( *parent, name.toAscii().constData(), lh_setup::ui_none|lh_setup::ui_default ),
     api5type_( lh_type_none ),
     api5flags_( 0 )
 {
@@ -45,33 +45,33 @@ LH_QtSetupItem::LH_QtSetupItem( LH_QtObject *parent, QString name, lh_setup_type
 
 void LH_QtSetupItem::setType( lh_setup_type t )
 {
-    int newmeta = meta() & lh_ui_flag_mask;
+    int newmeta = meta() & lh_setup::ui_flag_mask;
 
     switch( t )
     {
-    case lh_type_none:              newmeta |= lh_ui_none; break;
-    case lh_type_integer:           newmeta |= lh_ui_spinbox; break;
-    case lh_type_integer_boolean:   newmeta |= lh_ui_checkbox; break;
-    case lh_type_integer_color:     newmeta |= lh_ui_color; break;
-    case lh_type_integer_slider:    newmeta |= lh_ui_slider; break;
-    case lh_type_integer_progress:  newmeta |= lh_ui_progress; break;
-    case lh_type_integer_list:      newmeta |= lh_ui_dropdownbox; break;
-    case lh_type_fraction:          newmeta |= lh_ui_spinbox; break;
-    case lh_type_string:            newmeta |= lh_ui_string; break;
-    case lh_type_string_script:     newmeta |= lh_ui_text; break;
-    case lh_type_string_filename:   newmeta |= lh_ui_filename; break;
-    case lh_type_string_font:       newmeta |= lh_ui_font; break;
-    case lh_type_string_inputstate: newmeta |= lh_ui_input_state; break;
-    case lh_type_string_inputvalue: newmeta |= lh_ui_input_value; break;
-    case lh_type_image_png:         newmeta |= lh_ui_image; break;
-    case lh_type_image_qimage:      newmeta |= lh_ui_image; break;
-    case lh_type_integer_listbox:   newmeta |= lh_ui_listbox; break;
-    case lh_type_string_button:     newmeta |= lh_ui_button; break;
-    case lh_type_string_html:       newmeta |= lh_ui_htmllink; break;
+    case lh_type_none:              newmeta |= lh_setup::ui_none; break;
+    case lh_type_integer:           newmeta |= lh_setup::ui_spinbox; break;
+    case lh_type_integer_boolean:   newmeta |= lh_setup::ui_checkbox; break;
+    case lh_type_integer_color:     newmeta |= lh_setup::ui_color; break;
+    case lh_type_integer_slider:    newmeta |= lh_setup::ui_slider; break;
+    case lh_type_integer_progress:  newmeta |= lh_setup::ui_progress; break;
+    case lh_type_integer_list:      newmeta |= lh_setup::ui_dropdownbox; break;
+    case lh_type_fraction:          newmeta |= lh_setup::ui_spinbox; break;
+    case lh_type_string:            newmeta |= lh_setup::ui_string; break;
+    case lh_type_string_script:     newmeta |= lh_setup::ui_text; break;
+    case lh_type_string_filename:   newmeta |= lh_setup::ui_filename; break;
+    case lh_type_string_font:       newmeta |= lh_setup::ui_font; break;
+    case lh_type_string_inputstate: newmeta |= lh_setup::ui_input_state; break;
+    case lh_type_string_inputvalue: newmeta |= lh_setup::ui_input_value; break;
+    case lh_type_image_png:         newmeta |= lh_setup::ui_image; break;
+    case lh_type_image_qimage:      newmeta |= lh_setup::ui_image; break;
+    case lh_type_integer_listbox:   newmeta |= lh_setup::ui_listbox; break;
+    case lh_type_string_button:     newmeta |= lh_setup::ui_button; break;
+    case lh_type_string_html:       newmeta |= lh_setup::ui_htmllink; break;
     case lh_type_last:
     default:
         Q_ASSERT(0);
-        newmeta |= lh_ui_none;
+        newmeta |= lh_setup::ui_none;
         break;
     }
 
@@ -80,7 +80,7 @@ void LH_QtSetupItem::setType( lh_setup_type t )
 
 void LH_QtSetupItem::setFlags( int f )
 {
-    int newmeta = ui() | lh_ui_default;
+    int newmeta = ui() | lh_setup::ui_default;
 
     if( f & LH_FLAG_READONLY    ) ;
     if( f & LH_FLAG_HIDDEN      ) ;

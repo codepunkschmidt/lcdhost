@@ -63,8 +63,8 @@
 
   */
 
-#ifndef LH_PLUGIN_H
-#define LH_PLUGIN_H
+#ifndef LH_API5_PLUGIN_H
+#define LH_API5_PLUGIN_H
 
 #include <stddef.h>
 #include <limits.h>
@@ -548,4 +548,4 @@ int lh_cpuload( lh_cpudata *from, lh_cpudata *to ); /* Returns average load betw
 #endif
 
 
-#endif /* LH_PLUGIN_H */
+#endif /* LH_API5_PLUGIN_H */

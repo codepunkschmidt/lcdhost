@@ -111,7 +111,7 @@ void LH_QtObject::build_object_calltable( lh_object_calltable *ct )
 #endif
 
 LH_QtObject::LH_QtObject( LH_QtObject *parent ) :
-    lh_object( QString(), parent )
+    lh_object( *parent )
 {
 }
 

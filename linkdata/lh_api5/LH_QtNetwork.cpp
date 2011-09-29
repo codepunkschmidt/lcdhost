@@ -36,7 +36,7 @@
 
 LH_QtNetwork::LH_QtNetwork( LH_QtInstance *parent ) :
     QObject( parent ),
-    setup_smoothing_( *parent, "Smoothing", lh_ui_slider, 3,1,10 ),
+    setup_smoothing_( *parent, "Smoothing", lh_setup::ui_slider, 3,1,10 ),
     sink_netin_( *parent, "NetIn", "/system/net/in" ),
     sink_netout_( *parent, "NetOut", "/system/net/out" )
 {

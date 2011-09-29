@@ -1,20 +1,23 @@
-#ifndef LH_SETUP_H
-#define LH_SETUP_H
+#ifndef LH_API6_LH_SETUP_H
+#define LH_API6_LH_SETUP_H
 
 #include <QStringList>
-#include "lh_linkable.h"
+#include "lh_api6/lh_linkable.h"
 
-namespace lh_api6
-{
+namespace lh {
+namespace api6 {
+
+class input;
 
 /**
   Provides a linkable, saved setup item with optional UI.
   */
-class setup : public linkable, public setup_interface
+class setup : public linkable
 {
     Q_OBJECT
+    Q_INTERFACES( lh::api6::object lh::api6::linkable )
 
-    Q_PROPERTY( lh_ui_type ui READ ui WRITE setUi STORED false )
+    Q_PROPERTY( ui_type ui READ ui WRITE setUi STORED false )
     Q_PROPERTY( bool isStored READ isStored WRITE setStored STORED false )
     Q_PROPERTY( bool isEnabled READ isEnabled WRITE setEnabled STORED false )
     Q_PROPERTY( bool isVisible READ isVisible WRITE setVisible STORED false )
@@ -27,17 +30,64 @@ class setup : public linkable, public setup_interface
     Q_PROPERTY( QVariant maximum READ maximum WRITE setMaximum )
     Q_PROPERTY( QStringList list READ list WRITE setList STORED false )
 
-    Q_INTERFACES( lh_api6::setup_interface )
-
     int meta_;
     int order_;
     QString help_;
     QStringList list_;
 
 public:
+
+    /**
+      User interface flags for setup items.
+      */
+    enum ui_flag
+    {
+        is_stored = (1<<0), /**< this setup item should be saved if modified */
+        is_visible = (1<<1), /**< show the setup item in the UI */
+        is_enabled = (1<<2), /**< enable the setup item in the UI */
+        is_source = (1<<3), /**< allow the UI to use this setup item as a data source */
+        is_sink = (1<<4), /**< allow the UI to use this setup item as a data sink */
+        is_focus = (1<<5), /**< this setup item actively wants focus */
+        is_first = (1<<6), /**< same as setOrder(-1) */
+        is_last = (1<<7), /**< same as setOrder(1) */
+        ui_flag_mask = (is_last<<1)-1
+    };
+    Q_FLAGS( ui_flag )
+
+    /**
+      User interface type for setup items.
+      */
+    enum ui_type
+    {
+        ui_none = (1<<16),
+        ui_checkbox, /**< checkbox */
+        ui_color, /**< line editor with color picker */
+        ui_font, /**< line editor with font picker */
+        ui_image, /**< decode PNG data and show the image */
+        ui_spinbox, /**< line editor with spinbox (optional min/max) */
+        ui_slider, /**< slider (required min/max) */
+        ui_progress, /**< progress bar (optional min/max) */
+        ui_string, /**< line editor */
+        ui_text, /**< multiline text editor */
+        ui_filename, /**< line editor and file selection dialog (optional other: string: file selection mask) */
+        ui_button, /**< a button (required other: string: button text) */
+        ui_htmllink, /**< clicked link in title text text */
+        ui_dropdownbox, /**< dropdown box (required other: stringlist: selectable values) */
+        ui_listbox, /**< listbox (required other: stringlist: selectable values) */
+        ui_combobox, /**< combobox (optional other: stringlist: selectable values) */
+        ui_input_value, /**< readonly text and input selection dialog for button or axis */
+        ui_input_state, /**< readonly text and input selection dialog for button state or half-axis */
+        ui_type_mask = ~(ui_none-1)
+    };
+    Q_ENUMS( ui_type )
+
+    static const int ui_default = (is_stored|is_visible|is_enabled|is_source|is_sink);
+    static const char * ui_name( ui_type t );
+    static ui_type ui_name( const char * name );
+
     explicit setup(
             object & parent,
-            const QString & ident,
+            const char * ident,
             const int meta,
             const QVariant & val = QVariant(),
             const QVariant & min = QVariant(),
@@ -47,32 +97,27 @@ public:
         meta_( meta ),
         order_( 0 )
     {
-        if( meta_ & lh_ui_first ) -- order_;
-        if( meta_ & lh_ui_last ) ++ order_;
+        if( meta_ & is_first ) -- order_;
+        if( meta_ & is_last ) ++ order_;
         lh_create();
     }
 
     int meta() const { return meta_; }
-    lh_ui_type ui() const { return (lh_ui_type) (meta_ & lh_ui_type_mask); }
-    int flags() const { return meta_ & lh_ui_flag_mask; }
+    ui_type ui() const { return (ui_type) (meta_ & ui_type_mask); }
+    int flags() const { return meta_ & ui_flag_mask; }
     bool flag( const int f ) const { return (flags() & f) ? true : false; }
-    bool isStored() const { return flag( lh_ui_stored ); }
-    bool isEnabled() const { return flag( lh_ui_enabled ); }
-    bool isVisible() const { return flag( lh_ui_visible ); }
+    bool isStored() const { return flag( is_stored ); }
+    bool isEnabled() const { return flag( is_enabled ); }
+    bool isVisible() const { return flag( is_visible ); }
     int order() const { return order_; }
     const QString & help() const { return help_; }
     const QStringList & list() const { return list_; }
 
-    void setUi( lh_ui_type ui ) { setMeta( (meta_ & ~lh_ui_type_mask) | ui ); }
+    void setUi( ui_type ui ) { setMeta( (meta_ & ~ui_type_mask) | ui ); }
     void setFlag( const int f, const bool b ) { setMeta( (meta_&~f) | (b?f:0) ); }
-    void setStored( const bool b ) { setFlag( lh_ui_stored, b ); }
-    void setEnabled( const bool b ) { setFlag( lh_ui_enabled, b ); }
-    void setVisible( const bool b ) { setFlag( lh_ui_visible, b ); }
-
-    // lh_setup_interface
-    lh_ui_type lh_setup_ui() { return ui(); }
-    void lh_event_input( const lh_input * ) {}
-    void lh_event_duplicate_source() {}
+    void setStored( const bool b ) { setFlag( is_stored, b ); }
+    void setEnabled( const bool b ) { setFlag( is_enabled, b ); }
+    void setVisible( const bool b ) { setFlag( is_visible, b ); }
 
 signals:
     void metaChanged( const int );
@@ -84,8 +129,10 @@ public slots:
     void setList( const QStringList & sl );
 };
 
-} // namespace lh_api6
+} // namespace api6
+} // namespace lh
 
-typedef lh_api6::setup lh_setup;
 
-#endif // LH_SETUP_H
+Q_DECLARE_INTERFACE( lh::api6::setup, "se.linkdata.lh_setup/6.0" )
+
+#endif // LH_API6_LH_SETUP_H

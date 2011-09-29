@@ -1,11 +1,10 @@
-#ifndef LH_SOURCE_H
-#define LH_SOURCE_H
+#ifndef LH_API6_LH_SOURCE_H
+#define LH_API6_LH_SOURCE_H
 
-#include "lh_linkable.h"
+#include "lh_api6/lh_linkable.h"
 
-
-namespace lh_api6
-{
+namespace lh {
+namespace api6 {
 
 /**
   source is a convenience class for creating
@@ -14,6 +13,7 @@ namespace lh_api6
 class source : public linkable
 {
     Q_OBJECT
+    Q_INTERFACES( lh::api6::object lh::api6::linkable )
 
     Q_PROPERTY( QString push READ push STORED false )
     Q_PROPERTY( QVariant value READ value WRITE setValue STORED false )
@@ -23,7 +23,7 @@ class source : public linkable
 public:
     explicit source(
             object & parent,
-            const QString & ident,
+            const char * ident,
             const QString & path,
             const QVariant & val = QVariant(),
             const QVariant & min = QVariant(),
@@ -34,8 +34,9 @@ public:
     }
 };
 
-} // namespace lh_api6
+} // namespace api6
+} // namespace lh
 
-typedef lh_api6::source lh_source;
+Q_DECLARE_INTERFACE( lh::api6::source, "se.linkdata.lh_source/6.0" )
 
-#endif // LH_SOURCE_H
+#endif // LH_API6_LH_SOURCE_H

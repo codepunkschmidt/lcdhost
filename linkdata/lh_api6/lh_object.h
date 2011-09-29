@@ -33,41 +33,56 @@
   POSSIBILITY OF SUCH DAMAGE.
   */
 
-#ifndef LH_OBJECT_H
-#define LH_OBJECT_H
+#ifndef LH_API6_LH_OBJECT_H
+#define LH_API6_LH_OBJECT_H
 
 #include <QObject>
-#include <QExplicitlySharedDataPointer>
-#include "lh_id.h"
-#include "lh_interfaces.h"
-#include "lh_qvariant.h"
+#include <QString>
+#include "lh_api6/lh_id.h"
 
-namespace lh_api6
-{
+namespace lh {
+namespace api6 {
 
-class object : public QObject, public object_interface
+class object : public QObject
 {
     Q_OBJECT
 
-    Q_PROPERTY( QString error READ lh_error STORED false )
-    Q_INTERFACES( lh_api6::object_interface )
+    Q_PROPERTY( QString error READ error WRITE setError STORED false )
 
     QString error_;
-    lh_id lh_id_;
+    id_ptr lh_id_;
+
+protected:
+    /**
+      The only object that may be constructed without
+      a parent is the plugin object, and that's created
+      by LCDHost when loading the plugin.
+      */
+    object() : QObject() {}
+
+    /**
+      Called by LCDHost to provide the LCDHost ID.
+      This is called once the corresponding LCDHost object
+      has been created. Any pre-existing children will have
+      their lh_create() function called. Then the init()
+      function will be called. Use setError() to report
+      an error condition. If init() return false, lh_destroy()
+      will be called to disassociate from LCDHost.
+
+      \param id The LCDHost ID.
+      */
+    void lh_init( const id_ptr & id );
 
 public:
     /**
-      All lh::object descendants must implement default
-      constructors that instantiate the object in a known
-      state. This means initializing primitive data members.
-      Pay particular attention to pointers. While you're not
-      explicitly forbidden to perform costly operations in
-      the constructor, it's good practice to do it in \c init().
+      Base constructor for LCDHost plugin objects. Note that
+      you must have a valid (although not nessecarily
+      initalized) parent object.
       */
-    object( const QString & ident = QString(), object * parent = 0 ) :
-        QObject( parent )
+    object( object & parent, const char * objectname = 0 ) :
+        QObject( & parent )
     {
-        setObjectName( ident );
+        if( objectname ) setObjectName( objectname );
         return;
     }
 
@@ -83,20 +98,29 @@ public:
     }
 
     /**
-      Overridden to ensure LCDHost C-API compliant identity strings.
-      */
-    void setObjectName( const QString & name )
-    {
-        QObject::setObjectName( object::ident( name ) );
-        return;
-    }
-
-    /**
       Override to return lh_object *
       */
     object *parent() const
     {
         return static_cast<object*>( QObject::parent() );
+    }
+
+    /**
+      Overridden to ensure the object name conforms
+      to LCDHost conventions.
+      */
+    void setObjectName( const QString & name )
+    {
+        QObject::setObjectName( ident( name, this ) );
+        return;
+    }
+
+    /**
+      Returns the LCDHost ID object.
+      */
+    const id_ptr & id() const
+    {
+        return lh_id_;
     }
 
     /**
@@ -109,7 +133,8 @@ public:
     void lh_create()
     {
         if( !lh_id_ && parent() && parent()->lh_id_ )
-            parent()->lh_id_->lh_new( this );
+            parent()->lh_id_->lh_new( *this );
+        return;
     }
 
     /**
@@ -121,9 +146,10 @@ public:
     {
         if( lh_id_ )
         {
-            lh_id_->lh_delete( this );
+            lh_id_->lh_delete();
             lh_id_.reset();
         }
+        return;
     }
 
     /**
@@ -138,71 +164,59 @@ public:
         return true;
     }
 
-    void setError( const QString & err )
-    {
-        error_ = err;
-    }
-
-    // lh_api6::object_interface
-
-    /**
-      Called by LCDHost to provide the LCDHost ID.
-      This is called once the corresponding LCDHost object
-      has been created. Any pre-existing children will have
-      their lh_create() function called. Then the init()
-      function will be called. Don't reimplement this
-      in a subclass unless you know what you're doing.
-      */
-    bool lh_init( const lh_id & id );
-
     /**
       Return the object's error string, or an empty
       string if there is no error condition.
       */
-    QString lh_error() const
+    const QString & error() const
     {
         return error_;
     }
 
-    /**
-      Called by LCDHost once this object and all it's
-      children have had been initialized successfully
-      and all stored properties have been set.
-      */
-    void lh_event_initialized()
+    void setError( const QString & err )
     {
+        error_ = err;
         return;
     }
-
-    // export lcdhost_interface
 
     void lh_request_polling() const
     {
         if( lh_id_ ) lh_id_->lh_request_polling();
+        return;
     }
 
     void lh_request_render() const
     {
         if( lh_id_ ) lh_id_->lh_request_render();
+        return;
     }
 
     void lh_request_reload( const QString & reason ) const
     {
         if( lh_id_ ) lh_id_->lh_request_reload( reason );
+        return;
     }
 
+    void customEvent( QEvent * );
+
     /**
-      Alters an object name so that it conforms
-      to the rules set for object.ident.
+      Sanitizes a string to conform to LCDHost identity string rules.
+      If the \p obj parameter is given, it will also auto-generate
+      an identity string for the given object if needed.
+      \param str The string to sanitize.
+      \param obj Optional object to sanitize for.
+      \return A reasonable LCDHost identity string.
       */
-    static QString ident( const QString& name );
+    static QString ident( const QString & str, const QObject *obj = 0 );
 
 signals:
+    void initialized();
     void titleChanged( const QString & title );
 };
 
-} // namespace lh_api6
+} // namespace api6
+} // namespace lh
 
-typedef lh_api6::object lh_object;
+Q_DECLARE_INTERFACE( lh::api6::object, "se.linkdata.lh_object/6.0" )
 
-#endif // LH_OBJECT_H
+#endif // LH_API6_LH_OBJECT_H

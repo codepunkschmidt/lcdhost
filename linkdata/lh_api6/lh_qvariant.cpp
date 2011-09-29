@@ -38,7 +38,7 @@
 #include <QFont>
 #include <QXmlStreamReader>
 #include <QXmlStreamWriter>
-#include "lh_qvariant.h"
+#include "lh_api6/lh_api6.h"
 
 static bool isHexDigit( const QChar ch )
 {
@@ -219,7 +219,7 @@ QString lh_qstring_from_qcolor( const QColor& c )
     return retv;
 }
 
-void lh_qstring_to_lhinput( const QString& s, lh_input& in )
+void lh_qstring_to_lhinput( const QString & s, lh_input & in )
 {
     memset( &in, 0, sizeof(in) );
 
@@ -228,10 +228,8 @@ void lh_qstring_to_lhinput( const QString& s, lh_input& in )
     const QChar *identstart = it;
     while( it != s.constEnd() && *it != QChar('/') ) ++it;
     const QString ident = QString::fromRawData(identstart,(it-identstart));
-    if( ident.size() == 0 || ident.size() >= LH_MAX_IDENT ) return;
-
-    for( int i=0; i<ident.size(); ++i )
-        in.ident[i] = ident.at(i).toAscii();
+    in.setDeviceName( ident );
+    if( ident.isEmpty() ) return;
 
     if( it != s.constEnd() && *it == QChar('/') )
     {
@@ -241,14 +239,14 @@ void lh_qstring_to_lhinput( const QString& s, lh_input& in )
             const QChar *itemstart = it;
             ++ it;
             while( it != s.constEnd() && it->isDigit() ) ++it;
-            in.item = QString::fromRawData(itemstart,it-itemstart).toInt();
+            in.setItem( QString::fromRawData(itemstart,it-itemstart).toInt() );
 
             if( it != s.constEnd() && *it == QChar('/') )
             {
                 ++ it;
                 const QChar *flagstart = it;
                 while( it != s.constEnd() && isHexDigit(it->toLower()) ) ++it;
-                in.flags = QString::fromRawData(flagstart,it-flagstart).toInt(0,16);
+                in.setFlags( QString::fromRawData(flagstart,it-flagstart).toInt(0,16) );
             }
         }
     }
@@ -259,11 +257,11 @@ void lh_qstring_to_lhinput( const QString& s, lh_input& in )
 QString lh_qstring_from_lhinput( const lh_input& in )
 {
     QString retv;
-    if( *in.ident )
+    if( ! in.deviceName().isEmpty() )
     {
         QTextStream ts(&retv,QIODevice::WriteOnly);
-        ts << in.ident << '/' << forcesign << in.item;
-        ts << '/' << noforcesign << hex << in.flags;
+        ts << in.deviceName() << '/' << forcesign << in.item();
+        ts << '/' << noforcesign << hex << in.flags();
     }
     return retv;
 }

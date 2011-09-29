@@ -1,10 +1,10 @@
-#ifndef LH_SINK_H
-#define LH_SINK_H
+#ifndef LH_API6_LH_SINK_H
+#define LH_API6_LH_SINK_H
 
-#include "lh_linkable.h"
+#include "lh_api6/lh_linkable.h"
 
-namespace lh_api6
-{
+namespace lh {
+namespace api6 {
 
 /**
   sink is a convenience class for creating
@@ -13,6 +13,7 @@ namespace lh_api6
 class sink : public linkable
 {
     Q_OBJECT
+    Q_INTERFACES( lh::api6::object lh::api6::linkable )
 
     Q_PROPERTY( QString pull READ pull STORED false )
     Q_PROPERTY( QVariant value READ value WRITE setValue STORED false )
@@ -22,7 +23,7 @@ class sink : public linkable
 public:
     explicit sink(
             object & parent,
-            const QString & ident,
+            const char * ident,
             const QString & path,
             const QVariant & val = QVariant(),
             const QVariant & min = QVariant(),
@@ -33,8 +34,9 @@ public:
     }
 };
 
-} // namespace lh_api6
+} // namespace api6
+} // namespace lh
 
-typedef lh_api6::sink lh_sink;
+Q_DECLARE_INTERFACE( lh::api6::sink, "se.linkdata.lh_sink/6.0" )
 
-#endif // LH_SINK_H
+#endif // LH_API6_LH_SINK_H

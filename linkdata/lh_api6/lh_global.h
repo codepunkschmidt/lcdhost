@@ -77,6 +77,8 @@
 #define LH_API_MAJOR 6
 #define LH_API_MINOR 0
 
+#error ( "Dont use this" )
+
 #ifndef NEXTBIT
 # define NEXTBIT(v) (((v-1)>>1)|((v-1)>>2)|((v-1)>>4)|((v-1)>>8)|((v-1)>>16))
 #endif
@@ -120,7 +122,7 @@ typedef struct lh_buffer_t
   */
 typedef enum lh_ui_flag_t
 {
-    lh_ui_stored = (1<<0), /**< this setup item should be saved if modified */
+    is_stored = (1<<0), /**< this setup item should be saved if modified */
     lh_ui_visible = (1<<1), /**< show the setup item in the UI */
     lh_ui_enabled = (1<<2), /**< enable the setup item in the UI */
     lh_ui_source = (1<<3), /**< allow the UI to use this setup item as a data source */
@@ -158,7 +160,7 @@ typedef enum lh_ui_type_t
     lh_ui_type_mask = ~(lh_ui_none-1)
 } lh_ui_type;
 
-const int lh_ui_default = (lh_ui_stored|lh_ui_visible|lh_ui_enabled|lh_ui_source|lh_ui_sink);
+const int lh_ui_default = (is_stored|lh_ui_visible|lh_ui_enabled|lh_ui_source|lh_ui_sink);
 
 #ifndef LH_MAX_IDENT
 

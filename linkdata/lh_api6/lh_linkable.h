@@ -1,10 +1,12 @@
-#ifndef LH_LINKABLE_H
-#define LH_LINKABLE_H
+#ifndef LH_API6_LH_LINKABLE_H
+#define LH_API6_LH_LINKABLE_H
 
-#include "lh_object.h"
+#include <QVariant>
+#include <QString>
+#include "lh_api6/lh_object.h"
 
-namespace lh_api6
-{
+namespace lh {
+namespace api6 {
 
 /**
   linkable provides the basic data linking
@@ -16,6 +18,7 @@ namespace lh_api6
 class linkable : public object
 {
     Q_OBJECT
+    Q_INTERFACES( lh::api6::object )
 
     QString push_;
     QString pull_;
@@ -25,14 +28,14 @@ class linkable : public object
 
 public:
     linkable( object & parent,
-              const QString & ident,
+              const char * ident,
               const QString & path = QString(),
               bool is_source = false,
               const QVariant & val = QVariant(),
               const QVariant & min = QVariant(),
               const QVariant & max = QVariant()
               ) :
-        object( ident, & parent ),
+        object( parent, ident ),
         push_( is_source ? path : QString() ),
         pull_( is_source ? QString() : path ),
         value_( val ),
@@ -64,8 +67,9 @@ public slots:
     void setMaximum( const QVariant & v );
 };
 
-} // namespace lh_api6
+} // namespace api6
+} // namespace lh
 
-typedef lh_api6::linkable lh_linkable;
+Q_DECLARE_INTERFACE( lh::api6::linkable, "se.linkdata.lh_linkable/6.0" )
 
-#endif // LH_LINKABLE_H
+#endif // LH_API6_LH_LINKABLE_H

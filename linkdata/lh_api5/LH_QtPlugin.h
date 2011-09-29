@@ -35,39 +35,16 @@
 #ifndef LH_QTPLUGIN_H
 #define LH_QTPLUGIN_H
 
-#include <QtGlobal>
-#include <QtPlugin>
-#include <QObject>
-
 #include "LH_QtObject.h"
 
-#ifndef EXPORT
-# define EXPORT extern "C" Q_DECL_EXPORT
-#endif
-
-
-/**
-  Base class for Qt-based LCDHost shared libraries.
-  As of alpha 17, the LH_QtPlugin object is no longer a global
-  C++ object, rather it is created dynamically in lh_create()
-  and destroyed in lh_destroy(). These two functions are
-  defined when you use the LH_PLUGIN(classname) macro.
-  */
 class LH_QtPlugin : public LH_QtObject
 {
     Q_OBJECT
-public:
+    Q_INTERFACES( lh::api6::object )
 };
 
-#define LH_SIGNATURE()
-
-/**
-  This macro creates the required exported functions
-  for your LH_QtPlugin descendant.
-  */
-#define LH_PLUGIN(classname) \
-    Q_EXPORT_PLUGIN2(classname,classname) \
-    lh_signature lh_##classname##_signature = LH_SIGNATURE_BLANK; \
-    char lh_##classname##_xml[]
+#ifndef LH_SIGNATURE
+# define LH_SIGNATURE()
+#endif
 
 #endif // LH_QTPLUGIN_H

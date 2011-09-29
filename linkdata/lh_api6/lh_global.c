@@ -19,7 +19,7 @@
 */
 void lh_buffer_to_headerfile( const lh_buffer_t *buffer, const char *filename, const char *varname )
 {
-    unsigned n, m;
+    int n, m;
     FILE *f;
 
     if( filename == NULL || buffer == NULL ) return;

@@ -38,7 +38,6 @@
 #include <QObject>
 
 #include "LH_QtObject.h"
-#include "lh_setup.h"
 #include "lh_plugin.h"
 
 /**
@@ -47,6 +46,7 @@
 class LH_QtSetupItem : public lh_setup
 {
     Q_OBJECT
+    Q_INTERFACES( lh::api6::object lh::api6::setup )
 
 protected:
     lh_setup_type api5type_;

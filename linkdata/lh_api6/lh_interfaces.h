@@ -2,23 +2,20 @@
 #define LH_INTERFACES_H
 
 #include <QtPlugin>
-#include <QSharedData>
 #include "lh_global.h"
 #include "lh_id.h"
 
 class QString;
 class QImage;
+class QEvent;
 
-namespace lh_api6
-{
+namespace lh {
+namespace api6 {
 
 class object_interface
 {
 public:
     virtual ~object_interface() {}
-    virtual bool lh_init( const id_ptr & id ) = 0;
-    virtual QString lh_error() const = 0;
-    virtual void lh_event_initialized() = 0;
 };
 
 class setup_interface
@@ -74,17 +71,18 @@ public:
     virtual void lh_widget_destroy( QObject * ) = 0;
 };
 
-}
+} // namespace api6
+} // namespace lh
 
-typedef lh_api6::object_interface lh_object_interface;
-typedef lh_api6::setup_interface lh_setup_interface;
+typedef lh::api6::object_interface lh_object_interface;
+typedef lh::api6::setup_interface lh_setup_interface;
 
-Q_DECLARE_INTERFACE( lh_api6::object_interface, "se.linkdata.lh.object_interface/6.0" )
-Q_DECLARE_INTERFACE( lh_api6::setup_interface, "se.linkdata.lh.setup_interface/6.0" )
-Q_DECLARE_INTERFACE( lh_api6::device_interface, "se.linkdata.lh.device_interface/6.0" )
-Q_DECLARE_INTERFACE( lh_api6::output_interface, "se.linkdata.lh.output_interface/6.0" )
-Q_DECLARE_INTERFACE( lh_api6::input_interface, "se.linkdata.lh.input_interface/6.0" )
-Q_DECLARE_INTERFACE( lh_api6::item_interface, "se.linkdata.lh.item_interface/6.0" )
-Q_DECLARE_INTERFACE( lh_api6::widget_interface, "se.linkdata.lh.widget_interface/6.0" )
+Q_DECLARE_INTERFACE( lh::api6::object_interface, "se.linkdata.lh.object_interface/6.0" )
+Q_DECLARE_INTERFACE( lh::api6::setup_interface, "se.linkdata.lh.setup_interface/6.0" )
+Q_DECLARE_INTERFACE( lh::api6::device_interface, "se.linkdata.lh.device_interface/6.0" )
+Q_DECLARE_INTERFACE( lh::api6::output_interface, "se.linkdata.lh.output_interface/6.0" )
+Q_DECLARE_INTERFACE( lh::api6::input_interface, "se.linkdata.lh.input_interface/6.0" )
+Q_DECLARE_INTERFACE( lh::api6::item_interface, "se.linkdata.lh.item_interface/6.0" )
+Q_DECLARE_INTERFACE( lh::api6::widget_interface, "se.linkdata.lh.widget_interface/6.0" )
 
 #endif // LH_INTERFACES_H

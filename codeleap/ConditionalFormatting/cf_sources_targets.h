@@ -9,7 +9,7 @@
 #include "LH_QtSetupItem.h"
 //#include "LH_Qt_bool.h"
 #include "LH_Qt_QString.h"
-//#include "LH_Qt_QStringList.h"
+#include "LH_Qt_QStringList.h"
 //#include "LH_Qt_QTextEdit.h"
 //#include "LH_Qt_QColor.h"
 //#include "LH_Qt_QFont.h"
@@ -124,6 +124,9 @@ public:
             {
             case lh_type_string:
                 value = ((LH_Qt_QString*)obj_)->value();
+                break;
+            case lh_type_integer_list:
+                value = ((LH_Qt_QStringList*)obj_)->valueText();
                 break;
             default:
                 qWarning() << "Unhandled cf source type: " << obj_->type();

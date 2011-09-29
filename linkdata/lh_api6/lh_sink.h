@@ -1,7 +1,7 @@
 #ifndef LH_API6_LH_SINK_H
 #define LH_API6_LH_SINK_H
 
-#include "lh_api6/lh_linkable.h"
+#include "lh_linkable.h"
 
 namespace lh {
 namespace api6 {

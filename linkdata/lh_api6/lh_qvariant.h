@@ -38,12 +38,13 @@
 
 #include <QVariant>
 #include <QMetaType>
+#include "lh_input.h"
 
 class QXmlStreamWriter;
 class QXmlStreamReader;
 class QColor;
 
-typedef class lh::api6::input lh_input;
+typedef lh::api6::input lh_input;
 
 Q_DECLARE_METATYPE(lh_input)
 

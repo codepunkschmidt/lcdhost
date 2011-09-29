@@ -2,7 +2,7 @@
 #define LH_API6_LH_SETUP_H
 
 #include <QStringList>
-#include "lh_api6/lh_linkable.h"
+#include "lh_linkable.h"
 
 namespace lh {
 namespace api6 {

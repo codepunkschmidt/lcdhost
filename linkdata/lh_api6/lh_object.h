@@ -38,7 +38,9 @@
 
 #include <QObject>
 #include <QString>
-#include "lh_api6/lh_id.h"
+#include <QVariant>
+#include "lh_id.h"
+#include "lh_event.h"
 
 namespace lh {
 namespace api6 {
@@ -59,19 +61,6 @@ protected:
       by LCDHost when loading the plugin.
       */
     object() : QObject() {}
-
-    /**
-      Called by LCDHost to provide the LCDHost ID.
-      This is called once the corresponding LCDHost object
-      has been created. Any pre-existing children will have
-      their lh_create() function called. Then the init()
-      function will be called. Use setError() to report
-      an error condition. If init() return false, lh_destroy()
-      will be called to disassociate from LCDHost.
-
-      \param id The LCDHost ID.
-      */
-    void lh_init( const id_ptr & id );
 
 public:
     /**
@@ -122,6 +111,20 @@ public:
     {
         return lh_id_;
     }
+
+    /**
+      Called by LCDHost to provide the LCDHost ID.
+      This is called once the corresponding LCDHost object
+      has been created. Any pre-existing children will have
+      their lh_create() function called. Then the init()
+      function will be called. Use setError() to report
+      an error condition. If init() return false, lh_destroy()
+      will be called to disassociate from LCDHost.
+
+      \param id The LCDHost ID.
+      \return Result from init()
+      */
+     bool lh_init( const id_ptr & id );
 
     /**
       Request that LCDHost create it's corresponding
@@ -213,6 +216,40 @@ signals:
     void initialized();
     void titleChanged( const QString & title );
 };
+
+namespace event {
+
+class initchild : public QEvent
+{
+    id_ptr id_;
+    QString childname_;
+public:
+    static const Type type = (Type) type_initchild;
+    initchild( const id_ptr & id, const QString & childname ) :
+        QEvent( type ),
+        id_( id ),
+        childname_( childname )
+    {}
+    const id_ptr & id() const { return id_; }
+    const QString & childName() const { return childname_; }
+};
+
+class setproperty : public QEvent
+{
+    const char * name_;
+    QVariant value_;
+public:
+    static const Type type = (Type) type_setproperty;
+    setproperty( const char * name, const QVariant & value ) :
+        QEvent( type ),
+        name_( name ),
+        value_( value )
+    {}
+    const char * name() const { return name_; }
+    const QVariant & value() const { return value_; }
+};
+
+} // namespace event
 
 } // namespace api6
 } // namespace lh

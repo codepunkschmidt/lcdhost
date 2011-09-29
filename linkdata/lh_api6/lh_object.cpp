@@ -34,15 +34,15 @@
   */
 
 #include <QDebug>
-#include "lh_api6/lh_api6.h"
+#include "lh_object.h"
 
 using namespace lh::api6;
 
-void object::lh_init( const id_ptr & id )
+bool object::lh_init( const id_ptr & id )
 {
     lh_id_ = id;
     error_.clear();
-    if( !lh_id_ ) return;
+    if( !lh_id_ ) return true;
 
     lh_id_->lh_bind( *this );
 
@@ -62,7 +62,7 @@ void object::lh_init( const id_ptr & id )
 
     lh_id_->lh_init_result( error_ );
 
-    return;
+    return error_.isEmpty();
 }
 
 void object::customEvent( QEvent *event )
@@ -70,38 +70,26 @@ void object::customEvent( QEvent *event )
     switch( (event::type) event->type() )
     {
 
-    case event::init::type:
+    case event::initchild::type:
     {
-        event::init *e = static_cast<event::init *>(event);
-        object *dest = 0;
-        if( e->childName().isEmpty() )
+        event::initchild *e = static_cast<event::initchild *>(event);
+        QObjectList::const_iterator it;
+        for( it = children().constBegin(); it != children().constEnd(); ++ it )
         {
-            // special case for the main plugin object
-            dest = this;
-        }
-        else
-        {
-            QObjectList::const_iterator it;
-            for( it = children().constBegin(); it != children().constEnd(); ++ it )
+            if( (*it)->objectName() == e->childName() )
             {
-                if( (*it)->objectName() == e->childName() )
-                    dest = qobject_cast<object *>(*it);
-                if( dest ) break;
+                if( object * child = qobject_cast<object *>(*it) )
+                {
+                    child->lh_init( e->id() );
+                    return;
+                }
             }
         }
 
-        if( dest )
-        {
-            dest->lh_init( e->id() );
-        }
-        else
-        {
-            qCritical() << metaObject()->className()
-                        << objectName()
-                        << "event_init: no child named"
-                        << e->childName();
-        }
-
+        qCritical() << metaObject()->className()
+                    << objectName()
+                    << "event_initchild: no child named"
+                    << e->childName();
         return;
     }
 

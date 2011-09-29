@@ -38,7 +38,7 @@
 #include <QFont>
 #include <QXmlStreamReader>
 #include <QXmlStreamWriter>
-#include "lh_api6/lh_api6.h"
+#include "lh_qvariant.h"
 
 static bool isHexDigit( const QChar ch )
 {

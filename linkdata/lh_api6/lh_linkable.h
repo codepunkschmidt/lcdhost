@@ -3,7 +3,7 @@
 
 #include <QVariant>
 #include <QString>
-#include "lh_api6/lh_object.h"
+#include "lh_object.h"
 
 namespace lh {
 namespace api6 {

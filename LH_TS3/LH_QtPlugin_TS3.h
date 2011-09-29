@@ -25,7 +25,7 @@
 #ifndef LH_QTPLUGIN_TS3_H
 #define LH_QTPLUGIN_TS3_H
 
-#define TS3_DEBUG_MESSAGES
+//#define TS3_DEBUG_MESSAGES
 //#define TS3_USER_DEFINED_UID
 
 

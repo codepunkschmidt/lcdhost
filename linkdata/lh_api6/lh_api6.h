@@ -46,21 +46,18 @@
 
 #ifdef __cplusplus
 
-#include "lh_api6/lh_id.h"
-#include "lh_api6/lh_input.h"
-#include "lh_api6/lh_qvariant.h"
-#include "lh_api6/lh_event.h"
-#include "lh_api6/lh_object.h"
-#include "lh_api6/lh_plugin.h"
-#include "lh_api6/lh_linkable.h"
-#include "lh_api6/lh_source.h"
-#include "lh_api6/lh_sink.h"
-#include "lh_api6/lh_setup.h"
+#include "lh_id.h"
+#include "lh_input.h"
+#include "lh_qvariant.h"
+#include "lh_object.h"
+#include "lh_plugin.h"
+#include "lh_linkable.h"
+#include "lh_source.h"
+#include "lh_sink.h"
+#include "lh_setup.h"
 
 typedef lh::api6::id_ptr lh_id;
 typedef lh::api6::input lh_input;
-typedef lh::api6::event::init lh_event_init;
-typedef lh::api6::event::setproperty lh_event_setproperty;
 typedef lh::api6::object lh_object;
 typedef lh::api6::plugin lh_plugin;
 typedef lh::api6::plugin::signature lh_signature;
@@ -70,6 +67,8 @@ typedef lh::api6::sink lh_sink;
 typedef lh::api6::setup lh_setup;
 typedef lh::api6::setup::ui_type lh_ui_type;
 typedef lh::api6::setup::ui_flag lh_ui_flag;
+
+namespace lh_event = lh::api6::event;
 
 #endif // __cplusplus
 

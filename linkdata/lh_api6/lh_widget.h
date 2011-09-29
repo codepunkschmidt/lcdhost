@@ -1,7 +1,7 @@
 #ifndef LH_API6_LH_WIDGET_H
 #define LH_API6_LH_WIDGET_H
 
-#include "lh_api6/lh_object.h"
+#include "lh_object.h"
 
 namespace lh {
 namespace api6 {

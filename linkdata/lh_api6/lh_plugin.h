@@ -2,7 +2,7 @@
 #define LH_API6_LH_PLUGIN_H
 
 #include <QtPlugin>
-#include "lh_api6/lh_object.h"
+#include "lh_object.h"
 
 namespace lh {
 namespace api6 {

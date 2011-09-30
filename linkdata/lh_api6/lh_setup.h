@@ -22,6 +22,7 @@ class setup : public linkable
     Q_PROPERTY( bool isEnabled READ isEnabled WRITE setEnabled STORED false )
     Q_PROPERTY( bool isVisible READ isVisible WRITE setVisible STORED false )
     Q_PROPERTY( int order READ order WRITE setOrder )
+    Q_PROPERTY( QString title READ title WRITE setTitle STORED false )
     Q_PROPERTY( QString push READ push WRITE setPush )
     Q_PROPERTY( QString pull READ pull WRITE setPull )
     Q_PROPERTY( QString help READ help WRITE setHelp )
@@ -32,6 +33,7 @@ class setup : public linkable
 
     int meta_;
     int order_;
+    QString title_;
     QString help_;
     QStringList list_;
 
@@ -95,7 +97,8 @@ public:
             ) :
         linkable( parent, ident, QString(), false, val, min, max ),
         meta_( meta ),
-        order_( 0 )
+        order_( 0 ),
+        title_( ident )
     {
         if( meta_ & is_first ) -- order_;
         if( meta_ & is_last ) ++ order_;
@@ -110,6 +113,7 @@ public:
     bool isEnabled() const { return flag( is_enabled ); }
     bool isVisible() const { return flag( is_visible ); }
     int order() const { return order_; }
+    const QString & title() const { return title_; }
     const QString & help() const { return help_; }
     const QStringList & list() const { return list_; }
 
@@ -125,6 +129,7 @@ signals:
 public slots:
     void setMeta( int meta );
     void setOrder( int order );
+    void setTitle( const QString & title );
     void setHelp( const QString & help );
     void setList( const QStringList & sl );
 };

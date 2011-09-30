@@ -34,17 +34,45 @@
   */
 
 #include <QDebug>
+#include <QMetaProperty>
 #include "lh_object.h"
 
 using namespace lh::api6;
 
+bool object::send_properties( bool init_result ) const
+{
+    if( !id() ) return false;
+
+    for( int i = 0; i < metaObject()->propertyCount(); ++ i )
+    {
+        QMetaProperty prop( metaObject()->property(i) );
+        if( prop.isScriptable() )
+        {
+            if( !id()->lh_set_property( prop.name(), property(prop.name()) ) )
+                return false;
+        }
+    }
+
+    return init_result;
+}
+
 bool object::lh_init( const id_ptr & id )
 {
-    lh_id_ = id;
-    error_.clear();
-    if( !lh_id_ ) return true;
+    if( !(lh_id_ = id) )
+    {
+        qCritical() << metaObject()->className()
+                    << objectName()
+                    << "lh_init() called with null ID";
+        return false;
+    }
 
-    lh_id_->lh_bind( *this );
+    if( !lh_id_->lh_bind( *this ) )
+    {
+        qCritical() << metaObject()->className()
+                    << objectName()
+                    << "lh_bind() failed";
+        return false;
+    }
 
     QObjectList::const_iterator it;
     for( it = children().constBegin(); it != children().constEnd(); ++ it )
@@ -53,26 +81,28 @@ bool object::lh_init( const id_ptr & id )
             child->lh_create();
     }
 
-    if( !init() && error_.isEmpty() )
-    {
-        error_ = tr("%1 %2: init() failed")
-                .arg(metaObject()->className())
-                .arg(objectName());
-    }
-
-    lh_id_->lh_init_result( error_ );
-
-    return error_.isEmpty();
+    return lh_id_->lh_init_result( send_properties( init() ) );
 }
 
 void object::customEvent( QEvent *event )
 {
-    switch( (event::type) event->type() )
+    switch( event::fromType( event->type() ) )
     {
+    case event::type_create_child:
+    case event::type_init_success:
+    case event::type_init_failure:
+    case event::type_api6_unused:
+        break;
 
-    case event::initchild::type:
+    case event::type_ping:
     {
-        event::initchild *e = static_cast<event::initchild *>(event);
+        id()->lh_ping_reply();
+        return;
+    }
+
+    case event::type_init_child:
+    {
+        event::init_child *e = static_cast<event::init_child *>(event);
         QObjectList::const_iterator it;
         for( it = children().constBegin(); it != children().constEnd(); ++ it )
         {
@@ -88,32 +118,40 @@ void object::customEvent( QEvent *event )
 
         qCritical() << metaObject()->className()
                     << objectName()
-                    << "event_initchild: no child named"
+                    << "event::init_child: no child named"
                     << e->childName();
         return;
     }
 
-    case event::setproperty::type:
+    case event::type_set_property:
     {
-        event::setproperty *e = static_cast<event::setproperty *>(event);
+        event::set_property *e = static_cast<event::set_property *>(event);
         if( !setProperty( e->name(), e->value() ) )
-            qCritical() << metaObject()->className()
-                        << objectName()
-                        << "event_setproperty: failed to set"
-                        << e->name();
+        {
+            if( metaObject()->indexOfProperty(e->name()) == -1 )
+            {
+                qCritical() << metaObject()->className()
+                            << objectName()
+                            << "event::set_property: failed to set"
+                            << e->name();
+            }
+            else
+            {
+                qWarning() << metaObject()->className()
+                           << objectName()
+                           << "event::set_property: added dynamic"
+                           << e->name();
+            }
+        }
         return;
     }
 
-    case event::first_type:
-    case event::last_type:
-        break;
     }
 
     qCritical() << metaObject()->className()
                 << objectName()
-                << ": unhandled event"
-                << event->type()
-                << event::name( (event::type) event->type() );
+                << "unhandled event"
+                << event::name( event->type() );
     return;
 }
 

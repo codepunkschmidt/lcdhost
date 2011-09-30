@@ -5,26 +5,54 @@
 
 namespace lh {
 namespace api6 {
+
+/**
+  Converts an unsigned integer to a hex
+  string using a static char buffer of
+  at least sizeof(qptrdiff)*2+1.
+  */
+char * hex( qptrdiff n, char * buf );
+
 namespace event {
 
 /**
-  Registering event types using QEvent::registerEventType()
-  doesn't match up across dynamic library boundaries.
-  Note that the actual event classes are declared with
-  the objects that make use of them.
+  LCDHost custom events. The enumeration
+  values are relative to \c lh_event::toType().
   */
 typedef enum
 {
-    first_type = QEvent::MaxUser - (QEvent::User*2),
-    type_initchild,
-    type_setproperty,
-    last_type
+    type_ping = 0,
+    type_create_child,
+    type_init_child,
+    type_init_success,
+    type_init_failure,
+    type_set_property,
+    type_api6_unused
 } type;
 
 /**
-  Returns a the event name given a type.
+  Returns the base of the LCDHost event type
+  enumeration, plus the value given, as a
+  QEvent::Type value.
   */
-const char * name( type t );
+QEvent::Type toType( type t = type_ping );
+
+/**
+  Returns the LCDHost type enumeration value
+  given a QEvent::Type. The return value may
+  not be a valid lh_event::type.
+  */
+inline type fromType( QEvent::Type t )
+{
+    return (type) ( t - toType() );
+}
+
+/**
+  Returns a string describing the event.
+  For non-LCDHost event types, returns
+  the numerical value as a hex string.
+  */
+const char * name( QEvent::Type t );
 
 } // namespace event
 } // namespace api6

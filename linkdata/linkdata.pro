@@ -2,7 +2,6 @@
 # linkdata.pro
 #
 
+TARGET = linkdata
 TEMPLATE = subdirs
-SUBDIRS = 
-
-# this space intentionally left blank
+SUBDIRS = lh_api6

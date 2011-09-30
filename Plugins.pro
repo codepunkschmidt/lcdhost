@@ -38,11 +38,12 @@ defineTest(cfgLine) {
     error("Please review $$PWD/PluginsConfig.prf, make adjustments as needed, and then rebuild")
 }
 
-load($$PWD/PluginsConfig.prf)
-isEmpty(LH_PLUGINS_LIST): LH_PLUGINS_LIST=$$files(LH_*)
-
 TARGET = Plugins
 TEMPLATE = subdirs
-CONFIG += lh_plugin ordered
-SUBDIRS = linkdata
+CONFIG += ordered linkdata autolist
+
+load($$PWD/PluginsConfig.prf)
+
+autolist: isEmpty(LH_PLUGINS_LIST): LH_PLUGINS_LIST=$$files(LH_*)
+linkdata: SUBDIRS += linkdata
 SUBDIRS += $$LH_PLUGINS_LIST

@@ -113,6 +113,8 @@ protected:
     void add_cf_source(QString name);
     void add_cf_target(LH_QtSetupItem *si);
 
+    void cf_set_rules(QString rulesXML, bool enable_cf = true);
+
 public:
     LH_Qt_QStringList *setup_cf_source_;
     LH_Qt_QStringList *setup_cf_source_mode_;

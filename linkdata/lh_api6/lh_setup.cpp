@@ -63,15 +63,20 @@ void setup::setMeta( int meta )
 
 void setup::setOrder( int order )
 {
+    order_ = order;
+}
 
+void setup::setTitle( const QString & title )
+{
+    title_ = title;
 }
 
 void setup::setHelp( const QString & help )
 {
-
+    help_ = help;
 }
 
 void setup::setList( const QStringList & sl )
 {
-
+    list_ = sl;
 }

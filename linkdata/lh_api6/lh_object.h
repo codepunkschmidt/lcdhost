@@ -48,7 +48,6 @@ namespace api6 {
 class object : public QObject
 {
     Q_OBJECT
-
     Q_PROPERTY( QString error READ error WRITE setError STORED false )
 
     QString error_;
@@ -61,6 +60,13 @@ protected:
       by LCDHost when loading the plugin.
       */
     object() : QObject() {}
+
+    /**
+      Sends all scriptable property values to LCDHost,
+      returns \p init_result unless there was an error,
+      in which case \c false is returned.
+      */
+    bool send_properties( bool init_result = true ) const;
 
 public:
     /**
@@ -135,8 +141,8 @@ public:
       */
     void lh_create()
     {
-        if( !lh_id_ && parent() && parent()->lh_id_ )
-            parent()->lh_id_->lh_new( *this );
+        if( !id() && parent() && parent()->id() )
+            parent()->id()->lh_create_child( *this );
         return;
     }
 
@@ -147,9 +153,9 @@ public:
       */
     void lh_destroy()
     {
-        if( lh_id_ )
+        if( id() )
         {
-            lh_id_->lh_delete();
+            id()->lh_destroy();
             lh_id_.reset();
         }
         return;
@@ -184,19 +190,19 @@ public:
 
     void lh_request_polling() const
     {
-        if( lh_id_ ) lh_id_->lh_request_polling();
+        if( id() ) id()->lh_request_polling();
         return;
     }
 
     void lh_request_render() const
     {
-        if( lh_id_ ) lh_id_->lh_request_render();
+        if( id() ) id()->lh_request_render();
         return;
     }
 
     void lh_request_reload( const QString & reason ) const
     {
-        if( lh_id_ ) lh_id_->lh_request_reload( reason );
+        if( id() ) id()->lh_request_reload( reason );
         return;
     }
 
@@ -219,14 +225,27 @@ signals:
 
 namespace event {
 
-class initchild : public QEvent
+class create_child : public QEvent
+{
+    QByteArray classname_;
+    QString objectname_;
+public:
+    create_child( const char * classname, const QString & objectname ) :
+        QEvent( toType(type_create_child) ),
+        classname_( classname ),
+        objectname_( objectname )
+    {}
+    const QByteArray & className() const { return classname_; }
+    const QString & objectName() const { return objectname_; }
+};
+
+class init_child : public QEvent
 {
     id_ptr id_;
     QString childname_;
 public:
-    static const Type type = (Type) type_initchild;
-    initchild( const id_ptr & id, const QString & childname ) :
-        QEvent( type ),
+    init_child( const id_ptr & id, const QString & childname ) :
+        QEvent( toType(type_init_child) ),
         id_( id ),
         childname_( childname )
     {}
@@ -234,18 +253,17 @@ public:
     const QString & childName() const { return childname_; }
 };
 
-class setproperty : public QEvent
+class set_property : public QEvent
 {
-    const char * name_;
+    QByteArray name_;
     QVariant value_;
 public:
-    static const Type type = (Type) type_setproperty;
-    setproperty( const char * name, const QVariant & value ) :
-        QEvent( type ),
+    set_property( const char * name, const QVariant & value ) :
+        QEvent( toType(type_set_property) ),
         name_( name ),
         value_( value )
     {}
-    const char * name() const { return name_; }
+    const QByteArray & name() const { return name_; }
     const QVariant & value() const { return value_; }
 };
 

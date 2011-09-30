@@ -1,40 +1,37 @@
+#
 # lh_api6.pro
+#
+# Builds the LCDHost plugin API6 support library
+#
 
-PRECOMPILED_HEADER = $$PWD/lh_api6.h
+TARGET = lh_api6
+TEMPLATE = lib
+CONFIG += staticlib
+DESTDIR = $$PWD
 
-lh_api6 {
-    INCLUDEPATH += $$PWD/..
-    LIBS += -L$$PWD/.. -llh_api6
-} else {
-    TARGET = lh_api6
-    TEMPLATE = lib
-    CONFIG += staticlib
-    DESTDIR = $$PWD/..
-    HEADERS = \
-        $$PWD/lh_id.h \
-        $$PWD/lh_input.h \
-        $$PWD/lh_event.h \
-        $$PWD/lh_qvariant.h \
-        $$PWD/lh_object.h \
-        $$PWD/lh_plugin.h \
-        $$PWD/lh_linkable.h \
-        $$PWD/lh_source.h \
-        $$PWD/lh_sink.h \
-        $$PWD/lh_setup.h \
-        $$PWD/lh_widget.h
+HEADERS = \
+    lh_id.h \
+    lh_input.h \
+    lh_event.h \
+    lh_qvariant.h \
+    lh_object.h \
+    lh_plugin.h \
+    lh_linkable.h \
+    lh_source.h \
+    lh_sink.h \
+    lh_setup.h \
+    lh_widget.h
 
-    SOURCES = \
-        $$PWD/lh_event.cpp \
-        $$PWD/lh_qvariant.cpp \
-        $$PWD/lh_object.cpp \
-        $$PWD/lh_plugin.cpp \
-        $$PWD/lh_linkable.cpp \
-        $$PWD/lh_source.cpp \
-        $$PWD/lh_sink.cpp \
-        $$PWD/lh_setup.cpp \
-        $$PWD/lh_widget.cpp
-}
-
+SOURCES = \
+    lh_event.cpp \
+    lh_qvariant.cpp \
+    lh_object.cpp \
+    lh_plugin.cpp \
+    lh_linkable.cpp \
+    lh_source.cpp \
+    lh_sink.cpp \
+    lh_setup.cpp \
+    lh_widget.cpp
 
 
 

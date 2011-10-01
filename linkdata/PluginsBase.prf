@@ -9,9 +9,40 @@
 # http://code.google.com/p/lcdhost/issues/list
 #
 
+# LH_DESTDIR must point to the root destination directory.
+# This is usually set in ../PluginsConfig.prf
 isEmpty(LH_DESTDIR): error("LH_DESTDIR is not set")
-isEmpty(DESTDIR): DESTDIR=$$LH_DESTDIR
 
+# Set default destinations paths based on platform
+# and define LCDHOST_PLATFORM based on OS and release mode.
+CONFIG(debug, debug|release): LCDHOST_PLATFORM = "d"
+else: LCDHOST_PLATFORM = ""
+win32 {
+    LCDHOST_BINARIES = $$LH_DESTDIR
+    LCDHOST_PLUGINS = $$LH_DESTDIR/plugins
+    LCDHOST_PLATFORM=win32$$LCDHOST_PLATFORM
+}
+macx {
+    LCDHOST_BINARIES = $$LH_DESTDIR/LCDHost.app/Contents/MacOS
+    LCDHOST_PLUGINS = $$LH_DESTDIR/LCDHost.app/Contents/PlugIns
+    LCDHOST_PLATFORM=mac64$$LCDHOST_PLATFORM
+}
+unix:!macx {
+    LCDHOST_BINARIES = $$LH_DESTDIR
+    LCDHOST_PLUGINS = $$LH_DESTDIR/plugins
+    LCDHOST_PLATFORM=lin64$$LCDHOST_PLATFORM
+}
+DEFINES += LCDHOST_PLATFORM=\"\\\"$$LCDHOST_PLATFORM\\\"\"
+
+# See if we have a reasonable default for DESTDIR based on TEMPLATE and CONFIG
+# If nothing else fit, just dump it in LH_DESTDIR.
+# In particular, the linkdata/ static libraries must end up there.
+isEmpty(DESTDIR): contains(TEMPLATE,lib): !staticlib: DESTDIR = $$LCDHOST_PLUGINS
+isEmpty(DESTDIR): contains(TEMPLATE,app): DESTDIR = $$LCDHOST_BINARIES
+isEmpty(DESTDIR): DESTDIR = $$LH_DESTDIR
+
+# Pull revision data from mercurial and put it in the
+# CHANGESET and REVISION defines.
 CHANGESET_REVISION = $$system($$quote(cd $$_PRO_FILE_PWD_ && hg log -l 1 --template \'{node}/{rev}\' .))
 !isEmpty(CHANGESET_REVISION) {
     CHANGESET = $$section(CHANGESET_REVISION,"/",0,0)
@@ -23,6 +54,8 @@ CHANGESET_REVISION = $$system($$quote(cd $$_PRO_FILE_PWD_ && hg log -l 1 --templ
     warning("Can't get mercurial revison for" $$_PRO_FILE_PWD_)
 }
 
+# Add linkdata/ to the include path, and
+# LH_DESTDIR to the static library search path.
 INCLUDEPATH += $$PWD
 LIBS += -L$$LH_DESTDIR
 
@@ -35,12 +68,14 @@ lh_plugin {
     PRECOMPILED_HEADER = $$PWD/lh_api5/lh_api5.h
 }
 
+# API 6
 lh_api6 {
     LIBS += -llh_api6
     unix:POST_TARGETDEPS += $$LH_DESTDIR/liblh_api6.a
     PRECOMPILED_HEADER = $$PWD/lh_api6/lh_api6.h
 }
 
+# LCDHost supplied hidapi library
 lh_hidapi {
     LIBS += -llh_hidapi
     unix:POST_TARGETDEPS += $$LH_DESTDIR/liblh_hidapi.a
@@ -49,22 +84,14 @@ lh_hidapi {
     unix:!macx: LIBS += -ludev
 }
 
+# LCDHost supplied libusb library
 lh_libusb {
-    unix:POST_TARGETDEPS += $$LH_DESTDIR/liblh_hidusb.a
     LIBS += -llh_libusb
-
-    win32 {
-            DEFINES += OS_WINDOWS
-            LIBS += -lole32 -lsetupapi -lcfgmgr32
-    }
-
-    macx {
-            DEFINES += OS_DARWIN THREADS_POSIX HAVE_SYS_TIME_H HAVE_POLL_H
-            LIBS += -framework CoreFoundation -framework IOKit
-    }
-
-    unix:!macx {
-            DEFINES += OS_LINUX THREADS_POSIX HAVE_SYS_TIME_H HAVE_POLL_H
-    }
+    unix:POST_TARGETDEPS += $$LH_DESTDIR/liblh_hidusb.a
+    win32:DEFINES += OS_WINDOWS
+    win32: LIBS += -lole32 -lsetupapi -lcfgmgr32
+    macx: DEFINES += OS_DARWIN THREADS_POSIX HAVE_SYS_TIME_H HAVE_POLL_H
+    macx: LIBS += -framework CoreFoundation -framework IOKit
+    unix:!macx: DEFINES += OS_LINUX THREADS_POSIX HAVE_SYS_TIME_H HAVE_POLL_H
 }
 

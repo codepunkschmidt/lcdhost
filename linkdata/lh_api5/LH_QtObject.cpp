@@ -32,9 +32,8 @@
   POSSIBILITY OF SUCH DAMAGE.
   */
 
+#include "lh_api5.h"
 #include <QDebug>
-#include "LH_QtObject.h"
-#include "LH_QtSetupItem.h"
 
 LH_QtPlugin *LH_QtObject::plugin_ = 0;
 

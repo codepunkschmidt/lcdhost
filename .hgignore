@@ -2,3 +2,4 @@ Plugins.pro.user
 PluginsConfig.prf
 Debug/
 Release/
+.DS_Store

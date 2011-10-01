@@ -35,8 +35,10 @@
 #ifndef LH_QTNETWORK_H
 #define LH_QTNETWORK_H
 
+#include "lh_api6/lh_api6.h"
 #include <QQueue>
-#include "LH_QtInstance.h"
+
+class LH_QtInstance;
 
 class LH_QtNetwork : public QObject
 {
@@ -55,7 +57,7 @@ public:
     explicit LH_QtNetwork( LH_QtInstance *parent );
     ~LH_QtNetwork();
 
-    LH_QtInstance *parent() const { return static_cast<LH_QtInstance *>(QObject::parent()); }
+    LH_QtInstance *parent() const { return reinterpret_cast<LH_QtInstance *>(QObject::parent()); }
 
     int samples() { return setup_smoothing_.value().toInt() + 1; }
 

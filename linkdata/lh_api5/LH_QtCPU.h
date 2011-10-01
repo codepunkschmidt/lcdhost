@@ -35,8 +35,10 @@
 #ifndef LH_QTCPU_H
 #define LH_QTCPU_H
 
+#include "lh_api6/lh_api6.h"
 #include <QQueue>
-#include "LH_QtInstance.h"
+
+class LH_QtInstance;
 
 class LH_QtCPU : public QObject
 {
@@ -53,7 +55,7 @@ public:
     explicit LH_QtCPU( LH_QtInstance * parent );
     ~LH_QtCPU();
 
-    LH_QtInstance *parent() const { return static_cast<LH_QtInstance *>(QObject::parent()); }
+    LH_QtInstance *parent() const { return reinterpret_cast<LH_QtInstance *>(QObject::parent()); }
 
     int count();
     int samples() { return setup_smoothing_.value().toInt() + 1; }

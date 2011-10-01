@@ -1,7 +1,7 @@
 TARGET = LH_LgBacklight
 TEMPLATE = lib
 DEFINES += LGBACKLIGHT_LIBRARY
-CONFIG += lh_api5 hidapi
+CONFIG += lh_plugin hidapi
 
 load(../PluginsConfig.prf)
 

@@ -15,21 +15,16 @@ class input;
 class setup : public linkable
 {
     Q_OBJECT
-    Q_INTERFACES( lh::api6::object lh::api6::linkable )
-
     Q_PROPERTY( ui_type ui READ ui WRITE setUi STORED false )
     Q_PROPERTY( bool isStored READ isStored WRITE setStored STORED false )
     Q_PROPERTY( bool isEnabled READ isEnabled WRITE setEnabled STORED false )
     Q_PROPERTY( bool isVisible READ isVisible WRITE setVisible STORED false )
-    Q_PROPERTY( int order READ order WRITE setOrder )
+    Q_PROPERTY( int order READ order WRITE setOrder STORED isStored )
     Q_PROPERTY( QString title READ title WRITE setTitle STORED false )
-    Q_PROPERTY( QString push READ push WRITE setPush )
-    Q_PROPERTY( QString pull READ pull WRITE setPull )
-    Q_PROPERTY( QString help READ help WRITE setHelp )
-    Q_PROPERTY( QVariant value READ value WRITE setValue )
-    Q_PROPERTY( QVariant minimum READ minimum WRITE setMinimum )
-    Q_PROPERTY( QVariant maximum READ maximum WRITE setMaximum )
+    Q_PROPERTY( QString help READ help WRITE setHelp STORED false )
     Q_PROPERTY( QStringList list READ list WRITE setList STORED false )
+
+    Q_INTERFACES( lh::api6::object lh::api6::linkable )
 
     int meta_;
     int order_;

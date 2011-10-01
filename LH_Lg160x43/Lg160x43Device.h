@@ -1,10 +1,10 @@
 #ifndef LG160X43DEVICE_H
 #define LG160X43DEVICE_H
 
-#include "LH_QtOutputDevice.h"
-#include "hidapi.h"
+#include "lh_api5/lh_api5.h"
+#include "lh_hidapi/hidapi.h"
 
-class Lg160x43Device : public LH_QtOutputDevice
+class Lg160x43Device : public LH_QtDevice
 {
     Q_OBJECT
 
@@ -15,7 +15,7 @@ class Lg160x43Device : public LH_QtOutputDevice
     bool offline_;
 
 public:
-    Lg160x43Device( const struct hid_device_info *di );
+    Lg160x43Device( const struct hid_device_info *di, LH_QtPlugin *drv );
     ~Lg160x43Device();
 
     void setRemoval( bool b ) { to_remove_ = b; }

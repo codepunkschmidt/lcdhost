@@ -47,4 +47,14 @@ class LH_QtPlugin : public LH_QtObject
 # define LH_SIGNATURE()
 #endif
 
+#define LH_PLUGIN(classname) \
+    EXPORT void *lh_create() \
+    { \
+        classname *the_plugin = 0; \
+        the_plugin = new classname; \
+        LH_QtObject::set_plugin( the_plugin ); \
+        return reinterpret_cast<void*>(the_plugin); \
+    } \
+    EXPORT void lh_destroy( void *ref ) { delete reinterpret_cast<classname*>(ref); }
+
 #endif // LH_QTPLUGIN_H

@@ -3,7 +3,7 @@ TEMPLATE = lib
 DEFINES += LG160X43_LIBRARY
 CONFIG += lh_plugin hidapi
 
-load(../PluginsConfig.prf)
+load(../lcdhost.prf)
 
 SOURCES += \
     LH_Lg160x43.cpp \

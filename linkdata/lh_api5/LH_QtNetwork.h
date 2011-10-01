@@ -45,8 +45,8 @@ class LH_QtNetwork : public QObject
     QQueue<long long> netin_;
     QQueue<long long> netout_;
 
-    void smoothingOrder(int n) { }
-    void smoothingHidden(bool hide) {  }
+    void smoothingOrder(int) { }
+    void smoothingHidden(bool) {  }
 
 protected:
     lh_setup setup_smoothing_;

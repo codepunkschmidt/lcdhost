@@ -52,7 +52,7 @@ class LH_QtObject : public lh_object
 
     void show() const { }
     void hide() const { }
-    void setVisible( bool b ) const { }
+    void setVisible( bool ) const { }
 
     void requestRebuild() const {}
 

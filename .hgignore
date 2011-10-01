@@ -1,5 +1,8 @@
+lcdhost.pro.user
+lcdhost.prf
 Plugins.pro.user
-PluginsConfig.prf
+Plugins.pro
 Debug/
 Release/
+codeleap/GoogleTranslator/TranslationAPIKey.h
 .DS_Store

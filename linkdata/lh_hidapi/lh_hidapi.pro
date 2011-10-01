@@ -8,7 +8,7 @@ TARGET = lh_hidapi
 TEMPLATE = lib
 CONFIG += staticlib
 
-load($$PWD/../../PluginsConfig.prf)
+load($$PWD/../../lcdhost.prf)
 
 QMAKE_CFLAGS_WARN_ON = -w
 

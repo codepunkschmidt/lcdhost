@@ -12,20 +12,26 @@ enum
         G15_BUFFER_LEN = 0x03e0	/* total length of the HID output report */
 };
 
-Lg160x43Device::Lg160x43Device( const struct hid_device_info *di )
-    : LH_QtOutputDevice(di->path,160,43,1,false)
+Lg160x43Device::Lg160x43Device( const struct hid_device_info *di, LH_QtPlugin *drv ) : LH_QtDevice(drv)
 {
     to_remove_ = false;
     product_id_ = di->product_id;
     hiddev_ = 0;
     path_ = di->path;
     offline_ = false;
-    setObjectName( QString::fromWCharArray(di->product_string) );
+
+    setDevid(di->path);
+    setName( QString::fromWCharArray(di->product_string) );
+    setSize(160,43);
+    setDepth(1);
+    setAutoselect(true);
+    arrive();
 }
 
 Lg160x43Device::~Lg160x43Device()
 {
     close();
+    leave();
 }
 
 const char* Lg160x43Device::open()

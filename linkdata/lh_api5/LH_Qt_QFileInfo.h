@@ -35,58 +35,26 @@
 #ifndef LH_QT_QFILEINFO_H
 #define LH_QT_QFILEINFO_H
 
+#include "LH_Qt_QString.h"
 #include <QFileInfo>
 #include <QByteArray>
 #include <QDir>
-#include "LH_QtSetupItem.h"
 
-class LH_Qt_QFileInfo : public LH_QtSetupItem
+class LH_Qt_QFileInfo : public LH_Qt_QString
 {
-    QFileInfo fi_;
-    QByteArray array_;
-
 public:
     LH_Qt_QFileInfo( LH_QtObject *parent, QString name, QFileInfo value, int flags = 0 )
-        : LH_QtSetupItem( parent, name, lh_type_string_filename, flags ), fi_(value), array_(value.filePath().toUtf8())
+        : LH_Qt_QString( parent, name, value.filePath(), flags, lh_type_string_filename )
+    {}
+
+    const QFileInfo value() const
     {
-        item_.param.size = array_.capacity();
-        item_.data.s = array_.data();
-        return;
+        return QFileInfo( LH_Qt_QString::value() );
     }
 
-    virtual void setup_resize( size_t needed )
+    void setValue( const QFileInfo & fi )
     {
-        array_.resize(needed);
-        item_.param.size = array_.capacity();
-        item_.data.s = array_.data();
-        return;
-    }
-
-    virtual void setup_change()
-    {
-        const char *path = "";
-        if( parent() && parent()->state() ) path = parent()->state()->dir_layout;
-        fi_ = QFileInfo( QString::fromUtf8(path), QString::fromUtf8(item_.data.s) );
-        LH_QtSetupItem::setup_change();
-        return;
-    }
-
-    QFileInfo& value()
-    {
-        return fi_;
-    }
-
-    void setValue(const QFileInfo &fi)
-    {
-        if( fi != fi_ )
-        {
-            fi_ = fi;
-            array_ = fi_.filePath().toUtf8();
-            item_.param.size = array_.capacity();
-            item_.data.s = array_.data();
-            refresh();
-            emit set();
-        }
+        LH_Qt_QString::setValue( fi.filePath() );
     }
 };
 

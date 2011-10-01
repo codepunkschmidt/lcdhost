@@ -32,7 +32,8 @@
   POSSIBILITY OF SUCH DAMAGE.
   */
 
-#include "LH_QtCPU.h"
+
+#include "lh_api5.h"
 
 LH_QtCPU::LH_QtCPU( LH_QtInstance *parent ) :
     QObject( parent ),

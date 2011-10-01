@@ -35,54 +35,27 @@
 #ifndef LH_QT_QFONT_H
 #define LH_QT_QFONT_H
 
-#include <QFont>
 #include "LH_QtSetupItem.h"
+#include <QFont>
 
 class LH_Qt_QFont : public LH_QtSetupItem
 {
-    QFont font_;
-    QByteArray array_;
-
 public:
-    LH_Qt_QFont( LH_QtObject *parent, QString name, QFont value, int flags = 0 )
-        : LH_QtSetupItem( parent, name, lh_type_string_font, flags ), font_(value), array_(value.toString().toUtf8())
+    LH_Qt_QFont( LH_QtObject * parent, const QString & name, const QFont & value, int flags = 0 )
+        : LH_QtSetupItem( parent, name, lh_type_string_font, flags )
     {
-        item_.param.size = array_.capacity();
-        item_.data.s = array_.data();
-        return;
-    }
-
-    virtual void setup_resize( size_t needed )
-    {
-        array_.resize(needed);
-        item_.param.size = array_.capacity();
-        item_.data.s = array_.data();
-        return;
-    }
-
-    virtual void setup_change()
-    {
-        font_.fromString( QString::fromUtf8( item_.data.s ) );
-        LH_QtSetupItem::setup_change();
+        LH_QtSetupItem::setValue( value );
         return;
     }
 
     QFont value() const
     {
-        return font_;
+        return qVariantValue<QFont>(LH_QtSetupItem::value());
     }
 
-    void setValue(const QFont& f)
+    void setValue( const QFont & f )
     {
-        if( f != font_ )
-        {
-            font_ = f;
-            array_ = font_.toString().toUtf8();
-            item_.param.size = array_.capacity();
-            item_.data.s = array_.data();
-            refresh();
-            emit set();
-        }
+        LH_QtSetupItem::setValue( f );
     }
 };
 

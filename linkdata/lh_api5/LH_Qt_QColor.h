@@ -35,8 +35,8 @@
 #ifndef LH_QT_QCOLOR_H
 #define LH_QT_QCOLOR_H
 
-#include <QColor>
 #include "LH_QtSetupItem.h"
+#include <QColor>
 
 class LH_Qt_QColor : public LH_QtSetupItem
 {

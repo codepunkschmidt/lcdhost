@@ -35,12 +35,9 @@
 #ifndef LH_QTINSTANCE_H
 #define LH_QTINSTANCE_H
 
+#include "LH_QtObject.h"
 #include <QtGlobal>
 #include <QImage>
-
-#include "LH_QtObject.h"
-#include "LH_QtPlugin.h"
-#include "lh_plugin.h"
 
 #ifndef EXPORT
 # define EXPORT extern "C" Q_DECL_EXPORT

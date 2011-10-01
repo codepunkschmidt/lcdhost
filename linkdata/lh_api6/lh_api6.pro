@@ -7,7 +7,8 @@
 TARGET = lh_api6
 TEMPLATE = lib
 CONFIG += staticlib
-DESTDIR = $$PWD/..
+
+load($$PWD/../../PluginsConfig.prf)
 
 HEADERS = \
     lh_api6.h \

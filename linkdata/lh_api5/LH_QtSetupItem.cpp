@@ -32,7 +32,7 @@
   POSSIBILITY OF SUCH DAMAGE.
   */
 
-#include "LH_QtSetupItem.h"
+#include "lh_api5.h"
 
 LH_QtSetupItem::LH_QtSetupItem( LH_QtObject *parent, QString name, lh_setup_type type, int flags ) :
     lh_setup( *parent, name.toAscii().constData(), lh_setup::ui_none|lh_setup::ui_default ),

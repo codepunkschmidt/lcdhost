@@ -32,7 +32,7 @@
   POSSIBILITY OF SUCH DAMAGE.
   */
 
-#include "LH_QtNetwork.h"
+#include "lh_api5.h"
 
 LH_QtNetwork::LH_QtNetwork( LH_QtInstance *parent ) :
     QObject( parent ),

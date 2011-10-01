@@ -40,60 +40,36 @@
 class LH_Qt_int : public LH_QtSetupItem
 {
 public:
-    LH_Qt_int( LH_QtObject *parent, QString name, int value, int min, int max, int flags = 0 )
-        : LH_QtSetupItem( parent, name, lh_type_integer, flags )
+    LH_Qt_int( LH_QtObject *parent, QString name, int value, int min, int max,
+               int flags = 0, lh_setup_type subtype = lh_type_integer )
+        : LH_QtSetupItem( parent, name, subtype, flags )
     {
-        item_.data.i = value;
-        item_.param.slider.min = min;
-        item_.param.slider.max = max;
+        LH_QtSetupItem::setValue( value );
+        LH_QtSetupItem::setMinimum( min );
+        LH_QtSetupItem::setMaximum( max );
     }
 
-    LH_Qt_int( LH_QtObject *parent, QString name, int value, int flags = 0 )
-        : LH_QtSetupItem( parent, name, lh_type_integer, flags )
+    LH_Qt_int( LH_QtObject *parent, QString name, int value,
+               int flags = 0, lh_setup_type subtype = lh_type_integer  )
+        : LH_QtSetupItem( parent, name, subtype, flags )
     {
-        item_.data.i = value;
-        item_.param.slider.min = 0;
-        item_.param.slider.max = 99;
+        LH_QtSetupItem::setValue( value );
     }
 
     int value() const
     {
-        return item_.data.i;
-    }
-
-    void setMinimum( int min )
-    {
-        item_.param.slider.min = min;
-        refresh();
-    }
-
-    void setMaximum( int max )
-    {
-        item_.param.slider.max = max;
-        refresh();
+        return LH_QtSetupItem::value().toInt();
     }
 
     void setMinMax( int min, int max )
     {
-        item_.param.slider.min = min;
-        item_.param.slider.max = max;
-        refresh();
+        LH_QtSetupItem::setMinimum( min );
+        LH_QtSetupItem::setMaximum( max );
     }
 
-    void setValue(int i)
+    void setValue( int value )
     {
-        if( item_.data.i != i )
-        {
-            item_.data.i = i;
-            refresh();
-            emit set();
-        }
-    }
-
-    virtual void setup_change()
-    {
-        emit change( value() );
-        LH_QtSetupItem::setup_change();
+        LH_QtSetupItem::setValue( value );
     }
 };
 

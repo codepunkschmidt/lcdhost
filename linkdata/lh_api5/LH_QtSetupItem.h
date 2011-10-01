@@ -35,10 +35,8 @@
 #ifndef LH_QTSETUPITEM_H
 #define LH_QTSETUPITEM_H
 
-#include <QObject>
-
 #include "LH_QtObject.h"
-#include "lh_plugin.h"
+#include <QObject>
 
 /**
   Helper class to manage setup items. Subclass this, mapping the LCDHost setup types to Qt classes.

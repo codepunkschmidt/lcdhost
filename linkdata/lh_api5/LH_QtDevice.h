@@ -35,10 +35,8 @@
 #ifndef LH_QTDEVICE_H
 #define LH_QTDEVICE_H
 
-#include <QImage>
-
-#include "LH_QtPlugin.h"
 #include "LH_QtObject.h"
+#include <QImage>
 
 /**
   Suggested base class for LCD devices reported by your driver. You

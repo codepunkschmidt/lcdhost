@@ -35,8 +35,8 @@
 #ifndef LH_QT_QSTRINGLIST_H
 #define LH_QT_QSTRINGLIST_H
 
-#include <QStringList>
 #include "LH_QtSetupItem.h"
+#include <QStringList>
 
 class LH_Qt_QStringList : public LH_QtSetupItem
 {

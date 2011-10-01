@@ -4,7 +4,9 @@
 #include <QString>
 #include <QByteArray>
 #include <QColor>
-#include "hidapi.h"
+
+#include "lh_api5/lh_api5.h"
+#include "lh_hidapi/hidapi.h"
 
 class LH_LgBacklight;
 

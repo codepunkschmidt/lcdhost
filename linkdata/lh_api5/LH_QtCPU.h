@@ -44,8 +44,8 @@ class LH_QtCPU : public QObject
 {
     QQueue<QVariantList> load_;
 
-    void smoothingOrder(int n) { }
-    void smoothingHidden(bool hide) { }
+    void smoothingOrder(int) { }
+    void smoothingHidden(bool) { }
 
 protected:
     lh_setup setup_smoothing_;

@@ -89,10 +89,18 @@ void object::customEvent( QEvent *event )
     switch( event::fromType( event->type() ) )
     {
     case event::type_create_child:
-    case event::type_init_success:
     case event::type_init_failure:
     case event::type_api6_unused:
         break;
+
+    case event::type_init_success:
+    {
+        qDebug() << metaObject()->className()
+                 << objectName()
+                 << "fully initialized";
+        emit initialized();
+        return;
+    }
 
     case event::type_ping:
     {

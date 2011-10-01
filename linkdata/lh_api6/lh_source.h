@@ -15,11 +15,6 @@ class source : public linkable
     Q_OBJECT
     Q_INTERFACES( lh::api6::object lh::api6::linkable )
 
-    Q_PROPERTY( QString push READ push STORED false )
-    Q_PROPERTY( QVariant value READ value WRITE setValue STORED false )
-    Q_PROPERTY( QVariant minimum READ minimum WRITE setMinimum STORED false )
-    Q_PROPERTY( QVariant maximum READ maximum WRITE setMaximum STORED false )
-
 public:
     explicit source(
             object & parent,

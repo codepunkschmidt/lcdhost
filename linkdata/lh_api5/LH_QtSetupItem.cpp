@@ -101,25 +101,25 @@ void LH_QtSetupItem::setFlags( int f )
 // Using the '=' and '@' prefixes
 void LH_QtSetupItem::setLink(QString s)
 {
-    setPush();
-    setPull();
+    setLinkOut();
+    setLinkIn();
     if( s.startsWith('=') )
     {
         s.remove(0,1);
-        setPull(s);
+        setLinkIn(s);
     }
     else if( s.startsWith('@') )
     {
         s.remove(0,1);
-        setPush(s);
+        setLinkOut(s);
     }
     return;
 }
 
 QString LH_QtSetupItem::link()
 {
-    if( !push().isEmpty() ) return QString('@').append(push());
-    if( !pull().isEmpty() ) return QString('=').append(pull());
+    if( !linkOut().isEmpty() ) return QString('@').append(linkOut());
+    if( !linkIn().isEmpty() ) return QString('=').append(linkIn());
     return QString();
 }
 

@@ -15,11 +15,6 @@ class sink : public linkable
     Q_OBJECT
     Q_INTERFACES( lh::api6::object lh::api6::linkable )
 
-    Q_PROPERTY( QString pull READ pull STORED false )
-    Q_PROPERTY( QVariant value READ value WRITE setValue STORED false )
-    Q_PROPERTY( QVariant minimum READ minimum WRITE setMinimum STORED false )
-    Q_PROPERTY( QVariant maximum READ maximum WRITE setMaximum STORED false )
-
 public:
     explicit sink(
             object & parent,
@@ -30,8 +25,7 @@ public:
             const QVariant & max = QVariant()
             ) :
         linkable( parent, ident, path, false, val, min, max )
-    {
-    }
+    {}
 };
 
 } // namespace api6

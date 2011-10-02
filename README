@@ -59,7 +59,7 @@ to the LCDHost repository.
 *** Configuring your build preferences
 *********************************************************************
 
-You must create a file named "lcdhost.prf" in the top level repository
+You must create a file named "PluginsConfig.prf" in the top level repository
 directory. This is fine as it's both in ".hgignore" and you're not going
 to add it to the repository.
 
@@ -68,7 +68,7 @@ variable that decides which plugins to build. It will also be included
 by the plugin project files, so you should configure any extra build
 steps there as well.
 
-If lcdhost.prf does not exist, lcdhost.pro will create a default
+If PluginsConfig.prf does not exist, lcdhost.pro will create a default
 one for you.
 
 Sample contents to build and sign a single plugin on Windows, assuming
@@ -160,12 +160,12 @@ confused if you accidentally build using lcdhost.pro.
 
 Usually, you don't want to build all the plugins. It takes a long
 time, and you very likely already have them. Therefore lcdhost.pro
-looks for a file called "lcdhost.prf". It expects it to define a
+looks for a file called "PluginsConfig.prf". It expects it to define a
 variable called "LH_PLUGINS_LIST", which is a list of the plugins that
 should be built, in order.
 
 In the directory with lcdhost.pro, create a text file named
-"lcdhost.prf" containing the text
+"PluginsConfig.prf" containing the text
 
 	LH_PLUGINS_LIST = LH_MyLCDHostPlugin
 	load($$PWD/linkdata/PluginsBase.prf)
@@ -177,9 +177,9 @@ LH_MyLCDHostPlugin.pro file, after the
 "DEFINES += LH_MYLCDHOSTPLUGIN_LIBRARY" line but before 
 "SOURCES += LH_MyLCDHostPlugin.cpp"
 
-	load(../lcdhost.prf)
+	load(../PluginsConfig.prf)
 
-This tells qmake to first try including the lcdhost.prf file we
+This tells qmake to first try including the PluginsConfig.prf file we
 just made.
 
 This should pull in the basic header files, include paths, sources and

@@ -12,7 +12,6 @@ load($$PWD/../../lcdhost.prf)
 
 HEADERS += \
     lh_api5.h \
-    lh_api5_plugin.h \
     LH_Qt_bool.h \
     LH_Qt_float.h \
     LH_Qt_InputState.h \
@@ -33,7 +32,8 @@ HEADERS += \
     LH_QtNetwork.h \
     LH_QtObject.h \
     LH_QtPlugin.h \
-    LH_QtSetupItem.h
+    LH_QtSetupItem.h \
+    lh_plugin.h
 
 SOURCES += \
     lh_api5_plugin.c \
@@ -44,6 +44,8 @@ SOURCES += \
     LH_QtObject.cpp \
     LH_QtPlugin.cpp \
     LH_QtSetupItem.cpp
+
+
 
 
 

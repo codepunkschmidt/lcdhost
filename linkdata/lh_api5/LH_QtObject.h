@@ -36,7 +36,7 @@
 #define LH_QTOBJECT_H
 
 #include "lh_api6/lh_api6.h"
-#include "lh_api5/lh_api5_plugin.h"
+#include "lh_api5/lh_plugin.h"
 
 class LH_QtPlugin;
 

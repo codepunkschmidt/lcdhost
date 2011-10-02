@@ -53,9 +53,8 @@ public:
   This macro creates the required exported functions
   for your lh_plugin descendant.
   */
-#define LH_API6_PLUGIN(classname) \
+#define LH_PLUGIN(classname) \
     Q_EXPORT_PLUGIN2(classname,classname) \
-    lh::api6::plugin::signature lh_##classname##_signature = LH_SIGNATURE_BLANK; \
-    char lh_##classname##_xml[]
+    lh::api6::plugin::signature lh_##classname##_signature = LH_SIGNATURE_BLANK;
 
 #endif // LH_API6_LH_PLUGIN_H

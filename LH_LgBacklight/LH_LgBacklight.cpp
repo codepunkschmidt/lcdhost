@@ -36,8 +36,9 @@
 #include <QDebug>
 #include "LH_LgBacklight.h"
 
-LH_API6_PLUGIN(LH_LgBacklight) =
-"<?xml version=\"1.0\"?>"
+LH_PLUGIN(LH_LgBacklight)
+
+char _lh_xml_info[] = "<?xml version=\"1.0\"?>"
 "<lcdhostplugin>"
   "<id>Backlight</id>"
   "<rev>" STRINGIZE(REVISION) "</rev>"

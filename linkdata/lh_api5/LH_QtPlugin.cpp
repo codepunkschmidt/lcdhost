@@ -35,7 +35,7 @@
 #include "LH_QtPlugin.h"
 #include "LH_QtInstance.h"
 
-LH_SIGNATURE();
+
 #if 0
 /**
   Exported from all LCDHost plugins.

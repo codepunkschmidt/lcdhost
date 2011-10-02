@@ -3,7 +3,7 @@
 
 #include "../lh_api6/lh_api6.h"
 
-#include "lh_api5_plugin.h"
+#include "../lh_api5/lh_plugin.h"
 
 #ifdef __cplusplus
 #include "LH_QtObject.h"

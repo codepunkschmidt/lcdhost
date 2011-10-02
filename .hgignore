@@ -1,5 +1,5 @@
 lcdhost.pro.user
-lcdhost.prf
+PluginsConfig.prf
 Plugins.pro.user
 Plugins.pro
 Debug/

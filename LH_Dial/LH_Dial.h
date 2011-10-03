@@ -64,9 +64,17 @@ struct tickSet
     QList<tickObject> quarterCircle;
 };
 
+enum DialType
+{
+    DIALTYPE_DIAL,
+    DIALTYPE_PIE
+};
+
 class LH_Dial : public LH_QtInstance
 {
     Q_OBJECT
+
+    DialType dialType_;
 
     qreal min_;
     qreal max_;
@@ -74,23 +82,30 @@ class LH_Dial : public LH_QtInstance
     QString faceCode_;
     QImage *faceImage_;
 
+    void getDimensions(qreal degrees, int& h, int& w, int& relH, int& relW, float& radians, float& drawLen);
+    QString generateNeedleCode(float drawLen, QColor needleColor, int needleThick, int needleLength, int needleGap, int h, int w, QString needleImagePath, int needleStyle);
+
     QImage getFace();
     QImage getNeedle(int needleID, qreal degrees, int& needleStyle);
+    QImage getSlice(int needleID, qreal degrees, qreal offsetAngle, int& needleStyle);
     void getCenter(QPointF& center);
     void getCenter(QPointF& center, float& horzSize, float& vertSize);
     void getRotationData(qreal startAngle, qreal angle, float& centerX, float& centerY, float& xlen, float& ylen, float& radians);
     void paintLine(QPainter& painter, QPen& pen, qreal startAngle, qreal angle, qreal relLength, qreal gap = 0);
-    void paintImage(QPainter& painter, QImage needleImage, qreal startAngle, qreal angle, bool reverseOffsetting = false);
+    void paintImage(QPainter& painter, QImage needleImage, qreal startAngle, qreal angle, bool reverseOffsetting = false, qreal pieOffsetAngle = 0);
     QString colString(QColor col);
 
     QList<float> needle_pos_;
     QList<float> needle_val_;
     QList<float> needle_step_;
     QList<QString> needleCode_;
+    QString unusedAreaCode_;
+    QImage* unusedImage_;
     QList<QImage*> needleImage_;
     QList<bool> needle_vis_;
 
     void loadNeedleConfig(int lineID, int& needleStyle, QColor& needleColor, int& needleThick, int& needleLength, int& needleGap, QString& needleImage);
+    void loadSliceConfig(int sliceID, int& sliceStyle, QColor& sliceColor, int& sliceLength, QString& sliceImage);
 
     static const bool isDebug = false;
 
@@ -127,11 +142,18 @@ protected:
     LH_Qt_int *setup_needle_gap_;
     LH_Qt_QFileInfo* setup_needle_image_;
 
+    LH_Qt_QColor* setup_unused_color_;
+    LH_Qt_int* setup_unused_length_;
+    LH_Qt_QFileInfo* setup_unused_image_;
+
     LH_Qt_QTextEdit *setup_needle_configs_;
+    LH_Qt_QStringList *setup_unused_style_;
 
     void setNeedleVisibility(bool visible, int index = 0);
+    void syncNeedleConfigs();
+
 public:    
-    LH_Dial();
+    LH_Dial(DialType dialType = DIALTYPE_DIAL);
     ~LH_Dial();
 
     virtual const char *userInit();
@@ -182,6 +204,7 @@ public slots:
     void changeType();
     void changeFaceStyle();
     void changeNeedleStyle();
+    void changeUnusedStyle();
     void changeSelectedNeedle();
     void updateSelectedNeedle();
 

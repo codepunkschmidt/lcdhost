@@ -1,7 +1,7 @@
 /**
-  \file     LH_QtPlugin_Dial.h
-  \author   Andy Bridges <andy@bridgesuk.com>
-  \legalese Copyright (c) 2011 Andy Bridges
+  \file     LH_PieCPUAverage.cpp
+  \author   Johan Lindh <johan@linkdata.se>
+  \legalese Copyright (c) 2009-2010 Johan Lindh
 
     Permission is hereby granted, free of charge, to any person obtaining a copy
     of this software and associated documentation files (the "Software"), to deal
@@ -23,16 +23,41 @@
 
   */
 
-#ifndef LH_QTPLUGIN_DIAL_H
-#define LH_QTPLUGIN_DIAL_H
+#include "LH_Dial.h"
+#include "LH_QtCPU.h"
 
-#include "LH_QtPlugin.h"
-
-#define VERSION 1.04
-
-class LH_QtPlugin_Dial : public LH_QtPlugin
+class LH_PieCPUAverage : public LH_Dial
 {
-    Q_OBJECT
+    LH_QtCPU cpu_;
+
+public:
+    LH_PieCPUAverage() : LH_Dial(DIALTYPE_PIE), cpu_( this )
+    {
+        setMin(0.0);
+        setMax(10000.0);
+    }
+
+    static lh_class *classInfo()
+    {
+        static lh_class classInfo =
+        {
+            sizeof(lh_class),
+            "System/CPU",
+            "SystemCPUAveragePie",
+            "Average Load (Pie)",
+            48,48
+        };
+
+        return &classInfo;
+    }
+
+    int notify(int n, void *p)
+    {
+        setVal( cpu_.averageload() );
+        return cpu_.notify(n,p);
+    }
+
 };
 
-#endif // LH_QTPLUGIN_DIAL_H
+LH_PLUGIN_CLASS(LH_PieCPUAverage)
+

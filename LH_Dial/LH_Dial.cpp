@@ -469,7 +469,7 @@ QString LH_Dial::generateNeedleCode(float drawLen, QColor needleColor, int needl
         break;
     case 1: // Image (needle only)
     case 2: // Image (full face)
-        needleCode = QString("%1;%2;%3;%4").arg(drawLen).arg(needleImagePath).arg(h).arg(w);
+        needleCode = QString("%1;%2;%3;%4;%5;%6").arg(drawLen).arg(needleImagePath).arg(h).arg(w).arg(dialType_==DIALTYPE_PIE? needleThick : 0).arg(dialType_==DIALTYPE_PIE? needleGap : 0);
         break;
     }
     return QString::number(needleStyle) + ":" + needleCode;
@@ -548,53 +548,68 @@ QImage LH_Dial::getSlice(int sliceID, qreal degrees, qreal offsetAngle, int& sli
     QColor sliceColor = QColor();
     int sliceLength;
     QString sliceImagePath;
-    loadSliceConfig(sliceID, sliceStyle, sliceColor, sliceLength, sliceImagePath);
+    int sliceImageAlpha;
+    loadSliceConfig(sliceID, sliceStyle, sliceColor, sliceLength, sliceImagePath, sliceImageAlpha);
 
     int h; int w; int relH; int relW; float radians; float drawLen;
     getDimensions(degrees, h, w, relH, relW, radians, drawLen);
 
+    if (img_size_.width() != w || img_size_.height()!= h)
+        reload_images();
+
     QPainter painter;
-    QString needleCode = generateNeedleCode(drawLen, sliceColor, qRound(degrees*16), sliceLength, offsetAngle, h, w, sliceImagePath, sliceStyle);
+    QString needleCode = generateNeedleCode(drawLen, sliceColor, qRound(degrees*16), sliceLength, offsetAngle, h, w, QString("%1@%2").arg(sliceImagePath).arg(sliceImageAlpha), sliceStyle);
 
     if (needleCode != (sliceID==UNUSED_AREA? unusedAreaCode_ : needleCode_[sliceID]))
     {
+        relW*=2; relH*=2;
         QImage* sliceImage;
 
-        /*
         QFileInfo f(sliceImagePath);
-        if(needleStyle == 1 && f.isFile())
+        if((sliceStyle == 1 || sliceStyle == 2) && f.isFile())
         {
-            QImage needle_img(f.absoluteFilePath());
-            drawWid = qCeil(((float)(needle_img.width() * drawLen)) / needle_img.height());
-
-            sliceImage = new QImage(drawWid,drawLen,QImage::Format_ARGB32_Premultiplied);
-            sliceImage->fill( PREMUL( QColor(Qt::transparent).rgba() ) );
-
-            if( painter.begin( sliceImage ) )
+            //build mask
+            uchar *blank_data = (uchar[4]){0,0,0,0};
+            QImage maskImg = QImage(blank_data,1,1,QImage::Format_ARGB32).scaled(relW,relH);
+            QPainter maskPaint;
+            if( maskPaint.begin( &maskImg ) )
             {
-                painter.drawImage(QRectF( 0, 0, drawWid, drawLen ), needle_img);
-                painter.end();
+                maskPaint.setRenderHint( QPainter::Antialiasing, true );
+                QColor maskCol = QColor(0,0,0,sliceImageAlpha);
+                maskPaint.setPen(maskCol);
+                maskPaint.setBrush(QBrush(maskCol));
+                maskPaint.drawPie(relW*(100-sliceLength)/200.0,relH*(100-sliceLength)/200.0, relW*sliceLength/100.0, relH*sliceLength/100.0, (startDegrees()+offsetAngle-90)*-16,qRound(degrees*-16));
+                maskPaint.end();
             }
-        }else
-        if(needleStyle == 2 && f.isFile())
-        {
-            float drawWid = qSqrt( qPow(relH,2) * qPow(relW,2) / ( qPow(relW * qSin(radians),2) + qPow(relH * qCos(radians),2) ) );
-            QImage needle_img(f.absoluteFilePath());
 
-            sliceImage = new QImage(drawWid*2,drawLen*2,QImage::Format_ARGB32_Premultiplied);
+            //apply mask
+            QImage tempImg;
+            if(!fgImgs_.contains(sliceImagePath) && f.isFile())
+                 fgImgs_.insert(sliceImagePath,QImage(sliceImagePath).scaled(w,h));
+            if(fgImgs_.contains(sliceImagePath))
+            {
+                tempImg = fgImgs_.value(sliceImagePath);
+                QPainter tempPaint;
+                if( tempPaint.begin( &tempImg ) )
+                {
+                    tempPaint.setCompositionMode(QPainter::CompositionMode_DestinationIn);
+                    tempPaint.drawImage(QRectF( 0,0, relW, relH ), maskImg);
+                    tempPaint.end();
+                }
+            }
+
+            //create slice image
+            sliceImage = new QImage(relW, relH,QImage::Format_ARGB32_Premultiplied);
             sliceImage->fill( PREMUL( QColor(Qt::transparent).rgba() ) );
 
             if( painter.begin( sliceImage ) )
             {
-                painter.drawImage(QRectF( 0, 0, drawWid*2, drawLen*2 ), needle_img);
+                painter.drawImage(QRectF( 0,0, relW, relH ), tempImg);
                 painter.end();
             }
         }
         else
-*/
-
         {
-            relW*=2; relH*=2;
             sliceImage = new QImage(relW, relH,QImage::Format_ARGB32_Premultiplied);
             sliceImage->fill( PREMUL( QColor(Qt::transparent).rgba() ) );
 
@@ -967,11 +982,11 @@ void LH_Dial::changeNeedleStyle()
     }
     else
     {
-        setup_needle_color_->setFlag(LH_FLAG_HIDDEN, setup_needle_style_->value()==2);
+        setup_needle_color_->setFlag(LH_FLAG_HIDDEN, setup_needle_style_->value()!=0);
         setup_needle_thickness_->setFlag(LH_FLAG_HIDDEN, true);
-        setup_needle_length_->setFlag(LH_FLAG_HIDDEN, setup_needle_style_->value()==2);
+        setup_needle_length_->setFlag(LH_FLAG_HIDDEN, setup_needle_style_->value()!=0);
         setup_needle_gap_->setFlag(LH_FLAG_HIDDEN, true);
-        setup_needle_image_->setFlag(LH_FLAG_HIDDEN, setup_needle_style_->value()!=2);
+        setup_needle_image_->setFlag(LH_FLAG_HIDDEN, setup_needle_style_->value()==0);
     }
 }
 
@@ -1010,8 +1025,9 @@ QString LH_Dial::buildNeedleConfig()
     return config.join(",");
 }
 
-void LH_Dial::loadSliceConfig(int sliceID, int& sliceStyle, QColor& sliceColor, int& sliceLength, QString& sliceImage)
+void LH_Dial::loadSliceConfig(int sliceID, int& sliceStyle, QColor& sliceColor, int& sliceLength, QString& sliceImage, int& sliceImageAlpha)
 {
+    sliceImageAlpha = 255;
     if(sliceID == UNUSED_AREA)
     {
         sliceStyle = setup_unused_style_->value() - 2;
@@ -1101,4 +1117,28 @@ void LH_Dial::updateSelectedNeedle()
     setup_needle_gap_->setMaximum(100 - setup_needle_length_->value());
 
     setup_needle_configs_->setValue(configs.join("~"));
+}
+
+void LH_Dial::reload_images()
+{
+    if(image_ == NULL)
+        return;
+
+    int w = image_->width();
+    int h = image_->height();
+
+    img_size_.setHeight(h);
+    img_size_.setWidth(w);
+
+    for( int sliceID=0; sliceID<needleCount(); ++sliceID )
+    {
+        QColor sliceColor = QColor();
+        int sliceStyle; int sliceLength; int sliceImageAlpha;
+        QString sliceImagePath;
+        loadSliceConfig(sliceID, sliceStyle, sliceColor, sliceLength, sliceImagePath, sliceImageAlpha);
+
+        fgImgs_.remove(sliceImagePath);
+        if(QFileInfo(sliceImagePath).isFile())
+            fgImgs_.insert(sliceImagePath, QImage(sliceImagePath).scaled(w,h));
+    }
 }

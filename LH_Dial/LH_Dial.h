@@ -37,6 +37,8 @@
 
 #include <QList>
 #include <QStringList>
+#include <QHash>
+#include <QString>
 
 class tickObject
 {
@@ -81,6 +83,8 @@ class LH_Dial : public LH_QtInstance
 
     QString faceCode_;
     QImage *faceImage_;
+    QSize img_size_;
+    QHash<QString,QImage> fgImgs_;
 
     void getDimensions(qreal degrees, int& h, int& w, int& relH, int& relW, float& radians, float& drawLen);
     QString generateNeedleCode(float drawLen, QColor needleColor, int needleThick, int needleLength, int needleGap, int h, int w, QString needleImagePath, int needleStyle);
@@ -105,7 +109,7 @@ class LH_Dial : public LH_QtInstance
     QList<bool> needle_vis_;
 
     void loadNeedleConfig(int lineID, int& needleStyle, QColor& needleColor, int& needleThick, int& needleLength, int& needleGap, QString& needleImage);
-    void loadSliceConfig(int sliceID, int& sliceStyle, QColor& sliceColor, int& sliceLength, QString& sliceImage);
+    void loadSliceConfig(int sliceID, int& sliceStyle, QColor& sliceColor, int& sliceLength, QString& sliceImage, int& sliceImageAlpha);
 
     static const bool isDebug = false;
 
@@ -115,6 +119,7 @@ class LH_Dial : public LH_QtInstance
 
     float maxDegrees();
     float startDegrees();
+    void reload_images();
 protected:
     bool isClock;
 

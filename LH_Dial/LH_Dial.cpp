@@ -115,7 +115,7 @@ const char *LH_Dial::userInit()
                                   "<br/>The needle is assumed to be in the vertical position and will be rotated around the image's <i>center point</i> as required.</li>"
                                   "</ul></p>");
     } else {
-        setup_needle_style_ = new LH_Qt_QStringList(this, "Segment Style",QStringList()<<"Fill"<<"Image (Anchored)"<<"Image (Moving)", LH_FLAG_AUTORENDER|LH_FLAG_NOSAVE);
+        setup_needle_style_ = new LH_Qt_QStringList(this, "Segment Style",QStringList()<<"Fill"<<"Image (Minimum Aligned)"<<"Image (Maximum Aligned)", LH_FLAG_AUTORENDER|LH_FLAG_NOSAVE);
         setup_needle_style_->setHelp( "<p>How the selected segment should be drawn.</p>");
     }
     setup_needle_color_ = new LH_Qt_QColor(this,QString("%1 Color").arg(nameText1),Qt::red,LH_FLAG_AUTORENDER|LH_FLAG_NOSAVE);
@@ -139,7 +139,7 @@ const char *LH_Dial::userInit()
 
     if(dialType_==DIALTYPE_PIE)
     {
-        setup_unused_style_ = new LH_Qt_QStringList(this, "Unused Capacity Style", QStringList() << "Empty" << "Hidden" << "Fill" << "Image (Anchored)" << "Image (Moving)", LH_FLAG_AUTORENDER);
+        setup_unused_style_ = new LH_Qt_QStringList(this, "Unused Capacity Style", QStringList() << "Empty" << "Hidden" << "Fill" << "Image (Minimum Aligned)" << "Image (Maximum Aligned)", LH_FLAG_AUTORENDER);
 
         setup_unused_color_ = new LH_Qt_QColor(this,QString("%1 Color").arg("Unused Capacity"),Qt::white,LH_FLAG_AUTORENDER|LH_FLAG_HIDDEN);
         setup_unused_color_->setHelp( "<p>The colour used do fill the unused capacity area.</p>");
@@ -588,10 +588,12 @@ QImage LH_Dial::getSlice(int sliceID, qreal degrees, qreal offsetAngle, int& sli
                  fgImgs_.insert(sliceImagePath,QImage(sliceImagePath).scaled(w,h));
             if(fgImgs_.contains(sliceImagePath))
             {
-                tempImg = fgImgs_.value(sliceImagePath);
+                tempImg = QImage(blank_data,1,1,QImage::Format_ARGB32).scaled(relW,relH);
+
                 QPainter tempPaint;
                 if( tempPaint.begin( &tempImg ) )
                 {
+                    paintImage(tempPaint, fgImgs_.value(sliceImagePath), startDegrees(), offsetAngle+( sliceStyle == 2? degrees : 0), true, 0, true);
                     tempPaint.setCompositionMode(QPainter::CompositionMode_DestinationIn);
                     tempPaint.drawImage(QRectF( 0,0, relW, relH ), maskImg);
                     tempPaint.end();
@@ -731,12 +733,12 @@ void LH_Dial::paintLine(QPainter& painter, QPen& pen, qreal startAngle, qreal an
     painter.drawLine(x1,y1,x2,y2);
 }
 
-void LH_Dial::paintImage(QPainter& painter, QImage needleImage, qreal startAngle, qreal angle, bool reverseOffsetting, qreal pieOffsetAngle)
+void LH_Dial::paintImage(QPainter& painter, QImage needleImage, qreal startAngle, qreal angle, bool reverseOffsetting, qreal pieOffsetAngle, bool forceRotation)
 {
     float x; float y; float horzSize; float vertSize; float radians;
 
     //int m = (setup_needles_reverse_->value() ? -1 : 1);
-    getRotationData(startAngle, (dialType_==DIALTYPE_DIAL? angle : pieOffsetAngle), x, y, horzSize, vertSize, radians);
+    getRotationData(startAngle, (dialType_==DIALTYPE_DIAL || forceRotation? angle : pieOffsetAngle), x, y, horzSize, vertSize, radians);
 
     painter.save();
 
@@ -744,7 +746,7 @@ void LH_Dial::paintImage(QPainter& painter, QImage needleImage, qreal startAngle
     float Hyp = qSqrt( qPow(y,2) + qPow(x,2) );
     float drawLen = qSqrt( qPow(y,2) * qPow(x,2) / ( qPow(y * qSin(radians),2) + qPow(x * qCos(radians),2) ) );
 
-    if(dialType_==DIALTYPE_DIAL)
+    if(dialType_==DIALTYPE_DIAL || forceRotation)
     {
         x = Hyp * qCos(A - (radians-M_PI));
         y = Hyp * qSin(A - (radians-M_PI));
@@ -888,7 +890,7 @@ void LH_Dial::drawDial()
         }
         if(dialType_ == DIALTYPE_PIE)
         {
-            if(setup_unused_style_->valueText()=="Fill" || setup_unused_style_->valueText()=="Image")
+            if(setup_unused_style_->valueText()=="Fill" || setup_unused_style_->valueText().contains("Image"))
             {
                 int needleStyle;
                 bool reverse = setup_needles_reverse_->value();
@@ -993,8 +995,8 @@ void LH_Dial::changeNeedleStyle()
 void LH_Dial::changeUnusedStyle()
 {
     setup_unused_color_->setFlag(LH_FLAG_HIDDEN, setup_unused_style_->value()!=2);
-    setup_unused_length_->setFlag(LH_FLAG_HIDDEN, setup_unused_style_->value()!=2);
-    setup_unused_image_->setFlag(LH_FLAG_HIDDEN, setup_unused_style_->value()!=3);
+    setup_unused_length_->setFlag(LH_FLAG_HIDDEN, setup_unused_style_->value()<2);
+    setup_unused_image_->setFlag(LH_FLAG_HIDDEN, setup_unused_style_->value()<3);
 }
 
 QString LH_Dial::buildNeedleConfig()
@@ -1130,12 +1132,12 @@ void LH_Dial::reload_images()
     img_size_.setHeight(h);
     img_size_.setWidth(w);
 
-    for( int sliceID=0; sliceID<needleCount(); ++sliceID )
+    for( int sliceID=-1; sliceID<needleCount(); ++sliceID )
     {
         QColor sliceColor = QColor();
         int sliceStyle; int sliceLength; int sliceImageAlpha;
         QString sliceImagePath;
-        loadSliceConfig(sliceID, sliceStyle, sliceColor, sliceLength, sliceImagePath, sliceImageAlpha);
+        loadSliceConfig((sliceID==-1? UNUSED_AREA: sliceID), sliceStyle, sliceColor, sliceLength, sliceImagePath, sliceImageAlpha);
 
         fgImgs_.remove(sliceImagePath);
         if(QFileInfo(sliceImagePath).isFile())

@@ -40,11 +40,11 @@ void linkable::setValue( const QVariant & v )
 
 void linkable::setMinimum( const QVariant & v )
 {
-
+    minimum_ = v;
 }
 
 void linkable::setMaximum( const QVariant & v )
 {
-
+    maximum_ = v;
 }
 

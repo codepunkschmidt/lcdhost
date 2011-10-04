@@ -59,17 +59,23 @@ CHANGESET_REVISION = $$system($$quote(cd $$_PRO_FILE_PWD_ && hg log -l 1 --templ
 INCLUDEPATH += $$PWD
 LIBS += -L$$LH_DESTDIR
 
-# API 5 compat layer
+# API 5 compatibility CONFIG's
 lh_plugin {
-    CONFIG -= lh_api6
-    hidapi: CONFIG += lh_hidapi
-    hid: CONFIG += lh_hidapi
-    libusb: CONFIG += lh_libusb
-    usb: CONFIG += lh_libusb
-    LIBS += -llh_api6 -llh_api5
-    unix:POST_TARGETDEPS += $$LH_DESTDIR/liblh_api6.a $$LH_DESTDIR/liblh_api5.a
-    PRECOMPILED_HEADER = $$PWD/lh_api5/lh_api5.h
+	lh_api6: error("Can't have both lh_api6 and lh_plugin: INCLUDEPATH's will conflict")
+	CONFIG += lh_api5
+	hid: CONFIG += lh_hidapi
+	hidapi: CONFIG += lh_hidapi
+	usb: CONFIG += lh_libusb
+	libusb: CONFIG += lh_libusb
     INCLUDEPATH += $$PWD/lh_api5
+    INCLUDEPATH += $$PWD/lh_api5/QtSupport
+}
+
+# API 5
+lh_api5 {
+    LIBS += -llh_api5
+    unix:POST_TARGETDEPS += $$LH_DESTDIR/liblh_api5.a
+    PRECOMPILED_HEADER = $$PWD/lh_api5/lh_api5.h
 }
 
 # API 6

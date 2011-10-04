@@ -36,17 +36,13 @@
 
 #include <QDebug>
 #include "LH_TextNumber.h"
-#include "LH_Qt_int.h"
 
 class LH_TextNetInbound : public LH_TextNumber
 {
 public:
-    const char *userInit()
+    LH_TextNetInbound(): LH_TextNumber()
     {
-        if( const char *err = LH_TextNumber::userInit() ) return err;
         setup_bits_->setFlag( LH_FLAG_HIDDEN, false );
-        setup_value_->setLink("/system/net/in/rate");
-        return 0;
     }
 
     static lh_class *classInfo()
@@ -58,6 +54,8 @@ public:
             "SystemNetworkInboundText",
             "Inbound Bandwidth Usage (Text)",
             20,10,
+            lh_object_calltable_NULL,
+            lh_instance_calltable_NULL
         };
         return &classInfo;
     }
@@ -71,6 +69,17 @@ public:
             else setText( text().append( "B/s" ) );
         }
     }
+
+    int notify(int code, void *param)
+    {
+        if( !code || code&LH_NOTE_NET )
+        {
+            bool needrender = setValue( state()->net_cur_in ) | setMax( state()->net_max_in ); // bitwise OR - we need both to execute!
+            if( needrender ) callback(lh_cb_render,NULL);
+        }
+        return LH_TextNumber::notify(code,param) | LH_NOTE_SECOND;
+    }
+
 };
 
 LH_PLUGIN_CLASS(LH_TextNetInbound)

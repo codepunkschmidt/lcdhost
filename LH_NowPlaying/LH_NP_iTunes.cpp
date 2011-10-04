@@ -23,7 +23,8 @@
 #include <QFile>
 #include <windows.h>
 #include "iTunesCOMInterface.h"
-#include "LH_NowPlayingReader.h"
+
+#include "LH_QtPlugin_NowPlaying.h"
 
 #define Enable_iTunes_Events
 #ifndef QT_NO_DEBUG

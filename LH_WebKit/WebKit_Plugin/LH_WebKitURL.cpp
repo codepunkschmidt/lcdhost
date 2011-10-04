@@ -46,14 +46,19 @@ lh_class *LH_WebKitURL::classInfo()
         "DynamicWebKitURL",
         "WebKit URL",
         96, 32,
+        lh_object_calltable_NULL,
+        lh_instance_calltable_NULL
     };
 
     return &classinfo;
 }
 
-const char *LH_WebKitURL::userInit()
+#ifdef USE_NAM
+LH_WebKitURL::LH_WebKitURL() : LH_WebKit(true)
+#else
+LH_WebKitURL::LH_WebKitURL() : LH_WebKit()
+#endif
 {
-    if( const char *err = LH_WebKit::userInit() ) return err;
     setup_url_ = new LH_Qt_QString(this,"URL",QString(),LH_FLAG_FOCUS);
     connect( setup_url_, SIGNAL(changed()), this, SLOT(urlChanged()) );
     setup_url_sanitized_ = new LH_Qt_QString(this,"Sanitized URL",QString(),LH_FLAG_READONLY);
@@ -62,8 +67,6 @@ const char *LH_WebKitURL::userInit()
     nam_ = new QNetworkAccessManager(this);
     connect(nam_, SIGNAL(finished(QNetworkReply*)), this, SLOT(finished(QNetworkReply*)));
 #endif
-
-    return 0;
 }
 
 void LH_WebKitURL::urlChanged()
@@ -92,7 +95,7 @@ void LH_WebKitURL::finished( QNetworkReply* reply )
         {
             if( reply->attribute(QNetworkRequest::HttpStatusCodeAttribute) == 200 )
             {
-                sendRequest( QUrl::fromLocalFile( dir_layout() + "/" ), reply->readAll() );
+                sendRequest( QUrl::fromLocalFile( QString::fromUtf8( state()->dir_layout ) + "/" ), reply->readAll() );
             }
             else if( reply->attribute(QNetworkRequest::HttpStatusCodeAttribute) == 301 )
             {

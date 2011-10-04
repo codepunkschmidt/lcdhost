@@ -24,7 +24,9 @@
 
 #include "LH_QtPlugin_Cursor.h"
 
-LH_PLUGIN(LH_QtPlugin_Cursor) =
+LH_PLUGIN(LH_QtPlugin_Cursor)
+
+char __lcdhostplugin_xml[] =
 "<?xml version=\"1.0\"?>"
 "<lcdhostplugin>"
   "<id>Cursor</id>"

@@ -1,7 +1,7 @@
 #ifndef LH_DATAVIEWERBAR_H
 #define LH_DATAVIEWERBAR_H
 
-#include "../LH_Bar/LH_Bar.h"
+#include "LH_Bar/LH_Bar.h"
 
 #include "LH_QtPlugin.h"
 #include "LH_Qt_int.h"
@@ -29,8 +29,7 @@ protected:
     LH_Qt_QString *setup_item_name_max_;
 
 public:
-    LH_DataViewerBar() : data_(this) {}
-    const char *userInit();
+    LH_DataViewerBar();
     QImage *render_qimage( int w, int h );
 
     int polling();

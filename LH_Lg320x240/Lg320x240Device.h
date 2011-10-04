@@ -1,10 +1,10 @@
 #ifndef LG320x240DEVICE_H
 #define LG320x240DEVICE_H
 
-#include "LH_QtOutputDevice.h"
+#include "LH_QtDevice.h"
 #include "libusb.h"
 
-class Lg320x240Device : public LH_QtOutputDevice
+class Lg320x240Device : public LH_QtDevice
 {
     Q_OBJECT
 
@@ -14,7 +14,7 @@ class Lg320x240Device : public LH_QtOutputDevice
     libusb_device_handle *dh_;
 
 public:
-    Lg320x240Device( libusb_device *dev, libusb_device_descriptor *dd );
+    Lg320x240Device( libusb_device *dev, libusb_device_descriptor *dd, LH_QtPlugin *drv );
     ~Lg320x240Device();
 
     void setRemoval( bool b ) { to_remove_ = b; }

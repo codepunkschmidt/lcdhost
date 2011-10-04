@@ -45,11 +45,11 @@
 #include <QDateTime>
 
 #include "LH_Text.h"
-#include "LH_Qt_QString.h"
-#include "LH_Qt_QSlider.h"
-#include "LH_Qt_InputState.h"
-#include "LH_Qt_QStringList.h"
-#include "LH_Qt_int.h"
+#include "../LH_Qt_QString.h"
+#include "../LH_Qt_QSlider.h"
+#include "../LH_Qt_InputState.h"
+#include "../LH_Qt_QStringList.h"
+#include "../LH_Qt_int.h"
 
 class LH_TextRSS : public LH_Text
 {

@@ -41,8 +41,8 @@ lh_class *LH_DataViewerText::classInfo()
         "DataViewerText",
         "Data Text",
         -1, -1,
-        
-        
+        lh_object_calltable_NULL,
+        lh_instance_calltable_NULL
     };
 
     if( classInfo.width == -1 )
@@ -56,10 +56,8 @@ lh_class *LH_DataViewerText::classInfo()
     return &classInfo;
 }
 
-const char *LH_DataViewerText::userInit()
+LH_DataViewerText::LH_DataViewerText() : data_(this)
 {
-    if( const char *err = LH_Text::userInit() ) return err;
-
     setup_text_->setValue(" ");
     setup_text_->setFlags(LH_FLAG_READONLY | LH_FLAG_NOSAVE);
 
@@ -73,7 +71,7 @@ const char *LH_DataViewerText::userInit()
 
     updateTimer_.start();
     scrollTimer_.start();
-    return 0;
+    return;
 }
 
 int LH_DataViewerText::polling()

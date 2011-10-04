@@ -39,13 +39,9 @@
 class LH_TextMemPhysicalTotal : public LH_TextNumber
 {
 public:
-    const char *userInit()
+    LH_TextMemPhysicalTotal() : LH_TextNumber()
     {
-        if( const char *err = LH_TextNumber::userInit() ) return err;
         setBytes(true);
-        setShowMax(true);
-        setup_value_->setLink("/system/memory/physical");
-        return 0;
     }
 
     static lh_class *classInfo()
@@ -57,8 +53,20 @@ public:
             "SystemMemoryPhysicalTotalText",
             "Physical memory total (Text)",
             20,10,
+            lh_object_calltable_NULL,
+            lh_instance_calltable_NULL
         };
         return &classInfo;
+    }
+
+    int notify(int code, void *param)
+    {
+        if( !code || code&LH_NOTE_MEM )
+        {
+            if( setValue( state()->mem_data.tot_phys ) | setMax( state()->mem_data.tot_phys ) )
+                callback(lh_cb_render,NULL);
+        }
+        return LH_TextNumber::notify(code,param) | LH_NOTE_MEM;
     }
 };
 

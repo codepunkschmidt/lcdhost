@@ -38,17 +38,12 @@
 #define LH_RECTANGLE_H
 
 #include "LH_QtPlugin.h"
-#include "LH_QtCFInstance.h"
+#include "LH_QtInstance.h"
 #include "LH_Qt_bool.h"
 #include "LH_Qt_QSlider.h"
 #include "LH_Qt_QColor.h"
 
-class LH_Rectangle :
-#ifdef LH_CF
-    public LH_QtCFInstance
-#else
-    public LH_QtInstance
-#endif
+class LH_Rectangle : public LH_QtInstance
 {
     Q_OBJECT
 
@@ -62,7 +57,7 @@ protected:
     LH_Qt_bool *setup_horizontal_;
 
 public:
-    const char *userInit();
+    LH_Rectangle();
 
     virtual int notify( int n, void* );
     QImage *render_qimage( int w, int h );
@@ -74,6 +69,8 @@ public:
     QColor pencolor() const { return setup_pencolor_->value(); }
     QColor bgcolor1() const { return setup_bgcolor1_->value(); }
     QColor bgcolor2() const { return setup_bgcolor2_->value(); }
+
+    static lh_class *classInfo();
 
 public slots:
     void enableGradient(bool);

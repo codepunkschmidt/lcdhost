@@ -25,10 +25,10 @@
 #ifndef LH_MONITORINGIMAGE_H
 #define LH_MONITORINGIMAGE_H
 
-#include "../LH_QImage/LH_QImage.h"
+#include "LH_QImage.h"
 #include "LH_Qt_QString.h"
 
-#include "../Sources/LH_MonitoringUI.h"
+#include "Sources/LH_MonitoringUI.h"
 
 class LH_MonitoringImage : public LH_QImage
 {

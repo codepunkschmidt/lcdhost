@@ -25,23 +25,17 @@
   */
 
 #include "LH_Dial.h"
+#include "LH_QtCPU.h"
 
 class LH_DialCPUHistogram : public LH_Dial
 {
+    LH_QtCPU cpu_;
+
 public:
-    const char *userInit()
+    explicit LH_DialCPUHistogram() : cpu_(this)
     {
-        if( const char *err = LH_Dial::userInit() ) return err;
-
-        setLinkedValueMultiplier(0.01);
-        setup_linked_values_->setLink("/system/cpu/coreloads");
-        setup_linked_values_->refreshValue();
-
-        setMin(0);
-        setMax(100);
-        //setYUnit("%");
-
-        return 0;
+        setMin(0.0);
+        setMax(10000.0);
     }
 
     static lh_class *classInfo()
@@ -52,10 +46,33 @@ public:
             "System/CPU",
             "SystemCPUHistogramDial",
             "Core Load (Dial)",
-            48,48
+            48,48,
+            lh_object_calltable_NULL,
+            lh_instance_calltable_NULL
         };
 
         return &classInfo;
+    }
+
+    int notify(int n, void *p)
+    {
+        qreal *loads = new qreal[ cpu_.count() ];
+        if( loads )
+        {
+            if(needleCount() != cpu_.count())
+            {
+                clearNeedles();
+                for( int i=0; i<cpu_.count(); i++ )
+                    addNeedle("CPU/Core #"+QString::number(i));
+            }
+
+            for( int i=0; i<cpu_.count(); i++ )
+                loads[i] = cpu_.coreload(i);
+            setVal( loads, cpu_.count() );
+            delete[] loads;
+        }
+
+        return cpu_.notify(n,p);
     }
 };
 

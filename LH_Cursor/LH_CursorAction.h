@@ -42,10 +42,59 @@
 #include <QtXml>
 
 
+class actionTypes
+{
+    QHash<QString,actionType> actionTypes_;
+    QStringList actionTypeIDs_;
+    LH_CursorAction *cursorAction_;
+
+    void add(actionType at)
+    {
+        actionTypes_.insert(at.typeCode, at);
+        actionTypeIDs_.append(at.typeCode);
+        // return actionTypes_[at.typeCode];
+        return;
+    }
+
+public:
+    actionTypes( LH_CursorAction *p ) : cursorAction_(p) {
+        add( actionType(p,"open"      ,"Open Layout"               , QList<actionParameter>() << actionParameter("Layout File",aptFile) ) );
+        add( actionType(p,"run"       ,"Run Application"           , QList<actionParameter>() << actionParameter("Application",aptFile,"path") << actionParameter("Parameters",aptString,"args") ) );
+        add( actionType(p,"url"       ,"Open URL"                  , QList<actionParameter>() << actionParameter("URL",aptString) ) );
+        add( actionType(p,"move"      ,"Move Cursor"               , QList<actionParameter>() << actionParameter("New X Coordinate",aptInteger,"","x",altCursorX) << actionParameter("New Y Coordinate",aptInteger,"","y",altCursorY)) );
+        add( actionType(p,"select"    ,"Move Cursor & Select"      , QList<actionParameter>() << actionParameter("New X Coordinate",aptInteger,"","x",altCursorX) << actionParameter("New Y Coordinate",aptInteger,"","y",altCursorY)) );
+        add( actionType(p,"wait"      ,"Wait"                      , QList<actionParameter>() << actionParameter("Delay (in ms)",aptInteger,"","",altWait)) );
+        add( actionType(p,"deselect"  ,"Clear Selection") );
+        add( actionType(p,"deactivate","Deactivate the Cursor") );
+        add( actionType(p,"reselect"  ,"Reselect the previous item") );
+    }
+    actionType at(int index)
+    {
+        return at(actionTypeIDs_[index]);
+    }
+    actionType at(QString typeCode)
+    {
+        return actionTypes_.value(typeCode,actionType(this->cursorAction_));
+    }
+    QStringList list()
+    {
+        QStringList list_ = QStringList();
+        for (int i=0; i<actionTypeIDs_.count(); i++)
+            list_.append(at(i).description);
+        return list_;
+    }
+    int indexOf(QString typeCode)
+    {
+        return actionTypeIDs_.indexOf(typeCode);
+    }
+};
+
 class LH_CursorAction : public LH_QtInstance
 {
     Q_OBJECT
     actionTypes actionTypes_;
+
+    bool updateState();
 
     bool fired;
     bool selected;
@@ -55,44 +104,38 @@ class LH_CursorAction : public LH_QtInstance
 
     int cludgeLock;
 
-    void enableEditUI(bool);
 protected:
     QString statusCode_;
 
     LH_Qt_QString *setup_coordinate_;
     LH_Qt_InputState *setup_jump_to_;
-    LH_Qt_QString *setup_json_data_;
-    LH_Qt_QString *setup_json_postback_;
 
-    LH_Qt_QString     *setup_action_desc_;
+    LH_Qt_QStringList *setup_actions_;
+    LH_Qt_QString *setup_action_desc_;
     LH_Qt_QStringList *setup_action_type_;
-    LH_Qt_bool        *setup_action_enabled_;
 
-    LH_Qt_QString   *setup_action_parameter1_desc_;
-    LH_Qt_QString   *setup_action_parameter1_str_;
-    LH_Qt_int       *setup_action_parameter1_int_;
+    LH_Qt_QString *setup_action_parameter1_desc_;
+    LH_Qt_QString *setup_action_parameter1_str_;
+    LH_Qt_int *setup_action_parameter1_int_;
     LH_Qt_QFileInfo *setup_action_parameter1_file_;
 
-    LH_Qt_QString   *setup_action_parameter2_desc_;
-    LH_Qt_QString   *setup_action_parameter2_str_;
-    LH_Qt_int       *setup_action_parameter2_int_;
+    LH_Qt_QString *setup_action_parameter2_desc_;
+    LH_Qt_QString *setup_action_parameter2_str_;
+    LH_Qt_int *setup_action_parameter2_int_;
     LH_Qt_QFileInfo *setup_action_parameter2_file_;
 
-    LH_Qt_QStringList *setup_act_rules_;
-    LH_Qt_QString     *setup_act_new_;
-    LH_Qt_QString     *setup_act_save_;
-    LH_Qt_QString     *setup_act_cancel_;
-    LH_Qt_QString     *setup_act_delete_;
-    LH_Qt_QString     *setup_act_move_up_;
-    LH_Qt_QString     *setup_act_move_down_;
-    LH_Qt_QString     *setup_act_copy_;
-    LH_Qt_QString     *setup_act_paste_;
+    LH_Qt_int *setup_action_index_;
+    LH_Qt_bool *setup_action_enabled_;
 
-    LH_Qt_QTextEdit   *setup_act_XML_;
+    LH_Qt_QString *setup_action_add_;
+    LH_Qt_QString *setup_action_delete_;
+    LH_Qt_QString *setup_action_delete_confirm_;
+
+    LH_Qt_QTextEdit *setup_actions_xml_;
 
 public:
     LH_CursorAction();
-    const char *userInit();
+    const char *userInit(){ hide(); return NULL; }
 
     int polling();
 
@@ -101,19 +144,14 @@ public:
     void fire(int = 0);
 
 public slots:
-    bool updateState();
-    void doJumpTo(int flags,int value);
+    void doJumpTo(QString key,int flags,int value);
     void xmlChanged();
-    void reloadAction();
-    void saveAction();
-    void moveAction_up();
-    void moveAction_down();
+    void actionSelected();
+    void actionEdited();
+    void actionMoved();
     void newAction();
     void deleteAction();
-    void actionTypeChanged();
-    void copyActions();
-    void pasteActions();
-    void uneditAction();
+    void deleteActionCheck();
 };
 
 #endif // LH_CURSORACTION_H

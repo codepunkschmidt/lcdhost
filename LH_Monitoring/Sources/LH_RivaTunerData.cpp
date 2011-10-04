@@ -258,7 +258,7 @@ void LH_RivaTunerData::loadTypesList(RTHM_SHARED_MEMORY_HEADER* RTHMHeader)
 
         ui_->refresh(mon_type);
         ui_->setIndex();
-        loadItemsList(ui_->index(mon_type));
+        loadItemsList(ui_->value(mon_type));
     }
 }
 

@@ -39,7 +39,9 @@
 #include <QTime>
 #include <QRegExp>
 
-#include "../LH_Text/LH_Text.h"
+#include "LH_Text/LH_Text.h"
+
+#include "LH_QtPlugin_NowPlaying.h"
 
 class LH_NowPlayingText : public LH_Text
 {
@@ -47,21 +49,14 @@ class LH_NowPlayingText : public LH_Text
 
     void replace_token(QString &str, QString token, QString val);
     void replace_token(QString &str, QString token, int seconds, int totalSeconds);
-
 protected:
     LH_Qt_QStringList* setup_item_;
     LH_Qt_QString* setup_custom_;
     LH_Qt_bool* setup_hide_playing_state_;
 
 public:
-    LH_NowPlayingText() :
-        LH_Text(),
-        setup_item_(0),
-        setup_custom_(0),
-        setup_hide_playing_state_(0)
-    {}
+    LH_NowPlayingText();
 
-    const char *userInit();
     static lh_class *classInfo();
 
 public slots:

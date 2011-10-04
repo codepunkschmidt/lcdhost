@@ -39,8 +39,8 @@ lh_class *LH_WeatherBrowserOpener::classInfo()
         "WeatherBrowserOpener",
         "Weather Browser Opener",
         -1, -1,
-        
-        
+        lh_object_calltable_NULL,
+        lh_instance_calltable_NULL
     };
 
     if( classInfo.width == -1 )
@@ -54,20 +54,24 @@ lh_class *LH_WeatherBrowserOpener::classInfo()
     return &classInfo;
 }
 
-const char *LH_WeatherBrowserOpener::userInit()
+LH_WeatherBrowserOpener::LH_WeatherBrowserOpener()
 {
-    if( const char *err = LH_QtInstance::userInit() ) return err;
-    setup_browser_ = new LH_Qt_InputState(this,("Open in browser"),QString(),LH_FLAG_AUTORENDER);
+    setup_browser_ = new LH_Qt_InputState(this,tr("Open in browser"),QString(),LH_FLAG_AUTORENDER);
     setup_browser_->setHelp("Defining a key here will allow you to open the forecast in your browser for more details");
     setup_browser_->setOrder(-4);
-    connect( setup_browser_, SIGNAL(input(int,int)), this, SLOT(openBrowser(int,int)) );
-    hide();
-    return NULL;
+    connect( setup_browser_, SIGNAL(input(QString,int,int)), this, SLOT(openBrowser(QString,int,int)) );
 }
 
-void LH_WeatherBrowserOpener::openBrowser(int flags,int value)
+LH_WeatherBrowserOpener::~LH_WeatherBrowserOpener()
+{
+    return ;
+}
+
+
+void LH_WeatherBrowserOpener::openBrowser(QString key,int flags,int value)
 {
     qDebug() << "Open Browser";
+    Q_UNUSED(key);
     Q_UNUSED(flags);
     Q_UNUSED(value);
     if( weather_data.url !="" )

@@ -2,31 +2,23 @@ TARGET = LH_Lua
 TEMPLATE = lib
 DEFINES += LH_LUA_LIBRARY
 
-load(../PluginsConfig.prf)
+include(../Plugins.pri)
 
 # We don't want warnings from 3rd party C code
 QMAKE_CFLAGS_WARN_ON = -w
 
 SOURCES += \
+    $$PLUGIN_SOURCES \
     LH_QtPlugin_Lua.cpp \
     LH_LuaClass.cpp \
     LH_LuaInstance.cpp \
-    luaXT.cpp \
-    LH_LuaSetupItem.cpp \
-    LH_LuaThread.cpp \
-    LH_Lua.cpp \
-    LH_LuaVariant.cpp
-
-INCLUDEPATH += $$PWD
-
+    luaXT.cpp
+	
 HEADERS += \
+    $$PLUGIN_HEADERS \
     LH_QtPlugin_Lua.h \
     LH_LuaClass.h \
-    LH_LuaInstance.h \
-    LH_LuaSetupItem.h \
-    LH_LuaThread.h \
-    LH_Lua.h \
-    LH_LuaVariant.h
+    LH_LuaInstance.h
 
 
 macx {
@@ -128,12 +120,13 @@ DEFINES += \
     CAIRO_HAS_TEST_SURFACES=0 \
     CAIRO_HAS_TEE_SURFACE=0 \
     CAIRO_HAS_XML_SURFACE=0 \
+    CAIRO_HAS_PTHREAD=0 \
     CAIRO_HAS_GOBJECT_FUNCTIONS=0 \
     CAIRO_HAS_TRACE=0 \
     CAIRO_HAS_INTERPRETER=1 \
     CAIRO_HAS_SYMBOL_LOOKUP=0
 
-HEADERS += $$CAIRO_DIR/cairo.h $$CAIRO_DIR/cairo-deprecated.h cairo-version.h
+HEADERS += cairo.h cairo-deprecated.h ../cairo-version.h
 SOURCES += \
     cairo-analysis-surface.c cairo-arc.c cairo-array.c cairo-atomic.c \
     cairo-base64-stream.c cairo-base85-stream.c cairo-bentley-ottmann.c \
@@ -162,7 +155,6 @@ win32 {
     DEFINES += CAIRO_HAS_WIN32_SURFACE=1 CAIRO_HAS_WIN32_FONT=1
     DEFINES += CAIRO_HAS_QUARTZ_SURFACE=0 CAIRO_HAS_QUARTZ_FONT=0 CAIRO_HAS_QUARTZ_IMAGE_SURFACE=0
     DEFINES += CAIRO_HAS_FT_FONT=0 CAIRO_HAS_FC_FONT=0
-    DEFINES += CAIRO_HAS_PTHREAD=0
     LIBS += -lgdi32 -lmsimg32
 }
 
@@ -171,7 +163,7 @@ macx {
     DEFINES += CAIRO_HAS_WIN32_SURFACE=0 CAIRO_HAS_WIN32_FONT=0
     DEFINES += CAIRO_HAS_QUARTZ_SURFACE=1 CAIRO_HAS_QUARTZ_FONT=1 CAIRO_HAS_QUARTZ_IMAGE_SURFACE=1
     DEFINES += CAIRO_HAS_FT_FONT=0 CAIRO_HAS_FC_FONT=0
-    DEFINES += CAIRO_HAS_PTHREAD=1
+    DEFINES += CAIRO_HAS_PTHREAD
     LIBS += -framework Carbon -framework CoreFoundation -framework Cocoa
 }
 
@@ -181,10 +173,8 @@ unix:!macx {
     DEFINES += CAIRO_HAS_WIN32_SURFACE=0 CAIRO_HAS_WIN32_FONT=0
     DEFINES += CAIRO_HAS_QUARTZ_SURFACE=0 CAIRO_HAS_QUARTZ_FONT=0 CAIRO_HAS_QUARTZ_IMAGE_SURFACE=0
     DEFINES += CAIRO_HAS_FT_FONT=1 CAIRO_HAS_FC_FONT=0
-    DEFINES += CAIRO_HAS_PTHREAD=1
+    DEFINES += CAIRO_HAS_PTHREAD
 }
 
 # Lua cairo
 SOURCES += lua-cairo/lcairo.c
-
-

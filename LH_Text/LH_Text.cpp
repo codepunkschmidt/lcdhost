@@ -59,90 +59,89 @@ static inline uint PREMUL(uint x) {
     return x;
 }
 
-const char *LH_Text::userInit()
+LH_Text::LH_Text() : LH_QtCFInstance()
 {
-#ifdef LH_CF
-    if( const char *err = LH_QtCFInstance::userInit() ) return err;
-#else
-    if( const char *err = LH_QtInstance::userInit() ) return err;
-#endif
-
     richtext_ = false;
 
-    setup_text_ = new LH_Qt_QString( this, ("Text"), QString(), LH_FLAG_FOCUS|LH_FLAG_AUTORENDER );
+    setup_text_ = new LH_Qt_QString( this, tr("Text"), QString(), LH_FLAG_FOCUS|LH_FLAG_AUTORENDER );
     setup_text_->setOrder(-2);
     setup_text_->setHelp( "<p>The displayed text. Note that this supports "
                           "a limited HTML subset, including images and tables.</p>");
-    connect( setup_text_, SIGNAL(valueChanged()), this, SLOT(textChanged()) );
+    connect( setup_text_, SIGNAL(changed()), this, SLOT(textChanged()) );
 
-    setup_font_ = new LH_Qt_QFont( this, ("Font"), QFont("Arial",10), LH_FLAG_AUTORENDER );
+    setup_font_ = new LH_Qt_QFont( this, tr("Font"), QFont("Arial",10), LH_FLAG_AUTORENDER );
     setup_font_->setHelp( "<p>Font used to display the text.</p>");
-    connect( setup_font_, SIGNAL(valueChanged()), this, SLOT(fontChanged()) );
+    connect( setup_font_, SIGNAL(changed()), this, SLOT(fontChanged()) );
 
-    setup_fontresize_ = new LH_Qt_bool( this, ("^Adjust font size to instance height"), true, LH_FLAG_AUTORENDER|LH_FLAG_BLANKTITLE );
+    setup_fontresize_ = new LH_Qt_bool( this, tr("^Adjust font size to instance height"), true, LH_FLAG_AUTORENDER );
     setup_fontresize_->setHelp( "<p>Rather than using a fixed font size, "
                           "LCDHost will adjust the font height to "
                           "match the instance height.</p>"
                           );
-    connect( setup_fontresize_, SIGNAL(valueChanged()), this, SLOT(fontChanged()) );
+    connect( setup_fontresize_, SIGNAL(changed()), this, SLOT(fontChanged()) );
 
-    setup_pencolor_ = new LH_Qt_QColor( this, ("Color"), Qt::black, LH_FLAG_AUTORENDER );
+    setup_pencolor_ = new LH_Qt_QColor( this, tr("Color"), Qt::black, LH_FLAG_AUTORENDER );
     setup_pencolor_->setHelp( "<p>The color used to write the text.</p>");
-    connect( setup_pencolor_, SIGNAL(valueChanged()), this, SLOT(makeTextImage()) );
+    connect( setup_pencolor_, SIGNAL(changed()), this, SLOT(makeTextImage()) );
 
-    setup_bgcolor_ = new LH_Qt_QColor( this, ("Background"), Qt::transparent, LH_FLAG_AUTORENDER );
+    setup_bgcolor_ = new LH_Qt_QColor( this, tr("Background"), Qt::transparent, LH_FLAG_AUTORENDER );
     setup_bgcolor_->setHelp( "<p>The color for the background.</p>");
-    connect( setup_bgcolor_, SIGNAL(valueChanged()), this, SLOT(makeTextImage()) );
+    connect( setup_bgcolor_, SIGNAL(changed()), this, SLOT(makeTextImage()) );
 
-    setup_horizontal_ = new LH_Qt_QStringList( this, ("Horizontal"), QStringList() << ("Center") << ("Left")
-                                               << ("Right") << ("Scroll (Marquee)") << ("Reverse scroll (Marquee)")
-                                               << ("Scroll (Loop)") << ("Reverse scroll (Loop)")
+    setup_horizontal_ = new LH_Qt_QStringList( this, tr("Horizontal"), QStringList() << tr("Center") << tr("Left")
+                                               << tr("Right") << tr("Scroll (Marquee)") << tr("Reverse scroll (Marquee)")
+                                               << tr("Scroll (Loop)") << tr("Reverse scroll (Loop)")
                                               , LH_FLAG_AUTORENDER );
     setup_horizontal_->setHelp( "<p>How to handle the text if it is wider than "
                                 "the available horizontal area. You can either adjust "
                                 "the text to the left, center or right, or you can "
                                 "have LCDHost scroll it from right to left or "
                                 "in the reverse direction, left to right.</p>");
-    connect( setup_horizontal_, SIGNAL(valueChanged()), this, SLOT(requestPolling()) );
+    connect( setup_horizontal_, SIGNAL(changed()), this, SLOT(requestPolling()) );
 
-    setup_vertical_ = new LH_Qt_QStringList( this, ("Vertical"), QStringList() << ("Center") << ("Top")
-                                             << ("Bottom") << ("Scroll (Marquee)") << ("Reverse scroll (Marquee)")
-                                            << ("Scroll (Loop)") << ("Reverse scroll (Loop)"), LH_FLAG_AUTORENDER );
+    setup_vertical_ = new LH_Qt_QStringList( this, tr("Vertical"), QStringList() << tr("Center") << tr("Top")
+                                             << tr("Bottom") << tr("Scroll (Marquee)") << tr("Reverse scroll (Marquee)")
+                                            << tr("Scroll (Loop)") << tr("Reverse scroll (Loop)"), LH_FLAG_AUTORENDER );
     setup_vertical_->setHelp( "<p>How to handle the text if it is taller than "
                                 "the available vertical area. You can either adjust "
                                 "the text to the top, center or bottom, or you can "
                                 "have LCDHost scroll it from bottom to top or "
                                 "in the reverse direction, top to bottom.</p>");
-    connect( setup_vertical_, SIGNAL(valueChanged()), this, SLOT(requestPolling()) );
+    connect( setup_vertical_, SIGNAL(changed()), this, SLOT(requestPolling()) );
 
-    setup_scrollrate_ = new LH_Qt_QSlider( this, ("Scroll rate"), 15, 1, 30, LH_FLAG_AUTORENDER );
+    setup_scrollrate_ = new LH_Qt_QSlider( this, tr("Scroll rate"), 15, 1, 30, LH_FLAG_AUTORENDER );
     setup_scrollrate_->setHelp( "<p>How often the text is scrolled.</p>");
-    connect( setup_scrollrate_, SIGNAL(valueChanged()), this, SLOT(requestPolling()) );
+    connect( setup_scrollrate_, SIGNAL(changed()), this, SLOT(requestPolling()) );
 
-    setup_scrollstep_ = new LH_Qt_QSlider( this, ("Scroll step"), 2, 1, 20, LH_FLAG_AUTORENDER );
+    setup_scrollstep_ = new LH_Qt_QSlider( this, tr("Scroll step"), 2, 1, 20, LH_FLAG_AUTORENDER );
     setup_scrollstep_->setHelp( "<p>How large each scroll step is.</p>");
 
-    setup_scrollgap_ = new LH_Qt_QSlider( this, ("Scroll gap"), 10, 0, 340, LH_FLAG_AUTORENDER );
+    setup_scrollgap_ = new LH_Qt_QSlider( this, tr("Scroll gap"), 10, 0, 340, LH_FLAG_AUTORENDER );
     setup_scrollgap_->setHelp( "<p>How large a gap between \"loop\" scrolling text.</p>");
 
+    textimage_ = makeImage();
+
+    font_ = setup_font_->value();
     scrollposx_ = scrollposy_ = 0;
 
-#ifdef LH_CF
+    setText("LCDHost");
+
     add_cf_source(setup_text_);
     add_cf_target(setup_pencolor_);
     add_cf_target(setup_bgcolor_);
     add_cf_target(setup_font_);
-#endif
 
-    font_ = setup_font_->value();
-    textimage_ = makeImage();
-    setText("LCDHost");
-    return 0;
+    return;
+}
+
+LH_Text::~LH_Text()
+{
+    return;
 }
 
 void LH_Text::setRenderHints( QPainter& p )
 {
-    if( isMonochrome() )
+    if( monochrome() )
     {
         p.setRenderHint( QPainter::Antialiasing, false );
         p.setRenderHint( QPainter::TextAntialiasing, false );
@@ -152,6 +151,28 @@ void LH_Text::setRenderHints( QPainter& p )
         p.setRenderHint( QPainter::Antialiasing, true );
         p.setRenderHint( QPainter::TextAntialiasing, true );
     }
+}
+
+bool LH_Text::setStyleStrategy()
+{
+    int oldstrat = font_.styleStrategy();
+    int newstrat = oldstrat;
+    if( monochrome() )
+    {
+        newstrat &= ~QFont::PreferAntialias;
+        newstrat |= QFont::NoAntialias;
+    }
+    else
+    {
+        newstrat &= ~QFont::NoAntialias;
+        newstrat |= QFont::PreferAntialias;
+    }
+    if( newstrat != oldstrat )
+    {
+        font_.setStyleStrategy( (QFont::StyleStrategy) newstrat );
+        return true;
+    }
+    return false;
 }
 
 /**
@@ -180,7 +201,7 @@ void LH_Text::makeTextImage( int forheight )
     if( fontresize() )
     {
         int targetsize;
-        if( isMonochrome() ) targetsize = qMax(forheight,7);
+        if( monochrome() ) targetsize = qMax(forheight,7);
         else targetsize = qMax(forheight,20);
         font_.setPixelSize( targetsize );
         QFontMetrics fm( font_, &textimage_ );
@@ -188,18 +209,7 @@ void LH_Text::makeTextImage( int forheight )
     }
 
     // Set font antialiasing strategy
-    int strat = font_.styleStrategy();
-    if( isMonochrome() )
-    {
-        strat &= ~QFont::PreferAntialias;
-        strat |= QFont::NoAntialias;
-    }
-    else
-    {
-        strat &= ~QFont::NoAntialias;
-        strat |= QFont::PreferAntialias;
-    }
-    font_.setStyleStrategy( (QFont::StyleStrategy) strat );
+    setStyleStrategy();
 
     if( richtext_ )
     {
@@ -305,7 +315,7 @@ void LH_Text::makeTextImage( int forheight )
     // If forheight was given, ensure that height
     if( forheight && forheight != textimage_.height() )
     {
-        if( forheight < (textimage_.height()-3) && !isMonochrome() )
+        if( forheight < (textimage_.height()-3) && !monochrome() )
         {
             // scale the text image if higher by more than 3 pixels
             textimage_ = textimage_.scaledToHeight( forheight, Qt::SmoothTransformation );
@@ -338,10 +348,11 @@ void LH_Text::textChanged()
     {
         doc_.setDocumentMargin( 0 );
         doc_.setIndentWidth( 20 );
-        doc_.setMetaInformation(
-                    QTextDocument::DocumentUrl,
-                    QUrl::fromLocalFile(dir_layout()).toString()
-                    );
+        if( state() )
+            doc_.setMetaInformation(
+                        QTextDocument::DocumentUrl,
+                        QUrl::fromLocalFile(QString::fromUtf8(state()->dir_layout)).toString()
+                        );
         doc_.setHtml( setup_text_->value() );
         setup_fontresize_->setValue( false );
         setup_fontresize_->setFlag( LH_FLAG_READONLY|LH_FLAG_HIDDEN, true );
@@ -518,11 +529,7 @@ int LH_Text::notify(int code,void* param)
         makeTextImage();
         requestRender();
     }
-#ifdef LH_CF
-    return LH_NOTE_DEVICE | LH_QtCFInstance::notify(code,param);
-#else
-    return LH_NOTE_DEVICE | LH_QtInstance::notify(code,param);
-#endif
+    return LH_QtCFInstance::notify(code,param) | LH_NOTE_DEVICE ;
 }
 
 /**
@@ -585,17 +592,18 @@ bool LH_Text::prepareForRender(int w, int h)
     if( (image_ = initImage(w,h)) == NULL ) return false;
     image_->fill( PREMUL( bgcolor().rgba() ) );
 
-    if( richtext_ )
+    if( richtext_ && w != textimage_.width() )
     {
-        if( w != textimage_.width() )
-        {
-            doc_.setTextWidth( w );
-            makeTextImage();
-        }
+        doc_.setTextWidth( w );
+        makeTextImage();
     }
     else if( fontresize() && textimage_.height() != h )
     {
         makeTextImage( h );
+    }
+    else if( setStyleStrategy() )
+    {
+        makeTextImage();
     }
 
     return true;

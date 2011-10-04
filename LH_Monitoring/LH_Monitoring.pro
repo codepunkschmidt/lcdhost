@@ -4,13 +4,14 @@ DEFINES += LH_MONITORING_LIBRARY
 DEFINES += COMMON_OBJECT_NAME="Monitoring"
 DEFINES += MONITORING_FOLDER="System"
 QT += xml
+CONFIG += cf
 
-0 { # disabled until Triscopic is ready to attack the A20+ changes
+include(../Plugins.pri)
 
-load(../PluginsConfig.prf)
-include(../codeleap/cf/cf.pri)
+INCLUDEPATH += $$PWD/LH_QImage
 
 HEADERS += \
+    $$PLUGIN_HEADERS \
     ../LH_Graph/LH_Graph.h \
     ../LH_Text/LH_Text.h \
     ../LH_Bar/LH_Bar.h \
@@ -48,6 +49,7 @@ HEADERS += \
     Sources/LH_HWiNFOData.h
 
 SOURCES += \
+    $$PLUGIN_SOURCES \
     ../LH_Graph/LH_Graph.cpp \
     ../LH_Text/LH_Text.cpp \
     ../LH_Bar/LH_Bar.cpp \
@@ -75,6 +77,3 @@ SOURCES += \
     Sources/LH_MonitoringUI.cpp \
     Sources/LH_HWMonData.cpp \
     Sources/LH_HWiNFOData.cpp
-
-RESOURCES +=
-}

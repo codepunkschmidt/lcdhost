@@ -8,10 +8,11 @@ TARGET = lh_api6
 TEMPLATE = lib
 CONFIG += staticlib
 
-load($$PWD/../../lcdhost.prf)
+load($$PWD/../../PluginsConfig.prf)
 
 HEADERS = \
     lh_api6.h \
+    lh_loader.h \
     lh_id.h \
     lh_input.h \
     lh_event.h \
@@ -25,6 +26,7 @@ HEADERS = \
     lh_widget.h
 
 SOURCES = \
+    lh_loader.cpp \
     lh_event.cpp \
     lh_qvariant.cpp \
     lh_object.cpp \
@@ -34,6 +36,3 @@ SOURCES = \
     lh_sink.cpp \
     lh_setup.cpp \
     lh_widget.cpp
-
-
-

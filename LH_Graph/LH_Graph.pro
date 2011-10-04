@@ -1,12 +1,12 @@
 TARGET = LH_Graph
 TEMPLATE = lib
 DEFINES += LH_GRAPH_LIBRARY
-CONFIG += lh_plugin codeleapui
+CONFIG += systemstats
 
-load(../PluginsConfig.prf)
-include(../codeleap/codeleap.pri)
+include(../Plugins.pri)
 
 SOURCES += \
+    $$PLUGIN_SOURCES \
     LH_QtPlugin_Graph.cpp \
     LH_Graph.cpp \
     LH_GraphCPUAverage.cpp \
@@ -15,7 +15,8 @@ SOURCES += \
     LH_GraphMemVirtual.cpp \
     LH_GraphNetIn.cpp \
     LH_GraphNetOut.cpp
-	
+
 HEADERS += \
+    $$PLUGIN_HEADERS \
     LH_QtPlugin_Graph.h \
     LH_Graph.h

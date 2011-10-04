@@ -39,28 +39,16 @@
 #include <QTime>
 
 #include "LH_Text.h"
-#include "LH_Qt_int.h"
 
 class LH_TextCPULoad : public LH_Text
 {
-    LH_Qt_int *link_cpu_load_;
-
 public:
-    const char *userInit()
+    LH_TextCPULoad() : LH_Text()
     {
-        if( const char *err = LH_Text::userInit() ) return err;
-        link_cpu_load_ = new LH_Qt_int(this,"LinkCPULoad",0,LH_FLAG_AUTORENDER);
-        link_cpu_load_->setLink("/system/cpu/load");
-        setup_text_->setTitle( "Average CPU load" );
+        setup_text_->setName( "Average CPU load" );
         setup_text_->setFlag( LH_FLAG_READONLY, true );
-        setText("?%");
-        return 0;
-    }
-
-    void prerender()
-    {
-        setText( QString::number(link_cpu_load_->value()/100).append('%') );
-        LH_Text::prerender();
+        setText( "?%" );
+        return;
     }
 
     static lh_class *classInfo()
@@ -72,6 +60,8 @@ public:
             "SystemCPUText",
             "Average Load (Text)",
             -1, -1,
+            lh_object_calltable_NULL,
+            lh_instance_calltable_NULL
         };
 
         if( classInfo.width == -1 )
@@ -84,6 +74,25 @@ public:
 
         return &classInfo;
     }
+
+    /**
+      In this class, we set the text to render in notify() instead of prerender().
+      We do this because rendering can be done a lot more often than we ask for it,
+      and we just need to update the load text when the LH_NOTE_SECOND notification
+      fires. We use LH_NOTE_SECOND because the average load value lh_systemstate->cpu_load
+      updates once a second. We'll also do the work if the value for 'n' is zero, since
+      that's the initial call to notify right after the instance has been created.
+      */
+    int notify(int n,void* p)
+    {
+        if( !n || n&LH_NOTE_SECOND )
+        {
+            if( setText( QString::number(state()->cpu_load/100)+"%" ) )
+                callback(lh_cb_render,NULL); // only render if the text changed
+        }
+        return LH_Text::notify(n,p) | LH_NOTE_SECOND;
+    }
+
 };
 
 LH_PLUGIN_CLASS(LH_TextCPULoad)

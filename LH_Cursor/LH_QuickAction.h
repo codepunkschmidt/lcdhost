@@ -47,11 +47,14 @@ protected:
 
     void updateCountdown();
 public:
-    const char *userInit();
+    LH_QuickAction();
+    const char *userInit(){ hide(); return NULL; }
+
+
     static lh_class *classInfo();
 
 public slots:
-    void doFire(int flags=0,int value=0);
+    void doFire(QString key="",int flags=0,int value=0);
     void changeTimeout();
     void doCountdown();
 };

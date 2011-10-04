@@ -36,18 +36,13 @@
   */
 
 #include "LH_Bar.h"
-#include "LH_Qt_int.h"
+#include "LH_QtNetwork.h"
 
 class LH_BarMemVirtual : public LH_Bar
 {
-    LH_Qt_int *link_mem_virt_load_;
-
 public:
     const char *userInit()
     {
-        if( const char *err = LH_Bar::userInit() ) return err;
-        link_mem_virt_load_ = new LH_Qt_int(this,"LinkMemVirtLoad",0,LH_FLAG_AUTORENDER);
-        link_mem_virt_load_->setLink("/system/memory/virtual/load");
         setMin(0.0);
         setMax(1000.0);
         return 0;
@@ -61,16 +56,30 @@ public:
             "System/Memory/Virtual",
             "SystemMemoryVirtualBar",
             "Virtual memory used (Bar)",
-            48,48
+            48,48,
+            lh_object_calltable_NULL,
+            lh_instance_calltable_NULL
         };
 
         return &classInfo;
     }
 
+    int notify(int n, void *p)
+    {
+        Q_UNUSED(p);
+        if( !n || n&LH_NOTE_MEM )
+            requestRender();
+        return LH_NOTE_MEM;
+    }
+
     QImage *render_qimage( int w, int h )
     {
         if( LH_Bar::render_qimage(w,h) == NULL ) return NULL;
-        drawSingle( link_mem_virt_load_->value() );
+        if( state()->mem_data.tot_virt )
+        {
+            qreal used_mem = ( state()->mem_data.tot_virt - state()->mem_data.free_virt );
+            drawSingle( used_mem * 1000.0 / (qreal) (state()->mem_data.tot_virt) );
+        }
         return image_;
     }
 };

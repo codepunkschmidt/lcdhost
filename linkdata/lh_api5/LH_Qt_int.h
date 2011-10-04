@@ -40,36 +40,60 @@
 class LH_Qt_int : public LH_QtSetupItem
 {
 public:
-    LH_Qt_int( LH_QtObject *parent, QString name, int value, int min, int max,
-               int flags = 0, lh_setup_type subtype = lh_type_integer )
-        : LH_QtSetupItem( parent, name, subtype, flags )
+    LH_Qt_int( LH_QtObject *parent, QString name, int value, int min, int max, int flags = 0 )
+        : LH_QtSetupItem( parent, name, lh_type_integer, flags )
     {
-        LH_QtSetupItem::setValue( value );
-        LH_QtSetupItem::setMinimum( min );
-        LH_QtSetupItem::setMaximum( max );
+        item_.data.i = value;
+        item_.param.slider.min = min;
+        item_.param.slider.max = max;
     }
 
-    LH_Qt_int( LH_QtObject *parent, QString name, int value,
-               int flags = 0, lh_setup_type subtype = lh_type_integer  )
-        : LH_QtSetupItem( parent, name, subtype, flags )
+    LH_Qt_int( LH_QtObject *parent, QString name, int value, int flags = 0 )
+        : LH_QtSetupItem( parent, name, lh_type_integer, flags )
     {
-        LH_QtSetupItem::setValue( value );
+        item_.data.i = value;
+        item_.param.slider.min = 0;
+        item_.param.slider.max = 99;
     }
 
     int value() const
     {
-        return LH_QtSetupItem::value().toInt();
+        return item_.data.i;
+    }
+
+    void setMinimum( int min )
+    {
+        item_.param.slider.min = min;
+        refresh();
+    }
+
+    void setMaximum( int max )
+    {
+        item_.param.slider.max = max;
+        refresh();
     }
 
     void setMinMax( int min, int max )
     {
-        LH_QtSetupItem::setMinimum( min );
-        LH_QtSetupItem::setMaximum( max );
+        item_.param.slider.min = min;
+        item_.param.slider.max = max;
+        refresh();
     }
 
-    void setValue( int value )
+    void setValue(int i)
     {
-        LH_QtSetupItem::setValue( value );
+        if( item_.data.i != i )
+        {
+            item_.data.i = i;
+            refresh();
+            emit set();
+        }
+    }
+
+    virtual void setup_change()
+    {
+        emit change( value() );
+        LH_QtSetupItem::setup_change();
     }
 };
 

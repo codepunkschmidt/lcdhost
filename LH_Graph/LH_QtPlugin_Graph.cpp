@@ -26,7 +26,9 @@
 
 #include "LH_QtPlugin_Graph.h"
 
-LH_PLUGIN(LH_QtPlugin_Graph) =
+LH_PLUGIN(LH_QtPlugin_Graph)
+
+char __lcdhostplugin_xml[] =
 "<?xml version=\"1.0\"?>"
 "<lcdhostplugin>"
   "<id>Graph</id>"

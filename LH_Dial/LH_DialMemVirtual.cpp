@@ -25,21 +25,15 @@
   */
 
 #include "LH_Dial.h"
+#include "LH_QtNetwork.h"
 
 class LH_DialMemVirtual : public LH_Dial
 {
 public:
-    const char *userInit()
+    LH_DialMemVirtual()
     {
-        if( const char *err = LH_Dial::userInit() ) return err;
-
-        setup_linked_values_->setLink("/system/memory/virtual/used");
-        setup_max_->setLink("/system/memory/virtual/total");
-
-        setMin(0);
-        setMax(1000);
-        //setYUnit("GB", 1024 * 1024 * 1024);
-        return 0;
+        setMin(0.0);
+        setMax(1000.0);
     }
 
     static lh_class *classInfo()
@@ -50,10 +44,25 @@ public:
             "System/Memory/Virtual",
             "SystemMemoryVirtualDial",
             "Virtual memory used (Dial)",
-            48,48
+            48,48,
+            lh_object_calltable_NULL,
+            lh_instance_calltable_NULL
         };
 
         return &classInfo;
+    }
+
+    int notify(int n, void *p)
+    {
+        Q_UNUSED(p);
+        if( !n || n&LH_NOTE_MEM )
+        if( state()->mem_data.tot_virt )
+        {
+            qreal used_mem = ( state()->mem_data.tot_virt - state()->mem_data.free_virt );
+            setVal( used_mem * 1000.0 / (qreal) (state()->mem_data.tot_virt) );
+            //requestRender();
+        }
+        return LH_NOTE_MEM;
     }
 };
 

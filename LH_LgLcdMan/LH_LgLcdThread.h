@@ -36,13 +36,61 @@
 #define LH_LGLCDTHREAD_H
 
 #include <QThread>
+#include <QImage>
+#include <QSemaphore>
+
+#ifdef Q_WS_WIN
+# ifndef UNICODE
+#  error ("This isn't going to work")
+# endif
+# include "windows.h"
+# include "../wow64.h"
+# include "win/lglcd.h"
+#endif
+
+#ifdef Q_WS_MAC
+# include "mac/lgLcdError.h"
+# include "mac/lgLcd.h"
+# ifndef ERROR_FILE_NOT_FOUND
+#  define ERROR_FILE_NOT_FOUND 2
+# endif
+# ifndef ERROR_PIPE_NOT_CONNECTED
+#  define ERROR_PIPE_NOT_CONNECTED 2
+# endif
+# ifndef LGLCD_DEVICE_FAMILY_ALL
+#  define LGLCD_DEVICE_FAMILY_ALL 0xFF
+# endif
+#endif
 
 class LH_LgLcdThread : public QThread
 {
     Q_OBJECT
+    bool time_to_die_;
+
+protected:
+    QSemaphore sem_;
+#ifdef Q_WS_WIN
+    wchar_t *appname_;
+#endif
+#ifdef Q_WS_MAC
+    CFStringRef appname_;
+#endif
+
 public:
     explicit LH_LgLcdThread(QObject *parent = 0);
     ~LH_LgLcdThread();
+
+    void timeToDie() { time_to_die_ = true; }
+    bool stayAlive() const { return !time_to_die_; }
+
+    virtual bool hasBW() const = 0;
+    virtual bool hasQVGA() const = 0;
+
+    void setBW( QImage img );
+    void setQVGA( QImage img );
+
+    static lgLcdBitmap bw_bm;
+    static lgLcdBitmap qvga_bm;
 };
 
 #endif // LH_LGLCDTHREAD_H

@@ -25,7 +25,7 @@
 #ifndef LH_WEATHERTEXT_H
 #define LH_WEATHERTEXT_H
 
-#include "../LH_Text/LH_Text.h"
+#include "LH_Text/LH_Text.h"
 
 #include "LH_WeatherData.h"
 
@@ -41,7 +41,8 @@ protected:
     LH_Qt_QString *setup_post_text_;
 
 public:
-    const char *userInit();
+    LH_WeatherText();
+
     int notify( int, void* );
     QString getSelectedValueText();
 

@@ -35,12 +35,80 @@
 #ifndef LH_QTPLUGIN_H
 #define LH_QTPLUGIN_H
 
+#include <QtGlobal>
+#include <QObject>
+
 #include "LH_QtObject.h"
 
+#ifndef EXPORT
+# define EXPORT extern "C" Q_DECL_EXPORT
+#endif
+
+
+/**
+  Automatic registration of LCDHost layout classes written using this
+  framework. You can also manually register/deregister classes using
+  the lh_add_class() and lh_remove_class() functions in LH_QtPlugin.
+  */
+typedef lh_class *(*lh_class_info_t)();
+typedef void *(*lh_class_factory_t)(const lh_class *);
+class LH_QtClassLoader
+{
+public:
+    static LH_QtClassLoader *first_;
+    LH_QtClassLoader *next_;
+    lh_class_info_t info_;
+    lh_class_factory_t factory_;
+    LH_QtClassLoader( lh_class_info_t info, lh_class_factory_t factory ) : info_(info), factory_(factory)
+    {
+        next_ = first_;
+        first_ = this;
+    }
+};
+
+/*
+ Support class, keeps info for classes added with lh_add_class()
+ (as opposed to automatically added using LH_PLUGIN_CLASS)
+ */
+class lh_layout_class
+{
+    lh_class *info_;
+    lh_class_factory_t factory_;
+public:
+    lh_layout_class(lh_class *p,lh_class_factory_t f) : info_(p), factory_(f) {}
+    lh_class *info() const { return info_; }
+    lh_class_factory_t factory() const { return factory_; }
+};
+
+/**
+  Base class for Qt-based LCDHost shared libraries.
+  As of alpha 17, the LH_QtPlugin object is no longer a global
+  C++ object, rather it is created dynamically in lh_create()
+  and destroyed in lh_destroy(). These two functions are
+  defined when you use the LH_PLUGIN(classname) macro.
+  */
 class LH_QtPlugin : public LH_QtObject
 {
     Q_OBJECT
-    Q_INTERFACES( lh::api6::object )
+public:
+    virtual const lh_class **class_list();
 };
+
+/**
+  This macro creates the required exported functions
+  for your LH_QtPlugin descendant.
+  */
+#define LH_PLUGIN(classname) \
+    EXPORT void *lh_create() \
+    { \
+        classname *the_plugin = 0; \
+        the_plugin = new classname; \
+        LH_QtObject::set_plugin( the_plugin ); \
+        return reinterpret_cast<void*>(the_plugin); \
+    } \
+    EXPORT void lh_destroy( void *ref ) { delete reinterpret_cast<classname*>(ref); }
+
+extern void lh_add_class( lh_class *p, lh_class_factory_t f );
+extern void lh_remove_class( lh_class *p );
 
 #endif // LH_QTPLUGIN_H

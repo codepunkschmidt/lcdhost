@@ -38,9 +38,7 @@
 #include <QList>
 #include <QString>
 #include <QFileInfo>
-
-#include "LH_Lua.h"
-#include "LH_QtLayoutClass.h"
+#include "LH_QtPlugin.h"
 
 #define LUA_MAGIC "wf7bFprtNhNGS6XKjmrc"
 
@@ -62,37 +60,35 @@ extern lua_All_functions LuaFunctions;
   to garbage collection. The table is stored in lcdhost.instance
   */
 
-class LH_LuaClass : public LH_QtLayoutClass
+class LH_LuaClass
 {
-    Q_OBJECT
-
     lua_State *L;
     QFileInfo fi_;
     QString filename_;
+    QByteArray id_array_;
+    QByteArray name_array_;
+    QByteArray path_array_;
+    lh_class classinfo_;
 
-    LH_LuaClass(
-        const char *ident,
-        const char *title,
-        const char *path,
-        int width,
-        int height,
-        QFileInfo fi,
-        QString filename,
-        LH_Lua *parent );
+    LH_LuaClass( lua_State *luastate, QFileInfo fi, QString filename );
 
     static QList<LH_LuaClass*> list_;
 
 public:
     ~LH_LuaClass();
-    const char *userInit();
 
-    LH_Lua *parent() const { return static_cast<LH_Lua *>(LH_QtLayoutClass::parent()); }
     lua_State *luaState() { return L; }
+    lh_class *classInfo() { return &classinfo_; }
     QString filename() const { return filename_; }
 
+    QByteArray id() const { return id_array_; }
     void lua_pushmodule();
+
     const QFileInfo& fileInfo() const { return fi_; }
-    static QString load( LH_Lua *parent, QFileInfo fi );
+
+    static QString load( lua_State *state, QFileInfo fi, const char *datapath = NULL );
+    static LH_LuaClass *from_lh_class( const lh_class *cls );
+    static void clear();
 };
 
 #endif // LH_LUACLASS_H

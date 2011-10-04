@@ -1,8 +1,8 @@
 #ifndef LH_MONITORINGDIAL_H
 #define LH_MONITORINGDIAL_H
 
-#include "../Sources/LH_MonitoringUI.h"
-#include "../LH_Dial/LH_Dial.h"
+#include "Sources/LH_MonitoringUI.h"
+#include "LH_Dial/LH_Dial.h"
 #include <QTime>
 
 class LH_MonitoringDial : public LH_Dial

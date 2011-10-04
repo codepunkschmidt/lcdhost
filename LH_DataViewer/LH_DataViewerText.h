@@ -25,7 +25,7 @@
 #ifndef LH_DATAVIEWERTEXT_H
 #define LH_DATAVIEWERTEXT_H
 
-#include "../LH_Text/LH_Text.h"
+#include "LH_Text/LH_Text.h"
 #include "LH_Qt_int.h"
 
 #include "LH_DataViewerData.h"
@@ -43,8 +43,7 @@ protected:
     LH_Qt_QString *setup_item_name_;
 
 public:
-    LH_DataViewerText() : data_(this) {}
-    const char *userInit();
+    LH_DataViewerText();
 
     int polling();
 

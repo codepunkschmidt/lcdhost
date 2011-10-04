@@ -11,18 +11,16 @@ lh_class *LH_DataViewerBar::classInfo()
         "Dynamic/DataViewer",
         "DataViewerBar",
         "Data Bar",
-        48,48
-        
-        
+        48,48,
+        lh_object_calltable_NULL,
+        lh_instance_calltable_NULL
     };
 
     return &classInfo;
 }
 
-const char *LH_DataViewerBar::userInit()
+LH_DataViewerBar::LH_DataViewerBar() : data_(this)
 {
-    if( const char *err = LH_Bar::userInit() ) return err;
-
     setup_lookup_code_ = new LH_Qt_QString( this, "Data Template", "");
     setup_lookup_code_->setOrder(-3);
 
@@ -47,7 +45,6 @@ const char *LH_DataViewerBar::userInit()
 
     setMin(0.0);
     setMax(100.0);
-    return 0;
 }
 
 int LH_DataViewerBar::polling()

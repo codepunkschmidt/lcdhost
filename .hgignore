@@ -1,7 +1,8 @@
-lcdhost.pro.user
-PluginsConfig.prf
-Plugins.pro.user
+syntax: glob
+*.pro.user
+lcdhost.prf
 Plugins.pro
+PluginsConfig.prf
 Debug/
 Release/
 codeleap/GoogleTranslator/TranslationAPIKey.h

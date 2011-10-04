@@ -43,7 +43,7 @@
 #include <QTime>
 #include <QRegExp>
 
-#include "../LH_Text/LH_Text.h"
+#include "LH_Text/LH_Text.h"
 
 class LH_NowPlayingEmulator : public LH_Text
 {
@@ -57,16 +57,7 @@ protected:
     void sendMessage(bool enabled);
 
 public:
-    LH_NowPlayingEmulator() :
-        LH_Text(),
-        setup_player_(0),
-        setup_enabled_(0),
-        setup_artist_(0),
-        setup_track_(0),
-        setup_album_(0)
-    {}
-
-    const char *userInit();
+    LH_NowPlayingEmulator();
     ~LH_NowPlayingEmulator();
 
     int notify(int code, void *param);

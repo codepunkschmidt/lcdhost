@@ -32,98 +32,94 @@
   POSSIBILITY OF SUCH DAMAGE.
   */
 
-#include "lh_api5.h"
+#include "LH_QtSetupItem.h"
 
-LH_QtSetupItem::LH_QtSetupItem( LH_QtObject *parent, QString name, lh_setup_type type, int flags ) :
-    lh_setup( *parent, name.toAscii().constData(), lh_setup::ui_none|lh_setup::ui_default ),
-    api5type_( lh_type_none ),
-    api5flags_( 0 )
+LH_QtSetupItem::LH_QtSetupItem( LH_QtObject *parent, QString name, lh_setup_type type, int flags ) : QObject( parent )
 {
-    setType( type );
-    setFlags( flags );
+    Q_ASSERT( parent != NULL );
+    memset( &item_, 0, sizeof(item_) );
+    setName(name);
+    order_ = 0;
+    if( flags & LH_FLAG_FIRST ) order_ = -1;
+    if( flags & LH_FLAG_LAST ) order_ = 1;
+    item_.type = type;
+    item_.flags = flags;
 }
 
-void LH_QtSetupItem::setType( lh_setup_type t )
+void LH_QtSetupItem::setName(QString s)
 {
-    int newmeta = meta() & lh_setup::ui_flag_mask;
-
-    switch( t )
-    {
-    case lh_type_none:              newmeta |= lh_setup::ui_none; break;
-    case lh_type_integer:           newmeta |= lh_setup::ui_spinbox; break;
-    case lh_type_integer_boolean:   newmeta |= lh_setup::ui_checkbox; break;
-    case lh_type_integer_color:     newmeta |= lh_setup::ui_color; break;
-    case lh_type_integer_slider:    newmeta |= lh_setup::ui_slider; break;
-    case lh_type_integer_progress:  newmeta |= lh_setup::ui_progress; break;
-    case lh_type_integer_list:      newmeta |= lh_setup::ui_dropdownbox; break;
-    case lh_type_fraction:          newmeta |= lh_setup::ui_spinbox; break;
-    case lh_type_string:            newmeta |= lh_setup::ui_string; break;
-    case lh_type_string_script:     newmeta |= lh_setup::ui_text; break;
-    case lh_type_string_filename:   newmeta |= lh_setup::ui_filename; break;
-    case lh_type_string_font:       newmeta |= lh_setup::ui_font; break;
-    case lh_type_string_inputstate: newmeta |= lh_setup::ui_input_state; break;
-    case lh_type_string_inputvalue: newmeta |= lh_setup::ui_input_value; break;
-    case lh_type_image_png:         newmeta |= lh_setup::ui_image; break;
-    case lh_type_image_qimage:      newmeta |= lh_setup::ui_image; break;
-    case lh_type_integer_listbox:   newmeta |= lh_setup::ui_listbox; break;
-    case lh_type_string_button:     newmeta |= lh_setup::ui_button; break;
-    case lh_type_string_html:       newmeta |= lh_setup::ui_htmllink; break;
-    case lh_type_last:
-    default:
-        Q_ASSERT(0);
-        newmeta |= lh_setup::ui_none;
-        break;
-    }
-
-    setMeta( newmeta );
-}
-
-void LH_QtSetupItem::setFlags( int f )
-{
-    int newmeta = ui() | lh_setup::ui_default;
-
-    if( f & LH_FLAG_READONLY    ) ;
-    if( f & LH_FLAG_HIDDEN      ) ;
-    if( f & LH_FLAG_FOCUS       ) ;
-    if( f & LH_FLAG_AUTORENDER  ) ;
-    if( f & LH_FLAG_FIRST       ) ;
-    if( f & LH_FLAG_LAST        ) ;
-    if( f & LH_FLAG_NOSAVE      ) ;
-    if( f & LH_FLAG_BLANKTITLE  ) ;
-    if( f & LH_FLAG_NOSOURCE    ) ;
-    if( f & LH_FLAG_NOSINK      ) ;
-    if( f & LH_FLAG_HIDETITLE   ) ;
-    if( f & LH_FLAG_HIDEVALUE   ) ;
-
-    setMeta( newmeta );
-}
-
-// Using the '=' and '@' prefixes
-void LH_QtSetupItem::setLink(QString s)
-{
-    setLinkOut();
-    setLinkIn();
-    if( s.startsWith('=') )
-    {
-        s.remove(0,1);
-        setLinkIn(s);
-    }
-    else if( s.startsWith('@') )
-    {
-        s.remove(0,1);
-        setLinkOut(s);
-    }
+    setObjectName(s);
+    name_array_ = s.toUtf8();
+    item_.name = name_array_.constData();
     return;
-}
-
-QString LH_QtSetupItem::link()
-{
-    if( !linkOut().isEmpty() ) return QString('@').append(linkOut());
-    if( !linkIn().isEmpty() ) return QString('=').append(linkIn());
-    return QString();
 }
 
 void LH_QtSetupItem::setup_change()
 {
     emit changed();
+    if( item_.flags & LH_FLAG_AUTORENDER ) parent()->requestRender();
+    return;
+}
+
+void LH_QtSetupItem::setup_input( int flags, int value )
+{
+    emit input( QString(), flags, value );
+    return;
+}
+
+void LH_QtSetupItem::setFlag( int f, bool state )
+{
+    if( state )
+    {
+        if( (item_.flags & f) == f ) return;
+        item_.flags |= f;
+    }
+    else
+    {
+        if( !(item_.flags & f) ) return;
+        item_.flags &= ~f;
+    }
+    parent()->callback(lh_cb_setup_refresh, item() );
+    return;
+}
+
+
+void LH_QtSetupItem::setOrder( int n )
+{
+    order_ = n;
+}
+
+void LH_QtSetupItem::setLink(QString s)
+{
+    if( s.isEmpty() )
+    {
+        link_array_.clear();
+        item_.link = 0;
+    }
+    else
+    {
+        link_array_ = s.toUtf8();
+        item_.link = link_array_.constData();
+    }
+    parent()->callback( lh_cb_setup_refresh, item() );
+    return;
+}
+
+QString LH_QtSetupItem::link()
+{
+    if( item_.link ) return QString::fromUtf8( item_.link );
+    return QString();
+}
+
+void LH_QtSetupItem::setHelp(QString s)
+{
+    if( s.isEmpty() ) help_.clear();
+    else help_ = s.toUtf8();
+    item_.help = help_.constData();
+    return;
+}
+
+QString LH_QtSetupItem::help()
+{
+    return QString::fromUtf8(help_);
 }

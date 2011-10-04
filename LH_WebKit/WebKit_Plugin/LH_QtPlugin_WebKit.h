@@ -38,37 +38,19 @@
 
 #include <QProcess>
 #include <QTime>
-#include <QNetworkAccessManager>
-#include <QNetworkReply>
-#include <QUrl>
 #include "LH_QtPlugin.h"
-#include "LH_Qt_QString.h"
 
 class LH_QtPlugin_WebKit : public LH_QtPlugin
 {
-    Q_OBJECT
-
     QTime last_start_;
-    QNetworkAccessManager *nam_;
-
-    void refreshExternalAddress();
-    void refreshInternalAddress();
-protected:
-    LH_Qt_QString *setup_external_ip_;
-    LH_Qt_QString *setup_internal_ip_;
 
 public:
-    ~LH_QtPlugin_WebKit();
+    LH_QtPlugin_WebKit() : LH_QtPlugin() {}
 
-    const char *userInit();
+    virtual void term();
 
     bool startServer();
     bool sendQuit();
-
-public slots:
-    void refreshAddresses();
-    void finished( QNetworkReply* reply );
-
 };
 
 #endif // LH_QTPLUGIN_WEBKIT_H

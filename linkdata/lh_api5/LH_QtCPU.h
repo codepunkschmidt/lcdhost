@@ -35,36 +35,37 @@
 #ifndef LH_QTCPU_H
 #define LH_QTCPU_H
 
-#include "lh_api6/lh_api6.h"
 #include <QQueue>
+#include "lh_plugin.h"
+#include "LH_QtInstance.h"
+#include "LH_Qt_QSlider.h"
 
-class LH_QtInstance;
-
-class LH_QtCPU : public QObject
+class LH_QtCPU
 {
-    QQueue<QVariantList> load_;
+    QQueue<lh_cpudata*> load_;
+    LH_QtInstance *parent_;
 
-    void smoothingOrder(int) { }
-    void smoothingHidden(bool) { }
+    int load( lh_cpudata *from, lh_cpudata *to );
 
 protected:
-    lh_setup setup_smoothing_;
-    lh_sink sink_coreload_;
+    LH_Qt_QSlider *setup_smoothing_;
 
 public:
-    explicit LH_QtCPU( LH_QtInstance * parent );
+    explicit LH_QtCPU(LH_QtInstance *parent);
     ~LH_QtCPU();
 
-    LH_QtInstance *parent() const { return reinterpret_cast<LH_QtInstance *>(QObject::parent()); }
+    int notify(int n, void *p);
 
     int count();
-    int samples() { return setup_smoothing_.value().toInt() + 1; }
+    int samples() { return setup_smoothing_->value() + 1; }
+    const lh_systemstate *state() const { return parent_->state(); }
 
     int coreload(int n); // 0...10000
     int averageload(); // 0...10000
 
-public slots:
-    void coreloadChanged( const QVariant & );
+    void smoothingOrder(int n) { setup_smoothing_->setOrder(n); }
+
+    void smoothingHidden(bool hide) { setup_smoothing_->setFlag(LH_FLAG_HIDDEN, hide); }
 };
 
 #endif // LH_QTCPU_H

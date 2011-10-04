@@ -1,17 +1,17 @@
 TARGET = LH_DataViewer
 TEMPLATE = lib
-QT += network xml
+QT += network \
+    xml
 DEFINES += LH_DATAVIEWER_LIBRARY
+CONFIG += cf
 
-0 { # disabled until Triscopic is ready to attack the A20+ changes
-
-load(../PluginsConfig.prf)
-include(../codeleap/ConditionalFormatting.pri)
+include(../Plugins.pri)
 
 SOURCES += \
+    $$PLUGIN_SOURCES \
+    ../LH_Dial/LH_Dial.cpp \
     ../LH_Text/LH_Text.cpp \
     ../LH_Bar/LH_Bar.cpp \
-    ../LH_Dial/LH_Dial.cpp \
     LH_QtPlugin_DataViewer.cpp \
     LH_DataViewerConnector.cpp \
     LH_DataViewerText.cpp \
@@ -20,11 +20,12 @@ SOURCES += \
     LH_DataViewerExpiredImage.cpp \
     LH_DataViewerData.cpp \
     LH_DataViewerDial.cpp
-    
+
 HEADERS += \
+    $$PLUGIN_HEADERS \
+    ../LH_Dial/LH_Dial.h \
     ../LH_Text/LH_Text.h \
     ../LH_Bar/LH_Bar.h \
-    ../LH_Dial/LH_Dial.h \
     LH_QtPlugin_DataViewer.h \
     LH_DataViewerConnector.h \
     LH_DataViewerText.h \
@@ -34,4 +35,3 @@ HEADERS += \
     LH_DataViewerExpiredImage.h \
     LH_DataViewerDataTypes.h \
     LH_DataViewerDial.h
-}

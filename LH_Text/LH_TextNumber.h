@@ -38,45 +38,36 @@
 #define LH_TEXTNUMBER_H
 
 #include "LH_Text.h"
-#include "LH_Qt_double.h"
 
 class LH_TextNumber : public LH_Text
 {
     Q_OBJECT
+    qreal value_;
+    qreal max_;
 
     bool makeText();
     bool bytes_;
 
 protected:
-    LH_Qt_double *setup_value_;
-    LH_Qt_bool *setup_showleft_;
-    LH_Qt_bool *setup_showmax_;
     LH_Qt_bool *setup_showsuffix_;
     LH_Qt_bool *setup_showunits_;
     LH_Qt_bool *setup_bits_;
     LH_Qt_QStringList *setup_scale_;
 
 public:
-    LH_TextNumber() :
-        LH_Text(),
-        setup_value_(0),
-        setup_showleft_(0),
-        setup_showmax_(0),
-        setup_showsuffix_(0),
-        setup_showunits_(0),
-        setup_bits_(0),
-        setup_scale_(0)
-    {}
-
-    const char *userInit();
+    LH_TextNumber();
     void prerender() { makeText(); }
 
-    bool showUnits() const { return setup_showunits_->value() && (setup_scale_->index() != 1); }
+    bool showUnits() const { return setup_showunits_->value() && (setup_scale_->value() != 1); }
+
+    bool setMax( qreal m ); // return true if text changed and we need rendering
+    qreal max() const { return max_; }
+
+    bool setValue( qreal v ); // return true if text changed and we need rendering
+    qreal value() const { return value_; }
 
     bool isBytes() const { return bytes_; }
     void setBytes( bool b ) { bytes_ = b; }
-    void setShowLeft( bool b ) { setup_showleft_->setValue(b); }
-    void setShowMax( bool b ) { setup_showmax_->setValue(b); }
 };
 
 #endif // LH_TEXTNUMBER_H

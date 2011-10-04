@@ -45,16 +45,9 @@
 #include "LH_Qt_QSlider.h"
 #include "LH_Qt_QFileInfo.h"
 #include "LH_Qt_bool.h"
-#include "LH_Qt_array_double.h"
-#include "LH_Qt_double.h"
 #include "LH_Qt_int.h"
 
-class LH_Bar :
-#ifdef LH_CF
-    public LH_QtCFInstance
-#else
-    public LH_QtInstance
-#endif
+class LH_Bar : public LH_QtCFInstance
 {
     Q_OBJECT
 
@@ -65,8 +58,8 @@ class LH_Bar :
     QImage bar_img_endMask_;
     QImage bar_img_emptyMask_;
 
-    void draw_bar( double value, int pos = 0, int total = 1 );
-    double boundedValue(double value);
+    void draw_bar( qreal value, int pos = 0, int total = 1 );
+    qreal boundedValue(qreal value);
 
 protected:
     LH_Qt_QStringList *setup_type_;
@@ -82,60 +75,42 @@ protected:
     LH_Qt_bool *setup_discrete_;
     LH_Qt_int *setup_discrete_count_;
 
-
 public:
-    LH_Bar() :
-        min_(0),
-        max_(0),
-        setup_type_(0),
-        setup_file_(0),
-        setup_file_bg_(0),
-        setup_masking_(0),
-        setup_file_endMask_(0),
-        setup_pencolor1_(0),
-        setup_pencolor2_(0),
-        setup_bgcolor_(0),
-        setup_direction_(0),
-        setup_spacing_(0),
-        setup_discrete_(0),
-        setup_discrete_count_(0)
-    {}
-    const char *userInit();
+    LH_Bar();
+
     QImage *render_qimage( int w, int h );
 
     qreal min() const { return min_; }
     qreal max() const { return max_; }
+
     bool setMin( qreal r ); // return true if rendering needed
     bool setMax( qreal r ); // return true if rendering needed
 
-    void drawSingle( double value )
+    void drawSingle( qreal value )
     {
-#ifdef LH_CF
         cf_source_notify("Value", QString::number(boundedValue(value)));
-#endif
         draw_bar(value);
     }
-
-    void drawList( const double *values, int total )
+    void drawList( qreal *values, int total )
     {
-#ifdef LH_CF
         for( int i=0; i<total; ++i )
             cf_source_notify("Value", QString::number(boundedValue(values[i])), i, total);
-#endif
         for( int i=0; i<total; ++i )
             draw_bar( values[i], i, total );
     }
-
-    void drawList( const QVector<double> &values )
+    void drawList( const QVector<qreal> &values )
     {
-        drawList( values.constData(), values.size() );
+        for( int i=0; i<values.size(); ++i )
+            cf_source_notify("Value", QString::number(boundedValue(values.at(i))), i, values.size());
+        for( int i=0; i<values.size(); ++i )
+            draw_bar( values.at(i), i, values.size() );
     }
+
 
 public slots:
     void changeType();
     void changeDiscrete();
     void changeFile();
-    void draw();
 
 };
 

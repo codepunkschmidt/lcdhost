@@ -35,27 +35,32 @@
 #ifndef LH_QT_QIMAGE_H
 #define LH_QT_QIMAGE_H
 
-#include "LH_QtSetupItem.h"
 #include <QImage>
+#include "LH_QtSetupItem.h"
 
 class LH_Qt_QImage : public LH_QtSetupItem
 {
+    QImage image_;
+
 public:
-    LH_Qt_QImage( LH_QtObject *parent, const QString & name, QImage value, int flags = 0 ) :
-        LH_QtSetupItem( parent, name, lh_type_image_qimage, flags )
+    LH_Qt_QImage( LH_QtObject *parent, QString name, QImage value, int flags = 0 )
+        : LH_QtSetupItem( parent, name, lh_type_image_qimage, flags ), image_(value)
     {
-        LH_QtSetupItem::setValue( value );
+        item_.param.size = sizeof(QImage);
+        item_.data.s = (char*)(void*)&image_;
         return;
     }
 
-    QImage value() const
+    const QImage& value() const
     {
-        return qVariantValue<QImage>( LH_QtSetupItem::value() );
+        return image_;
     }
 
-    void setValue( const QImage & value )
+    void setValue(const QImage &i)
     {
-        LH_QtSetupItem::setValue( value );
+        image_ = i;
+        refresh();
+        emit set();
     }
 };
 

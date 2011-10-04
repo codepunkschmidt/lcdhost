@@ -43,31 +43,57 @@ public:
     LH_Qt_float( LH_QtObject *parent, QString name, float value, float min, float max, int flags = 0 )
         : LH_QtSetupItem( parent, name, lh_type_fraction, flags )
     {
-        LH_QtSetupItem::setValue( value );
-        LH_QtSetupItem::setMinimum( min );
-        LH_QtSetupItem::setMaximum( max );
+        item_.data.f = value;
+        item_.param.range.min = min;
+        item_.param.range.max = max;
     }
 
     LH_Qt_float( LH_QtObject *parent, QString name, float value, int flags = 0 )
         : LH_QtSetupItem( parent, name, lh_type_fraction, flags )
     {
-        LH_QtSetupItem::setValue( value );
+        item_.data.f = value;
+        item_.param.range.min = 0.0;
+        item_.param.range.max = 99.99;
+    }
+
+    void setMinimum( float min )
+    {
+        item_.param.range.min = min;
+        refresh();
+    }
+
+    void setMaximum( float max )
+    {
+        item_.param.range.max = max;
+        refresh();
     }
 
     void setMinMax( float min, float max )
     {
-        LH_QtSetupItem::setMinimum( min );
-        LH_QtSetupItem::setMaximum( max );
+        item_.param.range.min = min;
+        item_.param.range.max = max;
+        refresh();
     }
 
     float value() const
     {
-        return LH_QtSetupItem::value().toFloat();
+        return item_.data.f;
     }
 
     void setValue(float f)
     {
-        LH_QtSetupItem::setValue( f );
+        if( !qFuzzyCompare( item_.data.f, f ) )
+        {
+            item_.data.f = f;
+            refresh();
+            emit set();
+        }
+    }
+
+    virtual void setup_change()
+    {
+        emit change( value() );
+        LH_QtSetupItem::setup_change();
     }
 };
 

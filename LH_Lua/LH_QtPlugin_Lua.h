@@ -36,20 +36,57 @@
 #define LH_QTPLUGIN_LUA_H
 
 #include <QFileInfo>
+#include <QFileSystemWatcher>
+#include <QTime>
+#include <QLibrary>
 
 #include "LH_QtPlugin.h"
-#include "LH_LuaThread.h"
+
+#define LUADIR "lua"
+
+extern "C" {
+#ifdef LUA_STATIC
+# include "lua.h"
+# include "lauxlib.h"
+# include "lualib.h"
+#else
+# include "lua_dyn.h"
+# define LUA_PREFIX LuaFunctions.
+#endif
+}
 
 class LH_QtPlugin_Lua : public LH_QtPlugin
 {
     Q_OBJECT
 
-    LH_LuaThread *thread_;
+    lua_State *L;
+    // QFileSystemWatcher *watcher_;
+    QString luadir_;
+    QTime dirmodified_; // we need this to avoid races
+    bool needscan_;
+
+    void scanForFiles();
+    void loadLuaFile( QFileInfo fi );
 
 public:
-    LH_QtPlugin_Lua() : LH_QtPlugin(), thread_(0) {}
-    ~LH_QtPlugin_Lua();
-    const char *userInit();
+    LH_QtPlugin_Lua() : LH_QtPlugin(), L(NULL), needscan_(false) {}
+
+    const char * lh_name() { return "Lua"; }
+    const char * lh_shortdesc() { return "Lua scripting"; }
+    const char * lh_author() { return "Johan \"SirReal\" Lindh"; }
+    const char * lh_homepage() { return "<a href=\"http://www.linkdata.se/software/lcdhost\">Link Data Stockholm</a>"; }
+    const char * lh_longdesc()
+    {
+        return "";
+    }
+
+    const char *lh_load();
+    void lh_unload();
+
+    int notify( int code, void *);
+
+public slots:
+    void directoryChanged(QString);
 };
 
 #endif // LH_QTPLUGIN_LUA_H

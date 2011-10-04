@@ -165,15 +165,17 @@ void WebKitServerWindow::refreshList()
     return;
 }
 
-void WebKitServerWindow::customEvent(QEvent *e)
+bool WebKitServerWindow::event(QEvent *e)
 {
     if( e->type() == EventWebKitHeartbeat::type() )
     {
         // if( lastbeat_.elapsed() > 3*(1000/heart_->rate) ) qWarning() << lastbeat_.elapsed() << "ms since last heartbeat, interval" << (1000/heart_->rate);
         lastbeat_ = QTime::currentTime();
         updateRequests();
-        return;
+        return true;
     }
+
+    return QDialog::event(e);
 }
 
 void WebKitServerWindow::updateRequests()

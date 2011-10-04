@@ -1,12 +1,12 @@
 TARGET = LH_Text
 TEMPLATE = lib
 DEFINES += LH_TEXT_LIBRARY
-CONFIG += lh_plugin conditionalformatting
+CONFIG += cf
 
-load(../PluginsConfig.prf)
-include(../codeleap/codeleap.pri)
+include(../Plugins.pri)
 
 SOURCES += \
+    $$PLUGIN_SOURCES \
     LH_QtPlugin_Text.cpp \
     LH_Text.cpp \
     LH_TextTime.cpp \
@@ -22,10 +22,10 @@ SOURCES += \
     LH_TextMemVirtualFree.cpp \
     LH_TextMemVirtualTotal.cpp \
     LH_TextMemVirtualUsed.cpp \
-    LH_TextStatic.cpp \
-    LH_TextCPUCoreLoad.cpp
+    LH_TextStatic.cpp
 
 HEADERS += \
+    $$PLUGIN_HEADERS \
     LH_QtPlugin_Text.h \
     LH_Text.h \
     LH_TextFile.h \
@@ -36,3 +36,4 @@ HEADERS += \
 # QT += network xml
 #    LH_TextRSS.cpp \
 #    LH_TextRSS.h \
+

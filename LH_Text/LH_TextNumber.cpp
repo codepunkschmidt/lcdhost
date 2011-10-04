@@ -36,63 +36,38 @@
 
 #include "LH_TextNumber.h"
 
-const char *LH_TextNumber::userInit()
+LH_TextNumber::LH_TextNumber() : LH_Text()
 {
-    if( const char *err = LH_Text::userInit() ) return err;
+    value_ = max_ = 0.0;
     bytes_ = false;
     setup_text_->setFlag( LH_FLAG_READONLY, true );
-
-    setup_value_ = new LH_Qt_double(this,"Value",0,LH_FLAG_AUTORENDER);
-    setup_value_->setHelp("Link a data source to this value using the button on the left.");
-
-    setup_showleft_ = new LH_Qt_bool(this,"Show what's left",false,LH_FLAG_AUTORENDER|LH_FLAG_FIRST|LH_FLAG_HIDDEN);
-    setup_showleft_->setHelp(
-                "<p>By default, the value is shown as-is. If this box is selected, the difference"
-                "between the maximum and the current value is shown.</p>"
-                );
-
-    setup_showmax_ = new LH_Qt_bool(this,"Show maximum",false,LH_FLAG_AUTORENDER|LH_FLAG_FIRST|LH_FLAG_HIDDEN);
-    setup_showmax_->setHelp(
-                "<p>By default, the value is shown as-is. If this box is selected, the"
-                "maximum value is shown.</p>"
-                );
-
     setup_bits_ = new LH_Qt_bool(this,"Bits instead of bytes",false,LH_FLAG_AUTORENDER|LH_FLAG_FIRST|LH_FLAG_HIDDEN);
     setup_bits_->setHelp("<p>If this is selected, the value will be shown in bits rather than bytes.</p>");
-
     setup_showsuffix_ = new LH_Qt_bool(this,"Show multiplier",true,LH_FLAG_AUTORENDER|LH_FLAG_FIRST);
     setup_showunits_ = new LH_Qt_bool(this,"Show units",true,LH_FLAG_AUTORENDER|LH_FLAG_FIRST);
     setup_scale_ = new LH_Qt_QStringList(this,"Scale",
                         QStringList("Automatic")<<"Percentage"<<"No scaling"<<"Kilo"<<"Mega"<<"Giga"<<"Tera",
                         LH_FLAG_AUTORENDER|LH_FLAG_FIRST );
-    return 0;
 }
 
 bool LH_TextNumber::makeText()
 {
-    double max;
-    double value;
+    qreal scale = 1.0;
+    if( setup_bits_->value() ) scale = 8.0;
+    return setNum(value_*scale,setup_scale_->value(),setup_showsuffix_->value(),max_*scale,bytes_);
+}
 
-    max = setup_value_->max();
+bool LH_TextNumber::setMax( qreal m )
+{
+    if( m == max_ ) return false;
+    max_ = m;
+    if( setup_scale_->value() == 1 ) return makeText();
+    return false;
+}
 
-    if( setup_showleft_->value() ) value = max - setup_value_->value();
-    else value = setup_value_->value();
-
-    if( setup_bits_->value() )
-    {
-        value *= 8.0;
-        max *= 8.0;
-    }
-
-    if( setup_showmax_->value() )
-    {
-        value = max;
-    }
-
-    return setNum(
-                value,
-                setup_scale_->index(),
-                setup_showsuffix_->value(),
-                max,
-                bytes_);
+bool LH_TextNumber::setValue( qreal v )
+{
+    if( v == value_ ) return false;
+    value_ = v;
+    return makeText();
 }

@@ -50,12 +50,12 @@ class actionType
 {
     LH_CursorAction *cursorAction_;
 
-    void setIntMinMax(LH_Qt_int *int_, qint64 minVal, qint64 maxVal)
+    void setIntMinMax(LH_Qt_int *int_, int minVal, int maxVal)
     {
         int val = int_->value();
         int_->setMinMax(minVal,maxVal);
-        if(val<minVal) val = minVal;
-        if(val>maxVal) val = maxVal;
+        if(val<minVal)val = minVal;
+        if(val>maxVal)val = maxVal;
         int_->setValue(val);
     }
 
@@ -80,53 +80,6 @@ public:
     QString generateXML(bool enabled, QString desc, QStringList paramValues);
     void displayParameter(int id, LH_Qt_QString *desc_, LH_Qt_QString *str_, LH_Qt_int *int_, LH_Qt_QFileInfo *file_, cursorData cd, QDomElement e = QDomElement());
     QString getParameterValue(int id, LH_Qt_QString *str_, LH_Qt_int *int_, LH_Qt_QFileInfo *file_);
-};
-
-class actionTypes
-{
-    QHash<QString,actionType> actionTypes_;
-    QStringList actionTypeIDs_;
-    LH_CursorAction *cursorAction_;
-
-    void add(actionType at)
-    {
-        actionTypes_.insert(at.typeCode, at);
-        actionTypeIDs_.append(at.typeCode);
-        // return actionTypes_[at.typeCode];
-        return;
-    }
-
-public:
-    actionTypes( LH_CursorAction *p ) : cursorAction_(p) {
-        add( actionType(p,"open"      ,"Open Layout"               , QList<actionParameter>() << actionParameter("Layout File",aptFile) ) );
-        add( actionType(p,"run"       ,"Run Application"           , QList<actionParameter>() << actionParameter("Application",aptFile,"path") << actionParameter("Parameters",aptString,"args") ) );
-        add( actionType(p,"url"       ,"Open URL"                  , QList<actionParameter>() << actionParameter("URL",aptString) ) );
-        add( actionType(p,"move"      ,"Move Cursor"               , QList<actionParameter>() << actionParameter("New X Coordinate",aptInteger,"","x",altCursorX) << actionParameter("New Y Coordinate",aptInteger,"","y",altCursorY)) );
-        add( actionType(p,"select"    ,"Move Cursor & Select"      , QList<actionParameter>() << actionParameter("New X Coordinate",aptInteger,"","x",altCursorX) << actionParameter("New Y Coordinate",aptInteger,"","y",altCursorY)) );
-        add( actionType(p,"wait"      ,"Wait"                      , QList<actionParameter>() << actionParameter("Delay (in ms)",aptInteger,"","",altWait)) );
-        add( actionType(p,"deselect"  ,"Clear Selection") );
-        add( actionType(p,"deactivate","Deactivate the Cursor") );
-        add( actionType(p,"reselect"  ,"Reselect the previous item") );
-    }
-    actionType at(int index)
-    {
-        return at(actionTypeIDs_[index]);
-    }
-    actionType at(QString typeCode)
-    {
-        return actionTypes_.value(typeCode,actionType(this->cursorAction_));
-    }
-    QStringList list()
-    {
-        QStringList list_ = QStringList();
-        for (int i=0; i<actionTypeIDs_.count(); i++)
-            list_.append(at(i).description);
-        return list_;
-    }
-    int indexOf(QString typeCode)
-    {
-        return actionTypeIDs_.indexOf(typeCode);
-    }
 };
 
 #endif // ACTIONTYPE_H

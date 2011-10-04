@@ -10,17 +10,16 @@ lh_class *LH_DataViewerDial::classInfo()
         "Dynamic/DataViewer",
         "DataViewerDial",
         "Data Dial",
-        48,48
-        
-        
+        48,48,
+        lh_object_calltable_NULL,
+        lh_instance_calltable_NULL
     };
 
     return &classInfo;
 }
 
-const char *LH_DataViewerDial::userInit()
+LH_DataViewerDial::LH_DataViewerDial() : data_(this)
 {
-    if( const char *err = LH_Dial::userInit() ) return err;
     setup_lookup_code_ = new LH_Qt_QString( this, "Data Template", "");
     setup_lookup_code_->setOrder(-3);
 
@@ -45,7 +44,6 @@ const char *LH_DataViewerDial::userInit()
 
     setMin(0.0);
     setMax(100.0);
-    return 0;
 }
 
 int LH_DataViewerDial::polling()

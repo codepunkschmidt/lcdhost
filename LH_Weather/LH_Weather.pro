@@ -1,13 +1,14 @@
 TARGET = LH_Weather
 TEMPLATE = lib
-QT += network xml
+QT += network \
+    xml
 DEFINES += LH_WEATHER_LIBRARY
-CONFIG += lh_plugin conditionalformatting googletranslator
+CONFIG += cf translator
 
-load(../PluginsConfig.prf)
-include(../codeleap/codeleap.pri)
+include(../Plugins.pri)
 
 SOURCES += \
+    $$PLUGIN_SOURCES \
     ../LH_Text/LH_Text.cpp \
     LH_WeatherStructs.cpp \
     LH_QtPlugin_Weather.cpp \
@@ -15,8 +16,9 @@ SOURCES += \
     LH_WeatherImage.cpp \
     LH_WeatherData.cpp \
     LH_WeatherBrowserOpener.cpp
-    
+
 HEADERS += \
+    $$PLUGIN_HEADERS \
     ../LH_Text/LH_Text.h \
     LH_QtPlugin_Weather.h \
     LH_WeatherText.h \

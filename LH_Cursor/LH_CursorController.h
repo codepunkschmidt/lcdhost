@@ -25,13 +25,15 @@
 #ifndef LH_CURSORCONTROLLER_H
 #define LH_CURSORCONTROLLER_H
 
-#include "../LH_Text/LH_Text.h"
+// #include <windows.h>
+// #include <tchar.h>
+// #include <stdio.h>
+
+#include "LH_Text/LH_Text.h"
 #include "LH_Qt_InputState.h"
 #include "LH_Qt_QFileInfo.h"
 
 #include "LH_CursorData.h"
-
-#define ENABLE_VIRTUAL_CURSOR_KEYS
 
 enum selectMode
 {
@@ -46,16 +48,14 @@ struct cursorMode{
     QString description;
 };
 
-class LH_CursorController : public LH_QtCFInstance
+class LH_CursorController : public LH_QtInstance
 {
     Q_OBJECT
 
     QList<cursorMode> cursorModes;
 
     void persistSelection();
-    void updateLinkData();
 
-    cursorData cursor_data_;
 protected:
 
     LH_Qt_QString *setup_coordinate_;
@@ -76,34 +76,23 @@ protected:
     LH_Qt_bool *setup_persistent_autoselect_;
     LH_Qt_QFileInfo *setup_persistent_file_;
 
-    LH_Qt_QString *setup_link_json_data_;
-    LH_Qt_QString *setup_link_current_pos;
-    LH_Qt_QString *setup_link_selected_pos;
-    LH_Qt_QString *setup_link_postback_;
-
-    LH_Qt_bool *setup_cursor_active_;
-    LH_Qt_int *setup_cursor_sel_x_;
-    LH_Qt_int *setup_cursor_sel_y_;
-    LH_Qt_int *setup_cursor_x_;
-    LH_Qt_int *setup_cursor_y_;
-
-#ifdef ENABLE_VIRTUAL_CURSOR_KEYS
-    LH_Qt_QString *setup_virtual_keys_;
-#endif
-
 public:
-    const char *userInit();
+    LH_CursorController();
+
+    const char *userInit(){ hide(); return NULL; }
+
+    int polling();
 
     static lh_class *classInfo();
 
 public slots:
-    void doMoveUp(int flags=0,int value=0);
-    void doMoveDown(int flags=0,int value=0);
-    void doMoveLeft(int flags=0,int value=0);
-    void doMoveRight(int flags=0,int value=0);
-    void doSelect(int flags=0,int value=0);
-    void doReselect(int flags=0,int value=0);
-    void doActivate(int flags=0,int value=0);
+    void doMoveUp(QString key,int flags,int value);
+    void doMoveDown(QString key,int flags,int value);
+    void doMoveLeft(QString key,int flags,int value);
+    void doMoveRight(QString key,int flags,int value);
+    void doSelect(QString key,int flags,int value);
+    void doReselect(QString key,int flags,int value);
+    void doActivate(QString key,int flags,int value);
 
     void updateLocation(int xMod, int yMod, bool absolute = false);
     void changeMode();
@@ -111,15 +100,6 @@ public slots:
 
     void changePersistent();
     void loadPersistedSelection();
-
-    void processPostback();
-    void changeSourceLink();
-    void changeCursorData();
-    void initialiseLinking();
-
-#ifdef ENABLE_VIRTUAL_CURSOR_KEYS
-    void virtualKeyPress(QString);
-#endif
 };
 
 #endif // LH_CURSORCONTROLLER_H

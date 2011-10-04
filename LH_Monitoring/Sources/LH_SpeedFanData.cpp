@@ -24,18 +24,18 @@ monitoringDataType LH_SpeedFanData::getType()
     if(is_avg_)
         return mdtFloat;
     else
-        return (ui_->index(mon_type)!=2? mdtInt : mdtFloat);
+        return (ui_->value(mon_type)!=2? mdtInt : mdtFloat);
 }
 
 int LH_SpeedFanData::getThreshMax()
 {
-    return (ui_->index(mon_type)==2? 12 : (ui_->index(mon_type)==1? 99999 : 200));
+    return (ui_->value(mon_type)==2? 12 : (ui_->value(mon_type)==1? 99999 : 200));
 }
 
 bool LH_SpeedFanData::getData(float& value, QString& text, QString& units)
 {
     int count;
-    return getData(value, text, units, count, ui_->index(mon_item));
+    return getData(value, text, units, count, ui_->value(mon_item));
 }
 
 bool LH_SpeedFanData::getData(float& value, QString& text, QString& units, int index)
@@ -99,7 +99,7 @@ bool LH_SpeedFanData::getNames(QStringList& names)
     else
     {
         QString type = "";
-        switch (ui_->index(mon_type))
+        switch (ui_->value(mon_type))
         {
         case 0:
             type = "Temperature";
@@ -119,7 +119,7 @@ bool LH_SpeedFanData::getNames(QStringList& names)
 
 bool LH_SpeedFanData::getDeadValue(float& value)
 {
-    switch (ui_->index(mon_type))
+    switch (ui_->value(mon_type))
     {
     case 0:
         value = -12800;
@@ -134,7 +134,7 @@ bool LH_SpeedFanData::getDeadValue(float& value)
 bool LH_SpeedFanData::getDeadValue_Transformed(float& value)
 {
     bool result = getDeadValue(value);
-    if (ui_->index(mon_type) == 0) value /= 100.0 ;
+    if (ui_->value(mon_type) == 0) value /= 100.0 ;
     return result;
 }
 
@@ -145,7 +145,7 @@ void LH_SpeedFanData::getSelectedValue(const SFMemory* sfmemory, float& value, Q
     text = "";
     count = 0;
 
-    switch (ui_->index(mon_type))
+    switch (ui_->value(mon_type))
     {
     case 0:
         type = "Temperature";
@@ -169,8 +169,8 @@ void LH_SpeedFanData::getSelectedValue(const SFMemory* sfmemory, float& value, Q
     }
 
     //really a bad place to put these but...
-    is_avg_ = (ui_->index(mon_item)==sel_id_avg_);
-    is_group_ = (ui_->index(mon_item)==sel_id_all_);
+    is_avg_ = (ui_->value(mon_item)==sel_id_avg_);
+    is_group_ = (ui_->value(mon_item)==sel_id_all_);
 
     return ;
 }
@@ -182,7 +182,7 @@ void LH_SpeedFanData::loadSensorList(const SFMemory* sfmemory)
     QString type;
     if(sfmemory)
     {
-        switch (ui_->index(mon_type))
+        switch (ui_->value(mon_type))
         {
         case 0:
             type = "Temperature";
@@ -203,7 +203,7 @@ void LH_SpeedFanData::loadSensorList(const SFMemory* sfmemory)
 
         sel_id_all_ = -2;
         sel_id_avg_ = -2;
-        if(ui_->index(mon_type)!=2 && count>1)
+        if(ui_->value(mon_type)!=2 && count>1)
         {
             ui_->append( mon_item, "Average " + type );
             sel_id_avg_ = ui_->count(mon_item)-1;
@@ -218,5 +218,5 @@ void LH_SpeedFanData::loadSensorList(const SFMemory* sfmemory)
     }
 
     ui_->refresh(mon_item);
-    ui_->setIndex(mon_item, ui_->setup_value_item_index_->value());
+    ui_->setValue(mon_item, ui_->setup_value_item_index_->value());
 }

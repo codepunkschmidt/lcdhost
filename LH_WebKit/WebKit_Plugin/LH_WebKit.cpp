@@ -39,14 +39,14 @@
 
 #include "LH_WebKit.h"
 
-const char *LH_WebKit::userInit()
+LH_WebKit::LH_WebKit(const bool enableParsing)
 {
-    if( const char *err = LH_QtInstance::userInit() ) return err;
-    int parseFlags = (!parsingEnabled_? LH_FLAG_HIDDEN | LH_FLAG_READONLY | LH_FLAG_NOSAVE : 0);
+    parsingEnabled_ = enableParsing;
+    int parseFlags = (!enableParsing? LH_FLAG_HIDDEN | LH_FLAG_READONLY | LH_FLAG_NOSAVE : 0);
 
     zoom_ = new LH_Qt_QSlider(this,"Zoom",10,1,20,LH_FLAG_FOCUS);
     zoom_->setOrder(1);
-    connect( zoom_, SIGNAL(change(qint64)), this, SLOT(zoomChanged(int)) );
+    connect( zoom_, SIGNAL(change(int)), this, SLOT(zoomChanged(int)) );
 
     progress_ = new LH_Qt_QProgressBar(this,"~WebKitProgress",0,0,100,LH_FLAG_READONLY|LH_FLAG_HIDDEN);
     progress_->setOrder(2);
@@ -78,19 +78,26 @@ const char *LH_WebKit::userInit()
     connect( setup_template_, SIGNAL(changed()), this, SLOT(reparse()) );
     parseThread = new LH_ParseThread(this);
     connect( parseThread, SIGNAL(finished()), this, SLOT(doneParsing()));
-    return 0;
+    return;
 }
 
 LH_WebKit::~LH_WebKit()
 {
-    parseThread->quit();
-    parseThread->wait();
     if( sock_ )
     {
         if( sock_->state() == QLocalSocket::ConnectedState ) sock_->abort();
         delete sock_;
         sock_ = NULL;
     }
+}
+
+const char *LH_WebKit::userInit()
+{
+    return 0;
+}
+
+void LH_WebKit::userTerm()
+{
 }
 
 
@@ -182,7 +189,7 @@ void LH_WebKit::error(QLocalSocket::LocalSocketError err)
 {
     if( err == QLocalSocket::ServerNotFoundError  )
     {
-        static_cast<LH_QtPlugin_WebKit*>(LH_QtPlugin::instance())->startServer();
+        static_cast<LH_QtPlugin_WebKit*>(plugin())->startServer();
         return;
     }
 
@@ -220,12 +227,10 @@ void LH_WebKit::sendData( bool resize )
             else
                 if(parsingEnabled_)
                 {
-                    parseThread->quit();
-                    if( !parseThread->wait(1000) )
+                    if(parseThread->isRunning())
                     {
                         WebKitCommand(0, scaled_size(),url_,"Aborting...").write(sock_);
                         parseThread->terminate();
-                        parseThread->wait(1000);
                     }
                     WebKitCommand(0, scaled_size(),url_,"Parsing...").write(sock_);
                     parseThread->parsedHtml = setup_template_->value();
@@ -249,10 +254,11 @@ void LH_WebKit::sendData( bool resize )
 QHash<QString, QString> LH_WebKit::getTokens()
 {
     QHash<QString, QString> tokens;
-    QString s = dir_layout();
 
-    if( s.endsWith('\\') || s.endsWith('/')) s.remove( s.length()-1, 1 );
-    tokens.insert( "layout_path", s );
+    QString layoutPath = state()->dir_layout;
+    if (layoutPath.endsWith('\\') || layoutPath.endsWith('/'))
+        layoutPath = layoutPath.left(layoutPath.length()-1);
+    tokens.insert( "layout_path", layoutPath );
 
     return tokens;
 }
@@ -323,9 +329,9 @@ void LH_WebKit::readyRead()
 
 void LH_WebKit::reparse()
 {
-    setup_regexp_->setHidden( !setup_parse_->value());
-    setup_regexp_lazy_->setHidden( !setup_parse_->value());
-    setup_template_->setHidden( !setup_parse_->value());
+    setup_regexp_->setFlag(LH_FLAG_HIDDEN, !setup_parse_->value());
+    setup_regexp_lazy_->setFlag(LH_FLAG_HIDDEN, !setup_parse_->value());
+    setup_template_->setFlag(LH_FLAG_HIDDEN, !setup_parse_->value());
     sent_html_ = false;
     sendData(false);
     requestRender();

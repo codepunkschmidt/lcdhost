@@ -38,11 +38,15 @@ protected:
     LH_Qt_InputState *setup_browser_;
 
 public:
-    const char *userInit();
+    LH_WeatherBrowserOpener();
+    ~LH_WeatherBrowserOpener();
+
+    //QImage *render_qimage( int w, int h );
+
     static lh_class *classInfo();
 
 public slots:
-    void openBrowser(int,int);
+    void openBrowser(QString,int,int);
 };
 
 #endif // LH_WeatherBrowserOpener_H

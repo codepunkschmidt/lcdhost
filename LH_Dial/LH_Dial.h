@@ -33,10 +33,7 @@
 #include "LH_Qt_QFileInfo.h"
 #include "LH_Qt_bool.h"
 #include "LH_Qt_int.h"
-#include "LH_Qt_array_double.h"
-#include "LH_Qt_double.h"
-#include "LH_Qt_array_string_ui.h"
-#include "LH_Qt_array_int_ui.h"
+#include "LH_Qt_QTextEdit.h"
 
 #include <QList>
 #include <QStringList>
@@ -71,6 +68,9 @@ class LH_Dial : public LH_QtInstance
 {
     Q_OBJECT
 
+    qreal min_;
+    qreal max_;
+
     QString faceCode_;
     QImage *faceImage_;
 
@@ -90,19 +90,16 @@ class LH_Dial : public LH_QtInstance
     QList<QImage*> needleImage_;
     QList<bool> needle_vis_;
 
-    qreal max(qreal);
-    qreal min(qreal);
+    void loadNeedleConfig(int lineID, int& needleStyle, QColor& needleColor, int& needleThick, int& needleLength, int& needleGap, QString& needleImage);
 
     static const bool isDebug = false;
+
+    QString buildNeedleConfig();
 
     bool polling_on_;
 
     float maxDegrees();
     float startDegrees();
-
-    QList< QList<double> >linkedValues;
-    bool useLinkedValueAverage_;
-    double linkedValueMultiplier_;
 protected:
     bool isClock;
 
@@ -111,9 +108,6 @@ protected:
     LH_Qt_bool *setup_needles_reverse_;
     LH_Qt_bool *setup_needles_smooth_;
 
-    LH_Qt_double *setup_max_;
-    LH_Qt_double *setup_min_;
-    LH_Qt_array_double *setup_linked_values_;
 
     LH_Qt_QColor *setup_bgcolor_;
 
@@ -125,26 +119,28 @@ protected:
     LH_Qt_bool *setup_face_ticks_;
 
     LH_Qt_QStringList *setup_needle_selection_;
-    LH_Qt_array_string_ui *setup_needle_style_;
-    LH_Qt_array_int_ui *setup_needle_color_;
-    LH_Qt_array_int_ui *setup_needle_thickness_;
-    LH_Qt_array_int_ui *setup_needle_length_;
-    LH_Qt_array_int_ui *setup_needle_gap_;
-    LH_Qt_array_string_ui* setup_needle_image_;
+
+    LH_Qt_QStringList *setup_needle_style_;
+    LH_Qt_QColor *setup_needle_color_;
+    LH_Qt_int *setup_needle_thickness_;
+    LH_Qt_int *setup_needle_length_;
+    LH_Qt_int *setup_needle_gap_;
+    LH_Qt_QFileInfo* setup_needle_image_;
+
+    LH_Qt_QTextEdit *setup_needle_configs_;
 
     void setNeedleVisibility(bool visible, int index = 0);
-public:
+public:    
     LH_Dial();
     ~LH_Dial();
-    const char *userInit();
+
+    virtual const char *userInit();
 
     int polling();
-    int notify(int code,void* param);
-
     QImage *render_qimage( int w, int h );
 
-    qreal min();
-    qreal max();
+    qreal min() const { return min_; }
+    qreal max() const { return max_; }
 
     bool setMin( qreal r ); // return true if rendering needed
     bool setMax( qreal r ); // return true if rendering needed
@@ -162,7 +158,6 @@ public:
 
     void addNeedle(QString name);
     int needleCount();
-    void setNeedleCount(int);
     void clearNeedles();
     void setNeedles(QStringList names) {
         bool matchingList = names.length() == setup_needle_selection_->list().length();
@@ -183,18 +178,12 @@ public:
 
     tickSet ticks;
 
-    void syncNeedleDataArrays();
-    void setUseLinkedValueAverage(bool val) { useLinkedValueAverage_ = val; }
-    bool useLinkedValueAverage() { return useLinkedValueAverage_; }
-    void setLinkedValueMultiplier(double val) { linkedValueMultiplier_ = val; }
-    double linkedValueMultiplier() { return linkedValueMultiplier_; }
 public slots:
-    void initializeDefaults();
-    void changeType(bool = false);
+    void changeType();
     void changeFaceStyle();
     void changeNeedleStyle();
     void changeSelectedNeedle();
-    void newLinkedValue();
+    void updateSelectedNeedle();
 
 };
 

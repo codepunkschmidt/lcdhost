@@ -25,26 +25,17 @@
   */
 
 #include "LH_Dial.h"
+#include "LH_QtNetwork.h"
 
 class LH_DialNetIn : public LH_Dial
 {
+    LH_QtNetwork net_;
+
 public:
-    const char *userInit()
+    LH_DialNetIn() : net_(this)
     {
-        if( const char *err = LH_Dial::userInit() ) return err;
-
-        //addCustomUnits("kb/s (kilobits per second)", "kb/s", 1024 / 8);
-        //addCustomUnits("Mb/s (megabits per second)", "Mb/s", 1024 * 1024 / 8);
-        //addCustomUnits("kB/s (kilobytes per second)", "kB/s", 1024);
-        //addCustomUnits("MB/s (megabytes per second)", "MB/s", 1024 * 1024);
-
-        setup_linked_values_->setLink("/system/net/in/rate");
-        setup_max_->setLink("/system/net/in/max");
-
-        setMin(0);
-        setMax(1);
-        //setYUnit("kb/s");
-        return 0;
+        setMin(0.0);
+        setMax(1000.0);
     }
 
     static lh_class *classInfo()
@@ -55,10 +46,18 @@ public:
             "System/Network/Inbound",
             "SystemNetworkInboundDial",
             "Inbound Bandwidth Usage (Dial)",
-            48,48
+            48,48,
+            lh_object_calltable_NULL,
+            lh_instance_calltable_NULL
         };
 
         return &classInfo;
+    }
+
+    int notify(int n, void *p)
+    {
+        setVal( net_.inPermille() );
+        return net_.notify(n,p);
     }
 };
 

@@ -1,8 +1,8 @@
 #ifndef LH_MONITORINGGRAPH_H
 #define LH_MONITORINGGRAPH_H
 
-#include "../Sources/LH_MonitoringUI.h"
-#include "../LH_Graph/LH_Graph.h"
+#include "Sources/LH_MonitoringUI.h"
+#include "LH_Graph/LH_Graph.h"
 
 class LH_MonitoringGraph : public LH_Graph
 {

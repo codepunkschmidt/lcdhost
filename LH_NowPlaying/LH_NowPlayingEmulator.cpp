@@ -54,6 +54,7 @@ lh_class *LH_NowPlayingEmulator::classInfo()
         "NowPlayingEmulator",
         "Now Playing Emulator (Text)",
         -1, -1,
+        lh_instance_calltable_NULL
     };
 
     if( classInfo.width == -1 )
@@ -70,19 +71,18 @@ lh_class *LH_NowPlayingEmulator::classInfo()
 #endif
 }
 
-const char *LH_NowPlayingEmulator::userInit()
+LH_NowPlayingEmulator::LH_NowPlayingEmulator()
 {
-    if( const char *err = LH_Text::userInit() ) return err;
-    setup_text_->setVisible(false);
+    setup_text_->setFlag(LH_FLAG_HIDDEN, true);
     setup_text_->setFlag(LH_FLAG_NOSAVE, true);
-    setup_font_->setVisible(false);
-    setup_fontresize_->setVisible(false);
-    setup_pencolor_->setVisible(false);
-    setup_bgcolor_->setVisible(false);
-    setup_horizontal_->setVisible(false);
-    setup_vertical_->setVisible(false);
-    setup_scrollrate_->setVisible(false);
-    setup_scrollstep_->setVisible(false);
+    setup_font_->setFlag(LH_FLAG_HIDDEN, true);
+    setup_fontresize_->setFlag(LH_FLAG_HIDDEN, true);
+    setup_pencolor_->setFlag(LH_FLAG_HIDDEN, true);
+    setup_bgcolor_->setFlag(LH_FLAG_HIDDEN, true);
+    setup_horizontal_->setFlag(LH_FLAG_HIDDEN, true);
+    setup_vertical_->setFlag(LH_FLAG_HIDDEN, true);
+    setup_scrollrate_->setFlag(LH_FLAG_HIDDEN, true);
+    setup_scrollstep_->setFlag(LH_FLAG_HIDDEN, true);
     setText("Msn Compatible Music Player Emulator");
 
     setup_player_  = new LH_Qt_QString(this,"Player Name","TestPlayer");
@@ -90,8 +90,6 @@ const char *LH_NowPlayingEmulator::userInit()
     setup_artist_  = new LH_Qt_QString(this,"Artist Name","Artist");
     setup_track_   = new LH_Qt_QString(this,"Track Name","Track");
     setup_album_   = new LH_Qt_QString(this,"Album Name","Album");
-
-    return 0;
 }
 
 LH_NowPlayingEmulator::~LH_NowPlayingEmulator()

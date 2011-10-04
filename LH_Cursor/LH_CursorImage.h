@@ -25,27 +25,42 @@
 #ifndef LH_CURSORIMAGE_H
 #define LH_CURSORIMAGE_H
 
-#include "../LH_Monitoring/LH_QImage/LH_QImage.h"
+#include <QtGlobal>
+#include <QHash>
+
+#include "LH_QtInstance.h"
 #include "LH_Qt_QString.h"
+#include "LH_Qt_QFileInfo.h"
 
 #include "LH_CursorData.h"
 
-class LH_CursorImage : public LH_QImage
+class LH_CursorImage : public LH_QtInstance
 {
     Q_OBJECT
 
+    bool updateState();
+
 protected:
+    QString statusCode_;
+    QHash<QString, QStringList> *imageDefinitions;
+
+    LH_Qt_QFileInfo *setup_file_;
     LH_Qt_QString *setup_coordinate_;
-    LH_Qt_QStringList *setup_cursor_state_;
-    LH_Qt_QString *setup_json_data_;
+    LH_Qt_QString *setup_text_;
 
 public:
-    const char *userInit();
+    LH_CursorImage();
+
+    QImage *render_qimage( int w, int h );
+    int polling();
+
+    QString getImageName();
 
     static lh_class *classInfo();
 
 public slots:
-    bool updateState();
+    void fileChanged();
+
 };
 
 #endif // LH_CURSORIMAGE_H

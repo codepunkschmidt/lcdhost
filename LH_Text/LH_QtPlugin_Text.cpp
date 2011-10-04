@@ -36,7 +36,9 @@
 
 #include "LH_QtPlugin_Text.h"
 
-LH_PLUGIN(LH_QtPlugin_Text) =
+LH_PLUGIN(LH_QtPlugin_Text)
+
+char __lcdhostplugin_xml[] =
 "<?xml version=\"1.0\"?>"
 "<lcdhostplugin>"
   "<id>Text</id>"

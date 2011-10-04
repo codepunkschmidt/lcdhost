@@ -29,7 +29,7 @@
 #include <QFileSystemWatcher>
 #include <QHash>
 
-#include "../LH_Text/LH_Text.h"
+#include "LH_Text/LH_Text.h"
 #include "LH_Qt_QFileInfo.h"
 #include "LH_Qt_QString.h"
 #include "LH_Qt_QStringList.h"
@@ -92,8 +92,9 @@ protected:
 
     QString get_dir_layout();
 public:
+    LH_DataViewerConnector();
     ~LH_DataViewerConnector();
-    const char *userInit();
+    const char *userInit(){ hide(); return NULL; }
 
     int polling();
 

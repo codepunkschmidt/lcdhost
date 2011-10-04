@@ -35,10 +35,77 @@
 #include <QCoreApplication>
 #include "LH_LgLcdThread.h"
 
-LH_LgLcdThread::LH_LgLcdThread(QObject *parent) : QThread(parent)
+lgLcdBitmap LH_LgLcdThread::bw_bm;
+lgLcdBitmap LH_LgLcdThread::qvga_bm;
+
+LH_LgLcdThread::LH_LgLcdThread(QObject *parent)
+     : QThread(parent), time_to_die_(false), sem_(1), appname_(NULL)
 {
+    int appname_len = QCoreApplication::applicationName().length();
+#ifdef Q_WS_WIN
+    appname_ = new wchar_t[appname_len+1];
+    QCoreApplication::applicationName().toWCharArray(appname_);
+    appname_[appname_len] = 0;
+#endif
+#ifdef Q_WS_MAC
+    appname_ = CFStringCreateWithCharacters(
+                0, reinterpret_cast<const UniChar *>(QCoreApplication::applicationName().unicode()),
+                appname_len );
+#endif
 }
 
 LH_LgLcdThread::~LH_LgLcdThread()
 {
+    if( appname_ )
+    {
+#ifdef Q_WS_WIN
+        delete[] (wchar_t *)appname_;
+#endif
+#ifdef Q_WS_MAC
+        CFRelease( (CFStringRef) appname_ );
+#endif
+    }
+}
+
+void LH_LgLcdThread::setBW( QImage img )
+{
+    if( img.isNull() || img.width() != 160 || img.height() != 43 )
+    {
+        bw_bm.hdr.Format = 0;
+        return;
+    }
+
+    bw_bm.bmp_mono.hdr.Format = LGLCD_BMP_FORMAT_160x43x1;
+    for( int y=0; y<43; ++y )
+    {
+        for( int x=0; x<160; ++x )
+        {
+            Q_ASSERT( (size_t)(y*160+x) < sizeof(bw_bm.bmp_mono.pixels) );
+            bw_bm.bmp_mono.pixels[y*160 + x] = ( qGray( img.pixel(x,y) ) > 128) ? 0xFF : 0x00;
+        }
+    }
+
+    sem_.release();
+}
+
+void LH_LgLcdThread::setQVGA( QImage img )
+{
+    if( img.isNull() )
+    {
+        qvga_bm.hdr.Format = 0;
+        return;
+    }
+
+    Q_ASSERT( img.numBytes() == sizeof( qvga_bm.bmp_qvga32.pixels ) );
+
+    qvga_bm.bmp_qvga32.hdr.Format = LGLCD_BMP_FORMAT_QVGAx32;
+    memcpy( qvga_bm.bmp_qvga32.pixels,
+#ifdef Q_WS_MAC
+            img.rgbSwapped().bits(),
+#else
+            img.bits(),
+#endif
+            sizeof( qvga_bm.bmp_qvga32.pixels ) );
+
+    sem_.release();
 }

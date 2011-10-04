@@ -1,5 +1,4 @@
 
-#include "lh_api5/lh_api5.h"
 #include <QDebug>
 #include "LgBacklightDevice.h"
 #include "LH_LgBacklight.h"

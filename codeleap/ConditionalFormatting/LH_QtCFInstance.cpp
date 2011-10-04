@@ -87,7 +87,7 @@ void LH_QtCFInstance::cf_initialize()
         setup_cf_enabled_->setHelp("<p>Conditional Formatting allows a number of properties on the object to change automatically.</p><p>E.g. a text object could change it's fore or background colour or its font.</p>");
         new LH_Qt_QString(this,tr("^comment"),"<span style='color:grey'>(Conditional Formatting is still experimental)</span>",LH_FLAG_LAST | LH_FLAG_UI,lh_type_string_html );
 
-        setup_cf_state_ = new LH_Qt_QString(this, "State", "", LH_FLAG_NOSAVE | LH_FLAG_READONLY | LH_FLAG_LAST | LH_FLAG_HIDDEN);
+        setup_cf_state_ = new LH_Qt_QString(this, "State", "", LH_FLAG_NOSAVE  | LH_FLAG_LAST | LH_FLAG_HIDDEN);
         setup_cf_state_->setHelp("<p>One way to simplify the Conditional Formatting rules is to have one set of rules that set this \"State\" value and another set that change colours, fonts, images, etc based on it.</p>");
 
         setup_cf_visibility_ = new LH_Qt_bool(this, "Visibility", true, LH_FLAG_NOSAVE | LH_FLAG_LAST | LH_FLAG_HIDDEN);
@@ -307,7 +307,7 @@ void LH_QtCFInstance::cf_XML_changed()
     }
     setup_cf_rules_->refreshList();    
     setup_cf_rules_->setValue(selIndex);
-    setup_cf_rules_->setFlag(LH_FLAG_HIDDEN, !setup_cf_enabled_->value());
+    cf_enabled_changed();
     cf_apply_rules();
 }
 
@@ -514,4 +514,13 @@ void LH_QtCFInstance::cf_save_rule()
 
     setup_cf_XML_->setValue(doc.toString());
     cf_XML_changed();
+}
+
+void LH_QtCFInstance::cf_set_rules(QString rulesXML, bool enable_cf)
+{
+    setup_cf_XML_->setValue(rulesXML);
+    if(enable_cf)
+        setup_cf_enabled_->setValue(true);
+    cf_XML_changed();
+    cf_rules_changed();
 }

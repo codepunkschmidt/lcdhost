@@ -25,15 +25,14 @@
 #ifndef LH_CURSORCONTROLLER_H
 #define LH_CURSORCONTROLLER_H
 
-// #include <windows.h>
-// #include <tchar.h>
-// #include <stdio.h>
-
-#include "LH_Text/LH_Text.h"
+#include "../LH_Text/LH_Text.h"
 #include "LH_Qt_InputState.h"
 #include "LH_Qt_QFileInfo.h"
+#include "LH_Qt_int.h"
 
 #include "LH_CursorData.h"
+
+//#define ENABLE_VIRTUAL_CURSOR_KEYS
 
 enum selectMode
 {
@@ -48,14 +47,20 @@ struct cursorMode{
     QString description;
 };
 
+#ifdef LH_CF
+class LH_CursorController : public LH_QtCFInstance
+#else
 class LH_CursorController : public LH_QtInstance
+#endif
 {
     Q_OBJECT
 
     QList<cursorMode> cursorModes;
 
     void persistSelection();
+    void updateLinkData();
 
+    cursorData cursor_data_;
 protected:
 
     LH_Qt_QString *setup_coordinate_;
@@ -76,12 +81,25 @@ protected:
     LH_Qt_bool *setup_persistent_autoselect_;
     LH_Qt_QFileInfo *setup_persistent_file_;
 
+    LH_Qt_QString *setup_link_json_data_;
+    LH_Qt_QString *setup_link_current_pos;
+    LH_Qt_QString *setup_link_selected_pos;
+    LH_Qt_QString *setup_link_postback_;
+
+    LH_Qt_bool *setup_cursor_active_;
+    LH_Qt_int *setup_cursor_sel_x_;
+    LH_Qt_int *setup_cursor_sel_y_;
+    LH_Qt_int *setup_cursor_x_;
+    LH_Qt_int *setup_cursor_y_;
+
+#ifdef ENABLE_VIRTUAL_CURSOR_KEYS
+    LH_Qt_QString *setup_virtual_keys_;
+#endif
+
 public:
     LH_CursorController();
 
     const char *userInit(){ hide(); return NULL; }
-
-    int polling();
 
     static lh_class *classInfo();
 
@@ -100,6 +118,15 @@ public slots:
 
     void changePersistent();
     void loadPersistedSelection();
+
+    void processPostback();
+    //void changeSourceLink();
+    void changeCursorData();
+    void initialiseLinking();
+
+#ifdef ENABLE_VIRTUAL_CURSOR_KEYS
+    void virtualKeyPress(QString);
+#endif
 };
 
 #endif // LH_CURSORCONTROLLER_H

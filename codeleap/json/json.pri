@@ -1,6 +1,12 @@
-
 json {
-	INCLUDEPATH += $$PWD
-	HEADERS += $$PWD/json.h
-	SOURCES += $$PWD/json.cpp
+
+DEFINES += JSON
+
+INCLUDEPATH += $$PWD
+
+SOURCES += \
+    $$PWD/json.cpp
+
+HEADERS += \
+    $$PWD/json.h
 }

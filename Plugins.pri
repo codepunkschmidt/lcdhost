@@ -1,5 +1,13 @@
 #
-# LCDHost API5 compatiblity layer
+# Plugins.pri
+#
+# This plugin include file sets things up the way
+# I want them when I build LCDHost. It may or may
+# not work for you.
+#
+# In particular, the automated signing using
+# QMAKE_POST_LINK need to use your own keys
+# and URL's if you want to use it.
 #
 
 CONFIG(debug, debug|release):RELDEB = Debug
@@ -27,14 +35,32 @@ unix:!macx {
     LCDHOST_BINARIES = $$PWD/../$$RELDEB
 }
 
-CONFIG += lh_plugin
-hid: CONFIG += lh_hidapi
-usb: CONFIG += lh_libusb
+DESTDIR = $$LCDHOST_PLUGINS
 
-INCLUDEPATH += $$PWD
+LINKDATA = $$PWD/linkdata
+CODELEAP = $$PWD/codeleap
 
-cf: include($$PWD/codeleap/ConditionalFormatting/ConditionalFormatting.pri)
-translator: include($$PWD/codeleap/GoogleTranslator/GoogleTranslator.pri)
+QTSUPPORT = $$LINKDATA/QtSupport
+
+INCLUDEPATH += \
+    $$PWD \
+    $$QTSUPPORT \
+    $$LINKDATA \
+    $$CODELEAP
+
+PLUGIN_SOURCES = \
+    $$LINKDATA/lh_plugin.c \
+    $$QTSUPPORT/LH_QtObject.cpp \
+    $$QTSUPPORT/LH_QtPlugin.cpp \
+    $$QTSUPPORT/LH_QtInstance.cpp \
+    $$QTSUPPORT/LH_QtSetupItem.cpp
+
+PLUGIN_HEADERS += \
+    $$LINKDATA/lh_plugin.h \
+    $$QTSUPPORT/LH_QtObject.h \
+    $$QTSUPPORT/LH_QtPlugin.h \
+    $$QTSUPPORT/LH_QtInstance.h \
+    $$QTSUPPORT/LH_QtSetupItem.h
 
 load($$PWD/PluginsConfig.prf)
 

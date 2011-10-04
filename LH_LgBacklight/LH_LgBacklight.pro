@@ -3,7 +3,7 @@ TEMPLATE = lib
 DEFINES += LGBACKLIGHT_LIBRARY
 CONFIG += lh_plugin hidapi
 
-load(../PluginsConfig.prf)
+include(../Plugins.pri)
 
 SOURCES += \
     LH_LgBacklight.cpp \

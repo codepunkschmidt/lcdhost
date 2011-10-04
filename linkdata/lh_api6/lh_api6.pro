@@ -8,7 +8,7 @@ TARGET = lh_api6
 TEMPLATE = lib
 CONFIG += staticlib
 
-load($$PWD/../../PluginsConfig.prf)
+load($$PWD/../../lcdhost.prf)
 
 HEADERS = \
     lh_api6.h \

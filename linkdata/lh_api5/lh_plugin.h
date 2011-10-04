@@ -63,19 +63,16 @@
 
   */
 
-#ifndef LH_API5_PLUGIN_H
-#define LH_API5_PLUGIN_H
+#ifndef LH_PLUGIN_H
+#define LH_PLUGIN_H
 
 #include <stddef.h>
 #include <limits.h>
 
 #include "lh_systemstate.h"
 
-#ifndef LH_API_MAJOR
-# define LH_API_MAJOR 5
-# define LH_API_MINOR 0
-#endif
-
+#define LH_API_MAJOR 5
+#define LH_API_MINOR 0
 #define LH_DEVICE_MAXBUTTONS 32
 
 /**
@@ -219,7 +216,6 @@ typedef enum lh_callbackcode_t
   */
 typedef void (*lh_callback_t)( int cb_id, const void *obj, lh_callbackcode code, void *param );
 
-#ifndef LH_SIGNATURE_MARKER
 /**
     Definition of signature area
     The signature area is optional by highly recommended.
@@ -237,8 +233,6 @@ typedef struct lh_signature_t
 /* Declare a signature area - don't mess with the constants, */
 /* they're there so that SignPlugin can find the right spot. */
 #define LH_SIGNATURE() lh_signature _lh_plugin_signature = { LH_SIGNATURE_MARKER, {0}, {0}, sizeof(lh_signature) }
-
-#endif
 
 typedef enum lh_setup_type_t
 {
@@ -548,4 +542,4 @@ int lh_cpuload( lh_cpudata *from, lh_cpudata *to ); /* Returns average load betw
 #endif
 
 
-#endif /* LH_API5_PLUGIN_H */
+#endif /* LH_PLUGIN_H */

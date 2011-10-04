@@ -37,7 +37,7 @@
 #include <stdlib.h>
 #include <ctype.h>
 
-#include "../lh_api5/lh_plugin.h"
+#include "lh_plugin.h"
 
 /**
 	lh_binaryfile_to_blob()

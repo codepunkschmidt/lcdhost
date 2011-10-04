@@ -1,11 +1,11 @@
 TARGET = LH_LgLcdMan
 TEMPLATE = lib
 DEFINES += LGLCDMAN_LIBRARY
-CONFIG += device wow64
-
-include(../Plugins.pri)
 
 win32 {
+    CONFIG += device wow64
+    include(../Plugins.pri)
+
     SOURCES += \
         $$PLUGIN_SOURCES \
         LH_LgLcdMan.cpp \

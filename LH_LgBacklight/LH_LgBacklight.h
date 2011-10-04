@@ -36,6 +36,11 @@
 #define LH_LGBACKLIGHT_H
 
 #include "LgBacklightDevice.h"
+#include "LH_QtPlugin.h"
+#include "LH_Qt_QString.h"
+#include "LH_Qt_QStringList.h"
+#include "LH_Qt_QColor.h"
+#include "LH_Qt_bool.h"
 
 class LH_LgBacklight : public LH_QtPlugin
 {

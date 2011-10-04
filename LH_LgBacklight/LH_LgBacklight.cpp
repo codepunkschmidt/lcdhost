@@ -38,7 +38,8 @@
 
 LH_PLUGIN(LH_LgBacklight)
 
-char _lh_xml_info[] = "<?xml version=\"1.0\"?>"
+char __lcdhostplugin_xml[] =
+"<?xml version=\"1.0\"?>"
 "<lcdhostplugin>"
   "<id>Backlight</id>"
   "<rev>" STRINGIZE(REVISION) "</rev>"
@@ -67,20 +68,22 @@ const char *LH_LgBacklight::userInit()
     if( const char *err = LH_QtPlugin::userInit() ) return err;
     devselect_ = new LH_Qt_QStringList( this, "Device", QStringList(), LH_FLAG_NOSAVE|LH_FLAG_NOSOURCE|LH_FLAG_NOSINK|LH_FLAG_HIDDEN );
     devselect_->setHelp( "The device which backlight you want to control." );
-    connect( devselect_, SIGNAL(valueChanged()), this, SLOT(changeDev()) );
+    connect( devselect_, SIGNAL(changed()), this, SLOT(changeDev()) );
 
     devcolor_ = new LH_Qt_QColor( this, "Color", Qt::white, LH_FLAG_NOSAVE|LH_FLAG_HIDDEN );
     devcolor_->setHelp("The color you want to see used as backlight.");
-    connect( devcolor_, SIGNAL(valueChanged()), this, SLOT(changeColor()) );
+    connect( devcolor_, SIGNAL(changed()), this, SLOT(changeColor()) );
 
     allcolor_ = new LH_Qt_QColor( this, "SetAllColor", Qt::white, LH_FLAG_NOSAVE|LH_FLAG_HIDDEN|LH_FLAG_NOSOURCE );
     allcolor_->setLink("/plugin/backlight/all/set");
-    connect( allcolor_, SIGNAL(valueChanged()), this, SLOT(setAllColor()) );
+    connect( allcolor_, SIGNAL(changed()), this, SLOT(setAllColor()) );
 
+#ifdef lh_cb_reload
     rescanbutton_ = new LH_Qt_QString( this, "Rescan",tr("Reload to scan for new devices"),
                                        LH_FLAG_LAST|LH_FLAG_HIDETITLE|LH_FLAG_NOSAVE|LH_FLAG_NOSOURCE|LH_FLAG_NOSINK,
                                        lh_type_string_button );
-    // connect( rescanbutton_, SIGNAL(valueChanged(LH_QtSetupItem)), this, SLOT(wantRescan()) );
+    connect( rescanbutton_, SIGNAL(changed()), this, SLOT(wantRescan()) );
+#endif
 
     scan();
     return NULL;
@@ -130,6 +133,7 @@ void LH_LgBacklight::scan()
     }
     else
         qDebug() << "LH_LgBacklight: hid_enumerate() failed";
+
 
     QString current = devselect_->valueText();
     QStringList sl;
@@ -191,5 +195,7 @@ void LH_LgBacklight::setAllColor()
 
 void LH_LgBacklight::wantRescan()
 {
-    lh_request_reload( "rescan for devices" );
+#ifdef lh_cb_reload
+    callback( lh_cb_reload, (void*) "rescan for devices" );
+#endif
 }

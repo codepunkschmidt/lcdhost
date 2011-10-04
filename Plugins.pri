@@ -37,7 +37,7 @@ unix:!macx {
 
 DESTDIR = $$LCDHOST_PLUGINS
 
-LINKDATA = $$PWD/linkdata
+LINKDATA = $$PWD/linkdata/lh_api5
 CODELEAP = $$PWD/codeleap
 
 QTSUPPORT = $$LINKDATA/QtSupport

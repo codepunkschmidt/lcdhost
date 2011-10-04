@@ -42,6 +42,6 @@ char __lcdhostplugin_xml[] =
   "Displays dials"
   "</shortdesc>"
   "<longdesc>"
-    "<p>Displays data items such as CPU, memory and network load in the form of dials. </p>"
+    "<p>Displays data items such as CPU, memory and network load in the form of dials and pie charts.</p>"
 "</longdesc>"
 "</lcdhostplugin>";

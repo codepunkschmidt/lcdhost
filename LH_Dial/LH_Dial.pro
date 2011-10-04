@@ -16,10 +16,14 @@ SOURCES += \
     LH_DialMemVirtual.cpp \
     LH_DialMemPhysical.cpp \
     LH_DialTime.cpp \
-    LH_DialTest.cpp
+    LH_DialTest.cpp \
+    LH_PieCPUAverage.cpp \
+    LH_PieCPUHistogram.cpp
 	
 HEADERS += \
     $$PLUGIN_HEADERS \
     LH_QtPlugin_Dial.h \
     LH_Dial.h \
     LH_DialTime.h
+
+

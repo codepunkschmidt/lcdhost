@@ -2,6 +2,9 @@
 
 LH_GPUZData::LH_GPUZData(LH_QtObject *parent, LH_MonitoringUI *ui, monitoringDataMode dataMode, bool includeGroups) : LH_MonitoringData( parent, ui, dataMode, includeGroups )
 {
+    Q_UNUSED(dataMode);
+    Q_UNUSED(includeGroups);
+
     ui_->reset();
     ui_->setVisible(mon_type);
     ui_->refresh(mon_type);
@@ -90,5 +93,5 @@ void LH_GPUZData::loadTypesList(GPUZ_SH_MEM* gpuzMemory)
             ui_->append( mon_type, sensorName );
     }
     ui_->refresh(mon_type);
-    ui_->setIndex(mon_type, ui_->setup_value_type_index_->value());
+    ui_->setValue(mon_type, ui_->setup_value_type_index_->value());
 }

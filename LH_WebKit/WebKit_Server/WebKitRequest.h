@@ -43,7 +43,7 @@
 #include <QSharedMemory>
 
 #include "WebKitServerWindow.h"
-#include "../WebKitCommand.h"
+#include "WebKitCommand.h"
 
 class WebKitRequest : public QObject
 {

@@ -1,12 +1,12 @@
 TARGET = LH_Dial
 TEMPLATE = lib
 DEFINES += LH_DIAL_LIBRARY
-CONFIG += lh_plugin codeleapui
+CONFIG += systemstats
 
-load(../PluginsConfig.prf)
-include(../codeleap/codeleap.pri)
+include(../Plugins.pri)
 
 SOURCES += \
+    $$PLUGIN_SOURCES \
     LH_QtPlugin_Dial.cpp \
     LH_Dial.cpp \
     LH_DialCPUAverage.cpp \
@@ -15,10 +15,11 @@ SOURCES += \
     LH_DialNetIn.cpp \
     LH_DialMemVirtual.cpp \
     LH_DialMemPhysical.cpp \
-    LH_DialTime.cpp
-    #LH_DialTest.cpp \
-
+    LH_DialTime.cpp \
+    LH_DialTest.cpp
+	
 HEADERS += \
+    $$PLUGIN_HEADERS \
     LH_QtPlugin_Dial.h \
     LH_Dial.h \
     LH_DialTime.h

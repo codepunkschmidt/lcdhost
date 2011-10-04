@@ -35,8 +35,10 @@
 #ifndef LH_QTDEVICE_H
 #define LH_QTDEVICE_H
 
-#include "LH_QtObject.h"
 #include <QImage>
+
+#include "LH_QtPlugin.h"
+#include "LH_QtObject.h"
 
 /**
   Suggested base class for LCD devices reported by your driver. You
@@ -47,13 +49,14 @@ class LH_QtDevice : public LH_QtObject
 {
     Q_OBJECT
     QByteArray devid_;
-    QSize size_;
-    int depth_;
-    bool noauto_;
+    QByteArray name_;
+    lh_device lh_dev_;
 
 public:
     LH_QtDevice( LH_QtObject *parent );
     virtual ~LH_QtDevice();
+
+    lh_device *lh_dev() { return &lh_dev_; }
 
     /**
       These methods are the ones you need to override in your
@@ -64,24 +67,25 @@ public:
     virtual const char* render_qimage(QImage*) { return NULL; }
     virtual const char* render_argb32(int,int,const void*) { return NULL; }
     virtual const char* render_mono(int,int,const void*) { return NULL; }
+    virtual const char* get_backlight(lh_device_backlight*) { return NULL; }
+    virtual const char* set_backlight(lh_device_backlight*) { return NULL; }
     virtual const char* close() { return NULL; }
 
     void arrive();
     void leave();
 
-    QByteArray devid() const { return devid_; }
+    QByteArray devid() const { return QByteArray(lh_dev_.devid); }
     void setDevid( QByteArray );
-    QString name() const { return objectName(); }
+    QString name() const { return QString::fromUtf8(lh_dev_.name); }
     void setName( QString );
-
-    QSize size() const { return size_; }
-    void setSize( QSize s ) { size_ = s; }
-    void setSize( int w, int h ) { size_.setWidth(w); size_.setHeight(h); }
-    int depth() const { return depth_; }
-    void setDepth( int n ) { depth_ = n; }
-    void setAutoselect(bool b) { noauto_ = !b; }
-    bool autoselect() const { return noauto_ == 0; } /* available for autoselection by LCDHost */
-    bool monochrome() const { return depth_ == 1; }
+    QSize size() const { return QSize( lh_dev_.width, lh_dev_.height); }
+    void setSize( QSize s ) { lh_dev_.width = s.width(); lh_dev_.height = s.height(); }
+    void setSize( int w, int h ) { lh_dev_.width = w; lh_dev_.height = h; }
+    int depth() const { return lh_dev_.depth; }
+    void setDepth( int n ) { lh_dev_.depth = n; }
+    void setAutoselect(bool b) { lh_dev_.noauto = !b; }
+    bool autoselect() const { return lh_dev_.noauto == 0; } /* available for autoselection by LCDHost */
+    bool monochrome() const { return lh_dev_.depth == 1; }
 };
 
 #endif // LH_QTDEVICE_H

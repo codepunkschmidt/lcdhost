@@ -21,7 +21,7 @@
 #include "LH_LogitechData.h"
 #include "LH_Aida64Data.h"
 #include "LH_HWMonData.h"
-// #include "LH_HWiNFOData.h"
+#include "LH_HWiNFOData.h"
 #endif
 
 enum ui_mon_entry_type
@@ -95,10 +95,10 @@ public:
     void refresh(int);
     void setReadonly(int, bool);
     QString at(ui_mon_entry_type, int);
-    int index(ui_mon_entry_type);
+    int value(ui_mon_entry_type);
     QString valueText(ui_mon_entry_type);
     int count(ui_mon_entry_type);
-    void setIndex(ui_mon_entry_type, int, bool fix=false);
+    void setValue(ui_mon_entry_type, int, bool fix=false);
 
     bool applyOffset();
     bool applyFormat();

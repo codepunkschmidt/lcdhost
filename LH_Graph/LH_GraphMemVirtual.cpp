@@ -28,17 +28,30 @@
 
 class LH_GraphMemVirtual : public LH_Graph
 {
+    bool initialized;
+    qreal unitBase;
+
+    void initialize(){
+        if( state()->mem_data.tot_virt ) {
+            initialized = true;
+            setMax( state()->mem_data.tot_virt / unitBase );
+        }
+    }
+
+
 public:
-    const char *userInit()
+    LH_GraphMemVirtual()
     {
-        if( const char *err = LH_Graph::userInit() ) return err;
+        unitBase = 1024 * 1024 * 1024;
+        setMin(0.0);
+        setMax(1000.0);
+        setYUnit("GB");
+        initialized = false;
+    }
 
-        setup_linked_values_->setLink("/system/memory/virtual/used");
-        setup_max_->setLink("/system/memory/virtual/total");
-
-        setMin(0);
-        setMax(1000);
-        setYUnit("GB", 1024 * 1024 * 1024);
+    virtual const char *userInit()
+    {
+        initialize();
         return 0;
     }
 
@@ -50,10 +63,35 @@ public:
             "System/Memory/Virtual",
             "SystemMemoryVirtualGraph",
             "Virtual memory used (Graph)",
-            48,48
+            48,48,
+            lh_object_calltable_NULL,
+            lh_instance_calltable_NULL
         };
-
         return &classInfo;
+    }
+
+    int notify(int n, void *p)
+    {
+        Q_UNUSED(p);
+
+        if( state()->mem_data.tot_virt )
+        {
+            if (!initialized) initialize();
+            if(!n || n&LH_NOTE_SECOND)
+            {
+                qreal used_mem = ( state()->mem_data.tot_virt - state()->mem_data.free_virt ) / unitBase;
+                addValue(used_mem);
+                callback(lh_cb_render,NULL);
+            }
+        }
+        return LH_NOTE_SECOND;
+    }
+
+    QImage *render_qimage( int w, int h )
+    {
+        if( LH_Graph::render_qimage(w,h) == NULL ) return NULL;
+        drawSingle();
+        return image_;
     }
 };
 

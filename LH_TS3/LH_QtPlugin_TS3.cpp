@@ -26,7 +26,9 @@
 
 #include "LH_QtPlugin_TS3.h"
 
-LH_PLUGIN(LH_QtPlugin_TS3) =
+LH_PLUGIN(LH_QtPlugin_TS3)
+
+char __lcdhostplugin_xml[] =
 "<?xml version=\"1.0\"?>"
 "<lcdhostplugin>"
   "<id>TS3</id>"
@@ -56,42 +58,46 @@ const char *LH_QtPlugin_TS3::userInit()
     socket_ = new QTcpSocket(this);
     myclid_ = -1;
 
-    setup_connection_details_ = new LH_Qt_html(this, "", LH_FLAG_NOSINK | LH_FLAG_NOSOURCE );
-    setup_talking_details_ = new LH_Qt_html(this, "", LH_FLAG_NOSINK | LH_FLAG_NOSOURCE );
-    new LH_Qt_html( this, "<hr/>", LH_FLAG_NOSINK | LH_FLAG_NOSOURCE );
+    setup_connection_details_ = new LH_Qt_QString(this, "", "", LH_FLAG_NOSINK | LH_FLAG_NOSOURCE, lh_type_string_html );
+    setup_talking_details_ = new LH_Qt_QString(this, "~hr1", "", LH_FLAG_NOSINK | LH_FLAG_NOSOURCE, lh_type_string_html );
+    new LH_Qt_QString( this, "~hr2", "<hr/>", LH_FLAG_NOSINK | LH_FLAG_NOSOURCE , lh_type_string_html);
 
-    /*setup_nickname_expression_ = new LH_Qt_QString(this, "Nickname Epression", "", LH_FLAG_NOSINK | LH_FLAG_NOSOURCE);
-    setup_nickname_expression_->setTitle("Nickname:");
+#ifdef TS3_USER_DEFINED_UID
+    setup_nickname_expression_ = new LH_Qt_QString(this, "Nickname Expression", "", LH_FLAG_NOSINK | LH_FLAG_NOSOURCE);
+    //setup_nickname_expression_->setTitle("Nickname:");
     setup_nickname_expression_->setHelp("Entering your nickname will enable the plugin to acquire additional information about your status.<br/><br/>Note that this field is actually a Regular Expression, so you can have it match multiple possible names. The first match it finds will be the one it uses.");
-    connect(setup_nickname_expression_, SIGNAL(valueChanged()), this, SLOT(updateMyDetails()));*/
+    connect(setup_nickname_expression_, SIGNAL(changed()), this, SLOT(updateMyDetails()));
+#endif
 
-    setup_user_detail_ = new LH_Qt_html(this, "", LH_FLAG_NOSINK | LH_FLAG_NOSOURCE );
+    setup_user_detail_ = new LH_Qt_QString(this, "~hr3", "", LH_FLAG_NOSINK | LH_FLAG_NOSOURCE , lh_type_string_html);
 
     setup_nickname_ = new LH_Qt_QString(this, "Nickname", "", LH_FLAG_HIDDEN | LH_FLAG_READONLY | LH_FLAG_NOSAVE | LH_FLAG_NOSINK);
-    setup_nickname_->setLink("Monitoring/3rdParty/TeamSpeak3/Nickname", true);
-    setup_nickname_->refreshValue();
+    setup_nickname_->setLink("@/Monitoring/3rdParty/TeamSpeak3/Nickname");//, true);
+    //setup_nickname_->refreshData();
 
     setup_talking_ = new LH_Qt_QString(this, "Talking", "", LH_FLAG_HIDDEN | LH_FLAG_READONLY | LH_FLAG_NOSAVE | LH_FLAG_NOSINK);
-    setup_talking_->setLink("Monitoring/3rdParty/TeamSpeak3/Talking", true);
-    setup_talking_->refreshValue();
+    setup_talking_->setLink("@/Monitoring/3rdParty/TeamSpeak3/Talking");//, true);
+    //setup_talking_->refreshData();
+    setup_talking_me_ = new LH_Qt_bool(this, "Me Talking", false, LH_FLAG_HIDDEN | LH_FLAG_READONLY | LH_FLAG_NOSAVE | LH_FLAG_NOSINK);
+    setup_talking_me_->setLink("@/Monitoring/3rdParty/TeamSpeak3/Me Talking");//, true);
 
     setup_channelname_ = new LH_Qt_QString(this, "Channel", "", LH_FLAG_HIDDEN | LH_FLAG_READONLY | LH_FLAG_NOSAVE | LH_FLAG_NOSINK);
-    setup_channelname_->setLink("Monitoring/3rdParty/TeamSpeak3/Channel Name",true);
-    setup_channelname_->refreshValue();
+    setup_channelname_->setLink("@/Monitoring/3rdParty/TeamSpeak3/Channel Name");//,true);
+    //setup_channelname_->refreshData();
 
     setup_connection_status_ = new LH_Qt_QStringList(this, "Connection Status", QStringList() << "Not Running" << "Not Connected" << "Connected", LH_FLAG_HIDDEN | LH_FLAG_READONLY | LH_FLAG_NOSAVE | LH_FLAG_NOSINK );
-    setup_connection_status_->setLink("Monitoring/3rdParty/TeamSpeak3/Connection Status",true);
-    setup_connection_status_->refreshValue();
+    setup_connection_status_->setLink("@/Monitoring/3rdParty/TeamSpeak3/Connection Status");//,true);
+    //setup_connection_status_->refreshData();
 
     setup_microphone_status_ = new LH_Qt_QStringList(this, "Microphone Status", QStringList() << "N/A" << "None" << "Muted" << "Active", LH_FLAG_HIDDEN | LH_FLAG_READONLY | LH_FLAG_NOSAVE | LH_FLAG_NOSINK );
-    setup_microphone_status_->setLink("Monitoring/3rdParty/TeamSpeak3/Microphone Status",true);
-    setup_microphone_status_->refreshValue();
+    setup_microphone_status_->setLink("@/Monitoring/3rdParty/TeamSpeak3/Microphone Status");//,true);
+    //setup_microphone_status_->refreshData();
 
     setup_speakers_status_   = new LH_Qt_QStringList(this, "Speaker Status"   , QStringList() << "N/A" << "None" << "Muted" << "Active", LH_FLAG_HIDDEN | LH_FLAG_READONLY | LH_FLAG_NOSAVE | LH_FLAG_NOSINK );
-    setup_speakers_status_->setLink("Monitoring/3rdParty/TeamSpeak3/Speaker Status",true);
-    setup_speakers_status_->refreshValue();
+    setup_speakers_status_->setLink("@/Monitoring/3rdParty/TeamSpeak3/Speaker Status");//,true);
+    //setup_speakers_status_->refreshData();
 
-    connect(setup_nickname_, SIGNAL(valueChanged()), this, SLOT(updateMyDetails()));
+    connect(setup_nickname_, SIGNAL(changed()), this, SLOT(updateMyDetails()));
     connect(socket_, SIGNAL(connected()), this, SLOT(TS3Connected()));
     connect(socket_, SIGNAL(disconnected()), this, SLOT(TS3Disconnected()));
     connect(socket_, SIGNAL(readyRead()), this, SLOT(TS3DataReceived()));
@@ -107,7 +113,7 @@ int LH_QtPlugin_TS3::notify( int code, void *param )
 {
     if( code & LH_NOTE_SECOND && server_action_ == sa_disconnected  && tryConnectTimer_.elapsed() >= 5000)
         openConnection();
-    return LH_NOTE_SECOND|LH_QtPlugin::notify(code,param);
+    return LH_NOTE_SECOND;
 }
 
 void LH_QtPlugin_TS3::openConnection()
@@ -115,28 +121,38 @@ void LH_QtPlugin_TS3::openConnection()
     switch(socket_->state())
     {
     case QAbstractSocket::UnconnectedState:
-        //qDebug() << "LH_TS3: Attempting to connect.";
+#ifdef TS3_DEBUG_MESSAGES
+        qDebug() << "LH_TS3: Attempting to connect.";
+#endif
         server_action_ = sa_connecting;
         socket_->connectToHost("127.0.0.1", 25639);
         break;
     case QAbstractSocket::ConnectedState:
-        //qWarning() << "LH_TS3: Cannot connect - already connected.";
+#ifdef TS3_DEBUG_MESSAGES
+        qWarning() << "LH_TS3: Cannot connect - already connected.";
+#endif
         server_action_ = sa_reconnect;
         socket_->disconnectFromHost();
         break;
     case QAbstractSocket::ClosingState:
-        //qWarning() << "LH_TS3: Cannot connect - still closing previous connection.";
+#ifdef TS3_DEBUG_MESSAGES
+        qWarning() << "LH_TS3: Cannot connect - still closing previous connection.";
+#endif
         server_action_ = sa_reconnect;
         break;
     default:
-        //qWarning() << "LH_TS3: Cannot connect - previous connection attempt was in progress - aborting.";
+#ifdef TS3_DEBUG_MESSAGES
+        qWarning() << "LH_TS3: Cannot connect - previous connection attempt was in progress - aborting.";
+#endif
         server_action_ = sa_reconnect;
         socket_->abort();
     }
 }
 
 void LH_QtPlugin_TS3::TS3Connected() {
-    //qDebug() << "LH_TS3: Connected";
+#ifdef TS3_DEBUG_MESSAGES
+    qDebug() << "LH_TS3: Connected";
+#endif
     updateStatus(true);
     server_action_ = sa_eventregister_pending;
     sendMessage(QString("clientnotifyregister schandlerid=%1 event=notifytalkstatuschange \n"
@@ -155,7 +171,9 @@ void LH_QtPlugin_TS3::TS3Connected() {
 
 void LH_QtPlugin_TS3::TS3Disconnected()
 {
-    //qDebug() << "LH_TS3: Disconnected";
+#ifdef TS3_DEBUG_MESSAGES
+    qDebug() << "LH_TS3: Disconnected";
+#endif
     clients_.clear();
     channels_.clear();
     updateStatus(false);
@@ -172,7 +190,9 @@ void LH_QtPlugin_TS3::TS3ConnectionError(QAbstractSocket::SocketError socketErro
     {
         server_action_ = sa_disconnected;
         tryConnectTimer_.restart();
-        //qDebug() << "LH_TS3: Connection Refused - will try again in a few moments";
+#ifdef TS3_DEBUG_MESSAGES
+        qDebug() << "LH_TS3: Connection Refused - will try again in a few moments";
+#endif
     }
     else
     {
@@ -210,7 +230,9 @@ void LH_QtPlugin_TS3::TS3DataReceived()
             clients_.clear();
             speakers_.clear();
             updateTalking();
-            //qDebug() << "LH_TS3: Client is not connected to a server.";
+#ifdef TS3_DEBUG_MESSAGES
+            qDebug() << "LH_TS3: Client is not connected to a server.";
+#endif
             updateStatus(true);
         }
         else
@@ -226,8 +248,11 @@ void LH_QtPlugin_TS3::TS3DataReceived()
         if(QString("clientleftview,cliententerview,clientupdated,clientmoved").split(',').contains(rxNotify.cap(1)) ||
            QString("channelcreated,channeledited,channeldeleted,channelmoved").split(',').contains(rxNotify.cap(1)) )
         {
-            server_action_ = sa_whoami_pending;
-            sendMessage("whoami");
+#ifndef TS3_USER_DEFINED_UID
+            request_WhoAmI();
+#else
+            request_ChannelList();
+#endif
         }
     }
     else switch(server_action_)
@@ -235,25 +260,31 @@ void LH_QtPlugin_TS3::TS3DataReceived()
     case sa_eventregister_pending:
         if(!result.isResult)
             break;
-        server_action_ = sa_whoami_pending;
-        sendMessage("whoami");
+#ifndef TS3_USER_DEFINED_UID
+        request_WhoAmI();
+#else
+        request_ChannelList();
+#endif
         break;
     case sa_whoami_pending:
         if(rxMyID.indexIn(receivedMsg)!=-1)
         {
             myclid_ = rxMyID.cap(1).toInt();
             updateMyDetails();
-            server_action_ = sa_channellist_pending;
-            sendMessage("channellist");
+            request_ChannelList();
         }
         break;
     case sa_channellist_pending:
         if(channels_.load(receivedMsg))
         {
+#ifdef TS3_USER_DEFINED_UID
+            updateMyDetails();
+#endif
             updateStatus(true,true,true);
-            //qDebug()<<"LH_TS3: Server has " << channels_.length() << " channel(s)";
-            server_action_ = sa_clientlist_pending;
-            sendMessage("clientlist -voice");
+#ifdef TS3_DEBUG_MESSAGES
+            qDebug()<<"LH_TS3: Server has " << channels_.count() << " channel(s)";
+#endif
+            request_ClientList();
         }
         break;
     case sa_clientlist_pending:
@@ -273,9 +304,30 @@ void LH_QtPlugin_TS3::TS3DataReceived()
     }
 }
 
+void LH_QtPlugin_TS3::request_WhoAmI()
+{
+    server_action_ = sa_whoami_pending;
+    sendMessage("whoami");
+}
+
+void LH_QtPlugin_TS3::request_ChannelList()
+{
+    server_action_ = sa_channellist_pending;
+    sendMessage("channellist");
+}
+
+void LH_QtPlugin_TS3::request_ClientList()
+{
+    server_action_ = sa_clientlist_pending;
+    sendMessage("clientlist -voice");
+}
+
+
 int LH_QtPlugin_TS3::sendMessage(QString msg)
 {
-    //qDebug() << QString(msg).toUtf8();
+#ifdef TS3_DEBUG_MESSAGES
+    qDebug() << QString(msg).toUtf8();
+#endif
     return socket_->write(QString("%1\n").arg(msg).toUtf8());
 }
 
@@ -312,21 +364,24 @@ void LH_QtPlugin_TS3::updateTalking(bool force)
     QString talkingNames = speakers_.toString();
     if(force || setup_talking_->value()!=talkingNames)
     {
-        //qDebug() << "Talking: " << talkingNames;
+#ifdef TS3_DEBUG_MESSAGES
+        qDebug() << "Talking: " << talkingNames;
+#endif
         setup_talking_->setValue(talkingNames);
-        setup_talking_details_->setTitle(QString("<hr/><table style='margin-left:4px'>"
+        setup_talking_details_->setValue(QString("<hr/><table style='margin-left:4px'>"
                                         "<tr><td><img src=':/images/%2.png'/></td><td width='56' style='padding-left:5px;'>Talking:<img src=':/images/sizer.png'/></td>   <td><img src=':/images/sizer.png'/>%1</td> </tr>"
                                         "</table>")
                                         .arg(talkingNames)
                                         .arg(talkingNames==""? "empty" : "talking")
                                         );
+        setup_talking_me_->setValue(speakers_.contains(myclid_));
         emit talkingChanged(talkingNames);
     }
 }
 
 void LH_QtPlugin_TS3::updateStatus(bool isRunning, bool isConnected, bool showChannels, bool showClients)
 {
-    setup_connection_details_->setTitle(QString("<table style='margin-left:4px'>"
+    setup_connection_details_->setValue(QString("<table style='margin-left:4px'>"
                                    "<tr><td><img src=':/images/%5.png'/></td><td style='padding-left:5px'>TS3 is %1%2.</td></tr>"
                                    "</table>"
                                    "<hr/>"
@@ -347,13 +402,15 @@ void LH_QtPlugin_TS3::updateStatus(bool isRunning, bool isConnected, bool showCh
 
 void LH_QtPlugin_TS3::updateMyDetails()
 {
-    //myclid_ = clients_.findclid(setup_nickname_expression_->value());
+#ifdef TS3_USER_DEFINED_UID
+    myclid_ = clients_.findclid(setup_nickname_expression_->value());
+#endif
     if(clients_.contains(myclid_))
     {
         clientdetail myClient = clients_.value(myclid_);
         channeldetail myChannel = channels_.value(myClient.cid);
 
-        setup_user_detail_->setTitle(QString("<hr/><table style='margin-left:23px'>"
+        setup_user_detail_->setValue(QString("<hr/><table style='margin-left:23px'>"
                                             "<tr><td><img src=':/images/sizer.png'/></td> <td width='56'>Nickname:</td>   <td>%1</td></tr>"
                                             "<tr><td><img src=':/images/sizer.png'/></td> <td width='56'>Channel:</td>    <td>%2</td></tr>"
                                             "<tr><td><img src=':/images/sizer.png'/></td> <td width='56'>Microphone:</td> <td><img src=':/images/microphone%3.png'/></td></tr>"
@@ -370,7 +427,7 @@ void LH_QtPlugin_TS3::updateMyDetails()
         setup_channelname_->setValue(myChannel.name);
         setup_nickname_->setValue(myClient.name);
     } else {
-        setup_user_detail_->setTitle("");
+        setup_user_detail_->setValue("");
         setup_microphone_status_->setValue(0);
         setup_speakers_status_->setValue(0);
         setup_channelname_->setValue("");

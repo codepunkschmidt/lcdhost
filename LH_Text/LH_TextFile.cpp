@@ -52,21 +52,22 @@ lh_class *LH_TextFile::classInfo()
         "StaticTextFile",
         "Text (file)",
         96, 32,
+        lh_object_calltable_NULL,
+        lh_instance_calltable_NULL
     };
 
     return &classinfo;
 }
 
-const char *LH_TextFile::userInit()
+LH_TextFile::LH_TextFile() : LH_Text()
 {
-    if( const char *err = LH_Text::userInit() ) return err;
-    setup_file_ = new LH_Qt_QFileInfo( this, ("File"), QFileInfo(), LH_FLAG_AUTORENDER );
+    setup_file_ = new LH_Qt_QFileInfo( this, tr("File"), QFileInfo(), LH_FLAG_AUTORENDER );
     setup_file_->setOrder(-1);
     setup_file_->setHelp("<p>Select the file whose contents will be shown. "
                          "The file will be checked for updates regularly.</p>");
     connect( setup_file_, SIGNAL(changed()), this, SLOT(fileChanged()) );
+    setup_text_->setName("~HiddenText");
     setup_text_->setFlag(LH_FLAG_HIDDEN|LH_FLAG_READONLY,true);
-    return 0;
 }
 
 void LH_TextFile::fileChanged()
@@ -81,13 +82,13 @@ void LH_TextFile::checkFile()
     setup_file_->value().refresh();
     if( !setup_file_->value().isFile() )
     {
-        setup_text_->setValue(("No such file."));
-        setup_text_->setHidden(false);
+        setup_text_->setValue(tr("No such file."));
+        setup_text_->setFlag(LH_FLAG_HIDDEN,false);
         return;
     }
     else
     {
-        setup_text_->setHidden(true);
+        setup_text_->setFlag(LH_FLAG_HIDDEN,true);
     }
 
     if( !last_read_.isValid() || setup_file_->value().lastModified() > last_read_ )

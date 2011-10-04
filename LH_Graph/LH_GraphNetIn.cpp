@@ -25,26 +25,36 @@
   */
 
 #include "LH_Graph.h"
+#include "LH_QtNetwork.h"
 
 class LH_GraphNetIn : public LH_Graph
 {
+    LH_QtNetwork net_;
+    int valCount;
+    qreal valCache;
+    qreal lastVal;
+
+protected:
+    LH_Qt_QStringList *setup_units_;
+
 public:
-    const char *userInit()
+    LH_GraphNetIn( ) : net_(this)
     {
-        if( const char *err = LH_Graph::userInit() ) return err;
+        QStringList valuesList;
+        valuesList.append("kb/s (kilobits per second)");
+        valuesList.append("Mb/s (megabits per second)");
+        valuesList.append("kB/s (kilobytes per second)");
+        valuesList.append("MB/s (megabytes per second)");
+        setup_units_ = new LH_Qt_QStringList(this,"Units",valuesList,LH_FLAG_AUTORENDER);
+        valCount = 0;
+        valCache = 0;
+        lastVal = 0;
 
-        addCustomUnits("kb/s (kilobits per second)", "kb/s", 1024 / 8);
-        addCustomUnits("Mb/s (megabits per second)", "Mb/s", 1024 * 1024 / 8);
-        addCustomUnits("kB/s (kilobytes per second)", "kB/s", 1024);
-        addCustomUnits("MB/s (megabytes per second)", "MB/s", 1024 * 1024);
-
-        setup_linked_values_->setLink("/system/net/in/rate");
-        setup_max_->setLink("/system/net/in/max");
-
-        setMin(0);
-        setMax(1);
+        setMin(0.0);
+        setMax(1000);
         setYUnit("kb/s");
-        return 0;
+
+        net_.smoothingHidden(true);
     }
 
     static lh_class *classInfo()
@@ -55,10 +65,57 @@ public:
             "System/Network/Inbound",
             "SystemNetworkInboundGraph",
             "Inbound Bandwidth Usage (Graph)",
-            48,48
+            48,48,
+            lh_object_calltable_NULL,
+            lh_instance_calltable_NULL
         };
 
         return &classInfo;
+    }
+
+    int notify(int n, void *p)
+    {
+        changeUnits();
+        if(!n || n&LH_NOTE_SECOND)
+        {
+            if (valCount!=0) {
+                lastVal = valCache/valCount;
+                setMax( state()->net_max_in);
+                addValue(lastVal);
+            }
+            valCache = 0;
+            valCount = 0;
+        } else {
+            valCache+=net_.inRate();
+            valCount+=1;
+        }
+        return LH_Graph::notify(n,p) | net_.notify(n,p) | LH_NOTE_SECOND;
+    }
+
+    QImage *render_qimage( int w, int h )
+    {
+        if( LH_Graph::render_qimage(w,h) == NULL ) return NULL;
+        drawSingle( );
+        return image_;
+    }
+
+    void changeUnits()
+    {
+        switch(setup_units_->value())
+        {
+        case 0:
+            setYUnit("kb/s", 1024 / 8);
+            break;
+        case 1:
+            setYUnit("Mb/s", 1024 * 1024 / 8);
+            break;
+        case 2:
+            setYUnit("kB/s", 1024);
+            break;
+        case 3:
+            setYUnit("MB/s", 1024 * 1024);
+            break;
+        }
     }
 };
 

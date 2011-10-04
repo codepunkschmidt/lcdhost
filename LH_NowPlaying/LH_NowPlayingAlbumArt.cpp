@@ -1,9 +1,18 @@
+#include "LH_NowPlayingAlbumArt.h"
 #include <QDebug>
 
-#include "LH_NowPlayingAlbumArt.h"
-#include "LH_NowPlayingReader.h"
-
 LH_PLUGIN_CLASS(LH_NowPlayingAlbumArt)
+
+LH_NowPlayingAlbumArt::LH_NowPlayingAlbumArt()
+{
+    connect( currentTrack, SIGNAL(artworkChanged()), this, SLOT(refresh_image()) );
+
+    setup_file_ = new LH_Qt_QFileInfo( this, tr("Image"), QFileInfo(), LH_FLAG_AUTORENDER | LH_FLAG_READONLY | LH_FLAG_NOSAVE);
+    if(currentTrack!=NULL)
+        refresh_image();
+    //setup_file_->setFlag( LH_FLAG_HIDDEN, true );
+    return;
+}
 
 lh_class *LH_NowPlayingAlbumArt::classInfo()
 {
@@ -13,24 +22,11 @@ lh_class *LH_NowPlayingAlbumArt::classInfo()
         "3rdParty/Music",
         "NowPlayingAlbumArt",
         "Now Playing (Album Art)",
-        -1, -1
+        -1, -1,
+        lh_instance_calltable_NULL
     };
 
     return &classInfo;
-}
-
-const char *LH_NowPlayingAlbumArt::userInit()
-{
-    if( const char *err = LH_QtInstance::userInit() ) return err;
-
-    connect( currentTrack, SIGNAL(artworkChanged()), this, SLOT(refresh_image()) );
-
-    setup_file_ = new LH_Qt_QFileInfo( this, ("Image"), QFileInfo(), LH_FLAG_AUTORENDER | LH_FLAG_READONLY | LH_FLAG_NOSAVE);
-    if(currentTrack!=NULL)
-        refresh_image();
-    //setup_file_->setFlag( LH_FLAG_HIDDEN, true );
-
-    return 0;
 }
 
 QImage *LH_NowPlayingAlbumArt::render_qimage(int w, int h)

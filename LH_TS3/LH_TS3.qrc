@@ -12,5 +12,11 @@
         <file>images/sizer.png</file>
         <file>images/talking.png</file>
         <file>images/empty.png</file>
+        <file>images/LED_BothSpeaking.png</file>
+        <file>images/LED_NoSpeaker.png</file>
+        <file>images/LED_NotConnected.png</file>
+        <file>images/LED_NotRunning.png</file>
+        <file>images/LED_OtherSpeaking.png</file>
+        <file>images/LED_MeSpeaking.png</file>
     </qresource>
 </RCC>

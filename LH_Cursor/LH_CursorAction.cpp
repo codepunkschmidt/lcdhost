@@ -23,13 +23,10 @@
   */
 
 #include "LH_CursorAction.h"
-#include "LH_QtPlugin.h"
 #include <QProcess>
 #include <QDesktopServices>
 
 LH_PLUGIN_CLASS(LH_CursorAction)
-
-const int LH_FLAG_UI = LH_FLAG_NOSAVE | LH_FLAG_NOSINK | LH_FLAG_NOSOURCE;
 
 lh_class *LH_CursorAction::classInfo()
 {
@@ -39,9 +36,9 @@ lh_class *LH_CursorAction::classInfo()
         "Cursor",
         "CursorAction",
         "Cursor Action",
-        48,48
-
-
+        48,48,
+        lh_object_calltable_NULL,
+        lh_instance_calltable_NULL
     };
     return &classInfo;
 }
@@ -52,15 +49,6 @@ LH_CursorAction::LH_CursorAction() : actionTypes_(this)
     selected = false;
     fired = false;
     delay = 0;
-    statusCode_ = "OFF";
-}
-
-const char *LH_CursorAction::userInit()
-{
-    if( const char *err = LH_QtInstance::userInit() ) return err;
-
-    hide();
-
     setup_coordinate_ = new LH_Qt_QString(this, "Coordinate", "1,1", LH_FLAG_AUTORENDER);
     setup_coordinate_->setHelp("This is the coordinate of this object, i.e. when the cursor is at the point specified here this object is selected. <br/>"
                                "<br/>"
@@ -74,64 +62,47 @@ const char *LH_CursorAction::userInit()
                                "In short the cursor page works by changing its width (which only works if the width is set to \"adjust\") which will then make any objects that are aligned to the right edge of the page move off & on screen creating the illusion of a page of objects being hidden/shown."
                                );
 
-    setup_json_data_ = new LH_Qt_QString(this, "Cursor Data", "", LH_FLAG_NOSAVE | LH_FLAG_NOSOURCE | LH_FLAG_LAST /*| LH_FLAG_READONLY | LH_FLAG_HIDEVALUE*/);
-    setup_json_data_->setLink("Cursors/Primary Cursor");
-    setup_json_data_->setLinkFilter("Cursors");
-    setup_json_data_->refreshData();
-
-    setup_json_postback_ = new LH_Qt_QString(this, "Cursor Postback", "", LH_FLAG_NOSAVE | LH_FLAG_NOSINK | LH_FLAG_LAST | LH_FLAG_READONLY );
-    setup_json_postback_->setLink("Cursors/Postback", true);
-    setup_json_postback_->setLinkFilter("CursorPostback");
-    setup_json_postback_->refreshData();
-
-    setup_jump_to_ = new LH_Qt_InputState(this, "Quick Select", "", LH_FLAG_NOSINK | LH_FLAG_NOSOURCE);
+    setup_jump_to_ = new LH_Qt_InputState(this, "Quick Select", "");
     setup_jump_to_->setHelp("This optional field allows you to bind a specific key to this coordinate; when that key is pressed the cursor immediately jumps to and selects the coordintes.<br/>"
                                "<br/>"
                                "Note that this functionality is meant more for pages than for menus, but can be used on either."
                                );
+    connect( setup_jump_to_, SIGNAL(input(QString,int,int)), this, SLOT(doJumpTo(QString,int,int)) );
 
-    setup_act_copy_ = new LH_Qt_QString(this, "Copy Actions", "Copy",  LH_FLAG_UI | LH_FLAG_BLANKTITLE, lh_type_string_button);
-    setup_act_paste_ = new LH_Qt_QString(this, "Paste Actions", "Paste",  LH_FLAG_UI | LH_FLAG_BLANKTITLE, lh_type_string_button);
+    statusCode_ = "OFF";
 
-    setup_act_rules_ = new LH_Qt_QStringList(this, "Actions", QStringList(),LH_FLAG_UI,lh_type_string_listbox);
-    setup_act_rules_->setHelp("This box contains the list of actions that will be perfromed when the coordinate is selected. Each action is done in the order shown here.<br/><br/>Select an action from this list to edit or delete it.");
+    setup_actions_ = new LH_Qt_QStringList(this, "Actions", QStringList(),LH_FLAG_NOSAVE,lh_type_integer_listbox);
+    setup_actions_->setHelp("This box contains the list of actions that will be perfromed when the coordinate is selected. Each action is done in the order shown here.<br/><br/>Select an action from this list to edit or delete it.");
+    setup_action_add_ = new LH_Qt_QString(this, "^AddNewAction","Add New Action", LH_FLAG_NOSAVE, lh_type_string_button);
 
-    setup_act_move_up_= new LH_Qt_QString(this, "Move Action Up", "Move Up",  LH_FLAG_UI | LH_FLAG_READONLY | LH_FLAG_BLANKTITLE, lh_type_string_button);
-    setup_act_move_down_= new LH_Qt_QString(this, "Move Action Down", "Move Down",  LH_FLAG_UI | LH_FLAG_READONLY | LH_FLAG_BLANKTITLE, lh_type_string_button);
-    setup_act_new_ = new LH_Qt_QString(this, "New Action", "New",  LH_FLAG_UI | LH_FLAG_BLANKTITLE, lh_type_string_button);
-    setup_act_delete_ = new LH_Qt_QString(this, "Delete Action", "Delete", LH_FLAG_UI | LH_FLAG_READONLY | LH_FLAG_BLANKTITLE, lh_type_string_button);
+    setup_action_desc_ = new LH_Qt_QString(this, "Action Description", "",LH_FLAG_READONLY|LH_FLAG_HIDDEN|LH_FLAG_NOSAVE);
+    setup_action_index_ = new LH_Qt_int(this, "Action Index",0, LH_FLAG_READONLY|LH_FLAG_HIDDEN|LH_FLAG_NOSAVE);
+    setup_action_type_ = new LH_Qt_QStringList(this, "Action Type", actionTypes_.list(),LH_FLAG_READONLY|LH_FLAG_HIDDEN|LH_FLAG_NOSAVE);
 
-    setup_action_desc_ = new LH_Qt_QString(this, "Description", "",LH_FLAG_READONLY|LH_FLAG_HIDDEN|LH_FLAG_UI);
-    setup_action_type_ = new LH_Qt_QStringList(this, "Action Type", actionTypes_.list(),LH_FLAG_READONLY|LH_FLAG_HIDDEN|LH_FLAG_UI);
+    setup_action_parameter1_desc_ = new LH_Qt_QString(  this, "^p0_desc","",LH_FLAG_READONLY|LH_FLAG_HIDDEN|LH_FLAG_NOSAVE);
+    setup_action_parameter1_str_  = new LH_Qt_QString(  this, "^p0_str" ,"",LH_FLAG_READONLY|LH_FLAG_HIDDEN|LH_FLAG_NOSAVE);
+    setup_action_parameter1_int_  = new LH_Qt_int(      this, "^p0_int" ,0,LH_FLAG_READONLY|LH_FLAG_HIDDEN|LH_FLAG_NOSAVE);
+    setup_action_parameter1_file_ = new LH_Qt_QFileInfo(this, "^p0_file",QFileInfo(),LH_FLAG_READONLY|LH_FLAG_HIDDEN|LH_FLAG_NOSAVE);
 
-    setup_action_parameter1_desc_ = new LH_Qt_QString(  this, "p0_desc","",LH_FLAG_READONLY|LH_FLAG_HIDDEN|LH_FLAG_UI | LH_FLAG_BLANKTITLE);
-    setup_action_parameter1_str_  = new LH_Qt_QString(  this, "p0_str" ,"",LH_FLAG_READONLY|LH_FLAG_HIDDEN|LH_FLAG_UI | LH_FLAG_BLANKTITLE);
-    setup_action_parameter1_int_  = new LH_Qt_int(      this, "p0_int" ,0,LH_FLAG_READONLY|LH_FLAG_HIDDEN|LH_FLAG_UI | LH_FLAG_BLANKTITLE);
-    setup_action_parameter1_file_ = new LH_Qt_QFileInfo(this, "p0_file",QFileInfo(),LH_FLAG_READONLY|LH_FLAG_HIDDEN|LH_FLAG_UI | LH_FLAG_BLANKTITLE);
+    setup_action_parameter2_desc_ = new LH_Qt_QString(  this, "^p1_desc","",LH_FLAG_READONLY|LH_FLAG_HIDDEN|LH_FLAG_NOSAVE);
+    setup_action_parameter2_str_  = new LH_Qt_QString(  this, "^p1_str" ,"",LH_FLAG_READONLY|LH_FLAG_HIDDEN|LH_FLAG_NOSAVE);
+    setup_action_parameter2_int_  = new LH_Qt_int(      this, "^p1_int" ,0,LH_FLAG_READONLY|LH_FLAG_HIDDEN|LH_FLAG_NOSAVE);
+    setup_action_parameter2_file_ = new LH_Qt_QFileInfo(this, "^p1_file",QFileInfo(),LH_FLAG_READONLY|LH_FLAG_HIDDEN|LH_FLAG_NOSAVE);
 
-    setup_action_parameter2_desc_ = new LH_Qt_QString(  this, "p1_desc","",LH_FLAG_READONLY|LH_FLAG_HIDDEN|LH_FLAG_UI | LH_FLAG_BLANKTITLE);
-    setup_action_parameter2_str_  = new LH_Qt_QString(  this, "p1_str" ,"",LH_FLAG_READONLY|LH_FLAG_HIDDEN|LH_FLAG_UI | LH_FLAG_BLANKTITLE);
-    setup_action_parameter2_int_  = new LH_Qt_int(      this, "p1_int" ,0,LH_FLAG_READONLY|LH_FLAG_HIDDEN|LH_FLAG_UI | LH_FLAG_BLANKTITLE);
-    setup_action_parameter2_file_ = new LH_Qt_QFileInfo(this, "p1_file",QFileInfo(),LH_FLAG_READONLY|LH_FLAG_HIDDEN|LH_FLAG_UI | LH_FLAG_BLANKTITLE);
+    setup_action_enabled_= new LH_Qt_bool(this, "^Action Enabled", true, LH_FLAG_READONLY|LH_FLAG_HIDDEN|LH_FLAG_NOSAVE);
 
-    setup_action_enabled_= new LH_Qt_bool(this, "Action Enabled", true, LH_FLAG_READONLY|LH_FLAG_HIDDEN|LH_FLAG_UI | LH_FLAG_BLANKTITLE);
+    setup_action_delete_ = new LH_Qt_QString(this, "^DeleteAction","Delete Action", LH_FLAG_HIDDEN|LH_FLAG_NOSAVE, lh_type_string_button);
+    setup_action_delete_confirm_ = new LH_Qt_QString(this, "^DeleteActionConfirm", "Confirm Delete", LH_FLAG_READONLY|LH_FLAG_HIDDEN|LH_FLAG_NOSAVE, lh_type_string_button);
 
-    setup_act_save_   = new LH_Qt_QString(this, "Save Condition", "Save", LH_FLAG_UI | LH_FLAG_HIDDEN | LH_FLAG_BLANKTITLE, lh_type_string_button);
-    setup_act_cancel_ = new LH_Qt_QString(this, "Cancel Condition Edit", "Cancel", LH_FLAG_UI | LH_FLAG_HIDDEN | LH_FLAG_BLANKTITLE, lh_type_string_button);
 
-    setup_act_XML_ = new LH_Qt_QTextEdit(this, "Action XML", "<actions>\n</actions>", LH_FLAG_HIDDEN | LH_FLAG_HIDETITLE);
+    setup_actions_xml_ = new LH_Qt_QTextEdit(this, tr("~"), "<actions>\n</actions>", LH_FLAG_HIDDEN);
 
-    connect(setup_json_data_,SIGNAL(changed()),this,SLOT(updateState()));
+    connect( setup_actions_xml_,            SIGNAL(changed()), this, SLOT(xmlChanged()));
+    connect( setup_actions_,                SIGNAL(changed()), this, SLOT(actionSelected()));
 
-    connect( setup_jump_to_,                SIGNAL(input(int,int)), this, SLOT(doJumpTo(int,int)) );
-    connect( setup_act_XML_,                SIGNAL(changed()), this, SLOT(xmlChanged()));
-    connect( setup_act_rules_,              SIGNAL(changed()), this, SLOT(reloadAction()));
-
-    connect( setup_action_type_,            SIGNAL(changed()), this, SLOT(actionTypeChanged()));
-
-    /*connect( setup_action_desc_,            SIGNAL(changed()), this, SLOT(actionEdited()));
-    //connect( setup_action_index_,           SIGNAL(changed()), this, SLOT(actionMoved()));
-    connect( setup_action_enabled_,         SIGNAL(changed()), this, SLOT(actionEdited()));
+    connect( setup_action_desc_,            SIGNAL(changed()), this, SLOT(actionEdited()));
+    connect( setup_action_index_,           SIGNAL(changed()), this, SLOT(actionMoved()));
+    connect( setup_action_type_,            SIGNAL(changed()), this, SLOT(actionEdited()));
 
     connect( setup_action_parameter1_str_ , SIGNAL(changed()), this, SLOT(actionEdited()));
     connect( setup_action_parameter1_int_ , SIGNAL(changed()), this, SLOT(actionEdited()));
@@ -139,18 +110,13 @@ const char *LH_CursorAction::userInit()
 
     connect( setup_action_parameter2_str_ , SIGNAL(changed()), this, SLOT(actionEdited()));
     connect( setup_action_parameter2_int_ , SIGNAL(changed()), this, SLOT(actionEdited()));
-    connect( setup_action_parameter2_file_, SIGNAL(changed()), this, SLOT(actionEdited()));*/
+    connect( setup_action_parameter2_file_, SIGNAL(changed()), this, SLOT(actionEdited()));
 
-    connect(setup_act_new_,       SIGNAL(changed()), this, SLOT(newAction()));
-    connect(setup_act_save_,      SIGNAL(changed()), this, SLOT(saveAction()));
-    connect(setup_act_cancel_,    SIGNAL(changed()), this, SLOT(uneditAction()));
-    connect(setup_act_delete_,    SIGNAL(changed()), this, SLOT(deleteAction()));
-    connect(setup_act_move_up_,   SIGNAL(changed()), this, SLOT(moveAction_up()));
-    connect(setup_act_move_down_, SIGNAL(changed()), this, SLOT(moveAction_down()));
-    connect(setup_act_copy_,      SIGNAL(changed()), this, SLOT(copyActions()));
-    connect(setup_act_paste_,     SIGNAL(changed()), this, SLOT(pasteActions()));
+    connect( setup_action_enabled_,         SIGNAL(changed()), this, SLOT(actionEdited()));
 
-    return 0;
+    connect( setup_action_delete_,          SIGNAL(changed()), this, SLOT(deleteActionCheck()));
+    connect( setup_action_delete_confirm_,  SIGNAL(changed()), this, SLOT(deleteAction()));
+    connect( setup_action_add_,             SIGNAL(changed()), this, SLOT(newAction()));
 }
 
 int LH_CursorAction::polling()
@@ -165,12 +131,27 @@ int LH_CursorAction::polling()
     return 200;
 }
 
+
+
 bool LH_CursorAction::updateState()
 {
-    bool newSelected;
-    bool newActive;
-    QString newStatusCode = cursorData(setup_json_data_->value()).getState(setup_coordinate_->value().split(';'),newSelected,newActive);
+    QStringList mycoords = setup_coordinate_->value().split(';');
 
+    bool newSelected = false;
+    bool newActive = false;
+    foreach (QString mycoord_str, mycoords)
+    {
+        QStringList mycoord = mycoord_str.split(',');
+        if(mycoord.length()==2)
+        {
+            int myX = mycoord.at(0).toInt();
+            int myY = mycoord.at(1).toInt();
+
+            newSelected = newSelected || ( cursor_data.selState && cursor_data.selX==myX && cursor_data.selY==myY );
+            newActive = newActive ||  ( cursor_data.active && cursor_data.x==myX && cursor_data.y==myY );
+        }
+    }
+    QString newStatusCode = QString("%1%2").arg(newActive? "ON" : "OFF").arg(newSelected? "_SEL" : "");
     if(statusCode_ != newStatusCode)
     {
         statusCode_ = newStatusCode;
@@ -188,11 +169,10 @@ bool LH_CursorAction::updateState()
 
 void LH_CursorAction::fire(int startAt)
 {
-    cursorData cursor_data(setup_json_data_->value());
     fired = true;
     waiting = false;
     QDomDocument actionsXML("actionsXML");
-    if(actionsXML.setContent(setup_act_XML_->value()))
+    if(actionsXML.setContent(setup_actions_xml_->value()))
     {
         QDomNode rootNode = actionsXML.firstChild();
         for(uint i = startAt; i< rootNode.childNodes().length(); i++)
@@ -208,7 +188,7 @@ void LH_CursorAction::fire(int startAt)
             {
                 QString layout = action.getParameter(e,0);
                 if (!layout.contains(":"))
-                    layout = QString("%1\%2").arg(dir_layout()).arg(layout);
+                    layout = QString("%1\%2").arg(state()->dir_layout).arg(layout);
                 static QByteArray ary;
                 ary = layout.toUtf8();
                 callback(lh_cb_load_layout, ary.data() );
@@ -220,14 +200,14 @@ void LH_CursorAction::fire(int startAt)
                 QString path = action.getParameter(e,0);
                 QFileInfo exe = QFileInfo(path);
                 if(!exe.isFile())
-                    exe = QFileInfo(QString("%1%2").arg(dir_layout()).arg(path));
+                    exe = QFileInfo(QString("%1%2").arg(state()->dir_layout).arg(path));
                 QString argsString = action.getParameter(e,1);
                 QStringList argsList;
                 if(rx.indexIn(argsString) != -1)
                     for(int i=1; i<=rx.captureCount(); i++)
                         if(rx.cap(i)!="")
                             argsList.append(rx.cap(i));
-                process.startDetached(exe.absoluteFilePath(),argsList,dir_layout());
+                process.startDetached(exe.absoluteFilePath(),argsList,state()->dir_layout);
             }else
             if(typeCode=="url")
             {
@@ -243,54 +223,48 @@ void LH_CursorAction::fire(int startAt)
             {
                 cursor_data.x = action.getParameter(e,0).toInt();
                 cursor_data.y = action.getParameter(e,1).toInt();
-                cursor_data.postback(setup_json_postback_, setup_json_data_);
             }else
             if(typeCode=="select")
             {
                 cursor_data.x = action.getParameter(e,0).toInt();
                 cursor_data.y = action.getParameter(e,1).toInt();
                 cursor_data.sendSelect = true;
-                cursor_data.postback(setup_json_postback_, setup_json_data_);
             }else
             if(typeCode=="deselect")
             {
                 cursor_data.selState = false;
-                cursor_data.postback(setup_json_postback_, setup_json_data_);
             }else
             if(typeCode=="deactivate")
             {
                 cursor_data.active = false;
-                cursor_data.postback(setup_json_postback_, setup_json_data_);
             }else
             if(typeCode=="reselect")
             {
                 cursor_data.x = cursor_data.lastSelX2;
                 cursor_data.y = cursor_data.lastSelY2;
                 cursor_data.sendSelect = true;
-                cursor_data.postback(setup_json_postback_, setup_json_data_);
             } else
-                qWarning() << "LH_Cursor: Unknown Action: " << typeCode;
+                Q_ASSERT(false);
         }
     }
 }
 
-void LH_CursorAction::doJumpTo(int flags, int value)
+void LH_CursorAction::doJumpTo(QString key, int flags, int value)
 {
+    Q_UNUSED(key);
     Q_UNUSED(flags);
     Q_UNUSED(value);
     QString coord = setup_coordinate_->value().split(';')[0];
-    cursorData cursor_data(setup_json_data_->value());
     cursor_data.x = coord.split(',')[0].toInt();
     cursor_data.y = coord.split(',')[1].toInt();
     cursor_data.sendSelect = true;
-    cursor_data.postback(setup_json_postback_, setup_json_data_);
 }
 
 void LH_CursorAction::xmlChanged()
 {
-    setup_act_rules_->list().clear();
+    setup_actions_->list().clear();
     QDomDocument actionsXML("actionsXML");
-    if(actionsXML.setContent(setup_act_XML_->value()))
+    if(actionsXML.setContent(setup_actions_xml_->value()))
     {
         QDomNode rootNode = actionsXML.firstChild();
         for(uint i = 0; i< rootNode.childNodes().length(); i++)
@@ -301,55 +275,47 @@ void LH_CursorAction::xmlChanged()
             QString desc = (e.attribute("desc")==""? actionTypes_.at(e.attribute("type")).description : e.attribute("desc"));
             if(e.attribute("enabled")=="false") desc+=" [disabled]";
 
-            setup_act_rules_->list().append(desc);
+            setup_actions_->list().append(desc);
         }
     }
-    setup_act_rules_->refreshList();
-    reloadAction();
+    setup_actions_->refreshList();
+    actionSelected();
 }
 
-void LH_CursorAction::enableEditUI(bool enabled)
+void LH_CursorAction::actionSelected()
 {
-    int offFlag = (enabled? 0 : LH_FLAG_HIDDEN | LH_FLAG_READONLY);
-    int curPos = setup_act_rules_->index();
+    int offFlag = 0;
+    if(setup_actions_->list().count()==0) offFlag = LH_FLAG_HIDDEN | LH_FLAG_READONLY;
 
-    setup_action_desc_->setFlags(LH_FLAG_UI | offFlag);
-    setup_action_type_->setFlags(LH_FLAG_UI | offFlag);
+    setup_action_desc_->setFlags(LH_FLAG_NOSAVE | offFlag);
+    setup_action_index_->setFlags(LH_FLAG_NOSAVE | offFlag);
+    setup_action_index_->setMinMax(0,setup_actions_->list().count()-1);
 
-    setup_action_parameter1_desc_->setFlags(LH_FLAG_HIDDEN | LH_FLAG_READONLY | LH_FLAG_UI | offFlag);
-    setup_action_parameter1_str_->setFlags(LH_FLAG_HIDDEN | LH_FLAG_UI | offFlag);
-    setup_action_parameter1_int_->setFlags(LH_FLAG_HIDDEN | LH_FLAG_UI | offFlag);
-    setup_action_parameter1_file_->setFlags(LH_FLAG_HIDDEN | LH_FLAG_UI | offFlag);
+    setup_action_type_->setFlags(LH_FLAG_NOSAVE | offFlag);
+    setup_action_parameter1_desc_->setFlags(LH_FLAG_READONLY|LH_FLAG_NOSAVE | offFlag);
+    setup_action_parameter1_str_->setFlags(LH_FLAG_HIDDEN|LH_FLAG_NOSAVE | offFlag);
+    setup_action_parameter1_int_->setFlags(LH_FLAG_HIDDEN|LH_FLAG_NOSAVE | offFlag);
+    setup_action_parameter1_file_->setFlags(LH_FLAG_HIDDEN|LH_FLAG_NOSAVE | offFlag);
+    setup_action_parameter2_desc_->setFlags(LH_FLAG_READONLY|LH_FLAG_NOSAVE | offFlag);
+    setup_action_parameter2_str_->setFlags(LH_FLAG_HIDDEN|LH_FLAG_NOSAVE | offFlag);
+    setup_action_parameter2_int_->setFlags(LH_FLAG_HIDDEN|LH_FLAG_NOSAVE | offFlag);
+    setup_action_parameter2_file_->setFlags(LH_FLAG_HIDDEN|LH_FLAG_NOSAVE | offFlag);
+    setup_action_delete_->setFlags(LH_FLAG_NOSAVE | offFlag);
+    setup_action_delete_confirm_->setFlags(LH_FLAG_HIDDEN|LH_FLAG_READONLY|LH_FLAG_NOSAVE | offFlag);
+    setup_action_enabled_->setFlags(LH_FLAG_NOSAVE | offFlag);
 
-    setup_action_parameter2_desc_->setFlags(LH_FLAG_HIDDEN | LH_FLAG_READONLY | LH_FLAG_UI | offFlag);
-    setup_action_parameter2_str_->setFlags(LH_FLAG_HIDDEN | LH_FLAG_UI | offFlag);
-    setup_action_parameter2_int_->setFlags(LH_FLAG_HIDDEN | LH_FLAG_UI | offFlag);
-    setup_action_parameter2_file_->setFlags(LH_FLAG_HIDDEN | LH_FLAG_UI | offFlag);
-
-    setup_action_enabled_->setFlags(LH_FLAG_UI | offFlag);
-
-    setup_act_save_->setFlags(LH_FLAG_UI | offFlag);
-    setup_act_move_up_->setFlags(LH_FLAG_UI | (offFlag & LH_FLAG_READONLY) | (curPos <= 0 ? LH_FLAG_READONLY : 0) );
-    setup_act_move_down_->setFlags(LH_FLAG_UI | (offFlag & LH_FLAG_READONLY) | ( curPos == -1 || curPos >= setup_act_rules_->list().count()-1? LH_FLAG_READONLY : 0) );
-    setup_act_delete_->setFlags(LH_FLAG_UI | (offFlag & LH_FLAG_READONLY) | (curPos == -1 ? LH_FLAG_READONLY : 0) );
-    setup_act_cancel_->setFlags(LH_FLAG_UI | offFlag);
-}
-
-void LH_CursorAction::reloadAction()
-{
-    enableEditUI(setup_act_rules_->list().count()!=0 && setup_act_rules_->index()!=-1);
-    if(setup_act_rules_->list().count()==0) return;
+    if(setup_actions_->list().count()==0) return;
 
     QDomDocument actionsXML("actionsXML");
-    if(actionsXML.setContent(setup_act_XML_->value()) && actionsXML.firstChild().childNodes().count()!=0 && setup_act_rules_->index()!=-1)
+    if(actionsXML.setContent(setup_actions_xml_->value()) && actionsXML.firstChild().childNodes().count()!=0 && setup_actions_->value()!=-1)
     {
-        QDomElement e = actionsXML.firstChild().childNodes().at(setup_act_rules_->index()).toElement();
+        QDomElement e = actionsXML.firstChild().childNodes().at(setup_actions_->value()).toElement();
         QString typeCode = e.attribute("type");
 
         setup_action_type_->setValue( actionTypes_.indexOf(typeCode) );
         setup_action_desc_->setValue( e.attribute("desc") );
+        setup_action_index_->setValue( setup_actions_->value() );
 
-        cursorData cursor_data(setup_json_data_->value());
         actionTypes_.at(typeCode).displayParameter(0,setup_action_parameter1_desc_,setup_action_parameter1_str_,setup_action_parameter1_int_,setup_action_parameter1_file_, cursor_data, e);
         actionTypes_.at(typeCode).displayParameter(1,setup_action_parameter2_desc_,setup_action_parameter2_str_,setup_action_parameter2_int_,setup_action_parameter2_file_, cursor_data, e);
 
@@ -357,8 +323,9 @@ void LH_CursorAction::reloadAction()
     }
 }
 
-void LH_CursorAction::saveAction()
+void LH_CursorAction::actionEdited()
 {
+    if(setup_actions_->list().count()==0) return;
     actionType at = actionTypes_.at(setup_action_type_->value());
 
     //acquire valid parameter values (blank values return in parameter is invalid)
@@ -367,139 +334,72 @@ void LH_CursorAction::saveAction()
     paramValues.append( at.getParameterValue(1,setup_action_parameter2_str_,setup_action_parameter2_int_,setup_action_parameter2_file_));
 
     //in case the type has changed, update the parameter visibility
-    cursorData cursor_data(setup_json_data_->value());
     at.displayParameter(0,setup_action_parameter1_desc_,setup_action_parameter1_str_,setup_action_parameter1_int_,setup_action_parameter1_file_, cursor_data);
     at.displayParameter(1,setup_action_parameter2_desc_,setup_action_parameter2_str_,setup_action_parameter2_int_,setup_action_parameter2_file_, cursor_data);
 
     //Update the caption in case the description or enabled state has changed
     QString desc = (setup_action_desc_->value()==""? at.description : setup_action_desc_->value());
     if(!setup_action_enabled_->value()) desc+=" [disabled]";
+    setup_actions_->list()[setup_actions_->value()] = desc;
+    setup_actions_->refreshList();
 
     //Update the xml data
-    QString strXML = at.generateXML(setup_action_enabled_->value(),setup_action_desc_->value(),paramValues);
-    QStringList xmlLines = setup_act_XML_->value().split("\n");
-    if(setup_act_rules_->index()!=-1)
-    {
-        //setup_act_rules_->list()[setup_act_rules_->value()] = desc;
-        //setup_act_rules_->refreshList();
-        xmlLines[setup_act_rules_->index()+1] = strXML;
-    } else {
-        xmlLines.insert(xmlLines.count()-1, strXML);
-        //setup_act_rules_->setValue(setup_act_rules_->list().count()-1);
-    }
-    setup_act_XML_->setValue(xmlLines.join("\n"));
-    xmlChanged();
+    QStringList xmlLines = setup_actions_xml_->value().split("\n");
+    xmlLines[setup_actions_->value()+1] = at.generateXML(setup_action_enabled_->value(),setup_action_desc_->value(),paramValues);
+    setup_actions_xml_->setValue(xmlLines.join("\n"));
+
+    //reset the deletion stuff
+    setup_action_delete_->setFlag(LH_FLAG_READONLY, false);
+    setup_action_delete_confirm_->setFlag(LH_FLAG_READONLY, true);
+    setup_action_delete_confirm_->setFlag(LH_FLAG_HIDDEN, true);
 }
 
-void LH_CursorAction::moveAction_up()
+void LH_CursorAction::actionMoved()
 {
-    int curPos = setup_act_rules_->index();
+    int curPos = setup_actions_->value();
+    int newPos = setup_action_index_->value();
 
-    if(curPos <= 0) return;
-
-    int newPos = curPos-1;//setup_action_index_->value();
-
-    QStringList xmlLines = setup_act_XML_->value().split("\n");
+    QStringList xmlLines = setup_actions_xml_->value().split("\n");
     xmlLines.move(curPos+1,newPos+1);
-    setup_act_XML_->setValue(xmlLines.join("\n"));
+    setup_actions_xml_->setValue(xmlLines.join("\n"));
 
     xmlChanged();
-    setup_act_rules_->setValue(newPos);
-    reloadAction();
-}
-
-void LH_CursorAction::moveAction_down()
-{
-    int curPos = setup_act_rules_->index();
-
-    if(curPos >= setup_act_rules_->list().count()-1) return;
-
-    int newPos = curPos+1;//setup_action_index_->value();
-
-    QStringList xmlLines = setup_act_XML_->value().split("\n");
-    xmlLines.move(curPos+1,newPos+1);
-    setup_act_XML_->setValue(xmlLines.join("\n"));
-
-    xmlChanged();
-    setup_act_rules_->setValue(newPos);
-    reloadAction();
+    setup_actions_->setValue(newPos);
+    actionSelected();
 }
 
 void LH_CursorAction::newAction()
 {
-    setup_act_rules_->setValue(-1);
-    enableEditUI(true);
+    actionType at = actionTypes_.at("deselect");
+    QString strXML =  at.generateXML(false,"",QStringList());
 
-    QString typeCode = "deselect";
+    QStringList xmlLines = setup_actions_xml_->value().split("\n");
+    xmlLines.insert(xmlLines.count()-1, strXML);
+    setup_actions_xml_->setValue(xmlLines.join("\n"));
 
-    setup_action_type_->setValue( actionTypes_.indexOf(typeCode) );
-    setup_action_desc_->setValue( "" );
+    xmlChanged();
+    setup_actions_->setValue(setup_actions_->list().count()-1);
+    actionSelected();
+}
 
-    //actionTypes_.at(typeCode).displayParameter(0,setup_action_parameter1_desc_,setup_action_parameter1_str_,setup_action_parameter1_int_,setup_action_parameter1_file_, cursor_data, e);
-    //actionTypes_.at(typeCode).displayParameter(1,setup_action_parameter2_desc_,setup_action_parameter2_str_,setup_action_parameter2_int_,setup_action_parameter2_file_, cursor_data, e);
-
-    setup_action_enabled_->setValue( true );
+void LH_CursorAction::deleteActionCheck()
+{
+    setup_action_delete_->setFlag(LH_FLAG_READONLY, true);
+    setup_action_delete_confirm_->setFlag(LH_FLAG_READONLY, false);
+    setup_action_delete_confirm_->setFlag(LH_FLAG_HIDDEN, false);
 }
 
 void LH_CursorAction::deleteAction()
 {
-    int selIndex = setup_act_rules_->index();
+    int selIndex = setup_actions_->value();
 
-    QStringList xmlLines = setup_act_XML_->value().split("\n");
+    QStringList xmlLines = setup_actions_xml_->value().split("\n");
     xmlLines.removeAt(selIndex+1);
-    setup_act_XML_->setValue(xmlLines.join("\n"));
+    setup_actions_xml_->setValue(xmlLines.join("\n"));
 
     xmlChanged();
-    if(selIndex>=setup_act_rules_->list().length()) selIndex--;
-    setup_act_rules_->setValue(selIndex);
-    reloadAction();
+    if(selIndex>=setup_actions_->list().length()) selIndex--;
+    setup_actions_->setValue(selIndex);
+    actionSelected();
 }
 
-void LH_CursorAction::copyActions()
-{
-    QFile file(QString("%1action_cache.xml").arg(dir_data()));
-    if (!file.open(QIODevice::WriteOnly | QIODevice::Text))
-        return;
-    else
-        file.write(setup_act_XML_->value().toAscii());
-}
-
-void LH_CursorAction::pasteActions()
-{
-    QString clip_text;
-    QFile file(QString("%1action_cache.xml").arg(dir_data()));
-    if (!file.open(QIODevice::ReadOnly | QIODevice::Text))
-        return;
-    else
-        clip_text = QString(file.readAll().data());
-
-    QDomDocument doc_clip("");
-    if(doc_clip.setContent(clip_text))
-    {
-        QDomElement root_clip = doc_clip.firstChild().toElement();
-
-        QDomDocument doc_curr("");
-        doc_curr.setContent(setup_act_XML_->value());
-        QDomElement root_curr = doc_curr.firstChild().toElement();
-
-        QDomNodeList actions = root_clip.elementsByTagName("action");
-        while(actions.length()!=0)
-            root_curr.appendChild(actions.at(0));
-
-        setup_act_XML_->setValue(doc_curr.toString());
-        xmlChanged();
-    }
-}
-
-void LH_CursorAction::uneditAction(){
-    setup_act_rules_->setValue(-1);
-    reloadAction();
-}
-
-void LH_CursorAction::actionTypeChanged()
-{
-    QString typeCode = actionTypes_.at(setup_action_type_->value()).typeCode;
-    cursorData cursor_data(setup_json_data_->value());
-    actionTypes_.at(typeCode).displayParameter(0,setup_action_parameter1_desc_,setup_action_parameter1_str_,setup_action_parameter1_int_,setup_action_parameter1_file_, cursor_data);
-    actionTypes_.at(typeCode).displayParameter(1,setup_action_parameter2_desc_,setup_action_parameter2_str_,setup_action_parameter2_int_,setup_action_parameter2_file_, cursor_data);
-}

@@ -26,15 +26,16 @@
 
 #include "LH_DialTime.h"
 
-const char *LH_DialTime::userInit()
+LH_DialTime::LH_DialTime()
 {
-    if( const char *err = LH_Dial::userInit() ) return err;
-
-    setup_type_->setFlag(LH_FLAG_NOSAVE, true);
-
     setMin(0.0);
     setMax(60.0);
     isClock = true;
+}
+
+const char *LH_DialTime::userInit()
+{
+    LH_Dial::userInit();
 
     setup_manual_adjust_ = new LH_Qt_bool(this, "Manual Adjust", false);
     setup_manual_adjust_->setHelp( "<p>Manually tweak the time displayed (e.g. to display time from a different time zone).</p>");
@@ -52,10 +53,10 @@ const char *LH_DialTime::userInit()
     setup_adjust_hours_->setHelp( "<p>Add or subract hours from the time.</p>");
     setup_adjust_hours_->setOrder(-10);
 
-    connect( setup_manual_adjust_, SIGNAL(valueChanged()), this, SLOT(changeManualAdjust()));
-    connect( setup_adjust_seconds_, SIGNAL(valueChanged()), this, SLOT(changeManualSeconds()));
-    connect( setup_adjust_minutes_, SIGNAL(valueChanged()), this, SLOT(changeManualMinutes()));
-    connect( setup_adjust_hours_, SIGNAL(valueChanged()), this, SLOT(changeManualHours()));
+    connect( setup_manual_adjust_, SIGNAL(changed()), this, SLOT(changeManualAdjust()));
+    connect( setup_adjust_seconds_, SIGNAL(changed()), this, SLOT(changeManualSeconds()));
+    connect( setup_adjust_minutes_, SIGNAL(changed()), this, SLOT(changeManualMinutes()));
+    connect( setup_adjust_hours_, SIGNAL(changed()), this, SLOT(changeManualHours()));
 
 
     clearNeedles();
@@ -63,7 +64,7 @@ const char *LH_DialTime::userInit()
     addNeedle("Minute Hand");
     addNeedle("Second Hand");
 
-    setup_type_->setVisible(false);
+    setup_type_->setFlag(LH_FLAG_HIDDEN, true);
     setup_type_->setValue(0);
 
     ticks.fullCircle.clear();
@@ -81,7 +82,9 @@ lh_class *LH_DialTime::classInfo()
         "System/Date and time",
         "SystemTimeDial",
         "Time (Dial)",
-        48,48
+        48,48,
+        lh_object_calltable_NULL,
+        lh_instance_calltable_NULL
     };
 
     return &classInfo;
@@ -116,9 +119,9 @@ int LH_DialTime::notify(int n, void *p)
 
 void LH_DialTime::changeManualAdjust()
 {
-    setup_adjust_seconds_->setHidden( !setup_manual_adjust_->value());
-    setup_adjust_minutes_->setHidden( !setup_manual_adjust_->value());
-    setup_adjust_hours_->setHidden( !setup_manual_adjust_->value());
+    setup_adjust_seconds_->setFlag(LH_FLAG_HIDDEN, !setup_manual_adjust_->value());
+    setup_adjust_minutes_->setFlag(LH_FLAG_HIDDEN, !setup_manual_adjust_->value());
+    setup_adjust_hours_->setFlag(LH_FLAG_HIDDEN, !setup_manual_adjust_->value());
 }
 void LH_DialTime::changeManualSeconds()
 {

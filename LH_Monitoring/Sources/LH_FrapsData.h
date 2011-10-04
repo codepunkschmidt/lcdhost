@@ -13,7 +13,6 @@ protected:
 
 public:
     LH_FrapsData( LH_QtObject *parent, LH_MonitoringUI *ui, monitoringDataMode dataMode = mdmNumbers, bool includeGroups = false);
-    ~LH_FrapsData();
 
     QString appName() { return "Fraps"; }
     monitoringDataType getType();

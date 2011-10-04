@@ -45,7 +45,8 @@ class LH_WebKitHTML : public LH_WebKit
     LH_Qt_QTextEdit *html_;
 
 public:
-    const char *userInit();
+    LH_WebKitHTML();
+
     static lh_class *classInfo();
 
 public slots:

@@ -8,7 +8,7 @@ TARGET = lh_api5
 TEMPLATE = lib
 CONFIG += staticlib
 
-load($$PWD/../../lcdhost.prf)
+load($$PWD/../../PluginsConfig.prf)
 
 HEADERS += \
     lh_api5.h \
@@ -36,7 +36,7 @@ HEADERS += \
     lh_plugin.h
 
 SOURCES += \
-    lh_api5_plugin.c \
+    lh_plugin.c \
     LH_QtCPU.cpp \
     LH_QtDevice.cpp \
     LH_QtInstance.cpp \

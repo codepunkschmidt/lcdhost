@@ -43,8 +43,8 @@ lh_class *LH_WeatherText::classInfo()
         "WeatherText",
         "Weather Text",
         -1, -1,
-        
-        
+        lh_object_calltable_NULL,
+        lh_instance_calltable_NULL
     };
 
     if( classInfo.width == -1 )
@@ -58,12 +58,12 @@ lh_class *LH_WeatherText::classInfo()
     return &classInfo;
 }
 
-const char *LH_WeatherText::userInit()
+LH_WeatherText::LH_WeatherText()
 {
-    if( const char *err = LH_Text::userInit() ) return err;
     //setup_text_->setName( "Text" );
     setup_text_->setFlag( LH_FLAG_READONLY, true );
     setup_text_->setFlag( LH_FLAG_NOSAVE, true );
+    setText("...");
 
     valueTypes = QStringList();
     valueTypes.append("Location: City");
@@ -118,8 +118,8 @@ const char *LH_WeatherText::userInit()
     setup_post_text_->setHelp( "<p>Text to be displayed after the sensor value.</p>");
     setup_post_text_->setOrder(-3);
     connect( setup_post_text_, SIGNAL(changed()), this, SLOT(updateText()) );
-    setText("...");
-    return 0;
+
+    return;
 }
 
 int LH_WeatherText::notify(int n,void* p)
@@ -138,7 +138,7 @@ void LH_WeatherText::updateText()
 QString LH_WeatherText::getSelectedValueText()
 {
     //return QString("%1:\r\n%2%5\r\n%3 (%4)").arg(weather_data.location.city, weather_data.condition.temp, weather_data.condition.text, weather_data.condition.code, weather_data.units.temperature);
-    QString selValue = valueTypes.at( setup_value_type_->index() );
+    QString selValue = valueTypes.at( setup_value_type_->value() );
     QString valueText;
 
     const int unit_none = 0;

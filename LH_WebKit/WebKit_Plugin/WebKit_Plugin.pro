@@ -3,14 +3,16 @@ TEMPLATE = lib
 QT += network \
     xml
 DEFINES += LH_WEBKIT_LIBRARY
-CONFIG += lh_plugin conditionalformatting
+CONFIG += cf
 
-load(../../PluginsConfig.prf)
-include(../../codeleap/codeleap.pri)
+include(../../Plugins.pri)
+
+INCLUDEPATH += ..
 
 SOURCES += \
-    ../WebKitCommand.cpp \
+    $$PLUGIN_SOURCES \
     ../../LH_Text/LH_Text.cpp \
+    ../WebKitCommand.cpp \
     LH_QtPlugin_WebKit.cpp \
     LH_WebKit.cpp \
     LH_WebKitHTML.cpp \
@@ -22,8 +24,9 @@ SOURCES += \
     LH_RSSBody.cpp
 
 HEADERS += \
-    ../WebKitCommand.h \
+    $$PLUGIN_HEADERS \
     ../../LH_Text/LH_Text.h \
+    ../WebKitCommand.h \
     LH_QtPlugin_WebKit.h \
     LH_WebKit.h \
     LH_WebKitHTML.h \

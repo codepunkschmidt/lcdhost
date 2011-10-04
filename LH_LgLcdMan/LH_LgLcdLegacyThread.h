@@ -36,13 +36,32 @@
 #define LH_LGLCDLEGACYTHREAD_H
 
 #include "LH_LgLcdThread.h"
+#include <QImage>
 
 class LH_LgLcdLegacyThread : public LH_LgLcdThread
 {
     Q_OBJECT
+
+    bool enumerate( int conn );
+    bool render( int conn );
+
 public:
+    static lgLcdOpenContext bw_cxt;
+    static lgLcdOpenContext qvga_cxt;
+
     explicit LH_LgLcdLegacyThread(QObject *parent = 0) : LH_LgLcdThread(parent) {}
+
     void run();
+
+    bool hasBW() const { return bw_cxt.index != -1; }
+    bool hasQVGA() const { return qvga_cxt.index != -1; }
+
+#ifdef Q_WS_WIN
+    static DWORD WINAPI LH_LogitechButtonCB(int device, DWORD dwButtons, const PVOID pContext);
+#endif
+#ifdef Q_WS_MAC
+    static unsigned long LH_LogitechButtonCB(int device, unsigned long dwButtons, const void* pContext);
+#endif
 };
 
 #endif // LH_LGLCDLEGACYTHREAD_H

@@ -46,7 +46,8 @@ class LH_WebKitFile : public LH_WebKit
     LH_Qt_QFileInfo *setup_file_;
 
 public:
-    const char *userInit();
+    LH_WebKitFile();
+
     static lh_class *classInfo();
 
 public slots:

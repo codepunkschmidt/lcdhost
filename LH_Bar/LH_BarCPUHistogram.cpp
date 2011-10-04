@@ -39,16 +39,13 @@
 
 class LH_BarCPUHistogram : public LH_Bar
 {
-    LH_QtCPU *cpu_;
+    LH_QtCPU cpu_;
 
 public:
-    const char *userInit()
+    LH_BarCPUHistogram() : LH_Bar(), cpu_(this)
     {
-        if( const char *err = LH_Bar::userInit() ) return err;
-        cpu_ = new LH_QtCPU(this);
         setMin(0.0);
         setMax(10000.0);
-        return 0;
     }
 
     static lh_class *classInfo()
@@ -59,21 +56,28 @@ public:
             "System/CPU",
             "SystemCPUHistogram",
             "Core Load (Bar)",
-            48,48
+            48,48,
+            lh_object_calltable_NULL,
+            lh_instance_calltable_NULL
         };
 
         return &classInfo;
     }
 
+    int notify(int n, void *p)
+    {
+        return cpu_.notify(n,p);
+    }
+
     QImage *render_qimage( int w, int h )
     {
         if( LH_Bar::render_qimage(w,h) == NULL ) return NULL;
-        qreal *loads = new qreal[ cpu_->count() ];
+        qreal *loads = new qreal[ cpu_.count() ];
         if( loads )
         {
-            for( int i=0; i<cpu_->count(); i++ )
-                loads[i] = cpu_->coreload(i);
-            drawList( loads, cpu_->count() );
+            for( int i=0; i<cpu_.count(); i++ )
+                loads[i] = cpu_.coreload(i);
+            drawList( loads, cpu_.count() );
             delete[] loads;
         }
         return image_;

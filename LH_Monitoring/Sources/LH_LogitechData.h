@@ -13,7 +13,6 @@ protected:
 
 public:
     LH_LogitechData( LH_QtObject *parent, LH_MonitoringUI *ui, monitoringDataMode dataMode = mdmNumbers, bool includeGroups = false);
-    ~LH_LogitechData();
 
     QString appName() { return "Logitech Monitoring Gadget"; }
     monitoringDataType getType();

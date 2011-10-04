@@ -25,10 +25,13 @@
 #ifndef LH_QTPLUGIN_TS3_H
 #define LH_QTPLUGIN_TS3_H
 
+//#define TS3_DEBUG_MESSAGES
+//#define TS3_USER_DEFINED_UID
+
+
 #include "LH_QtPlugin.h"
 #include "LH_Qt_QString.h"
 #include "LH_Qt_bool.h"
-#include "LH_Qt_html.h"
 #include "LH_Qt_QStringList.h"
 
 #include "LH_TS3_ChannelList.h"
@@ -82,11 +85,19 @@ class LH_QtPlugin_TS3 : public LH_QtPlugin
     responseResult parseResult(QString msg);
     void updateTalking(bool force = false);
     void updateStatus(bool isRunning, bool isConnected = false, bool showChannels = false, bool showClients = false);
+
+    void request_WhoAmI();
+    void request_ChannelList();
+    void request_ClientList();
+
 protected:
     LH_Qt_QString *setup_connection_details_;
     LH_Qt_QString *setup_talking_;
     LH_Qt_QString *setup_talking_details_;
-    //LH_Qt_QString *setup_nickname_expression_;
+    LH_Qt_bool *setup_talking_me_;
+#ifdef TS3_USER_DEFINED_UID
+    LH_Qt_QString *setup_nickname_expression_;
+#endif
     LH_Qt_QString *setup_nickname_;
     LH_Qt_QString *setup_channelname_;
     LH_Qt_QStringList *setup_connection_status_;

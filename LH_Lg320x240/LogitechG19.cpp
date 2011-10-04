@@ -2,21 +2,12 @@
 #include <QDebug>
 #include "LogitechG19.h"
 
-LogitechG19::LogitechG19( libusb_device *usbdev, libusb_device_descriptor *dd )
-    : LH_QtOutputDevice("LH_Lg320x240:G19",320,240,32,
-#ifdef Q_WS_WIN
-          true
-#else
-          false
-#endif
-          )
+LogitechG19::LogitechG19( libusb_device *usbdev, libusb_device_descriptor *dd, LH_QtObject *drv ) : LH_QtDevice(drv)
 {
     usbdev_ = usbdev;
     lcdhandle_ = 0;
     endpoint_in_ = endpoint_out_ = 0;
     offline_ = false;
-
-    setObjectName("Logitech G19 LCD (USB)");
 
     for( int config_num=0; config_num<dd->bNumConfigurations; ++config_num )
     {
@@ -56,10 +47,21 @@ LogitechG19::LogitechG19( libusb_device *usbdev, libusb_device_descriptor *dd )
         }
         if( conf_desc ) libusb_free_config_descriptor( conf_desc );
     }
+    setDevid("G19");
+    setName("Logitech G19 LCD (USB)");
+    setSize(320,240);
+    setDepth(16);
+#ifdef Q_WS_WIN
+    setAutoselect(false);
+#else
+    setAutoselect(true);
+#endif
+    arrive();
 }
 
 LogitechG19::~LogitechG19()
 {
+    leave();
 }
 
 #define ASSERT_USB(x) do { int retv_ = x; if( retv_ ) { qDebug() << #x << libusb_strerror((libusb_error)retv_); return libusb_strerror((libusb_error) retv_); } } while(0)
@@ -81,25 +83,6 @@ const char* LogitechG19::close()
 {
     if( lcdhandle_ ) libusb_close( lcdhandle_ ); lcdhandle_ = 0;
     return NULL;
-}
-
-const char* LogitechG19::input_name(const char *devid, int n)
-{
-    Q_UNUSED(devid);
-
-    switch(n)
-    {
-    case 0: return "Logitech G19";
-    case 0x01: return "App";
-    case 0x02: return "Cancel";
-    case 0x04: return "Menu";
-    case 0x08: return "Ok";
-    case 0x10: return "Right";
-    case 0x20: return "Left";
-    case 0x40: return "Down";
-    case 0x80: return "Up";
-    }
-    return 0;
 }
 
 int LogitechG19::buttons()
@@ -129,18 +112,30 @@ int LogitechG19::buttons()
             int mask = 1<<bit;
             if( (button&mask) != (last_buttons_&mask) )
             {
-                lh_input di;
-                strcpy( di.ident, lh_dev()->obj.ident );
+                lh_device_input di;
+                di.devid = lh_dev()->devid;
+                switch( mask )
+                {
+                case 0x01: di.control = "App"; break;
+                case 0x02: di.control = "Cancel"; break;
+                case 0x04: di.control = "Menu"; break;
+                case 0x08: di.control = "Ok"; break;
+                case 0x10: di.control = "Right"; break;
+                case 0x20: di.control = "Left"; break;
+                case 0x40: di.control = "Down"; break;
+                case 0x80: di.control = "Up"; break;
+                default: di.control = "Unknown"; break;
+                }
                 di.item = bit;
-                di.flags = lh_input_button;
+                di.flags = lh_df_button;
                 if( button & mask )
                 {
-                    di.flags |= lh_input_pressed;
+                    di.flags |= lh_df_down;
                     di.value = 0xFFFF;
                 }
                 else
                 {
-                    di.flags |= lh_input_released;
+                    di.flags |= lh_df_up;
                     di.value = 0x0;
                 }
                 callback( lh_cb_input, (void*) &di );

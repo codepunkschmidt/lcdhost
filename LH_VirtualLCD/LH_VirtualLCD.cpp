@@ -35,11 +35,13 @@
 #include <QFile>
 #include <QDebug>
 
-#include "LH_QtOutputDevice.h"
+#include "LH_QtDevice.h"
 #include "LH_VirtualLCD.h"
 #include "LH_Qt_QImage.h"
 
-LH_PLUGIN(LH_QtPlugin_VirtualLCD) =
+LH_PLUGIN(LH_VirtualLCD)
+
+char __lcdhostplugin_xml[] =
 "<?xml version=\"1.0\"?>"
 "<lcdhostplugin>"
   "<id>Virtual LCD</id>"
@@ -58,20 +60,20 @@ LH_PLUGIN(LH_QtPlugin_VirtualLCD) =
   "</longdesc>"
 "</lcdhostplugin>";
 
-class VirtualLCD : public LH_QtOutputDevice
+class VirtualLCD : public LH_QtDevice
 {
 protected:
     LH_Qt_QImage *setup_output_;
 
 public:
-    VirtualLCD( const char *devid, int w, int h, int d, bool noauto ) :
-        LH_QtOutputDevice(devid,w,h,d,noauto) {}
-
-    const char *userInit()
+    VirtualLCD( LH_QtPlugin *drv ) : LH_QtDevice(drv)
     {
-        if( const char *err = LH_QtOutputDevice::userInit() ) return err;
         setup_output_ = new LH_Qt_QImage(this,"Output",QImage(),LH_FLAG_HIDDEN);
-        return 0;
+    }
+
+    ~VirtualLCD()
+    {
+        leave();
     }
 
     const char* open()
@@ -112,10 +114,38 @@ public:
     }
 };
 
-const char *LH_QtPlugin_VirtualLCD::userInit()
+
+class VirtualQVGA : public VirtualLCD
 {
-    if( const char *err = LH_QtPlugin::userInit() ) return err;
-    new VirtualLCD( "LH_VirtualLCD:320x240x32", 320, 240, 32, true );
-    new VirtualLCD( "LH_VirtualLCD:160x43x1", 160, 43, 1, true );
+public:
+    VirtualQVGA( LH_QtPlugin *drv ) : VirtualLCD( drv )
+    {
+        setDevid("320x240x32");
+        setName("Virtual 320x240x32 device");
+        setSize(320,240);
+        setDepth(32);
+        setAutoselect(false);
+        arrive();
+    }
+};
+
+class VirtualBW : public VirtualLCD
+{
+public:
+    VirtualBW( LH_QtPlugin *drv ) : VirtualLCD( drv )
+    {
+        setDevid("160x43x1");
+        setName("Virtual 160x43x1 device");
+        setSize(160,43);
+        setDepth(1);
+        setAutoselect(false);
+        arrive();
+    }
+};
+
+const char *LH_VirtualLCD::userInit()
+{
+    new VirtualQVGA(this);
+    new VirtualBW(this);
     return 0;
 }

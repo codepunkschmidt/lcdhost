@@ -30,8 +30,12 @@ public:
         int size; /**< sizeof(signature) */
     } signature;
 
+    typedef void (*loader)(object&);
+
     plugin() : object()
     {}
+
+    bool init();
 };
 
 } // namespace api6

@@ -60,9 +60,9 @@ bool LH_HWMonData::getSelectedValue(float& value, QString& text, QString& units,
     if (ui_->count(mon_item) == 0)
         loadSensorList(&reg);
 
-    if(ui_->index(mon_item)<sensorKeys_.length() && ui_->index(mon_item)>=0)
+    if(ui_->value(mon_item)<sensorKeys_.length() && ui_->value(mon_item)>=0)
     {
-        QStringList items = sensorKeys_.at(ui_->index(mon_item));
+        QStringList items = sensorKeys_.at(ui_->value(mon_item));
 
         if(ui_->valueText(mon_item).endsWith("(All)"))
             count = items.count();
@@ -233,5 +233,5 @@ void LH_HWMonData::loadSensorList(QSettings *reg)
     }
 
     ui_->refresh(mon_item);
-    ui_->setIndex(mon_item, ui_->setup_value_item_index_->value());
+    ui_->setValue(mon_item, ui_->setup_value_item_index_->value());
 }

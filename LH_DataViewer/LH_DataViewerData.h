@@ -11,7 +11,7 @@
 // #include <stdio.h>
 // #include <windows.h>
 
-#include "LH_DataViewerDataTypes.h"
+#include <LH_DataViewerDataTypes.h>
 extern dataNode* rootNode;
 extern sharedCollection* sharedData;
 

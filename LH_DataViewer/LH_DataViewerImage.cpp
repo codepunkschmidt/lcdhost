@@ -46,27 +46,25 @@ lh_class *LH_DataViewerImage::classInfo()
         "DataViewerImage",
         "Data Image",
         -1, -1,
-
-
+        lh_object_calltable_NULL,
+        lh_instance_calltable_NULL
     };
 
     return &classinfo;
 }
 
-const char *LH_DataViewerImage::userInit()
+LH_DataViewerImage::LH_DataViewerImage() : data_(this)
 {
-    if( const char *err = LH_QtInstance::userInit() ) return err;
-
     setup_lookup_code_ = new LH_Qt_QString(this, "Lookup Code", "");
     connect( setup_lookup_code_, SIGNAL(changed()), this, SLOT(updateImage()) );
 
     setup_lookup_code_value_ = new LH_Qt_QString(this, " ", "", LH_FLAG_READONLY|LH_FLAG_NOSAVE|LH_FLAG_NOSAVE);
 
-    setup_file_ = new LH_Qt_QFileInfo( this, ("File"), QFileInfo(), LH_FLAG_AUTORENDER );
+    setup_file_ = new LH_Qt_QFileInfo( this, tr("File"), QFileInfo(), LH_FLAG_AUTORENDER );
     setup_file_->setOrder(-1);
     connect( setup_file_, SIGNAL(changed()), this, SLOT(fileChanged()) );
 
-    setup_text_ = new LH_Qt_QString( this, ("~"), QString(), LH_FLAG_READONLY|LH_FLAG_NOSAVE|LH_FLAG_HIDDEN|LH_FLAG_AUTORENDER );
+    setup_text_ = new LH_Qt_QString( this, tr("~"), QString(), LH_FLAG_READONLY|LH_FLAG_NOSAVE|LH_FLAG_HIDDEN|LH_FLAG_AUTORENDER );
 
     //setup_text_->setOrder(-1);
 
@@ -75,7 +73,11 @@ const char *LH_DataViewerImage::userInit()
 
     imageCode_X_ = "";
     imageCode_Y_ = "";
-    return 0;
+}
+
+LH_DataViewerImage::~LH_DataViewerImage()
+{
+    return;
 }
 
 int LH_DataViewerImage::polling()
@@ -151,13 +153,13 @@ void LH_DataViewerImage::fileChanged()
     setup_file_->value().refresh();
     if( !setup_file_->value().isFile() )
     {
-        setup_text_->setValue(("No such file."));
-        setup_text_->setHidden(false);
+        setup_text_->setValue(tr("No such file."));
+        setup_text_->setFlag(LH_FLAG_HIDDEN,false);
         return;
     }
     else
     {
-        setup_text_->setHidden(true);
+        setup_text_->setFlag(LH_FLAG_HIDDEN,true);
         QFile file( setup_file_->value().filePath() );
 
         if( file.open( QIODevice::ReadOnly) )
@@ -197,8 +199,8 @@ void LH_DataViewerImage::fileChanged()
             }
             updateImage(true);
         } else {
-            setup_text_->setValue(("Unable to open file."));
-            setup_text_->setHidden(false);
+            setup_text_->setValue(tr("Unable to open file."));
+            setup_text_->setFlag(LH_FLAG_HIDDEN,false);
             return;
         }
     }

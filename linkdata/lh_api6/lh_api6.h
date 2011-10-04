@@ -46,6 +46,7 @@
 
 #ifdef __cplusplus
 
+#include "lh_loader.h"
 #include "lh_id.h"
 #include "lh_input.h"
 #include "lh_qvariant.h"
@@ -56,6 +57,7 @@
 #include "lh_sink.h"
 #include "lh_setup.h"
 
+typedef lh::api6::loader lh_loader;
 typedef lh::api6::id_ptr lh_id;
 typedef lh::api6::input lh_input;
 typedef lh::api6::object lh_object;

@@ -45,7 +45,7 @@
 #include <QDebug>
 #include <QRegExp>
 #include <windows.h>
-#include "LH_NowPlayingReader.h"
+#include "LH_QtPlugin_NowPlaying.h"
 
 #ifndef WIN32
 //??

@@ -54,12 +54,7 @@
 #include "LH_Qt_QStringList.h"
 #include "LH_Qt_QSlider.h"
 
-class LH_Text:
-#ifdef LH_CF
-    public LH_QtCFInstance
-#else
-    public LH_QtInstance
-#endif
+class LH_Text : public LH_QtCFInstance
 {
     Q_OBJECT
     QTextDocument doc_;
@@ -96,28 +91,8 @@ public:
         Tera
     } NumberMode;
 
-    LH_Text() :
-    #ifdef LH_CF
-        LH_QtCFInstance(),
-    #else
-        LH_QtInstance(),
-    #endif
-        scrollposx_(0),
-        scrollposy_(0),
-        richtext_(false),
-        setup_text_(0),
-        setup_font_(0),
-        setup_fontresize_(0),
-        setup_pencolor_(0),
-        setup_bgcolor_(0),
-        setup_horizontal_(0),
-        setup_vertical_(0),
-        setup_scrollrate_(0),
-        setup_scrollstep_(0),
-        setup_scrollgap_(0)
-    {}
-
-    const char *userInit();
+    LH_Text();
+    ~LH_Text();
 
     int polling();
     int notify(int code,void* param);
@@ -131,8 +106,8 @@ public:
     virtual QColor bgcolor() { return setup_bgcolor_->value(); }
 
     QFont font() const { return font_; }
-    int horizontal() const { return setup_horizontal_->index(); }
-    int vertical() const { return setup_vertical_->index(); }
+    int horizontal() const { return setup_horizontal_->value(); }
+    int vertical() const { return setup_vertical_->value(); }
     bool fontresize() const { return setup_fontresize_->value(); }
     int scrollrate() const { return setup_scrollrate_->value(); }
     int scrollstep() const { return setup_scrollstep_->value(); }
@@ -145,6 +120,8 @@ public:
     bool richtext() const { return richtext_; }
     QImage& textimage() { return textimage_; }
     bool prepareForRender(int w, int h);
+    bool monochrome() const { return state() ? state()->dev_depth == 1 : false; }
+    bool setStyleStrategy();
 
     static QImage makeImage(int w = 1, int h = 1)
     {

@@ -27,7 +27,7 @@
 
 #include "LH_QtPlugin.h"
 
-#define VERSION 1.02
+#define VERSION 1.00
 
 class LH_QtPlugin_Cursor: public LH_QtPlugin
 {

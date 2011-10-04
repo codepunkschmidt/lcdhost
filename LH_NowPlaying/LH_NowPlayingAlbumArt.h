@@ -3,6 +3,7 @@
 
 #include "LH_QtInstance.h"
 #include "LH_Qt_QFileInfo.h"
+#include "LH_QtPlugin_NowPlaying.h"
 
 class LH_NowPlayingAlbumArt : public LH_QtInstance
 {
@@ -12,8 +13,12 @@ protected:
     LH_Qt_QFileInfo *setup_file_;
 
 public:
-    const char *userInit();
+    LH_NowPlayingAlbumArt();
 
+    int polling() { return 0; }
+    int notify(int n,void* p)  { Q_UNUSED(n); Q_UNUSED(p); return 0; }
+    int width( void*obj,int h ) { Q_UNUSED(obj); Q_UNUSED(h); return -1; }
+    int height( void*obj,int h ) { Q_UNUSED(obj); Q_UNUSED(h); return -1; }
     QImage *render_qimage( int w, int h );
 
     static lh_class *classInfo();

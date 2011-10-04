@@ -18,7 +18,9 @@ static HANDLE hShell32Dll = (HANDLE)0;
 static SHGetUnreadMailCountW_t SHGetUnreadMailCountW = NULL;
 #endif
 
-LH_PLUGIN(LH_QtPlugin_Mailcount) =
+LH_PLUGIN(LH_QtPlugin_Mailcount)
+
+char __lcdhostplugin_xml[] =
 "<?xml version=\"1.0\"?>"
 "<lcdhostplugin>"
   "<id>Mailcount</id>"
@@ -38,26 +40,31 @@ LH_PLUGIN(LH_QtPlugin_Mailcount) =
   "</longdesc>"
 "</lcdhostplugin>";
 
-const char *LH_QtPlugin_Mailcount::userInit()
+LH_QtPlugin_Mailcount::LH_QtPlugin_Mailcount()
 {
-    if( const char *err = LH_QtPlugin::userInit() ) return err;
-
-    email_count_ = new LH_Qt_int(this,("Mail count"),0,LH_FLAG_READONLY|LH_FLAG_NOSAVE|LH_FLAG_NOSINK);
+    email_count_ = new LH_Qt_int(this,tr("Mail count"),0,LH_FLAG_READONLY|LH_FLAG_NOSAVE|LH_FLAG_NOSINK);
     email_count_->setHelp("This is the number of waiting e-mails, as reported by the "
                           "operating system.");
-    email_count_->setLink("/system/mail/count",true);
-    email_addr_ = new LH_Qt_QString(this,("Only check address"),QString());
+    email_count_->setLink("@/system/Mail count");
+    email_addr_ = new LH_Qt_QString(this,tr("Only check address"),QString());
     email_addr_->setHelp("If not empty, limits the search for waiting email to the "
                          "given e-mail address. <strong>Leave it empty</strong> for normal use.");
-    email_days_ = new LH_Qt_int(this,("Days back to check"),7);
+    email_days_ = new LH_Qt_int(this,tr("Days back to check"),7);
     email_days_->setHelp("How far back to look for unread e-mails.");
-    check_interval_ = new LH_Qt_int(this,("Check interval (seconds)"),2);
+    check_interval_ = new LH_Qt_int(this,tr("Check interval (seconds)"),2);
     check_interval_->setHelp("How often to look for new email, in seconds.");
-    manual_adjust_ = new LH_Qt_int(this,("Manual adjustment"),0);
+    manual_adjust_ = new LH_Qt_int(this,tr("Manual adjustment"),0);
     manual_adjust_->setHelp("If the number of mails reported by the system is "
                             "always wrong by a fixed amount, you may adjust for it here.");
-    connect( manual_adjust_, SIGNAL(valueChanged()), this, SLOT(getUnreadMailcount()) );
+    connect( manual_adjust_, SIGNAL(changed()), this, SLOT(getUnreadMailcount()) );
+}
 
+LH_QtPlugin_Mailcount::~LH_QtPlugin_Mailcount()
+{
+}
+
+const char *LH_QtPlugin_Mailcount::userInit()
+{
 #ifdef Q_WS_WIN
     hShell32Dll = LoadLibraryW( L"SHELL32.DLL" );
     if( hShell32Dll != NULL )
@@ -83,7 +90,7 @@ int LH_QtPlugin_Mailcount::notify( int code, void *param )
     return LH_QtPlugin::notify( code, param ) | LH_NOTE_SECOND;
 }
 
-LH_QtPlugin_Mailcount::~LH_QtPlugin_Mailcount()
+void LH_QtPlugin_Mailcount::userTerm()
 {
 #ifdef Q_WS_WIN
     if( hShell32Dll )

@@ -43,17 +43,22 @@ public:
     LH_Qt_bool( LH_QtObject *parent, QString name, bool value, int flags = 0 )
         : LH_QtSetupItem( parent, name, lh_type_integer_boolean, flags )
     {
-        LH_QtSetupItem::setValue( value );
+        item_.data.i = value;
     }
 
     bool value() const
     {
-        return qVariantValue<bool>( LH_QtSetupItem::value() );
+        return item_.data.i ? true : false;
     }
 
     void setValue(bool b)
     {
-        LH_QtSetupItem::setValue( b );
+        if( (item_.data.i != 0) != b )
+        {
+            item_.data.i = ( b ? 1 : 0 );
+            refresh();
+            emit set();
+        }
     }
 
     virtual void setup_change()

@@ -23,7 +23,6 @@ public:
     //LH_Qt_bool *setup_value_format_;
 
     LH_AfterburnerData( LH_QtObject *parent, LH_MonitoringUI *ui, monitoringDataMode dataMode = mdmNumbers, bool includeGroups = false );
-    ~LH_AfterburnerData();
 
     QString appName() { return "MSI Afterburner"; }
     monitoringDataType getType();

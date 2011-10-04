@@ -43,6 +43,7 @@
 
 #include "LH_Image.h"
 #include "logo_blob.h"
+#include "lh_plugin.h"
 
 #ifndef Q_UNUSED
 # if defined(Q_CC_INTEL) && !defined(Q_OS_WIN) || defined(Q_CC_RVCT)
@@ -54,8 +55,14 @@ inline void qUnused(T &x) { (void)x; }
 # endif
 #endif
 
-lh_signature lh_image_signature = LH_SIGNATURE_BLANK;
-char lh_image_xml[] =
+LH_SIGNATURE();
+
+#ifndef STRINGIZE
+# define STRINGIZE_(x) #x
+# define STRINGIZE(x) STRINGIZE_(x)
+#endif
+
+char __lcdhostplugin_xml[] =
 "<?xml version=\"1.0\"?>"
 "<lcdhostplugin>"
   "<id>Image</id>"
@@ -80,32 +87,90 @@ char lh_image_xml[] =
 **************************************************************************/
 
 /**
-  This structure is what we'll be using as a layout item
-  of our single layout class.
+  This structure is what we'll be using as an 'instance' of ourselves.
   */
 typedef struct _lh_image_s
 {
-    lh_layout_item item_;
     char filename[256];
-    lh_buffer *file_contents;
+    lh_blob *blob;
+    lh_callback_t cb;
+    int cb_id;
+    const lh_systemstate *state;
     lh_setup_item setup_filename;
+    lh_setup_item *setup_array[2];
 } lh_image;
+
+/**
+  image_new() allocates a new instance of this class and returns it.
+  */
+static void * image_new( const lh_class *cls )
+{
+    lh_image *img;
+    Q_UNUSED(cls);
+
+    img = malloc( sizeof(lh_image) );
+    if( img )
+    {
+        memset( img, 0, sizeof(img) );
+        img->blob = NULL;
+        img->state = 0;
+        memset( &img->setup_filename, 0, sizeof(img->setup_filename) );
+        img->setup_filename.name = "Filename";
+        img->setup_filename.help = NULL;
+        img->setup_filename.type = lh_type_string_filename;
+        img->setup_filename.param.size = sizeof(img->filename);
+        img->setup_filename.data.s = img->filename;
+        img->setup_filename.flags = 0;
+        img->setup_array[0] = & img->setup_filename;
+        img->setup_array[1] = NULL;
+        return img;
+    }
+
+    return NULL;
+}
+
+/**
+  */
+
+static const char *image_init(void*obj,lh_callback_t cb,int cb_id,const char*name,const lh_systemstate*state)
+{
+    lh_image *img = obj;
+    Q_UNUSED(name);
+    img->cb = cb;
+    img->cb_id = cb_id;
+    img->state = state;
+    return 0;
+}
+
+/**
+  Since we store the setup array inside our struct, and do
+  the setup when creating it, just return the array.
+
+  This function is called right after the instance is created,
+  and the returned data is expected to be valid until the instance
+  is destroyed.
+  */
+static lh_setup_item ** image_setup_data(void *obj)
+{
+    lh_image *img = obj;
+    return img->setup_array;
+}
 
 /**
   React to changes in setup immediately. We don't need to check which
   item is changed since we only have one. To illustrate self-unloading,
   if the filename equals 'unload', we request unloading.
   */
-static void image_value_changed( lh_setup_item *obj )
+static void image_setup_change(void*obj,lh_setup_item *i)
 {
-    lh_image *img = (void*) obj->obj.ref;
-    if( img )
+    lh_image *img = obj;
+    if( img && img->cb )
     {
-        if( !strcmp( (char*)obj->value.data.b.p, "unload" ) )
+        if( !strcmp( i->data.s, "unload" ) )
         {
-            strcpy( (char*)obj->value.data.b.p, "was-unloaded" );
-            obj->obj.cb_fn( obj->obj.cb_id, lh_cb_setup_refresh_value, 0 );
-            obj->obj.cb_fn( obj->obj.cb_id, lh_cb_unload, "Filename was 'unload'." );
+            strcpy( i->data.s, "was-unloaded" );
+            img->cb( img->cb_id, img, lh_cb_setup_refresh, i );
+            img->cb( img->cb_id, img, lh_cb_unload, "Filename was 'unload'." );
         }
         else
         {
@@ -114,47 +179,76 @@ static void image_value_changed( lh_setup_item *obj )
                 free( img->blob );
                 img->blob = NULL;
             }
-            img->item_.obj.cb_fn( img->item_.obj.cb_id, lh_cb_render, 0 );
+            img->cb( img->cb_id, img, lh_cb_render, NULL );
         }
     }
     return;
 }
 
 /**
-  On init, report our single setup item.
+  Not using input.
   */
-static const char *image_init(lh_object *obj)
+static void image_input(void*obj,lh_setup_item *i,int f,int v)
 {
-    lh_image *img = (void*) obj;
+    Q_UNUSED(obj);
+    Q_UNUSED(i);
+    Q_UNUSED(f);
+    Q_UNUSED(v);
+    return;
+}
 
-    img->setup_filename.obj.size = sizeof(lh_object);
-    img->setup_filename.obj.ref = img;
-    img->setup_filename.size = sizeof(lh_setup_item);
-    strcpy( img->setup_filename.obj.ident, "Filename");
-    img->setup_filename.meta.ui = lh_type_string_filename;
-    img->setup_filename.meta.flags = lh_meta_default;
-    img->setup_filename.value.fmt = lh_format_string;
-    img->setup_filename.value.data.b.p = img->filename;
-    img->setup_filename.value.data.b.n = sizeof(img->filename);
-    img->setup_filename.obj_value_changed = image_value_changed;
-    img->item_.obj.cb_fn( img->item_.obj.cb_id, lh_cb_setup_create, &img->setup_filename );
-
+/**
+  We don't use polling, so we always return zero.
+  */
+static int image_polling(void*obj)
+{
+    Q_UNUSED(obj);
     return 0;
 }
 
 /**
   If the image loading has failed, we'll retry every second
   */
-static int image_notify( lh_object *obj, int note, void *param )
+static int image_notify(void*obj,int note,void *param)
 {
-    lh_image *img = (void*) obj;
+    lh_image *img = obj;
     Q_UNUSED(param);
     if( img && ((!note) || (note&LH_NOTE_SECOND)) )
     {
         if( img->blob == 0 )
-            img->item_.obj.cb_fn( img->item_.obj.cb_id, lh_cb_render, 0 );
+            img->cb( img->cb_id, img, lh_cb_render, 0 );
     }
     return LH_NOTE_SECOND;
+}
+
+/**
+  This might be a good place to check if the image file
+  has been updated.
+  */
+static void image_prerender(void*obj)
+{
+    Q_UNUSED(obj);
+    return;
+}
+
+/**
+  We're so primitive, we can't even tell what size picture
+  we'll be returning. No worries. Negative size means
+  'I don't know', and LCDHost will get the size from the
+  image data.
+  */
+static int image_width(void*obj,int h)
+{
+    Q_UNUSED(obj);
+    Q_UNUSED(h);
+    return -1;
+}
+
+static int image_height(void*obj,int w)
+{
+    Q_UNUSED(obj);
+    Q_UNUSED(w);
+    return -1;
 }
 
 static int is_absolute( const char *filename )
@@ -174,165 +268,84 @@ static int is_absolute( const char *filename )
   data. Let LCDHost handle B/W color matching and
   sizing issues that may arise.
   */
-static const lh_buffer * image_render_buffer(lh_layout_item *obj,int w,int h)
+static const lh_blob * image_render_blob(void*obj,int w,int h)
 {
-    lh_image *img = (void*) obj;
+    char *fullname;
+    size_t n;
+    lh_image *img = obj;
 
     Q_UNUSED(w);
     Q_UNUSED(h);
 
-    if( img->file_contents->p == &logo_blob || img->file_contents->p == 0 )
+    if( img->blob == NULL )
     {
-        const char *filename = img->filename;
-        char *fullname = 0;
-        FILE *f = 0;
-        size_t n;
-
-        if( !is_absolute(filename) )
+        const char *dir_layout = img->state->dir_layout;
+        if( !is_absolute(img->filename) && dir_layout )
         {
-            const char *dir_layout = img->item_.layout.dir;
-            if( dir_layout == 0 ) dir_layout = "./";
             n = strlen( dir_layout ) + strlen( img->filename ) + 1;
             fullname = malloc( n );
             if( fullname )
             {
                 strcpy( fullname, dir_layout );
                 strcat( fullname, img->filename );
-                filename = fullname;
                 /* convert it from UTF-8 to local 8 bit */
-                img->item_.obj.cb_fn( img->item_.obj.cb_id, lh_cb_utf8_to_local8bit, fullname );
+                img->cb( img->cb_id, img, lh_cb_utf8_to_local8bit, fullname );
                 img->blob = lh_binaryfile_to_blob( fullname );
+                free( fullname );
             }
         }
-
-        f = fopen( filename, "rb" );
-        if( f != NULL )
-        {
-            long filesize = 0;
-            if( fseek( f, 0, SEEK_END ) == 0 ) filesize = ftell( f );
-            if( filesize > 0 )
-            {
-                fseek( f, 0, SEEK_SET );
-                img->file_contents->p = malloc( filesize );
-                if( img->file_contents->p )
-                {
-                    if( fread( img->file_contents->p, 1, filesize, f ) != (size_t) filesize )
-                    {
-                        free( img->file_contents->p );
-                        img->file_contents->p = NULL;
-                        img->file_contents->n = 0;
-                    }
-                    else
-                    {
-                        img->file_contents->n = filesize;
-                    }
-                }
-            }
-            fclose( f );
-        }
-
-        if( fullname ) free( fullname );
+        else
+            img->blob = lh_binaryfile_to_blob( img->filename );
     }
 
-    if( img->file_contents->p == 0 )
-    {
-        img->file_contents->p = logo_blob;
-        img->file_contents->n = sizeof(logo_blob);
-    }
-
-    return & img->file_contents;
-}
-
-/**
-  image_new() allocates a new instance of this class and returns it.
-  */
-static lh_layout_item* image_new( lh_layout_class *cls )
-{
-    lh_image *img;
-    Q_UNUSED(cls);
-
-    img = malloc( sizeof(lh_image) );
-    if( img )
-    {
-        memset( img, 0, sizeof(lh_image) );
-        img->item_.obj.size = sizeof( lh_object );
-        img->item_.obj.obj_init = image_init;
-        img->item_.obj.obj_notify = image_notify;
-
-        img->item_.size = sizeof(lh_layout_item);
-        img->item_.obj_render_blob = image_render_blob;
-
-        img->blob = NULL;
-        memset( &img->setup_filename, 0, sizeof(lh_setup_item) );
-        return (lh_layout_item*) img;
-    }
-
-    return NULL;
+    return img->blob ? img->blob : logo_blob;
 }
 
 /**
   Free resources.
   */
-static void image_delete( lh_layout_class *cls, lh_layout_item *obj )
+static void image_delete(void*obj)
 {
-    Q_UNUSED(cls);
-    lh_image *img = (void*) obj;
+    lh_image *img = obj;
     if( img->blob ) free( img->blob );
-    if( img->setup_filename.obj.cb_id )
-        img->setup_filename.obj.cb_fn( img->setup_filename.obj.cb_id, lh_cb_destroy, 0 );
     memset( img, 0, sizeof(lh_image) );
     free( img );
     return;
 }
 
 /**************************************************************************
-** Our layout class object
+** LCDHost data
 **************************************************************************/
 
-static lh_layout_class image_class =
+static lh_class class_image =
 {
+    sizeof(lh_class),
+    "Static",
+    "StaticImage",
+    "Image",
+    -1,-1,
     {
-        sizeof(lh_object),
-        0, /* ref */
-        0, /* cb_id */
-        0, /* cb */
-        0, /* obj_init */
-        0, /* obj_polling */
-        0, /* obj_notify */
-        0, /* obj_realloc */
-        "StaticImage", /* ident */
-        "Image" /* title */
+        sizeof(lh_object_calltable),
+        image_init,
+        image_setup_data,
+        0, /* not using setup_resize, the filename isn't dynamically allocated */
+        image_setup_change,
+        image_input,
+        image_polling,
+        image_notify,
+        0, /* not using class list */
+        0 /* not using term */
     },
-    sizeof(lh_layout_class),
-    "Static", /* path */
-    -1,-1, /* default size */
-    image_new,
-    image_delete
-};
-
-static const char *image_plugin_init( lh_object *o )
-{
-    o->cb_fn( o->cb_id, lh_cb_class_create, &image_class );
-    return 0;
-}
-
-
-/**************************************************************************
-** Our plugin object
-**************************************************************************/
-
-static lh_object image_plugin =
-{
-    sizeof(lh_object),
-    0, /* ref */
-    0, /* cb_id */
-    0, /* cb */
-    image_plugin_init, /* to register our single class */
-    0, /* obj_polling */
-    0, /* obj_notify */
-    0, /* obj_realloc */
-    {}, /* ident */
-    "Image", /* title */
+    {
+        sizeof(lh_instance_calltable),
+        image_new,
+        image_prerender,
+        image_width,
+        image_height,
+        image_render_blob,
+        0, /* not using render_qimage */
+        image_delete
+    }
 };
 
 /**************************************************************************
@@ -355,16 +368,54 @@ static lh_object image_plugin =
 # define EXPORT
 #endif
 
-EXPORT lh_object *lh_create()
+static const char *plugin_init(void*ref,lh_callback_t cb,int cb_id,const char*name,const lh_systemstate*state)
 {
-    return &image_plugin;
+    Q_UNUSED(ref);
+    Q_UNUSED(cb);
+    Q_UNUSED(cb_id);
+    Q_UNUSED(name);
+    Q_UNUSED(state);
+    return 0;
 }
 
-EXPORT void lh_destroy( lh_object *o )
+static const lh_class ** plugin_class_list(void*ref)
 {
-    Q_UNUSED(o);
-    if( image_class.obj.cb_fn && image_class.obj.cb_id )
-        image_class.obj.cb_fn( image_class.obj.cb_id, lh_cb_destroy, 0 );
+    Q_UNUSED(ref);
+    static const lh_class *lh_classes[] =
+    {
+        & class_image,
+        NULL
+    };
+    return lh_classes;
+}
+
+EXPORT void *lh_create()
+{
+    return & class_image;
+}
+
+EXPORT const lh_object_calltable* lh_get_object_calltable( void *ref )
+{
+    Q_UNUSED(ref);
+    static lh_object_calltable objtable =
+    {
+        sizeof(lh_object_calltable),
+        plugin_init, /* init */
+        0, /* setup_data */
+        0, /* setup_resize */
+        0, /* setup_change */
+        0, /* input */
+        0, /* polling */
+        0, /* notify */
+        plugin_class_list, /* class list */
+        0 /* term */
+    };
+    return & objtable;
+}
+
+EXPORT void lh_destroy( void *ref )
+{
+    Q_UNUSED(ref);
     return;
 }
 

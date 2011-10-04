@@ -63,7 +63,9 @@ LIBS += -L$$LH_DESTDIR
 lh_plugin {
     CONFIG -= lh_api6
     hidapi: CONFIG += lh_hidapi
+    hid: CONFIG += lh_hidapi
     libusb: CONFIG += lh_libusb
+    usb: CONFIG += lh_libusb
     LIBS += -llh_api6 -llh_api5
     unix:POST_TARGETDEPS += $$LH_DESTDIR/liblh_api6.a $$LH_DESTDIR/liblh_api5.a
     PRECOMPILED_HEADER = $$PWD/lh_api5/lh_api5.h

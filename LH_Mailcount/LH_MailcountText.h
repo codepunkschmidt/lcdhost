@@ -4,7 +4,7 @@
 #include <QTime>
 #include <QImage>
 
-#include "../LH_Text/LH_Text.h"
+#include "LH_Text/LH_Text.h"
 #include "LH_Qt_QString.h"
 #include "LH_Qt_int.h"
 #include "LH_Qt_bool.h"
@@ -16,8 +16,7 @@ class LH_MailcountText: public LH_Text
     LH_Qt_int *hide_limit_;
 
 public:
-    LH_MailcountText() : LH_Text(), email_count_(0), hide_limit_(0) {}
-    const char *userInit();
+    LH_MailcountText();
     static lh_class *classInfo();
 
 public slots:

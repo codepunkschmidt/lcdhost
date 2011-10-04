@@ -34,7 +34,7 @@
   */
 
 #include "LH_WebKitHTML.h"
-#include "../WebKitCommand.h"
+#include "WebKitCommand.h"
 
 LH_PLUGIN_CLASS(LH_WebKitHTML)
 
@@ -47,20 +47,20 @@ lh_class *LH_WebKitHTML::classInfo()
         "DynamicWebKitHTML",
         "WebKit HTML",
         96, 32,
+        lh_object_calltable_NULL,
+        lh_instance_calltable_NULL
     };
 
     return &classinfo;
 }
 
-const char *LH_WebKitHTML::userInit()
+LH_WebKitHTML::LH_WebKitHTML()
 {
-    if( const char *err = LH_WebKit::userInit() ) return err;
     html_ = new LH_Qt_QTextEdit(this,"~WebKitHTMLScript",QString(),LH_FLAG_FOCUS);
     connect( html_, SIGNAL(changed()), this, SLOT(htmlChanged()) );
-    return 0;
 }
 
 void LH_WebKitHTML::htmlChanged()
 {
-    sendRequest( QUrl::fromLocalFile( dir_layout() + "/" ), html_->value() );
+    sendRequest( QUrl::fromLocalFile( QString::fromUtf8( state()->dir_layout ) + "/" ), html_->value() );
 }

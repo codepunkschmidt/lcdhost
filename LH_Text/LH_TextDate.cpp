@@ -47,22 +47,18 @@ protected:
     LH_Qt_QString *setup_format_;
 
 public:
-    const char *userInit()
+    LH_TextDate() : LH_Text()
     {
-        if( const char *err = LH_Text::userInit() ) return err;
-        setup_format_ = new LH_Qt_QString(this,
-                                          "(a href='http:||doc.trolltech.com|4.6|qdate.html#toString')Form",
-                                          "yyyy-MM-dd dddd");
-        setup_format_->setTitle("<a href=\"http://doc.trolltech.com/4.6/qdate.html#toString\">Format</a>");
+        setup_format_ = new LH_Qt_QString(this,"<a href=\"http://doc.trolltech.com/4.6/qdate.html#toString\">Format</a>","yyyy-MM-dd dddd");
         setup_format_->setHelp("<p>Format to use. Common formats include:</p>"
                                "<ul>"
                                "<li>yyyy-MM-dd dddd</li>"
                                "<li>MM/dd/yyyy</li>"
                                "<li>ddd MMM d yyyy</li>"
                                "</ul>");
-        setup_text_->setTitle("Current date");
+        setup_text_->setName("Current date");
         setup_text_->setFlag(LH_FLAG_READONLY,true);
-        return 0;
+        return;
     }
 
     /**
@@ -97,8 +93,8 @@ public:
             "SystemDateText",
             "Date (Text)",
             -1, -1,
-            
-            
+            lh_object_calltable_NULL,
+            lh_instance_calltable_NULL
         };
 
         if( classInfo.width == -1 )

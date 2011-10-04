@@ -39,19 +39,84 @@
 #define LH_QTPLUGIN_NOWPLAYING_H
 
 #include "LH_QtPlugin.h"
-#include "LH_NowPlayingThread.h"
+#include "utils.h"
+#include <QFile>
+#include <QThread>
+#include <QDebug>
+#include <QTimer>
 
-#define VERSION 2.21
+#define VERSION 2.10
+
+class LH_NowPlaying_Reader: public QThread
+{
+    Q_OBJECT
+    bool playerFound_;
+    QString artworkCachePath_;
+    TrackInfo info_;
+    artworkDescription cachedArtwork_;
+    bool storeInfo(TrackInfo newInfo);
+
+public:
+    LH_NowPlaying_Reader(LH_QtPlugin *parent): QThread((QObject*)parent)
+    {
+        // get the data directory. we will save a temporary "art.jpg" file
+        // here whilst it is valid. When the album changes or the plugin is
+        // unloaded this file is automatically cleaned up.
+        artworkCachePath_ = QString::fromUtf8(parent->state()->dir_data);
+        Q_ASSERT( artworkCachePath_.endsWith('/') );
+        return;
+    }
+
+    ~LH_NowPlaying_Reader();
+
+    TrackInfo info() { return info_; }
+    bool playerFound() { return playerFound_; }
+    QString artworkFileName()
+    {
+        return cachedArtwork_.fileName;
+    }
+    void clearArtwork()
+    {
+        /*
+        qDebug() << "Clean up requested: " << cachedArtwork_.fileName;
+        if(cachedArtwork_.fileName!="" && QFile::exists(cachedArtwork_.fileName))
+            qDebug() << "Clean up suceeded: " << QFile::remove(cachedArtwork_.fileName);
+        else
+            qDebug() << "Clean up skipped";
+        */
+        if(cachedArtwork_.fileName!="" && QFile::exists(cachedArtwork_.fileName))
+        {
+            #ifdef Q_OS_WIN
+                SetFileAttributes((LPCTSTR)cachedArtwork_.fileName.utf16(), 0);
+            #endif
+            QFile::remove(cachedArtwork_.fileName);
+        }
+        cachedArtwork_ = (artworkDescription){amNone, "","","",""};
+    }
+
+    void refresh();
+    virtual void run() { refresh(); }
+
+signals:
+    void changed();
+    void artworkChanged();
+};
+
+
+
+extern LH_NowPlaying_Reader* currentTrack;
 
 class LH_QtPlugin_NowPlaying : public LH_QtPlugin
 {
     Q_OBJECT
-    LH_NowPlayingThread *thread_;
+    QTimer timer_;
 
 public:
-    LH_QtPlugin_NowPlaying() : LH_QtPlugin(), thread_(0) {}
-    ~LH_QtPlugin_NowPlaying();
     const char *userInit();
+    void userTerm();
+
+public slots:
+    void refresh_data();
 };
 
 #endif // LH_QTPLUGIN_NOWPLAYING_H

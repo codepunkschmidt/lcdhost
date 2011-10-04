@@ -48,7 +48,7 @@
 #include "LH_Qt_QProgressBar.h"
 #include "LH_Qt_bool.h"
 #include "LH_Qt_QTextEdit.h"
-#include "../WebKitCommand.h"
+#include "WebKitCommand.h"
 
 class LH_ParseThread : public QThread {
     Q_OBJECT
@@ -86,19 +86,23 @@ class LH_WebKit : public LH_QtInstance
 
 protected:
     QString html_;
+
     LH_Qt_bool *setup_parse_;
     LH_Qt_QTextEdit *setup_regexp_;
     LH_Qt_bool *setup_regexp_lazy_;
     LH_Qt_QTextEdit *setup_template_;
+
     LH_Qt_QSlider *zoom_;
     LH_Qt_QProgressBar *progress_;
-    QHash<QString, QString> virtual getTokens();
 
+    QHash<QString, QString> virtual getTokens();
 public:
-    LH_WebKit( const bool enableParsing = false) : LH_QtInstance(0), parsingEnabled_(enableParsing) {}
+    LH_WebKit( const bool enableParsing = false);
     ~LH_WebKit();
 
     const char *userInit();
+    void userTerm();
+
     int notify(int, void *);
     QImage *render_qimage(int w, int h);
 

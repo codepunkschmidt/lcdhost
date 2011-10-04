@@ -32,67 +32,78 @@
   POSSIBILITY OF SUCH DAMAGE.
   */
 
-#include "lh_api5.h"
+#include "LH_QtNetwork.h"
 
-LH_QtNetwork::LH_QtNetwork( LH_QtInstance *parent ) :
-    QObject( parent ),
-    setup_smoothing_( *parent, "Smoothing", lh_setup::ui_slider, 3,1,10 ),
-    sink_netin_( *parent, "NetIn", "/system/net/in" ),
-    sink_netout_( *parent, "NetOut", "/system/net/out" )
+LH_QtNetwork::LH_QtNetwork( LH_QtInstance *parent )
 {
-    connect( &sink_netin_, SIGNAL(valueChanged(QVariant)), this, SLOT(netInChanged(QVariant)) );
-    connect( &sink_netout_, SIGNAL(valueChanged(QVariant)), this, SLOT(netOutChanged(QVariant)) );
+    parent_ = parent;
+    setup_smoothing_ = new LH_Qt_QSlider(parent,"Smoothing",3,1,10,LH_FLAG_AUTORENDER);
+    data_.clear();
     return;
 }
 
 LH_QtNetwork::~LH_QtNetwork()
 {
+    while( !data_.isEmpty() )
+        delete data_.takeFirst();
     return;
 }
 
-void LH_QtNetwork::netInChanged( const QVariant & v )
+int LH_QtNetwork::notify(int n, void *p)
 {
-    netin_.enqueue( v.toLongLong() );
-    while( netin_.size() >= samples() ) netin_.dequeue();
-    parent()->requestRender();
+    Q_UNUSED(p);
+    Q_ASSERT( parent_ != NULL );
+
+    if( n & LH_NOTE_NET )
+    {
+        while( data_.size() >= samples() ) delete data_.dequeue();
+        lh_netdata *data = new lh_netdata;
+        if( data )
+        {
+            memcpy( data, & state()->net_data, sizeof(lh_netdata) );
+            while( data_.size() >= samples() ) delete data_.dequeue();
+            data_.enqueue( data );
+            parent_->requestRender();
+        }
+    }
+    return LH_NOTE_NET;
 }
 
-void LH_QtNetwork::netOutChanged( const QVariant & v )
+qint64 LH_QtNetwork::inRate() const
 {
-    netout_.enqueue( v.toLongLong() );
-    while( netout_.size() >= samples() ) netout_.dequeue();
-    parent()->requestRender();
+    if( data_.size() < 2 ) return 0;
+    if( data_.last()->device != data_.first()->device ) return 0;
+    if( data_.last()->in < data_.first()->in ) return 0;
+    qint64 timedelta = data_.last()->when - data_.first()->when;
+    if( timedelta > 0 ) return (data_.last()->in - data_.first()->in) * Q_INT64_C(1000) / timedelta;
+    return 0;
 }
 
-long long LH_QtNetwork::inRate() const
+qint64 LH_QtNetwork::outRate() const
 {
-    if( netin_.size() < 2 ) return 0;
-    return ( netin_.first() + netin_.last() ) / 2;
-}
-
-long long LH_QtNetwork::outRate() const
-{
-    if( netout_.size() < 2 ) return 0;
-    return ( netout_.first() + netout_.last() ) / 2;
+    if( data_.size() < 2 ) return 0;
+    if( data_.last()->device != data_.first()->device ) return 0;
+    if( data_.last()->out < data_.first()->out ) return 0;
+    qint64 timedelta = data_.last()->when - data_.first()->when;
+    if( timedelta > 0 ) return (data_.last()->out - data_.first()->out) * Q_INT64_C(1000) / timedelta;
+    return 0;
 }
 
 int LH_QtNetwork::inPermille() const
 {
-    if( long long inmax = sink_netin_.maximum().toLongLong() )
-        return inRate() * 1000 / inmax;
+    if( state()->net_max_in ) return inRate() * 1000 / state()->net_max_in;
     return 0;
 }
 
 int LH_QtNetwork::outPermille() const
 {
-    if( long long outmax = sink_netout_.maximum().toLongLong() )
-        return outRate() * 1000 / outmax;
+    if( state()->net_max_out ) return outRate() * 1000 / state()->net_max_out;
     return 0;
 }
 
 int LH_QtNetwork::tpPermille() const
 {
-    if( long long max = (sink_netin_.maximum().toLongLong() + sink_netout_.maximum().toLongLong()) )
-        return (inRate()+outRate()) * 1000 / max;
+    qint64 div = state()->net_max_in + state()->net_max_out;
+    if( div ) return (inRate() + outRate()) * 1000 / div;
     return 0;
 }

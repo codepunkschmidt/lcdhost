@@ -36,17 +36,16 @@
   **/
 
 #include "LH_NowPlayingBar.h"
-#include "LH_NowPlayingReader.h"
 
 LH_PLUGIN_CLASS(LH_NowPlayingBar)
 
-const char *LH_NowPlayingBar::userInit()
+LH_NowPlayingBar::LH_NowPlayingBar()
 {
-    if( const char *err = LH_Bar::userInit() ) return err;
     connect( currentTrack, SIGNAL(changed()), this, SLOT(refresh_pos()) );
     setMin(0);
     setValue(0,1);
-    return 0;
+
+    return;
 }
 
 lh_class *LH_NowPlayingBar::classInfo()
@@ -58,7 +57,7 @@ lh_class *LH_NowPlayingBar::classInfo()
         "NowPlayingBar",
         "Now Playing (Progress Bar)",
         -1, -1,
-        
+        lh_instance_calltable_NULL
     };
 
     return &classInfo;

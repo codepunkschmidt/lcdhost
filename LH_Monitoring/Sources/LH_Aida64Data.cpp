@@ -15,10 +15,6 @@ LH_Aida64Data::LH_Aida64Data( LH_QtObject *parent, LH_MonitoringUI *ui,monitorin
     ui_->setVisible(mon_type | mon_group | mon_item);
 }
 
-LH_Aida64Data::~LH_Aida64Data()
-{
-}
-
 QString getTypeName(QString tagName)
 {
     if (tagName == "sys") return QString("System (%1)").arg(tagName);

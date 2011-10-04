@@ -1,5 +1,5 @@
 /**
-  \file     utils.cpp
+  \file     LH_NP_MSN_Compat.cpp
   \author   Andy Bridges <andy@bridgesuk.com>
 
   THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"

@@ -39,8 +39,8 @@ lh_class *LH_DataViewerConnector::classInfo()
         "DataViewerConnector",
         "Data Connector",
         -1, -1,
-
-
+        lh_object_calltable_NULL,
+        lh_instance_calltable_NULL
     };
 
     if( classInfo.width == -1 )
@@ -59,16 +59,14 @@ lh_class *LH_DataViewerConnector::classInfo()
 #define source_type_INI 3
 
 
-const char *LH_DataViewerConnector::userInit()
+LH_DataViewerConnector::LH_DataViewerConnector()
 {
-    if( const char *err = LH_QtInstance::userInit() ) return err;
-
     setup_feedback_ = new LH_Qt_QString(this, "Feedback", "", LH_FLAG_READONLY | LH_FLAG_NOSAVE);
 
     QStringList langs = listLanguages();
     qDebug() << "languages: " << langs.count() << ": " << langs.join(",");
     setup_language_ = new LH_Qt_QStringList(this,"Language",langs, LH_FLAG_AUTORENDER);
-    setup_language_->setHidden( langs.length()<=1);
+    setup_language_->setFlag(LH_FLAG_HIDDEN, langs.length()<=1);
     connect( setup_language_, SIGNAL(changed()), this, SLOT(languageFileChanged()) );
 
     setup_map_file_ = new LH_Qt_QFileInfo(this,"Data Map",QFileInfo(), LH_FLAG_AUTORENDER );
@@ -87,13 +85,11 @@ const char *LH_DataViewerConnector::userInit()
 
     dataExpiry_ = 0;
     repolled_ = false;
-    hide();
-    return 0;
 }
 
 QString LH_DataViewerConnector::get_dir_layout()
 {
-    return dir_layout();
+    return QString::fromUtf8( state()->dir_layout );
 }
 
 QStringList LH_DataViewerConnector::listLanguages()
@@ -124,6 +120,7 @@ LH_DataViewerConnector::~LH_DataViewerConnector()
     rootNode = 0;
     delete sharedData;
     sharedData = 0;
+    return ;
 }
 
 int LH_DataViewerConnector::polling()
@@ -330,7 +327,7 @@ void LH_DataViewerConnector::mapFileChanged()
                         QString value = item.section('=',1,-1).trimmed();
                         if(property=="type")
                             sourceType_ = (value.toLower()=="xml"? source_type_XML : (value.toLower()=="ini"? source_type_INI : source_type_TXT)); else
-                        if(property=="delimited")
+                        if(property=="delimited")                        
                             isDelimited_ = (value.toLower()=="true" || value.toLower()=="yes" || value.toLower()=="1"); else
                         if(property=="delimiter")
                         {
@@ -646,8 +643,8 @@ dataNode* LH_DataViewerConnector::findNode(QString address, QHash<QString,int> i
 void LH_DataViewerConnector::languageFileChanged()
 {
     QString fileName;
-    if(setup_language_->index()>0 && setup_language_->index() < setup_language_->list().count())
-        fileName = QString("%1lists.%2.txt").arg(get_dir_layout()).arg(setup_language_->list().at(setup_language_->index()));
+    if(setup_language_->value()>0 && setup_language_->value() < setup_language_->list().count())
+        fileName = QString("%1lists.%2.txt").arg(get_dir_layout()).arg(setup_language_->list().at(setup_language_->value()));
     else
         fileName = setup_map_file_->value().absoluteFilePath();
 

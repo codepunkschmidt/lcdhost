@@ -1,7 +1,7 @@
 #ifndef LH_DATAVIEWERDIAL_H
 #define LH_DATAVIEWERDIAL_H
 
-#include "../LH_Dial/LH_Dial.h"
+#include "LH_Dial/LH_Dial.h"
 
 #include "LH_QtPlugin.h"
 #include "LH_Qt_int.h"
@@ -29,8 +29,7 @@ protected:
     LH_Qt_QString *setup_item_name_max_;
 
 public:
-    LH_DataViewerDial() : data_(this) {}
-    const char *userInit();
+    LH_DataViewerDial();
     QImage *render_qimage( int w, int h );
 
     int polling();

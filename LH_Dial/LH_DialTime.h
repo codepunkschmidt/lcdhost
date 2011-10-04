@@ -41,8 +41,12 @@ protected:
     LH_Qt_int *setup_adjust_hours_;
 
 public:
+    LH_DialTime();
+
     virtual const char *userInit();
+
     static lh_class *classInfo();
+
     int notify(int n, void *p);
 
 public slots:

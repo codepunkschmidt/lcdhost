@@ -60,12 +60,7 @@ class LH_WebKitURL : public LH_WebKit
 
 
 public:
-    LH_WebKitURL() : LH_WebKit(
-#ifdef USE_NAM
-            true
-#endif
-            ) {}
-    const char *userInit();
+    LH_WebKitURL();
 
     static lh_class *classInfo();
 

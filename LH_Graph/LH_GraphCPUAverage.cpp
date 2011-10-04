@@ -25,24 +25,27 @@
   */
 
 #include "LH_Graph.h"
+#include "LH_QtCPU.h"
 
 class LH_GraphCPUAverage : public LH_Graph
 {
+    LH_QtCPU cpu_;
+    int valCount;
+    qreal valCache;
+    qreal lastVal;
+
 public:
-    const char *userInit()
+    LH_GraphCPUAverage() : cpu_( this )
     {
-        if( const char *err = LH_Graph::userInit() ) return err;
+        valCount = 0;
+        valCache = 0;
+        lastVal = 0;
 
-        setUseLinkedValueAverage(true);
-        setLinkedValueMultiplier(0.01);
-        setup_linked_values_->setLink("/system/cpu/coreloads");
-        setup_linked_values_->refreshValue();
-
-        setMin(0);
+        setMin(0.0);
         setMax(100);
         setYUnit("%");
 
-        return 0;
+        cpu_.smoothingHidden(true);
     }
 
     static lh_class *classInfo()
@@ -53,10 +56,36 @@ public:
             "System/CPU",
             "SystemCPUAverageGraph",
             "Average Load (Graph)",
-            48,48
+            48,48,
+            lh_object_calltable_NULL,
+            lh_instance_calltable_NULL
         };
 
         return &classInfo;
+    }
+
+    int notify(int n, void *p)
+    {
+        if(!n || n&LH_NOTE_SECOND)
+        {
+            if (valCount!=0) {
+                lastVal = valCache/valCount;
+                addValue(lastVal);
+            }
+            valCache = 0;
+            valCount = 0;
+        } else {
+            valCache+=cpu_.averageload()/100;
+            valCount+=1;
+        }
+        return LH_Graph::notify(n,p) | cpu_.notify(n,p) | LH_NOTE_SECOND;
+    }
+
+    QImage *render_qimage( int w, int h )
+    {
+        if( LH_Graph::render_qimage(w,h) == NULL ) return NULL;
+        drawSingle();
+        return image_;
     }
 };
 

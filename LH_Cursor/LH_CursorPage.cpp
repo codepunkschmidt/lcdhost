@@ -37,23 +37,17 @@ lh_class *LH_CursorPage::classInfo()
         "Cursor",
         "CursorPage",
         "Cursor Page",
-        -1, -1
+        -1, -1,
+        lh_object_calltable_NULL,
+        lh_instance_calltable_NULL
     };
+
     return &classinfo;
 }
 
+
 LH_CursorPage::LH_CursorPage()
 {
-    active = false;
-    selected = false;
-}
-
-const char *LH_CursorPage::userInit()
-{
-    if( const char *err = LH_QtInstance::userInit() ) return err;
-
-    setVisible(selected);
-
     setup_coordinate_ = new LH_Qt_QString(this, "Coordinate", "1,1", LH_FLAG_AUTORENDER);
     setup_coordinate_->setHelp("This is the coordinate of this object, i.e. when the cursor is at the point specified here this object is selected. <br/>"
                                "<br/>"
@@ -64,21 +58,49 @@ const char *LH_CursorPage::userInit()
                                "<br/>"
                                "When selected a page (and all its children) is visible. When not selected it (and all its children) are hidden, although they can still be selected in the Instances tree."
                                );
-    setup_json_data_ = new LH_Qt_QString(this, "Cursor Data", "", LH_FLAG_NOSAVE | LH_FLAG_NOSOURCE | LH_FLAG_LAST /*| LH_FLAG_READONLY | LH_FLAG_HIDEVALUE*/);
-    setup_json_data_->setLink("Cursors/Primary Cursor");
-    setup_json_data_->setLinkFilter("Cursors");
-    setup_json_data_->refreshData();
-
-    connect(setup_json_data_,SIGNAL(changed()),this,SLOT(updateState()));
-    return 0;
+    active = false;
+    selected = false;
 }
+
+const char *LH_CursorPage::userInit()
+{
+    setVisible(selected);
+    return NULL;
+}
+
+int LH_CursorPage::polling()
+{
+    if(updateState()) callback(lh_cb_render,NULL);
+    return 100;
+}
+
+
+QImage *LH_CursorPage::render_qimage( int w, int h )
+{
+    Q_UNUSED(w);
+    Q_UNUSED(h);
+    return image_;
+}
+
 
 bool LH_CursorPage::updateState()
 {
-    bool newSelected;
-    bool newActive;
-    cursorData(setup_json_data_->value()).getState(setup_coordinate_->value().split(';'),newSelected,newActive);
+    QStringList mycoords = setup_coordinate_->value().split(';');
 
+    bool newSelected = false;
+    bool newActive = false;
+    foreach (QString mycoord_str, mycoords)
+    {
+        QStringList mycoord = mycoord_str.split(',');
+        if(mycoord.length()==2)
+        {
+            int myX = mycoord.at(0).toInt();
+            int myY = mycoord.at(1).toInt();
+
+            newSelected = newSelected || ( cursor_data.selState && cursor_data.selX==myX && cursor_data.selY==myY );
+            newActive = newActive ||  ( cursor_data.active && cursor_data.x==myX && cursor_data.y==myY );
+        }
+    }
     if(selected!=newSelected || active != newActive)
     {
         selected = newSelected;

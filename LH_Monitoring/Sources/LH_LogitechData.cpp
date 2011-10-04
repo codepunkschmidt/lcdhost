@@ -27,11 +27,6 @@ LH_LogitechData::LH_LogitechData(LH_QtObject *parent, LH_MonitoringUI *ui, monit
     ui_->refresh(mon_item);
 }
 
-LH_LogitechData::~LH_LogitechData()
-{
-
-}
-
 bool LH_LogitechData::getData(float& value, QString& text, QString& units)
 {
     bool resultVal = true;

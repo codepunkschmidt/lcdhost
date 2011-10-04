@@ -13,8 +13,8 @@ lh_class *LH_RSSText::classInfo()
         "DynamicRSSFeedText",
         "RSS feed (Text)",
         -1, -1,
-        
-        
+        lh_object_calltable_NULL,
+        lh_instance_calltable_NULL
     };
 
     if( classInfo.width == -1 )
@@ -28,13 +28,11 @@ lh_class *LH_RSSText::classInfo()
     return &classInfo;
 }
 
-const char *LH_RSSText::userInit()
+LH_RSSText::LH_RSSText() : LH_Text(), rss_(this)
 {
-    if( const char *err = LH_Text::userInit() ) return err;
 
-    rss_ = new LH_RSSInterface(this);
-    connect( rss_, SIGNAL(changed()), this, SLOT(setRssItem()) );
-    connect( rss_, SIGNAL(begin()), this, SLOT(beginFetch()) );
+    connect( &rss_, SIGNAL(changed()), this, SLOT(setRssItem()) );
+    connect( &rss_, SIGNAL(begin()), this, SLOT(beginFetch()) );
 
     setup_horizontal_->setFlag( LH_FLAG_HIDDEN, true );
     setup_vertical_->setFlag( LH_FLAG_HIDDEN, true );
@@ -45,17 +43,16 @@ const char *LH_RSSText::userInit()
     setup_text_->setFlag( LH_FLAG_READONLY, true );
 
     setRssItem();
-    return 0;
 }
 
 int LH_RSSText::notify(int code,void* param)
 {
-    return rss_->notify(code,param) | LH_Text::notify(code,param);
+    return rss_.notify(code,param) | LH_Text::notify(code,param);
 }
 
 void LH_RSSText::setRssItem()
 {
-    if( setText(rss_->item().title) ) requestRender();
+    if( setText(rss_.item().title) ) requestRender();
 }
 
 

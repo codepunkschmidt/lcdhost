@@ -35,8 +35,8 @@
 #include "LH_QtPlugin.h"
 #include "LH_QtInstance.h"
 
+LH_SIGNATURE();
 
-#if 0
 /**
   Exported from all LCDHost plugins.
   Note that lh_create() and lh_destroy() are defined with the LH_PLUGIN(classname) macro.
@@ -55,4 +55,3 @@ const lh_class **LH_QtPlugin::class_list()
     return LH_QtInstance::auto_class_list();
 }
 
-#endif

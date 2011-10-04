@@ -45,10 +45,9 @@ static inline uint PREMUL(uint x) {
     return x;
 }
 
-LH_Graph::LH_Graph( double defaultMin, double defaultMax )
+LH_Graph::LH_Graph( float defaultMin, float defaultMax )
 {
-    defaultMin_ = defaultMin;
-    defaultMax_ = defaultMax;
+    if (isDebug) qDebug() << "graph: init: begin";
     userDefinableLimits_ = false;
     graphMinY_ = graphMaxY_ = 0.0;
     values_.clear();
@@ -57,16 +56,6 @@ LH_Graph::LH_Graph( double defaultMin, double defaultMax )
     len_ = 30;
     divisorY_ = 1;
     unitText_ = "";
-    useLinkedValueAverage_ = false;
-    linkedValueMultiplier_ = 1;
-    return;
-}
-
-const char *LH_Graph::userInit()
-{
-    if( const char *err = LH_QtInstance::userInit() ) return err;
-
-    if (isDebug) qDebug() << "graph: init: begin";
 
     QStringList fgTypes = QStringList();
     fgTypes.append("Line Only");
@@ -107,31 +96,28 @@ const char *LH_Graph::userInit()
     setup_sample_rate_ = new LH_Qt_int(this,"Sample Rate",1,1,12,LH_FLAG_AUTORENDER);
     setup_sample_rate_->setHelp( "<p>How frequently to log data.</p>");
 
-    setup_description_ = new LH_Qt_QString(this,"Description","...",LH_FLAG_READONLY|LH_FLAG_NOSAVE|LH_FLAG_NOSINK|LH_FLAG_NOSOURCE|LH_FLAG_HIDETITLE);
+    setup_description_ = new LH_Qt_QString(this,"~","...",LH_FLAG_READONLY|LH_FLAG_NOSAVE);
     setup_description_->setHelp( "<p>Combining the \"Max Samples\" and the \"Sample Rate\" this field displays that total timespan of the graph.</p>");
 
     setup_line_selection_ = new LH_Qt_QStringList(this,"Selected Line",QStringList());
     setup_line_selection_->setHelp( "<p>Select a line here and configure it below. Seperate settings are stored for each line.</p>");
 
-    setup_line_pencolor_ = new LH_Qt_array_int_ui(this,"Line color",0,LH_FLAG_AUTORENDER, lh_type_integer_color);
-    setup_line_pencolor_->setHelp( "<p>The colour used do draw the line.</p>");
-    setup_line_fillcolor1_ = new LH_Qt_array_int_ui(this,"Area color (start)",0,LH_FLAG_AUTORENDER | LH_FLAG_HIDDEN, lh_type_integer_color);
-    setup_line_fillcolor1_->setHelp( "<p>The color used to fill the area between the line and the axis, at the furthest point from the axis (this color is only truely visible when the graph is full).</p>");
-    setup_line_fillcolor2_ = new LH_Qt_array_int_ui(this,"Area color (end)",0,LH_FLAG_AUTORENDER | LH_FLAG_HIDDEN, lh_type_integer_color);
-    setup_line_fillcolor2_->setHelp( "<p>The color used to fill the area between the line and the axis, at the axis.</p>");
+    setup_pencolor_ = new LH_Qt_QColor(this,"Line color",Qt::black,LH_FLAG_AUTORENDER);
+    setup_pencolor_->setHelp( "<p>The colour used do draw the line.</p>");
 
-    setup_line_image_ = new LH_Qt_array_string_ui(this, "Fill Image", QStringList(),
-                                                  LH_FLAG_AUTORENDER | LH_FLAG_HIDDEN, lh_type_string_filename);
-    setup_line_image_->setHelp( "<p>This image is used to create the foreground, filling the area between the line and the axis.</p>");
-    setup_line_image_opacity_ = new LH_Qt_array_int_ui(this,"Fill Image Opacity", 1, 0, 255, LH_FLAG_AUTORENDER | LH_FLAG_HIDDEN);
-    setup_line_image_opacity_->setHelp( "<p>This value affects the opacity of the fill image.</p>");
+    setup_fillcolor1_ = new LH_Qt_QColor(this,"Area color (start)",Qt::green,LH_FLAG_AUTORENDER);
+    setup_fillcolor1_->setHelp( "<p>The color used to fill the area between the line and the axis, at the furthest point from the axis (this color is only truely visible when the graph is full).</p>");
+    setup_fillcolor2_ = new LH_Qt_QColor(this,"Area color (end)",Qt::red,LH_FLAG_AUTORENDER);
+    setup_fillcolor2_->setHelp( "<p>The color used to fill the area between the line and the axis, at the axis.</p>");
 
-    setup_max_ = new LH_Qt_double(this, "Graph Ymax",defaultMax_,-99999999,99999999, LH_FLAG_AUTORENDER | LH_FLAG_HIDDEN);
+    setup_fg_image_ = new LH_Qt_QFileInfo(this, "Fill Image", QFileInfo(""), LH_FLAG_AUTORENDER | LH_FLAG_HIDDEN);
+    setup_fg_image_->setHelp( "<p>This image is used to create the foreground, filling the area between the line and the axis.</p>");
+    setup_fg_alpha_ = new LH_Qt_int(this,"Fill Image Opacity", 255, 0, 255, LH_FLAG_AUTORENDER | LH_FLAG_HIDDEN);
+    setup_fg_alpha_->setHelp( "<p>This value affects the opacity of the fill image.</p>");
+
+    setup_max_ = new LH_Qt_float(this, "Graph Ymax",defaultMax,-99999999,99999999, LH_FLAG_AUTORENDER | LH_FLAG_HIDDEN);
     setup_max_->setHelp( "<p>The maximum value displayed on the graph.</p>"
                          "<p>This value can only be set when \"Ymax Can Grow\" is disabled (see below).</p>");
-
-    setup_linked_values_ = new LH_Qt_array_double(this,"Linked Value",0,LH_FLAG_NOSAVE);
-    setup_units_ = new LH_Qt_QStringList(this,"Units",QStringList(),LH_FLAG_AUTORENDER | LH_FLAG_HIDDEN);
 
     setup_max_grow_ = new LH_Qt_bool(this,"Ymax Can Grow", true, LH_FLAG_AUTORENDER | LH_FLAG_READONLY | LH_FLAG_HIDDEN);
     setup_max_grow_->setHelp( "<p>When enabled the value for \"Graph Ymax\" will increase automatically to ensure no value goes off the top edge.</p>");
@@ -139,7 +125,7 @@ const char *LH_Graph::userInit()
     setup_auto_scale_y_max_ = new LH_Qt_bool(this,"Auto Scale Ymax", false, LH_FLAG_AUTORENDER);
     setup_auto_scale_y_max_->setHelp( "<p>When enabled, the plotted area's highest point will shift with the visible data to create a \"zooming\" effect. The less variation in the data the tighter the zoom. (Best used with \"Auto Scale Ymin\".)</p>");
 
-    setup_min_ = new LH_Qt_double(this, "Graph Ymin",defaultMin_,-99999999,99999999, LH_FLAG_AUTORENDER | LH_FLAG_READONLY | LH_FLAG_HIDDEN);
+    setup_min_ = new LH_Qt_float(this, "Graph Ymin",defaultMin,-99999999,99999999, LH_FLAG_AUTORENDER | LH_FLAG_READONLY | LH_FLAG_HIDDEN);
     setup_min_->setHelp( "<p>The minimum value displayed on the graph.</p>");
 
     setup_auto_scale_y_min_ = new LH_Qt_bool(this,"Auto Scale Ymin", false, LH_FLAG_AUTORENDER);
@@ -163,6 +149,10 @@ const char *LH_Graph::userInit()
     setup_y_labels_right_ = new LH_Qt_bool(this,"Y Labels on Right", false, LH_FLAG_AUTORENDER|LH_FLAG_HIDDEN);
     setup_y_labels_right_->setHelp( "<p>Position the labels on the right side instead of the left (or bottom instead of top for graphs which swap the X & Y axis).</p>");
 
+    setup_line_configs_ = new LH_Qt_QTextEdit(this, "Line Configs","",LH_FLAG_HIDDEN);
+    setup_line_configs_->setHelp( "<p>This text field stores the configuration data for each individual line and should not be edited manually.</p>");
+    setup_line_configs_->setOrder(1);
+
     setup_label_font_ = new LH_Qt_QFont(this, "Axis Label Font", QFont("Arial",8),LH_FLAG_AUTORENDER|LH_FLAG_HIDDEN);
     setup_label_font_->setHelp( "<p>The font used for Axis labels.</p>");
 
@@ -180,41 +170,59 @@ const char *LH_Graph::userInit()
     connect( setup_max_samples_, SIGNAL(changed()), this, SLOT(changeMaxSamples()) );
     connect( setup_sample_rate_, SIGNAL(changed()), this, SLOT(changeSampleRate()) );
     connect( setup_line_selection_, SIGNAL(changed()), this, SLOT(changeSelectedLine()) );
-    connect( setup_bg_image_, SIGNAL(changed()), this, SLOT(reloadImages()) );
+    connect( setup_pencolor_, SIGNAL(changed()), this, SLOT(updateSelectedLine()) );
+    connect( setup_fillcolor1_, SIGNAL(changed()), this, SLOT(updateSelectedLine()) );
+    connect( setup_fillcolor2_, SIGNAL(changed()), this, SLOT(updateSelectedLine()) );
+    connect( setup_fg_image_, SIGNAL(changed()), this, SLOT(updateFGImage()) );
+    connect( setup_bg_image_, SIGNAL(changed()), this, SLOT(updateBGImage()) );
+    connect( setup_fg_alpha_, SIGNAL(changed()), this, SLOT(updateSelectedLine()) );
     connect( setup_show_y_max_, SIGNAL(changed()), this, SLOT(updateLabelSelection()) );
     connect( setup_show_y_min_, SIGNAL(changed()), this, SLOT(updateLabelSelection()) );
     connect( setup_show_real_limits_, SIGNAL(changed()), this, SLOT(updateLabelSelection()) );
     connect( setup_max_grow_, SIGNAL(changed()), this, SLOT(updateLimitControls()) );
-    connect( setup_linked_values_, SIGNAL(changed()), this, SLOT(newLinkedValue()) );
-    connect( setup_units_, SIGNAL(changed()), this, SLOT(changeUnits()));
-    connect( setup_line_image_, SIGNAL(changed()), this, SLOT(reloadImages()));
-    connect( setup_line_image_, SIGNAL(set()), this, SLOT(reloadImages()));
-
-    connect( this, SIGNAL(initialized()), this, SLOT(updateDescText()));
 
     if (isDebug) qDebug() << "graph: init: done";
-
-    return 0;
+    return;
 }
 
-double LH_Graph::max()
+LH_Graph::~LH_Graph()
+{
+    if (isDebug) qDebug() << "graph: destroy: begin";
+
+    disconnect( setup_fg_type_, SIGNAL(changed()) );
+    disconnect( setup_max_samples_, SIGNAL(changed()) );
+    disconnect( setup_sample_rate_, SIGNAL(changed()) );
+    disconnect( setup_line_selection_, SIGNAL(changed()) );
+    disconnect( setup_pencolor_, SIGNAL(changed()) );
+    disconnect( setup_fillcolor1_, SIGNAL(changed()) );
+    disconnect( setup_fillcolor2_, SIGNAL(changed()) );
+    disconnect( setup_fg_image_, SIGNAL(changed()) );
+    disconnect( setup_fg_alpha_, SIGNAL(changed()) );
+    disconnect( setup_show_y_max_, SIGNAL(changed()) );
+    disconnect( setup_show_y_min_, SIGNAL(changed()) );
+    disconnect( setup_show_real_limits_, SIGNAL(changed()) );
+    disconnect( setup_max_grow_, SIGNAL(changed()) );
+    if (isDebug) qDebug() << "graph: destroy: done";
+}
+
+qreal LH_Graph::max()
 {
     if (setup_min_->value() < setup_max_->value())
         return setup_max_->value();
     else
         return setup_min_->value()+1;
 }
-double LH_Graph::max(double val)
+qreal LH_Graph::max(qreal val)
 {
     setup_max_->setValue(val);
     return max();
 }
 
-double LH_Graph::min()
+qreal LH_Graph::min()
 {
     return setup_min_->value();
 }
-double LH_Graph::min(double val)
+qreal LH_Graph::min(qreal val)
 {
     setup_min_->setValue(val);
     return min();
@@ -247,13 +255,13 @@ void LH_Graph::findDataBounds()
     // examine data points for each line and shift the data boundries accordingly
     for(int lineID=0;lineID<lineCount(); lineID++)
     {
-        double valueMin = max();
-        double valueMax = min();
+        qreal valueMin = max();
+        qreal valueMax = min();
         bool isConstant = true;
-        double constantValue = 0;
+        float constantValue = 0;
         for(int i=0;i<values_[lineID].length() && i<len_;i++)
         {
-            double y = values_[lineID].at(i);
+            qreal y = values_[lineID].at(i);
             if(i==0)
                 constantValue = y;
             else
@@ -320,13 +328,14 @@ void LH_Graph::drawSingle( int lineID )
     if (lineID>=lineCount()) return;
 
     if (isDebug) qDebug() << "graph: draw line: begin " << lineID;
+    QColor penColor = QColor();
+    QColor fillColor1 = QColor();
+    QColor fillColor2 = QColor();
+    QString fgImgPath = "";
+    int fgImgAlpha = 255;
 
     //get the colours required for this line & it's fill area
-    QColor penColor = QColor::fromRgba(setup_line_pencolor_->at(lineID,0));
-    QColor fillColor1 = QColor::fromRgba(setup_line_fillcolor1_->at(lineID,0));
-    QColor fillColor2 = QColor::fromRgba(setup_line_fillcolor2_->at(lineID,0));
-    QString fgImgPath = setup_line_image_->at(lineID,"");
-    int fgImgAlpha = setup_line_image_opacity_->at(lineID,255);
+    loadColors(lineID, penColor, fillColor1, fillColor2, fgImgPath, fgImgAlpha);
 
     QPainter painter;
 
@@ -339,11 +348,11 @@ void LH_Graph::drawSingle( int lineID )
     if(lineID==0)
     {
         if (img_size_.width() != w || img_size_.height()!= h)
-            reloadImages();
+            reload_images();
 
         delete image_;
 
-        switch(setup_bg_type_->index())
+        switch(setup_bg_type_->value())
         {
         case 2:
             if(setup_bg_image_->value().isFile())
@@ -368,12 +377,12 @@ void LH_Graph::drawSingle( int lineID )
 
     //assemble the array of points for the graph (based on values & orientation)
     bool isConstant = true;
-    double constantValue = 0;
+    float constantValue = 0;
     int i;
     for(i=0;i<values_[lineID].length() && i<len_;i++)
     {
-        double x = 0; double y=0;
-        switch(setup_orientation_->index())
+        qreal x = 0; qreal y=0;
+        switch(setup_orientation_->value())
         {
         case 0:
             x = ((len_-1) - i) * w / (len_-1);
@@ -418,9 +427,9 @@ void LH_Graph::drawSingle( int lineID )
 
     //apply point corrections & prep gradient
     QLinearGradient gradient;
-    double x = points[i-1].x();
-    double y = points[i-1].y();
-    switch(setup_orientation_->index())
+    qreal x = points[i-1].x();
+    qreal y = points[i-1].y();
+    switch(setup_orientation_->value())
     {
     case 0:
         points[i++] =  QPointF(x, h+10);
@@ -483,7 +492,7 @@ void LH_Graph::drawSingle( int lineID )
         bool doDraw = !(hasDeadValue_ && isConstant && (deadValue_ == constantValue));
         if (doDraw)
         {
-            switch(setup_fg_type_->index())
+            switch(setup_fg_type_->value())
             {
             case 0:
                 painter.drawPolyline(points, values_[lineID].length());
@@ -541,7 +550,7 @@ void LH_Graph::drawSingle( int lineID )
             QString minLabel = getLabelText((setup_show_real_limits_->value()? dataMinY_: graphMinY_));
 
             bool emptyHide = setup_hide_when_empty_->value() && graph_empty_;
-            switch(setup_orientation_->index())
+            switch(setup_orientation_->value())
             {
             case 0:
             case 2:
@@ -575,7 +584,7 @@ void LH_Graph::drawSingle( int lineID )
     if (isDebug) qDebug() << "graph: draw line: done " << lineID;
 }
 
-QString LH_Graph::getLabelText(double val)
+QString LH_Graph::getLabelText(qreal val)
 {
     int prec = 1 - int(log10(dataDeltaY_/ divisorY_));
     if (prec<0) prec = 0;
@@ -613,16 +622,23 @@ void LH_Graph::addText(QPainter& painter, QRect rect, int flags, QString text, i
 
 void LH_Graph::addLine(QString name)
 {
-    QStringList sl(setup_line_selection_->list());
-    sl.append(name);
-    setup_line_selection_->setList( sl );
+    setup_line_selection_->list().append(name);
+    setup_line_selection_->refreshList();
     cacheCount_.append(0);
     cacheVal_.append(0);
-    values_.append( QList<double>() );
+    values_.append( QList<qreal>() );
 
-    setup_line_selection_->setHidden( setup_line_selection_->list().count()==1);
+    QStringList configs = setup_line_configs_->value().split('~',QString::SkipEmptyParts);
+    if (configs.length()<lineCount())
+    {
+        QString configString = buildColorConfig();
+        while(configs.length()<lineCount())
+            configs.append(configString);
+        setup_line_configs_->setValue(configs.join("~"));
+    }
+
+    setup_line_selection_->setFlag(LH_FLAG_HIDDEN, setup_line_selection_->list().count()==1);
     setup_line_selection_->setValue(0);
-    syncLineDataArrays();
 }
 
 int LH_Graph::lineCount()
@@ -630,29 +646,17 @@ int LH_Graph::lineCount()
     return setup_line_selection_->list().count();
 }
 
-void LH_Graph::setLineCount(int count)
-{
-    if(count <= 0)
-        return;
-    if(count == setup_line_selection_->list().count())
-        return;
-    QStringList names;
-    for(int i = 0; i<count;)
-        names.append(QString("Line #%1").arg(++i));
-    setLines(names);
-}
-
 void LH_Graph::clearLines()
 {
-    setup_line_selection_->setList( QStringList() );
+    setup_line_selection_->list().clear();
+    setup_line_selection_->refreshList();
     cacheCount_.clear();
     cacheVal_.clear();
     values_.clear();
-    setup_line_selection_->setHidden( false);
-    syncLineDataArrays();
+    setup_line_selection_->setFlag(LH_FLAG_HIDDEN, false);
 }
 
-bool LH_Graph::setMin( double r )
+bool LH_Graph::setMin( qreal r )
 {
     if( min() == r ) return false;
     min(r);
@@ -661,7 +665,7 @@ bool LH_Graph::setMin( double r )
     return true;
 }
 
-bool LH_Graph::setMax( double r, bool b )
+bool LH_Graph::setMax( qreal r, bool b )
 {
     if(!userDefinableLimits_) canGrow( b );
     if(graphMinY_==r) r++;
@@ -671,63 +675,32 @@ bool LH_Graph::setMax( double r, bool b )
     return true;
 }
 
-void LH_Graph::setYUnit( QString str, double divisor )
+void LH_Graph::setYUnit( QString str, qreal divisor )
 {
     unitText_ = str;
     if (divisor!=0) divisorY_ = divisor;
 }
 
-int LH_Graph::notify(int n, void *p)
+int LH_Graph::notify(int code,void* param)
 {
-    Q_UNUSED(p);
-    if(setup_linked_values_->linkPath()==NULL)
-        return 0;
-    else
-    {
-        if(n&LH_NOTE_SECOND)
-        {
-            double totalTotal = 0;
-            if(useLinkedValueAverage_)
-                setLineCount(1);
-            else
-                setLineCount(linkedValues.count());
-            for(int n=0; n<linkedValues.count(); n++)
-            {
-                double total = 0;
-                foreach(double d, linkedValues[n])
-                    total += d;
-                if(linkedValues[n].count()!=0)
-                    total/=linkedValues[n].count();
-                if(!useLinkedValueAverage_)
-                    addValue(total, n);
-                else
-                    totalTotal += total;
-                linkedValues[n].clear();
-            }
-            if(linkedValues.count()!=0)
-                totalTotal/=linkedValues.count();
-            if(useLinkedValueAverage_)
-                addValue(totalTotal);
-            requestRender();
-        }
-        return LH_NOTE_SECOND;
-    }
+    Q_UNUSED(code);
+    Q_UNUSED(param);
+    return 0;
 }
 
 QImage *LH_Graph::render_qimage( int w, int h )
 {
     if( LH_QtInstance::initImage(w,h) == NULL ) return NULL;
     image_->fill( PREMUL( setup_bgcolor_->value().rgba() ) );
-    drawAll();
     return image_;
 }
 
-void LH_Graph::addValue(double value, int lineID )
+void LH_Graph::addValue(float value, int lineID )
 {
     if (lineID>=lineCount()) return;
     if (isDebug) qDebug() << "graph: add value: begin " << lineID;
     cacheCount_[lineID] ++;
-    cacheVal_[lineID] += (double)value;
+    cacheVal_[lineID] += (qreal)value;
     if(cacheCount_[lineID] >= setup_sample_rate_->value())
     {
         if (values_[lineID].length()>=len_) values_[lineID].pop_back();
@@ -736,6 +709,67 @@ void LH_Graph::addValue(double value, int lineID )
         cacheVal_[lineID] = 0;
     }
     if (isDebug) qDebug() << "graph: add value: end ";
+}
+
+void LH_Graph::loadColors(int lineID, QColor& penColor, QColor& fillColor1, QColor& fillColor2, QString& fgImgPath, int& fgImgAlpha)
+{
+    if (isDebug) qDebug() << "graph: load colours: begin " << lineID;
+    QStringList configs = setup_line_configs_->value().split('~',QString::SkipEmptyParts);
+
+    if( lineID < 0 ) lineID = 0;
+    if( lineID >= configs.length() ) lineID = configs.length()-1;
+
+    QString configString = configs.at(lineID);
+    QStringList config = configString.split(',');
+
+    penColor.setRed(QString(config.at(0)).toInt());
+    penColor.setGreen(QString(config.at(1)).toInt());
+    penColor.setBlue(QString(config.at(2)).toInt());
+    penColor.setAlpha(QString(config.at(3)).toInt());
+
+    fillColor1.setRed(QString(config.at(4)).toInt());
+    fillColor1.setGreen(QString(config.at(5)).toInt());
+    fillColor1.setBlue(QString(config.at(6)).toInt());
+    fillColor1.setAlpha(QString(config.at(7)).toInt());
+
+    fillColor2.setRed(QString(config.at(8)).toInt());
+    fillColor2.setGreen(QString(config.at(9)).toInt());
+    fillColor2.setBlue(QString(config.at(10)).toInt());
+    fillColor2.setAlpha(QString(config.at(11)).toInt());
+
+    if(config.length()>12)fgImgPath = config.at(12);
+    if(config.length()>13)fgImgAlpha = config.at(13).toInt();
+
+    if (isDebug) qDebug() << "graph: load colours: end ";
+}
+
+QString LH_Graph::buildColorConfig()
+{
+    QColor penColor = setup_pencolor_->value();
+    QColor fillColor1 = setup_fillcolor1_->value();
+    QColor fillColor2 = setup_fillcolor2_->value();
+
+    QStringList config = QStringList();
+
+    config.append(QString::number(penColor.red()));
+    config.append(QString::number(penColor.green()));
+    config.append(QString::number(penColor.blue()));
+    config.append(QString::number(penColor.alpha()));
+
+    config.append(QString::number(fillColor1.red()));
+    config.append(QString::number(fillColor1.green()));
+    config.append(QString::number(fillColor1.blue()));
+    config.append(QString::number(fillColor1.alpha()));
+
+    config.append(QString::number(fillColor2.red()));
+    config.append(QString::number(fillColor2.green()));
+    config.append(QString::number(fillColor2.blue()));
+    config.append(QString::number(fillColor2.alpha()));
+
+    config.append(setup_fg_image_->value().absoluteFilePath());
+    config.append(QString::number(setup_fg_alpha_->value()));
+
+    return config.join(",");
 }
 
 void LH_Graph::changeMaxSamples()
@@ -777,38 +811,59 @@ void LH_Graph::updateDescText()
 
 void LH_Graph::changeType()
 {
-    setup_line_fillcolor1_->setHidden( (setup_fg_type_->index()!=1));
-    setup_line_fillcolor2_->setHidden( (setup_fg_type_->index()!=1));
-    setup_line_image_->setHidden( (setup_fg_type_->index()!=2));
-    setup_line_image_opacity_->setHidden( (setup_fg_type_->index()!=2));
+    setup_fillcolor1_->setFlag(LH_FLAG_HIDDEN, (setup_fg_type_->value()!=1));
+    setup_fillcolor2_->setFlag(LH_FLAG_HIDDEN, (setup_fg_type_->value()!=1));
+    setup_fg_image_->setFlag(LH_FLAG_HIDDEN, (setup_fg_type_->value()!=2));
+    setup_fg_alpha_->setFlag(LH_FLAG_HIDDEN, (setup_fg_type_->value()!=2));
 
-    setup_bgcolor_->setHidden( (setup_bg_type_->index()!=1));
-    setup_bg_image_->setHidden( (setup_bg_type_->index()!=2));
+    setup_bgcolor_->setFlag(LH_FLAG_HIDDEN, (setup_bg_type_->value()!=1));
+    setup_bg_image_->setFlag(LH_FLAG_HIDDEN, (setup_bg_type_->value()!=2));
 }
 
 void LH_Graph::changeSelectedLine()
 {
-    if (setup_line_selection_->index() >= lineCount()) setup_line_selection_->setValue(lineCount()-1);
-    if (setup_line_selection_->index() < 0) setup_line_selection_->setValue(0);
+    QColor penColor = QColor();
+    QColor fillColor1 = QColor();
+    QColor fillColor2 = QColor();
+    QString fgImgPath = "";
+    int fgImgAlpha = 255;
 
-    setup_line_pencolor_->setEditIndex(setup_line_selection_->index());
-    setup_line_fillcolor1_->setEditIndex(setup_line_selection_->index());
-    setup_line_fillcolor2_->setEditIndex(setup_line_selection_->index());
-    setup_line_image_->setEditIndex(setup_line_selection_->index());
-    setup_line_image_opacity_->setEditIndex(setup_line_selection_->index());
+    if (setup_line_selection_->value() >= lineCount()) setup_line_selection_->setValue(lineCount()-1);
+    if (setup_line_selection_->value() < 0) setup_line_selection_->setValue(0);
+
+    loadColors(setup_line_selection_->value(), penColor, fillColor1, fillColor2, fgImgPath, fgImgAlpha);
+
+    setup_pencolor_->setValue(penColor);
+    setup_fillcolor1_->setValue(fillColor1);
+    setup_fillcolor2_->setValue(fillColor2);
+    setup_fg_image_->setValue(QFileInfo(fgImgPath));
+    setup_fg_alpha_->setValue(fgImgAlpha);
+}
+
+void LH_Graph::updateSelectedLine()
+{
+    QStringList configs = setup_line_configs_->value().split('~',QString::SkipEmptyParts);
+
+    int lineID = setup_line_selection_->value();
+    if( lineID < 0 ) lineID = 0;
+    if( lineID >= configs.length() ) lineID = configs.length()-1;
+
+    configs.replace(lineID, buildColorConfig());
+
+    setup_line_configs_->setValue(configs.join("~"));
 }
 
 void LH_Graph::updateLabelSelection()
 {
-    setup_hide_when_empty_->setHidden( !(setup_show_y_max_->value() | setup_show_y_min_->value()));
-    setup_show_real_limits_->setHidden( !(setup_show_y_max_->value() | setup_show_y_min_->value()));
-    setup_y_labels_right_->setHidden( !(setup_show_y_max_->value() | setup_show_y_min_->value()));
-    setup_label_font_->setHidden( !(setup_show_y_max_->value() | setup_show_y_min_->value()));
-    setup_label_color_->setHidden( !(setup_show_y_max_->value() | setup_show_y_min_->value()));
-    setup_label_shadow_->setHidden( !(setup_show_y_max_->value() | setup_show_y_min_->value()));
+    setup_hide_when_empty_->setFlag(LH_FLAG_HIDDEN, !(setup_show_y_max_->value() | setup_show_y_min_->value()));
+    setup_show_real_limits_->setFlag(LH_FLAG_HIDDEN, !(setup_show_y_max_->value() | setup_show_y_min_->value()));
+    setup_y_labels_right_->setFlag(LH_FLAG_HIDDEN, !(setup_show_y_max_->value() | setup_show_y_min_->value()));
+    setup_label_font_->setFlag(LH_FLAG_HIDDEN, !(setup_show_y_max_->value() | setup_show_y_min_->value()));
+    setup_label_color_->setFlag(LH_FLAG_HIDDEN, !(setup_show_y_max_->value() | setup_show_y_min_->value()));
+    setup_label_shadow_->setFlag(LH_FLAG_HIDDEN, !(setup_show_y_max_->value() | setup_show_y_min_->value()));
 }
 
-void LH_Graph::clear(double newMin, double newMax, bool newGrow)
+void LH_Graph::clear(float newMin, float newMax, bool newGrow)
 {
     for(int lineID=0;lineID<lineCount(); lineID++)
     {
@@ -839,15 +894,26 @@ bool LH_Graph::setUserDefinableLimits(bool v)
 
 void LH_Graph::updateLimitControls()
 {
-    setup_max_grow_->setHidden( !userDefinableLimits_);
+    setup_max_grow_->setFlag(LH_FLAG_HIDDEN, !userDefinableLimits_);
     setup_max_grow_->setFlag(LH_FLAG_READONLY, !userDefinableLimits_);
-    setup_max_->setHidden( !userDefinableLimits_);
+    setup_max_->setFlag(LH_FLAG_HIDDEN, !userDefinableLimits_);
     setup_max_->setFlag(LH_FLAG_READONLY, !userDefinableLimits_ || canGrow());
-    setup_min_->setHidden( !userDefinableLimits_);
+    setup_min_->setFlag(LH_FLAG_HIDDEN, !userDefinableLimits_);
     setup_min_->setFlag(LH_FLAG_READONLY, !userDefinableLimits_);
 }
 
-void LH_Graph::reloadImages()
+void LH_Graph::updateFGImage()
+{
+    updateSelectedLine();
+    reload_images();
+}
+
+void LH_Graph::updateBGImage()
+{
+    reload_images();
+}
+
+void LH_Graph::reload_images()
 {
     if(image_ == NULL)
         return;
@@ -863,55 +929,16 @@ void LH_Graph::reloadImages()
 
     for(int lineID=0;lineID<lineCount(); lineID++)
     {
-        QFileInfo fgImg( QDir( dir_layout() ), setup_line_image_->at(lineID,""));
+        QColor penColor = QColor();
+        QColor fillColor1 = QColor();
+        QColor fillColor2 = QColor();
+        QString fgImgPath = "";
+        int fgImgAlpha = 255;
+
+        loadColors(lineID, penColor, fillColor1, fillColor2, fgImgPath, fgImgAlpha);
+
         fgImgs_.remove(lineID);
-        if(fgImg.isFile())
-            fgImgs_.insert(lineID, QImage(fgImg.filePath()).scaled(w,h));
+        if(QFileInfo(fgImgPath).isFile())
+            fgImgs_.insert(lineID, QImage(fgImgPath).scaled(w,h));
     }
 }
-
-void LH_Graph::newLinkedValue()
-{
-    while(linkedValues.count()<setup_linked_values_->size())
-        linkedValues.append( QList<double>() );
-    while(linkedValues.count()>setup_linked_values_->size())
-        linkedValues.removeLast();
-
-    for(int n=0; n<setup_linked_values_->size(); n++)
-    {
-        double val = setup_linked_values_->at(n);
-        linkedValues[n].append(val * linkedValueMultiplier_);
-    }
-    callback(lh_cb_notify);
-}
-
-void LH_Graph::changeUnits()
-{
-    if(setup_units_->index()==-1)
-        return;
-
-    customUnit u = customUnits.at(setup_units_->index());
-    setYUnit(u.text, u.divisor);
-}
-
-void LH_Graph::addCustomUnits(QString caption, QString text, double divisor)
-{
-    customUnits.append((customUnit){text, divisor});
-    QStringList sl(setup_units_->list());
-    sl.append(caption);
-    setup_units_->setList(sl);
-    if(setup_units_->index()==-1)
-        setup_units_->setIndex(0);
-    setup_units_->setHidden( false);
-}
-
-void LH_Graph::syncLineDataArrays()
-{
-    int _lineCount = lineCount();
-    setup_line_pencolor_->resize(_lineCount, QColor(Qt::black).rgba() );
-    setup_line_fillcolor1_->resize(_lineCount, QColor(Qt::green).rgba());
-    setup_line_fillcolor2_->resize(_lineCount, QColor(Qt::red).rgba());
-    setup_line_image_->resize(_lineCount, "");
-    setup_line_image_opacity_->resize(_lineCount, 255);
-}
-

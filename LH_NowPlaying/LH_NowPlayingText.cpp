@@ -35,14 +35,11 @@
   **/
 
 #include "LH_NowPlayingText.h"
-#include "LH_NowPlayingReader.h"
 
 LH_PLUGIN_CLASS(LH_NowPlayingText)
 
-const char *LH_NowPlayingText::userInit()
+LH_NowPlayingText::LH_NowPlayingText()
 {
-    if( const char *err = LH_Text::userInit() ) return err;
-
     connect( currentTrack, SIGNAL(changed()), this, SLOT(refresh_text()) );
 
     setup_item_ = new LH_Qt_QStringList(this, "Item",
@@ -63,7 +60,7 @@ const char *LH_NowPlayingText::userInit()
     setup_item_->setHelp("The item to display<br/><br/>Note that not all players provide all data items. If you user such a player you may find a custom string a better choice.");
     connect(setup_item_, SIGNAL(changed()), this, SLOT(setup_item_changed()));
 
-    setup_custom_ = new LH_Qt_QString(this, "Custom", "{artist}{artist?: \"}{title}{artist?:\"} {status?[}{status}{status?]}", LH_FLAG_FIRST | LH_FLAG_HIDDEN | LH_FLAG_BLANKTITLE);
+    setup_custom_ = new LH_Qt_QString(this, "^Custom", "{artist}{artist?: \"}{title}{artist?:\"} {status?[}{status}{status?]}", LH_FLAG_FIRST);
     setup_custom_->setHelp("Enter a template string.<br/><br/>"
                            "Templates: <br/><br/>"
                            "<table>"
@@ -87,12 +84,12 @@ const char *LH_NowPlayingText::userInit()
     setup_hide_playing_state_->setHelp("This changes the behaviour of the \"State\" option, causing it not to display the \"Playing\" value.");
     connect(setup_hide_playing_state_, SIGNAL(changed()), this, SLOT(refresh_text()));
 
-    setup_text_->setTitle( "Now Playing" );
+    setup_text_->setName( "Now Playing" );
     setup_text_->setFlag( LH_FLAG_READONLY, true );
     setup_text_->setFlag( LH_FLAG_HIDDEN, true );
     setup_text_->setFlag( LH_FLAG_NOSAVE, true );
-    setText("  ");
-    return 0;
+    setText( "  " );
+    return;
 }
 
 lh_class *LH_NowPlayingText::classInfo()
@@ -104,6 +101,7 @@ lh_class *LH_NowPlayingText::classInfo()
         "NowPlayingText",
         "Now Playing (Text)",
         -1, -1,
+        lh_instance_calltable_NULL
     };
 
     if( classInfo.width == -1 )
@@ -119,7 +117,7 @@ lh_class *LH_NowPlayingText::classInfo()
 
 void LH_NowPlayingText::setup_item_changed()
 {
-    setup_custom_->setHidden( setup_item_->index()!=8);
+    setup_custom_->setFlag(LH_FLAG_HIDDEN, setup_item_->value()==7);
     refresh_text();
 }
 
@@ -128,7 +126,7 @@ void LH_NowPlayingText::refresh_text()
     if (currentTrack->playerFound())
     {
         QString template_value = "";
-        switch(setup_item_->index())
+        switch(setup_item_->value())
         {
         case 0:     //Track Title
             template_value = "{title}";

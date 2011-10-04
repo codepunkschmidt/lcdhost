@@ -41,12 +41,14 @@
 #include <windows.h>
 #endif
 
-#include "LH_QtOutputDevice.h"
+#include "LH_QtDevice.h"
 #include "LH_Lg320x240.h"
 #include "Lg320x240Device.h"
 #include "LH_Qt_QImage.h"
 
-LH_PLUGIN(LH_Lg320x240) =
+LH_PLUGIN(LH_Lg320x240)
+
+char __lcdhostplugin_xml[] =
 "<?xml version=\"1.0\"?>"
 "<lcdhostplugin>"
   "<id>Lg320x240</id>"
@@ -81,7 +83,6 @@ extern "C"
 const char *LH_Lg320x240::userInit()
 {
     Q_ASSERT( g19thread_ == 0 );
-    if( const char *err = LH_QtPlugin::userInit() ) return err;
 
 #ifdef Q_WS_WIN
     // make sure neither LCDMon.exe nor LCORE.EXE is running on Windows
@@ -95,22 +96,17 @@ const char *LH_Lg320x240::userInit()
     return NULL;
 }
 
-LH_Lg320x240::~LH_Lg320x240()
+void LH_Lg320x240::userTerm()
 {
     if( g19thread_ )
     {
         g19thread_->timeToDie();
-        if( !g19thread_->wait(2500) )
+        if( !g19thread_->wait(4000) )
         {
-            qWarning() << "LH_Lg320x240: worker thread not responding, terminating it";
+            qWarning() << "LH_Lg320x240: worker thread not responding";
             g19thread_->terminate();
         }
-        if( !g19thread_->wait(1000) )
-        {
-            qWarning() << "LH_Lg320x240: worker thread can't be terminated";
-        }
-        else
-            delete g19thread_;
+        else delete g19thread_;
     }
     g19thread_ = 0;
 }

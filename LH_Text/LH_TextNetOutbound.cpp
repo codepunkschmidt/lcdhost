@@ -39,12 +39,9 @@
 class LH_TextNetOutbound : public LH_TextNumber
 {
 public:
-    const char *userInit()
+    LH_TextNetOutbound(): LH_TextNumber()
     {
-        if( const char *err = LH_TextNumber::userInit() ) return err;
         setup_bits_->setFlag( LH_FLAG_HIDDEN, false );
-        setup_value_->setLink("/system/net/out/rate");
-        return 0;
     }
 
     static lh_class *classInfo()
@@ -56,8 +53,8 @@ public:
             "SystemNetworkOutboundText",
             "Outbound Bandwidth Usage (Text)",
             20,10,
-            
-            
+            lh_object_calltable_NULL,
+            lh_instance_calltable_NULL
         };
         return &classInfo;
     }
@@ -70,6 +67,16 @@ public:
             if( setup_bits_->value() ) setText( text().append( "bit/s" ) );
             else setText( text().append( "B/s" ) );
         }
+    }
+
+    int notify(int code, void *param)
+    {
+        if( !code || code&LH_NOTE_NET )
+        {
+            bool needrender = setValue( state()->net_cur_out ) | setMax( state()->net_max_out ); // bitwise OR - we need both to execute!
+            if( needrender ) callback(lh_cb_render,NULL);
+        }
+        return LH_TextNumber::notify(code,param) | LH_NOTE_SECOND;
     }
 };
 

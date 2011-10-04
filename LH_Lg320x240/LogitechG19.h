@@ -1,10 +1,10 @@
 #ifndef LOGITECHG19_H
 #define LOGITECHG19_H
 
-#include "LH_QtOutputDevice.h"
+#include <LH_QtDevice.h>
 #include "libusb.h"
 
-class LogitechG19 : public LH_QtOutputDevice
+class LogitechG19 : public LH_QtDevice
 {
     Q_OBJECT
 
@@ -19,10 +19,8 @@ class LogitechG19 : public LH_QtOutputDevice
     int last_buttons_;
 
 public:
-    LogitechG19( libusb_device *usbdev, libusb_device_descriptor *dd );
+    LogitechG19( libusb_device *usbdev, libusb_device_descriptor *dd, LH_QtObject *drv );
     ~LogitechG19();
-
-    const char *input_name(const char *devid, int item);
 
     const char* render_argb32(int,int,const void*) { return NULL; }
     const char* render_mono(int,int,const void*) { return NULL; }

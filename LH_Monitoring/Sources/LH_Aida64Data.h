@@ -27,7 +27,6 @@ public:
     bool loadXML(bool doListUpdate = true);
 
     LH_Aida64Data( LH_QtObject *parent, LH_MonitoringUI *ui, monitoringDataMode dataMode = mdmNumbers, bool includeGroups = false);
-    ~LH_Aida64Data();
 
     QString appName() { return "Aida64"; }
     bool getCount(int& count);

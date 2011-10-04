@@ -25,23 +25,63 @@
   */
 
 #include "LH_Graph.h"
+#include "QDebug"
+#include "LH_QtCPU.h"
 
 class LH_GraphCPUHistogram : public LH_Graph
 {
+    LH_QtCPU cpu_;
+    int *valCount;
+    qreal *valCache;
+    qreal *lastVal;
+    bool initialized;
+
+    void initialize(int cpuCount){
+        if (cpuCount != 0) {
+            initialized = true;
+            if(lineCount() != cpuCount)
+            {
+                clearLines();
+                for( int i=0; i<cpu_.count(); i++ )
+                    addLine("CPU/Core #"+QString::number(i));
+            }
+
+            valCount = new int[cpuCount];
+            valCache = new qreal[cpuCount];
+            lastVal = new qreal[cpuCount];
+
+            for(int i =0; i<cpuCount; i++ )
+            {
+                valCount[i] = 0;
+                valCache[i] = 0;
+                lastVal[i] = 0;
+            }
+        }
+    }
+
 public:
-    const char *userInit()
+    explicit LH_GraphCPUHistogram() : LH_Graph(), cpu_(this)
     {
-        if( const char *err = LH_Graph::userInit() ) return err;
+        initialized = false;
 
-        setLinkedValueMultiplier(0.01);
-        setup_linked_values_->setLink("/system/cpu/coreloads");
-        setup_linked_values_->refreshValue();
-
-        setMin(0);
-        setMax(100);
+        setMin(0.0);
+        setMax(100.0);
         setYUnit("%");
 
+        cpu_.smoothingHidden(true);
+    }
+
+    virtual const char *userInit()
+    {
+        initialize(cpu_.count());
         return 0;
+    }
+
+    ~LH_GraphCPUHistogram()
+    {
+        delete valCount;
+        delete valCache;
+        delete lastVal;
     }
 
     static lh_class *classInfo()
@@ -52,10 +92,45 @@ public:
             "System/CPU",
             "SystemCPUHistogramGraph",
             "Core Load (Graph)",
-            48,48
+            48,48,
+            lh_object_calltable_NULL,
+            lh_instance_calltable_NULL
         };
 
         return &classInfo;
+    }
+
+    int notify(int n, void *p)
+    {
+        if (cpu_.count()!=0)
+        {
+            if (!initialized) initialize(cpu_.count());
+
+            for(int i =0; i<cpu_.count(); i++ )
+            {
+                if(!n || n&LH_NOTE_SECOND)
+                {
+                    if (valCount[i]!=0)
+                    {
+                        lastVal[i] = valCache[i]/valCount[i];
+                        addValue(lastVal[i], i);
+                    }
+                    valCache[i] = 0;
+                    valCount[i] = 0;
+                } else {
+                    valCache[i]+=cpu_.coreload(i)/100;
+                    valCount[i]+=1;
+                }
+            }
+        }
+        return LH_Graph::notify(n,p) | cpu_.notify(n,p) | LH_NOTE_SECOND;
+    }
+
+    QImage *render_qimage( int w, int h )
+    {
+        if( LH_Graph::render_qimage(w,h) == NULL ) return NULL;
+        drawAll();
+        return image_;
     }
 };
 

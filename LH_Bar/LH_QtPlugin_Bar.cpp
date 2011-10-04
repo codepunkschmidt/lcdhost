@@ -36,7 +36,9 @@
 
 #include "LH_QtPlugin_Bar.h"
 
-LH_PLUGIN(LH_QtPlugin_Bar) =
+LH_PLUGIN(LH_QtPlugin_Bar)
+
+char __lcdhostplugin_xml[] =
 "<?xml version=\"1.0\"?>"
 "<lcdhostplugin>"
   "<id>Bar</id>"
@@ -55,3 +57,12 @@ LH_PLUGIN(LH_QtPlugin_Bar) =
   "<p>The source code for this plugin is included with the distribution.</p>"
   "</longdesc>"
 "</lcdhostplugin>";
+
+const char *LH_QtPlugin_Bar::lh_load()
+{
+    return NULL;
+}
+
+void LH_QtPlugin_Bar::lh_unload()
+{
+}

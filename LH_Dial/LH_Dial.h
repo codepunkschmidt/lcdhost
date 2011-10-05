@@ -93,15 +93,20 @@ class LH_Dial : public LH_QtInstance
     QSize img_size_;
     QHash<QString,QImage> fgImgs_;
 
-    void getDimensions(qreal degrees, int& h, int& w, int& relH, int& relW, float& radians, float& drawLen);
+    void getRelativeSize(float& relH, float& relW);
+    float getRadians(qreal degrees, float& offsetRadians);
+    float getRadians(qreal degrees) {float offsetRadians; return getRadians(degrees, offsetRadians);}
+    float getDrawLen(float boxHeight, float boxWidth, float radians);
+    void getDimensions(qreal degrees, int& h, int& w, float& relH, float& relW, float& radians, float& drawLen);
     QString generateNeedleCode(float drawLen, QColor needleColor, int needleThick, int needleLength, int needleGap, int h, int w, QString needleImagePath, int needleStyle);
 
     QImage getFace();
     QImage getNeedle(int needleID, qreal degrees, int& needleStyle);
     QImage getSlice(int needleID, qreal degrees, qreal offsetAngle, int& needleStyle);
     void getCenter(QPointF& center);
-    void getCenter(QPointF& center, float& horzSize, float& vertSize);
-    void getRotationData(qreal startAngle, qreal angle, float& centerX, float& centerY, float& xlen, float& ylen, float& radians);
+    void getCenter(float& centerX, float& centerY) { QPointF center; getCenter(center); centerX = center.x(); centerY = center.y(); }
+
+    void getRotationData(qreal startAngle, qreal angle, float& centerX, float& centerY, float& relH, float& relW, float& radians);
     void paintLine(QPainter& painter, QPen& pen, qreal startAngle, qreal angle, qreal relLength, qreal gap = 0);
     void paintImage(QPainter& painter, QImage needleImage, RotationType rotationType, qreal startAngle, qreal angle = 0);
     QString colString(QColor col);

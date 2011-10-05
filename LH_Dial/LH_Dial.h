@@ -72,6 +72,13 @@ enum DialType
     DIALTYPE_PIE
 };
 
+enum RotationType
+{
+    ROT_NONE,
+    ROT_FACE,
+    ROT_NEEDLE
+};
+
 class LH_Dial : public LH_QtInstance
 {
     Q_OBJECT
@@ -96,7 +103,7 @@ class LH_Dial : public LH_QtInstance
     void getCenter(QPointF& center, float& horzSize, float& vertSize);
     void getRotationData(qreal startAngle, qreal angle, float& centerX, float& centerY, float& xlen, float& ylen, float& radians);
     void paintLine(QPainter& painter, QPen& pen, qreal startAngle, qreal angle, qreal relLength, qreal gap = 0);
-    void paintImage(QPainter& painter, QImage needleImage, qreal startAngle, qreal angle, bool reverseOffsetting = false, qreal pieOffsetAngle = 0, bool forceRotation = false);
+    void paintImage(QPainter& painter, QImage needleImage, RotationType rotationType, qreal startAngle, qreal angle = 0);
     QString colString(QColor col);
 
     QList<float> needle_pos_;

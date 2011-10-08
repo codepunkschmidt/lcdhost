@@ -415,15 +415,15 @@ QImage LH_Dial::getFace()
 }
 
 
-void LH_Dial::getDimensions(qreal degrees, int& h, int& w, float& relH, float& relW, float& radians, float& drawLen)
+void LH_Dial::getDimensions(qreal degrees, int& h, int& w, float& radH, float& radW, float& radians, float& drawLen)
 {
     float radiansM;
     h = image_->height();
     w = image_->width();
 
-    getRelativeSize(relH, relW);
+    getRadii(radH, radW);
     radians = getRadians(degrees, radiansM);
-    drawLen = getDrawLen(relH, relW, radiansM);
+    drawLen = getDrawLen(radH, radW, radiansM);
 }
 
 float LH_Dial::getRadians(qreal degrees, float& offsetRadians)
@@ -458,7 +458,7 @@ float LH_Dial::getRadians(qreal degrees, float& offsetRadians)
 
 float LH_Dial::getDrawLen(float boxHeight, float boxWidth, float radians)
 {
-    float denom = qSqrt( qPow(boxHeight * qSin(radians),2) + qPow(boxWidth * qCos(radians),2) );
+    float denom = qSqrt( qPow(boxHeight * qSin(radians),2) + qPow(boxWidth * qCos(radians),2) );    
     if(denom == 0) return 0;
     float drawLen = boxHeight * boxWidth / denom;
     if( drawLen != drawLen )
@@ -472,12 +472,12 @@ float LH_Dial::getDrawLen(float boxHeight, float boxWidth, float radians)
     return drawLen;
 }
 
-void LH_Dial::getRelativeSize(float& relH, float& relW)
+void LH_Dial::getRadii(float& radH, float& radW)
 {
     float w = image_->width();
     float h = image_->height();
-    relH = h/2;
-    relW = w/2;
+    radH = h/2;
+    radW = w/2;
 
     switch(setup_type_->value())
     {
@@ -487,22 +487,22 @@ void LH_Dial::getRelativeSize(float& relH, float& relW)
         switch(setup_orientation_->value())
         {
         case 0: //left / bottom left
-            relW = w;
+            radW = w;
             break;
         case 1: //top / top left
-            relH = h;
+            radH = h;
             break;
         case 2: //right / top right
-            relW = w;
+            radW = w;
             break;
         case 3: //bottom / bottom right
-            relH = h;
+            radH = h;
             break;
         }
         break;
     case 2: //quarter circle
-        relW = (setup_needles_reverse_->value()? h : w);
-        relH = (setup_needles_reverse_->value()? w : h);
+        radW = (setup_needles_reverse_->value()? h : w);
+        radH = (setup_needles_reverse_->value()? w : h);
         switch(setup_orientation_->value())
         {
         case 0: //left / bottom left
@@ -510,9 +510,9 @@ void LH_Dial::getRelativeSize(float& relH, float& relW)
             break;
         case 3: //bottom / bottom right
         case 1: //top / top left
-            float tmp = relW;
-            relW = relH;
-            relH = tmp;
+            float tmp = radW;
+            radW = radH;
+            radH = tmp;
             break;
         }
         break;
@@ -573,10 +573,10 @@ void LH_Dial::getCenter(QPointF& center)
     }
 }
 
-void LH_Dial::getRotationData(qreal startAngle, qreal angle, float& centerX, float& centerY, float& relH, float& relW, float& radians)
+void LH_Dial::getRotationData(qreal startAngle, qreal angle, float& centerX, float& centerY, float& radH, float& radW, float& radians)
 {
     radians = (180+(angle+startAngle)) * M_PI/180;
-    getRelativeSize(relH, relW);
+    getRadii(radH, radW);
     getCenter(centerX, centerY);
 }
 
@@ -612,8 +612,8 @@ QImage LH_Dial::getNeedle(int needleID, qreal degrees, int& needleStyle)
 
     loadNeedleConfig(needleID, needleStyle, needleColor, needleThick, needleLength, needleGap, needleImagePath);
 
-    int h; int w; float relH; float relW; float radians; float drawLen;
-    getDimensions(degrees, h, w, relH, relW, radians, drawLen);
+    int h; int w; float radH; float radW; float radians; float drawLen;
+    getDimensions(degrees, h, w, radH, radW, radians, drawLen);
 
     QString needleCode = generateNeedleCode(drawLen, needleColor, needleThick, needleLength, needleGap, h, w, needleImagePath, needleStyle);
     if (needleCode_[needleID] != needleCode)
@@ -642,7 +642,7 @@ QImage LH_Dial::getNeedle(int needleID, qreal degrees, int& needleStyle)
         {
             QImage needle_img(f.absoluteFilePath());
             //rescale needle image width to match the required height
-            float drawWid = qSqrt( qPow(relH,2) * qPow(relW,2) / ( qPow(relW * qSin(radians),2) + qPow(relH * qCos(radians),2) ) );
+            float drawWid = getDrawLen(radW, radH, radians);
 
             needleImage_[needleID] = new QImage(drawWid*2,drawLen*2,QImage::Format_ARGB32_Premultiplied);
             needleImage_[needleID]->fill( PREMUL( QColor(Qt::transparent).rgba() ) );
@@ -683,18 +683,16 @@ QImage LH_Dial::getSlice(int sliceID, qreal degrees, qreal offsetAngle, int& sli
     int sliceImageAlpha;
     loadSliceConfig(sliceID, sliceStyle, sliceColor, sliceLength, sliceImagePath, sliceImageAlpha);
 
-    int h; int w; float relH; float relW; float radians; float drawLen;
-    getDimensions(degrees, h, w, relH, relW, radians, drawLen);
-
-    if (img_size_.width() != w || img_size_.height()!= h)
-        reload_images();
+    int h; int w; float radH; float radW; float radians; float drawLen;
+    getDimensions(degrees, h, w, radH, radW, radians, drawLen);
 
     QPainter painter;
     QString needleCode = generateNeedleCode(drawLen, sliceColor, qRound(degrees*16), sliceLength, offsetAngle, h, w, QString("%1@%2").arg(sliceImagePath).arg(sliceImageAlpha), sliceStyle);
 
     if (needleCode != (sliceID==UNUSED_AREA? unusedAreaCode_ : needleCode_[sliceID]))
     {
-        relW*=2; relH*=2;
+        float circleW = radW * 2;
+        float circleH = radH * 2;
         QImage* sliceImage;
 
         QFileInfo f(sliceImagePath);
@@ -702,7 +700,7 @@ QImage LH_Dial::getSlice(int sliceID, qreal degrees, qreal offsetAngle, int& sli
         {
             //build mask
             uchar *blank_data = (uchar[4]){0,0,0,0};
-            QImage maskImg = QImage(blank_data,1,1,QImage::Format_ARGB32).scaled(relW,relH);
+            QImage maskImg = QImage(blank_data,1,1,QImage::Format_ARGB32).scaled(circleW,circleH);
             QPainter maskPaint;
             if( maskPaint.begin( &maskImg ) )
             {
@@ -710,49 +708,58 @@ QImage LH_Dial::getSlice(int sliceID, qreal degrees, qreal offsetAngle, int& sli
                 QColor maskCol = QColor(0,0,0,sliceImageAlpha);
                 maskPaint.setPen(maskCol);
                 maskPaint.setBrush(QBrush(maskCol));
-                maskPaint.drawPie(relW*(100-sliceLength)/200.0,relH*(100-sliceLength)/200.0, relW*sliceLength/100.0, relH*sliceLength/100.0, (startDegrees()+offsetAngle-90)*-16,qRound(degrees*-16));
+                maskPaint.drawPie(radW*(100-sliceLength)/100.0,radH*(100-sliceLength)/100.0, circleW*sliceLength/100.0, circleH*sliceLength/100.0, (startDegrees()+offsetAngle-90)*-16,qRound(degrees*-16));
                 maskPaint.end();
             }
 
-            //apply mask
             QImage tempImg;
             if(!fgImgs_.contains(sliceImagePath) && f.isFile())
-                 fgImgs_.insert(sliceImagePath,QImage(sliceImagePath).scaled(relW,relH));
+                 fgImgs_.insert(sliceImagePath,QImage(sliceImagePath));
             if(fgImgs_.contains(sliceImagePath))
             {
-                tempImg = QImage(blank_data,1,1,QImage::Format_ARGB32).scaled(relW,relH);
-
                 QPainter tempPaint;
+                tempImg = QImage(blank_data,1,1,QImage::Format_ARGB32).scaled(fgImgs_.value(sliceImagePath).width(),fgImgs_.value(sliceImagePath).height());
+
+                //Rotate the image
                 if( tempPaint.begin( &tempImg ) )
                 {
-                    paintImage(tempPaint, fgImgs_.value(sliceImagePath), ROT_FACE, startDegrees(), offsetAngle+( sliceStyle == 2? degrees : 0));
-                    //tempPaint.drawImage(QRectF( 0,0, relW, relH ), fgImgs_.value(sliceImagePath));
+                    paintImage(tempPaint, fgImgs_.value(sliceImagePath), ROT_CENTER, startDegrees(), offsetAngle+( sliceStyle == 2? degrees : 0));
+                    tempPaint.end();
+                }
+
+                //Rescale the image
+                tempImg = tempImg.scaled(circleW, circleH);
+
+                //Apply mask
+                if( tempPaint.begin( &tempImg ) )
+                {
                     tempPaint.setCompositionMode(QPainter::CompositionMode_DestinationIn);
-                    tempPaint.drawImage(QRectF( 0,0, relW, relH ), maskImg);
+                    tempPaint.drawImage(QRectF( 0,0, circleW, circleH ), maskImg);
                     tempPaint.end();
                 }
             }
 
             //create slice image
-            sliceImage = new QImage(relW, relH,QImage::Format_ARGB32_Premultiplied);
+            sliceImage = new QImage(circleW, circleH,QImage::Format_ARGB32_Premultiplied);
             sliceImage->fill( PREMUL( QColor(Qt::transparent).rgba() ) );
 
             if( painter.begin( sliceImage ) )
             {
-                painter.drawImage(QRectF( 0,0, relW, relH ), tempImg);
+                //painter.drawImage(QRectF( 0,0, circleW, circleH ), tempImg);
+                painter.drawImage(QPointF( 0,0 ), tempImg);
                 painter.end();
             }
         }
         else
         {
-            sliceImage = new QImage(relW, relH,QImage::Format_ARGB32_Premultiplied);
+            sliceImage = new QImage(circleW, circleH,QImage::Format_ARGB32_Premultiplied);
             sliceImage->fill( PREMUL( QColor(Qt::transparent).rgba() ) );
 
             if( painter.begin( sliceImage ) )
             {
                 painter.setBrush(QBrush(sliceColor));
                 painter.setPen(QPen(sliceColor));
-                painter.drawPie(relW*(100-sliceLength)/200.0,relH*(100-sliceLength)/200.0, relW*sliceLength/100.0, relH*sliceLength/100.0, (startDegrees()+offsetAngle-90)*-16,qRound(degrees*-16));
+                painter.drawPie(radW*(100-sliceLength)/100.0,radH*(100-sliceLength)/100.0, circleW*sliceLength/100.0, circleH*sliceLength/100.0, (startDegrees()+offsetAngle-90)*-16,qRound(degrees*-16));
                 painter.end();
             }
         }
@@ -775,33 +782,37 @@ QImage LH_Dial::getSlice(int sliceID, qreal degrees, qreal offsetAngle, int& sli
 
 void LH_Dial::paintLine(QPainter& painter, QPen& pen, qreal startAngle, qreal angle, qreal relLength, qreal gap)
 {
-    float x1; float y1; float relW; float relH; float radians;
-    getRotationData(startAngle, angle, x1, y1, relW, relH, radians);
+    float x1; float y1; float radW; float radH; float radians;
+    getRotationData(startAngle, angle, x1, y1, radW, radH, radians);
 
-    int x2 = (qSin(radians) * (gap+relLength) * relW) + x1;
-    int y2 = (qCos(radians) * (gap+relLength) * relH) + y1;
+    int x2 = (qSin(radians) * (gap+relLength) * radW) + x1;
+    int y2 = (qCos(radians) * (gap+relLength) * radH) + y1;
 
-    x1 = (qSin(radians) * gap * relW) + x1;
-    y1 = (qCos(radians) * gap * relH) + y1;
+    x1 = (qSin(radians) * gap * radW) + x1;
+    y1 = (qCos(radians) * gap * radH) + y1;
 
     painter.setPen(pen);
     painter.drawLine(x1,y1,x2,y2);
 }
 
-void LH_Dial::paintImage(QPainter& painter, QImage needleImage, RotationType rotationType, qreal startAngle, qreal angle)
+void LH_Dial::paintImage(QPainter& painter, QImage srcImage, RotationType rotationType, qreal startAngle, qreal angle)
 {
-    float x; float y; float relW; float relH; float radians;
+    float x; float y; float radW; float radH; float radians;
 
-    getRotationData(startAngle, (rotationType == ROT_NONE? 0 : angle), x, y, relW, relH, radians);
+    getRotationData(startAngle, (rotationType == ROT_NONE? 0 : angle), x, y, radW, radH, radians);
 
     painter.save();
 
     switch(rotationType)
     {
     case ROT_NONE:
-        x -= (needleImage.width()/2.0);
-        y -= (needleImage.height()/2.0);
+        x -= (srcImage.width()/2.0);
+        y -= (srcImage.height()/2.0);
         break;
+    case ROT_CENTER:
+        //ROT_CENTER is a special case that doesn't use the dial's dimensions, but rather uses the dimensions of srcImage.
+        x = (srcImage.width()/2.0);
+        y = (srcImage.height()/2.0);
     case ROT_FACE:
     case ROT_NEEDLE:
         float A = (x!=0? qAtan(y/x) : M_PI/2);
@@ -809,9 +820,10 @@ void LH_Dial::paintImage(QPainter& painter, QImage needleImage, RotationType rot
         float drawLen = getDrawLen(y,x,radians);
 
         painter.rotate(startAngle + angle);
-        x = Hyp * qCos(A - (radians-M_PI)) - (needleImage.width()/2.0);
-        y = Hyp * qSin(A - (radians-M_PI)) - (needleImage.height());
-
+        x = Hyp * qCos(A - (radians-M_PI)) - (srcImage.width()/2.0);
+        y = Hyp * qSin(A - (radians-M_PI)) - (srcImage.height());
+        if(rotationType==ROT_CENTER)
+            y +=drawLen;
         if(rotationType==ROT_FACE)
         {
             y +=drawLen;
@@ -824,7 +836,7 @@ void LH_Dial::paintImage(QPainter& painter, QImage needleImage, RotationType rot
                 {
                 case 0: //left / bottom left
                 case 1: //top / top left
-                    y += (needleImage.height()/2);
+                    y += (srcImage.height()/2);
                     break;
                 case 2: //right / top right
                 case 3: //bottom / bottom right
@@ -837,7 +849,7 @@ void LH_Dial::paintImage(QPainter& painter, QImage needleImage, RotationType rot
                 case 0: //left / bottom left
                 case 1: //top / top left
                 case 2: //right / top right
-                    y += (needleImage.height()/2);
+                    y += (srcImage.height()/2);
                     break;
                 case 3: //bottom / bottom right
                     break;
@@ -845,10 +857,11 @@ void LH_Dial::paintImage(QPainter& painter, QImage needleImage, RotationType rot
                 break;
             }
         }
+        break;
     }
 
     painter.setRenderHints(QPainter::Antialiasing | QPainter::SmoothPixmapTransform);
-    painter.drawImage(QPointF(x,y),needleImage);
+    painter.drawImage(QPointF(x,y),srcImage);
 
     painter.restore();
 }
@@ -982,7 +995,7 @@ void LH_Dial::drawDial()
             {
                 int needleStyle;
                 bool reverse = setup_needles_reverse_->value();
-                //something here to add a extra segment
+
                 qreal pos = max()-usedCapacity;
                 qreal angle = maxDegrees() * (pos-min_) / (max_-min_);
                 QImage sliceImage = getSlice(UNUSED_AREA, angle, totalAngle, needleStyle);
@@ -1150,8 +1163,6 @@ void LH_Dial::loadNeedleConfig(int needleID, int& needleStyle, QColor& needleCol
     QStringList config = configString.split(',');
 
     needleStyle = (config.at(0)).toInt();
-    //Prevent "Full Face" needles on non-full-circle dials:
-    //if(needleStyle==2 && setup_type_->value()!=0) needleStyle=1;
 
     needleColor.setRed(QString(config.at(1)).toInt());
     needleColor.setGreen(QString(config.at(2)).toInt());
@@ -1206,28 +1217,4 @@ void LH_Dial::updateSelectedNeedle()
     setup_needle_gap_->setMaximum(100 - setup_needle_length_->value());
 
     setup_needle_configs_->setValue(configs.join("~"));
-}
-
-void LH_Dial::reload_images()
-{
-    if(image_ == NULL)
-        return;
-
-    int w = image_->width();
-    int h = image_->height();
-
-    img_size_.setHeight(h);
-    img_size_.setWidth(w);
-
-    for( int sliceID=-1; sliceID<needleCount(); ++sliceID )
-    {
-        QColor sliceColor = QColor();
-        int sliceStyle; int sliceLength; int sliceImageAlpha;
-        QString sliceImagePath;
-        loadSliceConfig((sliceID==-1? UNUSED_AREA: sliceID), sliceStyle, sliceColor, sliceLength, sliceImagePath, sliceImageAlpha);
-
-        fgImgs_.remove(sliceImagePath);
-        if(QFileInfo(sliceImagePath).isFile())
-            fgImgs_.insert(sliceImagePath, QImage(sliceImagePath).scaled(w,h));
-    }
 }

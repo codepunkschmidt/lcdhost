@@ -76,7 +76,8 @@ enum RotationType
 {
     ROT_NONE,
     ROT_FACE,
-    ROT_NEEDLE
+    ROT_NEEDLE,
+    ROT_CENTER
 };
 
 class LH_Dial : public LH_QtInstance
@@ -90,14 +91,14 @@ class LH_Dial : public LH_QtInstance
 
     QString faceCode_;
     QImage *faceImage_;
-    QSize img_size_;
+    //QSize img_size_;
     QHash<QString,QImage> fgImgs_;
 
-    void getRelativeSize(float& relH, float& relW);
+    void getRadii(float& radH, float& radW);
     float getRadians(qreal degrees, float& offsetRadians);
     float getRadians(qreal degrees) {float offsetRadians; return getRadians(degrees, offsetRadians);}
     float getDrawLen(float boxHeight, float boxWidth, float radians);
-    void getDimensions(qreal degrees, int& h, int& w, float& relH, float& relW, float& radians, float& drawLen);
+    void getDimensions(qreal degrees, int& h, int& w, float& radH, float& radW, float& radians, float& drawLen);
     QString generateNeedleCode(float drawLen, QColor needleColor, int needleThick, int needleLength, int needleGap, int h, int w, QString needleImagePath, int needleStyle);
 
     QImage getFace();
@@ -106,7 +107,7 @@ class LH_Dial : public LH_QtInstance
     void getCenter(QPointF& center);
     void getCenter(float& centerX, float& centerY) { QPointF center; getCenter(center); centerX = center.x(); centerY = center.y(); }
 
-    void getRotationData(qreal startAngle, qreal angle, float& centerX, float& centerY, float& relH, float& relW, float& radians);
+    void getRotationData(qreal startAngle, qreal angle, float& centerX, float& centerY, float& radH, float& radW, float& radians);
     void paintLine(QPainter& painter, QPen& pen, qreal startAngle, qreal angle, qreal relLength, qreal gap = 0);
     void paintImage(QPainter& painter, QImage needleImage, RotationType rotationType, qreal startAngle, qreal angle = 0);
     QString colString(QColor col);
@@ -131,7 +132,7 @@ class LH_Dial : public LH_QtInstance
 
     float maxDegrees();
     float startDegrees();
-    void reload_images();
+
 protected:
     bool isClock;
 

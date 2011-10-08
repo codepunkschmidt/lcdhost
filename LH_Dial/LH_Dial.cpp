@@ -503,18 +503,6 @@ void LH_Dial::getRadii(float& radH, float& radW)
     case 2: //quarter circle
         radW = (setup_needles_reverse_->value()? h : w);
         radH = (setup_needles_reverse_->value()? w : h);
-        switch(setup_orientation_->value())
-        {
-        case 0: //left / bottom left
-        case 2: //right / top right
-            break;
-        case 3: //bottom / bottom right
-        case 1: //top / top left
-            float tmp = radW;
-            radW = radH;
-            radH = tmp;
-            break;
-        }
         break;
     }
 }
@@ -698,57 +686,45 @@ QImage LH_Dial::getSlice(int sliceID, qreal degrees, qreal offsetAngle, int& sli
         QFileInfo f(sliceImagePath);
         if((sliceStyle == 1 || sliceStyle == 2) && f.isFile())
         {
-            //build mask
-            uchar *blank_data = (uchar[4]){0,0,0,0};
-            QImage maskImg = QImage(blank_data,1,1,QImage::Format_ARGB32).scaled(circleW,circleH);
-            QPainter maskPaint;
-            if( maskPaint.begin( &maskImg ) )
-            {
-                maskPaint.setRenderHint( QPainter::Antialiasing, true );
-                QColor maskCol = QColor(0,0,0,sliceImageAlpha);
-                maskPaint.setPen(maskCol);
-                maskPaint.setBrush(QBrush(maskCol));
-                maskPaint.drawPie(radW*(100-sliceLength)/100.0,radH*(100-sliceLength)/100.0, circleW*sliceLength/100.0, circleH*sliceLength/100.0, (startDegrees()+offsetAngle-90)*-16,qRound(degrees*-16));
-                maskPaint.end();
-            }
-
-            QImage tempImg;
             if(!fgImgs_.contains(sliceImagePath) && f.isFile())
                  fgImgs_.insert(sliceImagePath,QImage(sliceImagePath));
-            if(fgImgs_.contains(sliceImagePath))
+            Q_ASSERT(fgImgs_.contains(sliceImagePath));
+
+            //build mask
+            QImage maskImg = QImage(circleW, circleH,QImage::Format_ARGB32_Premultiplied);
+            maskImg.fill( PREMUL( QColor(Qt::transparent).rgba() ) );
+            if( painter.begin( &maskImg ) )
             {
-                QPainter tempPaint;
-                tempImg = QImage(blank_data,1,1,QImage::Format_ARGB32).scaled(fgImgs_.value(sliceImagePath).width(),fgImgs_.value(sliceImagePath).height());
-
-                //Rotate the image
-                if( tempPaint.begin( &tempImg ) )
-                {
-                    paintImage(tempPaint, fgImgs_.value(sliceImagePath), ROT_CENTER, startDegrees(), offsetAngle+( sliceStyle == 2? degrees : 0));
-                    tempPaint.end();
-                }
-
-                //Rescale the image
-                tempImg = tempImg.scaled(circleW, circleH);
-
-                //Apply mask
-                if( tempPaint.begin( &tempImg ) )
-                {
-                    tempPaint.setCompositionMode(QPainter::CompositionMode_DestinationIn);
-                    tempPaint.drawImage(QRectF( 0,0, circleW, circleH ), maskImg);
-                    tempPaint.end();
-                }
+                painter.setRenderHint( QPainter::Antialiasing, true );
+                QColor maskCol = QColor(0,0,0,sliceImageAlpha);
+                painter.setPen(maskCol);
+                painter.setBrush(QBrush(maskCol));
+                painter.drawPie(circleW*(100-sliceLength)/200.0,circleH*(100-sliceLength)/200.0, circleW*sliceLength/100.0, circleH*sliceLength/100.0, (startDegrees()+offsetAngle-90)*-16,qRound(degrees*-16));
+                painter.end();
             }
 
-            //create slice image
+            QImage tempImg = QImage(fgImgs_.value(sliceImagePath).width(), fgImgs_.value(sliceImagePath).height(),QImage::Format_ARGB32_Premultiplied);
+            tempImg.fill( PREMUL( QColor(Qt::transparent).rgba() ) );
+
+            //Rotate the image
+            if( painter.begin( &tempImg ) )
+            {
+                paintImage(painter, fgImgs_.value(sliceImagePath), ROT_CENTER, startDegrees(), offsetAngle+( sliceStyle == 2? degrees : 0));
+                painter.end();
+            }
+
             sliceImage = new QImage(circleW, circleH,QImage::Format_ARGB32_Premultiplied);
             sliceImage->fill( PREMUL( QColor(Qt::transparent).rgba() ) );
 
+            //Rescale the image & apply mask to create slice image
             if( painter.begin( sliceImage ) )
             {
-                //painter.drawImage(QRectF( 0,0, circleW, circleH ), tempImg);
-                painter.drawImage(QPointF( 0,0 ), tempImg);
+                painter.drawImage(QRectF( 0,0, circleW, circleH ), tempImg);
+                painter.setCompositionMode(QPainter::CompositionMode_DestinationIn);
+                painter.drawImage(QPointF( 0,0 ), maskImg);
                 painter.end();
             }
+
         }
         else
         {

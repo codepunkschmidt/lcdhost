@@ -90,6 +90,7 @@ class LH_Dial : public LH_QtInstance
     qreal max_;
 
     QString faceCode_;
+    QString unusedCapacityStyleLock_;
     QImage *faceImage_;
     //QSize img_size_;
     QHash<QString,QImage> fgImgs_;
@@ -126,7 +127,7 @@ class LH_Dial : public LH_QtInstance
 
     static const bool isDebug = false;
 
-    QString buildNeedleConfig();
+    QString buildNeedleConfig(QColor forceColor = Qt::transparent);
 
     bool polling_on_;
 
@@ -168,10 +169,10 @@ protected:
     LH_Qt_QStringList *setup_unused_style_;
 
     void setNeedleVisibility(bool visible, int index = 0);
-    void syncNeedleConfigs();
+    void syncNeedleConfigs(QColor defaultColor = Qt::transparent);
 
 public:    
-    LH_Dial(DialType dialType = DIALTYPE_DIAL);
+    LH_Dial(DialType dialType = DIALTYPE_DIAL, QString unusedCapacityStyle = "");
     ~LH_Dial();
 
     virtual const char *userInit();
@@ -196,7 +197,7 @@ public:
             repoll = setVal( values.at(i), i, repoll );
     }
 
-    void addNeedle(QString name);
+    void addNeedle(QString name, QColor defaultColor = Qt::transparent);
     int needleCount();
     void clearNeedles();
     void setNeedles(QStringList names) {

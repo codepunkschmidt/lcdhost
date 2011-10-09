@@ -47,12 +47,13 @@ static inline uint PREMUL(uint x)
     return x;
 }
 
-LH_Dial::LH_Dial(DialType dialType)
+LH_Dial::LH_Dial(DialType dialType, QString unusedCapacityStyle)
 {
     min_ = max_ = 0.0;
     polling_on_ = false;
     isClock = false;
     dialType_ = dialType;
+    unusedCapacityStyleLock_ = unusedCapacityStyle;
 }
 
 const char *LH_Dial::userInit()
@@ -150,7 +151,14 @@ const char *LH_Dial::userInit()
         setup_unused_image_ = new LH_Qt_QFileInfo( this, QString("%1 Image").arg("Unused Capacity"), QFileInfo(), LH_FLAG_AUTORENDER | LH_FLAG_HIDDEN);
         setup_unused_image_->setHelp( QString("<p>Image file to load and use for this %2 (see \"%1 Style\" for more information about how the image will be used).</p>").arg(nameText1).arg(nameText2));
 
-        connect( setup_unused_style_, SIGNAL(changed()), this, SLOT(changeUnusedStyle()));
+        if(unusedCapacityStyleLock_!="")
+        {
+            setup_unused_style_->setValue(unusedCapacityStyleLock_);
+            setup_unused_style_->setVisible(false);
+            changeUnusedStyle();
+        } else
+            connect( setup_unused_style_, SIGNAL(changed()), this, SLOT(changeUnusedStyle()));
+
     }
 
     setup_needle_configs_ = new LH_Qt_QTextEdit(this, QString("%1 Configs").arg(nameText1),"", LH_FLAG_HIDDEN);
@@ -188,7 +196,7 @@ LH_Dial::~LH_Dial()
     delete unusedImage_;
 }
 
-void LH_Dial::addNeedle(QString name)
+void LH_Dial::addNeedle(QString name, QColor defaultColor)
 {
     setup_needle_selection_->list().append(name);
     setup_needle_selection_->refreshList();
@@ -199,17 +207,30 @@ void LH_Dial::addNeedle(QString name)
     needleCode_.append("");
     needleImage_.append( new QImage() );
 
-    syncNeedleConfigs();
+    syncNeedleConfigs(defaultColor);
 }
 
-void LH_Dial::syncNeedleConfigs()
+void LH_Dial::syncNeedleConfigs(QColor defaultColor)
 {
     QStringList configs = setup_needle_configs_->value().split('~',QString::SkipEmptyParts);
     if (configs.length()<needleCount())
     {
-        QString configString = buildNeedleConfig();
+        QColor newColor = defaultColor;
         while(configs.length()<needleCount())
+        {
+            if (newColor==Qt::transparent)
+                switch (configs.length() % 6)
+                {
+                case 0: newColor = QColor::fromRgb(192,0,0); break;   // red
+                case 1: newColor = QColor::fromRgb(0,0,192); break;   // blue
+                case 2: newColor = QColor::fromRgb(0,192,0); break;   // green
+                case 3: newColor = QColor::fromRgb(192,192,0); break; // yellow
+                case 4: newColor = QColor::fromRgb(0,192,192); break; // cyan
+                case 5: newColor = QColor::fromRgb(192,0,192); break; // mageneta
+                }
+            QString configString = buildNeedleConfig(newColor);
             configs.append(configString);
+        }
         setup_needle_configs_->setValue(configs.join("~"));
     }
     setup_needle_selection_->setFlag(LH_FLAG_HIDDEN, setup_needle_selection_->list().count()==1);
@@ -1074,10 +1095,10 @@ void LH_Dial::changeUnusedStyle()
     setup_unused_image_->setFlag(LH_FLAG_HIDDEN, setup_unused_style_->value()<3);
 }
 
-QString LH_Dial::buildNeedleConfig()
+QString LH_Dial::buildNeedleConfig(QColor forceColor)
 {
     int needleStyle = setup_needle_style_->value();
-    QColor needleColor = setup_needle_color_->value();
+    QColor needleColor = ( forceColor == Qt::transparent? setup_needle_color_->value() : forceColor );
     int needleThick = setup_needle_thickness_->value();
     int needleLength = setup_needle_length_->value();
     int needleGap = setup_needle_gap_->value();

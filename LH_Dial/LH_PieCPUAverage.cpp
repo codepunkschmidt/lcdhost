@@ -39,6 +39,13 @@ public:
 
     static lh_class *classInfo()
     {
+        /**
+            This class shouldn't be available to the release build as it is much less efficient than the
+            usual needle-based dial and, frankly, if this class is available someone will realise they
+            can do something clever and cool with it without realising it's absorbing a lot of cycles.
+            Basically this class is 95% the same as the CPU Average Dial but nowhere near as efficient.
+        **/
+#ifndef QT_NO_DEBUG
         static lh_class classInfo =
         {
             sizeof(lh_class),
@@ -49,6 +56,9 @@ public:
         };
 
         return &classInfo;
+#else
+        return NULL;
+#endif
     }
 
     int notify(int n, void *p)

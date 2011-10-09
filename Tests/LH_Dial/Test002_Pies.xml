@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <instance>
-    <identity name="Virtual 320x240x32 device" id="3735j4"/>
+    <identity name="Virtual 320x240x32 device" id="35qsm8"/>
     <state modifiable="0" selectable="0" alerts="1"/>
     <origin x="0" y="0"/>
     <size w="320" h="240"/>
@@ -11,16 +11,16 @@
     <w_ref id="0" mod="0" units="0"/>
     <h_ref id="0" mod="0" units="0"/>
     <instance class="LH_Decor/StaticBackground">
-        <identity name="Background [1]" id="39ksuo"/>
+        <identity name="Background [1]" id="35yavc"/>
         <state modifiable="1" selectable="1" alerts="1"/>
         <origin x="0" y="0"/>
         <size w="320" h="240"/>
         <plugin_size w="-1" h="-1"/>
         <pos x="0" y="0" z="0"/>
-        <x_ref id="3735j4" align="0" ref_align="0"/>
-        <y_ref id="3735j4" align="0" ref_align="0"/>
-        <w_ref id="3735j4" mod="0" units="0"/>
-        <h_ref id="3735j4" mod="0" units="0"/>
+        <x_ref id="35qsm8" align="0" ref_align="0"/>
+        <y_ref id="35qsm8" align="0" ref_align="0"/>
+        <w_ref id="35qsm8" mod="0" units="0"/>
+        <h_ref id="35qsm8" mod="0" units="0"/>
         <setupitem>
             <identity name="First color" type="3"/>
             <value type="QString">-16756844</value>
@@ -39,14 +39,14 @@
         </setupitem>
     </instance>
     <instance class="LH_Dial/SystemCPUAverageDial">
-        <identity name="Average Load (Dial) [1]" id="39ocww"/>
+        <identity name="Average Load (Dial) [1]" id="3652dk"/>
         <state modifiable="1" selectable="1" alerts="1"/>
         <origin x="0" y="0"/>
         <size w="40" h="40"/>
         <plugin_size w="-1" h="-1"/>
         <pos x="17" y="13" z="1"/>
-        <x_ref id="3735j4" align="0" ref_align="0"/>
-        <y_ref id="3735j4" align="0" ref_align="0"/>
+        <x_ref id="35qsm8" align="0" ref_align="0"/>
+        <y_ref id="35qsm8" align="0" ref_align="0"/>
         <w_ref id="0" mod="40" units="4"/>
         <h_ref id="0" mod="40" units="4"/>
         <setupitem>
@@ -102,14 +102,14 @@
             <value type="QString">0,255,0,0,255,3,80,0,</value>
         </setupitem>
         <instance class="LH_Dial/SystemCPUAveragePie">
-            <identity name="Average Load (Pie) [1]" id="39odb4"/>
+            <identity name="Average Load (Pie) [1]" id="3655xk"/>
             <state modifiable="1" selectable="1" alerts="1"/>
             <origin x="0" y="0"/>
             <size w="44" h="40"/>
             <plugin_size w="-1" h="-1"/>
             <pos x="43" y="0" z="0"/>
-            <x_ref id="39ocww" align="0" ref_align="0"/>
-            <y_ref id="39ocww" align="0" ref_align="0"/>
+            <x_ref id="3652dk" align="0" ref_align="0"/>
+            <y_ref id="3652dk" align="0" ref_align="0"/>
             <w_ref id="0" mod="44" units="4"/>
             <h_ref id="0" mod="40" units="4"/>
             <setupitem>
@@ -195,14 +195,14 @@
         </instance>
     </instance>
     <instance class="LH_Dial/SystemCPUAverageDial">
-        <identity name="Average Load (Dial) [1]" id="39odhc"/>
+        <identity name="Average Load (Dial) [1]" id="3657wo"/>
         <state modifiable="1" selectable="1" alerts="1"/>
         <origin x="0" y="0"/>
         <size w="20" h="40"/>
         <plugin_size w="-1" h="-1"/>
         <pos x="18" y="61" z="2"/>
-        <x_ref id="3735j4" align="0" ref_align="0"/>
-        <y_ref id="3735j4" align="0" ref_align="0"/>
+        <x_ref id="35qsm8" align="0" ref_align="0"/>
+        <y_ref id="35qsm8" align="0" ref_align="0"/>
         <w_ref id="0" mod="20" units="4"/>
         <h_ref id="0" mod="40" units="4"/>
         <setupitem>
@@ -258,16 +258,16 @@
             <value type="QString">0,255,0,0,255,3,80,0,</value>
         </setupitem>
         <instance class="LH_Dial/SystemCPUAveragePie">
-            <identity name="Average Load (Pie) [1]" id="39vcsw"/>
+            <identity name="Average Load (Pie) [1]" id="365emg"/>
             <state modifiable="1" selectable="1" alerts="1"/>
             <origin x="20" y="0"/>
             <size w="20" h="40"/>
             <plugin_size w="-1" h="-1"/>
             <pos x="20" y="0" z="0"/>
-            <x_ref id="39odhc" align="0" ref_align="2"/>
-            <y_ref id="39odhc" align="0" ref_align="0"/>
-            <w_ref id="39odhc" mod="0" units="0"/>
-            <h_ref id="39odhc" mod="0" units="0"/>
+            <x_ref id="3657wo" align="0" ref_align="2"/>
+            <y_ref id="3657wo" align="0" ref_align="0"/>
+            <w_ref id="3657wo" mod="0" units="0"/>
+            <h_ref id="3657wo" mod="0" units="0"/>
             <setupitem>
                 <identity name="Reverse Needles" type="2"/>
                 <value type="QString">false</value>
@@ -351,14 +351,14 @@
         </instance>
     </instance>
     <instance class="LH_Dial/SystemCPUAverageDial">
-        <identity name="Average Load (Dial) [2]" id="39vcz4"/>
+        <identity name="Average Load (Dial) [2]" id="3664c0"/>
         <state modifiable="1" selectable="1" alerts="1"/>
         <origin x="0" y="0"/>
         <size w="20" h="20"/>
         <plugin_size w="-1" h="-1"/>
         <pos x="19" y="148" z="3"/>
-        <x_ref id="3735j4" align="0" ref_align="0"/>
-        <y_ref id="3735j4" align="0" ref_align="0"/>
+        <x_ref id="35qsm8" align="0" ref_align="0"/>
+        <y_ref id="35qsm8" align="0" ref_align="0"/>
         <w_ref id="0" mod="20" units="4"/>
         <h_ref id="0" mod="20" units="4"/>
         <setupitem>
@@ -414,16 +414,16 @@
             <value type="QString">0,255,0,0,255,3,80,0,</value>
         </setupitem>
         <instance class="LH_Dial/SystemCPUAveragePie">
-            <identity name="Average Load (Pie) [3]" id="39vd5c"/>
+            <identity name="Average Load (Pie) [3]" id="3664qw"/>
             <state modifiable="1" selectable="1" alerts="1"/>
             <origin x="20" y="0"/>
             <size w="20" h="20"/>
             <plugin_size w="-1" h="-1"/>
             <pos x="20" y="0" z="0"/>
-            <x_ref id="39vcz4" align="0" ref_align="2"/>
-            <y_ref id="39vcz4" align="0" ref_align="0"/>
-            <w_ref id="39vcz4" mod="0" units="0"/>
-            <h_ref id="39vcz4" mod="0" units="0"/>
+            <x_ref id="3664c0" align="0" ref_align="2"/>
+            <y_ref id="3664c0" align="0" ref_align="0"/>
+            <w_ref id="3664c0" mod="0" units="0"/>
+            <h_ref id="3664c0" mod="0" units="0"/>
             <setupitem>
                 <identity name="Reverse Needles" type="2"/>
                 <value type="QString">false</value>
@@ -507,14 +507,14 @@
         </instance>
     </instance>
     <instance class="LH_Dial/SystemCPUAverageDial">
-        <identity name="Average Load (Dial) [1]" id="39vdbk"/>
+        <identity name="Average Load (Dial) [1]" id="3664x4"/>
         <state modifiable="1" selectable="1" alerts="1"/>
         <origin x="0" y="0"/>
         <size w="20" h="40"/>
         <plugin_size w="-1" h="-1"/>
         <pos x="62" y="61" z="4"/>
-        <x_ref id="3735j4" align="0" ref_align="0"/>
-        <y_ref id="3735j4" align="0" ref_align="0"/>
+        <x_ref id="35qsm8" align="0" ref_align="0"/>
+        <y_ref id="35qsm8" align="0" ref_align="0"/>
         <w_ref id="0" mod="20" units="4"/>
         <h_ref id="0" mod="40" units="4"/>
         <setupitem>
@@ -570,16 +570,16 @@
             <value type="QString">0,255,0,0,255,3,80,0,</value>
         </setupitem>
         <instance class="LH_Dial/SystemCPUAveragePie">
-            <identity name="Average Load (Pie) [1]" id="39vdhs"/>
+            <identity name="Average Load (Pie) [1]" id="36653c"/>
             <state modifiable="1" selectable="1" alerts="1"/>
             <origin x="20" y="0"/>
             <size w="20" h="40"/>
             <plugin_size w="-1" h="-1"/>
             <pos x="20" y="0" z="0"/>
-            <x_ref id="39vdbk" align="0" ref_align="2"/>
-            <y_ref id="39vdbk" align="0" ref_align="0"/>
-            <w_ref id="39vdbk" mod="0" units="0"/>
-            <h_ref id="39vdbk" mod="0" units="0"/>
+            <x_ref id="3664x4" align="0" ref_align="2"/>
+            <y_ref id="3664x4" align="0" ref_align="0"/>
+            <w_ref id="3664x4" mod="0" units="0"/>
+            <h_ref id="3664x4" mod="0" units="0"/>
             <setupitem>
                 <identity name="Reverse Needles" type="2"/>
                 <value type="QString">false</value>
@@ -663,14 +663,14 @@
         </instance>
     </instance>
     <instance class="LH_Dial/SystemCPUAverageDial">
-        <identity name="Average Load (Dial) [2]" id="39vdo0"/>
+        <identity name="Average Load (Dial) [2]" id="36659k"/>
         <state modifiable="1" selectable="1" alerts="1"/>
         <origin x="0" y="0"/>
         <size w="40" h="20"/>
         <plugin_size w="-1" h="-1"/>
         <pos x="62" y="105" z="5"/>
-        <x_ref id="3735j4" align="0" ref_align="0"/>
-        <y_ref id="3735j4" align="0" ref_align="0"/>
+        <x_ref id="35qsm8" align="0" ref_align="0"/>
+        <y_ref id="35qsm8" align="0" ref_align="0"/>
         <w_ref id="0" mod="40" units="4"/>
         <h_ref id="0" mod="20" units="4"/>
         <setupitem>
@@ -726,16 +726,16 @@
             <value type="QString">0,255,0,0,255,3,80,0,</value>
         </setupitem>
         <instance class="LH_Dial/SystemCPUAveragePie">
-            <identity name="Average Load (Pie) [2]" id="39vdu8"/>
+            <identity name="Average Load (Pie) [2]" id="3665fs"/>
             <state modifiable="1" selectable="1" alerts="1"/>
             <origin x="0" y="20"/>
             <size w="40" h="20"/>
             <plugin_size w="-1" h="-1"/>
             <pos x="0" y="20" z="0"/>
-            <x_ref id="39vdo0" align="0" ref_align="0"/>
-            <y_ref id="39vdo0" align="0" ref_align="2"/>
-            <w_ref id="39vdo0" mod="0" units="0"/>
-            <h_ref id="39vdo0" mod="0" units="0"/>
+            <x_ref id="36659k" align="0" ref_align="0"/>
+            <y_ref id="36659k" align="0" ref_align="2"/>
+            <w_ref id="36659k" mod="0" units="0"/>
+            <h_ref id="36659k" mod="0" units="0"/>
             <setupitem>
                 <identity name="Reverse Needles" type="2"/>
                 <value type="QString">false</value>
@@ -819,14 +819,14 @@
         </instance>
     </instance>
     <instance class="LH_Dial/SystemCPUAverageDial">
-        <identity name="Average Load (Dial) [3]" id="39ve0g"/>
+        <identity name="Average Load (Dial) [3]" id="3665m0"/>
         <state modifiable="1" selectable="1" alerts="1"/>
         <origin x="0" y="0"/>
         <size w="40" h="20"/>
         <plugin_size w="-1" h="-1"/>
         <pos x="18" y="105" z="6"/>
-        <x_ref id="3735j4" align="0" ref_align="0"/>
-        <y_ref id="3735j4" align="0" ref_align="0"/>
+        <x_ref id="35qsm8" align="0" ref_align="0"/>
+        <y_ref id="35qsm8" align="0" ref_align="0"/>
         <w_ref id="0" mod="40" units="4"/>
         <h_ref id="0" mod="20" units="4"/>
         <setupitem>
@@ -882,16 +882,16 @@
             <value type="QString">0,255,0,0,255,3,80,0,</value>
         </setupitem>
         <instance class="LH_Dial/SystemCPUAveragePie">
-            <identity name="Average Load (Pie) [3]" id="39ve6o"/>
+            <identity name="Average Load (Pie) [3]" id="3665s8"/>
             <state modifiable="1" selectable="1" alerts="1"/>
             <origin x="0" y="20"/>
             <size w="40" h="20"/>
             <plugin_size w="-1" h="-1"/>
             <pos x="0" y="20" z="0"/>
-            <x_ref id="39ve0g" align="0" ref_align="0"/>
-            <y_ref id="39ve0g" align="0" ref_align="2"/>
-            <w_ref id="39ve0g" mod="0" units="0"/>
-            <h_ref id="39ve0g" mod="0" units="0"/>
+            <x_ref id="3665m0" align="0" ref_align="0"/>
+            <y_ref id="3665m0" align="0" ref_align="2"/>
+            <w_ref id="3665m0" mod="0" units="0"/>
+            <h_ref id="3665m0" mod="0" units="0"/>
             <setupitem>
                 <identity name="Smoothing" type="4"/>
                 <value type="QString">3</value>
@@ -963,14 +963,14 @@
         </instance>
     </instance>
     <instance class="LH_Dial/SystemCPUAverageDial">
-        <identity name="Average Load (Dial) [4]" id="39vecw"/>
+        <identity name="Average Load (Dial) [4]" id="3665yg"/>
         <state modifiable="1" selectable="1" alerts="1"/>
         <origin x="0" y="0"/>
         <size w="20" h="20"/>
         <plugin_size w="-1" h="-1"/>
         <pos x="62" y="149" z="7"/>
-        <x_ref id="3735j4" align="0" ref_align="0"/>
-        <y_ref id="3735j4" align="0" ref_align="0"/>
+        <x_ref id="35qsm8" align="0" ref_align="0"/>
+        <y_ref id="35qsm8" align="0" ref_align="0"/>
         <w_ref id="0" mod="20" units="4"/>
         <h_ref id="0" mod="20" units="4"/>
         <setupitem>
@@ -1026,16 +1026,16 @@
             <value type="QString">0,255,0,0,255,3,80,0,</value>
         </setupitem>
         <instance class="LH_Dial/SystemCPUAveragePie">
-            <identity name="Average Load (Pie) [4]" id="39vej4"/>
+            <identity name="Average Load (Pie) [4]" id="36664o"/>
             <state modifiable="1" selectable="1" alerts="1"/>
             <origin x="20" y="0"/>
             <size w="20" h="20"/>
             <plugin_size w="-1" h="-1"/>
             <pos x="20" y="0" z="0"/>
-            <x_ref id="39vecw" align="0" ref_align="2"/>
-            <y_ref id="39vecw" align="0" ref_align="0"/>
-            <w_ref id="39vecw" mod="0" units="0"/>
-            <h_ref id="39vecw" mod="0" units="0"/>
+            <x_ref id="3665yg" align="0" ref_align="2"/>
+            <y_ref id="3665yg" align="0" ref_align="0"/>
+            <w_ref id="3665yg" mod="0" units="0"/>
+            <h_ref id="3665yg" mod="0" units="0"/>
             <setupitem>
                 <identity name="Reverse Needles" type="2"/>
                 <value type="QString">false</value>
@@ -1119,14 +1119,14 @@
         </instance>
     </instance>
     <instance class="LH_Dial/SystemCPUAverageDial">
-        <identity name="Average Load (Dial) [5]" id="39vepc"/>
+        <identity name="Average Load (Dial) [5]" id="3666aw"/>
         <state modifiable="1" selectable="1" alerts="1"/>
         <origin x="0" y="0"/>
         <size w="20" h="20"/>
         <plugin_size w="-1" h="-1"/>
         <pos x="19" y="171" z="8"/>
-        <x_ref id="3735j4" align="0" ref_align="0"/>
-        <y_ref id="3735j4" align="0" ref_align="0"/>
+        <x_ref id="35qsm8" align="0" ref_align="0"/>
+        <y_ref id="35qsm8" align="0" ref_align="0"/>
         <w_ref id="0" mod="20" units="4"/>
         <h_ref id="0" mod="20" units="4"/>
         <setupitem>
@@ -1182,16 +1182,16 @@
             <value type="QString">1,255,0,0,255,3,90,0,64x5_BlackNeedle.png</value>
         </setupitem>
         <instance class="LH_Dial/SystemCPUAveragePie">
-            <identity name="Average Load (Pie) [5]" id="39vevk"/>
+            <identity name="Average Load (Pie) [5]" id="3666h4"/>
             <state modifiable="1" selectable="1" alerts="1"/>
             <origin x="20" y="0"/>
             <size w="20" h="20"/>
             <plugin_size w="-1" h="-1"/>
             <pos x="20" y="0" z="0"/>
-            <x_ref id="39vepc" align="0" ref_align="2"/>
-            <y_ref id="39vepc" align="0" ref_align="0"/>
-            <w_ref id="39vepc" mod="0" units="0"/>
-            <h_ref id="39vepc" mod="0" units="0"/>
+            <x_ref id="3666aw" align="0" ref_align="2"/>
+            <y_ref id="3666aw" align="0" ref_align="0"/>
+            <w_ref id="3666aw" mod="0" units="0"/>
+            <h_ref id="3666aw" mod="0" units="0"/>
             <setupitem>
                 <identity name="Reverse Needles" type="2"/>
                 <value type="QString">false</value>
@@ -1275,14 +1275,14 @@
         </instance>
     </instance>
     <instance class="LH_Dial/SystemCPUAverageDial">
-        <identity name="Average Load (Dial) [6]" id="39vf1s"/>
+        <identity name="Average Load (Dial) [6]" id="3666nc"/>
         <state modifiable="1" selectable="1" alerts="1"/>
         <origin x="0" y="0"/>
         <size w="20" h="20"/>
         <plugin_size w="-1" h="-1"/>
         <pos x="62" y="171" z="9"/>
-        <x_ref id="3735j4" align="0" ref_align="0"/>
-        <y_ref id="3735j4" align="0" ref_align="0"/>
+        <x_ref id="35qsm8" align="0" ref_align="0"/>
+        <y_ref id="35qsm8" align="0" ref_align="0"/>
         <w_ref id="0" mod="20" units="4"/>
         <h_ref id="0" mod="20" units="4"/>
         <setupitem>
@@ -1338,16 +1338,16 @@
             <value type="QString">1,255,0,0,255,3,90,0,64x5_BlackNeedle.png</value>
         </setupitem>
         <instance class="LH_Dial/SystemCPUAveragePie">
-            <identity name="Average Load (Pie) [6]" id="39vf80"/>
+            <identity name="Average Load (Pie) [6]" id="3666tk"/>
             <state modifiable="1" selectable="1" alerts="1"/>
             <origin x="20" y="0"/>
             <size w="20" h="20"/>
             <plugin_size w="-1" h="-1"/>
             <pos x="20" y="0" z="0"/>
-            <x_ref id="39vf1s" align="0" ref_align="2"/>
-            <y_ref id="39vf1s" align="0" ref_align="0"/>
-            <w_ref id="39vf1s" mod="0" units="0"/>
-            <h_ref id="39vf1s" mod="0" units="0"/>
+            <x_ref id="3666nc" align="0" ref_align="2"/>
+            <y_ref id="3666nc" align="0" ref_align="0"/>
+            <w_ref id="3666nc" mod="0" units="0"/>
+            <h_ref id="3666nc" mod="0" units="0"/>
             <setupitem>
                 <identity name="Reverse Needles" type="2"/>
                 <value type="QString">false</value>
@@ -1431,14 +1431,14 @@
         </instance>
     </instance>
     <instance class="LH_Dial/SystemCPUHistogramPie">
-        <identity name="Core Load (Pie) [1]" id="39vfe8"/>
+        <identity name="Core Load (Pie) [1]" id="3666zs"/>
         <state modifiable="1" selectable="1" alerts="1"/>
         <origin x="0" y="0"/>
         <size w="96" h="96"/>
         <plugin_size w="-1" h="-1"/>
         <pos x="111" y="15" z="10"/>
-        <x_ref id="3735j4" align="0" ref_align="0"/>
-        <y_ref id="3735j4" align="0" ref_align="0"/>
+        <x_ref id="35qsm8" align="0" ref_align="0"/>
+        <y_ref id="35qsm8" align="0" ref_align="0"/>
         <w_ref id="0" mod="96" units="4"/>
         <h_ref id="0" mod="96" units="4"/>
         <setupitem>
@@ -1511,14 +1511,14 @@
         </setupitem>
     </instance>
     <instance class="LH_Dial/SystemCPUHistogramDial">
-        <identity name="Core Load (Dial) [1]" id="39vfkg"/>
+        <identity name="Core Load (Dial) [1]" id="366760"/>
         <state modifiable="1" selectable="1" alerts="1"/>
         <origin x="0" y="0"/>
         <size w="48" h="48"/>
         <plugin_size w="48" h="48"/>
         <pos x="237" y="16" z="11"/>
-        <x_ref id="3735j4" align="0" ref_align="0"/>
-        <y_ref id="3735j4" align="0" ref_align="0"/>
+        <x_ref id="35qsm8" align="0" ref_align="0"/>
+        <y_ref id="35qsm8" align="0" ref_align="0"/>
         <w_ref id="0" mod="0" units="0"/>
         <h_ref id="0" mod="0" units="0"/>
         <setupitem>
@@ -1575,14 +1575,14 @@
         </setupitem>
     </instance>
     <instance class="LH_Dial/SystemCPUHistogramPie">
-        <identity name="Core Load (Pie) [1]" id="39vfqo"/>
+        <identity name="Core Load (Pie) [1]" id="3667c8"/>
         <state modifiable="1" selectable="1" alerts="1"/>
         <origin x="0" y="0"/>
         <size w="96" h="96"/>
         <plugin_size w="-1" h="-1"/>
         <pos x="111" y="117" z="12"/>
-        <x_ref id="3735j4" align="0" ref_align="0"/>
-        <y_ref id="3735j4" align="0" ref_align="0"/>
+        <x_ref id="35qsm8" align="0" ref_align="0"/>
+        <y_ref id="35qsm8" align="0" ref_align="0"/>
         <w_ref id="0" mod="96" units="4"/>
         <h_ref id="0" mod="96" units="4"/>
         <setupitem>
@@ -1655,14 +1655,14 @@
         </setupitem>
     </instance>
     <instance class="LH_Dial/SystemCPUAveragePie">
-        <identity name="Average Load (Pie) [28]" id="39vfww"/>
+        <identity name="Average Load (Pie) [28]" id="3667ig"/>
         <state modifiable="1" selectable="1" alerts="1"/>
         <origin x="0" y="0"/>
         <size w="48" h="96"/>
         <plugin_size w="-1" h="-1"/>
-        <pos x="236" y="94" z="13"/>
-        <x_ref id="3735j4" align="0" ref_align="0"/>
-        <y_ref id="3735j4" align="0" ref_align="0"/>
+        <pos x="236" y="69" z="13"/>
+        <x_ref id="35qsm8" align="0" ref_align="0"/>
+        <y_ref id="35qsm8" align="0" ref_align="0"/>
         <w_ref id="0" mod="48" units="4"/>
         <h_ref id="0" mod="96" units="4"/>
         <setupitem>
@@ -1715,7 +1715,83 @@
         </setupitem>
         <setupitem>
             <identity name="Unused Capacity Style" type="6"/>
+            <value type="QString">2</value>
+        </setupitem>
+        <setupitem>
+            <identity name="Unused Capacity Color" type="3"/>
+            <value type="QString">-1</value>
+        </setupitem>
+        <setupitem>
+            <identity name="Unused Capacity Length (%)" type="1"/>
+            <value type="QString">90</value>
+        </setupitem>
+        <setupitem>
+            <identity name="Unused Capacity Image" type="10"/>
+            <value type="QString"></value>
+        </setupitem>
+        <setupitem>
+            <identity name="Segment Configs" type="9"/>
+            <value type="QString">1,255,0,0,255,3,90,0,Cyan_to_Yellow_Disk.png</value>
+        </setupitem>
+    </instance>
+    <instance class="LH_Dial/SystemMemoryPie">
+        <identity name="Memory used (Pie) [1]" id="4huugo"/>
+        <state modifiable="1" selectable="1" alerts="1"/>
+        <origin x="0" y="0"/>
+        <size w="48" h="48"/>
+        <plugin_size w="48" h="48"/>
+        <pos x="236" y="173" z="14"/>
+        <x_ref id="0" align="0" ref_align="0"/>
+        <y_ref id="0" align="0" ref_align="0"/>
+        <w_ref id="0" mod="0" units="0"/>
+        <h_ref id="0" mod="0" units="0"/>
+        <setupitem>
+            <identity name="Dial Type" type="6"/>
+            <value type="int">0</value>
+        </setupitem>
+        <setupitem>
+            <identity name="Orientation" type="6"/>
+            <value type="int">0</value>
+        </setupitem>
+        <setupitem>
+            <identity name="Background color" type="3"/>
+            <value type="int">0</value>
+        </setupitem>
+        <setupitem>
+            <identity name="Face Style" type="6"/>
             <value type="int">2</value>
+        </setupitem>
+        <setupitem>
+            <identity name="Pen color" type="3"/>
+            <value type="int">-16777216</value>
+        </setupitem>
+        <setupitem>
+            <identity name="Fill color (start)" type="3"/>
+            <value type="int">-1</value>
+        </setupitem>
+        <setupitem>
+            <identity name="Fill color (end)" type="3"/>
+            <value type="int">-4144960</value>
+        </setupitem>
+        <setupitem>
+            <identity name="Face Image" type="10"/>
+            <value type="QString"></value>
+        </setupitem>
+        <setupitem>
+            <identity name="Show Ticks" type="2"/>
+            <value type="bool">false</value>
+        </setupitem>
+        <setupitem>
+            <identity name="Reverse Segments" type="2"/>
+            <value type="bool">false</value>
+        </setupitem>
+        <setupitem>
+            <identity name="Smooth Segments" type="2"/>
+            <value type="bool">true</value>
+        </setupitem>
+        <setupitem>
+            <identity name="Unused Capacity Style" type="6"/>
+            <value type="int">1</value>
         </setupitem>
         <setupitem>
             <identity name="Unused Capacity Color" type="3"/>
@@ -1731,7 +1807,7 @@
         </setupitem>
         <setupitem>
             <identity name="Segment Configs" type="9"/>
-            <value type="QString">1,255,0,0,255,3,90,0,Cyan_to_Yellow_Disk.png</value>
+            <value type="QString">0,192,0,0,255,3,90,0,~0,0,0,192,255,3,90,0,~0,192,192,255,96,3,90,0,~0,255,192,192,96,3,90,0,</value>
         </setupitem>
     </instance>
 </instance>

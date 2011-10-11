@@ -68,17 +68,20 @@ const char *LH_DataViewerConnector::userInit(){
     LH_QtInstance::userInit();
     hide();
 
-    setup_feedback_ = new LH_Qt_QString(this, "Feedback", "", LH_FLAG_READONLY | LH_FLAG_NOSAVE);
+    setup_feedback_ = new LH_Qt_QString(this, "Feedback", "", LH_FLAG_READONLY | LH_FLAG_NOSAVE | LH_FLAG_NOSINK | LH_FLAG_NOSOURCE);
     QStringList langs = listLanguages();
     qDebug() << "languages: " << langs.count() << ": " << langs.join(",");
-    setup_language_ = new LH_Qt_QStringList(this,"Language",langs, LH_FLAG_AUTORENDER);
+    setup_language_ = new LH_Qt_QStringList(this,"Language",langs, LH_FLAG_AUTORENDER | LH_FLAG_NOSINK | LH_FLAG_NOSOURCE);
+    setup_language_->setHelp("To add a new language copy the \"[List:<name>]\" blocks from the data map into a new file called lists.XX.txt (where XX is the language code, e.g. Spanish lists would go in a file called lists.ES.txt, French in lists.FR.txt) and translate the text values into the desired language.");
     setup_language_->setFlag(LH_FLAG_HIDDEN, langs.length()<=1);
     connect( setup_language_, SIGNAL(changed()), this, SLOT(languageFileChanged()) );
 
-    setup_map_file_ = new LH_Qt_QFileInfo(this,"Data Map",QFileInfo(), LH_FLAG_AUTORENDER );
+    setup_map_file_ = new LH_Qt_QFileInfo(this,"Data Map",QFileInfo(), LH_FLAG_AUTORENDER | LH_FLAG_NOSINK | LH_FLAG_NOSOURCE );
+    setup_map_file_->setHelp("The data map file contains information needed to understand and parse the data source.<br><br>(Unlike text files, XML data sources do not require a map file, although they do support them if advanced data parsing or data-expiriation is required.)");
     connect( setup_map_file_, SIGNAL(changed()), this, SLOT(mapFileChanged()) );
 
-    setup_data_file_ = new LH_Qt_QFileInfo(this,"Data Source",QFileInfo(), LH_FLAG_AUTORENDER );
+    setup_data_file_ = new LH_Qt_QFileInfo(this,"Data Source",QFileInfo(), LH_FLAG_AUTORENDER | LH_FLAG_NOSINK | LH_FLAG_NOSOURCE );
+    setup_data_file_ ->setHelp("The data source. Only XML data sources can be understood without a data map.");
     connect( setup_data_file_, SIGNAL(changed()), this, SLOT(sourceFileChanged()) );
 
     sourceWatcher_ = new QFileSystemWatcher(this);
@@ -242,6 +245,15 @@ void LH_DataViewerConnector::sourceFileChanged()
 #ifdef DEBUG_MESSAGES
         qDebug() << "Source File Changed: watching source file: " << watchPath_;
 #endif
+
+        if( !setup_map_file_->value().isFile() && watchPath_.trimmed().toLower().endsWith(".xml"))
+        {
+            sourceType_ = SOURCETYPE_XML;
+            isDelimited_ = false;
+            isSingleWrite_ = true;
+            dataExpiry_ = 0;
+        }
+
         sourceWatcher_->addPath(watchPath_);
         sourceFileUpdated(watchPath_);
     }

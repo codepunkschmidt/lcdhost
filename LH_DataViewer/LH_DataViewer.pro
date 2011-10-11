@@ -3,6 +3,8 @@ TEMPLATE = lib
 QT += network \
     xml
 DEFINES += LH_DATAVIEWER_LIBRARY
+DEFINES += VERSION=1.04
+
 CONFIG += cf
 
 include(../Plugins.pri)

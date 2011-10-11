@@ -1,7 +1,7 @@
 #ifndef LH_DATAVIEWERDIAL_H
 #define LH_DATAVIEWERDIAL_H
 
-#include "LH_Dial/LH_Dial.h"
+#include "../LH_Dial/LH_Dial.h"
 
 #include "LH_QtPlugin.h"
 #include "LH_Qt_int.h"

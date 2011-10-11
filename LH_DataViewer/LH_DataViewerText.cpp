@@ -87,7 +87,7 @@ int LH_DataViewerText::polling()
         scrollTimer_.restart();
     }
     return (scroll_poll_<polling_rate && scroll_poll_!=0? scroll_poll_ : polling_rate);
-};
+}
 
 void LH_DataViewerText::updateText()
 {

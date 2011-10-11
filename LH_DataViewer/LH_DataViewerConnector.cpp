@@ -27,8 +27,11 @@
 #include <QPainter>
 #include <QStringList>
 #include <cmath>
+#include <QtXml>
 
 LH_PLUGIN_CLASS(LH_DataViewerConnector)
+
+#define DEBUG_MESSAGES
 
 lh_class *LH_DataViewerConnector::classInfo()
 {
@@ -54,15 +57,18 @@ lh_class *LH_DataViewerConnector::classInfo()
     return &classInfo;
 }
 
-#define source_type_XML 1
-#define source_type_TXT 2
-#define source_type_INI 3
-
-
 LH_DataViewerConnector::LH_DataViewerConnector()
 {
-    setup_feedback_ = new LH_Qt_QString(this, "Feedback", "", LH_FLAG_READONLY | LH_FLAG_NOSAVE);
+    dataExpiry_ = 0;
+    repolled_ = false;
+    watchPath_ = "";
+}
 
+const char *LH_DataViewerConnector::userInit(){
+    LH_QtInstance::userInit();
+    hide();
+
+    setup_feedback_ = new LH_Qt_QString(this, "Feedback", "", LH_FLAG_READONLY | LH_FLAG_NOSAVE);
     QStringList langs = listLanguages();
     qDebug() << "languages: " << langs.count() << ": " << langs.join(",");
     setup_language_ = new LH_Qt_QStringList(this,"Language",langs, LH_FLAG_AUTORENDER);
@@ -75,16 +81,15 @@ LH_DataViewerConnector::LH_DataViewerConnector()
     setup_data_file_ = new LH_Qt_QFileInfo(this,"Data Source",QFileInfo(), LH_FLAG_AUTORENDER );
     connect( setup_data_file_, SIGNAL(changed()), this, SLOT(sourceFileChanged()) );
 
-
-    watchPath_ = "";
     sourceWatcher_ = new QFileSystemWatcher(this);
     connect( sourceWatcher_, SIGNAL(fileChanged(const QString)), this, SLOT(sourceFileUpdated(const QString)) );
 
     rootNode = new dataNode();
     sharedData = new sharedCollection();
 
-    dataExpiry_ = 0;
-    repolled_ = false;
+    connect( this, SIGNAL(initialized()), this, SLOT(sourceFileUpdated()) );
+
+    return NULL;
 }
 
 QString LH_DataViewerConnector::get_dir_layout()
@@ -121,21 +126,6 @@ LH_DataViewerConnector::~LH_DataViewerConnector()
     delete sharedData;
     sharedData = 0;
     return ;
-}
-
-int LH_DataViewerConnector::polling()
-{
-    //repoll the data automatically once to facilitate loading the data
-    //when a layout is first loaded.
-    if(!repolled_)
-    {
-        repolled_ = true;
-        return 100;
-    } else {
-        //second call happens after the initial delay. fake the update to refresh.
-        sourceFileUpdated("");
-        return 0;
-    }
 }
 
 void LH_DataViewerConnector::populateValues(dataNode* node, QStringList sourceLines)
@@ -200,7 +190,7 @@ QString LH_DataViewerConnector::formatData(QString data, QString formatting)
                 for(int i=0; i<list->levels.count(); i++)
                 {
                     //qDebug() << levelVal << " vs " <<  list->levels.at(i).levelBase << " (" << list->levels.at(i).levelNames.at(listIndex).trimmed() << ")";
-                    if(levelVal < list->levels.at(i).levelBase) break;
+                    if(levelVal < list->levels.at(i).levelBase && !list->levels.at(i).adaptiveBase) break;
                     if(listIndex<list->levels.at(i).levelNames.count())
                         result = list->levels.at(i).levelNames.at(listIndex).trimmed();
                     else
@@ -249,7 +239,9 @@ void LH_DataViewerConnector::sourceFileChanged()
     {
         setup_feedback_->setValue("Connected to Data");
         watchPath_ = setup_data_file_->value().absoluteFilePath();
-        //qDebug() << "watching source file: " << watchPath_;
+#ifdef DEBUG_MESSAGES
+        qDebug() << "Source File Changed: watching source file: " << watchPath_;
+#endif
         sourceWatcher_->addPath(watchPath_);
         sourceFileUpdated(watchPath_);
     }
@@ -283,7 +275,7 @@ void LH_DataViewerConnector::mapFileChanged()
             QString segment = "";
             parsingList.clear();
 
-            sourceType_ = source_type_TXT;
+            sourceType_ = SOURCETYPE_TXT;
             isDelimited_ = true;
             delimiter_ = ':';
             columnWidth_ = 0;
@@ -326,7 +318,7 @@ void LH_DataViewerConnector::mapFileChanged()
                         QString property = item.section('=',0,0).trimmed().toLower();
                         QString value = item.section('=',1,-1).trimmed();
                         if(property=="type")
-                            sourceType_ = (value.toLower()=="xml"? source_type_XML : (value.toLower()=="ini"? source_type_INI : source_type_TXT)); else
+                            sourceType_ = (value.toLower()=="xml"? SOURCETYPE_XML : (value.toLower()=="ini"? SOURCETYPE_INI : SOURCETYPE_TXT)); else
                         if(property=="delimited")                        
                             isDelimited_ = (value.toLower()=="true" || value.toLower()=="yes" || value.toLower()=="1"); else
                         if(property=="delimiter")
@@ -367,7 +359,7 @@ void LH_DataViewerConnector::mapFileChanged()
                     if(segment.startsWith("[definition:"))
                     {
                         QStringList parts = item.split('\t',QString::SkipEmptyParts);
-                        if(parts.count()>=2 && sourceType_ == source_type_TXT)
+                        if(parts.count()>=2 && sourceType_ == SOURCETYPE_TXT)
                         {
                             QRegExp rx("^\"(.*)\"$");
                             if (rx.indexIn(parts.at(1).trimmed()) != -1)
@@ -385,8 +377,8 @@ void LH_DataViewerConnector::mapFileChanged()
                     } else
                     if(segment.startsWith("[/definition:"))
                     {
-                        qWarning() << "Block cannot being with \"[/definition:\"";
-                        Q_ASSERT(false);
+                        qWarning() << "Block cannot being with \"[/definition:\" (check the INI file - it is badly written)";
+                        Q_ASSERT(!segment.startsWith("[/definition:"));
                     } else
                     if(segment=="[definitions]")
                     {
@@ -396,7 +388,7 @@ void LH_DataViewerConnector::mapFileChanged()
                             itemDefinition def;
                             def.name = parts.at(0).trimmed();
                             def.address = parts.at(1).trimmed();
-                            if(sourceType_ == source_type_TXT)
+                            if(sourceType_ == SOURCETYPE_TXT)
                             {
                                 def.x = def.address.section(',',0,0).toInt();
                                 def.y = def.address.section(',',1,1).toInt();
@@ -412,7 +404,7 @@ void LH_DataViewerConnector::mapFileChanged()
                     if(segment=="[parsing]") {
                         //rules for reinterpreting parsed data loaded here
                         QStringList parts = item.split('\t',QString::SkipEmptyParts);
-                        if(parts.count()>=2)
+                        if(parts.count()>=1)
                             parsingList.append(parts);
                     } else
                     {
@@ -432,7 +424,7 @@ void LH_DataViewerConnector::sourceFileUpdated(const QString &path)
 {
     Q_UNUSED(path);
 
-
+    QDomDocument xmlDoc;
     if( watchPath_ != "" )
     {
         setup_feedback_->setValue("Connected to Data");
@@ -448,14 +440,14 @@ void LH_DataViewerConnector::sourceFileUpdated(const QString &path)
             file.close();
         }
         switch(sourceType_){
-        case source_type_TXT:
-        case source_type_INI:
+        case SOURCETYPE_TXT:
+        case SOURCETYPE_INI:
             {
                 QStringList sourceLines = fileContent.split('\r',QString::SkipEmptyParts);
 
                 if (isSingleWrite_ || sourceLines.count()>=completeCount_)
                 {
-                    //clear memory
+                    // clear memory
                     sharedData->clear(itemDefinitions_.count());
 
                     // set expiry
@@ -463,8 +455,11 @@ void LH_DataViewerConnector::sourceFileUpdated(const QString &path)
                         sharedData->expiresAt =  QFileInfo(file).lastModified().addSecs(dataExpiry_).toString("yyyyMMddHHmmss.zzz");
                     else
                         sharedData->expiresAt = "N/A";
+
+                    // set last updated time
                     sharedData->lastUpdated = QDateTime::currentDateTime().toString("yyyyMMddHHmmss.zzz");
 
+                    // remove unwanted lines (for situations where new data is appended to old data)
                     if(updateLength_!=0)
                         while(sourceLines.count()>abs(updateLength_))
                         {
@@ -476,15 +471,17 @@ void LH_DataViewerConnector::sourceFileUpdated(const QString &path)
 
                     // load defined data
                     switch(sourceType_){
-                    case source_type_TXT:
+                    case SOURCETYPE_TXT:
                         //fill any index-based fields
                         for (int i=0; i<itemDefinitions_.count(); i++)
                             sharedData->setItem(i, itemDefinitions_.at(i).name, getTextValue(sourceLines, itemDefinitions_.at(i)));
                         //fill any node-based fields
                         populateValues(rootNode, sourceLines);
                         break;
-                    case source_type_INI:
+                    case SOURCETYPE_INI:
                         updateNodes(sourceLines);
+                        break;
+                    default:
                         break;
                     }
 
@@ -492,6 +489,33 @@ void LH_DataViewerConnector::sourceFileUpdated(const QString &path)
                     sharedData->valid = true;
                 }
             }
+            break;
+        case SOURCETYPE_XML:
+            xmlDoc = QDomDocument("data");
+            if(!xmlDoc.setContent(fileContent))
+            {
+                qWarning() << "LH_DataViewer: Could not load source document";
+                return;
+            }
+
+            // clear memory
+            sharedData->clear(itemDefinitions_.count());
+
+            // set expiry
+            if(dataExpiry_!=0)
+                sharedData->expiresAt =  QFileInfo(file).lastModified().addSecs(dataExpiry_).toString("yyyyMMddHHmmss.zzz");
+            else
+                sharedData->expiresAt = "N/A";
+
+            //set last updated time
+            sharedData->lastUpdated = QDateTime::currentDateTime().toString("yyyyMMddHHmmss.zzz");
+
+            // load defined data
+            updateNodes(xmlDoc.firstChild());
+
+            // declare valid
+            sharedData->valid = true;
+
             break;
         default:
             {
@@ -534,6 +558,33 @@ void LH_DataViewerConnector::updateNodes(QStringList sourceLines)
     }
 }
 
+void LH_DataViewerConnector::updateNodes(QDomNode n, dataNode* currentNode)
+{
+    bool isRoot = false;
+    if(!currentNode)
+    {
+        currentNode = rootNode;
+        currentNode->resetCursors();
+        isRoot = true;
+    }
+
+    qDebug() << "NODE: " << n.nodeName();
+    for(uint i = 0; i<n.childNodes().length(); i++)
+    {
+        QDomNode child = n.childNodes().at(i);
+        if(child.nodeType()==QDomNode::TextNode)
+            currentNode->setValue(child.nodeValue());
+        else
+            updateNodes(child, currentNode->openChild(child.nodeName()));
+    }
+
+    if(isRoot)
+        for(int i=0; i<parsingList.count(); i++)
+        {
+            parseAddress(rootNode, parsingList[i][0].trimmed().split('.',QString::SkipEmptyParts), parsingList[i], QHash<QString,int>() );
+        }
+}
+
 void LH_DataViewerConnector::parseAddress(dataNode* currentNode, QStringList addresses, QStringList parseData, QHash<QString,int> indexes)
 {
     if(addresses.count()>1)
@@ -553,8 +604,8 @@ void LH_DataViewerConnector::parseAddress(dataNode* currentNode, QStringList add
         //You can only create one new layer of nodes here
         if(!currentNode->contains(nodeName))
         {
-            qWarning() << "There was a problem parsing the data. Check the map file's format definition and the data file.";
-            Q_ASSERT(currentNode->contains(nodeName));
+            qWarning() << QString("LH_DataViewer: You can only create one new layer of nodes via the Parsing section at a time - the current datamap is trying to create more than that (\"%1\" does not exist but new nodes are trying to be added beneath it). Check the map file's format definition and the data file.").arg(nodeName);
+            return; //Q_ASSERT(currentNode->contains(nodeName));
         }
 
         QList<dataNode*> nodesList = currentNode->child(nodeName);
@@ -576,7 +627,6 @@ void LH_DataViewerConnector::parseAddress(dataNode* currentNode, QStringList add
         }
     } else {
         //apply parsing
-        dataNode* valueNode = findNode(parseData[1].trimmed(), indexes);
         QString formatCode = (parseData.count()<3? "" : parseData[2].trimmed());
 
         //now parse the format code as a template using stored indexes
@@ -598,12 +648,18 @@ void LH_DataViewerConnector::parseAddress(dataNode* currentNode, QStringList add
                 formatCode.replace(QString("{%1}").arg(match), matchNode->value());
         }
 
-        QString nodeValue = formatData(valueNode->value(), formatCode);
-        //create the new child node
-        if(valueNode->address() == currentNode->address(addresses[0]))
-            valueNode->setValue(nodeValue);
+        if(parseData.count()<2)
+            currentNode->openChild(addresses[0]);
         else
-            currentNode->openChild(addresses[0], nodeValue);
+        {
+            dataNode* valueNode = findNode(parseData[1].trimmed(), indexes);
+            QString nodeValue = formatData(valueNode->value(), formatCode);
+            //create the new child node
+            if(valueNode->address() == currentNode->address(addresses[0]))
+                valueNode->setValue(nodeValue);
+            else
+                currentNode->openChild(addresses[0], nodeValue);
+        }
     }
 }
 
@@ -654,7 +710,8 @@ void LH_DataViewerConnector::languageFileChanged()
         if( file.open( QIODevice::ReadOnly) )
         {
             QTextStream stream(&file);
-            QRegExp rx = QRegExp(";.*$");
+            QRegExp rxEnd = QRegExp("\\s*;.*$");
+            QRegExp rxPre = QRegExp("^[\\n\\r ]*");
             QString fileContent = stream.readAll();
 
             QStringList items = fileContent.split('\r',QString::SkipEmptyParts);
@@ -663,7 +720,8 @@ void LH_DataViewerConnector::languageFileChanged()
             QString segment = "";
             foreach (QString item, items)
             {
-                item = item.remove(rx).trimmed();
+                item = item.remove(rxEnd);
+                item = item.remove(rxPre);
                 if (item!="")
                 {
                     if(item.startsWith("["))
@@ -683,13 +741,25 @@ void LH_DataViewerConnector::languageFileChanged()
                     if(segment.startsWith("[list:"))
                     {
                         thresholdItem newLevel;
-                        newLevel.levelNames = item.split('\t',QString::SkipEmptyParts);
-                        newLevel.levelBase = newLevel.levelNames.at(0).trimmed().toFloat();
+                        newLevel.levelNames = item.split('\t');
+                        if(newLevel.levelNames.at(0)=="" && lists_.value(segmentName)->levels.count() == 0)
+                            newLevel.adaptiveBase = true;
+                        else
+                        {
+                            newLevel.adaptiveBase = false;
+                            newLevel.levelBase = newLevel.levelNames.at(0).trimmed().toFloat();
+                            if (lists_.value(segmentName)->levels.count() == 1)
+                                if (lists_.value(segmentName)->levels.at(0).adaptiveBase)
+                                    lists_.value(segmentName)->levels[0].levelBase = newLevel.levelBase - 1;
+                        }
                         lists_.value(segmentName)->levels.append(newLevel);
                     }
                 }
             }
 
+#ifdef DEBUG_MESSAGES
+            qDebug() << "Language File Changed - reload data";
+#endif
             sourceFileUpdated(setup_data_file_->value().absoluteFilePath());
         }
     }

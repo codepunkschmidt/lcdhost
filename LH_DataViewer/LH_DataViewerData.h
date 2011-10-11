@@ -69,6 +69,8 @@ public:
     QString populateLookupCode(QString lookupTemplate, bool getNames = false, bool preventEmpty = false)
     {
         QString templateResult = QString(lookupTemplate);
+
+        // look for the old index-style references, e.g. {0} {2} {34}
         QRegExp rx = QRegExp("\\{([0-9]*)\\}");
         bool blankValues = true;
         int hitCount = templateResult.count(rx);
@@ -79,6 +81,7 @@ public:
             templateResult.replace(rx.cap(0), strVal);
         }
 
+        // look for new address-based references, e.g. {player.name}
         rx = QRegExp("\\{([a-zA-Z0-9.[\\]]*)\\}");
         hitCount += templateResult.count(rx);
         while (rx.indexIn(templateResult) != -1)
@@ -88,12 +91,16 @@ public:
             templateResult.replace(rx.cap(0), strVal);
         }
 
-        rx = QRegExp("\\{=([^}=:]*)(?:\\:(.*))?\\}");
-        hitCount += templateResult.count(rx);
-        while (rx.indexIn(templateResult) != -1)
+        if(!getNames)
         {
-            QString strVal = parseMath(rx.cap(1),0,rx.cap(2));
-            templateResult.replace(rx.cap(0), strVal);
+            // look for formatting commands, e.g. {=<something>:%.2f}
+            rx = QRegExp("\\{=([^}=:]*)(?:\\:(.*))?\\}");
+            hitCount += templateResult.count(rx);
+            while (rx.indexIn(templateResult) != -1)
+            {
+                QString strVal = parseMath(rx.cap(1),0,rx.cap(2));
+                templateResult.replace(rx.cap(0), strVal);
+            }
         }
 
         if (blankValues && hitCount!=0) templateResult = "";

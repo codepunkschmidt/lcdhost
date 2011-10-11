@@ -44,12 +44,20 @@
 struct thresholdItem
 {
     float levelBase;
+    bool adaptiveBase;
     QStringList levelNames;
 };
 
 struct thresholdList
 {
     QList<thresholdItem> levels;
+};
+
+enum SourceType
+{
+    SOURCETYPE_XML = 1,
+    SOURCETYPE_TXT = 2,
+    SOURCETYPE_INI = 3
 };
 
 class LH_DataViewerConnector : public LH_QtInstance
@@ -62,7 +70,7 @@ class LH_DataViewerConnector : public LH_QtInstance
 
     bool repolled_;
 
-    int sourceType_;
+    SourceType sourceType_;
     bool isDelimited_;
     int updateLength_;
     char delimiter_;
@@ -75,6 +83,7 @@ class LH_DataViewerConnector : public LH_QtInstance
 
     void populateValues(dataNode* node, QStringList sourceLines);
     void updateNodes(QStringList sourceLines);
+    void updateNodes(QDomNode n, dataNode* currentNode = NULL);
     QString getTextValue(QStringList lines, itemDefinition def);
     QString formatData(QString data, QString formatting);
     QStringList splitByWidth(QString str, int w);
@@ -94,16 +103,14 @@ protected:
 public:
     LH_DataViewerConnector();
     ~LH_DataViewerConnector();
-    const char *userInit(){ hide(); return NULL; }
-
-    int polling();
+    const char *userInit();
 
     static lh_class *classInfo();
 
 public slots:
     void sourceFileChanged();
     void mapFileChanged();
-    void sourceFileUpdated(const QString &path);
+    void sourceFileUpdated(const QString &path = "");
     void languageFileChanged();
 };
 

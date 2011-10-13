@@ -29,6 +29,9 @@
 #include <cmath>
 #include <QtXml>
 
+
+#include <sstream>
+
 LH_PLUGIN_CLASS(LH_DataViewerConnector)
 
 #define DEBUG_MESSAGES
@@ -62,6 +65,8 @@ LH_DataViewerConnector::LH_DataViewerConnector()
     dataExpiry_ = 0;
     repolled_ = false;
     watchPath_ = "";
+    processName_ = "";
+    needsClearing_ = false;
 }
 
 const char *LH_DataViewerConnector::userInit(){
@@ -77,11 +82,12 @@ const char *LH_DataViewerConnector::userInit(){
     connect( setup_language_, SIGNAL(changed()), this, SLOT(languageFileChanged()) );
 
     setup_map_file_ = new LH_Qt_QFileInfo(this,"Data Map",QFileInfo(), LH_FLAG_AUTORENDER | LH_FLAG_NOSINK | LH_FLAG_NOSOURCE );
-    setup_map_file_->setHelp("The data map file contains information needed to understand and parse the data source.<br><br>(Unlike text files, XML data sources do not require a map file, although they do support them if advanced data parsing or data-expiriation is required.)");
+    setup_map_file_->setHelp("The data map file contains information needed to understand and parse the data source.<br><br>"
+                             "(Unlike text files, XML data sources do not require a map file, although they do support them if advanced data parsing or data-expiriation is required.)");
     connect( setup_map_file_, SIGNAL(changed()), this, SLOT(mapFileChanged()) );
 
     setup_data_file_ = new LH_Qt_QFileInfo(this,"Data Source",QFileInfo(), LH_FLAG_AUTORENDER | LH_FLAG_NOSINK | LH_FLAG_NOSOURCE );
-    setup_data_file_ ->setHelp("The data source. Only XML data sources can be understood without a data map.");
+    setup_data_file_ ->setHelp("The data source. Only XML data sources can be understood without a data map. If the datamap specifies \"MEM\" as the type then no source file is required.");
     connect( setup_data_file_, SIGNAL(changed()), this, SLOT(sourceFileChanged()) );
 
     sourceWatcher_ = new QFileSystemWatcher(this);
@@ -93,6 +99,19 @@ const char *LH_DataViewerConnector::userInit(){
     connect( this, SIGNAL(initialized()), this, SLOT(sourceFileUpdated()) );
 
     return NULL;
+}
+
+int LH_DataViewerConnector::polling()
+{
+    if(sourceType_ == SOURCETYPE_MEM)
+    {
+        if(readMemoryValues())
+            return 200;
+        else
+            return 1000;
+    }
+    else
+        return 0;
 }
 
 QString LH_DataViewerConnector::get_dir_layout()
@@ -256,7 +275,22 @@ void LH_DataViewerConnector::sourceFileChanged()
 
         sourceWatcher_->addPath(watchPath_);
         sourceFileUpdated(watchPath_);
+        setup_map_file_->setHidden(sourceType_ == SOURCETYPE_MEM);
     }
+}
+
+MemoryDataType LH_DataViewerConnector::ToMemType(QString s)
+{
+    if(s.contains(QRegExp("^\\s*(4\\s?Byte|Int(eger)?)\\s*$",Qt::CaseInsensitive)))
+        return MEMTYPE_4BYTE;
+    if(s.contains(QRegExp("^\\s*(8\\s?Byte|Long(\\s?Long))\\s*$",Qt::CaseInsensitive)))
+        return MEMTYPE_8BYTE;
+    if(s.contains(QRegExp("^\\s*(Float)\\s*$",Qt::CaseInsensitive)))
+        return MEMTYPE_FLOAT;
+    if(s.contains(QRegExp("^\\s*(Double)\\s*$",Qt::CaseInsensitive)))
+        return MEMTYPE_DOUBLE;
+    qWarning() << QString("LH_DataViewer: \"%1\" is not recognised as a data type").arg(s);
+    return MEMTYPE_NONE;
 }
 
 void LH_DataViewerConnector::mapFileChanged()
@@ -330,7 +364,7 @@ void LH_DataViewerConnector::mapFileChanged()
                         QString property = item.section('=',0,0).trimmed().toLower();
                         QString value = item.section('=',1,-1).trimmed();
                         if(property=="type")
-                            sourceType_ = (value.toLower()=="xml"? SOURCETYPE_XML : (value.toLower()=="ini"? SOURCETYPE_INI : SOURCETYPE_TXT)); else
+                            sourceType_ = (value.toLower()=="xml"? SOURCETYPE_XML : (value.toLower()=="mem"? SOURCETYPE_MEM : (value.toLower()=="ini"? SOURCETYPE_INI : SOURCETYPE_TXT))); else
                         if(property=="delimited")                        
                             isDelimited_ = (value.toLower()=="true" || value.toLower()=="yes" || value.toLower()=="1"); else
                         if(property=="delimiter")
@@ -368,23 +402,63 @@ void LH_DataViewerConnector::mapFileChanged()
                         newLevel.levelBase = newLevel.levelNames.at(0).trimmed().toFloat();
                         lists_.value(segmentName)->levels.append(newLevel);
                     } else
+                    if(segment=="[process]")
+                    {
+                        QString property = item.section('=',0,0).trimmed().toLower();
+                        QString value = item.section('=',1,-1).trimmed();
+                        if(property=="name")
+                            processName_ = value;
+                    } else
                     if(segment.startsWith("[definition:"))
                     {
                         QStringList parts = item.split('\t',QString::SkipEmptyParts);
-                        if(parts.count()>=2 && sourceType_ == SOURCETYPE_TXT)
+                        if((parts.count()>=2 && sourceType_ == SOURCETYPE_TXT) || (parts.count()>=3 && sourceType_ == SOURCETYPE_MEM))
                         {
                             QRegExp rx("^\"(.*)\"$");
                             if (rx.indexIn(parts.at(1).trimmed()) != -1)
                                 currentNode->addChild( parts.at(0).trimmed(), rx.cap(1) );
                             else
-                                currentNode->addChild( (itemDefinition){
-                                    parts.at(0).trimmed(),
-                                    parts.at(1).trimmed(),
-                                    parts.at(1).trimmed().section(',',0,0).toInt(),
-                                    parts.at(1).trimmed().section(',',1,1).toInt(),
-                                    (parts.count()<3? "" : parts.at(2)),
-                                    true
-                                });
+                            {
+                                if (sourceType_ == SOURCETYPE_TXT)
+                                    currentNode->addChild( (itemDefinition){
+                                        parts.at(0).trimmed(),
+                                        parts.at(1).trimmed(),
+                                        parts.at(1).trimmed().section(',',0,0).toInt(),
+                                        parts.at(1).trimmed().section(',',1,1).toInt(),
+                                        (parts.count()<3? "" : parts.at(2)),
+                                        true,0,NULL,MEMTYPE_NONE
+                                    });
+                                if (sourceType_ == SOURCETYPE_MEM)
+                                {
+                                    QStringList memAddress = parts.at(1).trimmed().split('>',QString::SkipEmptyParts);
+                                    uint *offsets = NULL;
+                                    if(memAddress.count()>1)
+                                    {
+                                        offsets = new uint[memAddress.count()-2];
+                                        for(int i = 0; i<=memAddress.count()-2; i++)
+                                        {
+                                            uint val;
+                                            sscanf(memAddress.at(i+1).toAscii().data(), "%x", &val);
+                                            offsets[i] = val;
+                                        }
+                                    }
+
+                                    uint addressVal;
+                                    sscanf(memAddress.at(0).toAscii().data(), "%x", &addressVal);
+
+                                    currentNode->addChild( (itemDefinition){
+                                        parts.at(0).trimmed(),
+                                        "",
+                                        0,
+                                        0,
+                                        (parts.count()<4? "" : parts.at(3)),
+                                        true,
+                                        addressVal,
+                                        offsets,
+                                        ToMemType(parts.at(2).trimmed())
+                                    });
+                                }
+                            }
                         }
                     } else
                     if(segment.startsWith("[/definition:"))
@@ -425,6 +499,8 @@ void LH_DataViewerConnector::mapFileChanged()
                 }
             }
             languageFileChanged();
+            if(sourceType_ == SOURCETYPE_MEM)
+                callback(lh_cb_polling, NULL);
         } else {
             setup_feedback_->setValue("Unable to open file.");
             return;
@@ -503,31 +579,36 @@ void LH_DataViewerConnector::sourceFileUpdated(const QString &path)
             }
             break;
         case SOURCETYPE_XML:
-            xmlDoc = QDomDocument("data");
-            if(!xmlDoc.setContent(fileContent))
             {
-                qWarning() << "LH_DataViewer: Could not load source document";
-                return;
+                xmlDoc = QDomDocument("data");
+                if(!xmlDoc.setContent(fileContent))
+                {
+                    qWarning() << "LH_DataViewer: Could not load source document";
+                    return;
+                }
+
+                // clear memory
+                sharedData->clear(itemDefinitions_.count());
+
+                // set expiry
+                if(dataExpiry_!=0)
+                    sharedData->expiresAt =  QFileInfo(file).lastModified().addSecs(dataExpiry_).toString("yyyyMMddHHmmss.zzz");
+                else
+                    sharedData->expiresAt = "N/A";
+
+                //set last updated time
+                sharedData->lastUpdated = QDateTime::currentDateTime().toString("yyyyMMddHHmmss.zzz");
+
+                // load defined data
+                updateNodes(xmlDoc.firstChild());
+
+                // declare valid
+                sharedData->valid = true;
+
             }
-
-            // clear memory
-            sharedData->clear(itemDefinitions_.count());
-
-            // set expiry
-            if(dataExpiry_!=0)
-                sharedData->expiresAt =  QFileInfo(file).lastModified().addSecs(dataExpiry_).toString("yyyyMMddHHmmss.zzz");
-            else
-                sharedData->expiresAt = "N/A";
-
-            //set last updated time
-            sharedData->lastUpdated = QDateTime::currentDateTime().toString("yyyyMMddHHmmss.zzz");
-
-            // load defined data
-            updateNodes(xmlDoc.firstChild());
-
-            // declare valid
-            sharedData->valid = true;
-
+            break;
+        case SOURCETYPE_MEM:
+            //this type doesn't have a data file.
             break;
         default:
             {
@@ -777,3 +858,29 @@ void LH_DataViewerConnector::languageFileChanged()
     }
 }
 
+bool LH_DataViewerConnector::readMemoryValues()
+{
+    QString feedbackMessage;
+    if(rootNode->openProcess(processName_, feedbackMessage))
+    {
+        rootNode->refreshProcessValues();
+        sharedData->lastUpdated = QDateTime::currentDateTime().toString("yyyyMMddHHmmss.zzz");
+        sharedData->expiresAt = QDateTime::currentDateTime().addSecs(1).toString("yyyyMMddHHmmss.zzz");
+        sharedData->valid = true;
+        needsClearing_ = true;
+        setup_feedback_->setValue( "Connected to Data" );
+        return true;
+    }
+    else
+    {
+        setup_feedback_->setValue( feedbackMessage );
+        if(needsClearing_)
+        {
+            rootNode->clearValues();
+            sharedData->expiresAt = QDateTime::currentDateTime().addSecs(1).toString("yyyyMMddHHmmss.zzz");
+            sharedData->valid = true;
+            needsClearing_ = false;
+        }
+        return false;
+    }
+}

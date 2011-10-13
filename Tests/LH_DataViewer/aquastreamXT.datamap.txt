@@ -1,6 +1,6 @@
 [Format]
 type=xml		; xml / txt / ini
-dataExpiry=0		; # of seconds to consider the data invalid
+dataExpiry=2		; # of seconds to consider the data invalid
 language=EN		; The language used by the lists in this file. Other languages can be added by copying the lists to a new text file,
 			; translating them and then saving the file as "lists.<language>.txt", e.g. lists.RU.txt
 

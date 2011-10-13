@@ -41,6 +41,14 @@
 
 #include "LH_DataViewerData.h"
 
+#ifdef Q_WS_WIN
+#include <windows.h>
+#include <winbase.h>
+#include <Psapi.h>
+#include <tlhelp32.h>
+
+#endif
+
 struct thresholdItem
 {
     float levelBase;
@@ -57,7 +65,8 @@ enum SourceType
 {
     SOURCETYPE_XML = 1,
     SOURCETYPE_TXT = 2,
-    SOURCETYPE_INI = 3
+    SOURCETYPE_INI = 3,
+    SOURCETYPE_MEM = 4
 };
 
 class LH_DataViewerConnector : public LH_QtInstance
@@ -76,8 +85,11 @@ class LH_DataViewerConnector : public LH_QtInstance
     char delimiter_;
     int columnWidth_;
     bool isSingleWrite_;
+    bool needsClearing_;
     int completeCount_;
     int dataExpiry_;
+
+    QString processName_;
 
     QList<QStringList> parsingList;
 
@@ -92,6 +104,9 @@ class LH_DataViewerConnector : public LH_QtInstance
     void parseAddress(dataNode* currentNode, QStringList addresses, QStringList parseData, QHash<QString,int> indexes);
     dataNode* findNode(QString address, QHash<QString,int> indexes);
 
+    MemoryDataType ToMemType(QString);
+    bool readMemoryValues();
+
 protected:
     LH_Qt_QString *setup_feedback_;
     LH_Qt_QFileInfo *setup_map_file_;
@@ -104,6 +119,7 @@ public:
     LH_DataViewerConnector();
     ~LH_DataViewerConnector();
     const char *userInit();
+    int polling();
 
     static lh_class *classInfo();
 

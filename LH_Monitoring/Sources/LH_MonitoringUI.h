@@ -22,6 +22,8 @@
 #include "LH_Aida64Data.h"
 #include "LH_HWMonData.h"
 #include "LH_HWiNFOData.h"
+#elif LH_DRIVESTATS_LIBRARY
+#include "LH_DriveStatsData.h"
 #endif
 
 enum ui_mon_entry_type
@@ -34,8 +36,10 @@ enum ui_mon_entry_type
 enum ui_mode_type
 {
     ui_mode_items,
-    ui_mode_index,
-    ui_mode_aida64
+#ifdef LH_MONITORING_LIBRARY
+    ui_mode_aida64,
+#endif
+    ui_mode_index
 };
 
 struct sensorGroup

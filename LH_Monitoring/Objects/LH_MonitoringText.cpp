@@ -40,7 +40,7 @@ lh_class *LH_MonitoringText::classInfo()
     static lh_class classInfo =
     {
         sizeof(lh_class),
-        "3rdParty/"STRINGIZE(MONITORING_FOLDER)" Monitoring",
+        STRINGIZE(MONITORING_FOLDER),
         STRINGIZE(COMMON_OBJECT_NAME)"Text",
         STRINGIZE(COMMON_OBJECT_NAME)" (Text)",
         -1, -1,

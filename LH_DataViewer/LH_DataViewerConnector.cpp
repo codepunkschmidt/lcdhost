@@ -66,6 +66,7 @@ LH_DataViewerConnector::LH_DataViewerConnector()
     repolled_ = false;
     watchPath_ = "";
     processName_ = "";
+    processVersion_ = "";
     needsClearing_ = false;
 }
 
@@ -123,7 +124,7 @@ QStringList LH_DataViewerConnector::listLanguages()
 {
     QStringList languages = QStringList();
     languages.append("Default");
-qDebug() << get_dir_layout();
+
     QDir layoutDir = QDir(get_dir_layout());
     QStringList filters;
     filters << "lists.*.txt";
@@ -142,7 +143,6 @@ qDebug() << get_dir_layout();
 
 LH_DataViewerConnector::~LH_DataViewerConnector()
 {
-    //delete sourceWatcher_;
     delete rootNode;
     rootNode = 0;
     delete sharedData;
@@ -408,6 +408,8 @@ void LH_DataViewerConnector::mapFileChanged()
                         QString value = item.section('=',1,-1).trimmed();
                         if(property=="name")
                             processName_ = value;
+                        if(property=="version")
+                            processVersion_ = value;
                     } else
                     if(segment.startsWith("[definition:"))
                     {
@@ -861,7 +863,7 @@ void LH_DataViewerConnector::languageFileChanged()
 bool LH_DataViewerConnector::readMemoryValues()
 {
     QString feedbackMessage;
-    if(rootNode->openProcess(processName_, feedbackMessage))
+    if(rootNode->openProcess(processName_, processVersion_, feedbackMessage))
     {
         rootNode->refreshProcessValues();
         sharedData->lastUpdated = QDateTime::currentDateTime().toString("yyyyMMddHHmmss.zzz");

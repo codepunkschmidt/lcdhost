@@ -207,6 +207,57 @@ class dataNode
         CloseHandle(processesSnapshot);
         return 0;
     }
+
+    QString getProcessVersion(QString exeFile)
+    {
+#ifdef Q_WS_WIN
+        QString version = "";
+
+        HANDLE moduleSnapshot = CreateToolhelp32Snapshot(TH32CS_SNAPMODULE, processID_);
+        if ( moduleSnapshot == INVALID_HANDLE_VALUE )
+            return "";
+
+        MODULEENTRY32 moduleInfo;
+        moduleInfo.dwSize = sizeof(moduleInfo);
+        bool searching = Module32First(moduleSnapshot, &moduleInfo);
+        while(searching)
+        {
+            if(QString::fromWCharArray(moduleInfo.szExePath).endsWith("\\" + exeFile))
+            {
+                DWORD verLength;
+                DWORD verSize = GetFileVersionInfoSize(moduleInfo.szExePath, &verLength);
+                if(verSize)
+                {
+                    LPBYTE lpBuffer = NULL;
+                    UINT size = 0;
+                    LPSTR verData = new char[verSize];
+                    if( GetFileVersionInfo(moduleInfo.szExePath, verLength, verSize, verData) )
+                        if (VerQueryValueA(verData,QString("\\").toAscii().data(),(VOID FAR* FAR*)&lpBuffer,&size) && size)
+                        {
+                            VS_FIXEDFILEINFO *verInfo = (VS_FIXEDFILEINFO *)lpBuffer;
+                            if (verInfo->dwSignature == 0xfeef04bd)
+                            {
+                                    int major = HIWORD(verInfo->dwFileVersionMS);
+                                    int minor = LOWORD(verInfo->dwFileVersionMS);
+                                    int build = HIWORD(verInfo->dwFileVersionLS);
+                                    int revision = LOWORD(verInfo->dwFileVersionLS);
+
+                                    version = QString("%1.%2.%3.%4").arg(major).arg(minor).arg(build).arg(revision);
+                                    break;
+                            }
+                        }
+                    delete verData;
+                }
+            }
+            searching = Module32Next(moduleSnapshot, &moduleInfo);
+        }
+        CloseHandle(moduleSnapshot);
+        return version;
+#else
+        return "";
+#endif
+    }
+
 #endif
 
 protected:
@@ -422,7 +473,7 @@ public:
         return changed;
     }
 
-    bool openProcess(QString exeFile, QString &feedbackMessage)
+    bool openProcess(QString exeFile, QString targetVersion, QString &feedbackMessage)
     {
 #ifdef Q_WS_WIN
         feedbackMessage = "";
@@ -453,7 +504,18 @@ public:
             return false;
         }
 
-        processHandle_ = OpenProcess(PROCESS_VM_READ, false, processID_);
+        if(targetVersion!="")
+        {
+            QString processVersion = getProcessVersion(exeFile);
+            if(targetVersion != processVersion)
+            {
+                feedbackMessage = QString("Incorrect version (layout is for v%1, not v%2)").arg(targetVersion).arg(processVersion);
+                return false;
+            }
+        }
+
+
+        processHandle_ = OpenProcess(PROCESS_QUERY_INFORMATION | PROCESS_VM_READ, false, processID_);
         if ( !processHandle_ )
         {
             feedbackMessage = QString("Could not open process \"%1\"").arg(exeFile);

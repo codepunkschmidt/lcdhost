@@ -5,6 +5,8 @@ QT += network \
 DEFINES += LH_DATAVIEWER_LIBRARY
 DEFINES += VERSION=1.04
 
+win32:LIBS += -L"C:/Program Files/Microsoft SDKs/Windows/v7.0/Lib" -lversion
+
 CONFIG += cf
 
 include(../Plugins.pri)

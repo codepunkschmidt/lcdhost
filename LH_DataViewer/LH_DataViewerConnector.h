@@ -36,15 +36,11 @@
 #include "LH_Qt_int.h"
 #include "LH_Qt_QTextEdit.h"
 
-// #include <stdio.h>
-// #include <windows.h>
-
 #include "LH_DataViewerData.h"
 
 #ifdef Q_WS_WIN
 #include <windows.h>
 #include <winbase.h>
-#include <Psapi.h>
 #include <tlhelp32.h>
 
 #endif
@@ -90,6 +86,7 @@ class LH_DataViewerConnector : public LH_QtInstance
     int dataExpiry_;
 
     QString processName_;
+    QString processVersion_;
 
     QList<QStringList> parsingList;
 

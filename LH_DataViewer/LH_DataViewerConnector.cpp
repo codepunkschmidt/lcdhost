@@ -663,7 +663,13 @@ void LH_DataViewerConnector::updateNodes(QDomNode n, dataNode* currentNode)
         isRoot = true;
     }
 
-    qDebug() << "NODE: " << n.nodeName();
+    QDomNamedNodeMap attrs = n.toElement().attributes();
+    for (int i = 0; i < attrs.size(); i++)
+    {
+        QDomAttr attr = attrs.item(i).toAttr();
+        currentNode->attributes.insert(attr.name(), attr.value());
+    }
+
     for(uint i = 0; i<n.childNodes().length(); i++)
     {
         QDomNode child = n.childNodes().at(i);
@@ -673,11 +679,10 @@ void LH_DataViewerConnector::updateNodes(QDomNode n, dataNode* currentNode)
             updateNodes(child, currentNode->openChild(child.nodeName()));
     }
 
+    //Apply parsing rules
     if(isRoot)
         for(int i=0; i<parsingList.count(); i++)
-        {
             parseAddress(rootNode, parsingList[i][0].trimmed().split('.',QString::SkipEmptyParts), parsingList[i], QHash<QString,int>() );
-        }
 }
 
 void LH_DataViewerConnector::parseAddress(dataNode* currentNode, QStringList addresses, QStringList parseData, QHash<QString,int> indexes)

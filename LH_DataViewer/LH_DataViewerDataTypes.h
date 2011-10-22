@@ -279,7 +279,10 @@ protected:
             }
         }
     }
+
 public:
+    QHash<QString,QString> attributes;
+
     void clearValues()
     {
         setValue("");

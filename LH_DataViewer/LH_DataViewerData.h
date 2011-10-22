@@ -82,7 +82,7 @@ public:
         }
 
         // look for new address-based references, e.g. {player.name}
-        rx = QRegExp("\\{([a-zA-Z0-9.[\\]]*)\\}");
+        rx = QRegExp("\\{([a-zA-Z0-9.[\\]]*(?:@[a-zA-Z0-9]+)?)\\}");
         hitCount += templateResult.count(rx);
         while (rx.indexIn(templateResult) != -1)
         {
@@ -136,6 +136,7 @@ public:
             return valueAddress;
         else
         {
+            QString attrName = "";
             QStringList path = valueAddress.split(".");
             dataNode* curNode = rootNode;
             QRegExp rx("^(.*)\\[([0-9]+)\\]$");
@@ -143,6 +144,13 @@ public:
             {
                 QString nodeName = path.first();
                 path.removeFirst();
+                if(!nodeName.contains("@"))
+                    attrName = "";
+                else
+                {
+                    attrName = nodeName.split('@')[1];
+                    nodeName = nodeName.split('@')[0];
+                }
 
                 int nodeIndex = 0;
                 if(rx.indexIn(nodeName) != -1)
@@ -160,7 +168,10 @@ public:
             while(curNode->defaultItem()!="")
                 curNode = curNode->child(curNode->defaultItem())[0];
 
-            resultText = curNode->value();
+            if(attrName == "")
+                resultText = curNode->value();
+            else
+                resultText = curNode->attributes.value(attrName);
         }
 
         return resultText;

@@ -51,7 +51,9 @@ lh_class *LH_TS3CombinedStatusImage::classInfo()
         "3rdParty/TeamSpeak 3",
         "TS3CombinedStatusImage",
         "TS3 Combined Status (Image)",
-        16,16
+        16,16,
+        lh_object_calltable_NULL,
+        lh_instance_calltable_NULL
     };
     return &classInfo;
 }

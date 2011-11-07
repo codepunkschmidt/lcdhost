@@ -32,7 +32,9 @@ public:
             "3rdParty/TeamSpeak 3",
             "TS3NicknameText",
             "TS3 Nickname (Text)",
-            -1, -1
+            -1, -1,
+            lh_object_calltable_NULL,
+            lh_instance_calltable_NULL
         };
 
         if( classInfo.width == -1 )

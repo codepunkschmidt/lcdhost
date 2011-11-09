@@ -24,6 +24,8 @@ LH_DriveStatsData::LH_DriveStatsData(LH_QtObject *parent, LH_MonitoringUI *ui, m
     if(dataMode & mdmNumbers) ui_->append(mon_item, "Used Space");
     if(dataMode & mdmNumbers) ui_->append(mon_item, "Total Space");
 
+    if(dataMode & mdmPie) ui_->append(mon_item, "Disk Space");
+
     QStringList drives = driveInfo.getDrives();
     for(int i=0; i<drives.count(); i++)
         ui_->append(mon_type, drives.at(i) );
@@ -53,6 +55,9 @@ bool LH_DriveStatsData::getData(float& value, QString& text, QString& units)
         if(dataMode_ & mdmNumbers) ui_->append(mon_item, "Free Space");
         if(dataMode_ & mdmNumbers) ui_->append(mon_item, "Used Space");
         if(dataMode_ & mdmNumbers) ui_->append(mon_item, "Total Space");
+
+        if(dataMode_ & mdmPie) ui_->append(mon_item, "Disk Space");
+
         ui_->refresh(mon_item);
     }
     else
@@ -90,10 +95,20 @@ bool LH_DriveStatsData::getData(float& value, QString& text, QString& units)
             parseBytes(driveInfo.UsedSpace(), value, text, units);
         if(ui_->valueText(mon_item) == "Total Space")
             parseBytes(driveInfo.TotalSpace(), value, text, units);
+
+        if(ui_->valueText(mon_item) == "Disk Space")
+            value = driveInfo.UsedSpace();
     }
 
     return driveInfo.valid();
 }
+
+bool LH_DriveStatsData::getPieMax(float &value)
+{
+    value = driveInfo.TotalSpace();
+    return driveInfo.valid();
+}
+
 
 void LH_DriveStatsData::parseBytes(qlonglong bytes, float& value, QString& text, QString& units)
 {

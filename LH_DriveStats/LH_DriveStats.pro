@@ -26,6 +26,7 @@ HEADERS += \
     ../LH_Monitoring/Objects/LH_MonitoringImage.h \
     ../LH_Monitoring/Objects/LH_MonitoringGraph.h \
     ../LH_Monitoring/Objects/LH_MonitoringDial.h \
+    ../LH_Monitoring/Objects/LH_MonitoringPie.h \
     ../LH_Monitoring/Objects/LH_MonitoringBar.h \
     ../LH_Monitoring/Sources/LH_MonitoringData.h \
     ../LH_Monitoring/Sources/LH_MonitoringUI.h \
@@ -45,6 +46,7 @@ SOURCES += \
     ../LH_Monitoring/Objects/LH_MonitoringImage.cpp \
     ../LH_Monitoring/Objects/LH_MonitoringGraph.cpp \
     ../LH_Monitoring/Objects/LH_MonitoringDial.cpp \
+    ../LH_Monitoring/Objects/LH_MonitoringPie.cpp \
     ../LH_Monitoring/Objects/LH_MonitoringBar.cpp \
     ../LH_Monitoring/Sources/LH_MonitoringData.cpp \
     ../LH_Monitoring/Sources/LH_MonitoringUI.cpp \

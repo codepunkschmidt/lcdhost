@@ -13,6 +13,7 @@ class LH_DriveStatsData: public LH_MonitoringData
 
 protected:
     bool getData(float& value, QString& text, QString& units);
+    bool getPieMax(float &value);
 
 public:
     LH_DriveStatsData( LH_QtObject *parent, LH_MonitoringUI *ui, monitoringDataMode dataMode = mdmNumbers, bool includeGroups = false);

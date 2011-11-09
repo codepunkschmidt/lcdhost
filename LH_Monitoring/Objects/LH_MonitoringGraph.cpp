@@ -111,7 +111,7 @@ int LH_MonitoringGraph::notify(int n, void *p)
             was_empty_ = graph_empty_;
             callback(lh_cb_render,NULL);
         }
-    return LH_Graph::notify(n,p) | LH_NOTE_SECOND;
+    return LH_QtInstance::notify(n,p) | LH_NOTE_SECOND;
 }
 
 void LH_MonitoringGraph::updateLines()

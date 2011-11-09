@@ -681,13 +681,6 @@ void LH_Graph::setYUnit( QString str, qreal divisor )
     if (divisor!=0) divisorY_ = divisor;
 }
 
-int LH_Graph::notify(int code,void* param)
-{
-    Q_UNUSED(code);
-    Q_UNUSED(param);
-    return 0;
-}
-
 QImage *LH_Graph::render_qimage( int w, int h )
 {
     if( LH_QtInstance::initImage(w,h) == NULL ) return NULL;

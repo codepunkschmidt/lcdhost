@@ -82,8 +82,6 @@ public:
             return false;
     }
 
-
-
     QStringList getDrives()
     {
         DWORD len = GetLogicalDriveStrings( 0, NULL );
@@ -185,22 +183,22 @@ public:
 
     qlonglong QueueDepth()
     {
-        return(!valid()? 0 : diskPerformance.QueueDepth);
+        return(!validNew_? 0 : diskPerformance.QueueDepth);
     }
 
     qlonglong FreeSpace()
     {
-        return(!valid()? 0 : FreeBytes_.QuadPart);
+        return(!validNew_? 0 : FreeBytes_.QuadPart);
     }
 
     qlonglong TotalSpace()
     {
-        return(!valid()? 0 : TotalBytes_.QuadPart);
+        return(!validNew_? 0 : TotalBytes_.QuadPart);
     }
 
     qlonglong UsedSpace()
     {
-        return(!valid()? 0 : TotalBytes_.QuadPart - FreeBytes_.QuadPart);
+        return(!validNew_? 0 : TotalBytes_.QuadPart - FreeBytes_.QuadPart);
     }
 };
 

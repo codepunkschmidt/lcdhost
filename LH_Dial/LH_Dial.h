@@ -100,7 +100,7 @@ class LH_Dial : public LH_QtInstance
     float getRadians(qreal degrees) {float offsetRadians; return getRadians(degrees, offsetRadians);}
     float getDrawLen(float boxHeight, float boxWidth, float radians);
     void getDimensions(qreal degrees, int& h, int& w, float& radH, float& radW, float& radians, float& drawLen);
-    QString generateNeedleCode(float drawLen, QColor needleColor, int needleThick, int needleLength, int needleGap, int h, int w, QString needleImagePath, int needleStyle);
+    QString generateNeedleCode(float drawLen, QColor needleColor, int needleThick, int needleLength, int needleGap, int h, int w, QString needleImagePath, int needleStyle, bool sliceGradient, QColor sliceColor2);
 
     QImage getFace();
     QImage getNeedle(int needleID, qreal degrees, int& needleStyle);
@@ -122,8 +122,8 @@ class LH_Dial : public LH_QtInstance
     QList<QImage*> needleImage_;
     QList<bool> needle_vis_;
 
-    void loadNeedleConfig(int lineID, int& needleStyle, QColor& needleColor, int& needleThick, int& needleLength, int& needleGap, QString& needleImage);
-    void loadSliceConfig(int sliceID, int& sliceStyle, QColor& sliceColor, int& sliceLength, QString& sliceImage, int& sliceImageAlpha);
+    void loadNeedleConfig(int lineID, int& needleStyle, QColor& needleColor, int& needleThick, int& needleLength, int& needleGap, QString& needleImage, bool& needleGradient, QColor& needleColor2);
+    void loadSliceConfig(int sliceID, int& sliceStyle, QColor& sliceColor, int& sliceLength, QString& sliceImage, int& sliceImageAlpha, bool &sliceGradient, QColor &sliceColor2);
 
     static const bool isDebug = false;
 
@@ -156,12 +156,16 @@ protected:
 
     LH_Qt_QStringList *setup_needle_style_;
     LH_Qt_QColor *setup_needle_color_;
+    LH_Qt_bool *setup_needle_gradient_;
+    LH_Qt_QColor *setup_needle_color2_;
     LH_Qt_int *setup_needle_thickness_;
     LH_Qt_int *setup_needle_length_;
     LH_Qt_int *setup_needle_gap_;
     LH_Qt_QFileInfo* setup_needle_image_;
 
     LH_Qt_QColor* setup_unused_color_;
+    LH_Qt_bool* setup_unused_gradient_;
+    LH_Qt_QColor* setup_unused_color2_;
     LH_Qt_int* setup_unused_length_;
     LH_Qt_QFileInfo* setup_unused_image_;
 

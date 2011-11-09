@@ -1,0 +1,269 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<instance>
+    <identity name="Logitech G19 LCD (USB)" id="34qse8"/>
+    <state modifiable="0" selectable="0" alerts="1"/>
+    <origin x="0" y="0"/>
+    <size w="320" h="240"/>
+    <plugin_size w="-1" h="-1"/>
+    <pos x="0" y="0" z="0"/>
+    <x_ref id="0" align="0" ref_align="0"/>
+    <y_ref id="0" align="0" ref_align="0"/>
+    <w_ref id="0" mod="0" units="0"/>
+    <h_ref id="0" mod="0" units="0"/>
+    <instance class="LH_Decor/StaticBackground">
+        <identity name="Background [1]" id="3hnkkw"/>
+        <state modifiable="1" selectable="1" alerts="1"/>
+        <origin x="0" y="0"/>
+        <size w="320" h="240"/>
+        <plugin_size w="-1" h="-1"/>
+        <pos x="0" y="0" z="0"/>
+        <x_ref id="34qse8" align="0" ref_align="0"/>
+        <y_ref id="34qse8" align="0" ref_align="0"/>
+        <w_ref id="34qse8" mod="0" units="0"/>
+        <h_ref id="34qse8" mod="0" units="0"/>
+        <setupitem>
+            <identity name="First color" type="3"/>
+            <value type="QString">-16759650</value>
+        </setupitem>
+        <setupitem>
+            <identity name="^Background is a gradient" type="2"/>
+            <value type="QString">false</value>
+        </setupitem>
+        <setupitem>
+            <identity name="Second color" type="3"/>
+            <value type="QString">-4144960</value>
+        </setupitem>
+        <setupitem>
+            <identity name="^Gradient is horizontal" type="2"/>
+            <value type="QString">false</value>
+        </setupitem>
+    </instance>
+    <instance class="LH_DriveStats/Drive PerformancePie">
+        <identity name="Drive Performance (Pie) [1]" id="3hnoq8"/>
+        <state modifiable="1" selectable="1" alerts="1"/>
+        <origin x="0" y="0"/>
+        <size w="48" h="48"/>
+        <plugin_size w="48" h="48"/>
+        <pos x="127" y="67" z="1"/>
+        <x_ref id="34qse8" align="0" ref_align="0"/>
+        <y_ref id="34qse8" align="0" ref_align="0"/>
+        <w_ref id="0" mod="0" units="0"/>
+        <h_ref id="0" mod="0" units="0"/>
+        <setupitem>
+            <identity name="Application" type="6"/>
+            <value type="QString">0</value>
+        </setupitem>
+        <setupitem>
+            <identity name="(Value Type)" type="1"/>
+            <value type="QString">0</value>
+        </setupitem>
+        <setupitem>
+            <identity name="(Value Type Name)" type="8"/>
+            <value type="QString"></value>
+        </setupitem>
+        <setupitem>
+            <identity name="(Value Group)" type="1"/>
+            <value type="QString">0</value>
+        </setupitem>
+        <setupitem>
+            <identity name="(Value Group Name)" type="8"/>
+            <value type="QString"></value>
+        </setupitem>
+        <setupitem>
+            <identity name="(Value Item)" type="1"/>
+            <value type="QString">0</value>
+        </setupitem>
+        <setupitem>
+            <identity name="(Value Item Name)" type="8"/>
+            <value type="QString"></value>
+        </setupitem>
+        <setupitem>
+            <identity name="(Value Index)" type="1"/>
+            <value type="QString">0</value>
+        </setupitem>
+        <setupitem>
+            <identity name="Apply Offsets" type="2"/>
+            <value type="QString">true</value>
+        </setupitem>
+        <setupitem>
+            <identity name="Use Formatted Data" type="2"/>
+            <value type="QString">false</value>
+        </setupitem>
+        <setupitem>
+            <identity name="Dial Type" type="6"/>
+            <value type="QString">0</value>
+        </setupitem>
+        <setupitem>
+            <identity name="Orientation" type="6"/>
+            <value type="QString">0</value>
+        </setupitem>
+        <setupitem>
+            <identity name="Background color" type="3"/>
+            <value type="QString">0</value>
+        </setupitem>
+        <setupitem>
+            <identity name="Face Style" type="6"/>
+            <value type="QString">2</value>
+        </setupitem>
+        <setupitem>
+            <identity name="Pen color" type="3"/>
+            <value type="QString">-16777216</value>
+        </setupitem>
+        <setupitem>
+            <identity name="Fill color (start)" type="3"/>
+            <value type="QString">-1</value>
+        </setupitem>
+        <setupitem>
+            <identity name="Fill color (end)" type="3"/>
+            <value type="QString">-4144960</value>
+        </setupitem>
+        <setupitem>
+            <identity name="Face Image" type="10"/>
+            <value type="QString"></value>
+        </setupitem>
+        <setupitem>
+            <identity name="Show Ticks" type="2"/>
+            <value type="QString">false</value>
+        </setupitem>
+        <setupitem>
+            <identity name="Reverse Segments" type="2"/>
+            <value type="QString">false</value>
+        </setupitem>
+        <setupitem>
+            <identity name="Smooth Segments" type="2"/>
+            <value type="QString">true</value>
+        </setupitem>
+        <setupitem>
+            <identity name="Unused Capacity Style" type="6"/>
+            <value type="QString">0</value>
+        </setupitem>
+        <setupitem>
+            <identity name="Unused Capacity Color" type="3"/>
+            <value type="QString">-1</value>
+        </setupitem>
+        <setupitem>
+            <identity name="Unused Capacity Length (%)" type="1"/>
+            <value type="QString">90</value>
+        </setupitem>
+        <setupitem>
+            <identity name="Unused Capacity Image" type="10"/>
+            <value type="QString"></value>
+        </setupitem>
+        <setupitem>
+            <identity name="Segment Configs" type="9"/>
+            <value type="QString">0,192,0,0,255,3,90,0,</value>
+        </setupitem>
+    </instance>
+    <instance class="LH_DriveStats/Drive PerformanceText">
+        <identity name="Drive Performance (Text) [1]" id="3hnp8w"/>
+        <state modifiable="1" selectable="1" alerts="1"/>
+        <origin x="0" y="0"/>
+        <size w="5" h="19"/>
+        <plugin_size w="5" h="19"/>
+        <pos x="200" y="49" z="2"/>
+        <x_ref id="0" align="0" ref_align="0"/>
+        <y_ref id="0" align="0" ref_align="0"/>
+        <w_ref id="0" mod="0" units="0"/>
+        <h_ref id="0" mod="0" units="0"/>
+        <setupitem>
+            <identity name="Application" type="6"/>
+            <value type="int">0</value>
+        </setupitem>
+        <setupitem>
+            <identity name="(Value Type)" type="1"/>
+            <value type="int">0</value>
+        </setupitem>
+        <setupitem>
+            <identity name="(Value Type Name)" type="8"/>
+            <value type="QString"></value>
+        </setupitem>
+        <setupitem>
+            <identity name="(Value Group)" type="1"/>
+            <value type="int">0</value>
+        </setupitem>
+        <setupitem>
+            <identity name="(Value Group Name)" type="8"/>
+            <value type="QString"></value>
+        </setupitem>
+        <setupitem>
+            <identity name="(Value Item)" type="1"/>
+            <value type="int">0</value>
+        </setupitem>
+        <setupitem>
+            <identity name="(Value Item Name)" type="8"/>
+            <value type="QString"></value>
+        </setupitem>
+        <setupitem>
+            <identity name="(Value Index)" type="1"/>
+            <value type="int">0</value>
+        </setupitem>
+        <setupitem>
+            <identity name="Apply Offsets" type="2"/>
+            <value type="bool">true</value>
+        </setupitem>
+        <setupitem>
+            <identity name="Use Formatted Data" type="2"/>
+            <value type="bool">false</value>
+        </setupitem>
+        <setupitem>
+            <identity name="Round" type="2"/>
+            <value type="bool">false</value>
+        </setupitem>
+        <setupitem>
+            <identity name="Append Units" type="2"/>
+            <value type="bool">true</value>
+        </setupitem>
+        <setupitem>
+            <identity name="Pre-Text" type="8"/>
+            <value type="QString"></value>
+        </setupitem>
+        <setupitem>
+            <identity name="Post-Text" type="8"/>
+            <value type="QString"></value>
+        </setupitem>
+        <setupitem>
+            <identity name="Font" type="11"/>
+            <value type="QString">Arial,10,-1,5,50,0,0,0,0,0</value>
+        </setupitem>
+        <setupitem>
+            <identity name="^Adjust font size to instance height" type="2"/>
+            <value type="bool">true</value>
+        </setupitem>
+        <setupitem>
+            <identity name="Color" type="3"/>
+            <value type="int">-16777216</value>
+        </setupitem>
+        <setupitem>
+            <identity name="Background" type="3"/>
+            <value type="int">0</value>
+        </setupitem>
+        <setupitem>
+            <identity name="Horizontal" type="6"/>
+            <value type="int">0</value>
+        </setupitem>
+        <setupitem>
+            <identity name="Vertical" type="6"/>
+            <value type="int">0</value>
+        </setupitem>
+        <setupitem>
+            <identity name="Scroll rate" type="4"/>
+            <value type="int">15</value>
+        </setupitem>
+        <setupitem>
+            <identity name="Scroll step" type="4"/>
+            <value type="int">2</value>
+        </setupitem>
+        <setupitem>
+            <identity name="Scroll gap" type="4"/>
+            <value type="int">10</value>
+        </setupitem>
+        <setupitem>
+            <identity name="^Enable Conditional Formatting" type="2"/>
+            <value type="bool">false</value>
+        </setupitem>
+        <setupitem>
+            <identity name="Conditions XML" type="9"/>
+            <value type="QString">&lt;rules/&gt;</value>
+        </setupitem>
+    </instance>
+</instance>

@@ -11,7 +11,8 @@ enum monitoringDataMode
 {
     mdmNumbers = 1,
     mdmText = 2,
-    mdmAll = mdmNumbers + mdmText
+    mdmAll = mdmNumbers + mdmText,
+    mdmPie = 4
 };
 
 enum monitoringDataType
@@ -56,6 +57,7 @@ public:
     virtual int getThreshMax();
     virtual bool getGraphMin(float& ) {return false;}
     virtual bool getGraphMax(float& ) {return false;}
+    virtual bool getPieMax(float& ) {return false;}
     virtual bool getNames(QStringList& names);
     virtual bool getValue(float& value);
     virtual bool getValue(float& value, int index);

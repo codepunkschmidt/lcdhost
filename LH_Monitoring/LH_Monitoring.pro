@@ -2,7 +2,7 @@ TARGET = LH_Monitoring
 TEMPLATE = lib
 DEFINES += LH_MONITORING_LIBRARY
 DEFINES += COMMON_OBJECT_NAME="Monitoring"
-DEFINES += MONITORING_FOLDER="3rdParty/System_Monitoring"
+DEFINES += "MONITORING_FOLDER=\"3rdParty/System Monitoring\""
 QT += xml
 CONFIG += cf
 

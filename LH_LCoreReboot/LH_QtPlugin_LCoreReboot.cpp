@@ -49,7 +49,9 @@ char __lcdhostplugin_xml[] =
   "Reboots the Logitech Gaming Software"
   "</shortdesc>"
   "<longdesc>"
-    "<p>Reboots the Logitech Gaming Software</p>"
+    "<p>This plugin provides a facility to restart the Logitech Gaming Software (LGS). It simply locates the running LGS process (LCore.exe), kills it and then relaunches the Logitech Gaming Software (sending it directly to the system tray, rather than allowing the main LGS window to open).</p>"
+    "<p>The purpose of this is to help the user quickly recover from a crashed LGS instance (i.e. when the lcd display appears frozen).</p>"
+    "<p><i>This plugin cannot be used if LCDHost is not running as an administrator on Windows 7 or Vista due to UAC.</i> Applications can be launched as an administrator at startup using <a href='http://www.sevenforums.com/tutorials/67503-task-create-run-program-startup-log.html'>scheduled tasks</a>. Note, however, that doing this will mean any applications launched by LCDHost (i.e. by a layout) will also be launched in admin mode.</p>"
 "</longdesc>"
 "</lcdhostplugin>";
 

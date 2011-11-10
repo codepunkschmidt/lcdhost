@@ -549,7 +549,6 @@ void LH_MonitoringUI::changeAppSelection()
 
     acquireAppData();
 
-    updateUnitOptions();
     emit appChanged();
 }
 
@@ -598,4 +597,6 @@ void LH_MonitoringUI::acquireAppData()
         data_->setAdaptiveUnits(adaptiveUnits_);
     else
         reset();
+
+    updateUnitOptions();
 }

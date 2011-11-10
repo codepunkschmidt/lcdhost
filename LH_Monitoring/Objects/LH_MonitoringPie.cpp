@@ -46,9 +46,7 @@ lh_class *LH_MonitoringPie::classInfo()
 const char *LH_MonitoringPie::userInit()
 {
     if( const char *err = LH_Dial::userInit() ) return err;
-    ui_ = new LH_MonitoringUI(this, mdmPie, true);
-
-    (new LH_Qt_QString(this,("image-hr1"), QString("<hr>"), LH_FLAG_NOSAVE | LH_FLAG_NOSOURCE | LH_FLAG_NOSINK | LH_FLAG_HIDETITLE,lh_type_string_html ))->setOrder(-3);
+    ui_ = new LH_MonitoringUI(this, mdmPie, true, false);
 
     updateBounds();
 
@@ -114,7 +112,7 @@ void LH_MonitoringPie::updateBounds()
 {
     float max = 1;
     if(ui_ && ui_->data_)
-        ui_->data_->getPieMax(max);
+        ui_->data_->getUpperLimit(max);
 
     setMax(max);
     setMin(0);

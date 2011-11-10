@@ -24,9 +24,9 @@ public:
 
     void updateScale();
     void updateLines();
-    void clearData();
 
 public slots:
+    void clearData();
     void updateUnits();
 
     void configChanged()  { clearData(); updateUnits();}

@@ -5,7 +5,7 @@
 #include <algorithm>
 #include <QSettings>
 
-LH_DriveStatsData::LH_DriveStatsData(LH_QtObject *parent, LH_MonitoringUI *ui, monitoringDataMode dataMode, bool includeGroups) : LH_MonitoringData( parent, ui, dataMode, includeGroups )
+LH_DriveStatsData::LH_DriveStatsData(LH_QtObject *parent, LH_MonitoringUI *ui, monitoringDataMode dataMode, bool includeGroups) : LH_MonitoringData( parent, ui, dataMode, includeGroups, true)
 {
     Q_UNUSED(includeGroups);
 
@@ -22,7 +22,7 @@ LH_DriveStatsData::LH_DriveStatsData(LH_QtObject *parent, LH_MonitoringUI *ui, m
     if(dataMode & mdmNumbers) ui_->append(mon_item, "Queue Depth");
     if(dataMode & mdmNumbers) ui_->append(mon_item, "Free Space");
     if(dataMode & mdmNumbers) ui_->append(mon_item, "Used Space");
-    if(dataMode & mdmNumbers) ui_->append(mon_item, "Total Space");
+    if(dataMode & mdmText) ui_->append(mon_item, "Total Space");
 
     if(dataMode & mdmPie) ui_->append(mon_item, "Disk Space");
 
@@ -33,6 +33,18 @@ LH_DriveStatsData::LH_DriveStatsData(LH_QtObject *parent, LH_MonitoringUI *ui, m
     driveInfo.setDrive(ui_->valueText(mon_type));
 
     ui_->refresh(mon_item | mon_type);
+}
+
+bool LH_DriveStatsData::getAdaptiveUnitOptions(unitOptionsType &options)
+{
+    QString item = ui_->valueText(mon_item);
+    if(item == "Bytes Read" || item == "Bytes Written" || item == "Free Space" ||  item == "Used Space" || item == "Total Space")
+    {
+        options.set(1024, new QStringList(QStringList()<<"B"<<"kB"<<"MB"<<"GB"<<"TB"));
+        return true;
+    }
+    else
+        return false;
 }
 
 bool LH_DriveStatsData::getData(float& value, QString& text, QString& units)
@@ -64,6 +76,8 @@ bool LH_DriveStatsData::getData(float& value, QString& text, QString& units)
         driveInfo.update();
     if(driveInfo.valid())
     {
+        units = this->adaptiveUnits()? "" : ui_->setup_unit_selection_->valueText();
+
         if(ui_->valueText(mon_item) == "Bytes Read")
             parseBytes(driveInfo.BytesRead(), value, text, units);
         if(ui_->valueText(mon_item) == "Bytes Written")
@@ -103,27 +117,29 @@ bool LH_DriveStatsData::getData(float& value, QString& text, QString& units)
     return driveInfo.valid();
 }
 
-bool LH_DriveStatsData::getPieMax(float &value)
+bool LH_DriveStatsData::getUpperLimit(float &value)
 {
-    value = driveInfo.TotalSpace();
-    return driveInfo.valid();
+    if(ui_->valueText(mon_item) == "Free Space" || ui_->valueText(mon_item) == "Used Space")
+    {
+        value = driveInfo.TotalSpace();
+        unitOptionsType options;
+        if(getAdaptiveUnitOptions(options))
+            options.convert(value, this->adaptiveUnits()? "" : ui_->setup_unit_selection_->valueText());
+
+        return driveInfo.valid();
+    }
+    else
+        return false;
 }
 
 
 void LH_DriveStatsData::parseBytes(qlonglong bytes, float& value, QString& text, QString& units)
 {
     value = bytes;
-    units = "B";
-    while(value >= 1024 && units != "TB")
-    {
-        value /= 1024;
-        if(units=="B") units = "kB"; else
-            if(units=="kB") units = "MB"; else
-                if(units=="MB") units = "GB"; else
-                    if(units=="GB") units = "TB";
-    }
+    unitOptionsType options;
+    if(getAdaptiveUnitOptions(options))
+        units = options.convert(value, units);
     text = QString::number(value, 'f', 0);
-    value = bytes;
 }
 
 monitoringDataType LH_DriveStatsData::getType()

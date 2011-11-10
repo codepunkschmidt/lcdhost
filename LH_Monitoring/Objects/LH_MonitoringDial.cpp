@@ -46,9 +46,7 @@ lh_class *LH_MonitoringDial::classInfo()
 const char *LH_MonitoringDial::userInit()
 {
     if( const char *err = LH_Dial::userInit() ) return err;
-    ui_ = new LH_MonitoringUI(this, mdmNumbers, true);
-
-    (new LH_Qt_QString(this,("image-hr1"), QString("<hr>"), LH_FLAG_NOSAVE | LH_FLAG_NOSOURCE | LH_FLAG_NOSINK | LH_FLAG_HIDETITLE,lh_type_string_html ))->setOrder(-3);
+    ui_ = new LH_MonitoringUI(this, mdmNumbers, true, false);
 
     setup_max_ = new LH_Qt_int(this, "Maximum", 100, 0, 99999);
     setup_max_->setHelp( "<p>The dial's maximum value.</p>");
@@ -86,6 +84,20 @@ int LH_MonitoringDial::polling()
         ui_->data_->getCount(count);
         if(needleCount() != count)
             updateNeedles();
+
+        float max;
+        if(ui_->data_->getUpperLimit(max))
+        {
+            this->setup_max_->setHidden(true);
+            this->setup_min_->setHidden(true);
+            this->setMax((qreal)max);
+            this->setMin((qreal)0);
+        }
+        else
+        {
+            this->setup_max_->setHidden(false);
+            this->setup_min_->setHidden(false);
+        }
 
         if(!ui_->data_->isGroup())
         {

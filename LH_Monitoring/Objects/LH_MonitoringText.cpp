@@ -67,9 +67,7 @@ const char *LH_MonitoringText::userInit()
 {
     if( const char *err = LH_Text::userInit() ) return err;
 
-    ui_ = new LH_MonitoringUI(this, mdmAll, false);
-
-    (new LH_Qt_QString(this,("image-hr1"), QString("<hr>"), LH_FLAG_NOSAVE | LH_FLAG_NOSOURCE | LH_FLAG_NOSINK | LH_FLAG_HIDETITLE,lh_type_string_html ))->setOrder(-3);
+    ui_ = new LH_MonitoringUI(this, mdmAll, false, true);
 
     setup_value_round_ = new LH_Qt_bool(this,"Round",false, LH_FLAG_AUTORENDER);
     setup_value_round_->setHelp( "<p>Round non integer values.</p>");

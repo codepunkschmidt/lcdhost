@@ -51,8 +51,6 @@ const char *LH_MonitoringGraph::userInit()
     setUserDefinableLimits(true);
     canGrow(true);
 
-    (new LH_Qt_QString(this,("image-hr1"), QString("<hr>"), LH_FLAG_NOSAVE | LH_FLAG_NOSOURCE | LH_FLAG_NOSINK | LH_FLAG_HIDETITLE,lh_type_string_html ))->setOrder(-3);
-
     setup_auto_scale_y_max_->setValue(true);
     setup_auto_scale_y_min_->setValue(true);
     setup_show_y_max_->setValue(true);
@@ -72,6 +70,8 @@ const char *LH_MonitoringGraph::userInit()
     connect(ui_, SIGNAL(groupChanged()), this, SLOT(configChanged()) );
     connect(ui_, SIGNAL(itemChanged()), this, SLOT(configChanged()) );
     connect(ui_, SIGNAL(initialized()), this, SLOT(configChanged()) );
+
+    connect(ui_->setup_unit_selection_, SIGNAL(changed()), SLOT(clearData()) );
 
     return 0;
 }

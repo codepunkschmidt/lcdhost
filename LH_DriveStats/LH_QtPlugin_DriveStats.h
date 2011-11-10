@@ -29,7 +29,7 @@
 
 #include <QDebug>
 
-#define VERSION 1.00
+#define VERSION 1.01
 
 
 class LH_QtPlugin_DriveStats : public LH_QtPlugin

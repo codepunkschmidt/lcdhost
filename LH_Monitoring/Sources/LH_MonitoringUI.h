@@ -55,11 +55,13 @@ class LH_MonitoringUI : public QObject
     ui_mode_type mode_;
     monitoringDataMode dataMode_;
     bool includeGroups_;
+    bool adaptiveUnits_;
 
     int initializationState_;
 
     void acquireAppData();
 
+    void updateUnitOptions();
 
 public:
     LH_MonitoringData *data_;
@@ -70,6 +72,7 @@ public:
     LH_Qt_QStringList *setup_value_type_;
     LH_Qt_QStringList *setup_value_group_;
     LH_Qt_QStringList *setup_value_item_;
+    LH_Qt_QStringList *setup_unit_selection_;
 
     LH_Qt_int         *setup_value_type_index_;
     LH_Qt_int         *setup_value_item_index_;
@@ -84,9 +87,10 @@ public:
     LH_Qt_bool *setup_value_offset_;
     LH_Qt_bool *setup_value_format_;
 
+
     QList<sensorGroup> sensors_;
 
-    LH_MonitoringUI(LH_QtObject *parent, monitoringDataMode dataMode, bool includeGroups = false);
+    LH_MonitoringUI(LH_QtObject *parent, monitoringDataMode dataMode, bool includeGroups = false, bool adaptiveUnits = false);
 
     void reset(ui_mode_type mode = ui_mode_items);
     void setVisible(int, bool = true);

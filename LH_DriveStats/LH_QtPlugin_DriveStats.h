@@ -29,9 +29,6 @@
 
 #include <QDebug>
 
-#define VERSION 1.01
-
-
 class LH_QtPlugin_DriveStats : public LH_QtPlugin
 {
     Q_OBJECT

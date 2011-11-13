@@ -216,7 +216,7 @@ responseResult LH_QtPlugin_TS3::parseResult(QString msg)
 
 void LH_QtPlugin_TS3::TS3DataReceived()
 {
-    QString receivedMsg = QString(socket_->readAll());
+    QString receivedMsg = QString::fromUtf8(socket_->readAll());
     //QRegExp rxSCHandler("selected schandlerid=([0-9]*)");
     QRegExp rxNotify("notify(\\w*) schandlerid=([0-9]*) (.*)");
     QRegExp rxMyID("clid=([0-9]*) cid=([0-9]*)");

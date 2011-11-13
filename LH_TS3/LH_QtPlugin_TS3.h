@@ -43,8 +43,6 @@
 #include <QTime>
 #include <QTimer>
 
-#define VERSION 1.00
-
 enum server_action {
     sa_none,
     sa_disconnected,

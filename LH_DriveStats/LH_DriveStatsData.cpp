@@ -119,7 +119,7 @@ bool LH_DriveStatsData::getData(float& value, QString& text, QString& units)
 
 bool LH_DriveStatsData::getUpperLimit(float &value)
 {
-    if(ui_->valueText(mon_item) == "Free Space" || ui_->valueText(mon_item) == "Used Space")
+    if(ui_->valueText(mon_item) == "Free Space" || ui_->valueText(mon_item) == "Used Space" || ui_->valueText(mon_item) == "Disk Space")
     {
         value = driveInfo.TotalSpace();
         unitOptionsType options;

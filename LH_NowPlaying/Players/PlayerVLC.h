@@ -28,27 +28,30 @@ public:
     virtual ~CPlayerVLC();
 
     static CPlayer* Create(std::wstring port);
+    static HWND FindVLCWindow();
 
 	virtual void UpdateData();
 
-    /*virtual void Pause();
+    virtual void Pause();
 	virtual void Play();
-	virtual void Stop();
+    virtual void Stop();
 	virtual void Next();
 	virtual void Previous();
-	virtual void SetPosition(int position);
+    /*virtual void SetPosition(int position);
 	virtual void SetRating(int rating);
-	virtual void SetVolume(int volume);
+    virtual void SetVolume(int volume);*/
 	virtual void SetShuffle(bool state);
 	virtual void SetRepeat(bool state);
 	virtual void ClosePlayer();
-    virtual void OpenPlayer(std::wstring& path);*/
+    //virtual void OpenPlayer(std::wstring& path);
 
 protected:
     CPlayerVLC(std::wstring port);
 
 private:
-	static CPlayer* c_Player;
+    static CPlayer* c_Player;
+    static BOOL CALLBACK EnumWindowsProc(HWND hWnd, LPARAM lParam);
+    static HWND m_VLCHandle;
 
 	DWORD m_LastCheckTime;
     std::wstring m_Port;

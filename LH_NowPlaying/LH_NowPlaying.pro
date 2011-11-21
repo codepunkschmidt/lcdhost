@@ -44,7 +44,8 @@ SOURCES += \
     Objects/LH_NowPlayingText.cpp \
     Objects/LH_NowPlayingBar.cpp \
     Objects/LH_NowPlayingEmulator.cpp \
-    Objects/LH_NowPlayingAlbumArt.cpp
+    Objects/LH_NowPlayingAlbumArt.cpp \
+    Objects/LH_NowPlayingRemoteControl.cpp
 
 HEADERS += \
     $$PLUGIN_HEADERS \
@@ -66,7 +67,14 @@ HEADERS += \
     Objects/LH_NowPlayingText.h \
     Objects/LH_NowPlayingBar.h \
     Objects/LH_NowPlayingEmulator.h \
-    Objects/LH_NowPlayingAlbumArt.h
+    Objects/LH_NowPlayingAlbumArt.h \
+    Objects/LH_NowPlayingRemoteControl.h
+
+RESOURCES += \
+    LH_NowPlaying.qrc
+
+
+
 
 
 

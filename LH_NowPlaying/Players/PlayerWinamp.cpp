@@ -19,6 +19,7 @@
 #include "PlayerWinamp.h"
 #include "Winamp/wa_ipc.h"
 #include "Winamp/wa_cmd.h"
+#include <QDebug>
 
 CPlayer* CPlayerWinamp::c_Player = NULL;
 
@@ -138,7 +139,7 @@ void CPlayerWinamp::UpdateData()
 			m_Volume = (SendMessage(m_Window, WM_WA_IPC, -666, IPC_SETVOLUME) * 100) / 255;	// 0 - 255 to 0 - 100
 		}
 
-		WCHAR wBuffer[MAX_PATH];
+        WCHAR wBuffer[MAX_PATH];
 		char cBuffer[MAX_PATH];
 
 		if (m_UseUnicodeAPI)
@@ -164,9 +165,11 @@ void CPlayerWinamp::UpdateData()
 			mbstowcs(wBuffer, cBuffer, MAX_PATH);
 		}
 
-		if (wcscmp(wBuffer, m_FilePath.c_str()) != 0)
+        m_Shuffle = (bool)SendMessage(m_Window, WM_WA_IPC, 0, IPC_GET_SHUFFLE);
+        m_Repeat = (bool)SendMessage(m_Window, WM_WA_IPC, 0, IPC_GET_REPEAT);
+        if (wcscmp(wBuffer, m_FilePath.c_str()) != 0)
 		{
-			++m_TrackCount;
+            ++m_TrackCount;
 			m_FilePath = wBuffer;
 			m_PlayingStream = (m_FilePath.find(L"://") != std::wstring::npos);
 
@@ -174,8 +177,6 @@ void CPlayerWinamp::UpdateData()
 			{
 				m_Rating = SendMessage(m_Window, WM_WA_IPC, 0, IPC_GETRATING);
 				m_Duration = SendMessage(m_Window, WM_WA_IPC, 1, IPC_GETOUTPUTTIME);
-				m_Shuffle = (bool)SendMessage(m_Window, WM_WA_IPC, 0, IPC_GET_SHUFFLE);
-				m_Repeat = (bool)SendMessage(m_Window, WM_WA_IPC, 0, IPC_GET_REPEAT);
 
 				TagLib::FileRef fr(wBuffer, false);
 				TagLib::Tag* tag = fr.tag();
@@ -460,7 +461,16 @@ void CPlayerWinamp::ClosePlayer()
 {
 	if (m_WinampType == WA_WINAMP)
 	{
-		SendMessage(m_Window, WM_CLOSE, 0, 0);
+        if(GetPlayer().startsWith("Foobar"))
+        {
+            HWND wnd = FindWindow(L"{97E27FAA-C0B3-4b8e-A693-ED7881E99FC1}", NULL);
+            if (wnd)
+            {
+                SendMessage(wnd, WM_CLOSE, 0, 0);
+            }
+        }
+        else
+            SendMessage(m_Window, WM_CLOSE, 0, 0);
 	}
 	else // if (m_WinampType == WA_MEDIAMONKEY)
 	{

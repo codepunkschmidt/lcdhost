@@ -36,7 +36,7 @@ public:
 	static std::wstring ConvertToWide(LPCSTR str, int codepage);
 
 private:
-        static QString getLastErrorMessage();
+    static QString getLastErrorMessage();
 	static HINTERNET c_NetHandle;
 };
 

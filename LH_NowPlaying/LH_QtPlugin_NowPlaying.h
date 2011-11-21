@@ -39,6 +39,9 @@
 #define LH_QTPLUGIN_NOWPLAYING_H
 
 #include "LH_QtPlugin.h"
+#include "LH_Qt_QString.h"
+#include "LH_Qt_InputState.h"
+#include "LH_Qt_bool.h"
 #include "Player.h"
 
 
@@ -54,6 +57,7 @@
 
 extern CPlayer* player;
 extern ArtworkCache* artworkCache;
+extern bool isElevated;
 
 class LH_QtPlugin_NowPlaying : public LH_QtPlugin
 {
@@ -72,13 +76,66 @@ class LH_QtPlugin_NowPlaying : public LH_QtPlugin
             return "Not found.";
     }
 
+    bool getElevated()
+    {
+        typedef BOOL (WINAPI *LPFNIUA)(void);
+
+        HMODULE hShell32 = LoadLibrary(L"shell32.dll");
+        LPFNIUA pIsAdmin = NULL;
+
+        if (hShell32)
+        {
+            pIsAdmin = (LPFNIUA)GetProcAddress(hShell32, MAKEINTRESOURCEA(680));
+            if (pIsAdmin)
+            {
+                if(pIsAdmin())
+                    return true;
+                else
+                    return false;
+            }
+            FreeLibrary(hShell32);
+        }
+        return false;
+    }
+
+    bool playerControlCheck();
 public:
+    LH_Qt_QString *setup_control_play_pause_;
+    LH_Qt_QString *setup_control_stop_;
+    LH_Qt_QString *setup_control_next_;
+    LH_Qt_QString *setup_control_prev_;
+    LH_Qt_QString *setup_control_close_;
+    LH_Qt_QString *setup_control_repeat_;
+    LH_Qt_QString *setup_control_shuffle_;
+
+    LH_Qt_InputState *setup_input_play_pause_;
+    LH_Qt_InputState *setup_input_stop_;
+    LH_Qt_InputState *setup_input_next_;
+    LH_Qt_InputState *setup_input_prev_;
+    LH_Qt_InputState *setup_input_shuffle_;
+    LH_Qt_InputState *setup_input_repeat_;
+    LH_Qt_InputState *setup_input_close_;
+
+    LH_Qt_bool *setup_media_keys_iTunes_;
+    LH_Qt_bool *setup_media_keys_Winamp_;
+    LH_Qt_bool *setup_media_keys_Foobar_;
+    LH_Qt_bool *setup_media_keys_Spotify_;
+    LH_Qt_bool *setup_media_keys_VLC_;
+    LH_Qt_bool *setup_media_keys_WLM_;
+
     const char *userInit();
     void userTerm();
     void clearPlayer();
 
 public slots:
     void refresh_data();
+    void controlPlayPauseClick(QString key="",int flags=0,int value=0);
+    void controlStopClick(QString key="",int flags=0,int value=0);
+    void controlNextClick(QString key="",int flags=0,int value=0);
+    void controlPrevClick(QString key="",int flags=0,int value=0);
+    void controlCloseClick();
+    void controlRepeatClick();
+    void controlShuffleClick();
 
 signals:
     void updated_data();

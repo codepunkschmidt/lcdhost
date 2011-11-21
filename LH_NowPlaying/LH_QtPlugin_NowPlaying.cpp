@@ -35,10 +35,15 @@
   **/
 
 #include "LH_QtPlugin_NowPlaying.h"
+
 #include <QFileInfo>
 #include <QDebug>
+#include "Internet.h"
 
 LH_PLUGIN(LH_QtPlugin_NowPlaying)
+
+CPlayer* player;
+ArtworkCache* artworkCache;
 
 char __lcdhostplugin_xml[] =
 "<?xml version=\"1.0\"?>"
@@ -90,7 +95,7 @@ char __lcdhostplugin_xml[] =
 "<td align='center' class='api'>Winamp</td>"
 "<td align='center' class='yes'>Yes</td>"
 "<td align='center' class='yes'>Yes</td>"
-"<td align='center' class='part'>Partial<sup>1</sup></td>"
+"<td align='center' class='yes'>Yes</td>"
 "</tr>"
 "<tr>"
 "<td class='info' colspan='4'>Full, native support. Just run Winamp and it should work immediately.</td>"
@@ -98,43 +103,43 @@ char __lcdhostplugin_xml[] =
 
 "<tr>"
 "<td class='info' rowspan='2'><a href=\"http://www.foobar2000.org/\">foobar2000</a></td>"
-"<td align='center' class='api'>Winamp</td>"
-"<td align='center' class='no'>No</td>"
+"<td align='center' class='api'>Winamp / Rainmeter</td>"
 "<td align='center' class='yes'>Yes</td>"
-"<td align='center' class='no'>No</td>"
+"<td align='center' class='yes'>Yes</td>"
+"<td align='center' class='yes'>Yes</td>"
 "</tr>"
 "<tr>"
-"<td class='info' colspan='4'>Requires the Foobar_Winamp_Spam plugin (no specific home page but v0.98 is located <a href=\"http://home.comcast.net/~selyb/\">here</a>)</td>"
+"<td class='info' colspan='4'>Requires the Foobar_Winamp_Spam plugin (no specific home page but v0.98 is located <a href=\"http://home.comcast.net/~selyb/\">here</a>) or the <a href=\"http://code.google.com/p/foo-rainmeter/\">foo_rainmeter.dll</a> plugin</td>"
+"</tr>"
+
+"<tr>"
+"<td class='info' rowspan='2'><a href=\"http://www.videolan.org/vlc/\">VLC Player</a></td>"
+"<td align='center' class='api'>VLC Web<sup>1</sup></td>"
+"<td align='center' class='yes'>Yes</td>"
+"<td align='center' class='yes'>Yes</td>"
+"<td align='center' class='yes'>Yes</td>"
+"</tr>"
+"<tr>"
+"<td class='info' colspan='4'>Requires the \"Web Interface\" to be enabled, found under View &gt; Add Interface &gt; Web Interface.</td>"
 "</tr>"
 
 "<tr>"
 "<td class='info' rowspan='2'><a href='http://windows.microsoft.com/en-US/windows/products/windows-media-player'>Windows Media <br/>Player</a></td>"
-"<td align='center' class='api'>MSN<sup>2</sup></td>"
+"<td align='center' class='api'>MSN<sup>1</sup></td>"
 "<td align='center' class='yes'>Yes</td>"
-"<td align='center' class='no'>No<sup>3</sup></td>"
-"<td align='center' class='no'>No<sup>3</sup></td>"
+"<td align='center' class='no'>No<sup>2</sup></td>"
+"<td align='center' class='no'>No<sup>2</sup></td>"
 "</tr>"
 "<tr>"
 "<td class='info' colspan='4'>Requires the \"Windows Live Messenger Music Plugin\", found under Plugins &gt; Background.</td>"
 "</tr>"
 
 "<tr>"
-"<td class='info' rowspan='2'><a href=\"http://www.videolan.org/vlc/\">VLC Player</a></td>"
-"<td align='center' class='api'>MSN<sup>2</sup></td>"
-"<td align='center' class='yes'>Yes</td>"
-"<td align='center' class='no'>No<sup>3</sup></td>"
-"<td align='center' class='no'>No<sup>3</sup></td>"
-"</tr>"
-"<tr>"
-"<td class='info' colspan='4'>Requires the \"MSN Now Playing\" interface to be enabled, found under Preferences &gt; All &gt; Interface &gt; Control Interfaces.</td>"
-"</tr>"
-
-"<tr>"
 "<td class='info' rowspan='2'><a href=\"http://www.spotify.com/\">Spotify</a></td>"
-"<td align='center' class='api'>MSN<sup>2</sup></td>"
-"<td align='center' class='yes'>Yes</td>"
-"<td align='center' class='no'>No<sup>3</sup></td>"
-"<td align='center' class='no'>No<sup>3</sup></td>"
+"<td align='center' class='api'>Title Bar Split</td>"
+"<td align='center' class='part'>Partial<sup>3</sup></td>"
+"<td align='center' class='no'>No</td>"
+"<td align='center' class='no'>No</td>"
 "</tr>"
 "<tr>"
 "<td class='info' colspan='4'>Partial, native support. Just run Spotify and it should work immediately.</td>"
@@ -143,146 +148,135 @@ char __lcdhostplugin_xml[] =
 "</table>"
 "<br/><br/>"
 "...and any other player that supports the MSN Now Playing interface, such as <a href=\"http://www.last.fm/download/\">Last.fm</a>, <a href=\"http://getopenpandora.appspot.com/\">OpenPandora</a>, <a href=\"http://getsongbird.com/\">Songbird</a>(+<a href=\"http://addons.songbirdnest.com/addon/1204\">LiveTweeter</a>), <a href=\"http://www.zune.net\">Zune</a> and others."
-"<br/><br/><sup>1</sup> Album artwork is only available from Winamp if the music's folder contains &quot;folder.jpg&quot;."
-"<br/><br/><sup>2</sup> Tests suggest the MSN interface does not function under 64-bit Windows."
-"<br/><br/><sup>3</sup> The MSN interface only supports the seperate Artist, Album &amp; Track details, hence players using this system cannot display the progress bar or album art."
+"<br/><br/><sup>1</sup> Tests suggest the MSN interface does not function under 64-bit Windows."
+"<br/><br/><sup>2</sup> The MSN interface only supports the seperate Artist, Album &amp; Track details, hence players using this system cannot display the progress bar or album art."
+"<br/><br/><sup>3</sup> The Title bar interface only supports the seperate Artist &amp; Track details, not the album name. As with MSN, players using this system cannot display the progress bar or album art."
 "</longdesc>"
 "</lcdhostplugin>";
 
-LH_NowPlaying_Reader* currentTrack;
-
-bool get_itunes_info(TrackInfo &ti, QString artworkPath, artworkDescription &cachedArtwork, bool &updatedArtwork);
-bool get_winamp_info(TrackInfo &ti);
-bool get_msn_compat_info(struct TrackInfo &ti);
-
-bool get_folder_artwork(TrackInfo newInfo, QString artworkCachePath, artworkDescription &cachedArtwork)
-{
-    QFileInfo newItemFile(newInfo.file);
-    QString newItemFilePath = newItemFile.absolutePath();
-    QString folderImage = newItemFilePath+"/folder.jpg";
-    QString artworkCacheFileName = QString("%0%1art.%2").arg(artworkCachePath).arg(artworkCachePath.endsWith("/")? "" : "/").arg("jpg");
-    if(QFile::exists(folderImage))
-    {
-        if(QFile::exists(artworkCacheFileName))
-        {
-            #ifdef Q_OS_WIN
-                SetFileAttributes((LPCTSTR)artworkCacheFileName.utf16(), 0);
-            #endif
-            QFile::remove(artworkCacheFileName);
-        }
-        if(QFile::copy(folderImage, artworkCacheFileName))
-        {
-            #ifdef Q_OS_WIN
-                SetFileAttributes((LPCTSTR)artworkCacheFileName.utf16(), 0);
-            #endif
-            cachedArtwork.cacheMode = amFileFolder;
-            cachedArtwork.album = newInfo.album;
-            cachedArtwork.artist = newInfo.artist;
-            cachedArtwork.sourcefolder = newItemFilePath;
-            cachedArtwork.fileName = artworkCacheFileName;
-            return true;
-        } else {
-            qWarning() << "NowPlaying: Unable to copy album artwork from " << folderImage;
-        }
-    }
-    return false;
-}
-
-void close_itunes_connection();
-
-LH_NowPlaying_Reader::~LH_NowPlaying_Reader() {
-    close_itunes_connection();
-}
-
-void LH_NowPlaying_Reader::refresh()
-{
-    playerFound_ = false;
-    TrackInfo newInfo;
-    bool updatedArtwork = false;
-
-    playerFound_ = playerFound_ || get_itunes_info(newInfo, artworkCachePath_, cachedArtwork_, updatedArtwork);
-    playerFound_ = playerFound_ || get_winamp_info(newInfo);
-    playerFound_ = playerFound_ || get_msn_compat_info(newInfo);
-
-    if(storeInfo(newInfo))
-        emit changed();
-
-    if(playerFound_ && !updatedArtwork)
-    {
-        QFileInfo newItemFile(newInfo.file);
-        QString newItemFilePath = newItemFile.absolutePath();
-        bool validArtwork = false;
-        switch(cachedArtwork_.cacheMode)
-        {
-        case amArtistAndAlbumName:
-            validArtwork = (cachedArtwork_.album == newInfo.album && cachedArtwork_.artist == newInfo.artist);
-            break;
-        case amFileFolder:
-            validArtwork = (cachedArtwork_.sourcefolder == newItemFilePath);
-            break;
-        case amTrack:
-            validArtwork = (cachedArtwork_.track == newInfo.track && cachedArtwork_.album == newInfo.album && cachedArtwork_.artist == newInfo.artist);
-            break;
-        case amNone:
-            validArtwork = false;
-            break;
-        }
-        if(!validArtwork)
-        {
-            currentTrack->clearArtwork();
-            updatedArtwork = get_folder_artwork(newInfo, artworkCachePath_, cachedArtwork_);
-            cachedArtwork_.album = newInfo.album;
-            cachedArtwork_.artist = newInfo.artist;
-            if(!updatedArtwork)
-            {
-                cachedArtwork_.sourcefolder = newItemFilePath;
-                updatedArtwork = true;
-            } else {
-                cachedArtwork_.track == newInfo.track;
-                cachedArtwork_.cacheMode = amTrack;
-            }
-        }
-    }
-
-    if(!playerFound_ && currentTrack->artworkFileName()!="")
-    {
-        currentTrack->clearArtwork();
-        updatedArtwork = true;
-    }
-    if(updatedArtwork)
-        emit artworkChanged();
-}
-
-bool LH_NowPlaying_Reader::storeInfo(TrackInfo newInfo)
-{
-    bool dirty = false;
-    dirty = dirty || (info_.album != newInfo.album);
-    dirty = dirty || (info_.artist != newInfo.artist);
-    dirty = dirty || (info_.currentSecs != newInfo.currentSecs);
-    dirty = dirty || (info_.player != newInfo.player);
-    dirty = dirty || (info_.status != newInfo.status);
-    dirty = dirty || (info_.totalSecs!= newInfo.totalSecs);
-    dirty = dirty || (info_.track!= newInfo.track);
-
-    info_ = newInfo;
-    return dirty;
-}
+const QString WLMPlayer = "MSN Compatible";
 
 const char *LH_QtPlugin_NowPlaying::userInit() {
-    currentTrack = new LH_NowPlaying_Reader(this);
+    CoInitializeEx(NULL, COINIT_MULTITHREADED);
+    CInternet::Initialize();
+
+    artworkCache = new ArtworkCache;
+    artworkCache->cachePath = QString::fromUtf8(state()->dir_data);
+    Q_ASSERT( artworkCache->cachePath.endsWith('/') );
+
+    player = NULL;
+    clearPlayer();
+
     timer_.setInterval(500);
     timer_.start();
     connect(&timer_, SIGNAL(timeout()), this, SLOT(refresh_data()));
-    return NULL;
+
+    qDebug() << getWindowClass("VLC media player");
+    return 0;
 }
 
 void LH_QtPlugin_NowPlaying::userTerm() {
-    //currentTrack->clearArtwork();
     timer_.stop();
-    currentTrack->deleteLater();
+    if(player) delete player;
+    if(artworkCache) delete artworkCache;
+    CInternet::Finalize();
+    CoUninitialize();
 }
 
 void LH_QtPlugin_NowPlaying::refresh_data() {
-    if(!currentTrack->isRunning())
-         currentTrack->run();
+    std::wstring vlcURL = L"http://127.0.0.1:8080/requests/status.xml";
+    if(player)
+    {
+        if(player->GetPlayer()==WLMPlayer)
+        {
+            if (FindWindowA("iTunes", NULL))
+            {
+                if(player) delete player;
+                player = CPlayerITunes::Create();
+                player->SetPlayer("iTunes");
+            } else
+            if (FindWindowA("{97E27FAA-C0B3-4b8e-A693-ED7881E99FC1}", NULL) && FindWindowA("Winamp v1.x", NULL)) //Foobar with Winamp_Spam plugin
+            {
+                if(player) delete player;
+                player = CPlayerWinamp::Create(WA_WINAMP);
+                player->SetPlayer("Foobar (WAMP)");
+            } else
+            if (FindWindowA("{97E27FAA-C0B3-4b8e-A693-ED7881E99FC1}", NULL) && FindWindowA("foo_rainmeter_class", NULL)) //Foobar with Rainmeter plugin
+            {
+                if(player) delete player;
+                player = CPlayerFoobar::Create();
+                player->SetPlayer("Foobar (RAIN)");
+            } else
+            if (FindWindowA("Winamp v1.x", NULL))
+            {
+                if(player) delete player;
+                player = CPlayerWinamp::Create(WA_WINAMP);
+                player->SetPlayer("Winamp");
+            } else
+            if (FindWindowA("SpotifyMainWindow", NULL))
+            {
+                if(player) delete player;
+                player = CPlayerSpotify::Create();
+                player->SetPlayer("Spotify");
+            } else
+            if (CInternet::TestUrl(vlcURL))
+            {
+                if(player) delete player;
+                player = CPlayerVLC::Create(QString("8080").toStdWString());
+                player->SetPlayer("VLC");
+            } else
+            if (FindWindowA("{97E27FAA-C0B3-4b8e-A693-ED7881E99FC1}", NULL)) //Foobar, no assistant plugin
+            {
+                qWarning() << "LH_NowPlaying: Foobar detected with no API plugin loaded.";
+            }
+
+            if(player)
+            {
+                player->AddMeasure(MEASURE_COVER);
+                player->AddMeasure(MEASURE_LYRICS);
+                player->setArtworkCachePath( artworkCache );
+                player->AddInstance();
+            }
+        } else {
+            if(player->GetPlayer()=="iTunes")
+                if (!FindWindowA("iTunes", NULL))
+                    return clearPlayer();
+            if(player->GetPlayer()=="Winamp")
+                if (!FindWindowA("Winamp v1.x", NULL))
+                    return clearPlayer();
+            if(player->GetPlayer().startsWith("Foobar"))
+                if (!FindWindowA("{97E27FAA-C0B3-4b8e-A693-ED7881E99FC1}", NULL))
+                    return clearPlayer();
+            if(player->GetPlayer()=="Spotify")
+                if (!FindWindowA("SpotifyMainWindow", NULL))
+                    return clearPlayer();
+            if(player->GetPlayer()=="VLC")
+                if (!CInternet::TestUrl(vlcURL))
+                    return clearPlayer();
+        }
+
+        player->UpdateData();
+        emit updated_data();
+    }
 }
+
+void LH_QtPlugin_NowPlaying::clearPlayer()
+{
+    if(player)
+    {
+        delete player;
+        player = NULL;
+    }
+
+    player = CPlayerWLM::Create();
+    player->SetPlayer(WLMPlayer);
+
+    if(artworkCache)
+    {
+        artworkCache->album = "//XX-DEAD//NODATA";
+        artworkCache->artist = "//XX-DEAD//NODATA";
+        artworkCache->cacheFile = "";
+    }
+    emit updated_data();
+}
+

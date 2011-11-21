@@ -3,39 +3,92 @@ TEMPLATE = lib
 CONFIG  += qaxcontainer
 QT += network xml
 DEFINES += LH_NOWPLAYING_LIBRARY
+DEFINES += VERSION=3.00
+DEFINES += USEINTERNET
+
+DEFINES += WINVER=0x0601
+DEFINES += _WIN32_WINNT=0x0601
+
 CONFIG += cf
 
 include(../Plugins.pri)
+include(../3rdParty/taglib/taglib.pri)
 
 # We don't want warnings from 3rd party C code
 QMAKE_CFLAGS_WARN_ON = -w
 
+LIBS += -L"C:/Program Files/Microsoft SDKs/Windows/v7.0/Lib" -lWininet
+
+INCLUDEPATH += \
+    SDKs \
+    SDKs/iTunes \
+    Players \
+    Helpers
+
 SOURCES += \
     $$PLUGIN_SOURCES \
+    LH_QtPlugin_NowPlaying.cpp \
+    SDKs/iTunes/iTunesCOMInterface_i.c \
+    Players/Player.cpp \
+    Players/PlayerITunes.cpp \
+    Players/PlayerWinamp.cpp \
+    Players/PlayerWLM.cpp \
+    Players/PlayerFoobar.cpp \
+    Players/PlayerVLC.cpp \
+    Players/PlayerSpotify.cpp \
+    Helpers/Lyrics.cpp \
+    Helpers/Internet.cpp \
+    Helpers/Cover.cpp \
     ../LH_Text/LH_Text.cpp \
     ../LH_Bar/LH_Bar.cpp \
-    LH_QtPlugin_NowPlaying.cpp \
-    LH_NP_iTunes.cpp \
-    LH_NP_Winamp.cpp  \
-    LH_NP_MSN_Compat.cpp \
-    LH_NowPlayingText.cpp \
-    LH_NowPlayingBar.cpp \
-    LH_NowPlayingEmulator.cpp \
-    iTunesCOMInterface_i.c  \
-    utils.cpp \
-    disphelper.c \
-    LH_NowPlayingAlbumArt.cpp
+    Objects/LH_NowPlayingText.cpp \
+    Objects/LH_NowPlayingBar.cpp \
+    Objects/LH_NowPlayingEmulator.cpp \
+    Objects/LH_NowPlayingAlbumArt.cpp
 
 HEADERS += \
     $$PLUGIN_HEADERS \
+    LH_QtPlugin_NowPlaying.h \
+    SDKs/iTunes/iTunesCOMInterface.h \
+    SDKs/iTunes/DispEx.h \
+    Players/Player.h \
+    Players/PlayerITunes.h \
+    Players/PlayerWinamp.h \
+    Players/PlayerWLM.h \
+    Players/PlayerFoobar.h \
+    Players/PlayerVLC.h \
+    Players/PlayerSpotify.h \
+    Helpers/Lyrics.h \
+    Helpers/Internet.h \
+    Helpers/Cover.h \
     ../LH_Text/LH_Text.h \
     ../LH_Bar/LH_Bar.h \
-    LH_QtPlugin_NowPlaying.h \
-    disphelper.h \
-    LH_NowPlayingText.h \
-    LH_NowPlayingBar.h \
-    wa_ipc.h \
-    iTunesCOMInterface.h \
-    LH_NowPlayingEmulator.h \
-    utils.h \
-    LH_NowPlayingAlbumArt.h
+    Objects/LH_NowPlayingText.h \
+    Objects/LH_NowPlayingBar.h \
+    Objects/LH_NowPlayingEmulator.h \
+    Objects/LH_NowPlayingAlbumArt.h
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

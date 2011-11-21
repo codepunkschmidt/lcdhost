@@ -54,6 +54,9 @@ LH_NowPlayingText::LH_NowPlayingText()
                                         <<"Player"
                                         <<"Custom"
                                         <<"File Name"
+                                        <<"Shuffle"
+                                        <<"Repeat"
+                                        <<"Rating"
                                         <<"Lyrics"
                                         ,
                                         LH_FLAG_FIRST
@@ -158,7 +161,16 @@ void LH_NowPlayingText::refresh_text()
         case 9:     //File
             template_value = "{file}";
             break;
-        case 10:     //Lyrics
+        case 10:     //Shuffle
+            template_value = "{shuffle}";
+            break;
+        case 11:     //Repeat
+            template_value = "{repeat}";
+            break;
+        case 12:     //Rating
+            template_value = "{rating}";
+            break;
+        case 13:     //Lyrics
             template_value = "{lyrics}";
             break;
         //case 8:     //Custom
@@ -189,6 +201,9 @@ void LH_NowPlayingText::refresh_text()
         replace_token(template_value,"status",status_text);
         replace_token(template_value,"player",player->GetPlayer());
         replace_token(template_value,"file",player->GetFilePath());
+        replace_token(template_value,"shuffle",(player->GetShuffle() ? "Shuffle" : ""));
+        replace_token(template_value,"repeat",(player->GetRepeat() ? "Repeat" : ""));
+        replace_token(template_value,"rating",QString::number(player->GetRating()));
         replace_token(template_value,"lyrics",player->GetLyrics());
 
         if( setText( template_value ) )  callback(lh_cb_render,NULL);

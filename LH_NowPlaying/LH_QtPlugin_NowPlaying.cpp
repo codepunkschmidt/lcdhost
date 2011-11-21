@@ -44,6 +44,7 @@ LH_PLUGIN(LH_QtPlugin_NowPlaying)
 
 CPlayer* player;
 ArtworkCache* artworkCache;
+bool isElevated;
 
 char __lcdhostplugin_xml[] =
 "<?xml version=\"1.0\"?>"
@@ -81,7 +82,7 @@ char __lcdhostplugin_xml[] =
 
 "<tr>"
 "<td class='info' rowspan='2'><a href=\"http://www.apple.com/itunes/\">iTunes</a></td>"
-"<td align='center' class='api'>iTunes</td>"
+"<td align='center' class='api'>iTunes<sup>1</sup></td>"
 "<td align='center' class='yes'>Yes</td>"
 "<td align='center' class='yes'>Yes</td>"
 "<td align='center' class='yes'>Yes</td>"
@@ -114,7 +115,7 @@ char __lcdhostplugin_xml[] =
 
 "<tr>"
 "<td class='info' rowspan='2'><a href=\"http://www.videolan.org/vlc/\">VLC Player</a></td>"
-"<td align='center' class='api'>VLC Web<sup>1</sup></td>"
+"<td align='center' class='api'>VLC Web</td>"
 "<td align='center' class='yes'>Yes</td>"
 "<td align='center' class='yes'>Yes</td>"
 "<td align='center' class='yes'>Yes</td>"
@@ -125,10 +126,10 @@ char __lcdhostplugin_xml[] =
 
 "<tr>"
 "<td class='info' rowspan='2'><a href='http://windows.microsoft.com/en-US/windows/products/windows-media-player'>Windows Media <br/>Player</a></td>"
-"<td align='center' class='api'>MSN<sup>1</sup></td>"
+"<td align='center' class='api'>MSN<sup>2</sup></td>"
 "<td align='center' class='yes'>Yes</td>"
-"<td align='center' class='no'>No<sup>2</sup></td>"
-"<td align='center' class='no'>No<sup>2</sup></td>"
+"<td align='center' class='no'>No<sup>3</sup></td>"
+"<td align='center' class='no'>No<sup>3</sup></td>"
 "</tr>"
 "<tr>"
 "<td class='info' colspan='4'>Requires the \"Windows Live Messenger Music Plugin\", found under Plugins &gt; Background.</td>"
@@ -137,7 +138,7 @@ char __lcdhostplugin_xml[] =
 "<tr>"
 "<td class='info' rowspan='2'><a href=\"http://www.spotify.com/\">Spotify</a></td>"
 "<td align='center' class='api'>Title Bar Split</td>"
-"<td align='center' class='part'>Partial<sup>3</sup></td>"
+"<td align='center' class='part'>Partial<sup>4</sup></td>"
 "<td align='center' class='no'>No</td>"
 "<td align='center' class='no'>No</td>"
 "</tr>"
@@ -148,9 +149,10 @@ char __lcdhostplugin_xml[] =
 "</table>"
 "<br/><br/>"
 "...and any other player that supports the MSN Now Playing interface, such as <a href=\"http://www.last.fm/download/\">Last.fm</a>, <a href=\"http://getopenpandora.appspot.com/\">OpenPandora</a>, <a href=\"http://getsongbird.com/\">Songbird</a>(+<a href=\"http://addons.songbirdnest.com/addon/1204\">LiveTweeter</a>), <a href=\"http://www.zune.net\">Zune</a> and others."
-"<br/><br/><sup>1</sup> Tests suggest the MSN interface does not function under 64-bit Windows."
-"<br/><br/><sup>2</sup> The MSN interface only supports the seperate Artist, Album &amp; Track details, hence players using this system cannot display the progress bar or album art."
-"<br/><br/><sup>3</sup> The Title bar interface only supports the seperate Artist &amp; Track details, not the album name. As with MSN, players using this system cannot display the progress bar or album art."
+"<br/><br/><sup>1</sup> If LCDHost is running as an administrator and iTunes is not (or visa versa) LH_NowPlaying will crash. Either run both as administrator or neither."
+"<br/><br/><sup>2</sup> Some users of 64 bit windows report that the MSN interface does not function with any application (i.e. the issue is unrelated to LCDHost); others have reported no problem."
+"<br/><br/><sup>3</sup> The MSN interface only supports the seperate Artist, Album &amp; Track details, hence players using this system cannot display the progress bar or album art."
+"<br/><br/><sup>4</sup> The Title bar interface only supports the seperate Artist &amp; Track details, not the album name. As with MSN, players using this system cannot display the progress bar or album art."
 "</longdesc>"
 "</lcdhostplugin>";
 
@@ -171,8 +173,155 @@ const char *LH_QtPlugin_NowPlaying::userInit() {
     timer_.start();
     connect(&timer_, SIGNAL(timeout()), this, SLOT(refresh_data()));
 
+    (new LH_Qt_QString(this, "~blurb1", "Media Key Bindings (Global):", LH_FLAG_HIDETITLE | LH_FLAG_NOSINK | LH_FLAG_NOSOURCE | LH_FLAG_NOSAVE, lh_type_string_html))->setHelp(
+                "This allows you to use the media keys to control players that are not automatically compatible with them.");
+
+    setup_input_play_pause_ = new LH_Qt_InputState(this, "Play & Pause", "", LH_FLAG_NOSOURCE | LH_FLAG_NOSINK);
+    connect( setup_input_play_pause_, SIGNAL(input(QString,int,int)), this, SLOT(controlPlayPauseClick(QString,int,int)) );
+
+    setup_input_stop_ = new LH_Qt_InputState(this, "Stop", "", LH_FLAG_NOSOURCE | LH_FLAG_NOSINK);
+    connect( setup_input_stop_, SIGNAL(input(QString,int,int)), this, SLOT(controlStopClick(QString,int,int)) );
+
+    setup_input_next_ = new LH_Qt_InputState(this, "Next Track", "", LH_FLAG_NOSOURCE | LH_FLAG_NOSINK);
+    connect( setup_input_next_, SIGNAL(input(QString,int,int)), this, SLOT(controlNextClick(QString,int,int)) );
+
+    setup_input_prev_ = new LH_Qt_InputState(this, "Previous Track", "", LH_FLAG_NOSOURCE | LH_FLAG_NOSINK);
+    connect( setup_input_prev_, SIGNAL(input(QString,int,int)), this, SLOT(controlPrevClick(QString,int,int)) );
+
+    setup_media_keys_iTunes_ = new LH_Qt_bool(this, "^Enable iTunes Control", false, LH_FLAG_NOSOURCE | LH_FLAG_NOSINK | LH_FLAG_HIDDEN);
+    setup_media_keys_Winamp_ = new LH_Qt_bool(this, "^Enable Winamp Control", false, LH_FLAG_NOSOURCE | LH_FLAG_NOSINK | LH_FLAG_HIDDEN);
+    setup_media_keys_Foobar_ = new LH_Qt_bool(this, "^Enable Foobar Control", false, LH_FLAG_NOSOURCE | LH_FLAG_NOSINK | LH_FLAG_HIDDEN);
+    setup_media_keys_Spotify_ = new LH_Qt_bool(this, "^Enable Spotify Control", false, LH_FLAG_NOSOURCE | LH_FLAG_NOSINK | LH_FLAG_HIDDEN);
+    setup_media_keys_VLC_ = new LH_Qt_bool(this, "^Enable VLC Player Control", true, LH_FLAG_NOSOURCE | LH_FLAG_NOSINK);
+    setup_media_keys_WLM_ = new LH_Qt_bool(this, "^Enable MSN-Compatible Control", false, LH_FLAG_NOSOURCE | LH_FLAG_NOSINK | LH_FLAG_HIDDEN);
+
+    new LH_Qt_QString(this, "~hr2", "<hr />", LH_FLAG_HIDETITLE | LH_FLAG_NOSINK | LH_FLAG_NOSOURCE | LH_FLAG_NOSAVE, lh_type_string_html);
+    (new LH_Qt_QString(this, "~blurb2", "Advanced Key Bindings (Global):", LH_FLAG_HIDETITLE | LH_FLAG_NOSINK | LH_FLAG_NOSOURCE | LH_FLAG_NOSAVE, lh_type_string_html))->setHelp(
+                "<p>This allows you to set up \"extra\" multimedia keys, e.g. bind \"Scroll Lock\" to repeat the current track.</p>"
+                "<p>Keys configured here will <b>always</b> work, regardless of what layout is loaded. To make keys only work when a specific layout is loaded add the \"Remote Control\" object to the layout.</p>"
+                "<p>Note that not all players are compatible with these features.</p>");
+
+    setup_input_shuffle_ = new LH_Qt_InputState(this, "Shuffle", "", LH_FLAG_NOSOURCE | LH_FLAG_NOSINK);
+    connect( setup_input_shuffle_, SIGNAL(input(QString,int,int)), this, SLOT(controlShuffleClick()) );
+
+    setup_input_repeat_ = new LH_Qt_InputState(this, "Repeat", "", LH_FLAG_NOSOURCE | LH_FLAG_NOSINK);
+    connect( setup_input_repeat_, SIGNAL(input(QString,int,int)), this, SLOT(controlRepeatClick()) );
+
+    setup_input_close_ = new LH_Qt_InputState(this, "Close Player", "", LH_FLAG_NOSOURCE | LH_FLAG_NOSINK);
+    connect( setup_input_close_, SIGNAL(input(QString,int,int)), this, SLOT(controlCloseClick()) );
+
+    new LH_Qt_QString(this, "~hr3", "<hr />", LH_FLAG_HIDETITLE | LH_FLAG_NOSINK | LH_FLAG_NOSOURCE | LH_FLAG_NOSAVE, lh_type_string_html);
+    (new LH_Qt_QString(this, "~blurb3", "Remote Controls:", LH_FLAG_HIDETITLE | LH_FLAG_NOSINK | LH_FLAG_NOSOURCE | LH_FLAG_NOSAVE, lh_type_string_html))->setHelp(
+                "These buttons are provided for convenience and testing purposes.");
+
+    setup_control_play_pause_ = new LH_Qt_QString(this, "Play_Pause Button", "Play/Pause", LH_FLAG_HIDETITLE | LH_FLAG_NOSAVE | LH_FLAG_NOSOURCE | LH_FLAG_NOSINK, lh_type_string_button );
+    connect( setup_control_play_pause_, SIGNAL(changed()), this, SLOT(controlPlayPauseClick()) );
+
+    setup_control_stop_ = new LH_Qt_QString(this, "Stop Button", "Stop", LH_FLAG_HIDETITLE | LH_FLAG_NOSAVE | LH_FLAG_NOSOURCE | LH_FLAG_NOSINK, lh_type_string_button );
+    connect( setup_control_stop_, SIGNAL(changed()), this, SLOT(controlStopClick()) );
+
+    setup_control_next_ = new LH_Qt_QString(this, "Next Button", "Next", LH_FLAG_HIDETITLE | LH_FLAG_NOSAVE | LH_FLAG_NOSOURCE | LH_FLAG_NOSINK, lh_type_string_button );
+    connect( setup_control_next_, SIGNAL(changed()), this, SLOT(controlNextClick()) );
+
+    setup_control_prev_ = new LH_Qt_QString(this, "Previous Button", "Previous", LH_FLAG_HIDETITLE | LH_FLAG_NOSAVE | LH_FLAG_NOSOURCE | LH_FLAG_NOSINK, lh_type_string_button );
+    connect( setup_control_prev_, SIGNAL(changed()), this, SLOT(controlPrevClick()) );
+
+    setup_control_repeat_ = new LH_Qt_QString(this, "Repeat Button", "Repeat", LH_FLAG_HIDETITLE | LH_FLAG_NOSAVE | LH_FLAG_NOSOURCE | LH_FLAG_NOSINK, lh_type_string_button );
+    connect( setup_control_repeat_, SIGNAL(changed()), this, SLOT(controlRepeatClick()) );
+
+    setup_control_shuffle_ = new LH_Qt_QString(this, "Shuffle Button", "Shuffle", LH_FLAG_HIDETITLE | LH_FLAG_NOSAVE | LH_FLAG_NOSOURCE | LH_FLAG_NOSINK, lh_type_string_button );
+    connect( setup_control_shuffle_, SIGNAL(changed()), this, SLOT(controlShuffleClick()) );
+
+    setup_control_close_ = new LH_Qt_QString(this, "Close Button", "Close Player", LH_FLAG_HIDETITLE | LH_FLAG_NOSAVE | LH_FLAG_NOSOURCE | LH_FLAG_NOSINK, lh_type_string_button );
+    connect( setup_control_close_, SIGNAL(changed()), this, SLOT(controlCloseClick()) );
+
+    isElevated = getElevated();
+
+    if(isElevated)
+        qWarning() << "LCDHost is running as administrator. LH_NowPlaying will crash if iTunes is opened without also being run as administrator.";
+
     qDebug() << getWindowClass("VLC media player");
     return 0;
+}
+
+bool LH_QtPlugin_NowPlaying::playerControlCheck()
+{
+    if(!player)
+        return false;
+    QString playerName = player->GetPlayer();
+    if(playerName.startsWith("iTunes"))
+        return setup_media_keys_iTunes_->value();
+    if(playerName.startsWith("Winamp"))
+        return setup_media_keys_Winamp_->value();
+    if(playerName.startsWith("Foobar"))
+        return setup_media_keys_Foobar_->value();
+    if(playerName.startsWith("Spotify"))
+        return setup_media_keys_Spotify_->value();
+    if(playerName.startsWith("VLC"))
+        return setup_media_keys_VLC_->value();
+    if(playerName.startsWith(WLMPlayer))
+        return setup_media_keys_WLM_->value();
+    return false;
+}
+
+void LH_QtPlugin_NowPlaying::controlPlayPauseClick(QString key,int flags,int value)
+{
+    Q_UNUSED(flags)
+    Q_UNUSED(value)
+    if(key=="" || playerControlCheck())
+    {
+        if(!player)
+            return;
+        if(player->GetState()==PLAYER_PLAYING)
+            player->Pause();
+        else
+            player->Play();
+    }
+}
+
+void LH_QtPlugin_NowPlaying::controlStopClick(QString key,int flags,int value)
+{
+    Q_UNUSED(flags)
+    Q_UNUSED(value)
+    if(key=="" || playerControlCheck())
+        if(player)
+            player->Stop();;
+}
+
+void LH_QtPlugin_NowPlaying::controlNextClick(QString key,int flags,int value)
+{
+    Q_UNUSED(flags)
+    Q_UNUSED(value)
+    if(key=="" || playerControlCheck())
+        if(player)
+            player->Next();
+}
+
+void LH_QtPlugin_NowPlaying::controlPrevClick(QString key,int flags,int value)
+{
+    Q_UNUSED(flags)
+    Q_UNUSED(value)
+    if(key=="" || playerControlCheck())
+        if(player)
+            player->Previous();
+}
+
+void LH_QtPlugin_NowPlaying::controlCloseClick()
+{
+    if(player)
+        player->ClosePlayer();
+}
+
+void LH_QtPlugin_NowPlaying::controlRepeatClick()
+{
+    if(player)
+        player->SetRepeat(!player->GetRepeat());
+}
+
+void LH_QtPlugin_NowPlaying::controlShuffleClick()
+{
+    if(player)
+       player->SetShuffle(!player->GetShuffle());
 }
 
 void LH_QtPlugin_NowPlaying::userTerm() {
@@ -195,17 +344,17 @@ void LH_QtPlugin_NowPlaying::refresh_data() {
                 player = CPlayerITunes::Create();
                 player->SetPlayer("iTunes");
             } else
-            if (FindWindowA("{97E27FAA-C0B3-4b8e-A693-ED7881E99FC1}", NULL) && FindWindowA("Winamp v1.x", NULL)) //Foobar with Winamp_Spam plugin
-            {
-                if(player) delete player;
-                player = CPlayerWinamp::Create(WA_WINAMP);
-                player->SetPlayer("Foobar (WAMP)");
-            } else
             if (FindWindowA("{97E27FAA-C0B3-4b8e-A693-ED7881E99FC1}", NULL) && FindWindowA("foo_rainmeter_class", NULL)) //Foobar with Rainmeter plugin
             {
                 if(player) delete player;
                 player = CPlayerFoobar::Create();
                 player->SetPlayer("Foobar (RAIN)");
+            } else
+            if (FindWindowA("{97E27FAA-C0B3-4b8e-A693-ED7881E99FC1}", NULL) && FindWindowA("Winamp v1.x", NULL)) //Foobar with Winamp_Spam plugin
+            {
+                if(player) delete player;
+                player = CPlayerWinamp::Create(WA_WINAMP);
+                player->SetPlayer("Foobar (WAMP)");
             } else
             if (FindWindowA("Winamp v1.x", NULL))
             {

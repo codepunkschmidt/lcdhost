@@ -182,8 +182,13 @@ const char *LH_QtPlugin_NowPlaying::userInit() {
 #endif
     connect(&timer_, SIGNAL(timeout()), this, SLOT(refresh_data()));
 
+    (setup_vlc_port_ = new LH_Qt_QString(this, "VLC Port","8080", LH_FLAG_NOSOURCE | LH_FLAG_NOSINK))->setHelp(
+                "Specify the port the VLC web admin interface runs on (default is 8080).");
+
+    new LH_Qt_QString(this, "~hr1", "<hr />", LH_FLAG_HIDETITLE | LH_FLAG_NOSINK | LH_FLAG_NOSOURCE | LH_FLAG_NOSAVE, lh_type_string_html);
     (new LH_Qt_QString(this, "~blurb1", "Media Key Bindings (Global):", LH_FLAG_HIDETITLE | LH_FLAG_NOSINK | LH_FLAG_NOSOURCE | LH_FLAG_NOSAVE, lh_type_string_html))->setHelp(
                 "This allows you to use the media keys to control players that are not automatically compatible with them.");
+
 
     setup_input_play_pause_ = new LH_Qt_InputState(this, "Play & Pause", "", LH_FLAG_NOSOURCE | LH_FLAG_NOSINK);
     connect( setup_input_play_pause_, SIGNAL(input(QString,int,int)), this, SLOT(controlPlayPauseClick(QString,int,int)) );
@@ -340,7 +345,6 @@ void LH_QtPlugin_NowPlaying::userTerm() {
 }
 
 void LH_QtPlugin_NowPlaying::refresh_data() {
-    std::wstring vlcURL = L"http://127.0.0.1:8080/requests/status.xml";
     if(player)
     {
         if(player->GetPlayer()==WLMPlayer)
@@ -399,10 +403,10 @@ void LH_QtPlugin_NowPlaying::refresh_data() {
                 player = CPlayerSpotify::Create();
                 player->SetPlayer("Spotify");
             } else
-            if (CInternet::TestUrl(vlcURL))
+            if (CPlayerVLC::TestUrl(setup_vlc_port_->value().toStdWString()))
             {
                 if(player) delete player;
-                player = CPlayerVLC::Create(QString("8080").toStdWString());
+                player = CPlayerVLC::Create(setup_vlc_port_->value().toStdWString());
                 player->SetPlayer("VLC");
             } else
             if (hWnd_iTunes && !elevationsMatch)
@@ -457,7 +461,7 @@ void LH_QtPlugin_NowPlaying::refresh_data() {
                 if (!FindWindowA("SpotifyMainWindow", NULL))
                     return clearPlayer();
             if(player->GetPlayer()=="VLC")
-                if (!CInternet::TestUrl(vlcURL))
+                if (!CPlayerVLC::TestUrl(setup_vlc_port_->value().toStdWString()))
                     return clearPlayer();
         }
 

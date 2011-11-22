@@ -64,6 +64,10 @@ HWND CPlayerVLC::FindVLCWindow()
     return m_VLCHandle;
 }
 
+bool CPlayerVLC::TestUrl(std::wstring port)
+{
+    return CInternet::TestUrl(L"http://127.0.0.1:" + port + L"/requests/status.xml");
+}
 /*
 ** CPlayerVLC
 **

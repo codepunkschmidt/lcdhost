@@ -29,6 +29,7 @@ public:
 
     static CPlayer* Create(std::wstring port);
     static HWND FindVLCWindow();
+    static bool TestUrl(std::wstring port);
 
 	virtual void UpdateData();
 

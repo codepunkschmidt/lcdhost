@@ -148,6 +148,8 @@ public:
     LH_Qt_bool *setup_media_keys_VLC_;
     LH_Qt_bool *setup_media_keys_WLM_;
 
+    LH_Qt_QString *setup_vlc_port_;
+
     const char *userInit();
     void userTerm();
     void clearPlayer();

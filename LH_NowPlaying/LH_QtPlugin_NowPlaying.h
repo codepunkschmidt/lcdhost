@@ -52,6 +52,7 @@
 #include "PlayerVLC.h"
 #include "PlayerWLM.h"
 
+#include <QTime>
 #include <QTimer>
 #include <QDebug>
 
@@ -77,6 +78,14 @@ class LH_QtPlugin_NowPlaying : public LH_QtPlugin
 
     Q_OBJECT
     QTimer timer_;
+
+#ifdef ITUNES_AUTO_CLOSING
+    QTime elapsedTime_;
+    bool forceClose_;
+#endif
+    HWND hWnd_iTunes_warn_cache_;
+    HWND hWnd_Foobar_warn_cache_;
+
 
     QString getWindowClass(LPCSTR windowCaption)
     {
@@ -104,6 +113,17 @@ class LH_QtPlugin_NowPlaying : public LH_QtPlugin
 
         return QString("Err Code: %1 - %2").arg(dwError).arg(QString::fromWCharArray(errBuf));
     }
+
+    void CloseWindow(HWND hWnd)
+    {
+        UINT uExitCode = 0;
+        DWORD dwProcessId;
+        GetWindowThreadProcessId( hWnd, &dwProcessId );
+        HANDLE hProcess = OpenProcess(PROCESS_QUERY_INFORMATION | PROCESS_VM_READ | PROCESS_TERMINATE, false, dwProcessId);
+        if (hProcess != NULL)
+            TerminateProcess(hProcess, uExitCode);
+    }
+
 public:
     LH_Qt_QString *setup_control_play_pause_;
     LH_Qt_QString *setup_control_stop_;

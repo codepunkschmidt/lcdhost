@@ -189,19 +189,18 @@ void CPlayerITunes::Initialize()
         HRESULT hr = CoCreateInstance(CLSID_iTunesApp, NULL, CLSCTX_LOCAL_SERVER, IID_IiTunes, (PVOID*)&m_iTunes);
         if (hr == CO_E_SERVER_EXEC_FAILURE)
         {
-            qDebug() << "iTunes appears to be busy";
+            qDebug() << "iTunes appears to be busy.";
             // This seems to happen if there is a modal dialog being shown in iTunes
             // or some other delay has occurred. Retrying should do the trick.
             continue;
         }
         else if (hr != S_OK)
         {
-            qDebug() << "Failed to get hold of iTunes instance via COM (" << hr << ")";
+            qWarning() << "Failed to get hold of iTunes instance via COM (" << hr << ")";
             CoUninitialize();
             m_iTunes = NULL;
         }
-        else
-            qDebug() << "iTunes aquired via COM";
+        //else qDebug() << "iTunes aquired via COM";
         break;
 	}
 

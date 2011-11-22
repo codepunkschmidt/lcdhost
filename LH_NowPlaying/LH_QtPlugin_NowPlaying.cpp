@@ -46,6 +46,10 @@ CPlayer* player;
 ArtworkCache* artworkCache;
 bool isElevated;
 
+#if !defined(TokenElevationType)
+#define TokenElevationType 18
+#endif
+
 char __lcdhostplugin_xml[] =
 "<?xml version=\"1.0\"?>"
 "<lcdhostplugin>"
@@ -172,6 +176,10 @@ const char *LH_QtPlugin_NowPlaying::userInit() {
 
     timer_.setInterval(500);
     timer_.start();
+#ifdef ITUNES_AUTO_CLOSING
+    elapsedTime_.start();
+    forceClose_ = false;
+#endif
     connect(&timer_, SIGNAL(timeout()), this, SLOT(refresh_data()));
 
     (new LH_Qt_QString(this, "~blurb1", "Media Key Bindings (Global):", LH_FLAG_HIDETITLE | LH_FLAG_NOSINK | LH_FLAG_NOSOURCE | LH_FLAG_NOSAVE, lh_type_string_html))->setHelp(
@@ -399,11 +407,27 @@ void LH_QtPlugin_NowPlaying::refresh_data() {
             } else
             if (hWnd_iTunes && !elevationsMatch)
             {
-                qWarning() << "LH_NowPlaying: iTunes detected, but running with a different elevation level.";
+#ifdef ITUNES_AUTO_CLOSING
+                if(isElevated && elapsedTime_.elapsed() <= 30*1000 && forceClose_)
+                {
+                    qDebug() << "Extraneous iTunes spotted. Head shot to process.";
+                    CloseWindow(hWnd_iTunes);
+                    forceClose_ = false;
+                } else
+#endif
+                if(hWnd_iTunes_warn_cache_ != hWnd_iTunes)
+                {
+                    hWnd_iTunes_warn_cache_ = hWnd_iTunes;
+                    qWarning() << "LH_NowPlaying: iTunes detected, but running with a different elevation level.";
+                }
             } else
             if (hWnd_Foobar) //Foobar, no assistant plugin
             {
-                qWarning() << "LH_NowPlaying: Foobar detected with no API plugin loaded.";
+                if(hWnd_Foobar_warn_cache_ != hWnd_Foobar)
+                {
+                    hWnd_Foobar_warn_cache_ = hWnd_Foobar;
+                    qWarning() << "LH_NowPlaying: Foobar detected with no API plugin loaded.";
+                }
             }
 
             if(player)
@@ -416,7 +440,13 @@ void LH_QtPlugin_NowPlaying::refresh_data() {
         } else {
             if(player->GetPlayer()=="iTunes")
                 if (!FindWindowA("iTunes", NULL))
+                {
+#ifdef ITUNES_AUTO_CLOSING
+                    elapsedTime_.restart();
+                    forceClose_ = true;
+#endif
                     return clearPlayer();
+                }
             if(player->GetPlayer()=="Winamp")
                 if (!FindWindowA("Winamp v1.x", NULL))
                     return clearPlayer();
@@ -458,53 +488,33 @@ void LH_QtPlugin_NowPlaying::clearPlayer()
 
 LH_QtPlugin_NowPlaying::elevationState LH_QtPlugin_NowPlaying::GetElevationState(DWORD PID)    // Returns 0 if process is elevated, 1 if process is not elevated or -1 if a function fails.
 {
-    if (!PID)
-    {
-        qDebug() << "GetCurrentProcessID function call failed: " << getLastErrorMessage();
-        return ELEVATION_UNKNOWN;
-    }
-
-    HANDLE hProcess = OpenProcess(PROCESS_ALL_ACCESS, TRUE, PID);
-
-    if (!hProcess)
-    {
-        qDebug() << "OpenProcess function call failed: " << getLastErrorMessage();
-        CloseHandle(hProcess);
-        return ELEVATION_UNKNOWN;
-    }
-
-    HANDLE hToken;
-
-    if(OpenProcessToken(hProcess, TOKEN_QUERY, &hToken) == 0)
-    {
-        qDebug() << "OpenProcessToken function call failed: " << getLastErrorMessage();
-        CloseHandle(hProcess);
-        CloseHandle(hToken);
-        return ELEVATION_UNKNOWN;
-    }
-
+    elevationState result = ELEVATION_UNKNOWN;
     TOKEN_ELEVATION_TYPE ElevationType = TokenElevationTypeFull;
+    HANDLE hToken = 0;
+    HANDLE hProcess = 0;
     DWORD SizeReturned = 0;
 
-    if (!GetTokenInformation(hToken, TokenElevationType, &ElevationType, sizeof(ElevationType), &SizeReturned))
+    if (PID)
     {
-        qDebug() << "GetTokenInformation function call failed: " << getLastErrorMessage();
+        if ((hProcess = OpenProcess(PROCESS_ALL_ACCESS, TRUE, PID)))
+        {
+            if(OpenProcessToken(hProcess, TOKEN_QUERY, &hToken))
+            {
+                if (GetTokenInformation(hToken, (TOKEN_INFORMATION_CLASS)TokenElevationType, &ElevationType, sizeof(ElevationType), &SizeReturned))
+                {
+                    if (ElevationType == TokenElevationTypeFull)
+                        result = ELEVATION_ELEVATED;
+                    else
+                        result = ELEVATION_NORMAL;
+                }
+                //else qDebug() << "GetTokenInformation function call failed: " << getLastErrorMessage();
+            }
+            //else qDebug() << "OpenProcessToken function call failed: " << getLastErrorMessage();
+            CloseHandle(hToken);
+        }
+        //else qDebug() << "OpenProcess function call failed: " << getLastErrorMessage();
         CloseHandle(hProcess);
-        CloseHandle(hToken);
-        return ELEVATION_UNKNOWN;
     }
-
-    if (ElevationType == TokenElevationTypeFull)
-    {
-        CloseHandle(hProcess);
-        CloseHandle(hToken);
-        return ELEVATION_ELEVATED;
-    }
-
-    else
-    {
-        CloseHandle(hProcess);
-        CloseHandle(hToken);
-        return ELEVATION_NORMAL;
-    }
+    //qDebug() << "GetCurrentProcessID function call failed: " << getLastErrorMessage();
+    return result;
 }

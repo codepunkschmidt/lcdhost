@@ -55,12 +55,26 @@
 #include <QTimer>
 #include <QDebug>
 
+
 extern CPlayer* player;
 extern ArtworkCache* artworkCache;
 extern bool isElevated;
 
 class LH_QtPlugin_NowPlaying : public LH_QtPlugin
 {
+    enum elevationState
+    {
+        ELEVATION_UNKNOWN = -1,
+        ELEVATION_NORMAL = 0,
+        ELEVATION_ELEVATED = 1
+    };
+
+    typedef enum _TOKEN_ELEVATION_TYPE {
+        TokenElevationTypeDefault = 1,
+        TokenElevationTypeFull,
+        TokenElevationTypeLimited
+    } TOKEN_ELEVATION_TYPE, *PTOKEN_ELEVATION_TYPE;
+
     Q_OBJECT
     QTimer timer_;
 
@@ -76,29 +90,20 @@ class LH_QtPlugin_NowPlaying : public LH_QtPlugin
             return "Not found.";
     }
 
-    bool getElevated()
-    {
-        typedef BOOL (WINAPI *LPFNIUA)(void);
-
-        HMODULE hShell32 = LoadLibrary(L"shell32.dll");
-        LPFNIUA pIsAdmin = NULL;
-
-        if (hShell32)
-        {
-            pIsAdmin = (LPFNIUA)GetProcAddress(hShell32, MAKEINTRESOURCEA(680));
-            if (pIsAdmin)
-            {
-                if(pIsAdmin())
-                    return true;
-                else
-                    return false;
-            }
-            FreeLibrary(hShell32);
-        }
-        return false;
-    }
-
     bool playerControlCheck();
+
+    elevationState GetElevationState(DWORD PID);
+
+    QString getLastErrorMessage()
+    {
+        DWORD dwError;
+        wchar_t errBuf[256];
+
+        dwError = GetLastError();
+        FormatMessage(FORMAT_MESSAGE_FROM_SYSTEM, NULL, dwError, MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT), (LPTSTR)errBuf, sizeof(errBuf),NULL);
+
+        return QString("Err Code: %1 - %2").arg(dwError).arg(QString::fromWCharArray(errBuf));
+    }
 public:
     LH_Qt_QString *setup_control_play_pause_;
     LH_Qt_QString *setup_control_stop_;

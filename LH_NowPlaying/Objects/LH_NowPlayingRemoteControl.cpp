@@ -4,14 +4,6 @@
 
 LH_PLUGIN_CLASS(LH_NowPlayingRemoteControl)
 
-typedef enum _TOKEN_ELEVATION_TYPE {
-    TokenElevationTypeDefault = 1,
-        TokenElevationTypeFull,
-        TokenElevationTypeLimited
-} TOKEN_ELEVATION_TYPE, *PTOKEN_ELEVATION_TYPE;
-
-TOKEN_INFORMATION_CLASS TokenElevationType;
-
 lh_class *LH_NowPlayingRemoteControl::classInfo()
 {
     static lh_class classInfo =
@@ -106,7 +98,7 @@ void LH_NowPlayingRemoteControl::controlShuffleClick()
 void LH_NowPlayingRemoteControl::controlOpenClick()
 {
     QFileInfo exe = setup_player_file_->value();
-    qDebug() << "Elevation? " << isElevated;
+    //qDebug() << "Elevation? " << isElevated;
     if(!exe.isFile())
         exe = QFileInfo(QString("%1%2").arg(state()->dir_layout).arg(exe.fileName()));
 

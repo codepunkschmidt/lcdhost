@@ -76,8 +76,9 @@ char __lcdhostplugin_xml[] =
 "<th class='head'>Player</th>"
 "<th class='head'>API</th>"
 "<th class='head'>Separate Album, <br/>Artist &amp; Track</th>"
-"<th class='head'>Progress Bar &amp; <br/>Played Times</th>"
-"<th class='head'>Album<br/>Artwork</th>"
+"<th class='head'>Album Artwork, Track<br/>"
+                 "Times &amp; Progress Bar</th>"
+"<th class='head'>Suffle &amp; Repeat<br/>Control</th>"
 "</tr>"
 
 "<tr>"
@@ -107,7 +108,7 @@ char __lcdhostplugin_xml[] =
 "<td align='center' class='api'>Winamp / Rainmeter</td>"
 "<td align='center' class='yes'>Yes</td>"
 "<td align='center' class='yes'>Yes</td>"
-"<td align='center' class='yes'>Yes</td>"
+"<td align='center' class='yes'>Yes<sup>2</sup></td>"
 "</tr>"
 "<tr>"
 "<td class='info' colspan='4'>Requires the Foobar_Winamp_Spam plugin (no specific home page but v0.98 is located <a href=\"http://home.comcast.net/~selyb/\">here</a>) or the <a href=\"http://code.google.com/p/foo-rainmeter/\">foo_rainmeter.dll</a> plugin</td>"
@@ -126,10 +127,10 @@ char __lcdhostplugin_xml[] =
 
 "<tr>"
 "<td class='info' rowspan='2'><a href='http://windows.microsoft.com/en-US/windows/products/windows-media-player'>Windows Media <br/>Player</a></td>"
-"<td align='center' class='api'>MSN<sup>2</sup></td>"
+"<td align='center' class='api'>MSN<sup>3</sup></td>"
 "<td align='center' class='yes'>Yes</td>"
-"<td align='center' class='no'>No<sup>3</sup></td>"
-"<td align='center' class='no'>No<sup>3</sup></td>"
+"<td align='center' class='no'>No<sup>4</sup></td>"
+"<td align='center' class='no'>No<sup>4</sup></td>"
 "</tr>"
 "<tr>"
 "<td class='info' colspan='4'>Requires the \"Windows Live Messenger Music Plugin\", found under Plugins &gt; Background.</td>"
@@ -138,7 +139,7 @@ char __lcdhostplugin_xml[] =
 "<tr>"
 "<td class='info' rowspan='2'><a href=\"http://www.spotify.com/\">Spotify</a></td>"
 "<td align='center' class='api'>Title Bar Split</td>"
-"<td align='center' class='part'>Partial<sup>4</sup></td>"
+"<td align='center' class='part'>Partial<sup>5</sup></td>"
 "<td align='center' class='no'>No</td>"
 "<td align='center' class='no'>No</td>"
 "</tr>"
@@ -150,16 +151,16 @@ char __lcdhostplugin_xml[] =
 "<br/><br/>"
 "...and any other player that supports the MSN Now Playing interface, such as <a href=\"http://www.last.fm/download/\">Last.fm</a>, <a href=\"http://getopenpandora.appspot.com/\">OpenPandora</a>, <a href=\"http://getsongbird.com/\">Songbird</a>(+<a href=\"http://addons.songbirdnest.com/addon/1204\">LiveTweeter</a>), <a href=\"http://www.zune.net\">Zune</a> and others."
 "<br/><br/><sup>1</sup> If LCDHost is running as an administrator and iTunes is not (or visa versa) LH_NowPlaying will crash. Either run both as administrator or neither."
-"<br/><br/><sup>2</sup> Some users of 64 bit windows report that the MSN interface does not function with any application (i.e. the issue is unrelated to LCDHost); others have reported no problem."
-"<br/><br/><sup>3</sup> The MSN interface only supports the seperate Artist, Album &amp; Track details, hence players using this system cannot display the progress bar or album art."
-"<br/><br/><sup>4</sup> The Title bar interface only supports the seperate Artist &amp; Track details, not the album name. As with MSN, players using this system cannot display the progress bar or album art."
+"<br/><br/><sup>2</sup> Foobar via Foo_Rainmeter.dll fully supports shuffle and repeat. The winamp spam dll supports sending shuffle and repeat toggle commands, but cannot read the values back."
+"<br/><br/><sup>3</sup> Some users of 64 bit windows report that the MSN interface does not function with any application (i.e. the issue is unrelated to LCDHost); others have reported no problem."
+"<br/><br/><sup>4</sup> The MSN interface only supports the seperate Artist, Album &amp; Track details, hence players using this system cannot display the progress bar or album art and cannot access or set shuffle/repeat data."
+"<br/><br/><sup>5</sup> The Title bar interface only supports the seperate Artist &amp; Track details, not the album name. As with MSN, players using this system cannot display the progress bar or album art."
 "</longdesc>"
 "</lcdhostplugin>";
 
 const QString WLMPlayer = "MSN Compatible";
 
 const char *LH_QtPlugin_NowPlaying::userInit() {
-    CoInitializeEx(NULL, COINIT_MULTITHREADED);
     CInternet::Initialize();
 
     artworkCache = new ArtworkCache;
@@ -235,10 +236,9 @@ const char *LH_QtPlugin_NowPlaying::userInit() {
     setup_control_close_ = new LH_Qt_QString(this, "Close Button", "Close Player", LH_FLAG_HIDETITLE | LH_FLAG_NOSAVE | LH_FLAG_NOSOURCE | LH_FLAG_NOSINK, lh_type_string_button );
     connect( setup_control_close_, SIGNAL(changed()), this, SLOT(controlCloseClick()) );
 
-    isElevated = getElevated();
-
-    if(isElevated)
-        qWarning() << "LCDHost is running as administrator. LH_NowPlaying will crash if iTunes is opened without also being run as administrator.";
+    isElevated = (GetElevationState(GetCurrentProcessId()) == ELEVATION_ELEVATED);
+    //if(isElevated)
+    //    qWarning() << "LCDHost is running as administrator. LH_NowPlaying will crash if iTunes is opened without also being run as administrator.";
 
     qDebug() << getWindowClass("VLC media player");
     return 0;
@@ -329,7 +329,6 @@ void LH_QtPlugin_NowPlaying::userTerm() {
     if(player) delete player;
     if(artworkCache) delete artworkCache;
     CInternet::Finalize();
-    CoUninitialize();
 }
 
 void LH_QtPlugin_NowPlaying::refresh_data() {
@@ -338,19 +337,43 @@ void LH_QtPlugin_NowPlaying::refresh_data() {
     {
         if(player->GetPlayer()==WLMPlayer)
         {
-            if (FindWindowA("iTunes", NULL))
+            bool elevationsMatch = false;
+            HWND hWnd_iTunes = FindWindowA("iTunes", NULL);
+            HWND hWnd_Foobar = FindWindowA("{97E27FAA-C0B3-4b8e-A693-ED7881E99FC1}", NULL);
+
+            if (hWnd_iTunes)
+            {
+                unsigned long procID;
+                GetWindowThreadProcessId(hWnd_iTunes, &procID);
+                elevationState iTunes_Elevation = GetElevationState(procID);
+                switch( iTunes_Elevation )
+                {
+                case ELEVATION_UNKNOWN:
+                    // returned when iTunes is elevated & LCDHost is not
+                    elevationsMatch = false;
+                    break;
+                case ELEVATION_NORMAL:
+                    elevationsMatch = !isElevated;
+                    break;
+                case ELEVATION_ELEVATED:
+                    elevationsMatch = isElevated;
+                    break;
+                }
+            }
+
+            if (hWnd_iTunes && elevationsMatch)
             {
                 if(player) delete player;
                 player = CPlayerITunes::Create();
                 player->SetPlayer("iTunes");
             } else
-            if (FindWindowA("{97E27FAA-C0B3-4b8e-A693-ED7881E99FC1}", NULL) && FindWindowA("foo_rainmeter_class", NULL)) //Foobar with Rainmeter plugin
+            if (hWnd_Foobar && FindWindowA("foo_rainmeter_class", NULL)) //Foobar with Rainmeter plugin
             {
                 if(player) delete player;
                 player = CPlayerFoobar::Create();
                 player->SetPlayer("Foobar (RAIN)");
             } else
-            if (FindWindowA("{97E27FAA-C0B3-4b8e-A693-ED7881E99FC1}", NULL) && FindWindowA("Winamp v1.x", NULL)) //Foobar with Winamp_Spam plugin
+            if (hWnd_Foobar && FindWindowA("Winamp v1.x", NULL)) //Foobar with Winamp_Spam plugin
             {
                 if(player) delete player;
                 player = CPlayerWinamp::Create(WA_WINAMP);
@@ -374,7 +397,11 @@ void LH_QtPlugin_NowPlaying::refresh_data() {
                 player = CPlayerVLC::Create(QString("8080").toStdWString());
                 player->SetPlayer("VLC");
             } else
-            if (FindWindowA("{97E27FAA-C0B3-4b8e-A693-ED7881E99FC1}", NULL)) //Foobar, no assistant plugin
+            if (hWnd_iTunes && !elevationsMatch)
+            {
+                qWarning() << "LH_NowPlaying: iTunes detected, but running with a different elevation level.";
+            } else
+            if (hWnd_Foobar) //Foobar, no assistant plugin
             {
                 qWarning() << "LH_NowPlaying: Foobar detected with no API plugin loaded.";
             }
@@ -429,3 +456,55 @@ void LH_QtPlugin_NowPlaying::clearPlayer()
     emit updated_data();
 }
 
+LH_QtPlugin_NowPlaying::elevationState LH_QtPlugin_NowPlaying::GetElevationState(DWORD PID)    // Returns 0 if process is elevated, 1 if process is not elevated or -1 if a function fails.
+{
+    if (!PID)
+    {
+        qDebug() << "GetCurrentProcessID function call failed: " << getLastErrorMessage();
+        return ELEVATION_UNKNOWN;
+    }
+
+    HANDLE hProcess = OpenProcess(PROCESS_ALL_ACCESS, TRUE, PID);
+
+    if (!hProcess)
+    {
+        qDebug() << "OpenProcess function call failed: " << getLastErrorMessage();
+        CloseHandle(hProcess);
+        return ELEVATION_UNKNOWN;
+    }
+
+    HANDLE hToken;
+
+    if(OpenProcessToken(hProcess, TOKEN_QUERY, &hToken) == 0)
+    {
+        qDebug() << "OpenProcessToken function call failed: " << getLastErrorMessage();
+        CloseHandle(hProcess);
+        CloseHandle(hToken);
+        return ELEVATION_UNKNOWN;
+    }
+
+    TOKEN_ELEVATION_TYPE ElevationType = TokenElevationTypeFull;
+    DWORD SizeReturned = 0;
+
+    if (!GetTokenInformation(hToken, TokenElevationType, &ElevationType, sizeof(ElevationType), &SizeReturned))
+    {
+        qDebug() << "GetTokenInformation function call failed: " << getLastErrorMessage();
+        CloseHandle(hProcess);
+        CloseHandle(hToken);
+        return ELEVATION_UNKNOWN;
+    }
+
+    if (ElevationType == TokenElevationTypeFull)
+    {
+        CloseHandle(hProcess);
+        CloseHandle(hToken);
+        return ELEVATION_ELEVATED;
+    }
+
+    else
+    {
+        CloseHandle(hProcess);
+        CloseHandle(hToken);
+        return ELEVATION_NORMAL;
+    }
+}

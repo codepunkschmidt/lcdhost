@@ -47,8 +47,15 @@ void LH_NowPlayingAlbumArt::refresh_image()
     if(player!=NULL)
     {
         QFileInfo f(player->GetCoverPath());
-        if(setup_file_->value().absoluteFilePath() != f.absoluteFilePath())
+        if(setup_file_->value().absoluteFilePath() != f.absoluteFilePath() ||
+                player->GetAlbum() != curAlbum_ ||
+                player->GetArtist() != curArtist_ ||
+                player->GetTitle() != curTitle_
+                )
         {
+            curAlbum_ = player->GetAlbum();
+            curArtist_ = player->GetArtist();
+            curTitle_ = player->GetTitle();
             setup_file_->setValue(f);
             this->requestRender();
         }

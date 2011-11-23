@@ -11,6 +11,9 @@ class LH_NowPlayingAlbumArt : public LH_QtInstance
 
 protected:
     LH_Qt_QFileInfo *setup_file_;
+    QString curAlbum_;
+    QString curArtist_;
+    QString curTitle_;
 
 public:
     LH_NowPlayingAlbumArt();

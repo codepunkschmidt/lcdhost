@@ -40,9 +40,9 @@ CPlayer::CPlayer() :
 	m_Position(),
 	m_Rating(),
 	m_Volume(),
-        m_InternetThread(),
-        m_artworkCache(),
-        m_PlayerName()
+    m_InternetThread(),
+    m_artworkCache(),
+    m_PlayerName()
 {
 	// Get temporary file for cover art
 	WCHAR buffer[MAX_PATH];

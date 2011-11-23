@@ -75,8 +75,6 @@ enum MEASURETYPE
 
 class CPlayer
 {
-    QString m_PlayerName;
-
 public:
 	CPlayer();
 	virtual ~CPlayer() = 0;
@@ -113,7 +111,7 @@ public:
     QString GetLyrics()    { return QString::fromStdWString( m_Lyrics ); }
     QString GetCoverPath() { return QString::fromStdWString( m_CoverPath ); }
     QString GetFilePath()  { return QString::fromStdWString( m_FilePath ); }
-    QString GetPlayer()    { return m_PlayerName; }
+    virtual QString GetPlayer()    { return m_PlayerName; }
     UINT GetDuration() { return m_Duration; }
 	UINT GetPosition() { return m_Position; }
 	UINT GetRating() { return m_Rating; }
@@ -149,6 +147,7 @@ protected:
 	bool m_Shuffle;
 	bool m_Repeat;
     ArtworkCache *m_artworkCache;
+    QString m_PlayerName;
 
 private:
 	static unsigned __stdcall LyricsThreadProc(void* pParam);

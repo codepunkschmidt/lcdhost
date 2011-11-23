@@ -162,8 +162,6 @@ char __lcdhostplugin_xml[] =
 "</longdesc>"
 "</lcdhostplugin>";
 
-const QString WLMPlayer = "MSN Compatible";
-
 const char *LH_QtPlugin_NowPlaying::userInit() {
     CInternet::Initialize();
 
@@ -272,7 +270,7 @@ bool LH_QtPlugin_NowPlaying::playerControlCheck()
         return setup_media_keys_Spotify_->value();
     if(playerName.startsWith("VLC"))
         return setup_media_keys_VLC_->value();
-    if(playerName.startsWith(WLMPlayer))
+    if(playerName.startsWith(CPlayerWLM::WLMPlayerName()))
         return setup_media_keys_WLM_->value();
     return false;
 }
@@ -347,7 +345,7 @@ void LH_QtPlugin_NowPlaying::userTerm() {
 void LH_QtPlugin_NowPlaying::refresh_data() {
     if(player)
     {
-        if(player->GetPlayer()==WLMPlayer)
+        if(player->GetPlayer()=="")
         {
             bool elevationsMatch = false;
             HWND hWnd_iTunes = FindWindowA("iTunes", NULL);
@@ -479,7 +477,7 @@ void LH_QtPlugin_NowPlaying::clearPlayer()
     }
 
     player = CPlayerWLM::Create();
-    player->SetPlayer(WLMPlayer);
+    player->SetPlayer(CPlayerWLM::WLMPlayerName());
 
     if(artworkCache)
     {

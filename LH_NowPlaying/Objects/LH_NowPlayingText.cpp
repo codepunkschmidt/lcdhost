@@ -182,7 +182,10 @@ void LH_NowPlayingText::refresh_text()
         switch(player->GetState())
         {
         case PLAYER_STOPPED:
-            status_text = "Stopped";
+            if(player->GetPlayer()=="")
+                status_text = "";
+            else
+                status_text = "Stopped";
             break;
         case PLAYER_PAUSED:
             status_text = "Paused";

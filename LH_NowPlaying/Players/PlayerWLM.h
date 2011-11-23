@@ -20,6 +20,8 @@
 #define __PLAYERWLM_H__
 
 #include "Player.h"
+#include <QTime>
+#include <QString>
 
 class CPlayerWLM : public CPlayer
 {
@@ -36,6 +38,9 @@ public:
 	virtual void Next();
 	virtual void Previous();
 
+    virtual QString GetPlayer()    { if(m_State==PLAYER_STOPPED) return ""; else return m_PlayerName; }
+
+    static const QString WLMPlayerName() { return "MSN Compatible"; }
 protected:
 	CPlayerWLM();
 

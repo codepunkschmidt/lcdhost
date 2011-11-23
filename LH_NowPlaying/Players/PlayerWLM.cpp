@@ -31,7 +31,7 @@ extern HINSTANCE g_Instance;
 **
 */
 CPlayerWLM::CPlayerWLM() : CPlayer(),
-	m_Window()
+    m_Window()
 {
 	// Create windows class
 	WNDCLASS wc = {0};
@@ -41,7 +41,7 @@ CPlayerWLM::CPlayerWLM() : CPlayer(),
 	RegisterClass(&wc);
 
 	// Create dummy window
-	m_Window = CreateWindow(L"MsnMsgrUIManager",
+    m_Window = CreateWindow(L"MsnMsgrUIManager",
 							L"",
 							WS_DISABLED,
 							CW_USEDEFAULT,

@@ -39,6 +39,8 @@ char __lcdhostplugin_xml[] =
   "<homepageurl><a href=\"http://www.codeleap.co.uk\">CodeLeap</a></homepageurl>"
   "<logourl></logourl>"
   "<shortdesc>Displays dials &amp; pie charts</shortdesc>"
+  "Displays dials and pie charts"
+  "</shortdesc>"
   "<longdesc>"
     "<p>Displays data items such as CPU, memory and network load in the form of dials and pie charts.</p>"
   "</longdesc>"

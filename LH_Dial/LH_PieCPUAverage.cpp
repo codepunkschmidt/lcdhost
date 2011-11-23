@@ -52,7 +52,9 @@ public:
             "System/CPU",
             "SystemCPUAveragePie",
             "Average Load (Pie)",
-            48,48
+            48,48,
+            lh_object_calltable_NULL,
+            lh_instance_calltable_NULL
         };
 
         return &classInfo;

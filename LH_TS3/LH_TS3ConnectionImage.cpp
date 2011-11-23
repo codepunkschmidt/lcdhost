@@ -44,7 +44,9 @@ public:
             "3rdParty/TeamSpeak 3",
             "TS3ConnectionImage",
             "TS3 Connection Status (Image)",
-            16,16
+            16,16,
+            lh_object_calltable_NULL,
+            lh_instance_calltable_NULL
         };
         return &classInfo;
     }

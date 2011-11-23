@@ -4,3 +4,4 @@ syntax: glob
 *.?pre?
 moc_*.*
 *.o
+codeleap/GoogleTranslator/TranslationAPIKey.h

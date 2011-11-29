@@ -45,6 +45,8 @@
 namespace lh {
 namespace api6 {
 
+class plugin;
+
 class object : public QObject
 {
     Q_OBJECT
@@ -53,14 +55,19 @@ class object : public QObject
     QString error_;
     id_ptr lh_id_;
 
-protected:
     /**
-      The only object that may be constructed without
-      a parent is the plugin object, and that's created
-      by LCDHost when loading the plugin.
+      The only objects that may be constructed without
+      a parent are services and plugins, which are
+      instantiated directly by LCDHost.
       */
-    object() : QObject() {}
+    friend class service;
+    object( const QString & objectname ) :
+        QObject()
+    {
+        setObjectName( objectname );
+    }
 
+protected:
     /**
       Sends all scriptable property values to LCDHost,
       returns \p init_result unless there was an error,
@@ -74,15 +81,15 @@ public:
       you must have a valid (although not nessecarily
       initalized) parent object.
       */
-    object( object & parent, const char * objectname = 0 ) :
+    object( object & parent, const QString & objectname = QString() ) :
         QObject( & parent )
     {
-        if( objectname ) setObjectName( objectname );
+        setObjectName( objectname );
         return;
     }
 
     /**
-      lh::object descendant destructors must be able to
+      lh_object descendant destructors must be able to
       clean up in an orderly fashion regardless of whether
       \c init() has been called or not.
       */
@@ -95,18 +102,18 @@ public:
     /**
       Override to return lh_object *
       */
-    object *parent() const
+    object * parent() const
     {
-        return static_cast<object*>( QObject::parent() );
+        return static_cast<object *>( QObject::parent() );
     }
 
     /**
       Overridden to ensure the object name conforms
       to LCDHost conventions.
       */
-    void setObjectName( const QString & name )
+    void setObjectName( const QString & objectname )
     {
-        QObject::setObjectName( ident( name, this ) );
+        QObject::setObjectName( ident( objectname, this ) );
         return;
     }
 
@@ -124,7 +131,7 @@ public:
       has been created. Any pre-existing children will have
       their lh_create() function called. Then the init()
       function will be called. Use setError() to report
-      an error condition. If init() return false, lh_destroy()
+      an error condition. If init() returns false, lh_destroy()
       will be called to disassociate from LCDHost.
 
       \param id The LCDHost ID.
@@ -182,10 +189,14 @@ public:
         return error_;
     }
 
-    void setError( const QString & err )
+    /**
+      Set the current error string. Returns true
+      if the error string is empty, false otherwise.
+      */
+    bool setError( const QString & err = QString() )
     {
-        error_ = err;
-        return;
+        error_ = err.trimmed();
+        return error_.isEmpty();
     }
 
     void lh_request_polling() const
@@ -209,14 +220,14 @@ public:
     void customEvent( QEvent * );
 
     /**
-      Sanitizes a string to conform to LCDHost identity string rules.
+      Generate or modify a string to conform to LCDHost identity string rules.
       If the \p obj parameter is given, it will also auto-generate
       an identity string for the given object if needed.
-      \param str The string to sanitize.
+      \param str Optional string to sanitize.
       \param obj Optional object to sanitize for.
       \return A reasonable LCDHost identity string.
       */
-    static QString ident( const QString & str, const QObject *obj = 0 );
+    static QString ident( const QString & str, const QObject * obj = 0 );
 
 signals:
     void initialized();

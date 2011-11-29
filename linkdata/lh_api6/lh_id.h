@@ -16,6 +16,8 @@ class id_data : public QSharedData
 {
 public:
     virtual ~id_data() {}
+    virtual QString toString() = 0;
+
     virtual void lh_create_child( object & new_child ) = 0;
     virtual void lh_destroy() = 0;
     virtual bool lh_bind( object & self ) = 0;

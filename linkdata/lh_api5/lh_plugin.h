@@ -474,7 +474,6 @@ typedef struct lh_device_t
 typedef struct lh_instance_calltable_t
 {
     int size; // sizeof(lh_instance_calltable)
-    // lh_object_calltable o;
     void * (*obj_new)(const lh_class*); /**< return a new instance of the class */
     void (*obj_prerender)(void*); /**< called right before width/height/render_xxx as a notification */
     int (*obj_width)(void*,int); /**< return suggested width given a height (or -1 for default width) */

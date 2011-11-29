@@ -18,21 +18,26 @@ HEADERS = \
     lh_event.h \
     lh_qvariant.h \
     lh_object.h \
+    lh_service.h \
     lh_plugin.h \
     lh_linkable.h \
     lh_source.h \
     lh_sink.h \
     lh_setup.h \
-    lh_widget.h
+    lh_layoutclass.h \
+    lh_layoutitem.h
 
 SOURCES = \
     lh_loader.cpp \
     lh_event.cpp \
     lh_qvariant.cpp \
     lh_object.cpp \
+    lh_service.cpp \
     lh_plugin.cpp \
     lh_linkable.cpp \
     lh_source.cpp \
     lh_sink.cpp \
     lh_setup.cpp \
-    lh_widget.cpp
+    lh_layoutitem.cpp \
+    lh_layoutclass.cpp
+

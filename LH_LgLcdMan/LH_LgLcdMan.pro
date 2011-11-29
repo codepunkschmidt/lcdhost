@@ -1,8 +1,8 @@
 TARGET = LH_LgLcdMan
-TEMPLATE = lib
-DEFINES += LGLCDMAN_LIBRARY
 
 win32 {
+	TEMPLATE = lib
+	DEFINES += LGLCDMAN_LIBRARY
     CONFIG += device wow64
     include(../Plugins.pri)
 
@@ -26,4 +26,6 @@ win32 {
 
     LIBS += $$PWD/win/lglcd.lib
     RESOURCES += LgLcdManResources.qrc
+} else {
+	TEMPLATE = subdirs
 }

@@ -2,37 +2,21 @@
 #define LH_API6_LH_PLUGIN_H
 
 #include <QtPlugin>
-#include "lh_object.h"
+#include "lh_service.h"
 
 namespace lh {
 namespace api6 {
 
-class plugin : public object
+class plugin : public service
 {
     Q_OBJECT
-    Q_INTERFACES( lh::api6::object )
+    Q_INTERFACES( lh::api6::service )
 
 public:
-    /**
-        Definition of the signature area
-        The signature area is optional by highly recommended.
-        Note that the signature needs to kept in the library. If
-        it's not marked as an export, and not referenced anywhere,
-        smart linkers are liable to simply remove it.
-
-        \sa LH_EMPTY_SIGNATURE
-    */
-    typedef struct
-    {
-        char marker[16]; /**< \sa LH_SIGNATURE_MARKER */
-        char sign[256]; /**< 2048-bit RSA signature of the shared plugin's SHA-1 digest, PKCS1 padded */
-        char url[128]; /**< URL to the public key */
-        int size; /**< sizeof(signature) */
-    } signature;
-
     typedef void (*loader)(object&);
 
-    plugin() : object()
+    plugin( const QString & objectname = QString() ) :
+        service( objectname )
     {}
 
     bool init();
@@ -40,6 +24,25 @@ public:
 
 } // namespace api6
 } // namespace lh
+
+#ifndef LH_SIGNATURE_MARKER
+
+/**
+    Definition of the signature area
+    The signature area is optional by highly recommended.
+    Note that the signature needs to kept in the library. If
+    it's not marked as an export, and not referenced anywhere,
+    smart linkers are liable to simply remove it.
+
+    \sa LH_EMPTY_SIGNATURE
+*/
+typedef struct
+{
+    char marker[16]; /**< \sa LH_SIGNATURE_MARKER */
+    char sign[256]; /**< 2048-bit RSA signature of the shared plugin's SHA-1 digest, PKCS1 padded */
+    char url[128]; /**< URL to the public key */
+    int size; /**< sizeof(signature) */
+} lh_signature;
 
 /**
     Signature marker so SignPlugin can find it
@@ -51,7 +54,9 @@ public:
     Define a blank signature area
     \sa lh_signature
 */
-#define LH_SIGNATURE_BLANK { LH_SIGNATURE_MARKER, {0}, {0}, sizeof(lh::api6::plugin::signature) }
+#define LH_SIGNATURE_BLANK { LH_SIGNATURE_MARKER, {0}, {0}, sizeof(lh_signature) }
+
+#endif // LH_SIGNATURE_MARKER
 
 /**
   This macro creates the required exported functions

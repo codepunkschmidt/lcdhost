@@ -51,6 +51,59 @@ CPlayer::CPlayer() :
 	m_TempCoverPath = buffer;
 }
 
+QString CPlayer::replace_tokens(QString str, bool hidePlayingState)
+{
+    QString status_text = "";
+    switch(GetState())
+    {
+    case PLAYER_STOPPED:
+        if(GetPlayer()=="")
+            status_text = "";
+        else
+            status_text = "Stopped";
+        break;
+    case PLAYER_PAUSED:
+        status_text = "Paused";
+        break;
+    case PLAYER_PLAYING:
+        status_text = (hidePlayingState? "" : "Playing");
+        break;
+    }
+
+    replace_token(str,"title"    ,GetTitle());
+    replace_token(str,"artist"   ,GetArtist());
+    replace_token(str,"album"    ,GetAlbum());
+    replace_token(str,"duration" ,GetDuration(),GetDuration());
+    replace_token(str,"played"   ,GetPosition(),GetDuration());
+    replace_token(str,"remaining",GetDuration() - GetPosition(),GetDuration());
+    replace_token(str,"status"   ,status_text);
+    replace_token(str,"player"   ,GetPlayer());
+    replace_token(str,"file"     ,GetFilePath());
+    replace_token(str,"shuffle"  ,(GetShuffle() ? "Shuffle" : ""));
+    replace_token(str,"repeat"   ,(GetRepeat() ? "Repeat" : ""));
+    replace_token(str,"rating"   ,QString::number(GetRating()));
+    replace_token(str,"lyrics"   ,GetLyrics());
+    return str;
+}
+
+void CPlayer::replace_token(QString &str, QString token, QString val)
+{
+    QRegExp re1(QString("\\{%1\\}").arg(token));
+    str = str.replace(re1, val);
+    QRegExp re2(QString("\\{%1\\?([^}]*)\\}").arg(token));
+    if(val.trimmed()!="")
+        str = str.replace(re2, "\\1");
+    else
+        str = str.replace(re2, "");
+}
+
+void CPlayer::replace_token(QString &str, QString token, uint seconds, uint totalSeconds)
+{
+    QTime t = QTime(0,0,0).addSecs(seconds);
+    replace_token(str,token,(totalSeconds==0? "" : t.toString((t.hour()>0? "hh:mm:ss" : "mm:ss"))));
+}
+
+
 /*
 ** ~CPlayer
 **

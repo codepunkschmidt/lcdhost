@@ -47,8 +47,6 @@ class LH_NowPlayingText : public LH_Text
 {
     Q_OBJECT
 
-    void replace_token(QString &str, QString token, QString val);
-    void replace_token(QString &str, QString token, uint seconds, uint totalSeconds);
 protected:
     LH_Qt_QStringList* setup_item_;
     LH_Qt_QString* setup_custom_;

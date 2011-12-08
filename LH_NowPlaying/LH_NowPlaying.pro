@@ -3,7 +3,7 @@ TEMPLATE = lib
 CONFIG  += qaxcontainer
 QT += network xml
 DEFINES += LH_NOWPLAYING_LIBRARY
-DEFINES += VERSION=3.00
+DEFINES += VERSION=3.02
 DEFINES += USEINTERNET
 
 DEFINES += WINVER=0x0601
@@ -25,6 +25,8 @@ INCLUDEPATH += \
     Players \
     Helpers
 
+INCLUDEPATH += $$PWD/../LH_Monitoring/LH_QImage
+
 SOURCES += \
     $$PLUGIN_SOURCES \
     LH_QtPlugin_NowPlaying.cpp \
@@ -41,11 +43,14 @@ SOURCES += \
     Helpers/Cover.cpp \
     ../LH_Text/LH_Text.cpp \
     ../LH_Bar/LH_Bar.cpp \
+    ../LH_Monitoring/LH_QImage/LH_QImage.cpp \
+    ../LH_Monitoring/LH_QImage/logo_blob.c \
     Objects/LH_NowPlayingText.cpp \
     Objects/LH_NowPlayingBar.cpp \
     Objects/LH_NowPlayingEmulator.cpp \
     Objects/LH_NowPlayingAlbumArt.cpp \
-    Objects/LH_NowPlayingRemoteControl.cpp
+    Objects/LH_NowPlayingRemoteControl.cpp \
+    Objects/LH_NowPlayingImage.cpp
 
 HEADERS += \
     $$PLUGIN_HEADERS \
@@ -64,14 +69,18 @@ HEADERS += \
     Helpers/Cover.h \
     ../LH_Text/LH_Text.h \
     ../LH_Bar/LH_Bar.h \
+    ../LH_Monitoring/LH_QImage/LH_QImage.h \
     Objects/LH_NowPlayingText.h \
     Objects/LH_NowPlayingBar.h \
     Objects/LH_NowPlayingEmulator.h \
     Objects/LH_NowPlayingAlbumArt.h \
-    Objects/LH_NowPlayingRemoteControl.h
+    Objects/LH_NowPlayingRemoteControl.h \
+    Objects/LH_NowPlayingImage.h
 
 RESOURCES += \
     LH_NowPlaying.qrc
+
+
 
 
 

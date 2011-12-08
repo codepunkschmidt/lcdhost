@@ -33,6 +33,8 @@
 #include <windows.h>
 #include <winuser.h>
 #include <QString>
+#include <QRegExp>
+#include <QTime>
 
 //#include "Cover.h"
 //#include "Internet.h"
@@ -75,6 +77,9 @@ enum MEASURETYPE
 
 class CPlayer
 {
+    void replace_token(QString &str, QString token, QString val);
+    void replace_token(QString &str, QString token, uint seconds, uint totalSeconds);
+
 public:
 	CPlayer();
 	virtual ~CPlayer() = 0;
@@ -120,6 +125,8 @@ public:
 	bool GetRepeat() { return m_Repeat; }
     void SetPlayer(QString s) { m_PlayerName = s; }
     void setArtworkCachePath( ArtworkCache *artworkCache ) { m_artworkCache = artworkCache; }
+
+    QString replace_tokens(QString str, bool hidePlayingState = false);
 
 protected:
 	void ClearData();

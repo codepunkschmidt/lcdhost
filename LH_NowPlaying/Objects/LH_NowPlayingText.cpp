@@ -178,57 +178,10 @@ void LH_NowPlayingText::refresh_text()
             template_value = setup_custom_->value();
         }
 
-        QString status_text = "";
-        switch(player->GetState())
-        {
-        case PLAYER_STOPPED:
-            if(player->GetPlayer()=="")
-                status_text = "";
-            else
-                status_text = "Stopped";
-            break;
-        case PLAYER_PAUSED:
-            status_text = "Paused";
-            break;
-        case PLAYER_PLAYING:
-            status_text = (setup_hide_playing_state_->value()? "" : "Playing");
-            break;
-        }
-
-        replace_token(template_value,"title",player->GetTitle());
-        replace_token(template_value,"artist",player->GetArtist());
-        replace_token(template_value,"album",player->GetAlbum());
-        replace_token(template_value,"duration",player->GetDuration(),player->GetDuration());
-        replace_token(template_value,"played",player->GetPosition(),player->GetDuration());
-        replace_token(template_value,"remaining",player->GetDuration() - player->GetPosition(),player->GetDuration());
-        replace_token(template_value,"status",status_text);
-        replace_token(template_value,"player",player->GetPlayer());
-        replace_token(template_value,"file",player->GetFilePath());
-        replace_token(template_value,"shuffle",(player->GetShuffle() ? "Shuffle" : ""));
-        replace_token(template_value,"repeat",(player->GetRepeat() ? "Repeat" : ""));
-        replace_token(template_value,"rating",QString::number(player->GetRating()));
-        replace_token(template_value,"lyrics",player->GetLyrics());
-
-        if( setText( template_value ) )  callback(lh_cb_render,NULL);
+        if( setText( player->replace_tokens(template_value, setup_hide_playing_state_->value()) ) )  callback(lh_cb_render,NULL);
     } else {
         // No player found
         if( setText( " " ) )  callback(lh_cb_render,NULL);
     }
 }
 
-void LH_NowPlayingText::replace_token(QString &str, QString token, QString val)
-{
-    QRegExp re1(QString("\\{%1\\}").arg(token));
-    str = str.replace(re1, val);
-    QRegExp re2(QString("\\{%1\\?([^}]*)\\}").arg(token));
-    if(val.trimmed()!="")
-        str = str.replace(re2, "\\1");
-    else
-        str = str.replace(re2, "");
-}
-
-void LH_NowPlayingText::replace_token(QString &str, QString token, uint seconds, uint totalSeconds)
-{
-    QTime t = QTime(0,0,0).addSecs(seconds);
-    replace_token(str,token,(totalSeconds==0? "" : t.toString((t.hour()>0? "hh:mm:ss" : "mm:ss"))));
-}

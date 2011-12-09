@@ -33,6 +33,7 @@
   */
 
 #include "LH_QtSetupItem.h"
+#include <QDebug>
 
 LH_QtSetupItem::LH_QtSetupItem( LH_QtObject *parent, QString name, lh_setup_type type, int flags ) : QObject( parent )
 {
@@ -56,6 +57,11 @@ void LH_QtSetupItem::setName(QString s)
 
 void LH_QtSetupItem::setup_change()
 {
+    if( link_array_ != item_.link )
+    {
+        link_array_ = QByteArray( item_.link );
+        item_.link = link_array_.constData();
+    }
     emit changed();
     if( item_.flags & LH_FLAG_AUTORENDER ) parent()->requestRender();
     return;

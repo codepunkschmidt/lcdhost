@@ -89,6 +89,7 @@ QImage* LH_NowPlayingImage::getPlaceholder()
 {
     QString placeholderName = "";
     QString playerName = player->GetPlayer();
+    float ratingValue = 0;
     switch(setup_item_->value())
     {
     case 0:     //Status
@@ -139,9 +140,20 @@ QImage* LH_NowPlayingImage::getPlaceholder()
         if(player->GetRepeat()) placeholderName = "repeat"; else placeholderName = "repeat_off";
         placeholderName = QString("control_%1_blue").arg(placeholderName);
         break;
-    /*case 4:     //Rating
-        template_value = "{rating}";
-        break;*/
+    case 4:     //Rating
+        ratingValue = (float)player->GetRating();
+        if(ratingValue<0.25) placeholderName = "0.0"; else
+        if(ratingValue<0.75) placeholderName = "0.5"; else
+        if(ratingValue<1.25) placeholderName = "1.0"; else
+        if(ratingValue<1.75) placeholderName = "1.5"; else
+        if(ratingValue<2.25) placeholderName = "2.0"; else
+        if(ratingValue<2.75) placeholderName = "2.5"; else
+        if(ratingValue<3.25) placeholderName = "3.0"; else
+        if(ratingValue<3.75) placeholderName = "3.5"; else
+        if(ratingValue<4.25) placeholderName = "4.0"; else
+        if(ratingValue<4.75) placeholderName = "4.5"; else
+                             placeholderName = "5.0";
+        break;
     default:
         placeholderName = "";
         break;

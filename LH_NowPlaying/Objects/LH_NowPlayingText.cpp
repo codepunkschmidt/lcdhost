@@ -65,7 +65,7 @@ LH_NowPlayingText::LH_NowPlayingText()
     setup_item_->setHelp("The item to display<br/><br/>Note that not all players provide all data items. If you user such a player you may find a custom string a better choice.");
     connect(setup_item_, SIGNAL(changed()), this, SLOT(setup_item_changed()));
 
-    setup_custom_ = new LH_Qt_QString(this, "^Custom", "{artist}{artist?: \"}{title}{artist?:\"} {status?[}{status}{status?]}", LH_FLAG_FIRST);
+    setup_custom_ = new LH_Qt_QString(this, "^Custom", "{artist}{artist?: \"}{title}{artist?\"} {status?[}{status}{status?]}", LH_FLAG_FIRST);
     setup_custom_->setHelp("Enter a template string.<br/><br/>"
                            "Templates: <br/><br/>"
                            "<table>"

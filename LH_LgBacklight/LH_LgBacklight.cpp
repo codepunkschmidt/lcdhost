@@ -59,7 +59,7 @@ char __lcdhostplugin_xml[] =
 "button. If you connect or disconnect backlit Logitech devices while this plugin is running, click "
 "that button have them discovered.</p>"
 "<p>To set the backlight for all connected devices from a layout, create a <i>data source</i> named "
-"<tt>/plugin/Backlight/all/set</tt> using the link button <img src=\":/LH_Backlight/source.png\"></img> at any color item.</p>"
+"<tt>/plugin/backlight/all/set</tt> using the link button <img src=\":/LH_Backlight/source.png\"></img> at any color item.</p>"
   "</longdesc>"
 "</lcdhostplugin>";
 
@@ -187,6 +187,7 @@ void LH_LgBacklight::changeColor()
 
 void LH_LgBacklight::setAllColor()
 {
+    qDebug() << "LH_LgBacklight::setAllColor()" << allcolor_->value();
     foreach( LgBacklightDevice *d, devs_ )
     {
         d->setColor( allcolor_->value() );

@@ -133,6 +133,12 @@ public:
     LH_Qt_QString *setup_control_repeat_;
     LH_Qt_QString *setup_control_shuffle_;
 
+    LH_Qt_QString *setup_source_player_;
+    LH_Qt_QString *setup_source_artist_;
+    LH_Qt_QString *setup_source_album_;
+    LH_Qt_QString *setup_source_title_;
+    LH_Qt_QString *setup_source_status_;
+
     LH_Qt_InputState *setup_input_play_pause_;
     LH_Qt_InputState *setup_input_stop_;
     LH_Qt_InputState *setup_input_next_;

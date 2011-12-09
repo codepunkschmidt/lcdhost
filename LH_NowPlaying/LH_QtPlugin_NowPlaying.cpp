@@ -277,6 +277,23 @@ const char *LH_QtPlugin_NowPlaying::userInit() {
     setup_control_close_ = new LH_Qt_QString(this, "Close Button", "Close Player", LH_FLAG_HIDETITLE | LH_FLAG_NOSAVE | LH_FLAG_NOSOURCE | LH_FLAG_NOSINK, lh_type_string_button );
     connect( setup_control_close_, SIGNAL(changed()), this, SLOT(controlCloseClick()) );
 
+
+    setup_source_player_ = new LH_Qt_QString(this, "Player Name", "", LH_FLAG_HIDDEN);
+    setup_source_player_->setLink("@/Now Playing/Music Player");
+
+    setup_source_artist_ = new LH_Qt_QString(this, "Current Artist", "", LH_FLAG_HIDDEN);
+    setup_source_artist_->setLink("@/Now Playing/Current Track/Artist");
+
+    setup_source_album_ = new LH_Qt_QString(this, "Current Album Name", "", LH_FLAG_HIDDEN);
+    setup_source_album_->setLink("@/Now Playing/Current Track/Album Name");
+
+    setup_source_title_ = new LH_Qt_QString(this, "Current Track Title", "", LH_FLAG_HIDDEN);
+    setup_source_title_->setLink("@/Now Playing/Current Track/Track Title");
+
+    setup_source_status_ = new LH_Qt_QString(this, "Playing Status", "", LH_FLAG_HIDDEN);
+    setup_source_status_->setLink("@/Now Playing/Playing Status");
+
+
     isElevated = (GetElevationState(GetCurrentProcessId()) == ELEVATION_ELEVATED);
     //if(isElevated)
     //    qWarning() << "LCDHost is running as administrator. LH_NowPlaying will crash if iTunes is opened without also being run as administrator.";
@@ -494,6 +511,13 @@ void LH_QtPlugin_NowPlaying::refresh_data() {
         }
 
         player->UpdateData();
+
+        setup_source_player_->setValue(player->GetPlayer());
+        setup_source_artist_->setValue(player->GetArtist());
+        setup_source_album_->setValue(player->GetAlbum());
+        setup_source_title_->setValue(player->GetTitle());
+        setup_source_status_->setValue(player->replace_tokens("{status}"));
+
         emit updated_data();
     }
 }

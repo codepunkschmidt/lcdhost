@@ -85,7 +85,7 @@ void LH_QtCFInstance::cf_initialize()
         new LH_Qt_QString(this,tr("CF-Area-Rule"),"<hr>",LH_FLAG_LAST | LH_FLAG_UI | LH_FLAG_HIDETITLE,lh_type_string_html );
         setup_cf_enabled_ = new LH_Qt_bool(this, "^Enable Conditional Formatting", false, LH_FLAG_LAST | LH_FLAG_AUTORENDER);
         setup_cf_enabled_->setHelp("<p>Conditional Formatting allows a number of properties on the object to change automatically.</p><p>E.g. a text object could change it's fore or background colour or its font.</p>");
-        new LH_Qt_QString(this,tr("^comment"),"<span style='color:grey'>(Conditional Formatting is still experimental)</span>",LH_FLAG_LAST | LH_FLAG_UI,lh_type_string_html );
+        //new LH_Qt_QString(this,tr("^comment"),"<span style='color:grey'>(Conditional Formatting is still experimental)</span>",LH_FLAG_LAST | LH_FLAG_UI,lh_type_string_html );
 
         setup_cf_state_ = new LH_Qt_QString(this, "State", "", LH_FLAG_NOSAVE  | LH_FLAG_LAST | LH_FLAG_HIDDEN);
         setup_cf_state_->setHelp("<p>One way to simplify the Conditional Formatting rules is to have one set of rules that set this \"State\" value and another set that change colours, fonts, images, etc based on it.</p>");
@@ -132,6 +132,7 @@ void LH_QtCFInstance::cf_initialize()
         setup_cf_XML_ = new LH_Qt_QTextEdit(this, "Conditions XML", "<rules/>", LH_FLAG_LAST | LH_FLAG_HIDDEN);
 
         connect(setup_cf_enabled_, SIGNAL(changed()), this, SLOT(cf_enabled_changed()));
+        connect(setup_cf_enabled_, SIGNAL(set()), this, SLOT(cf_enabled_changed()));
         connect(setup_cf_source_, SIGNAL(changed()), this, SLOT(cf_source_changed()));
         connect(setup_cf_source_, SIGNAL(set()), this, SLOT(cf_source_changed()));
         connect(setup_cf_target_, SIGNAL(changed()), this, SLOT(cf_target_changed()));

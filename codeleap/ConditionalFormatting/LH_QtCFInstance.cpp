@@ -33,6 +33,7 @@
   */
 
 #include <QDebug>
+#include <QTimer>
 #include "LH_QtCFInstance.h"
 
 #include "cf_rule.h"
@@ -41,6 +42,8 @@
 LH_QtCFInstance::LH_QtCFInstance() : LH_QtInstance()
 {
     cf_initialized_ = false;
+    cf_applying_rules_ = false;
+    connect(this, SIGNAL(initialized()), this, SLOT(cf_apply_rules()));
     return;
 }
 
@@ -213,6 +216,15 @@ void LH_QtCFInstance::add_cf_target(LH_QtSetupItem *si)
         targets_.insert(i, si);
         setup_cf_target_->list().insert(i, si->name());
     }
+
+    //This forces a recheck on the rules whenever the value is changed manually
+    if(si!=NULL)
+        if(si!=setup_cf_state_)
+        {
+            connect(si, SIGNAL(changed()), this, SLOT(cf_apply_rules()));
+            connect(si, SIGNAL(set()), this, SLOT(cf_apply_rules()));
+        }
+
     setup_cf_target_->refreshList();
 }
 
@@ -392,6 +404,11 @@ void LH_QtCFInstance::cf_apply_rules(bool allowRender)
     if(!setup_cf_enabled_->value())
         return;
 
+    if(cf_applying_rules_)
+        return; //already applying rules
+    else
+        cf_applying_rules_ = true;
+
     if (QObject::sender()!=NULL)
     {
         QString senderName = ((LH_QtSetupItem*)QObject::sender())->name();
@@ -409,6 +426,9 @@ void LH_QtCFInstance::cf_apply_rules(bool allowRender)
         doRender |= cf_rule(root.childNodes().at(i)).apply(this, sources_, targets_);
 
     if(doRender && allowRender) this->requestRender();
+
+    cf_applying_rules_ = false;
+    return;
 }
 
 void LH_QtCFInstance::cf_copy_rules()

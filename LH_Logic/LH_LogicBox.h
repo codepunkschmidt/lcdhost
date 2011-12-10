@@ -2,6 +2,7 @@
 #define LH_LOGICBOX_H
 
 #include <LH_QtCFInstance.h>
+#include <QTimer>
 
 class LH_LogicBox : public LH_QtCFInstance
 {
@@ -19,6 +20,9 @@ public:
     const char *userInit();
 
     static lh_class *classInfo();
+
+public slots:
+    void refreshOutput();
 };
 
 #endif // LH_LOGICBOX_H

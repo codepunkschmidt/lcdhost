@@ -53,7 +53,17 @@ char __lcdhostplugin_xml[] =
   "Advanced Logic Objects."
   "</shortdesc>"
   "<longdesc>"
-  "Advanced objects to allow layout designers to perform more complex activities. "
+    "<p><b>The Logic Box</b></p>"
+    "<p>The Logic Box object is not designed to render any data in itself. Instead it allows you to read two different values and, via rules, combine them into an output, allowing layout designers to perform more complex activities.</p>"
+    "<p>How to use it: "
+    "<ol>"
+        "<li>Firstly, use data linking to link the inputs to fields on other objects, e.g. Team Speak connection status and the Now Playing music player name.<br /></li>"
+        "<li>With that done, write a set of rules which set the value of the \"Output\" depending on the values of those inputs.<br /></li>"
+        "<li>Finally link the output value to a field on another object or objects, e.g. the Text field of a StaticText object. <br /><br />"
+            "You could now choose to write more rules to affect this object, or just display this new value.</li> "
+    "</ol></p>"
+    "<p>N.B.: If you need more than two inputs, you can add multiple Logic Boxes, linking the output of one to the input of the next to combine as many pieces of data as needed.</p>"
+    "<p>If none of this makes sense to you, you probably don't need to use this object. If you  still think you do, check out the Eos layout (installed with LCDHost) for an example of how it can work. Eos uses Logic Boxes to display either the Team Speak panel or the music player panel (and hide the 5-day weather and large clock) when the Team Speak 3 client or a recognised music player is run.</p>"
   "</longdesc>"
 "</lcdhostplugin>";
 

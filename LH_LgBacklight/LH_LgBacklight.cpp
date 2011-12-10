@@ -75,7 +75,7 @@ const char *LH_LgBacklight::userInit()
     connect( devcolor_, SIGNAL(changed()), this, SLOT(changeColor()) );
 
     allcolor_ = new LH_Qt_QColor( this, "SetAllColor", Qt::white, LH_FLAG_NOSAVE|LH_FLAG_HIDDEN|LH_FLAG_NOSOURCE );
-    allcolor_->setLink("/plugin/backlight/all/set");
+    allcolor_->setLink("=/plugin/backlight/all/set");
     connect( allcolor_, SIGNAL(changed()), this, SLOT(setAllColor()) );
 
 #ifdef lh_cb_reload
@@ -187,7 +187,6 @@ void LH_LgBacklight::changeColor()
 
 void LH_LgBacklight::setAllColor()
 {
-    qDebug() << "LH_LgBacklight::setAllColor()" << allcolor_->value();
     foreach( LgBacklightDevice *d, devs_ )
     {
         d->setColor( allcolor_->value() );

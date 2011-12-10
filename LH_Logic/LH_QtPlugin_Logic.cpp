@@ -42,7 +42,7 @@ char __lcdhostplugin_xml[] =
 "<?xml version=\"1.0\"?>"
 "<lcdhostplugin>"
   "<id>Logic</id>"
-  "<rev>1</rev>"
+  "<rev>" STRINGIZE(REVISION) "</rev>"
   "<api>" STRINGIZE(LH_API_MAJOR) "." STRINGIZE(LH_API_MINOR) "</api>"
   "<ver>" STRINGIZE(VERSION) "\nr" STRINGIZE(REVISION) "</ver>"
   "<versionurl>http://www.linkdata.se/lcdhost/version.php?arch=$ARCH</versionurl>"
@@ -57,5 +57,3 @@ char __lcdhostplugin_xml[] =
   "</longdesc>"
 "</lcdhostplugin>";
 
-
-//" STRINGIZE(REVISION) "

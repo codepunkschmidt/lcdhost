@@ -78,6 +78,7 @@ class LH_QtCFInstance : public LH_QtInstance
     //QDomElement createNode(QDomDocument doc, QString tagName, QString nodeValue = "", QString attributeName = "", QString attributeValue = "");
 
     bool cf_initialized_;
+    bool cf_applying_rules_;
     void cf_initialize();
 
     void add_cf_source(QString name, LH_QtSetupItem *si);

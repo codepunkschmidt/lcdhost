@@ -264,12 +264,15 @@ typedef enum lh_setup_type_t
 #define LH_FLAG_AUTORENDER  0x0008 /* Request a render when changed */
 #define LH_FLAG_FIRST       0x0010 /* Used with LH_QtSetupItem's - Same as calling setOrder(-1) */
 #define LH_FLAG_LAST        0x0020 /* Used with LH_QtSetupItem's - Same as calling setOrder(1) */
-#define LH_FLAG_NOSAVE      0x0040 /* Setup item won't be saved to or loaded from layout */
+#define LH_FLAG_NOSAVE_DATA 0x0040 /* Setup item won't be saved to or loaded from layout */
 #define LH_FLAG_BLANKTITLE  0x0080 /* Setup item title is not shown in GUI (blank space is shown) */
 #define LH_FLAG_NOSOURCE    0x0100 /* Setup item must not be used as a data source */
 #define LH_FLAG_NOSINK      0x0200 /* Setup item must not be used as a data sink */
 #define LH_FLAG_HIDETITLE   0x0400 /* Setup item title is not shown in GUI (all space to value) */
 #define LH_FLAG_HIDEVALUE   0x0800 /* Setup item value is not shown in GUI (all space to title) */
+#define LH_FLAG_NOSAVE_LINK 0x1000
+
+#define LH_FLAG_NOSAVE      LH_FLAG_NOSAVE_DATA
 
 typedef union lh_setup_param_t
 {

@@ -101,6 +101,8 @@ public slots:
     void setReadonly( bool b ) { setFlag( LH_FLAG_READONLY, b ); }
     void setWriteable( bool b ) { setFlag( LH_FLAG_READONLY, !b ); }
     void setSaving( bool b ) { setFlag( LH_FLAG_NOSAVE, !b ); }
+    void setSavingData( bool b ) { setFlag( LH_FLAG_NOSAVE_DATA, !b ); }
+    void setSavingLink( bool b ) { setFlag( LH_FLAG_NOSAVE_LINK, !b ); }
 
     virtual void setValue( bool ) { emit set(); }
     virtual void setValue( int ) { emit set(); }

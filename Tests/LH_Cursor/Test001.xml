@@ -1,0 +1,1328 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<instance>
+    <identity name="Virtual 320x240x32 device" id="38y6zs"/>
+    <state modifiable="0" selectable="0" alerts="1"/>
+    <origin x="0" y="0"/>
+    <size w="320" h="240"/>
+    <plugin_size w="-1" h="-1"/>
+    <pos x="0" y="0" z="0"/>
+    <x_ref id="0" align="0" ref_align="0"/>
+    <y_ref id="0" align="0" ref_align="0"/>
+    <w_ref id="0" mod="0" units="0"/>
+    <h_ref id="0" mod="0" units="0"/>
+    <instance class="LH_Decor/StaticBackground">
+        <identity name="Background" id="39mj7s"/>
+        <state modifiable="1" selectable="1" alerts="1"/>
+        <origin x="0" y="0"/>
+        <size w="320" h="240"/>
+        <plugin_size w="-1" h="-1"/>
+        <pos x="0" y="0" z="0"/>
+        <x_ref id="38y6zs" align="0" ref_align="0"/>
+        <y_ref id="38y6zs" align="0" ref_align="0"/>
+        <w_ref id="38y6zs" mod="0" units="0"/>
+        <h_ref id="38y6zs" mod="0" units="0"/>
+        <setupitem>
+            <identity name="First color" type="3"/>
+            <value type="QString">-10595329</value>
+        </setupitem>
+        <setupitem>
+            <identity name="^Background is a gradient" type="2"/>
+            <value type="QString">true</value>
+        </setupitem>
+        <setupitem>
+            <identity name="Second color" type="3"/>
+            <value type="QString">-7514881</value>
+        </setupitem>
+        <setupitem>
+            <identity name="^Gradient is horizontal" type="2"/>
+            <value type="QString">false</value>
+        </setupitem>
+    </instance>
+    <instance class="LH_Cursor/CursorController">
+        <identity name="Primary Cursor" id="39mmug"/>
+        <state modifiable="1" selectable="1" alerts="1"/>
+        <origin x="0" y="0"/>
+        <size w="24" h="24"/>
+        <plugin_size w="24" h="24"/>
+        <pos x="0" y="0" z="1"/>
+        <x_ref id="38y6zs" align="0" ref_align="0"/>
+        <y_ref id="38y6zs" align="0" ref_align="0"/>
+        <w_ref id="0" mod="0" units="0"/>
+        <h_ref id="0" mod="0" units="0"/>
+        <setupitem>
+            <identity name="Cursor Mode" type="6"/>
+            <value type="QString">0</value>
+        </setupitem>
+        <setupitem>
+            <identity name="Boundries" type="8"/>
+            <value type="QString">1,1,3,3</value>
+        </setupitem>
+        <setupitem>
+            <identity name="Loop at edges" type="2"/>
+            <value type="QString">false</value>
+        </setupitem>
+        <setupitem>
+            <identity name="Invalid Points&#10;(x,y;x,y;x,y)" type="8"/>
+            <value type="QString">2,2</value>
+        </setupitem>
+        <setupitem>
+            <identity name="Jump over invalid points" type="2"/>
+            <value type="QString">true</value>
+        </setupitem>
+        <setupitem>
+            <identity name="Up" type="12"/>
+            <value type="QString">UP pressed @ Terminal Server Keyboard Driver</value>
+            <extra str="0000:0000:0000:0001:0006.1480026" int="4101"/>
+        </setupitem>
+        <setupitem>
+            <identity name="Down" type="12"/>
+            <value type="QString">DOWN pressed @ Terminal Server Keyboard Driver</value>
+            <extra str="0000:0000:0000:0001:0006.1500028" int="4101"/>
+        </setupitem>
+        <setupitem>
+            <identity name="Left" type="12"/>
+            <value type="QString">LEFT pressed @ Terminal Server Keyboard Driver</value>
+            <extra str="0000:0000:0000:0001:0006.14b0025" int="4101"/>
+        </setupitem>
+        <setupitem>
+            <identity name="Right" type="12"/>
+            <value type="QString">RIGHT pressed @ Terminal Server Keyboard Driver</value>
+            <extra str="0000:0000:0000:0001:0006.14d0027" int="4101"/>
+        </setupitem>
+        <setupitem>
+            <identity name="Select" type="12"/>
+            <value type="QString">SPACE pressed @ Terminal Server Keyboard Driver</value>
+            <extra str="0000:0000:0000:0001:0006.390020" int="4101"/>
+        </setupitem>
+        <setupitem>
+            <identity name="Reselect" type="12"/>
+            <value type="QString"></value>
+        </setupitem>
+        <setupitem>
+            <identity name="Enable" type="12"/>
+            <value type="QString">1 pressed @ Terminal Server Keyboard Driver</value>
+            <extra str="0000:0000:0000:0001:0006.20031" int="4101"/>
+        </setupitem>
+        <setupitem>
+            <identity name="Persistent Selection" type="2"/>
+            <value type="QString">false</value>
+        </setupitem>
+        <setupitem>
+            <identity name="Auto-reselect" type="2"/>
+            <value type="QString">false</value>
+        </setupitem>
+        <setupitem>
+            <identity name="Persistence File" type="10"/>
+            <value type="QString"></value>
+        </setupitem>
+        <setupitem>
+            <identity name="^Enable Conditional Formatting" type="2"/>
+            <value type="QString">false</value>
+        </setupitem>
+        <setupitem>
+            <identity name="Conditions XML" type="9"/>
+            <value type="QString">&lt;rules/&gt;</value>
+        </setupitem>
+    </instance>
+    <instance class="LH_Cursor/CursorController">
+        <identity name="Secondary Cursor" id="39mmo8"/>
+        <state modifiable="1" selectable="1" alerts="1"/>
+        <origin x="0" y="0"/>
+        <size w="24" h="24"/>
+        <plugin_size w="24" h="24"/>
+        <pos x="0" y="0" z="2"/>
+        <x_ref id="38y6zs" align="0" ref_align="0"/>
+        <y_ref id="38y6zs" align="0" ref_align="0"/>
+        <w_ref id="0" mod="0" units="0"/>
+        <h_ref id="0" mod="0" units="0"/>
+        <setupitem>
+            <identity name="Cursor Mode" type="6"/>
+            <value type="QString">2</value>
+        </setupitem>
+        <setupitem>
+            <identity name="Boundries" type="8"/>
+            <value type="QString">1,1,1,4</value>
+        </setupitem>
+        <setupitem>
+            <identity name="Loop at edges" type="2"/>
+            <value type="bool">true</value>
+        </setupitem>
+        <setupitem>
+            <identity name="Invalid Points&#10;(x,y;x,y;x,y)" type="8"/>
+            <value type="QString"></value>
+        </setupitem>
+        <setupitem>
+            <identity name="Jump over invalid points" type="2"/>
+            <value type="QString">true</value>
+        </setupitem>
+        <setupitem>
+            <identity name="Up" type="12"/>
+            <value type="QString">UP pressed @ Terminal Server Keyboard Driver</value>
+            <extra str="0000:0000:0000:0001:0006.1480026" int="4101"/>
+        </setupitem>
+        <setupitem>
+            <identity name="Down" type="12"/>
+            <value type="QString">DOWN pressed @ Terminal Server Keyboard Driver</value>
+            <extra str="0000:0000:0000:0001:0006.1500028" int="4101"/>
+        </setupitem>
+        <setupitem>
+            <identity name="Left" type="12"/>
+            <value type="QString"></value>
+        </setupitem>
+        <setupitem>
+            <identity name="Right" type="12"/>
+            <value type="QString"></value>
+        </setupitem>
+        <setupitem>
+            <identity name="Select" type="12"/>
+            <value type="QString"></value>
+        </setupitem>
+        <setupitem>
+            <identity name="Reselect" type="12"/>
+            <value type="QString"></value>
+        </setupitem>
+        <setupitem>
+            <identity name="Enable" type="12"/>
+            <value type="QString">2 pressed @ Terminal Server Keyboard Driver</value>
+            <extra str="0000:0000:0000:0001:0006.30032" int="4101"/>
+        </setupitem>
+        <setupitem>
+            <identity name="Persistent Selection" type="2"/>
+            <value type="QString">false</value>
+        </setupitem>
+        <setupitem>
+            <identity name="Auto-reselect" type="2"/>
+            <value type="QString">false</value>
+        </setupitem>
+        <setupitem>
+            <identity name="Persistence File" type="10"/>
+            <value type="QString"></value>
+        </setupitem>
+        <setupitem>
+            <identity name="^Enable Conditional Formatting" type="2"/>
+            <value type="QString">true</value>
+        </setupitem>
+        <setupitem>
+            <identity name="Conditions XML" type="9"/>
+            <value type="QString">&lt;rules&gt;
+ &lt;rule&gt;
+  &lt;conditions&gt;
+   &lt;condition test=&quot;Equals&quot;&gt;
+    &lt;source&gt;State&lt;/source&gt;
+    &lt;value id=&quot;1&quot;&gt;(3,2) [0]&lt;/value&gt;
+   &lt;/condition&gt;
+  &lt;/conditions&gt;
+  &lt;actions&gt;
+   &lt;action type=&quot;property&quot;&gt;
+    &lt;target&gt;Active&lt;/target&gt;
+    &lt;value&gt;true&lt;/value&gt;
+   &lt;/action&gt;
+  &lt;/actions&gt;
+ &lt;/rule&gt;
+ &lt;rule&gt;
+  &lt;conditions&gt;
+   &lt;condition test=&quot;Does not equal&quot;&gt;
+    &lt;source&gt;Active&lt;/source&gt;
+    &lt;value id=&quot;1&quot;&gt;(3,2) [0]&lt;/value&gt;
+   &lt;/condition&gt;
+  &lt;/conditions&gt;
+  &lt;actions&gt;
+   &lt;action type=&quot;property&quot;&gt;
+    &lt;target&gt;Active&lt;/target&gt;
+    &lt;value&gt;false&lt;/value&gt;
+   &lt;/action&gt;
+  &lt;/actions&gt;
+ &lt;/rule&gt;
+&lt;/rules&gt;
+</value>
+        </setupitem>
+    </instance>
+    <instance class="LH_Cursor/CursorRectangle">
+        <identity name="Grid [1,1]" id="39mnd4"/>
+        <state modifiable="1" selectable="1" alerts="1"/>
+        <origin x="0" y="0"/>
+        <size w="69" h="69"/>
+        <plugin_size w="-1" h="-1"/>
+        <pos x="11" y="8" z="3"/>
+        <x_ref id="38y6zs" align="0" ref_align="0"/>
+        <y_ref id="38y6zs" align="0" ref_align="0"/>
+        <w_ref id="0" mod="69" units="4"/>
+        <h_ref id="0" mod="69" units="4"/>
+        <setupitem>
+            <identity name="Coordinate" type="8"/>
+            <value type="QString">1,1</value>
+        </setupitem>
+        <setupitem>
+            <identity name="hr1" type="18"/>
+            <value type="QString">&lt;hr&gt;</value>
+        </setupitem>
+        <setupitem>
+            <identity name="Pen width" type="4"/>
+            <value type="QString">0</value>
+        </setupitem>
+        <setupitem>
+            <identity name="Corner rounding" type="4"/>
+            <value type="QString">20</value>
+        </setupitem>
+        <setupitem>
+            <identity name="Pen color" type="3"/>
+            <value type="QString">-16777216</value>
+        </setupitem>
+        <setupitem>
+            <identity name="Fill color 1" type="3"/>
+            <value type="int">-1</value>
+        </setupitem>
+        <setupitem>
+            <identity name="^Background is a gradient" type="2"/>
+            <value type="QString">false</value>
+        </setupitem>
+        <setupitem>
+            <identity name="Fill color 2" type="3"/>
+            <value type="QString">-4144960</value>
+        </setupitem>
+        <setupitem>
+            <identity name="^Gradient is horizontal" type="2"/>
+            <value type="QString">false</value>
+        </setupitem>
+        <setupitem>
+            <identity name="hr2" type="18"/>
+            <value type="QString">&lt;hr&gt;</value>
+        </setupitem>
+        <setupitem>
+            <identity name="Layout Trigger" type="2"/>
+            <value type="QString">false</value>
+        </setupitem>
+        <setupitem>
+            <identity name="Layout" type="10"/>
+            <value type="QString"></value>
+        </setupitem>
+        <setupitem>
+            <identity name="^Enable Conditional Formatting" type="2"/>
+            <value type="QString">true</value>
+        </setupitem>
+        <setupitem>
+            <identity name="Conditions XML" type="9"/>
+            <value type="QString">&lt;rules&gt;&lt;rule&gt;&lt;conditions&gt;&lt;condition test='Equals'&gt;&lt;source&gt;Cursor State&lt;/source&gt;&lt;value id='1'&gt;OFF&lt;/value&gt;&lt;/condition&gt;&lt;/conditions&gt;&lt;actions&gt;&lt;action type='property'&gt;&lt;target&gt;Fill color 1&lt;/target&gt;&lt;value&gt;FFFFFFFF&lt;/value&gt;&lt;/action&gt;&lt;/actions&gt;&lt;/rule&gt;&lt;rule&gt;&lt;conditions&gt;&lt;condition test='Equals'&gt;&lt;source&gt;Cursor State&lt;/source&gt;&lt;value id='1'&gt;OFF_SEL&lt;/value&gt;&lt;/condition&gt;&lt;/conditions&gt;&lt;actions&gt;&lt;action type='property'&gt;&lt;target&gt;Fill color 1&lt;/target&gt;&lt;value&gt;FF0000FF&lt;/value&gt;&lt;/action&gt;&lt;/actions&gt;&lt;/rule&gt;&lt;rule&gt;&lt;conditions&gt;&lt;condition test='Equals'&gt;&lt;source&gt;Cursor State&lt;/source&gt;&lt;value id='1'&gt;ON&lt;/value&gt;&lt;/condition&gt;&lt;/conditions&gt;&lt;actions&gt;&lt;action type='property'&gt;&lt;target&gt;Fill color 1&lt;/target&gt;&lt;value&gt;FFFF0000&lt;/value&gt;&lt;/action&gt;&lt;/actions&gt;&lt;/rule&gt;&lt;rule&gt;&lt;conditions&gt;&lt;condition test='Equals'&gt;&lt;source&gt;Cursor State&lt;/source&gt;&lt;value id='1'&gt;ON_SEL&lt;/value&gt;&lt;/condition&gt;&lt;/conditions&gt;&lt;actions&gt;&lt;action type='property'&gt;&lt;target&gt;Fill color 1&lt;/target&gt;&lt;value&gt;FF800080&lt;/value&gt;&lt;/action&gt;&lt;/actions&gt;&lt;/rule&gt;&lt;/rules&gt;</value>
+        </setupitem>
+    </instance>
+    <instance class="LH_Cursor/CursorRectangle">
+        <identity name="Grid [2,1]" id="39mnvs"/>
+        <state modifiable="1" selectable="1" alerts="1"/>
+        <origin x="80" y="8"/>
+        <size w="69" h="69"/>
+        <plugin_size w="-1" h="-1"/>
+        <pos x="88" y="8" z="4"/>
+        <x_ref id="39mnd4" align="0" ref_align="2"/>
+        <y_ref id="39mnd4" align="0" ref_align="0"/>
+        <w_ref id="39mnd4" mod="0" units="0"/>
+        <h_ref id="39mnd4" mod="0" units="0"/>
+        <setupitem>
+            <identity name="Coordinate" type="8"/>
+            <value type="QString">2,1</value>
+        </setupitem>
+        <setupitem>
+            <identity name="hr1" type="18"/>
+            <value type="QString">&lt;hr&gt;</value>
+        </setupitem>
+        <setupitem>
+            <identity name="Pen width" type="4"/>
+            <value type="QString">0</value>
+        </setupitem>
+        <setupitem>
+            <identity name="Corner rounding" type="4"/>
+            <value type="QString">20</value>
+        </setupitem>
+        <setupitem>
+            <identity name="Pen color" type="3"/>
+            <value type="QString">-16777216</value>
+        </setupitem>
+        <setupitem>
+            <identity name="Fill color 1" type="3"/>
+            <value type="int">-1</value>
+        </setupitem>
+        <setupitem>
+            <identity name="^Background is a gradient" type="2"/>
+            <value type="QString">false</value>
+        </setupitem>
+        <setupitem>
+            <identity name="Fill color 2" type="3"/>
+            <value type="QString">-4144960</value>
+        </setupitem>
+        <setupitem>
+            <identity name="^Gradient is horizontal" type="2"/>
+            <value type="QString">false</value>
+        </setupitem>
+        <setupitem>
+            <identity name="hr2" type="18"/>
+            <value type="QString">&lt;hr&gt;</value>
+        </setupitem>
+        <setupitem>
+            <identity name="Layout Trigger" type="2"/>
+            <value type="QString">false</value>
+        </setupitem>
+        <setupitem>
+            <identity name="Layout" type="10"/>
+            <value type="QString"></value>
+        </setupitem>
+        <setupitem>
+            <identity name="^Enable Conditional Formatting" type="2"/>
+            <value type="QString">true</value>
+        </setupitem>
+        <setupitem>
+            <identity name="Conditions XML" type="9"/>
+            <value type="QString">&lt;rules&gt;&lt;rule&gt;&lt;conditions&gt;&lt;condition test='Equals'&gt;&lt;source&gt;Cursor State&lt;/source&gt;&lt;value id='1'&gt;OFF&lt;/value&gt;&lt;/condition&gt;&lt;/conditions&gt;&lt;actions&gt;&lt;action type='property'&gt;&lt;target&gt;Fill color 1&lt;/target&gt;&lt;value&gt;FFFFFFFF&lt;/value&gt;&lt;/action&gt;&lt;/actions&gt;&lt;/rule&gt;&lt;rule&gt;&lt;conditions&gt;&lt;condition test='Equals'&gt;&lt;source&gt;Cursor State&lt;/source&gt;&lt;value id='1'&gt;OFF_SEL&lt;/value&gt;&lt;/condition&gt;&lt;/conditions&gt;&lt;actions&gt;&lt;action type='property'&gt;&lt;target&gt;Fill color 1&lt;/target&gt;&lt;value&gt;FF0000FF&lt;/value&gt;&lt;/action&gt;&lt;/actions&gt;&lt;/rule&gt;&lt;rule&gt;&lt;conditions&gt;&lt;condition test='Equals'&gt;&lt;source&gt;Cursor State&lt;/source&gt;&lt;value id='1'&gt;ON&lt;/value&gt;&lt;/condition&gt;&lt;/conditions&gt;&lt;actions&gt;&lt;action type='property'&gt;&lt;target&gt;Fill color 1&lt;/target&gt;&lt;value&gt;FFFF0000&lt;/value&gt;&lt;/action&gt;&lt;/actions&gt;&lt;/rule&gt;&lt;rule&gt;&lt;conditions&gt;&lt;condition test='Equals'&gt;&lt;source&gt;Cursor State&lt;/source&gt;&lt;value id='1'&gt;ON_SEL&lt;/value&gt;&lt;/condition&gt;&lt;/conditions&gt;&lt;actions&gt;&lt;action type='property'&gt;&lt;target&gt;Fill color 1&lt;/target&gt;&lt;value&gt;FF800080&lt;/value&gt;&lt;/action&gt;&lt;/actions&gt;&lt;/rule&gt;&lt;/rules&gt;</value>
+        </setupitem>
+    </instance>
+    <instance class="LH_Cursor/CursorRectangle">
+        <identity name="Grid [3,1]" id="39mje0"/>
+        <state modifiable="1" selectable="1" alerts="1"/>
+        <origin x="157" y="8"/>
+        <size w="69" h="69"/>
+        <plugin_size w="-1" h="-1"/>
+        <pos x="165" y="7" z="5"/>
+        <x_ref id="39mnvs" align="0" ref_align="2"/>
+        <y_ref id="39mnd4" align="0" ref_align="0"/>
+        <w_ref id="39mnd4" mod="0" units="0"/>
+        <h_ref id="39mnd4" mod="0" units="0"/>
+        <setupitem>
+            <identity name="Coordinate" type="8"/>
+            <value type="QString">3,1</value>
+        </setupitem>
+        <setupitem>
+            <identity name="hr1" type="18"/>
+            <value type="QString">&lt;hr&gt;</value>
+        </setupitem>
+        <setupitem>
+            <identity name="Pen width" type="4"/>
+            <value type="QString">0</value>
+        </setupitem>
+        <setupitem>
+            <identity name="Corner rounding" type="4"/>
+            <value type="QString">20</value>
+        </setupitem>
+        <setupitem>
+            <identity name="Pen color" type="3"/>
+            <value type="QString">-16777216</value>
+        </setupitem>
+        <setupitem>
+            <identity name="Fill color 1" type="3"/>
+            <value type="int">-1</value>
+        </setupitem>
+        <setupitem>
+            <identity name="^Background is a gradient" type="2"/>
+            <value type="QString">false</value>
+        </setupitem>
+        <setupitem>
+            <identity name="Fill color 2" type="3"/>
+            <value type="QString">-4144960</value>
+        </setupitem>
+        <setupitem>
+            <identity name="^Gradient is horizontal" type="2"/>
+            <value type="QString">false</value>
+        </setupitem>
+        <setupitem>
+            <identity name="hr2" type="18"/>
+            <value type="QString">&lt;hr&gt;</value>
+        </setupitem>
+        <setupitem>
+            <identity name="Layout Trigger" type="2"/>
+            <value type="QString">false</value>
+        </setupitem>
+        <setupitem>
+            <identity name="Layout" type="10"/>
+            <value type="QString"></value>
+        </setupitem>
+        <setupitem>
+            <identity name="^Enable Conditional Formatting" type="2"/>
+            <value type="QString">true</value>
+        </setupitem>
+        <setupitem>
+            <identity name="Conditions XML" type="9"/>
+            <value type="QString">&lt;rules&gt;&lt;rule&gt;&lt;conditions&gt;&lt;condition test='Equals'&gt;&lt;source&gt;Cursor State&lt;/source&gt;&lt;value id='1'&gt;OFF&lt;/value&gt;&lt;/condition&gt;&lt;/conditions&gt;&lt;actions&gt;&lt;action type='property'&gt;&lt;target&gt;Fill color 1&lt;/target&gt;&lt;value&gt;FFFFFFFF&lt;/value&gt;&lt;/action&gt;&lt;/actions&gt;&lt;/rule&gt;&lt;rule&gt;&lt;conditions&gt;&lt;condition test='Equals'&gt;&lt;source&gt;Cursor State&lt;/source&gt;&lt;value id='1'&gt;OFF_SEL&lt;/value&gt;&lt;/condition&gt;&lt;/conditions&gt;&lt;actions&gt;&lt;action type='property'&gt;&lt;target&gt;Fill color 1&lt;/target&gt;&lt;value&gt;FF0000FF&lt;/value&gt;&lt;/action&gt;&lt;/actions&gt;&lt;/rule&gt;&lt;rule&gt;&lt;conditions&gt;&lt;condition test='Equals'&gt;&lt;source&gt;Cursor State&lt;/source&gt;&lt;value id='1'&gt;ON&lt;/value&gt;&lt;/condition&gt;&lt;/conditions&gt;&lt;actions&gt;&lt;action type='property'&gt;&lt;target&gt;Fill color 1&lt;/target&gt;&lt;value&gt;FFFF0000&lt;/value&gt;&lt;/action&gt;&lt;/actions&gt;&lt;/rule&gt;&lt;rule&gt;&lt;conditions&gt;&lt;condition test='Equals'&gt;&lt;source&gt;Cursor State&lt;/source&gt;&lt;value id='1'&gt;ON_SEL&lt;/value&gt;&lt;/condition&gt;&lt;/conditions&gt;&lt;actions&gt;&lt;action type='property'&gt;&lt;target&gt;Fill color 1&lt;/target&gt;&lt;value&gt;FF800080&lt;/value&gt;&lt;/action&gt;&lt;/actions&gt;&lt;/rule&gt;&lt;/rules&gt;</value>
+        </setupitem>
+    </instance>
+    <instance class="LH_Cursor/CursorRectangle">
+        <identity name="Grid [1,2]" id="39mjk8"/>
+        <state modifiable="1" selectable="1" alerts="1"/>
+        <origin x="11" y="77"/>
+        <size w="69" h="69"/>
+        <plugin_size w="-1" h="-1"/>
+        <pos x="11" y="85" z="6"/>
+        <x_ref id="39mnd4" align="0" ref_align="0"/>
+        <y_ref id="39mnd4" align="0" ref_align="2"/>
+        <w_ref id="39mnd4" mod="0" units="0"/>
+        <h_ref id="39mnd4" mod="0" units="0"/>
+        <setupitem>
+            <identity name="Coordinate" type="8"/>
+            <value type="QString">1,2</value>
+        </setupitem>
+        <setupitem>
+            <identity name="hr1" type="18"/>
+            <value type="QString">&lt;hr&gt;</value>
+        </setupitem>
+        <setupitem>
+            <identity name="Pen width" type="4"/>
+            <value type="QString">0</value>
+        </setupitem>
+        <setupitem>
+            <identity name="Corner rounding" type="4"/>
+            <value type="QString">20</value>
+        </setupitem>
+        <setupitem>
+            <identity name="Pen color" type="3"/>
+            <value type="QString">-16777216</value>
+        </setupitem>
+        <setupitem>
+            <identity name="Fill color 1" type="3"/>
+            <value type="int">-1</value>
+        </setupitem>
+        <setupitem>
+            <identity name="^Background is a gradient" type="2"/>
+            <value type="QString">false</value>
+        </setupitem>
+        <setupitem>
+            <identity name="Fill color 2" type="3"/>
+            <value type="QString">-4144960</value>
+        </setupitem>
+        <setupitem>
+            <identity name="^Gradient is horizontal" type="2"/>
+            <value type="QString">false</value>
+        </setupitem>
+        <setupitem>
+            <identity name="hr2" type="18"/>
+            <value type="QString">&lt;hr&gt;</value>
+        </setupitem>
+        <setupitem>
+            <identity name="Layout Trigger" type="2"/>
+            <value type="QString">false</value>
+        </setupitem>
+        <setupitem>
+            <identity name="Layout" type="10"/>
+            <value type="QString"></value>
+        </setupitem>
+        <setupitem>
+            <identity name="^Enable Conditional Formatting" type="2"/>
+            <value type="QString">true</value>
+        </setupitem>
+        <setupitem>
+            <identity name="Conditions XML" type="9"/>
+            <value type="QString">&lt;rules&gt;&lt;rule&gt;&lt;conditions&gt;&lt;condition test='Equals'&gt;&lt;source&gt;Cursor State&lt;/source&gt;&lt;value id='1'&gt;OFF&lt;/value&gt;&lt;/condition&gt;&lt;/conditions&gt;&lt;actions&gt;&lt;action type='property'&gt;&lt;target&gt;Fill color 1&lt;/target&gt;&lt;value&gt;FFFFFFFF&lt;/value&gt;&lt;/action&gt;&lt;/actions&gt;&lt;/rule&gt;&lt;rule&gt;&lt;conditions&gt;&lt;condition test='Equals'&gt;&lt;source&gt;Cursor State&lt;/source&gt;&lt;value id='1'&gt;OFF_SEL&lt;/value&gt;&lt;/condition&gt;&lt;/conditions&gt;&lt;actions&gt;&lt;action type='property'&gt;&lt;target&gt;Fill color 1&lt;/target&gt;&lt;value&gt;FF0000FF&lt;/value&gt;&lt;/action&gt;&lt;/actions&gt;&lt;/rule&gt;&lt;rule&gt;&lt;conditions&gt;&lt;condition test='Equals'&gt;&lt;source&gt;Cursor State&lt;/source&gt;&lt;value id='1'&gt;ON&lt;/value&gt;&lt;/condition&gt;&lt;/conditions&gt;&lt;actions&gt;&lt;action type='property'&gt;&lt;target&gt;Fill color 1&lt;/target&gt;&lt;value&gt;FFFF0000&lt;/value&gt;&lt;/action&gt;&lt;/actions&gt;&lt;/rule&gt;&lt;rule&gt;&lt;conditions&gt;&lt;condition test='Equals'&gt;&lt;source&gt;Cursor State&lt;/source&gt;&lt;value id='1'&gt;ON_SEL&lt;/value&gt;&lt;/condition&gt;&lt;/conditions&gt;&lt;actions&gt;&lt;action type='property'&gt;&lt;target&gt;Fill color 1&lt;/target&gt;&lt;value&gt;FF800080&lt;/value&gt;&lt;/action&gt;&lt;/actions&gt;&lt;/rule&gt;&lt;/rules&gt;</value>
+        </setupitem>
+    </instance>
+    <instance class="LH_Cursor/CursorRectangle">
+        <identity name="Grid [3,2]" id="39mjwo"/>
+        <state modifiable="1" selectable="1" alerts="1"/>
+        <origin x="165" y="85"/>
+        <size w="69" h="69"/>
+        <plugin_size w="-1" h="-1"/>
+        <pos x="165" y="85" z="7"/>
+        <x_ref id="39mje0" align="0" ref_align="0"/>
+        <y_ref id="39mjk8" align="0" ref_align="0"/>
+        <w_ref id="39mnd4" mod="0" units="0"/>
+        <h_ref id="39mnd4" mod="0" units="0"/>
+        <setupitem>
+            <identity name="Coordinate" type="8"/>
+            <value type="QString">3,2</value>
+        </setupitem>
+        <setupitem>
+            <identity name="hr1" type="18"/>
+            <value type="QString">&lt;hr&gt;</value>
+        </setupitem>
+        <setupitem>
+            <identity name="Pen width" type="4"/>
+            <value type="int">39</value>
+        </setupitem>
+        <setupitem>
+            <identity name="Corner rounding" type="4"/>
+            <value type="QString">20</value>
+        </setupitem>
+        <setupitem>
+            <identity name="Pen color" type="3"/>
+            <value type="QString">-16777216</value>
+        </setupitem>
+        <setupitem>
+            <identity name="Fill color 1" type="3"/>
+            <value type="int">-1</value>
+        </setupitem>
+        <setupitem>
+            <identity name="^Background is a gradient" type="2"/>
+            <value type="QString">false</value>
+        </setupitem>
+        <setupitem>
+            <identity name="Fill color 2" type="3"/>
+            <value type="QString">-4144960</value>
+        </setupitem>
+        <setupitem>
+            <identity name="^Gradient is horizontal" type="2"/>
+            <value type="QString">false</value>
+        </setupitem>
+        <setupitem>
+            <identity name="hr2" type="18"/>
+            <value type="QString">&lt;hr&gt;</value>
+        </setupitem>
+        <setupitem>
+            <identity name="Layout Trigger" type="2"/>
+            <value type="QString">false</value>
+        </setupitem>
+        <setupitem>
+            <identity name="Layout" type="10"/>
+            <value type="QString"></value>
+        </setupitem>
+        <setupitem>
+            <identity name="^Enable Conditional Formatting" type="2"/>
+            <value type="QString">true</value>
+        </setupitem>
+        <setupitem>
+            <identity name="Conditions XML" type="9"/>
+            <value type="QString">&lt;rules&gt;&lt;rule&gt;&lt;conditions&gt;&lt;condition test='Equals'&gt;&lt;source&gt;Cursor State&lt;/source&gt;&lt;value id='1'&gt;OFF&lt;/value&gt;&lt;/condition&gt;&lt;/conditions&gt;&lt;actions&gt;&lt;action type='property'&gt;&lt;target&gt;Fill color 1&lt;/target&gt;&lt;value&gt;FFFFFFFF&lt;/value&gt;&lt;/action&gt;&lt;/actions&gt;&lt;/rule&gt;&lt;rule&gt;&lt;conditions&gt;&lt;condition test='Equals'&gt;&lt;source&gt;Cursor State&lt;/source&gt;&lt;value id='1'&gt;OFF_SEL&lt;/value&gt;&lt;/condition&gt;&lt;/conditions&gt;&lt;actions&gt;&lt;action type='property'&gt;&lt;target&gt;Fill color 1&lt;/target&gt;&lt;value&gt;FF0000FF&lt;/value&gt;&lt;/action&gt;&lt;/actions&gt;&lt;/rule&gt;&lt;rule&gt;&lt;conditions&gt;&lt;condition test='Equals'&gt;&lt;source&gt;Cursor State&lt;/source&gt;&lt;value id='1'&gt;ON&lt;/value&gt;&lt;/condition&gt;&lt;/conditions&gt;&lt;actions&gt;&lt;action type='property'&gt;&lt;target&gt;Fill color 1&lt;/target&gt;&lt;value&gt;FFFF0000&lt;/value&gt;&lt;/action&gt;&lt;/actions&gt;&lt;/rule&gt;&lt;rule&gt;&lt;conditions&gt;&lt;condition test='Equals'&gt;&lt;source&gt;Cursor State&lt;/source&gt;&lt;value id='1'&gt;ON_SEL&lt;/value&gt;&lt;/condition&gt;&lt;/conditions&gt;&lt;actions&gt;&lt;action type='property'&gt;&lt;target&gt;Fill color 1&lt;/target&gt;&lt;value&gt;FF800080&lt;/value&gt;&lt;/action&gt;&lt;/actions&gt;&lt;/rule&gt;&lt;/rules&gt;</value>
+        </setupitem>
+        <instance class="LH_Cursor/CursorRectangle">
+            <identity name="Grid [3,2] - Menu BG" id="39mky0"/>
+            <state modifiable="1" selectable="1" alerts="1"/>
+            <origin x="0" y="0"/>
+            <size w="62" h="223"/>
+            <plugin_size w="-1" h="-1"/>
+            <pos x="83" y="-77" z="0"/>
+            <x_ref id="0" align="0" ref_align="0"/>
+            <y_ref id="0" align="0" ref_align="0"/>
+            <w_ref id="0" mod="62" units="4"/>
+            <h_ref id="0" mod="223" units="4"/>
+            <setupitem>
+                <identity name="Coordinate" type="8"/>
+                <value type="QString">3,2</value>
+            </setupitem>
+            <setupitem>
+                <identity name="hr1" type="18"/>
+                <value type="QString">&lt;hr&gt;</value>
+            </setupitem>
+            <setupitem>
+                <identity name="Pen width" type="4"/>
+                <value type="int">39</value>
+            </setupitem>
+            <setupitem>
+                <identity name="Corner rounding" type="4"/>
+                <value type="QString">20</value>
+            </setupitem>
+            <setupitem>
+                <identity name="Pen color" type="3"/>
+                <value type="QString">-16777216</value>
+            </setupitem>
+            <setupitem>
+                <identity name="Fill color 1" type="3"/>
+                <value type="int">-1</value>
+            </setupitem>
+            <setupitem>
+                <identity name="^Background is a gradient" type="2"/>
+                <value type="QString">false</value>
+            </setupitem>
+            <setupitem>
+                <identity name="Fill color 2" type="3"/>
+                <value type="QString">-4144960</value>
+            </setupitem>
+            <setupitem>
+                <identity name="^Gradient is horizontal" type="2"/>
+                <value type="QString">false</value>
+            </setupitem>
+            <setupitem>
+                <identity name="hr2" type="18"/>
+                <value type="QString">&lt;hr&gt;</value>
+            </setupitem>
+            <setupitem>
+                <identity name="Layout Trigger" type="2"/>
+                <value type="QString">false</value>
+            </setupitem>
+            <setupitem>
+                <identity name="Layout" type="10"/>
+                <value type="QString"></value>
+            </setupitem>
+            <setupitem>
+                <identity name="^Enable Conditional Formatting" type="2"/>
+                <value type="QString">true</value>
+            </setupitem>
+            <setupitem>
+                <identity name="Conditions XML" type="9"/>
+                <value type="QString">&lt;rules&gt;&lt;rule&gt;&lt;conditions&gt;&lt;condition test='Equals'&gt;&lt;source&gt;Cursor State&lt;/source&gt;&lt;value id='1'&gt;OFF&lt;/value&gt;&lt;/condition&gt;&lt;/conditions&gt;&lt;actions&gt;&lt;action type='property'&gt;&lt;target&gt;Fill color 1&lt;/target&gt;&lt;value&gt;FFFFFFFF&lt;/value&gt;&lt;/action&gt;&lt;/actions&gt;&lt;/rule&gt;&lt;rule&gt;&lt;conditions&gt;&lt;condition test='Equals'&gt;&lt;source&gt;Cursor State&lt;/source&gt;&lt;value id='1'&gt;OFF_SEL&lt;/value&gt;&lt;/condition&gt;&lt;/conditions&gt;&lt;actions&gt;&lt;action type='property'&gt;&lt;target&gt;Fill color 1&lt;/target&gt;&lt;value&gt;FF0000FF&lt;/value&gt;&lt;/action&gt;&lt;/actions&gt;&lt;/rule&gt;&lt;rule&gt;&lt;conditions&gt;&lt;condition test='Equals'&gt;&lt;source&gt;Cursor State&lt;/source&gt;&lt;value id='1'&gt;ON&lt;/value&gt;&lt;/condition&gt;&lt;/conditions&gt;&lt;actions&gt;&lt;action type='property'&gt;&lt;target&gt;Fill color 1&lt;/target&gt;&lt;value&gt;FFFF0000&lt;/value&gt;&lt;/action&gt;&lt;/actions&gt;&lt;/rule&gt;&lt;rule&gt;&lt;conditions&gt;&lt;condition test='Equals'&gt;&lt;source&gt;Cursor State&lt;/source&gt;&lt;value id='1'&gt;ON_SEL&lt;/value&gt;&lt;/condition&gt;&lt;/conditions&gt;&lt;actions&gt;&lt;action type='property'&gt;&lt;target&gt;Fill color 1&lt;/target&gt;&lt;value&gt;FF800080&lt;/value&gt;&lt;/action&gt;&lt;/actions&gt;&lt;/rule&gt;&lt;/rules&gt;</value>
+            </setupitem>
+            <instance class="LH_Cursor/CursorRectangle">
+                <identity name="Cursor Rectangle [11]" id="39ml48"/>
+                <state modifiable="1" selectable="1" alerts="1"/>
+                <origin x="0" y="0"/>
+                <size w="50" h="48"/>
+                <plugin_size w="-1" h="48"/>
+                <pos x="6" y="7" z="0"/>
+                <x_ref id="39mky0" align="0" ref_align="0"/>
+                <y_ref id="39mky0" align="0" ref_align="0"/>
+                <w_ref id="39mky0" mod="-12" units="0"/>
+                <h_ref id="0" mod="0" units="0"/>
+                <setupitem>
+                    <identity name="Coordinate" type="8"/>
+                    <value type="QString">1,1</value>
+                </setupitem>
+                <setupitem>
+                    <identity name="hr1" type="18"/>
+                    <value type="QString">&lt;hr&gt;</value>
+                </setupitem>
+                <setupitem>
+                    <identity name="Pen width" type="4"/>
+                    <value type="QString">0</value>
+                </setupitem>
+                <setupitem>
+                    <identity name="Corner rounding" type="4"/>
+                    <value type="QString">20</value>
+                </setupitem>
+                <setupitem>
+                    <identity name="Pen color" type="3"/>
+                    <value type="QString">-16777216</value>
+                </setupitem>
+                <setupitem>
+                    <identity name="Fill color 1" type="3"/>
+                    <value type="int">-1</value>
+                </setupitem>
+                <setupitem>
+                    <identity name="^Background is a gradient" type="2"/>
+                    <value type="QString">false</value>
+                </setupitem>
+                <setupitem>
+                    <identity name="Fill color 2" type="3"/>
+                    <value type="QString">-4144960</value>
+                </setupitem>
+                <setupitem>
+                    <identity name="^Gradient is horizontal" type="2"/>
+                    <value type="QString">false</value>
+                </setupitem>
+                <setupitem>
+                    <identity name="hr2" type="18"/>
+                    <value type="QString">&lt;hr&gt;</value>
+                </setupitem>
+                <setupitem>
+                    <identity name="Layout Trigger" type="2"/>
+                    <value type="QString">false</value>
+                </setupitem>
+                <setupitem>
+                    <identity name="Layout" type="10"/>
+                    <value type="QString"></value>
+                </setupitem>
+                <setupitem>
+                    <identity name="^Enable Conditional Formatting" type="2"/>
+                    <value type="QString">true</value>
+                </setupitem>
+                <setupitem>
+                    <identity name="Conditions XML" type="9"/>
+                    <value type="QString">&lt;rules&gt;&lt;rule&gt;&lt;conditions&gt;&lt;condition test='Equals'&gt;&lt;source&gt;Cursor State&lt;/source&gt;&lt;value id='1'&gt;OFF&lt;/value&gt;&lt;/condition&gt;&lt;/conditions&gt;&lt;actions&gt;&lt;action type='property'&gt;&lt;target&gt;Fill color 1&lt;/target&gt;&lt;value&gt;FFFFFFFF&lt;/value&gt;&lt;/action&gt;&lt;/actions&gt;&lt;/rule&gt;&lt;rule&gt;&lt;conditions&gt;&lt;condition test='Equals'&gt;&lt;source&gt;Cursor State&lt;/source&gt;&lt;value id='1'&gt;OFF_SEL&lt;/value&gt;&lt;/condition&gt;&lt;/conditions&gt;&lt;actions&gt;&lt;action type='property'&gt;&lt;target&gt;Fill color 1&lt;/target&gt;&lt;value&gt;FF0000FF&lt;/value&gt;&lt;/action&gt;&lt;/actions&gt;&lt;/rule&gt;&lt;rule&gt;&lt;conditions&gt;&lt;condition test='Equals'&gt;&lt;source&gt;Cursor State&lt;/source&gt;&lt;value id='1'&gt;ON&lt;/value&gt;&lt;/condition&gt;&lt;/conditions&gt;&lt;actions&gt;&lt;action type='property'&gt;&lt;target&gt;Fill color 1&lt;/target&gt;&lt;value&gt;FFFF0000&lt;/value&gt;&lt;/action&gt;&lt;/actions&gt;&lt;/rule&gt;&lt;rule&gt;&lt;conditions&gt;&lt;condition test='Equals'&gt;&lt;source&gt;Cursor State&lt;/source&gt;&lt;value id='1'&gt;ON_SEL&lt;/value&gt;&lt;/condition&gt;&lt;/conditions&gt;&lt;actions&gt;&lt;action type='property'&gt;&lt;target&gt;Fill color 1&lt;/target&gt;&lt;value&gt;FF800080&lt;/value&gt;&lt;/action&gt;&lt;/actions&gt;&lt;/rule&gt;&lt;/rules&gt;</value>
+                </setupitem>
+            </instance>
+            <instance class="LH_Cursor/CursorRectangle">
+                <identity name="Cursor Rectangle [12]" id="39mlag"/>
+                <state modifiable="1" selectable="1" alerts="1"/>
+                <origin x="6" y="55"/>
+                <size w="50" h="48"/>
+                <plugin_size w="-1" h="-1"/>
+                <pos x="6" y="61" z="1"/>
+                <x_ref id="39ml48" align="0" ref_align="0"/>
+                <y_ref id="39ml48" align="0" ref_align="2"/>
+                <w_ref id="39ml48" mod="0" units="0"/>
+                <h_ref id="39ml48" mod="0" units="0"/>
+                <setupitem>
+                    <identity name="Coordinate" type="8"/>
+                    <value type="QString">1,2</value>
+                </setupitem>
+                <setupitem>
+                    <identity name="hr1" type="18"/>
+                    <value type="QString">&lt;hr&gt;</value>
+                </setupitem>
+                <setupitem>
+                    <identity name="Pen width" type="4"/>
+                    <value type="QString">0</value>
+                </setupitem>
+                <setupitem>
+                    <identity name="Corner rounding" type="4"/>
+                    <value type="QString">20</value>
+                </setupitem>
+                <setupitem>
+                    <identity name="Pen color" type="3"/>
+                    <value type="QString">-16777216</value>
+                </setupitem>
+                <setupitem>
+                    <identity name="Fill color 1" type="3"/>
+                    <value type="int">-1</value>
+                </setupitem>
+                <setupitem>
+                    <identity name="^Background is a gradient" type="2"/>
+                    <value type="QString">false</value>
+                </setupitem>
+                <setupitem>
+                    <identity name="Fill color 2" type="3"/>
+                    <value type="QString">-4144960</value>
+                </setupitem>
+                <setupitem>
+                    <identity name="^Gradient is horizontal" type="2"/>
+                    <value type="QString">false</value>
+                </setupitem>
+                <setupitem>
+                    <identity name="hr2" type="18"/>
+                    <value type="QString">&lt;hr&gt;</value>
+                </setupitem>
+                <setupitem>
+                    <identity name="Layout Trigger" type="2"/>
+                    <value type="QString">false</value>
+                </setupitem>
+                <setupitem>
+                    <identity name="Layout" type="10"/>
+                    <value type="QString"></value>
+                </setupitem>
+                <setupitem>
+                    <identity name="^Enable Conditional Formatting" type="2"/>
+                    <value type="QString">true</value>
+                </setupitem>
+                <setupitem>
+                    <identity name="Conditions XML" type="9"/>
+                    <value type="QString">&lt;rules&gt;&lt;rule&gt;&lt;conditions&gt;&lt;condition test='Equals'&gt;&lt;source&gt;Cursor State&lt;/source&gt;&lt;value id='1'&gt;OFF&lt;/value&gt;&lt;/condition&gt;&lt;/conditions&gt;&lt;actions&gt;&lt;action type='property'&gt;&lt;target&gt;Fill color 1&lt;/target&gt;&lt;value&gt;FFFFFFFF&lt;/value&gt;&lt;/action&gt;&lt;/actions&gt;&lt;/rule&gt;&lt;rule&gt;&lt;conditions&gt;&lt;condition test='Equals'&gt;&lt;source&gt;Cursor State&lt;/source&gt;&lt;value id='1'&gt;OFF_SEL&lt;/value&gt;&lt;/condition&gt;&lt;/conditions&gt;&lt;actions&gt;&lt;action type='property'&gt;&lt;target&gt;Fill color 1&lt;/target&gt;&lt;value&gt;FF0000FF&lt;/value&gt;&lt;/action&gt;&lt;/actions&gt;&lt;/rule&gt;&lt;rule&gt;&lt;conditions&gt;&lt;condition test='Equals'&gt;&lt;source&gt;Cursor State&lt;/source&gt;&lt;value id='1'&gt;ON&lt;/value&gt;&lt;/condition&gt;&lt;/conditions&gt;&lt;actions&gt;&lt;action type='property'&gt;&lt;target&gt;Fill color 1&lt;/target&gt;&lt;value&gt;FFFF0000&lt;/value&gt;&lt;/action&gt;&lt;/actions&gt;&lt;/rule&gt;&lt;rule&gt;&lt;conditions&gt;&lt;condition test='Equals'&gt;&lt;source&gt;Cursor State&lt;/source&gt;&lt;value id='1'&gt;ON_SEL&lt;/value&gt;&lt;/condition&gt;&lt;/conditions&gt;&lt;actions&gt;&lt;action type='property'&gt;&lt;target&gt;Fill color 1&lt;/target&gt;&lt;value&gt;FF800080&lt;/value&gt;&lt;/action&gt;&lt;/actions&gt;&lt;/rule&gt;&lt;/rules&gt;</value>
+                </setupitem>
+            </instance>
+            <instance class="LH_Cursor/CursorRectangle">
+                <identity name="Cursor Rectangle [13]" id="39mlgo"/>
+                <state modifiable="1" selectable="1" alerts="1"/>
+                <origin x="6" y="109"/>
+                <size w="50" h="48"/>
+                <plugin_size w="-1" h="-1"/>
+                <pos x="6" y="115" z="2"/>
+                <x_ref id="39mlag" align="0" ref_align="0"/>
+                <y_ref id="39mlag" align="0" ref_align="2"/>
+                <w_ref id="39mlag" mod="0" units="0"/>
+                <h_ref id="39mlag" mod="0" units="0"/>
+                <setupitem>
+                    <identity name="Coordinate" type="8"/>
+                    <value type="QString">1,3</value>
+                </setupitem>
+                <setupitem>
+                    <identity name="hr1" type="18"/>
+                    <value type="QString">&lt;hr&gt;</value>
+                </setupitem>
+                <setupitem>
+                    <identity name="Pen width" type="4"/>
+                    <value type="QString">0</value>
+                </setupitem>
+                <setupitem>
+                    <identity name="Corner rounding" type="4"/>
+                    <value type="QString">20</value>
+                </setupitem>
+                <setupitem>
+                    <identity name="Pen color" type="3"/>
+                    <value type="QString">-16777216</value>
+                </setupitem>
+                <setupitem>
+                    <identity name="Fill color 1" type="3"/>
+                    <value type="int">-1</value>
+                </setupitem>
+                <setupitem>
+                    <identity name="^Background is a gradient" type="2"/>
+                    <value type="QString">false</value>
+                </setupitem>
+                <setupitem>
+                    <identity name="Fill color 2" type="3"/>
+                    <value type="QString">-4144960</value>
+                </setupitem>
+                <setupitem>
+                    <identity name="^Gradient is horizontal" type="2"/>
+                    <value type="QString">false</value>
+                </setupitem>
+                <setupitem>
+                    <identity name="hr2" type="18"/>
+                    <value type="QString">&lt;hr&gt;</value>
+                </setupitem>
+                <setupitem>
+                    <identity name="Layout Trigger" type="2"/>
+                    <value type="QString">false</value>
+                </setupitem>
+                <setupitem>
+                    <identity name="Layout" type="10"/>
+                    <value type="QString"></value>
+                </setupitem>
+                <setupitem>
+                    <identity name="^Enable Conditional Formatting" type="2"/>
+                    <value type="QString">true</value>
+                </setupitem>
+                <setupitem>
+                    <identity name="Conditions XML" type="9"/>
+                    <value type="QString">&lt;rules&gt;&lt;rule&gt;&lt;conditions&gt;&lt;condition test='Equals'&gt;&lt;source&gt;Cursor State&lt;/source&gt;&lt;value id='1'&gt;OFF&lt;/value&gt;&lt;/condition&gt;&lt;/conditions&gt;&lt;actions&gt;&lt;action type='property'&gt;&lt;target&gt;Fill color 1&lt;/target&gt;&lt;value&gt;FFFFFFFF&lt;/value&gt;&lt;/action&gt;&lt;/actions&gt;&lt;/rule&gt;&lt;rule&gt;&lt;conditions&gt;&lt;condition test='Equals'&gt;&lt;source&gt;Cursor State&lt;/source&gt;&lt;value id='1'&gt;OFF_SEL&lt;/value&gt;&lt;/condition&gt;&lt;/conditions&gt;&lt;actions&gt;&lt;action type='property'&gt;&lt;target&gt;Fill color 1&lt;/target&gt;&lt;value&gt;FF0000FF&lt;/value&gt;&lt;/action&gt;&lt;/actions&gt;&lt;/rule&gt;&lt;rule&gt;&lt;conditions&gt;&lt;condition test='Equals'&gt;&lt;source&gt;Cursor State&lt;/source&gt;&lt;value id='1'&gt;ON&lt;/value&gt;&lt;/condition&gt;&lt;/conditions&gt;&lt;actions&gt;&lt;action type='property'&gt;&lt;target&gt;Fill color 1&lt;/target&gt;&lt;value&gt;FFFF0000&lt;/value&gt;&lt;/action&gt;&lt;/actions&gt;&lt;/rule&gt;&lt;rule&gt;&lt;conditions&gt;&lt;condition test='Equals'&gt;&lt;source&gt;Cursor State&lt;/source&gt;&lt;value id='1'&gt;ON_SEL&lt;/value&gt;&lt;/condition&gt;&lt;/conditions&gt;&lt;actions&gt;&lt;action type='property'&gt;&lt;target&gt;Fill color 1&lt;/target&gt;&lt;value&gt;FF800080&lt;/value&gt;&lt;/action&gt;&lt;/actions&gt;&lt;/rule&gt;&lt;/rules&gt;</value>
+                </setupitem>
+            </instance>
+            <instance class="LH_Cursor/CursorRectangle">
+                <identity name="Cursor Rectangle [14]" id="39mo20"/>
+                <state modifiable="1" selectable="1" alerts="1"/>
+                <origin x="6" y="163"/>
+                <size w="50" h="48"/>
+                <plugin_size w="-1" h="-1"/>
+                <pos x="6" y="169" z="3"/>
+                <x_ref id="39mlgo" align="0" ref_align="0"/>
+                <y_ref id="39mlgo" align="0" ref_align="2"/>
+                <w_ref id="39mlgo" mod="0" units="0"/>
+                <h_ref id="39mlgo" mod="0" units="0"/>
+                <setupitem>
+                    <identity name="Coordinate" type="8"/>
+                    <value type="QString">1,4</value>
+                </setupitem>
+                <setupitem>
+                    <identity name="hr1" type="18"/>
+                    <value type="QString">&lt;hr&gt;</value>
+                </setupitem>
+                <setupitem>
+                    <identity name="Pen width" type="4"/>
+                    <value type="QString">0</value>
+                </setupitem>
+                <setupitem>
+                    <identity name="Corner rounding" type="4"/>
+                    <value type="QString">20</value>
+                </setupitem>
+                <setupitem>
+                    <identity name="Pen color" type="3"/>
+                    <value type="QString">-16777216</value>
+                </setupitem>
+                <setupitem>
+                    <identity name="Fill color 1" type="3"/>
+                    <value type="int">-1</value>
+                </setupitem>
+                <setupitem>
+                    <identity name="^Background is a gradient" type="2"/>
+                    <value type="QString">false</value>
+                </setupitem>
+                <setupitem>
+                    <identity name="Fill color 2" type="3"/>
+                    <value type="QString">-4144960</value>
+                </setupitem>
+                <setupitem>
+                    <identity name="^Gradient is horizontal" type="2"/>
+                    <value type="QString">false</value>
+                </setupitem>
+                <setupitem>
+                    <identity name="hr2" type="18"/>
+                    <value type="QString">&lt;hr&gt;</value>
+                </setupitem>
+                <setupitem>
+                    <identity name="Layout Trigger" type="2"/>
+                    <value type="QString">false</value>
+                </setupitem>
+                <setupitem>
+                    <identity name="Layout" type="10"/>
+                    <value type="QString"></value>
+                </setupitem>
+                <setupitem>
+                    <identity name="^Enable Conditional Formatting" type="2"/>
+                    <value type="QString">true</value>
+                </setupitem>
+                <setupitem>
+                    <identity name="Conditions XML" type="9"/>
+                    <value type="QString">&lt;rules&gt;&lt;rule&gt;&lt;conditions&gt;&lt;condition test='Equals'&gt;&lt;source&gt;Cursor State&lt;/source&gt;&lt;value id='1'&gt;OFF&lt;/value&gt;&lt;/condition&gt;&lt;/conditions&gt;&lt;actions&gt;&lt;action type='property'&gt;&lt;target&gt;Fill color 1&lt;/target&gt;&lt;value&gt;FFFFFFFF&lt;/value&gt;&lt;/action&gt;&lt;/actions&gt;&lt;/rule&gt;&lt;rule&gt;&lt;conditions&gt;&lt;condition test='Equals'&gt;&lt;source&gt;Cursor State&lt;/source&gt;&lt;value id='1'&gt;OFF_SEL&lt;/value&gt;&lt;/condition&gt;&lt;/conditions&gt;&lt;actions&gt;&lt;action type='property'&gt;&lt;target&gt;Fill color 1&lt;/target&gt;&lt;value&gt;FF0000FF&lt;/value&gt;&lt;/action&gt;&lt;/actions&gt;&lt;/rule&gt;&lt;rule&gt;&lt;conditions&gt;&lt;condition test='Equals'&gt;&lt;source&gt;Cursor State&lt;/source&gt;&lt;value id='1'&gt;ON&lt;/value&gt;&lt;/condition&gt;&lt;/conditions&gt;&lt;actions&gt;&lt;action type='property'&gt;&lt;target&gt;Fill color 1&lt;/target&gt;&lt;value&gt;FFFF0000&lt;/value&gt;&lt;/action&gt;&lt;/actions&gt;&lt;/rule&gt;&lt;rule&gt;&lt;conditions&gt;&lt;condition test='Equals'&gt;&lt;source&gt;Cursor State&lt;/source&gt;&lt;value id='1'&gt;ON_SEL&lt;/value&gt;&lt;/condition&gt;&lt;/conditions&gt;&lt;actions&gt;&lt;action type='property'&gt;&lt;target&gt;Fill color 1&lt;/target&gt;&lt;value&gt;FF800080&lt;/value&gt;&lt;/action&gt;&lt;/actions&gt;&lt;/rule&gt;&lt;/rules&gt;</value>
+                </setupitem>
+            </instance>
+        </instance>
+        <instance class="LH_Cursor/CursorRectangle">
+            <identity name="Grid [3,2] - Arm" id="39mklk"/>
+            <state modifiable="1" selectable="1" alerts="1"/>
+            <origin x="0" y="0"/>
+            <size w="22" h="48"/>
+            <plugin_size w="-1" h="48"/>
+            <pos x="65" y="10" z="1"/>
+            <x_ref id="0" align="0" ref_align="0"/>
+            <y_ref id="0" align="0" ref_align="0"/>
+            <w_ref id="0" mod="22" units="4"/>
+            <h_ref id="0" mod="0" units="0"/>
+            <setupitem>
+                <identity name="Coordinate" type="8"/>
+                <value type="QString">3,2</value>
+            </setupitem>
+            <setupitem>
+                <identity name="hr1" type="18"/>
+                <value type="QString">&lt;hr&gt;</value>
+            </setupitem>
+            <setupitem>
+                <identity name="Pen width" type="4"/>
+                <value type="int">126</value>
+            </setupitem>
+            <setupitem>
+                <identity name="Corner rounding" type="4"/>
+                <value type="int">0</value>
+            </setupitem>
+            <setupitem>
+                <identity name="Pen color" type="3"/>
+                <value type="QString">-16777216</value>
+            </setupitem>
+            <setupitem>
+                <identity name="Fill color 1" type="3"/>
+                <value type="int">-1</value>
+            </setupitem>
+            <setupitem>
+                <identity name="^Background is a gradient" type="2"/>
+                <value type="QString">false</value>
+            </setupitem>
+            <setupitem>
+                <identity name="Fill color 2" type="3"/>
+                <value type="QString">-4144960</value>
+            </setupitem>
+            <setupitem>
+                <identity name="^Gradient is horizontal" type="2"/>
+                <value type="QString">false</value>
+            </setupitem>
+            <setupitem>
+                <identity name="hr2" type="18"/>
+                <value type="QString">&lt;hr&gt;</value>
+            </setupitem>
+            <setupitem>
+                <identity name="Layout Trigger" type="2"/>
+                <value type="QString">false</value>
+            </setupitem>
+            <setupitem>
+                <identity name="Layout" type="10"/>
+                <value type="QString"></value>
+            </setupitem>
+            <setupitem>
+                <identity name="^Enable Conditional Formatting" type="2"/>
+                <value type="QString">true</value>
+            </setupitem>
+            <setupitem>
+                <identity name="Conditions XML" type="9"/>
+                <value type="QString">&lt;rules&gt;&lt;rule&gt;&lt;conditions&gt;&lt;condition test='Equals'&gt;&lt;source&gt;Cursor State&lt;/source&gt;&lt;value id='1'&gt;OFF&lt;/value&gt;&lt;/condition&gt;&lt;/conditions&gt;&lt;actions&gt;&lt;action type='property'&gt;&lt;target&gt;Fill color 1&lt;/target&gt;&lt;value&gt;FFFFFFFF&lt;/value&gt;&lt;/action&gt;&lt;/actions&gt;&lt;/rule&gt;&lt;rule&gt;&lt;conditions&gt;&lt;condition test='Equals'&gt;&lt;source&gt;Cursor State&lt;/source&gt;&lt;value id='1'&gt;OFF_SEL&lt;/value&gt;&lt;/condition&gt;&lt;/conditions&gt;&lt;actions&gt;&lt;action type='property'&gt;&lt;target&gt;Fill color 1&lt;/target&gt;&lt;value&gt;FF0000FF&lt;/value&gt;&lt;/action&gt;&lt;/actions&gt;&lt;/rule&gt;&lt;rule&gt;&lt;conditions&gt;&lt;condition test='Equals'&gt;&lt;source&gt;Cursor State&lt;/source&gt;&lt;value id='1'&gt;ON&lt;/value&gt;&lt;/condition&gt;&lt;/conditions&gt;&lt;actions&gt;&lt;action type='property'&gt;&lt;target&gt;Fill color 1&lt;/target&gt;&lt;value&gt;FFFF0000&lt;/value&gt;&lt;/action&gt;&lt;/actions&gt;&lt;/rule&gt;&lt;rule&gt;&lt;conditions&gt;&lt;condition test='Equals'&gt;&lt;source&gt;Cursor State&lt;/source&gt;&lt;value id='1'&gt;ON_SEL&lt;/value&gt;&lt;/condition&gt;&lt;/conditions&gt;&lt;actions&gt;&lt;action type='property'&gt;&lt;target&gt;Fill color 1&lt;/target&gt;&lt;value&gt;FF800080&lt;/value&gt;&lt;/action&gt;&lt;/actions&gt;&lt;/rule&gt;&lt;/rules&gt;</value>
+            </setupitem>
+            <instance class="LH_Cursor/CursorRectangle">
+                <identity name="Cursor Rectangle [31]" id="39mp9k"/>
+                <state modifiable="1" selectable="1" alerts="1"/>
+                <origin x="0" y="0"/>
+                <size w="3" h="48"/>
+                <plugin_size w="-1" h="-1"/>
+                <pos x="19" y="0" z="0"/>
+                <x_ref id="0" align="0" ref_align="0"/>
+                <y_ref id="0" align="0" ref_align="0"/>
+                <w_ref id="0" mod="3" units="4"/>
+                <h_ref id="39mklk" mod="0" units="0"/>
+                <setupitem>
+                    <identity name="Coordinate" type="8"/>
+                    <value type="QString">3,2</value>
+                </setupitem>
+                <setupitem>
+                    <identity name="hr1" type="18"/>
+                    <value type="QString">&lt;hr&gt;</value>
+                </setupitem>
+                <setupitem>
+                    <identity name="Pen width" type="4"/>
+                    <value type="int">0</value>
+                </setupitem>
+                <setupitem>
+                    <identity name="Corner rounding" type="4"/>
+                    <value type="int">0</value>
+                </setupitem>
+                <setupitem>
+                    <identity name="Pen color" type="3"/>
+                    <value type="int">-16777216</value>
+                </setupitem>
+                <setupitem>
+                    <identity name="Fill color 1" type="3"/>
+                    <value type="int">-1</value>
+                </setupitem>
+                <setupitem>
+                    <identity name="^Background is a gradient" type="2"/>
+                    <value type="bool">false</value>
+                </setupitem>
+                <setupitem>
+                    <identity name="Fill color 2" type="3"/>
+                    <value type="int">-4144960</value>
+                </setupitem>
+                <setupitem>
+                    <identity name="^Gradient is horizontal" type="2"/>
+                    <value type="bool">false</value>
+                </setupitem>
+                <setupitem>
+                    <identity name="hr2" type="18"/>
+                    <value type="QString">&lt;hr&gt;</value>
+                </setupitem>
+                <setupitem>
+                    <identity name="Layout Trigger" type="2"/>
+                    <value type="bool">false</value>
+                </setupitem>
+                <setupitem>
+                    <identity name="Layout" type="10"/>
+                    <value type="QString"></value>
+                </setupitem>
+                <setupitem>
+                    <identity name="^Enable Conditional Formatting" type="2"/>
+                    <value type="bool">true</value>
+                </setupitem>
+                <setupitem>
+                    <identity name="Conditions XML" type="9"/>
+                    <value type="QString">&lt;rules&gt;&lt;rule&gt;&lt;conditions&gt;&lt;condition test='Equals'&gt;&lt;source&gt;Cursor State&lt;/source&gt;&lt;value id='1'&gt;OFF&lt;/value&gt;&lt;/condition&gt;&lt;/conditions&gt;&lt;actions&gt;&lt;action type='property'&gt;&lt;target&gt;Fill color 1&lt;/target&gt;&lt;value&gt;FFFFFFFF&lt;/value&gt;&lt;/action&gt;&lt;/actions&gt;&lt;/rule&gt;&lt;rule&gt;&lt;conditions&gt;&lt;condition test='Equals'&gt;&lt;source&gt;Cursor State&lt;/source&gt;&lt;value id='1'&gt;OFF_SEL&lt;/value&gt;&lt;/condition&gt;&lt;/conditions&gt;&lt;actions&gt;&lt;action type='property'&gt;&lt;target&gt;Fill color 1&lt;/target&gt;&lt;value&gt;FF0000FF&lt;/value&gt;&lt;/action&gt;&lt;/actions&gt;&lt;/rule&gt;&lt;rule&gt;&lt;conditions&gt;&lt;condition test='Equals'&gt;&lt;source&gt;Cursor State&lt;/source&gt;&lt;value id='1'&gt;ON&lt;/value&gt;&lt;/condition&gt;&lt;/conditions&gt;&lt;actions&gt;&lt;action type='property'&gt;&lt;target&gt;Fill color 1&lt;/target&gt;&lt;value&gt;FFFF0000&lt;/value&gt;&lt;/action&gt;&lt;/actions&gt;&lt;/rule&gt;&lt;rule&gt;&lt;conditions&gt;&lt;condition test='Equals'&gt;&lt;source&gt;Cursor State&lt;/source&gt;&lt;value id='1'&gt;ON_SEL&lt;/value&gt;&lt;/condition&gt;&lt;/conditions&gt;&lt;actions&gt;&lt;action type='property'&gt;&lt;target&gt;Fill color 1&lt;/target&gt;&lt;value&gt;FF800080&lt;/value&gt;&lt;/action&gt;&lt;/actions&gt;&lt;/rule&gt;&lt;/rules&gt;</value>
+                </setupitem>
+            </instance>
+            <instance class="LH_Cursor/CursorRectangle">
+                <identity name="Cursor Rectangle [32]" id="5u1hi0"/>
+                <state modifiable="1" selectable="1" alerts="1"/>
+                <origin x="0" y="0"/>
+                <size w="7" h="48"/>
+                <plugin_size w="-1" h="-1"/>
+                <pos x="-4" y="0" z="1"/>
+                <x_ref id="0" align="0" ref_align="0"/>
+                <y_ref id="0" align="0" ref_align="0"/>
+                <w_ref id="0" mod="7" units="4"/>
+                <h_ref id="39mklk" mod="0" units="0"/>
+                <setupitem>
+                    <identity name="Coordinate" type="8"/>
+                    <value type="QString">3,2</value>
+                </setupitem>
+                <setupitem>
+                    <identity name="hr1" type="18"/>
+                    <value type="QString">&lt;hr&gt;</value>
+                </setupitem>
+                <setupitem>
+                    <identity name="Pen width" type="4"/>
+                    <value type="int">0</value>
+                </setupitem>
+                <setupitem>
+                    <identity name="Corner rounding" type="4"/>
+                    <value type="int">20</value>
+                </setupitem>
+                <setupitem>
+                    <identity name="Pen color" type="3"/>
+                    <value type="int">-16777216</value>
+                </setupitem>
+                <setupitem>
+                    <identity name="Fill color 1" type="3"/>
+                    <value type="int">-1</value>
+                </setupitem>
+                <setupitem>
+                    <identity name="^Background is a gradient" type="2"/>
+                    <value type="bool">false</value>
+                </setupitem>
+                <setupitem>
+                    <identity name="Fill color 2" type="3"/>
+                    <value type="int">-4144960</value>
+                </setupitem>
+                <setupitem>
+                    <identity name="^Gradient is horizontal" type="2"/>
+                    <value type="bool">false</value>
+                </setupitem>
+                <setupitem>
+                    <identity name="hr2" type="18"/>
+                    <value type="QString">&lt;hr&gt;</value>
+                </setupitem>
+                <setupitem>
+                    <identity name="Layout Trigger" type="2"/>
+                    <value type="bool">false</value>
+                </setupitem>
+                <setupitem>
+                    <identity name="Layout" type="10"/>
+                    <value type="QString"></value>
+                </setupitem>
+                <setupitem>
+                    <identity name="^Enable Conditional Formatting" type="2"/>
+                    <value type="bool">true</value>
+                </setupitem>
+                <setupitem>
+                    <identity name="Conditions XML" type="9"/>
+                    <value type="QString">&lt;rules&gt;&lt;rule&gt;&lt;conditions&gt;&lt;condition test='Equals'&gt;&lt;source&gt;Cursor State&lt;/source&gt;&lt;value id='1'&gt;OFF&lt;/value&gt;&lt;/condition&gt;&lt;/conditions&gt;&lt;actions&gt;&lt;action type='property'&gt;&lt;target&gt;Fill color 1&lt;/target&gt;&lt;value&gt;FFFFFFFF&lt;/value&gt;&lt;/action&gt;&lt;/actions&gt;&lt;/rule&gt;&lt;rule&gt;&lt;conditions&gt;&lt;condition test='Equals'&gt;&lt;source&gt;Cursor State&lt;/source&gt;&lt;value id='1'&gt;OFF_SEL&lt;/value&gt;&lt;/condition&gt;&lt;/conditions&gt;&lt;actions&gt;&lt;action type='property'&gt;&lt;target&gt;Fill color 1&lt;/target&gt;&lt;value&gt;FF0000FF&lt;/value&gt;&lt;/action&gt;&lt;/actions&gt;&lt;/rule&gt;&lt;rule&gt;&lt;conditions&gt;&lt;condition test='Equals'&gt;&lt;source&gt;Cursor State&lt;/source&gt;&lt;value id='1'&gt;ON&lt;/value&gt;&lt;/condition&gt;&lt;/conditions&gt;&lt;actions&gt;&lt;action type='property'&gt;&lt;target&gt;Fill color 1&lt;/target&gt;&lt;value&gt;FFFF0000&lt;/value&gt;&lt;/action&gt;&lt;/actions&gt;&lt;/rule&gt;&lt;rule&gt;&lt;conditions&gt;&lt;condition test='Equals'&gt;&lt;source&gt;Cursor State&lt;/source&gt;&lt;value id='1'&gt;ON_SEL&lt;/value&gt;&lt;/condition&gt;&lt;/conditions&gt;&lt;actions&gt;&lt;action type='property'&gt;&lt;target&gt;Fill color 1&lt;/target&gt;&lt;value&gt;FF800080&lt;/value&gt;&lt;/action&gt;&lt;/actions&gt;&lt;/rule&gt;&lt;/rules&gt;</value>
+                </setupitem>
+            </instance>
+        </instance>
+    </instance>
+    <instance class="LH_Cursor/CursorRectangle">
+        <identity name="Grid [1,3]" id="39mk2w"/>
+        <state modifiable="1" selectable="1" alerts="1"/>
+        <origin x="11" y="154"/>
+        <size w="69" h="69"/>
+        <plugin_size w="-1" h="-1"/>
+        <pos x="11" y="162" z="8"/>
+        <x_ref id="39mnd4" align="0" ref_align="0"/>
+        <y_ref id="39mjk8" align="0" ref_align="2"/>
+        <w_ref id="39mnd4" mod="0" units="0"/>
+        <h_ref id="39mnd4" mod="0" units="0"/>
+        <setupitem>
+            <identity name="Coordinate" type="8"/>
+            <value type="QString">1,3</value>
+        </setupitem>
+        <setupitem>
+            <identity name="hr1" type="18"/>
+            <value type="QString">&lt;hr&gt;</value>
+        </setupitem>
+        <setupitem>
+            <identity name="Pen width" type="4"/>
+            <value type="QString">0</value>
+        </setupitem>
+        <setupitem>
+            <identity name="Corner rounding" type="4"/>
+            <value type="QString">20</value>
+        </setupitem>
+        <setupitem>
+            <identity name="Pen color" type="3"/>
+            <value type="QString">-16777216</value>
+        </setupitem>
+        <setupitem>
+            <identity name="Fill color 1" type="3"/>
+            <value type="int">-1</value>
+        </setupitem>
+        <setupitem>
+            <identity name="^Background is a gradient" type="2"/>
+            <value type="QString">false</value>
+        </setupitem>
+        <setupitem>
+            <identity name="Fill color 2" type="3"/>
+            <value type="QString">-4144960</value>
+        </setupitem>
+        <setupitem>
+            <identity name="^Gradient is horizontal" type="2"/>
+            <value type="QString">false</value>
+        </setupitem>
+        <setupitem>
+            <identity name="hr2" type="18"/>
+            <value type="QString">&lt;hr&gt;</value>
+        </setupitem>
+        <setupitem>
+            <identity name="Layout Trigger" type="2"/>
+            <value type="QString">false</value>
+        </setupitem>
+        <setupitem>
+            <identity name="Layout" type="10"/>
+            <value type="QString"></value>
+        </setupitem>
+        <setupitem>
+            <identity name="^Enable Conditional Formatting" type="2"/>
+            <value type="QString">true</value>
+        </setupitem>
+        <setupitem>
+            <identity name="Conditions XML" type="9"/>
+            <value type="QString">&lt;rules&gt;&lt;rule&gt;&lt;conditions&gt;&lt;condition test='Equals'&gt;&lt;source&gt;Cursor State&lt;/source&gt;&lt;value id='1'&gt;OFF&lt;/value&gt;&lt;/condition&gt;&lt;/conditions&gt;&lt;actions&gt;&lt;action type='property'&gt;&lt;target&gt;Fill color 1&lt;/target&gt;&lt;value&gt;FFFFFFFF&lt;/value&gt;&lt;/action&gt;&lt;/actions&gt;&lt;/rule&gt;&lt;rule&gt;&lt;conditions&gt;&lt;condition test='Equals'&gt;&lt;source&gt;Cursor State&lt;/source&gt;&lt;value id='1'&gt;OFF_SEL&lt;/value&gt;&lt;/condition&gt;&lt;/conditions&gt;&lt;actions&gt;&lt;action type='property'&gt;&lt;target&gt;Fill color 1&lt;/target&gt;&lt;value&gt;FF0000FF&lt;/value&gt;&lt;/action&gt;&lt;/actions&gt;&lt;/rule&gt;&lt;rule&gt;&lt;conditions&gt;&lt;condition test='Equals'&gt;&lt;source&gt;Cursor State&lt;/source&gt;&lt;value id='1'&gt;ON&lt;/value&gt;&lt;/condition&gt;&lt;/conditions&gt;&lt;actions&gt;&lt;action type='property'&gt;&lt;target&gt;Fill color 1&lt;/target&gt;&lt;value&gt;FFFF0000&lt;/value&gt;&lt;/action&gt;&lt;/actions&gt;&lt;/rule&gt;&lt;rule&gt;&lt;conditions&gt;&lt;condition test='Equals'&gt;&lt;source&gt;Cursor State&lt;/source&gt;&lt;value id='1'&gt;ON_SEL&lt;/value&gt;&lt;/condition&gt;&lt;/conditions&gt;&lt;actions&gt;&lt;action type='property'&gt;&lt;target&gt;Fill color 1&lt;/target&gt;&lt;value&gt;FF800080&lt;/value&gt;&lt;/action&gt;&lt;/actions&gt;&lt;/rule&gt;&lt;/rules&gt;</value>
+        </setupitem>
+    </instance>
+    <instance class="LH_Cursor/CursorRectangle">
+        <identity name="Grid [2,3]" id="39mk94"/>
+        <state modifiable="1" selectable="1" alerts="1"/>
+        <origin x="88" y="162"/>
+        <size w="69" h="69"/>
+        <plugin_size w="-1" h="-1"/>
+        <pos x="88" y="162" z="9"/>
+        <x_ref id="39mnvs" align="0" ref_align="0"/>
+        <y_ref id="39mk2w" align="0" ref_align="0"/>
+        <w_ref id="39mnd4" mod="0" units="0"/>
+        <h_ref id="39mnd4" mod="0" units="0"/>
+        <setupitem>
+            <identity name="Coordinate" type="8"/>
+            <value type="QString">2,3</value>
+        </setupitem>
+        <setupitem>
+            <identity name="hr1" type="18"/>
+            <value type="QString">&lt;hr&gt;</value>
+        </setupitem>
+        <setupitem>
+            <identity name="Pen width" type="4"/>
+            <value type="QString">0</value>
+        </setupitem>
+        <setupitem>
+            <identity name="Corner rounding" type="4"/>
+            <value type="QString">20</value>
+        </setupitem>
+        <setupitem>
+            <identity name="Pen color" type="3"/>
+            <value type="QString">-16777216</value>
+        </setupitem>
+        <setupitem>
+            <identity name="Fill color 1" type="3"/>
+            <value type="int">-1</value>
+        </setupitem>
+        <setupitem>
+            <identity name="^Background is a gradient" type="2"/>
+            <value type="QString">false</value>
+        </setupitem>
+        <setupitem>
+            <identity name="Fill color 2" type="3"/>
+            <value type="QString">-4144960</value>
+        </setupitem>
+        <setupitem>
+            <identity name="^Gradient is horizontal" type="2"/>
+            <value type="QString">false</value>
+        </setupitem>
+        <setupitem>
+            <identity name="hr2" type="18"/>
+            <value type="QString">&lt;hr&gt;</value>
+        </setupitem>
+        <setupitem>
+            <identity name="Layout Trigger" type="2"/>
+            <value type="QString">false</value>
+        </setupitem>
+        <setupitem>
+            <identity name="Layout" type="10"/>
+            <value type="QString"></value>
+        </setupitem>
+        <setupitem>
+            <identity name="^Enable Conditional Formatting" type="2"/>
+            <value type="QString">true</value>
+        </setupitem>
+        <setupitem>
+            <identity name="Conditions XML" type="9"/>
+            <value type="QString">&lt;rules&gt;&lt;rule&gt;&lt;conditions&gt;&lt;condition test='Equals'&gt;&lt;source&gt;Cursor State&lt;/source&gt;&lt;value id='1'&gt;OFF&lt;/value&gt;&lt;/condition&gt;&lt;/conditions&gt;&lt;actions&gt;&lt;action type='property'&gt;&lt;target&gt;Fill color 1&lt;/target&gt;&lt;value&gt;FFFFFFFF&lt;/value&gt;&lt;/action&gt;&lt;/actions&gt;&lt;/rule&gt;&lt;rule&gt;&lt;conditions&gt;&lt;condition test='Equals'&gt;&lt;source&gt;Cursor State&lt;/source&gt;&lt;value id='1'&gt;OFF_SEL&lt;/value&gt;&lt;/condition&gt;&lt;/conditions&gt;&lt;actions&gt;&lt;action type='property'&gt;&lt;target&gt;Fill color 1&lt;/target&gt;&lt;value&gt;FF0000FF&lt;/value&gt;&lt;/action&gt;&lt;/actions&gt;&lt;/rule&gt;&lt;rule&gt;&lt;conditions&gt;&lt;condition test='Equals'&gt;&lt;source&gt;Cursor State&lt;/source&gt;&lt;value id='1'&gt;ON&lt;/value&gt;&lt;/condition&gt;&lt;/conditions&gt;&lt;actions&gt;&lt;action type='property'&gt;&lt;target&gt;Fill color 1&lt;/target&gt;&lt;value&gt;FFFF0000&lt;/value&gt;&lt;/action&gt;&lt;/actions&gt;&lt;/rule&gt;&lt;rule&gt;&lt;conditions&gt;&lt;condition test='Equals'&gt;&lt;source&gt;Cursor State&lt;/source&gt;&lt;value id='1'&gt;ON_SEL&lt;/value&gt;&lt;/condition&gt;&lt;/conditions&gt;&lt;actions&gt;&lt;action type='property'&gt;&lt;target&gt;Fill color 1&lt;/target&gt;&lt;value&gt;FF800080&lt;/value&gt;&lt;/action&gt;&lt;/actions&gt;&lt;/rule&gt;&lt;/rules&gt;</value>
+        </setupitem>
+    </instance>
+    <instance class="LH_Cursor/CursorRectangle">
+        <identity name="Grid [3,3]" id="39mkfc"/>
+        <state modifiable="1" selectable="1" alerts="1"/>
+        <origin x="165" y="162"/>
+        <size w="69" h="69"/>
+        <plugin_size w="-1" h="-1"/>
+        <pos x="165" y="162" z="10"/>
+        <x_ref id="39mje0" align="0" ref_align="0"/>
+        <y_ref id="39mk2w" align="0" ref_align="0"/>
+        <w_ref id="39mnd4" mod="0" units="0"/>
+        <h_ref id="39mnd4" mod="0" units="0"/>
+        <setupitem>
+            <identity name="Coordinate" type="8"/>
+            <value type="QString">3,3</value>
+        </setupitem>
+        <setupitem>
+            <identity name="hr1" type="18"/>
+            <value type="QString">&lt;hr&gt;</value>
+        </setupitem>
+        <setupitem>
+            <identity name="Pen width" type="4"/>
+            <value type="QString">0</value>
+        </setupitem>
+        <setupitem>
+            <identity name="Corner rounding" type="4"/>
+            <value type="QString">20</value>
+        </setupitem>
+        <setupitem>
+            <identity name="Pen color" type="3"/>
+            <value type="QString">-16777216</value>
+        </setupitem>
+        <setupitem>
+            <identity name="Fill color 1" type="3"/>
+            <value type="int">-1</value>
+        </setupitem>
+        <setupitem>
+            <identity name="^Background is a gradient" type="2"/>
+            <value type="QString">false</value>
+        </setupitem>
+        <setupitem>
+            <identity name="Fill color 2" type="3"/>
+            <value type="QString">-4144960</value>
+        </setupitem>
+        <setupitem>
+            <identity name="^Gradient is horizontal" type="2"/>
+            <value type="QString">false</value>
+        </setupitem>
+        <setupitem>
+            <identity name="hr2" type="18"/>
+            <value type="QString">&lt;hr&gt;</value>
+        </setupitem>
+        <setupitem>
+            <identity name="Layout Trigger" type="2"/>
+            <value type="QString">false</value>
+        </setupitem>
+        <setupitem>
+            <identity name="Layout" type="10"/>
+            <value type="QString"></value>
+        </setupitem>
+        <setupitem>
+            <identity name="^Enable Conditional Formatting" type="2"/>
+            <value type="QString">true</value>
+        </setupitem>
+        <setupitem>
+            <identity name="Conditions XML" type="9"/>
+            <value type="QString">&lt;rules&gt;&lt;rule&gt;&lt;conditions&gt;&lt;condition test='Equals'&gt;&lt;source&gt;Cursor State&lt;/source&gt;&lt;value id='1'&gt;OFF&lt;/value&gt;&lt;/condition&gt;&lt;/conditions&gt;&lt;actions&gt;&lt;action type='property'&gt;&lt;target&gt;Fill color 1&lt;/target&gt;&lt;value&gt;FFFFFFFF&lt;/value&gt;&lt;/action&gt;&lt;/actions&gt;&lt;/rule&gt;&lt;rule&gt;&lt;conditions&gt;&lt;condition test='Equals'&gt;&lt;source&gt;Cursor State&lt;/source&gt;&lt;value id='1'&gt;OFF_SEL&lt;/value&gt;&lt;/condition&gt;&lt;/conditions&gt;&lt;actions&gt;&lt;action type='property'&gt;&lt;target&gt;Fill color 1&lt;/target&gt;&lt;value&gt;FF0000FF&lt;/value&gt;&lt;/action&gt;&lt;/actions&gt;&lt;/rule&gt;&lt;rule&gt;&lt;conditions&gt;&lt;condition test='Equals'&gt;&lt;source&gt;Cursor State&lt;/source&gt;&lt;value id='1'&gt;ON&lt;/value&gt;&lt;/condition&gt;&lt;/conditions&gt;&lt;actions&gt;&lt;action type='property'&gt;&lt;target&gt;Fill color 1&lt;/target&gt;&lt;value&gt;FFFF0000&lt;/value&gt;&lt;/action&gt;&lt;/actions&gt;&lt;/rule&gt;&lt;rule&gt;&lt;conditions&gt;&lt;condition test='Equals'&gt;&lt;source&gt;Cursor State&lt;/source&gt;&lt;value id='1'&gt;ON_SEL&lt;/value&gt;&lt;/condition&gt;&lt;/conditions&gt;&lt;actions&gt;&lt;action type='property'&gt;&lt;target&gt;Fill color 1&lt;/target&gt;&lt;value&gt;FF800080&lt;/value&gt;&lt;/action&gt;&lt;/actions&gt;&lt;/rule&gt;&lt;/rules&gt;</value>
+        </setupitem>
+    </instance>
+</instance>

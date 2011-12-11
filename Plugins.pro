@@ -5,4 +5,4 @@ CONFIG += ordered
 include($$PWD/linkdata/linkdata.pri)
 include($$PWD/codeleap/codeleap.pri)
 
-SUBDIRS = $$SIRREAL
+SUBDIRS = $$SIRREAL $$TRISCOPIC

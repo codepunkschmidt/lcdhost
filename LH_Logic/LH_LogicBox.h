@@ -20,6 +20,7 @@ public:
     const char *userInit();
 
     static lh_class *classInfo();
+    QImage *render_qimage( int w, int h );
 
 public slots:
     void refreshOutput();

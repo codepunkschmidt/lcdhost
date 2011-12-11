@@ -52,3 +52,15 @@ void LH_LogicBox::refreshOutput()
 {
     setup_output_->setValue("");
 }
+
+QImage *LH_LogicBox::render_qimage(int w, int h)
+{
+    delete image_;
+    uchar *data = new uchar[4];
+    data[0] = 255;
+    data[1] = 0;
+    data[2] = 0;
+    data[3] = 0;
+    image_ = new QImage(data,1,1,QImage::Format_ARGB32);
+    return image_;
+}

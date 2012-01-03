@@ -57,11 +57,6 @@ void LH_QtSetupItem::setName(QString s)
 
 void LH_QtSetupItem::setup_change()
 {
-    if( link_array_ != item_.link )
-    {
-        link_array_ = QByteArray( item_.link );
-        item_.link = link_array_.constData();
-    }
     emit changed();
     if( item_.flags & LH_FLAG_AUTORENDER ) parent()->requestRender();
     return;
@@ -97,24 +92,15 @@ void LH_QtSetupItem::setOrder( int n )
 
 void LH_QtSetupItem::setLink(QString s)
 {
-    if( s.isEmpty() )
-    {
-        link_array_.clear();
-        item_.link = 0;
-    }
-    else
-    {
-        link_array_ = s.toUtf8();
-        item_.link = link_array_.constData();
-    }
+    memset( item_.link.source, 0, sizeof(item_.link.source) );
+    strncpy( item_.link.source, s.toAscii().constData(), sizeof(item_.link.source)-1 );
     parent()->callback( lh_cb_setup_refresh, item() );
     return;
 }
 
 QString LH_QtSetupItem::link()
 {
-    if( item_.link ) return QString::fromUtf8( item_.link );
-    return QString();
+    return QString::fromAscii( item_.link.source );
 }
 
 void LH_QtSetupItem::setHelp(QString s)

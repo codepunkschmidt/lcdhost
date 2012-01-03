@@ -296,14 +296,6 @@ typedef union lh_setup_data_t
 } lh_setup_data;
 
 /**
- Setup items are the main information link between LCDHost and it's plugins.
-
- Start a setup item name with '^' to not display the name, leaving the name column blank.
- Obsoleted. Use LH_FLAG_BLANKTITLE.
-
- Start a setup item name with '~' to extend the setup item into the name column.
- Obsoleted. Use LH_FLAG_HIDETITLE.
-
  You can have LCDHost automatically update a setup item with data from another item.
  The 'link' member, if not NULL, specifies how data linking is handled. The first
  character specifies if it's a data source or a data sink. The rest is a path
@@ -317,17 +309,66 @@ typedef union lh_setup_data_t
     link = "=/system/Mail count"; // ok, data sink reading the above source
     link = "/system/cpu/count"; // error, missing command character
     link = "=system/cpu/count"; // error, missing initial path slash
+*/
 
+#define LH_LINK_SIZE 128
+
+/**
+    You can have LCDHost automatically update a setup item with data
+    from another item. All setup items have a link path associated with
+    them. If you don't specify a path explicitly, one will be generated
+    using the id of the item and it's parents.
+
+    Programatically, you can link any two items. If the data can be
+    converted, it will be transferred when updated at the source.
+
+    The UI will show a data linking button for a setup item if
+    the LH_FLAG_NOSINK is not set. If clicked, the UI will list
+    all setup items that do not have the LH_FLAG_NOSOURCE flag and
+    have a compatible mimetype, meaning that the sink may be less
+    specialized than the source (as in, you can link 'text/plain'
+    to 'text') or identical.
+
+    Both the link paths and mime type text are ASCIIZ. Link path
+    separator is a forward slash.
+
+    The maximum length is LH_LINK_SIZE, including NUL.
+
+    \c path
+        The path of the link. If NULL, a path will be constructed
+        using the ID's of the setup item and parent objects.
+    \c mime
+        Mime type - this is not enforced, currently just used
+        to filter sources in user UI.
+    \c source
+        When the setup items that have link paths at 'source' are changed,
+        send the (possibly converted) data to this setup item.
+*/
+typedef struct lh_setup_link_t
+{
+    const char * path;
+    const char * mime;
+    char source[LH_LINK_SIZE];
+} lh_setup_link;
+
+/**
+ Setup items are the main information link between LCDHost and it's plugins.
+
+ Start a setup item name with '^' to not display the name, leaving the name column blank.
+ Obsoleted. Use LH_FLAG_BLANKTITLE.
+
+ Start a setup item name with '~' to extend the setup item into the name column.
+ Obsoleted. Use LH_FLAG_HIDETITLE.
 */
 typedef struct lh_setup_item_t
 {
-    const char *name; /* name to identify this item uniquely, and display to the user (start with ~ to hide from display */
-    const char *help; /* short HTML help text shows as tooltip, may be NULL */
-    const char *link; /* data link, see comment above, may be NULL */
+    const char * name; /* name to identify this item uniquely, and display to the user (start with ~ to hide from display */
+    const char * help; /* short HTML help text shows as tooltip, may be NULL */
     lh_setup_type type; /* type of data, see enum above */
     int flags; /* LH_FLAG_xxx */
     lh_setup_param param;
     lh_setup_data data;
+    lh_setup_link link;
 } lh_setup_item;
 
 /**

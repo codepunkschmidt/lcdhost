@@ -46,7 +46,6 @@ class LH_QtSetupItem : public QObject
 {
     Q_OBJECT
     QByteArray name_array_;
-    QByteArray link_array_;
     int order_;
     QByteArray help_;
 

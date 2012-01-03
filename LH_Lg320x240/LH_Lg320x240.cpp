@@ -101,12 +101,18 @@ void LH_Lg320x240::userTerm()
     if( g19thread_ )
     {
         g19thread_->timeToDie();
-        if( !g19thread_->wait(4000) )
+
+        for( int n=0; n<10; ++n )
         {
-            qWarning() << "LH_Lg320x240: worker thread not responding";
-            g19thread_->terminate();
+            if( !g19thread_->wait(1000) )
+            {
+                qWarning() << "LH_Lg320x240: worker thread not responding";
+                g19thread_->quit();
+            }
         }
-        else delete g19thread_;
+
+        if( g19thread_->wait(1000) )
+            delete g19thread_;
     }
     g19thread_ = 0;
 }

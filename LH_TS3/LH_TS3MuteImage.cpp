@@ -23,8 +23,7 @@ const char *LH_TS3MuteImage::userInit()
     setup_mute_source_ = new LH_Qt_QStringList(this, "Mute Source", QStringList() << "Speakers" << "Microphone", LH_FLAG_NOSINK | LH_FLAG_NOSOURCE | LH_FLAG_AUTORENDER);
 
     setup_mute_status_ = new LH_Qt_QStringList(this, "Mute Status", QStringList() << "N/A" << "None" << "Muted" << "Active", LH_FLAG_HIDDEN | LH_FLAG_READONLY | LH_FLAG_NOSOURCE | LH_FLAG_NOSAVE | LH_FLAG_AUTORENDER);
-    setup_mute_status_->setLink("=/Monitoring/3rdParty/TeamSpeak3/Speaker Status");
-    //setup_mute_status_->refreshData();
+    setup_mute_status_->setLink("=/3rdParty/TeamSpeak 3/Speaker Status");
 
     connect(setup_mute_source_, SIGNAL(changed()), this, SLOT(changeSource()));
 
@@ -52,8 +51,7 @@ lh_class *LH_TS3MuteImage::classInfo()
 void LH_TS3MuteImage::changeSource()
 {
     if(setup_mute_source_->valueText()=="Speakers")
-        setup_mute_status_->setLink("=/Monitoring/3rdParty/TeamSpeak3/Speaker Status");
+        setup_mute_status_->setLink("=/3rdParty/TeamSpeak 3/Speaker Status");
     if(setup_mute_source_->valueText()=="Microphone")
-        setup_mute_status_->setLink("=/Monitoring/3rdParty/TeamSpeak3/Microphone Status");
-    //setup_mute_status_->refreshData();
+        setup_mute_status_->setLink("=/3rdParty/TeamSpeak 3/Microphone Status");
 }

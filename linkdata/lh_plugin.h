@@ -334,21 +334,22 @@ typedef union lh_setup_data_t
 
     The maximum length is LH_LINK_SIZE, including NUL.
 
-    \c path
-        The path of the link. If NULL, a path will be constructed
-        using the ID's of the setup item and parent objects.
     \c mime
         Mime type - this is not enforced, currently just used
-        to filter sources in user UI.
-    \c source
-        When the setup items that have link paths at 'source' are changed,
-        send the (possibly converted) data to this setup item.
+        to filter sources in user UI. If NULL, a default mime
+        type will be selected matching the setup item type.
+    \c publish
+        When this setup item is changed, notify all items that
+        are subscribing to the link path 'publish'.
+    \c subscribe
+        When the setup items that publish to the link path 'subscribe'
+        are changed, send the (possibly converted) data to this item.
 */
 typedef struct lh_setup_link_t
 {
-    const char * path;
     const char * mime;
-    char source[LH_LINK_SIZE];
+    char publish[LH_LINK_SIZE];
+    char subscribe[LH_LINK_SIZE];
 } lh_setup_link;
 
 /**

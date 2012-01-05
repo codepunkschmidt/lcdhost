@@ -72,8 +72,18 @@ public:
     QString name() const { return objectName(); }
     void setHelp(QString s);
     QString help();
+
     void setLink(QString s);
-    QString link();
+    QString link() { return subscribePath(); }
+
+    void setPublishPath( QString s );
+    QString publishPath() { return QString::fromAscii(item_.link.publish); }
+
+    void setSubscribePath( QString s );
+    QString subscribePath() { return QString::fromAscii(item_.link.subscribe); }
+
+    void setMimeType( const char * s );
+    const char *mimeType() const { return item_.link.mime; }
 
     lh_setup_item *item() { return &item_; }
 

@@ -98,6 +98,13 @@ void LH_QtSetupItem::setLink( QString s )
     return;
 }
 
+void LH_QtSetupItem::setMimeType( const char * s )
+{
+    item_.link.mime = s;
+    parent()->callback( lh_cb_setup_refresh, item() );
+    return;
+}
+
 void LH_QtSetupItem::setPublishPath( QString s )
 {
     memset( item_.link.publish, 0, sizeof(item_.link.publish) );

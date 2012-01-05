@@ -279,19 +279,19 @@ const char *LH_QtPlugin_NowPlaying::userInit() {
 
 
     setup_source_player_ = new LH_Qt_QString(this, "Player Name", "", LH_FLAG_HIDDEN);
-    setup_source_player_->setLink("@/Now Playing/Music Player");
+    setup_source_player_->setLink("@/3rdParty/Music/Music Player");
 
     setup_source_artist_ = new LH_Qt_QString(this, "Current Artist", "", LH_FLAG_HIDDEN);
-    setup_source_artist_->setLink("@/Now Playing/Current Track/Artist");
+    setup_source_artist_->setLink("@/3rdParty/Music/Current Track/Artist");
 
     setup_source_album_ = new LH_Qt_QString(this, "Current Album Name", "", LH_FLAG_HIDDEN);
-    setup_source_album_->setLink("@/Now Playing/Current Track/Album Name");
+    setup_source_album_->setLink("@/3rdParty/Music/Current Track/Album Name");
 
     setup_source_title_ = new LH_Qt_QString(this, "Current Track Title", "", LH_FLAG_HIDDEN);
-    setup_source_title_->setLink("@/Now Playing/Current Track/Track Title");
+    setup_source_title_->setLink("@/3rdParty/Music/Current Track/Track Title");
 
     setup_source_status_ = new LH_Qt_QString(this, "Playing Status", "", LH_FLAG_HIDDEN);
-    setup_source_status_->setLink("@/Now Playing/Playing Status");
+    setup_source_status_->setLink("@/3rdParty/Music/Playing Status");
 
 
     isElevated = (GetElevationState(GetCurrentProcessId()) == ELEVATION_ELEVATED);

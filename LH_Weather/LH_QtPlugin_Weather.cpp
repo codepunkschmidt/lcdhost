@@ -84,31 +84,31 @@ LH_QtPlugin_Weather::LH_QtPlugin_Weather() : translator("Weather", this)
 
     lastrefresh_ = QDateTime::currentDateTime();
 
-    setup_languages_ = new LH_Qt_QStringList(this, "Language", QStringList(), LH_FLAG_NOSAVE);
+    setup_languages_ = new LH_Qt_QStringList(this, "Language", QStringList(), LH_FLAG_NOSAVE | LH_FLAG_NOSINK | LH_FLAG_NOSOURCE);
     setup_languages_->setHelp("<p>Yahoo's Weather API doesn't have multilingual support; the translation is instead done using Google Translate.</p>"
                               "<p>Bad translations can be corrected by editing the translation cache located in the LCDHost directory.</p>");
-    setup_language_ = new LH_Qt_QString(this, "^Language Code", "en", LH_FLAG_HIDDEN);
+    setup_language_ = new LH_Qt_QString(this, "^Language Code", "en", LH_FLAG_HIDDEN | LH_FLAG_NOSINK | LH_FLAG_NOSOURCE);
     connect(setup_languages_, SIGNAL(changed()), this, SLOT(selectLanguage()));
     connect(setup_language_, SIGNAL(changed()), this, SLOT(setLanguage()));
 
-    setup_location_name_ = new LH_Qt_QString(this,"Location",QString("London UK"));
+    setup_location_name_ = new LH_Qt_QString(this,"Location",QString("London UK"), LH_FLAG_NOSINK | LH_FLAG_NOSOURCE);
     setup_location_name_->setHelp("The location whose weather you want to display");
     setup_location_name_->setOrder(-5);
     connect( setup_location_name_, SIGNAL(changed()), this, SLOT(fetchWOEID()));
 
-    setup_yahoo_woeid_ = new LH_Qt_QString(this,"Y! WOEID",QString("26459500"), LH_FLAG_HIDDEN);
+    setup_yahoo_woeid_ = new LH_Qt_QString(this,"Y! WOEID",QString("26459500"), LH_FLAG_HIDDEN | LH_FLAG_NOSINK | LH_FLAG_NOSOURCE);
     setup_yahoo_woeid_->setHelp("Internal use only: Yahoo Where On Earth ID");
     setup_yahoo_woeid_->setOrder(-4);
 
-    setup_longlat_ = new LH_Qt_QString(this,"LongLat",QString(""), LH_FLAG_HIDDEN);
+    setup_longlat_ = new LH_Qt_QString(this,"LongLat",QString(""), LH_FLAG_HIDDEN | LH_FLAG_NOSINK | LH_FLAG_NOSOURCE);
     setup_longlat_->setHelp("Internal use only: Longitude & Latitude");
     setup_longlat_->setOrder(-4);
 
-    setup_yahoo_5dayid_ = new LH_Qt_QString(this,"Y! 5Day ID",QString("UKXX1726"), LH_FLAG_HIDDEN);
+    setup_yahoo_5dayid_ = new LH_Qt_QString(this,"Y! 5Day ID",QString("UKXX1726"), LH_FLAG_HIDDEN | LH_FLAG_NOSINK | LH_FLAG_NOSOURCE);
     setup_yahoo_5dayid_->setHelp("Internal use only: Yahoo id code for the 5-day feed");
     setup_yahoo_5dayid_->setOrder(-4);
 
-    setup_city_ = new LH_Qt_QString(this," ",QString(), LH_FLAG_READONLY);
+    setup_city_ = new LH_Qt_QString(this," ",QString(), LH_FLAG_READONLY | LH_FLAG_NOSINK | LH_FLAG_NOSOURCE);
     setup_city_->setHelp("<p>The location whose weather is currently being displayed.</p>"
                          "<p>The weather connector tries to look up the city as entered in the \"Location\" box, and displays the best result here.</p>");
     setup_city_->setOrder(-4);
@@ -121,14 +121,14 @@ LH_QtPlugin_Weather::LH_QtPlugin_Weather() : translator("Weather", this)
     QStringList unitTypes = QStringList();
     unitTypes.append("Metric (Centigrade, Kilometers, etc)");
     unitTypes.append("Imperial (Fahrenheit, Miles, etc)");
-    setup_units_type_ = new LH_Qt_QStringList(this, "Units", unitTypes, 0);
+    setup_units_type_ = new LH_Qt_QStringList(this, "Units", unitTypes, LH_FLAG_NOSINK | LH_FLAG_NOSOURCE);
     setup_units_type_->setHelp("Select whether you want metric (European) units or imperial (British Commonwealth & USA)");
     setup_units_type_->setOrder(-1);
     connect( setup_units_type_, SIGNAL(changed()), this, SLOT(fetch2DayU()) );
 
     setup_method_ = NULL;
 
-    setup_refresh_ = new LH_Qt_int(this,tr("Refresh (minutes)"),5);
+    setup_refresh_ = new LH_Qt_int(this,tr("Refresh (minutes)"),5, LH_FLAG_NOSINK | LH_FLAG_NOSOURCE);
     setup_refresh_->setHelp("How long to wait before checking for an update to the feed (in minutes)");
     connect( setup_refresh_, SIGNAL(changed()), this, SLOT(requestPolling()) );
 

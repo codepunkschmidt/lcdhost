@@ -19,7 +19,7 @@ public:
         setup_text_->setFlag(LH_FLAG_HIDDEN, true);
         setup_text_->setFlag(LH_FLAG_NOSAVE, true);
         setText("");
-        setup_text_->setLink("=/Monitoring/3rdParty/TeamSpeak3/Nickname");
+        setup_text_->setLink("=/3rdParty/TeamSpeak 3/Nickname");
         //setup_text_->refreshData();
         return 0;
     }

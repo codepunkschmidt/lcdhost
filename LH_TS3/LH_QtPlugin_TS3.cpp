@@ -77,8 +77,8 @@ const char *LH_QtPlugin_TS3::userInit()
     setup_talking_ = new LH_Qt_QString(this, "Speaking", "", LH_FLAG_HIDDEN | LH_FLAG_READONLY | LH_FLAG_NOSAVE | LH_FLAG_NOSINK);
     setup_talking_->setLink("@/3rdParty/TeamSpeak 3/Speaking");
 
-    setup_talking_me_ = new LH_Qt_bool(this, "Me Speaking", false, LH_FLAG_HIDDEN | LH_FLAG_READONLY | LH_FLAG_NOSAVE | LH_FLAG_NOSINK);
-    setup_talking_me_->setLink("@/3rdParty/TeamSpeak 3/Me Speaking");
+    setup_talking_me_ = new LH_Qt_bool(this, "Self Speaking", false, LH_FLAG_HIDDEN | LH_FLAG_READONLY | LH_FLAG_NOSAVE | LH_FLAG_NOSINK);
+    setup_talking_me_->setLink("@/3rdParty/TeamSpeak 3/Self Speaking");
 
     setup_channelname_ = new LH_Qt_QString(this, "Channel", "", LH_FLAG_HIDDEN | LH_FLAG_READONLY | LH_FLAG_NOSAVE | LH_FLAG_NOSINK);
     setup_channelname_->setLink("@/3rdParty/TeamSpeak 3/Channel Name");

@@ -28,38 +28,21 @@
 #ifndef LH_CURSORPAGE_H
 #define LH_CURSORPAGE_H
 
-#include <QtGlobal>
-
+#include "LH_CursorReceiver.h"
 #include "LH_QtInstance.h"
-#include "LH_Qt_QString.h"
-#include "LH_Qt_bool.h"
-#include "LH_Qt_QStringList.h"
-
-#include "LH_CursorData.h"
-
 
 class LH_CursorPage : public LH_QtInstance
 {
     Q_OBJECT
-
-    bool active;
-    bool selected;
-    bool updateState();
-
-protected:
-    LH_Qt_QString *setup_coordinate_;
-    LH_Qt_bool *setup_showing_;
+    LH_CursorReceiver* rcvr_;
 
 public:
-    LH_CursorPage();
-
     const char *userInit();
-
-    int polling();
-
-    QImage *render_qimage( int w, int h );
-
     static lh_class *classInfo();
+    QImage *render_qimage(int w, int h);
+
+public slots:
+    void stateChangeAction(bool,bool);
 };
 
 #endif // LH_CURSORPAGE_H

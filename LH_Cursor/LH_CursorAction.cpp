@@ -49,20 +49,15 @@ LH_CursorAction::LH_CursorAction() : actionTypes_(this)
     selected = false;
     fired = false;
     delay = 0;
-    setup_coordinate_ = new LH_Qt_QString(this, "Coordinate", "1,1", LH_FLAG_AUTORENDER);
-    setup_coordinate_->setHelp("This is the coordinate of this object, i.e. when the cursor is at the point specified here this object is selected. <br/>"
-                               "<br/>"
-                               "Note that many objects can have the same coordinate if the user requires.<br/>"
-                               "<br/>"
-                               "The format is [x],[y] <br/>"
-                               "e.g.: 1,1<br/>"
-                               "<br/>"
-                               "Note that cursor pages are not easy to work with and the guide should be consulted (see the Plugins tab for more information.<br/>"
-                               "<br/>"
-                               "In short the cursor page works by changing its width (which only works if the width is set to \"adjust\") which will then make any objects that are aligned to the right edge of the page move off & on screen creating the illusion of a page of objects being hidden/shown."
-                               );
+}
 
-    setup_jump_to_ = new LH_Qt_InputState(this, "Quick Select", "");
+const char *LH_CursorAction::userInit()
+{
+    if( const char *err = LH_QtInstance::userInit() ) return err;
+    hide();
+    rcvr_ = new LH_CursorReceiver(this, SLOT(stateChangeAction(bool,bool)));
+
+    setup_jump_to_ = new LH_Qt_InputState(this, "Quick Select", "", LH_FLAG_NOSOURCE | LH_FLAG_NOSINK);
     setup_jump_to_->setHelp("This optional field allows you to bind a specific key to this coordinate; when that key is pressed the cursor immediately jumps to and selects the coordintes.<br/>"
                                "<br/>"
                                "Note that this functionality is meant more for pages than for menus, but can be used on either."
@@ -71,28 +66,28 @@ LH_CursorAction::LH_CursorAction() : actionTypes_(this)
 
     statusCode_ = "OFF";
 
-    setup_actions_ = new LH_Qt_QStringList(this, "Actions", QStringList(),LH_FLAG_NOSAVE,lh_type_integer_listbox);
+    setup_actions_ = new LH_Qt_QStringList(this, "Actions", QStringList(),LH_FLAG_UI,lh_type_integer_listbox);
     setup_actions_->setHelp("This box contains the list of actions that will be perfromed when the coordinate is selected. Each action is done in the order shown here.<br/><br/>Select an action from this list to edit or delete it.");
-    setup_action_add_ = new LH_Qt_QString(this, "^AddNewAction","Add New Action", LH_FLAG_NOSAVE, lh_type_string_button);
+    setup_action_add_ = new LH_Qt_QString(this, "^AddNewAction","Add New Action", LH_FLAG_UI, lh_type_string_button);
 
-    setup_action_desc_ = new LH_Qt_QString(this, "Action Description", "",LH_FLAG_READONLY|LH_FLAG_HIDDEN|LH_FLAG_NOSAVE);
-    setup_action_index_ = new LH_Qt_int(this, "Action Index",0, LH_FLAG_READONLY|LH_FLAG_HIDDEN|LH_FLAG_NOSAVE);
-    setup_action_type_ = new LH_Qt_QStringList(this, "Action Type", actionTypes_.list(),LH_FLAG_READONLY|LH_FLAG_HIDDEN|LH_FLAG_NOSAVE);
+    setup_action_desc_ = new LH_Qt_QString(this, "Action Description", "",LH_FLAG_READONLY|LH_FLAG_HIDDEN|LH_FLAG_UI);
+    setup_action_index_ = new LH_Qt_int(this, "Action Index",0, LH_FLAG_READONLY|LH_FLAG_HIDDEN|LH_FLAG_UI);
+    setup_action_type_ = new LH_Qt_QStringList(this, "Action Type", actionTypes_.list(),LH_FLAG_READONLY|LH_FLAG_HIDDEN|LH_FLAG_UI);
 
-    setup_action_parameter1_desc_ = new LH_Qt_QString(  this, "^p0_desc","",LH_FLAG_READONLY|LH_FLAG_HIDDEN|LH_FLAG_NOSAVE);
-    setup_action_parameter1_str_  = new LH_Qt_QString(  this, "^p0_str" ,"",LH_FLAG_READONLY|LH_FLAG_HIDDEN|LH_FLAG_NOSAVE);
-    setup_action_parameter1_int_  = new LH_Qt_int(      this, "^p0_int" ,0,LH_FLAG_READONLY|LH_FLAG_HIDDEN|LH_FLAG_NOSAVE);
-    setup_action_parameter1_file_ = new LH_Qt_QFileInfo(this, "^p0_file",QFileInfo(),LH_FLAG_READONLY|LH_FLAG_HIDDEN|LH_FLAG_NOSAVE);
+    setup_action_parameter1_desc_ = new LH_Qt_QString(  this, "^p0_desc","",LH_FLAG_READONLY|LH_FLAG_HIDDEN|LH_FLAG_UI);
+    setup_action_parameter1_str_  = new LH_Qt_QString(  this, "^p0_str" ,"",LH_FLAG_READONLY|LH_FLAG_HIDDEN|LH_FLAG_UI);
+    setup_action_parameter1_int_  = new LH_Qt_int(      this, "^p0_int" ,0,LH_FLAG_READONLY|LH_FLAG_HIDDEN|LH_FLAG_UI);
+    setup_action_parameter1_file_ = new LH_Qt_QFileInfo(this, "^p0_file",QFileInfo(),LH_FLAG_READONLY|LH_FLAG_HIDDEN|LH_FLAG_UI);
 
-    setup_action_parameter2_desc_ = new LH_Qt_QString(  this, "^p1_desc","",LH_FLAG_READONLY|LH_FLAG_HIDDEN|LH_FLAG_NOSAVE);
-    setup_action_parameter2_str_  = new LH_Qt_QString(  this, "^p1_str" ,"",LH_FLAG_READONLY|LH_FLAG_HIDDEN|LH_FLAG_NOSAVE);
-    setup_action_parameter2_int_  = new LH_Qt_int(      this, "^p1_int" ,0,LH_FLAG_READONLY|LH_FLAG_HIDDEN|LH_FLAG_NOSAVE);
-    setup_action_parameter2_file_ = new LH_Qt_QFileInfo(this, "^p1_file",QFileInfo(),LH_FLAG_READONLY|LH_FLAG_HIDDEN|LH_FLAG_NOSAVE);
+    setup_action_parameter2_desc_ = new LH_Qt_QString(  this, "^p1_desc","",LH_FLAG_READONLY|LH_FLAG_HIDDEN|LH_FLAG_UI);
+    setup_action_parameter2_str_  = new LH_Qt_QString(  this, "^p1_str" ,"",LH_FLAG_READONLY|LH_FLAG_HIDDEN|LH_FLAG_UI);
+    setup_action_parameter2_int_  = new LH_Qt_int(      this, "^p1_int" ,0,LH_FLAG_READONLY|LH_FLAG_HIDDEN|LH_FLAG_UI);
+    setup_action_parameter2_file_ = new LH_Qt_QFileInfo(this, "^p1_file",QFileInfo(),LH_FLAG_READONLY|LH_FLAG_HIDDEN|LH_FLAG_UI);
 
-    setup_action_enabled_= new LH_Qt_bool(this, "^Action Enabled", true, LH_FLAG_READONLY|LH_FLAG_HIDDEN|LH_FLAG_NOSAVE);
+    setup_action_enabled_= new LH_Qt_bool(this, "^Action Enabled", true, LH_FLAG_READONLY|LH_FLAG_HIDDEN|LH_FLAG_UI);
 
-    setup_action_delete_ = new LH_Qt_QString(this, "^DeleteAction","Delete Action", LH_FLAG_HIDDEN|LH_FLAG_NOSAVE, lh_type_string_button);
-    setup_action_delete_confirm_ = new LH_Qt_QString(this, "^DeleteActionConfirm", "Confirm Delete", LH_FLAG_READONLY|LH_FLAG_HIDDEN|LH_FLAG_NOSAVE, lh_type_string_button);
+    setup_action_delete_ = new LH_Qt_QString(this, "^DeleteAction","Delete Action", LH_FLAG_HIDDEN|LH_FLAG_UI, lh_type_string_button);
+    setup_action_delete_confirm_ = new LH_Qt_QString(this, "^DeleteActionConfirm", "Confirm Delete", LH_FLAG_READONLY|LH_FLAG_HIDDEN|LH_FLAG_UI, lh_type_string_button);
 
 
     setup_actions_xml_ = new LH_Qt_QTextEdit(this, tr("~"), "<actions>\n</actions>", LH_FLAG_HIDDEN);
@@ -117,40 +112,12 @@ LH_CursorAction::LH_CursorAction() : actionTypes_(this)
     connect( setup_action_delete_,          SIGNAL(changed()), this, SLOT(deleteActionCheck()));
     connect( setup_action_delete_confirm_,  SIGNAL(changed()), this, SLOT(deleteAction()));
     connect( setup_action_add_,             SIGNAL(changed()), this, SLOT(newAction()));
+
+    return 0;
 }
 
-int LH_CursorAction::polling()
+void LH_CursorAction::stateChangeAction(bool newSelected, bool newActive)
 {
-    if(waiting)
-    {
-        delay-=200;
-        if (delay<=0) fire(lastStep+1);
-    } else
-        if(updateState())  callback(lh_cb_render,NULL);
-
-    return 200;
-}
-
-
-
-bool LH_CursorAction::updateState()
-{
-    QStringList mycoords = setup_coordinate_->value().split(';');
-
-    bool newSelected = false;
-    bool newActive = false;
-    foreach (QString mycoord_str, mycoords)
-    {
-        QStringList mycoord = mycoord_str.split(',');
-        if(mycoord.length()==2)
-        {
-            int myX = mycoord.at(0).toInt();
-            int myY = mycoord.at(1).toInt();
-
-            newSelected = newSelected || ( cursor_data.selState && cursor_data.selX==myX && cursor_data.selY==myY );
-            newActive = newActive ||  ( cursor_data.active && cursor_data.x==myX && cursor_data.y==myY );
-        }
-    }
     QString newStatusCode = QString("%1%2").arg(newActive? "ON" : "OFF").arg(newSelected? "_SEL" : "");
     if(statusCode_ != newStatusCode)
     {
@@ -161,19 +128,19 @@ bool LH_CursorAction::updateState()
             if(!newSelected) fired = false; else
             if(!fired) fire();
         }
-        return true;
     }
-    else
-        return false;
 }
 
 void LH_CursorAction::fire(int startAt)
 {
     fired = true;
     waiting = false;
+    qDebug()<<"Fire!";
     QDomDocument actionsXML("actionsXML");
     if(actionsXML.setContent(setup_actions_xml_->value()))
     {
+        cursorData cursor_data = rcvr_->data();
+        bool cursor_data_dirty = false;
         QDomNode rootNode = actionsXML.firstChild();
         for(uint i = startAt; i< rootNode.childNodes().length(); i++)
         {
@@ -223,28 +190,36 @@ void LH_CursorAction::fire(int startAt)
             {
                 cursor_data.x = action.getParameter(e,0).toInt();
                 cursor_data.y = action.getParameter(e,1).toInt();
+                cursor_data_dirty = true;
             }else
             if(typeCode=="select")
             {
                 cursor_data.x = action.getParameter(e,0).toInt();
                 cursor_data.y = action.getParameter(e,1).toInt();
                 cursor_data.sendSelect = true;
+                cursor_data_dirty = true;
             }else
             if(typeCode=="deselect")
             {
                 cursor_data.selState = false;
+                cursor_data_dirty = true;
             }else
             if(typeCode=="deactivate")
             {
                 cursor_data.active = false;
+                cursor_data_dirty = true;
             }else
             if(typeCode=="reselect")
             {
                 cursor_data.x = cursor_data.lastSelX2;
                 cursor_data.y = cursor_data.lastSelY2;
                 cursor_data.sendSelect = true;
+                cursor_data_dirty = true;
             } else
                 Q_ASSERT(false);
+            if (cursor_data_dirty)
+                rcvr_->postback(cursor_data);
+            cursor_data_dirty = false;
         }
     }
 }
@@ -254,10 +229,12 @@ void LH_CursorAction::doJumpTo(QString key, int flags, int value)
     Q_UNUSED(key);
     Q_UNUSED(flags);
     Q_UNUSED(value);
-    QString coord = setup_coordinate_->value().split(';')[0];
+    QString coord = rcvr_->setup_coordinate_->value().split(';')[0];
+    cursorData cursor_data = rcvr_->data();
     cursor_data.x = coord.split(',')[0].toInt();
     cursor_data.y = coord.split(',')[1].toInt();
     cursor_data.sendSelect = true;
+    rcvr_->postback(cursor_data);
 }
 
 void LH_CursorAction::xmlChanged()
@@ -287,22 +264,22 @@ void LH_CursorAction::actionSelected()
     int offFlag = 0;
     if(setup_actions_->list().count()==0) offFlag = LH_FLAG_HIDDEN | LH_FLAG_READONLY;
 
-    setup_action_desc_->setFlags(LH_FLAG_NOSAVE | offFlag);
-    setup_action_index_->setFlags(LH_FLAG_NOSAVE | offFlag);
+    setup_action_desc_->setFlags(LH_FLAG_UI | offFlag);
+    setup_action_index_->setFlags(LH_FLAG_UI | offFlag);
     setup_action_index_->setMinMax(0,setup_actions_->list().count()-1);
 
-    setup_action_type_->setFlags(LH_FLAG_NOSAVE | offFlag);
-    setup_action_parameter1_desc_->setFlags(LH_FLAG_READONLY|LH_FLAG_NOSAVE | offFlag);
-    setup_action_parameter1_str_->setFlags(LH_FLAG_HIDDEN|LH_FLAG_NOSAVE | offFlag);
-    setup_action_parameter1_int_->setFlags(LH_FLAG_HIDDEN|LH_FLAG_NOSAVE | offFlag);
-    setup_action_parameter1_file_->setFlags(LH_FLAG_HIDDEN|LH_FLAG_NOSAVE | offFlag);
-    setup_action_parameter2_desc_->setFlags(LH_FLAG_READONLY|LH_FLAG_NOSAVE | offFlag);
-    setup_action_parameter2_str_->setFlags(LH_FLAG_HIDDEN|LH_FLAG_NOSAVE | offFlag);
-    setup_action_parameter2_int_->setFlags(LH_FLAG_HIDDEN|LH_FLAG_NOSAVE | offFlag);
-    setup_action_parameter2_file_->setFlags(LH_FLAG_HIDDEN|LH_FLAG_NOSAVE | offFlag);
-    setup_action_delete_->setFlags(LH_FLAG_NOSAVE | offFlag);
-    setup_action_delete_confirm_->setFlags(LH_FLAG_HIDDEN|LH_FLAG_READONLY|LH_FLAG_NOSAVE | offFlag);
-    setup_action_enabled_->setFlags(LH_FLAG_NOSAVE | offFlag);
+    setup_action_type_->setFlags(LH_FLAG_UI | offFlag);
+    setup_action_parameter1_desc_->setFlags(LH_FLAG_READONLY|LH_FLAG_UI | offFlag);
+    setup_action_parameter1_str_->setFlags(LH_FLAG_HIDDEN|LH_FLAG_UI | offFlag);
+    setup_action_parameter1_int_->setFlags(LH_FLAG_HIDDEN|LH_FLAG_UI | offFlag);
+    setup_action_parameter1_file_->setFlags(LH_FLAG_HIDDEN|LH_FLAG_UI | offFlag);
+    setup_action_parameter2_desc_->setFlags(LH_FLAG_READONLY|LH_FLAG_UI | offFlag);
+    setup_action_parameter2_str_->setFlags(LH_FLAG_HIDDEN|LH_FLAG_UI | offFlag);
+    setup_action_parameter2_int_->setFlags(LH_FLAG_HIDDEN|LH_FLAG_UI | offFlag);
+    setup_action_parameter2_file_->setFlags(LH_FLAG_HIDDEN|LH_FLAG_UI | offFlag);
+    setup_action_delete_->setFlags(LH_FLAG_UI | offFlag);
+    setup_action_delete_confirm_->setFlags(LH_FLAG_HIDDEN|LH_FLAG_READONLY|LH_FLAG_UI | offFlag);
+    setup_action_enabled_->setFlags(LH_FLAG_UI | offFlag);
 
     if(setup_actions_->list().count()==0) return;
 
@@ -316,6 +293,7 @@ void LH_CursorAction::actionSelected()
         setup_action_desc_->setValue( e.attribute("desc") );
         setup_action_index_->setValue( setup_actions_->value() );
 
+        cursorData cursor_data = rcvr_->data();
         actionTypes_.at(typeCode).displayParameter(0,setup_action_parameter1_desc_,setup_action_parameter1_str_,setup_action_parameter1_int_,setup_action_parameter1_file_, cursor_data, e);
         actionTypes_.at(typeCode).displayParameter(1,setup_action_parameter2_desc_,setup_action_parameter2_str_,setup_action_parameter2_int_,setup_action_parameter2_file_, cursor_data, e);
 
@@ -334,6 +312,7 @@ void LH_CursorAction::actionEdited()
     paramValues.append( at.getParameterValue(1,setup_action_parameter2_str_,setup_action_parameter2_int_,setup_action_parameter2_file_));
 
     //in case the type has changed, update the parameter visibility
+    cursorData cursor_data = rcvr_->data();
     at.displayParameter(0,setup_action_parameter1_desc_,setup_action_parameter1_str_,setup_action_parameter1_int_,setup_action_parameter1_file_, cursor_data);
     at.displayParameter(1,setup_action_parameter2_desc_,setup_action_parameter2_str_,setup_action_parameter2_int_,setup_action_parameter2_file_, cursor_data);
 

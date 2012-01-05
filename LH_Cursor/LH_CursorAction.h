@@ -34,19 +34,19 @@
 #include "LH_Qt_int.h"
 #include "LH_Qt_bool.h"
 
-#include "LH_CursorData.h"
+#include "LH_CursorReceiver.h"
 #include "actionType.h"
 
 #include <QHash>
 #include <QList>
 #include <QtXml>
 
+const int LH_FLAG_UI = LH_FLAG_NOSAVE_DATA | LH_FLAG_NOSAVE_LINK | LH_FLAG_NOSOURCE | LH_FLAG_NOSINK;
+
 class LH_CursorAction : public LH_QtInstance
 {
     Q_OBJECT
     actionTypes actionTypes_;
-
-    bool updateState();
 
     bool fired;
     bool selected;
@@ -56,10 +56,10 @@ class LH_CursorAction : public LH_QtInstance
 
     int cludgeLock;
 
+    LH_CursorReceiver* rcvr_;
 protected:
     QString statusCode_;
 
-    LH_Qt_QString *setup_coordinate_;
     LH_Qt_InputState *setup_jump_to_;
 
     LH_Qt_QStringList *setup_actions_;
@@ -87,15 +87,13 @@ protected:
 
 public:
     LH_CursorAction();
-    const char *userInit(){ hide(); return NULL; }
-
-    int polling();
-
+    const char *userInit();
     static lh_class *classInfo();
 
     void fire(int = 0);
 
 public slots:
+    void stateChangeAction(bool, bool);
     void doJumpTo(QString key,int flags,int value);
     void xmlChanged();
     void actionSelected();

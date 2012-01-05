@@ -22,9 +22,6 @@
     THE SOFTWARE.
 **/
 
-#include <QDebug>
-#include <QPainter>
-
 #include "LH_CursorRectangle.h"
 
 LH_PLUGIN_CLASS(LH_CursorRectangle)
@@ -45,25 +42,12 @@ lh_class *LH_CursorRectangle::classInfo()
     return &classInfo;
 }
 
-LH_CursorRectangle::LH_CursorRectangle()
+const char *LH_CursorRectangle::userInit()
 {
-    setup_coordinate_ = new LH_Qt_QString(this, "Coordinate", "1,1", LH_FLAG_AUTORENDER | LH_FLAG_FIRST);
-    setup_coordinate_->setHelp("This is the coordinate of this object, i.e. when the cursor is at the point specified here this object is selected. <br/>"
-                               "<br/>"
-                               "Note that many objects can have the same coordinate if the user requires.<br/>"
-                               "<br/>"
-                               "The format is [x],[y] <br/>"
-                               "e.g.: 1,1"
-                               );
-
-    setup_json_data_ = new LH_Qt_QString(this, "Cursor Data", "", LH_FLAG_NOSAVE | LH_FLAG_NOSOURCE | LH_FLAG_LAST | LH_FLAG_READONLY /*| LH_FLAG_HIDEVALUE*/);
-    setup_json_data_->setLink("=/Cursors/Primary Cursor");
-    //setup_json_data_->setLinkFilter("Cursors");
-
-    setup_cursor_state_ = new LH_Qt_QStringList( this, ("Cursor State"), QStringList()<<"OFF"<<"OFF_SEL"<<"ON"<<"ON_SEL", LH_FLAG_NOSAVE|LH_FLAG_NOSINK|LH_FLAG_NOSOURCE|LH_FLAG_READONLY | LH_FLAG_FIRST );
+    if( const char *err = LH_Rectangle::userInit() ) return err;
+    rcvr_ = new LH_CursorReceiver(this, SLOT(stateChangeAction(bool,bool)));
 
     new LH_Qt_QString(this, "hr1", "<hr>", LH_FLAG_NOSOURCE | LH_FLAG_NOSINK | LH_FLAG_FIRST | LH_FLAG_HIDETITLE, lh_type_string_html );
-    new LH_Qt_QString(this, "hr2", "<hr>", LH_FLAG_NOSOURCE | LH_FLAG_NOSINK | LH_FLAG_HIDETITLE, lh_type_string_html);
 
     setup_layout_trigger_ = new LH_Qt_bool(this,"Layout Trigger",false,0);
     setup_layout_trigger_->setHelp("Cursor Rectangles can be used to create a simple menu. Simply check this box and when selected the selected layout will be opened.<br/>"
@@ -72,7 +56,6 @@ LH_CursorRectangle::LH_CursorRectangle()
     setup_layout_ = new LH_Qt_QFileInfo(this, "Layout", QFileInfo(), LH_FLAG_HIDDEN);
     setup_layout_trigger_->setHelp("The layout to load when the rectangle is selected.");
 
-    connect(setup_json_data_,SIGNAL(changed()),this,SLOT(updateState()));
     connect(setup_layout_trigger_, SIGNAL(changed()), this, SLOT(changeLayoutTrigger()));
 
 #ifdef LH_CF
@@ -82,7 +65,7 @@ LH_CursorRectangle::LH_CursorRectangle()
     add_cf_target(setup_bgcolor2_);
     add_cf_target(setup_gradient_);
     add_cf_target(setup_horizontal_);
-    add_cf_source(setup_cursor_state_);
+    add_cf_source(rcvr_->setup_cursor_state_);
 
     cf_set_rules("<rules>"
                  "<rule>"
@@ -103,29 +86,18 @@ LH_CursorRectangle::LH_CursorRectangle()
                  "</rule>"
                  "</rules>");
 #endif
-
+    return 0;
 }
 
-bool LH_CursorRectangle::updateState()
+void LH_CursorRectangle::stateChangeAction(bool newSelected, bool newActive)
 {
-    bool newSelected;
-    bool newActive;
-    QString newStatusCode = cursorData(setup_json_data_->value()).getState(setup_coordinate_->value().split(';'),newSelected,newActive);
-
-    if(setup_cursor_state_->valueText() != newStatusCode)
+    Q_UNUSED(newActive);
+    if(newSelected && setup_layout_trigger_->value() && setup_layout_->value().isFile())
     {
-        setup_cursor_state_->setValue(newStatusCode);
-
-        if(newSelected && setup_layout_trigger_->value() && setup_layout_->value().isFile())
-        {
-            static QByteArray ary;
-            ary = setup_layout_->value().absoluteFilePath().toUtf8();
-            callback(lh_cb_load_layout, ary.data() );
-        }
-        return true;
+        static QByteArray ary;
+        ary = setup_layout_->value().absoluteFilePath().toUtf8();
+        callback(lh_cb_load_layout, ary.data() );
     }
-    else
-        return false;
 }
 
 void LH_CursorRectangle::changeLayoutTrigger()

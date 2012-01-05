@@ -90,17 +90,28 @@ void LH_QtSetupItem::setOrder( int n )
     order_ = n;
 }
 
-void LH_QtSetupItem::setLink(QString s)
+void LH_QtSetupItem::setLink( QString s )
 {
-    memset( item_.link.source, 0, sizeof(item_.link.source) );
-    strncpy( item_.link.source, s.toAscii().constData(), sizeof(item_.link.source)-1 );
+    if( s.startsWith('@') ) setPublishPath( s.right(s.length()-1) );
+    else if( s.startsWith('=') ) setSubscribePath( s.right(s.length()-1) );
+    else setSubscribePath(s);
+    return;
+}
+
+void LH_QtSetupItem::setPublishPath( QString s )
+{
+    memset( item_.link.publish, 0, sizeof(item_.link.publish) );
+    strncpy( item_.link.publish, s.toAscii().constData(), sizeof(item_.link.publish)-1 );
     parent()->callback( lh_cb_setup_refresh, item() );
     return;
 }
 
-QString LH_QtSetupItem::link()
+void LH_QtSetupItem::setSubscribePath( QString s )
 {
-    return QString::fromAscii( item_.link.source );
+    memset( item_.link.subscribe, 0, sizeof(item_.link.subscribe) );
+    strncpy( item_.link.subscribe, s.toAscii().constData(), sizeof(item_.link.subscribe)-1 );
+    parent()->callback( lh_cb_setup_refresh, item() );
+    return;
 }
 
 void LH_QtSetupItem::setHelp(QString s)

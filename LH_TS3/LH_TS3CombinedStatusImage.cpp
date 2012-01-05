@@ -85,5 +85,4 @@ void LH_TS3CombinedStatusImage::updateCombinedStatus()
                 talking==setup_nickname_->value()?"Self Speaking":"Both Speaking"
                 );
     setup_combined_status_->setValue(combinedStatus);
-    qDebug() << setup_combined_status_->valueText();
 }

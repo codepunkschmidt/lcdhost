@@ -3,6 +3,7 @@ TEMPLATE = lib
 QT += network \
     xml
 DEFINES += LH_WEATHER_LIBRARY
+DEFINES += VERSION=1.50
 CONFIG += cf translator
 
 include(../Plugins.pri)

@@ -34,9 +34,6 @@
 #include <Psapi.h>
 #endif
 
-
-#define VERSION 1.00
-
 class LH_QtPlugin_LCoreReboot : public LH_QtPlugin
 {
     Q_OBJECT
@@ -46,9 +43,13 @@ class LH_QtPlugin_LCoreReboot : public LH_QtPlugin
     //void SetProcessPrivilege( );
 
     QString getLastErrorMessage();
+    bool getLCorePath(QString&);
+    bool killLCore();
+    void launchLCore();
 
 protected:
     LH_Qt_QString *setup_reboot_;
+    LH_Qt_QString *setup_lcore_path_;
 
 public:
     const char *userInit();

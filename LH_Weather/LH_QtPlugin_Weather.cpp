@@ -52,8 +52,9 @@ char __lcdhostplugin_xml[] =
   "</shortdesc>"
   "<longdesc>"
   "<p>The weather plugin draws on Yahoo's weather feeds and makes data available via a text and image class. Additionally, "
-  "translation is also supported (from English as Yahoo's API is only available in that one language) using Google's "
-  "translation API, although this can be a little unreliable.</p>"
+  "translation is also supported (from English as Yahoo's API is only available in that one language), but it has to be "
+  "done manually: select your language from the list and unknown words will be stored in a file in the LCDHost folder. "
+  "Edit this file to add the missing translations.</p>"
   "<p>To configure the plugin, use the plugin settings panel to the right, entering in your location and selecting the "
   "units you want to use, etc. These settings are then stored globally and will be applied to any layout which displays "
   "the weather.</p>"
@@ -77,18 +78,24 @@ char __lcdhostplugin_xml[] =
 //------------------------------------------------------------------------------------------------------------------
 
 
-LH_QtPlugin_Weather::LH_QtPlugin_Weather() : translator("Weather", this)
+LH_QtPlugin_Weather::LH_QtPlugin_Weather() : translator("Weather", this){}
+
+const char *LH_QtPlugin_Weather::userInit()
 {
-    translator.requestLanguages("en");
-    connect(&translator, SIGNAL(languages_updated()), this, SLOT(updateLanguagesList()));
-
+    if( const char *err = LH_QtPlugin::userInit() ) return err;
     lastrefresh_ = QDateTime::currentDateTime();
+    translator.setTargetLanguage("en");
 
-    setup_languages_ = new LH_Qt_QStringList(this, "Language", QStringList(), LH_FLAG_NOSAVE | LH_FLAG_NOSINK | LH_FLAG_NOSOURCE);
-    setup_languages_->setHelp("<p>Yahoo's Weather API doesn't have multilingual support; the translation is instead done using Google Translate.</p>"
-                              "<p>Bad translations can be corrected by editing the translation cache located in the LCDHost directory.</p>");
-    setup_language_ = new LH_Qt_QString(this, "Language Code", "en", LH_FLAG_HIDDEN | LH_FLAG_NOSINK | LH_FLAG_NOSOURCE | LH_FLAG_BLANKTITLE);
+    setup_show_all_languages_ = new LH_Qt_bool(this,"^Show Untranslated Languages", false, LH_FLAG_NOSAVE | LH_FLAG_NOSINK | LH_FLAG_NOSOURCE);
+    connect(setup_show_all_languages_, SIGNAL(changed()), this, SLOT(updateLanguagesList()));
+    setup_show_all_languages_->setHelp("<p>Ticking this box will allow you choose a language with no current translation. Unknown items will be added to a translation cache located in the LCDHost directory. Simply edit this cache to complete the translation.</p>");
+
+    setup_languages_ = new LH_Qt_QStringList(this, "Language", QStringList(), LH_FLAG_NOSINK | LH_FLAG_NOSOURCE);
+    setup_languages_->setHelp("<p>Yahoo's Weather API doesn't have multilingual support; the translation is instead done manually.</p>"
+                              "<p>Missing translations can be corrected by editing the translation cache located in the LCDHost directory.</p>");
     connect(setup_languages_, SIGNAL(changed()), this, SLOT(selectLanguage()));
+
+    setup_language_ = new LH_Qt_QString(this, "Language Code", "en", LH_FLAG_HIDDEN | LH_FLAG_NOSINK | LH_FLAG_NOSOURCE | LH_FLAG_BLANKTITLE);
     connect(setup_language_, SIGNAL(changed()), this, SLOT(setLanguage()));
 
     setup_location_name_ = new LH_Qt_QString(this,"Location",QString("London UK"), LH_FLAG_NOSINK | LH_FLAG_NOSOURCE);
@@ -143,13 +150,15 @@ LH_QtPlugin_Weather::LH_QtPlugin_Weather() : translator("Weather", this)
     connect(&nam5Day,  SIGNAL(finished(QNetworkReply*)), this, SLOT(finished5Day(QNetworkReply*)));
     connect(&namWOEID, SIGNAL(finished(QNetworkReply*)), this, SLOT(finishedWOEID(QNetworkReply*)));
 
+    updateLanguagesList();
+
+    return 0;
 }
 
 LH_QtPlugin_Weather::~LH_QtPlugin_Weather()
 {
     return ;
 }
-
 
 void LH_QtPlugin_Weather::fetch2Day()
 {
@@ -648,8 +657,6 @@ bool LH_QtPlugin_Weather::checkNight()
 
 void LH_QtPlugin_Weather::requestTranslation()
 {
-    translator.clear();
-
     translator.addItem(&weather_data.atmosphere.barometricReading);
 
     translator.addItem(&weather_data.location.city, ttNoun);
@@ -668,10 +675,13 @@ void LH_QtPlugin_Weather::requestTranslation()
         translator.addItem(&weather_data.forecast[i].date, ttDayName);
         translator.addItem(&weather_data.forecast[i].text);
     }
+
+    translator.saveCache();
 }
 
 void LH_QtPlugin_Weather::updateLanguagesList()
 {
+    translator.loadLanguages(setup_show_all_languages_->value());
     setup_languages_->list().clear();
     foreach(QString name, translator.languages.names())
         setup_languages_->list().append(name);

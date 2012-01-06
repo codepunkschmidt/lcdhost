@@ -25,7 +25,7 @@ json {
 }
 
 translator {
-    include($$CODELEAP/GoogleTranslator/GoogleTranslator.pri)
+    include($$CODELEAP/SimpleTranslator/SimpleTranslator.pri)
 }
 
 hid {

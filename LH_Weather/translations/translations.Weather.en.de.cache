@@ -1,0 +1,35 @@
+; = Months ==================================== 	
+January	Januar
+February	Februar
+March	M‰rz
+April	April
+May	Mai
+June	Juni
+July	Juli
+August	August
+September	September
+October	Oktober
+November	November
+December	Dezember
+	
+; = Week Days ================================= 	
+Monday	Montag
+Tuesday	Dienstag
+Wednesday	Mittwoch
+Thursday	Donnerstag
+Friday	Freitag
+Saturday	Samstag
+Sunday	Sonntag
+	
+; = "Relative" Days =========================== 	
+Today	Heute
+Tonight	Heute Abend
+Tomorrow	Morgen
+	
+; = Pressure States =========================== 	
+Falling	Steigendem
+Steady	Fallendem
+Rising	Gleichm‰ﬂigen
+	
+; = END ======================================= 	
+

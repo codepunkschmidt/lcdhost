@@ -1,18 +1,13 @@
-#ifndef GOOGLETRANSLATOR_H
-#define GOOGLETRANSLATOR_H
+#ifndef SIMPLETRANSLATOR_H
+#define SIMPLETRANSLATOR_H
 
 #include <QObject>
-
-#include <QNetworkAccessManager>
-#include <QNetworkReply>
 
 #include <QList>
 #include <QHash>
 #include <QStringList>
 
 #include "LH_QtObject.h"
-
-#include "TranslationAPIKey.h"
 
 enum TranslationType
 {
@@ -72,11 +67,22 @@ public:
         else
             return "";
     }
+
+    bool containsName(QString name)
+    {
+        return names_.contains(name);
+    }
+
+    bool containsCode(QString code)
+    {
+        return codes_.contains(code);
+    }
 };
 
-class GoogleTranslator: public QObject
+class SimpleTranslator: public QObject
 {
     Q_OBJECT
+    bool loaded_;
     QString name_;
     QString targetLanguage_;
     QString sourceLanguage_;
@@ -85,44 +91,38 @@ class GoogleTranslator: public QObject
     QHash<QString,QString> languageCache_;
     QHash<QString,QString> newCacheItems_;
 
-    QNetworkAccessManager namLanguages;
-    QNetworkReply* repLanguages;
-
-    QList<QString*> translateRequestItems_;
-    QList<TranslationType> translateRequestTypes_;
-    QStringList translateRequestValues_;
-
-    void apply(QStringList translatedValues);
     void apply(QString* item, QString translatedValue, TranslationType transType);
 
     void addToCache(QString sourceItem, QString translatedItem);
 
-    QString getCacheFileName(QString targetLanguage = "");
-    void saveCache();
-    void loadCache();
+    QString getCacheFileName(bool externalPath = true, QString targetLanguage = "");
+    void loadCache(bool languagesList = false, bool includeUntranslatedLanguages = false);
 
     QString fixCaps(QString src);
 
 public:
     IndexedPairList languages;
 
-    GoogleTranslator(QString name, LH_QtObject *parent = 0);
+    SimpleTranslator(QString name, LH_QtObject *parent = 0);
+    void loadLanguages(bool includeUntranslatedLanguages = false) { loadCache(true, includeUntranslatedLanguages); }
 
-    void clear();
+    void saveCache();
     void addItem(QString *item, TranslationType transType = ttAll);
-
-    void requestLanguages(QString code = "");
 
     QString fullDateName(QString shortName);
 
-    bool setTargetLanguage(QString language){ if(targetLanguage_ == language) return false; else { targetLanguage_ = language; loadCache(); return true; } }
+    bool setTargetLanguage(QString language){
+        if(targetLanguage_ == language && loaded_)
+            return false;
+        else
+        {
+            loaded_ = true;
+            targetLanguage_ = language;
+            loadCache();
+            return true;
+        }
+    }
     QString targetLanguage(){ return targetLanguage_; }
-
-signals:
-    void languages_updated();
-
-protected slots:
-    void finishedLanguages(QNetworkReply*);
 };
 
-#endif // GOOGLETRANSLATOR_H
+#endif // SIMPLETRANSLATOR_H

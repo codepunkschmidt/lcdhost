@@ -25,3 +25,6 @@ HEADERS += \
     LH_WeatherImage.h \
     LH_WeatherData.h \
     LH_WeatherBrowserOpener.h
+
+RESOURCES += \
+    LH_Weather.qrc

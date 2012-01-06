@@ -14,8 +14,6 @@
 
 #include "TranslationAPIKey.h"
 
-//define debug_translator
-
 enum TranslationType
 {
     ttAll,
@@ -87,9 +85,7 @@ class GoogleTranslator: public QObject
     QHash<QString,QString> languageCache_;
     QHash<QString,QString> newCacheItems_;
 
-    QNetworkAccessManager namTranslate;
     QNetworkAccessManager namLanguages;
-    QNetworkReply* repTranslate;
     QNetworkReply* repLanguages;
 
     QList<QString*> translateRequestItems_;
@@ -101,7 +97,7 @@ class GoogleTranslator: public QObject
 
     void addToCache(QString sourceItem, QString translatedItem);
 
-    QString getCacheFileName();
+    QString getCacheFileName(QString targetLanguage = "");
     void saveCache();
     void loadCache();
 
@@ -113,7 +109,6 @@ public:
     GoogleTranslator(QString name, LH_QtObject *parent = 0);
 
     void clear();
-    void request();
     void addItem(QString *item, TranslationType transType = ttAll);
 
     void requestLanguages(QString code = "");
@@ -127,7 +122,6 @@ signals:
     void languages_updated();
 
 protected slots:
-    void finishedTranslation(QNetworkReply*);
     void finishedLanguages(QNetworkReply*);
 };
 

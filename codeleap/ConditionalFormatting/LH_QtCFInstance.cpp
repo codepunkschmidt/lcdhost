@@ -194,7 +194,7 @@ void LH_QtCFInstance::add_cf_source(QString name, LH_QtSetupItem* si)
     else
     {
         sources_[name]->setValue();
-        if(si!=setup_cf_state_)
+        //if(si!=setup_cf_state_)
         {
             connect(si, SIGNAL(changed()), this, SLOT(cf_apply_rules()));
             connect(si, SIGNAL(set()), this, SLOT(cf_apply_rules()));
@@ -408,7 +408,6 @@ void LH_QtCFInstance::cf_apply_rules(bool allowRender)
         return; //already applying rules
     else
         cf_applying_rules_ = true;
-
     if (QObject::sender()!=NULL)
     {
         QString senderName = ((LH_QtSetupItem*)QObject::sender())->name();
@@ -417,16 +416,18 @@ void LH_QtCFInstance::cf_apply_rules(bool allowRender)
     }
 
     QDomDocument doc("");
-    doc.setContent(setup_cf_XML_->value());
-    QDomElement root = doc.firstChild().toElement();
+    if(setup_cf_XML_)
+    {
+        doc.setContent(setup_cf_XML_->value());
+        QDomElement root = doc.firstChild().toElement();
 
-    bool doRender = false;
+        bool doRender = false;
 
-    for(uint i=0; i<root.childNodes().length(); i++)
-        doRender |= cf_rule(root.childNodes().at(i)).apply(this, sources_, targets_);
+        for(uint i=0; i<root.childNodes().length(); i++)
+            doRender |= cf_rule(root.childNodes().at(i)).apply(this, sources_, targets_);
 
-    if(doRender && allowRender) this->requestRender();
-
+        if(doRender && allowRender) this->requestRender();
+    }
     cf_applying_rules_ = false;
     return;
 }

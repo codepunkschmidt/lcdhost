@@ -87,7 +87,7 @@ LH_QtPlugin_Weather::LH_QtPlugin_Weather() : translator("Weather", this)
     setup_languages_ = new LH_Qt_QStringList(this, "Language", QStringList(), LH_FLAG_NOSAVE | LH_FLAG_NOSINK | LH_FLAG_NOSOURCE);
     setup_languages_->setHelp("<p>Yahoo's Weather API doesn't have multilingual support; the translation is instead done using Google Translate.</p>"
                               "<p>Bad translations can be corrected by editing the translation cache located in the LCDHost directory.</p>");
-    setup_language_ = new LH_Qt_QString(this, "^Language Code", "en", LH_FLAG_HIDDEN | LH_FLAG_NOSINK | LH_FLAG_NOSOURCE);
+    setup_language_ = new LH_Qt_QString(this, "Language Code", "en", LH_FLAG_HIDDEN | LH_FLAG_NOSINK | LH_FLAG_NOSOURCE | LH_FLAG_BLANKTITLE);
     connect(setup_languages_, SIGNAL(changed()), this, SLOT(selectLanguage()));
     connect(setup_language_, SIGNAL(changed()), this, SLOT(setLanguage()));
 
@@ -668,8 +668,6 @@ void LH_QtPlugin_Weather::requestTranslation()
         translator.addItem(&weather_data.forecast[i].date, ttDayName);
         translator.addItem(&weather_data.forecast[i].text);
     }
-
-    translator.request();
 }
 
 void LH_QtPlugin_Weather::updateLanguagesList()

@@ -51,8 +51,6 @@
 #include "LH_WeatherData.h"
 #include "SimpleTranslator.h"
 
-#define VERSION 1.40
-
 class LH_QtPlugin_Weather : public LH_QtPlugin
 {
     Q_OBJECT

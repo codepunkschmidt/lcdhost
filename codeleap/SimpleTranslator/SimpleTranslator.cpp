@@ -185,7 +185,6 @@ void SimpleTranslator::loadCache(bool languageList, bool includeUntranslatedLang
                 }
                 else
                 {
-                    qDebug() << key;
                     if (!languageCache_.contains(key))
                         languageCache_.insert(key,itemPair[1]);
                 }

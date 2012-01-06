@@ -1,6 +1,7 @@
 TARGET = LH_LCoreReboot
 TEMPLATE = lib
 DEFINES += LH_LCOREREBOOT_LIBRARY
+DEFINES += VERSION=1.01
 
 include(../Plugins.pri)
 

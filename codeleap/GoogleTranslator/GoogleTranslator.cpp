@@ -3,6 +3,7 @@
 #include <QDebug>
 #include <QRegExp>
 #include <QFile>
+#include <QFileInfo>
 #include <QTextStream>
 #include <QNetworkProxyQuery>
 #include <QUrl>
@@ -14,20 +15,13 @@ GoogleTranslator::GoogleTranslator(QString name, LH_QtObject *parent) : QObject(
     sourceLanguage_ = "en";
     targetLanguage_ = "en";
 
-    repTranslate = NULL;
     repLanguages = NULL;
 
-    connect(&namTranslate, SIGNAL(finished(QNetworkReply*)), this, SLOT(finishedTranslation(QNetworkReply*)));
     connect(&namLanguages, SIGNAL(finished(QNetworkReply*)), this, SLOT(finishedLanguages(QNetworkReply*)));
 }
 
 void GoogleTranslator::clear()
 {
-    if(repTranslate!=NULL && repTranslate->isRunning()) {
-        repTranslate->abort();
-        repTranslate->deleteLater();
-        repTranslate = NULL;
-    }
     if(repLanguages!=NULL && repLanguages->isRunning()) {
         repLanguages->abort();
         repLanguages->deleteLater();
@@ -37,52 +31,6 @@ void GoogleTranslator::clear()
     translateRequestItems_.clear();
     translateRequestTypes_.clear();
     translateRequestValues_.clear();
-}
-
-void GoogleTranslator::request()
-{
-    if(targetLanguage_==sourceLanguage_)
-        return;
-
-    if(translateRequestValues_.length()==0)
-        return;
-
-    const QString host = "www.googleapis.com";
-    const QString path = "/language/translate/v2";
-
-    QString params = translateRequestValues_.join("&q=");
-
-    QNetworkProxyQuery npq(QUrl(QString("https://%1%2").arg(host).arg(path)));
-    QList<QNetworkProxy> listOfProxies = QNetworkProxyFactory::systemProxyForQuery(npq);
-    if(listOfProxies.count()!=0)
-    {
-        if(listOfProxies.at(0).type() != QNetworkProxy::NoProxy) {
-            #ifdef debug_translator
-                qDebug() << "GoogleTranslator: Using Proxy: " << listOfProxies.at(0).hostName()<< ":" << QString::number(listOfProxies.at(0).port());
-            #endif
-            namTranslate.setProxy(listOfProxies.at(0));
-        } else {
-           #ifdef debug_translator
-               qDebug() << "GoogleTranslator: No proxy required.";
-           #endif
-        }
-    } else {
-        #ifdef debug_translator
-            qDebug() << "GoogleTranslator: No proxy listed.";
-        #endif
-    }
-
-    QString url = QString("https://%1%2?source=%3&target=%4&key=%5").arg(host).arg(path).arg(sourceLanguage_).arg(targetLanguage_).arg(TRANSLATION_API_KEY);
-    QByteArray textByteArray("q=");
-    textByteArray.append( params.toUtf8() );
-
-    QNetworkRequest reqTranslate = QNetworkRequest(QUrl(url));
-    reqTranslate.setHeader( QNetworkRequest::ContentLengthHeader, params.length() );
-    reqTranslate.setRawHeader("X-HTTP-Method-Override", "GET");
-    if(params.length()>=5000)
-        qWarning() << "Not permitted to request a translation of this length";
-    else
-        repTranslate = namTranslate.post( reqTranslate , textByteArray );
 }
 
 void GoogleTranslator::addItem(QString *item, TranslationType transType)
@@ -137,58 +85,6 @@ QString GoogleTranslator::fullDateName(QString shortName)
             return longNames[i];
 
     return shortName;
-}
-
-void GoogleTranslator::finishedTranslation(QNetworkReply* reply)
-{
-    if( reply )
-    {
-        if( reply->error() == QNetworkReply::NoError )
-        {
-            if( reply->attribute(QNetworkRequest::HttpStatusCodeAttribute) == 200 )
-            {
-                #ifdef debug_translator
-                    qDebug() << "GoogleTranslator: HTTP (Translate) Request Complete" << reply->attribute(QNetworkRequest::HttpStatusCodeAttribute);
-                #endif
-
-                QString response = QString::fromUtf8(reply->readAll()).trimmed();
-
-                QRegExp rxValid("^\\{\\s*\"data\":\\s*\\{\\s*\"translations\":");
-                if(rxValid.indexIn(response)==-1)
-                {
-                    #ifdef debug_translator
-                        qDebug() << "GoogleTranslator: HTTP (Translate) Unrecognised Response: " << response;
-                    #else
-                        qDebug() << "GoogleTranslator: HTTP (Translate) Unrecognised Response.";
-                    #endif
-                }
-                else
-                {
-                    QRegExp rxDecode("&#([0-9]*);");
-                    QRegExp rxItem("\\{\\s*\"translatedText\":\\s*\"([^\"]*)\"\\s*\\}");
-                    QStringList translations;
-                    int pos=0;
-                    while((pos = rxItem.indexIn(response, pos)+1)!=0)
-                    {
-                        QString item = rxItem.cap(1);
-                        while(rxDecode.indexIn(item)!=-1)
-                            item = item.replace(rxDecode.cap(0), QString("%1").arg((char)rxDecode.cap(1).toInt()));
-                        translations.append(item);
-                    }
-                    apply(translations);
-                    saveCache();
-                }
-             }
-            else
-                qWarning() << "GoogleTranslator: Error during HTTP (Translate) fetch:" << reply->attribute(QNetworkRequest::HttpStatusCodeAttribute) << reply->errorString() << reply->url().toString();
-        }
-        else
-            qWarning() << "GoogleTranslator: Error during HTTP (Translate) fetch:" << reply->attribute(QNetworkRequest::HttpStatusCodeAttribute) << reply->errorString() << reply->url().toString();
-        reply->deleteLater();
-        reply = NULL;
-    }
-    repTranslate->deleteLater();
-    repTranslate = NULL;
 }
 
 void GoogleTranslator::apply(QStringList translatedValues)
@@ -261,13 +157,14 @@ void GoogleTranslator::addToCache(QString sourceItem, QString translatedItem)
     newCacheItems_.insert(sourceItem, translatedItem.trimmed());
 }
 
-QString GoogleTranslator::getCacheFileName()
+QString GoogleTranslator::getCacheFileName(QString targetLanguage)
 {
+    if (targetLanguage == "") targetLanguage = targetLanguage_;
     return QString("%1translations.%2.%3.%4.cache")
             .arg(QString::fromUtf8(parent_->state()->dir_data))
             .arg(name_)
             .arg(sourceLanguage_)
-            .arg(targetLanguage_);
+            .arg(targetLanguage);
 }
 
 void GoogleTranslator::saveCache()
@@ -390,7 +287,9 @@ void GoogleTranslator::finishedLanguages(QNetworkReply* reply)
                         QString langName = rxItem.cap(2);
                         while(rxDecode.indexIn(langName)!=-1)
                             langName = langName.replace(rxDecode.cap(0), QString("%1").arg((char)rxDecode.cap(1).toInt()));
-                        newLangs = languages.append(langCode,langName) || newLangs;
+
+                        if (langCode=="en" || QFileInfo(getCacheFileName(langCode)).exists())
+                            newLangs = languages.append(langCode,langName) || newLangs;
                     }
                     if(newLangs)
                         emit(languages_updated());

@@ -76,7 +76,7 @@ bool LH_DriveStatsData::getData(float& value, QString& text, QString& units)
         driveInfo.update();
     if(driveInfo.valid())
     {
-        units = this->adaptiveUnits()? "" : ui_->setup_unit_selection_->valueText();
+        units = (this->adaptiveUnits() && ui_->setup_unit_selection_->valueText()=="(Auto)")? "" : ui_->setup_unit_selection_->valueText();
 
         if(ui_->valueText(mon_item) == "Bytes Read")
             parseBytes(driveInfo.BytesRead(), value, text, units);

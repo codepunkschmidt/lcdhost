@@ -296,10 +296,16 @@ void LH_MonitoringUI::updateUnitOptions()
     if(data_)
     {
         unitOptionsType options;
-        bool hasOptions = data_->adaptiveUnitsAllowed() && !data_->adaptiveUnits() && data_->getAdaptiveUnitOptions(options);
+        bool hasOptions = data_->adaptiveUnitsAllowed() &&
+                //!data_->adaptiveUnits() &&
+                data_->getAdaptiveUnitOptions(options);
         setup_unit_selection_->setVisible(hasOptions);
         if(hasOptions)
+        {
+            if(data_->adaptiveUnits())
+                options.addAuto();
             setup_unit_selection_->setList(options.list());
+        }
     }
 }
 

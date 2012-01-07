@@ -57,6 +57,12 @@ public:
         set(divisor, options);
     }
 
+    void addAuto()
+    {
+        options_.insert(0,"(Auto)");
+        lookup_.insert("(Auto)",-1);
+    }
+
     void set(int divisor = 0, QStringList *options = NULL)
     {
         if(!options)

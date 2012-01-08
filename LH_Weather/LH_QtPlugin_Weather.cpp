@@ -78,7 +78,7 @@ char __lcdhostplugin_xml[] =
 //------------------------------------------------------------------------------------------------------------------
 
 
-LH_QtPlugin_Weather::LH_QtPlugin_Weather() : translator("Weather", this){}
+LH_QtPlugin_Weather::LH_QtPlugin_Weather() : translator("Weather", this), weather_data(){}
 
 const char *LH_QtPlugin_Weather::userInit()
 {
@@ -120,11 +120,6 @@ const char *LH_QtPlugin_Weather::userInit()
                          "<p>The weather connector tries to look up the city as entered in the \"Location\" box, and displays the best result here.</p>");
     setup_city_->setOrder(-4);
 
-    //setup_browser_ = new LH_Qt_InputState(this,tr("Open in browser"),QString(),LH_FLAG_AUTORENDER);
-    //setup_browser_->setHelp("Defining a key here will allow you to open the forecast in your browser for more details");
-    //setup_browser_->setOrder(-4);
-    //connect( setup_browser_, SIGNAL(input(QString,int,int)), this, SLOT(openBrowser(QString,int,int)) );
-
     QStringList unitTypes = QStringList();
     unitTypes.append("Metric (Centigrade, Kilometers, etc)");
     unitTypes.append("Imperial (Fahrenheit, Miles, etc)");
@@ -139,12 +134,13 @@ const char *LH_QtPlugin_Weather::userInit()
     setup_refresh_->setHelp("How long to wait before checking for an update to the feed (in minutes)");
     connect( setup_refresh_, SIGNAL(changed()), this, SLOT(requestPolling()) );
 
-    //setup_current_url_ = new LH_Qt_QString(this,"Full Weather URL",QString("N/A"),LH_FLAG_READONLY | LH_FLAG_HIDDEN);
-    //setup_current_url_->setHelp("Internal use only: URL to the page showing the full forecast");
-
     connectionId_WOEID = NULL;
     connectionId_2Day = NULL;
     connectionId_5Day = NULL;
+
+    setup_json_weather_ = new LH_Qt_QString(this, "JSON Data", "", LH_FLAG_NOSINK | LH_FLAG_HIDDEN);
+    setup_json_weather_->setLink("@/JSON_Weather_Data");
+    setup_json_weather_->setMimeType("application/x-weather");
 
     connect(&nam2Day,  SIGNAL(finished(QNetworkReply*)), this, SLOT(finished2Day(QNetworkReply*)));
     connect(&nam5Day,  SIGNAL(finished(QNetworkReply*)), this, SLOT(finished5Day(QNetworkReply*)));
@@ -153,11 +149,6 @@ const char *LH_QtPlugin_Weather::userInit()
     updateLanguagesList();
 
     return 0;
-}
-
-LH_QtPlugin_Weather::~LH_QtPlugin_Weather()
-{
-    return ;
 }
 
 void LH_QtPlugin_Weather::fetch2Day()
@@ -326,18 +317,10 @@ void LH_QtPlugin_Weather::processResponse(QByteArray xmlData, QString name, QXml
         if(debugSaveXML)saveXMLResponse(xmlData,name);
         xmlReader.addData(xmlData);
         (this->*xmlParser)();
+        QString weatherJSON = weather_data.serialize();
+        setup_json_weather_->setValue(weatherJSON);
     }
 }
-
-//void LH_QtPlugin_Weather::openBrowser(QString key,int flags,int value)
-//{
-//    qDebug() << "Open Browser";
-//    Q_UNUSED(key);
-//    Q_UNUSED(flags);
-//    Q_UNUSED(value);
-//    if( setup_current_url_->value() !="" )
-//        QDesktopServices::openUrl( QUrl::fromUserInput(setup_current_url_->value()) );
-//}
 
 void LH_QtPlugin_Weather::saveXMLResponse(QByteArray data, QString docType)
 {

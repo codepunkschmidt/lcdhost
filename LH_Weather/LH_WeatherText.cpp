@@ -119,15 +119,13 @@ LH_WeatherText::LH_WeatherText()
     setup_post_text_->setOrder(-3);
     connect( setup_post_text_, SIGNAL(changed()), this, SLOT(updateText()) );
 
+    setup_json_weather_ = new LH_Qt_QString(this, "JSON Data", "", LH_FLAG_NOSOURCE | LH_FLAG_HIDDEN);
+    setup_json_weather_->setLink("=/JSON_Weather_Data");
+    setup_json_weather_->setMimeType("application/x-weather");
+    connect( setup_json_weather_, SIGNAL(changed()), this, SLOT(updateText()) );
+
     return;
 }
-
-int LH_WeatherText::notify(int n,void* p)
-{
-    if( !n || n&LH_NOTE_SECOND )
-        updateText();
-    return LH_Text::notify(n,p) | LH_NOTE_SECOND;
-};
 
 void LH_WeatherText::updateText()
 {
@@ -137,6 +135,10 @@ void LH_WeatherText::updateText()
 
 QString LH_WeatherText::getSelectedValueText()
 {
+    bool ok;
+    weatherData weather_data(setup_json_weather_->value(), ok);
+
+
     //return QString("%1:\r\n%2%5\r\n%3 (%4)").arg(weather_data.location.city, weather_data.condition.temp, weather_data.condition.text, weather_data.condition.code, weather_data.units.temperature);
     QString selValue = valueTypes.at( setup_value_type_->value() );
     QString valueText;

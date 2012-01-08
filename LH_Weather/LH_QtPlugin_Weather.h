@@ -57,6 +57,8 @@ class LH_QtPlugin_Weather : public LH_QtPlugin
 
     typedef void (LH_QtPlugin_Weather::*xmlParserFunc)();
 
+    weatherData weather_data;
+
     QDateTime lastrefresh_;
     static const bool get5Day = true;
 
@@ -111,10 +113,11 @@ protected:
     LH_Qt_QString *setup_language_;
     LH_Qt_bool *setup_show_all_languages_;
 
+    LH_Qt_QString *setup_json_weather_;
+
     SimpleTranslator translator;
 public:
     LH_QtPlugin_Weather();
-    ~LH_QtPlugin_Weather();
 
     const char *userInit();
     int notify(int code,void* param);

@@ -50,21 +50,16 @@ class LH_WeatherImage:public LH_QtInstance
     QString weatherCode;
     bool isNight;
 
-
 protected:
     LH_Qt_QStringList *setup_value_type_;
     LH_Qt_QFileInfo *setup_file_;
     LH_Qt_QString *setup_text_;
     LH_Qt_QTextEdit *setup_usage_;
+    LH_Qt_QString *setup_json_weather_;
 
 public:
     LH_WeatherImage();
-    ~LH_WeatherImage();
 
-    int polling();
-    int notify(int n,void* p);
-    int width( void*obj,int h );
-    int height( void*obj,int h );
     QImage *render_qimage( int w, int h );
 
     static lh_class *classInfo();

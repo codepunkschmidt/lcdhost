@@ -85,38 +85,11 @@ LH_WeatherImage::LH_WeatherImage()
 
     weatherCode = "3200";
     isNight = false;
-}
 
-LH_WeatherImage::~LH_WeatherImage()
-{
-    return;
-}
-
-int LH_WeatherImage::polling()
-{
-    return 0;
-}
-
-int LH_WeatherImage::notify(int n,void* p)
-{
-    Q_UNUSED(p);
-    if( !n || n&LH_NOTE_SECOND )
-        updateImage();
-    return LH_NOTE_SECOND;
-}
-
-int LH_WeatherImage::width( void*obj,int h )
-{
-    Q_UNUSED(obj);
-    Q_UNUSED(h);
-    return -1;
-}
-
-int LH_WeatherImage::height( void*obj,int h )
-{
-    Q_UNUSED(obj);
-    Q_UNUSED(h);
-    return -1;
+    setup_json_weather_ = new LH_Qt_QString(this, "JSON Data", "", LH_FLAG_NOSOURCE | LH_FLAG_HIDDEN);
+    setup_json_weather_->setLink("=/JSON_Weather_Data");
+    setup_json_weather_->setMimeType("application/x-weather");
+    connect( setup_json_weather_, SIGNAL(changed()), this, SLOT(updateImage()) );
 }
 
 QImage *LH_WeatherImage::render_qimage(int w, int h)
@@ -199,6 +172,8 @@ void LH_WeatherImage::fileChanged()
 
 void LH_WeatherImage::updateImage(bool rerender)
 {
+    bool ok;
+    weatherData weather_data(setup_json_weather_->value(), ok);
     bool newIsNight = (setup_value_type_->value()<=1) && weather_data.isNight;
     if (isNight!=newIsNight) rerender = true;
     isNight = newIsNight;

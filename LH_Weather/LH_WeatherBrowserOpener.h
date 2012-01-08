@@ -27,6 +27,7 @@
 
 #include "LH_QtInstance.h"
 #include "LH_Qt_InputState.h"
+#include "LH_Qt_QString.h"
 
 #include "LH_WeatherData.h"
 
@@ -36,6 +37,7 @@ class LH_WeatherBrowserOpener : public LH_QtInstance
 
 protected:
     LH_Qt_InputState *setup_browser_;
+    LH_Qt_QString *setup_json_weather_;
 
 public:
     const char *userInit();

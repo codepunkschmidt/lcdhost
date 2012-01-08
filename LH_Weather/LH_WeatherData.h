@@ -2,6 +2,9 @@
 #define LH_WEATHERDATA_H
 
 #include <QString>
+#include <QVariant>
+#include <QVariantMap>
+#include "json.h"
 
 struct locationData
 {
@@ -51,8 +54,14 @@ struct forecastData
     QString text;
     QString code;
 };
-struct weatherData
+
+class weatherData
 {
+public:
+    weatherData();
+    weatherData(QString jsonData, bool& ok);
+    QString serialize();
+
     bool isNight;
     locationData location;
     unitsData units;
@@ -64,8 +73,5 @@ struct weatherData
     forecastData forecast[5];
     QString url;
 };
-
-extern weatherData weather_data;
-
 
 #endif // LH_WEATHERDATA_H

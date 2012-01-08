@@ -312,7 +312,7 @@ public:
         mutex->lock();
         if(definition_.offsets)
         {
-            delete definition_.offsets; // TODO: should this be delete[]?
+            delete[] definition_.offsets;
             definition_.offsets = NULL;
         }
 #ifdef Q_WS_WIN

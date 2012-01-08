@@ -428,7 +428,7 @@ void LH_DataViewerConnector::mapFileChanged()
                                         parts.at(1).trimmed().section(',',0,0).toInt(),
                                         parts.at(1).trimmed().section(',',1,1).toInt(),
                                         (parts.count()<3? "" : parts.at(2)),
-                                        true,0,NULL,MEMTYPE_NONE
+                                        true,0,0,NULL,MEMTYPE_NONE
                                     });
                                 if (sourceType_ == SOURCETYPE_MEM)
                                 {
@@ -437,7 +437,7 @@ void LH_DataViewerConnector::mapFileChanged()
                                     if(memAddress.count()>1)
                                     {
                                         offsets = new uint[memAddress.count()-2];
-                                        for(int i = 0; i<=memAddress.count()-2; i++)
+                                        for(int i = 0; i<memAddress.count()-1; i++)
                                         {
                                             uint val;
                                             sscanf(memAddress.at(i+1).toAscii().data(), "%x", &val);
@@ -456,6 +456,7 @@ void LH_DataViewerConnector::mapFileChanged()
                                         (parts.count()<4? "" : parts.at(3)),
                                         true,
                                         addressVal,
+                                        memAddress.count()-1,
                                         offsets,
                                         ToMemType(parts.at(2).trimmed())
                                     });

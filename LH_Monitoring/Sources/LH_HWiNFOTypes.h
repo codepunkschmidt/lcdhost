@@ -3,12 +3,15 @@
 
 #define HWiNFO_SENSORS_MAP_FILE_NAME     "HWiNFO_SENS_SM"
 
-#define HWiNFO_MAX_SENSORS         16    // max # of sensor instances
+#define HWiNFO_MAX_SENSORS         64    // max # of sensor instances (extended in v3)
+
 #define HWiNFO_MAX_TEMPERATURES    128   // max # of temp sensor outputs per sensor
 #define HWiNFO_MAX_VOLTAGES        32    // max # of volt sensor outputs per sensor
 #define HWiNFO_MAX_FANS            16    // max # of fan sensor outputs per sensor
 #define HWiNFO_MAX_CURRENTS        16    // max # of current sensor outputs per sensor
 #define HWiNFO_MAX_POWERS          16    // max # of power sensor outputs per sensor
+#define HWiNFO_MAX_CLOCKS          16    // max # of clock sensor outputs per sensor (added in v2)
+#define HWiNFO_MAX_USAGES          32    // max # of usage sensor outputs per sensor (added in v2)
 #define HWiNFO_MAX_OTHER           32    // max # of other sensor outputs per sensor
 
 #define HWiNFO_SENSORS_STRING_LEN  128
@@ -34,15 +37,17 @@ typedef struct _HWiNFO_SENSORS_SENSOR_ENTRY {
   HWiNFO_SENSORS_READING_LIST Fans[HWiNFO_MAX_FANS];
   HWiNFO_SENSORS_READING_LIST Currents[HWiNFO_MAX_CURRENTS];
   HWiNFO_SENSORS_READING_LIST Powers[HWiNFO_MAX_POWERS];
+  HWiNFO_SENSORS_READING_LIST Clocks[HWiNFO_MAX_CLOCKS];  // added in v2
+  HWiNFO_SENSORS_READING_LIST Usages[HWiNFO_MAX_USAGES];  // added in v2
   HWiNFO_SENSORS_READING_LIST Others[HWiNFO_MAX_OTHER];
 
 } HWiNFO_SENSORS_SENSOR_ENTRY, *PHWiNFO_SENSORS_SENSOR_ENTRY;
 
 typedef struct _HWiNFO_SENSORS_SHARED_MEM_HEADER {
 
-  DWORD   dwSignature;      // "HWiS"
-  DWORD   dwVersion;        // = 1 for current
-  DWORD   dwRevision;       // = 1 for current
+    DWORD   dwSignature;      // "HWiS"
+    DWORD   dwVersion;        // v3 is latest
+    DWORD   dwRevision;       //
 
 } HWiNFO_SENSORS_SHARED_MEM_HEADER, *PHWiNFO_SENSORS_SHARED_MEM_HEADER;
 

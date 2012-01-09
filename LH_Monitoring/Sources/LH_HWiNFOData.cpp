@@ -49,7 +49,7 @@ bool LH_HWiNFOData::getData(float& value, QString& text, QString& units)
         _HWiNFO_SENSORS_SHARED_MEM* hwinfoMemory = (_HWiNFO_SENSORS_SHARED_MEM*)MapViewOfFile(filemap, FILE_MAP_READ, 0, 0, sizeof(_HWiNFO_SENSORS_SHARED_MEM));
         if (hwinfoMemory)
         {
-            if(hwinfoMemory->header.dwVersion!=1)
+            if(hwinfoMemory->header.dwVersion!=3)
             {
                 qWarning() << "LH_Monitoring: HWiNFO version is incompatible.";
                 return false;
@@ -125,6 +125,8 @@ HWiNFO_SENSORS_READING_LIST *LH_HWiNFOData::getList(HWiNFO_SENSORS_SENSOR_ENTRY 
     if(listName=="Fans") { list = hwinfoSensor.Fans; max = HWiNFO_MAX_FANS; }
     if(listName=="Currents") { list = hwinfoSensor.Currents; max = HWiNFO_MAX_CURRENTS; }
     if(listName=="Powers") { list = hwinfoSensor.Powers; max = HWiNFO_MAX_POWERS; }
+    if(listName=="Clocks") { list = hwinfoSensor.Clocks; max = HWiNFO_MAX_CLOCKS; }
+    if(listName=="Usages") { list = hwinfoSensor.Usages; max = HWiNFO_MAX_USAGES; }
     if(listName=="Other") { list = hwinfoSensor.Others; max = HWiNFO_MAX_OTHER; }
     return list;
 }
@@ -153,6 +155,8 @@ void LH_HWiNFOData::loadTypesList(_HWiNFO_SENSORS_SHARED_MEM* hwinfoMemory)
     bool hasFans = false;
     bool hasCurr = false;
     bool hasPowr = false;
+    bool hasClck = false;
+    bool hasUsge = false;
     bool hasOthr = false;
 
     while (i<HWiNFO_MAX_SENSORS)
@@ -167,6 +171,8 @@ void LH_HWiNFOData::loadTypesList(_HWiNFO_SENSORS_SHARED_MEM* hwinfoMemory)
             if(!hasFans) hasFans = QString(hwinfoSensor.Fans[0].szLabel) != "";
             if(!hasCurr) hasCurr = QString(hwinfoSensor.Currents[0].szLabel) != "";
             if(!hasPowr) hasPowr = QString(hwinfoSensor.Powers[0].szLabel) != "";
+            if(!hasClck) hasClck = QString(hwinfoSensor.Clocks[0].szLabel) != "";
+            if(!hasUsge) hasUsge = QString(hwinfoSensor.Usages[0].szLabel) != "";
             if(!hasOthr) hasOthr = QString(hwinfoSensor.Others[0].szLabel) != "";
         }
     }
@@ -175,6 +181,8 @@ void LH_HWiNFOData::loadTypesList(_HWiNFO_SENSORS_SHARED_MEM* hwinfoMemory)
     if(hasFans) ui_->append( mon_type, "Fans" );
     if(hasCurr) ui_->append( mon_type, "Currents" );
     if(hasPowr) ui_->append( mon_type, "Powers" );
+    if(hasClck) ui_->append( mon_type, "Clocks" );
+    if(hasUsge) ui_->append( mon_type, "Usages" );
     if(hasOthr) ui_->append( mon_type, "Other" );
 
     ui_->refresh(mon_type);

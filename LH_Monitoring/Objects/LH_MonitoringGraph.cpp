@@ -49,7 +49,7 @@ const char *LH_MonitoringGraph::userInit()
     ui_ = new LH_MonitoringUI(this, mdmNumbers, true);
 
     setUserDefinableLimits(true);
-    canGrow(true);
+    //canGrow(true);
 
     setup_auto_scale_y_max_->setValue(true);
     setup_auto_scale_y_min_->setValue(true);
@@ -131,7 +131,7 @@ QImage *LH_MonitoringGraph::render_qimage( int w, int h )
 
 void LH_MonitoringGraph::clearData()
 {
-    clear();
+    clear(0, 1, canGrow());
     updateUnits();
     callback(lh_cb_render,NULL);
 }

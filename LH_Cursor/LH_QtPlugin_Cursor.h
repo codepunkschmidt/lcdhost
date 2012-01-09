@@ -35,8 +35,6 @@
 #include <QList>
 #include <QTime>
 
-#define VERSION 2.10
-
 #define MAX_KEYS 4
 
 class LH_QtPlugin_Cursor: public LH_QtPlugin

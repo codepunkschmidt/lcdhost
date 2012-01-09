@@ -66,7 +66,12 @@ public:
 
     int notify(int n, void *p)
     {
-        if(!n || n&LH_NOTE_SECOND)
+        if(n&LH_NOTE_CPU)
+        {
+            valCache+=cpu_.averageload()/100;
+            valCount+=1;
+        }
+        if(n&LH_NOTE_SECOND)
         {
             if (valCount!=0) {
                 lastVal = valCache/valCount;
@@ -74,9 +79,6 @@ public:
             }
             valCache = 0;
             valCount = 0;
-        } else {
-            valCache+=cpu_.averageload()/100;
-            valCount+=1;
         }
         return LH_Graph::notify(n,p) | cpu_.notify(n,p) | LH_NOTE_SECOND;
     }

@@ -465,6 +465,7 @@ void LH_CursorController::changeMode()
     setup_select_->setFlag(LH_FLAG_HIDDEN, cursorModes[setup_mode_->value()].select==smNone);
     setup_reselect_->setFlag(LH_FLAG_HIDDEN, cursorModes[setup_mode_->value()].select!=smSelectDeselect);
     setup_activate_->setFlag(LH_FLAG_HIDDEN, !cursorModes[setup_mode_->value()].activate);
+    updateLocation(0,0);
 }
 
 void LH_CursorController::changeBounds()

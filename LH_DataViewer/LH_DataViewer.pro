@@ -3,7 +3,7 @@ TEMPLATE = lib
 QT += network \
     xml
 DEFINES += LH_DATAVIEWER_LIBRARY
-DEFINES += VERSION=1.04
+DEFINES += VERSION=1.05
 
 win32:LIBS += -L"C:/Program Files/Microsoft SDKs/Windows/v7.0/Lib" -lversion
 
@@ -23,7 +23,8 @@ SOURCES += \
     LH_DataViewerBar.cpp \
     LH_DataViewerExpiredImage.cpp \
     LH_DataViewerData.cpp \
-    LH_DataViewerDial.cpp
+    LH_DataViewerDial.cpp \
+    LH_DataViewerDataTypes.cpp
 
 HEADERS += \
     $$PLUGIN_HEADERS \

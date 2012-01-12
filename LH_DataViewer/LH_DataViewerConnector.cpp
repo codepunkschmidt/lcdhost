@@ -166,9 +166,8 @@ void LH_DataViewerConnector::populateValues(dataNode* node, QStringList sourceLi
 
 QString LH_DataViewerConnector::getTextValue(QStringList lines, itemDefinition def)
 {
-    if (lines.count()<=def.y)
-        return "";
-    else {
+    if (def.y<lines.count())
+    {
         QString dataLine = lines[def.y];
         QStringList dataItems;
         if (isDelimited_)
@@ -176,11 +175,13 @@ QString LH_DataViewerConnector::getTextValue(QStringList lines, itemDefinition d
         else
             dataItems = splitByWidth(dataLine, columnWidth_);
 
-        if (dataItems.count()<=def.x)
-            return "";
-        else
+        if (def.x<dataItems.count())
             return formatData(dataItems[def.x].trimmed(), def.formatting);
+        else
+            return "";
     }
+    else
+        return "";
 }
 
 QString LH_DataViewerConnector::formatData(QString data, QString formatting)
@@ -289,6 +290,10 @@ MemoryDataType LH_DataViewerConnector::ToMemType(QString s)
         return MEMTYPE_FLOAT;
     if(s.contains(QRegExp("^\\s*(Double)\\s*$",Qt::CaseInsensitive)))
         return MEMTYPE_DOUBLE;
+    if(s.contains(QRegExp("^\\s*(Text([-_]?\\s*U(ni(code)?)?)?)\\s*$",Qt::CaseInsensitive)))
+        return MEMTYPE_TEXT_UNICODE;
+    if(s.contains(QRegExp("^\\s*(Text([-_]?\\s*A(sc(ii)?)?)?)\\s*$",Qt::CaseInsensitive)))
+        return MEMTYPE_TEXT_ASCII;
     qWarning() << QString("LH_DataViewer: \"%1\" is not recognised as a data type").arg(s);
     return MEMTYPE_NONE;
 }
@@ -332,7 +337,7 @@ void LH_DataViewerConnector::mapFileChanged()
 
             foreach (QString item, items)
             {
-                QString removedPart = item.right(item.length() - item.indexOf(rx)).trimmed();
+                QString removedPart = item.right(item.length() - item.remove(rx).trimmed().length() - 1);
                 item = item.remove(rx).trimmed();
                 if (item!="")
                 {
@@ -356,7 +361,10 @@ void LH_DataViewerConnector::mapFileChanged()
                         {
                             segmentName = QString(segment).replace(QRegExp("\\[definition:(.*)\\]") , "\\1" );
                             currentNode = currentNode->parentNode();
-                            segment = QString("[definition:%1]").arg(currentNode->name());
+                            if(currentNode->name()=="")
+                                segment="";
+                            else
+                                segment = QString("[definition:%1]").arg(currentNode->name());
                         }
                     } else
                     if(segment=="[format]")
@@ -428,25 +436,21 @@ void LH_DataViewerConnector::mapFileChanged()
                                         parts.at(1).trimmed().section(',',0,0).toInt(),
                                         parts.at(1).trimmed().section(',',1,1).toInt(),
                                         (parts.count()<3? "" : parts.at(2)),
-                                        true,0,0,NULL,MEMTYPE_NONE
+                                        true,"",QList<uint>(),MEMTYPE_NONE
                                     });
                                 if (sourceType_ == SOURCETYPE_MEM)
                                 {
                                     QStringList memAddress = parts.at(1).trimmed().split('>',QString::SkipEmptyParts);
-                                    uint *offsets = NULL;
+                                    QList<uint> offsets;
                                     if(memAddress.count()>1)
                                     {
-                                        offsets = new uint[memAddress.count()-2];
                                         for(int i = 0; i<memAddress.count()-1; i++)
                                         {
                                             uint val;
                                             sscanf(memAddress.at(i+1).toAscii().data(), "%x", &val);
-                                            offsets[i] = val;
+                                            offsets.append(val);
                                         }
                                     }
-
-                                    uint addressVal;
-                                    sscanf(memAddress.at(0).toAscii().data(), "%x", &addressVal);
 
                                     currentNode->addChild( (itemDefinition){
                                         parts.at(0).trimmed(),
@@ -455,8 +459,7 @@ void LH_DataViewerConnector::mapFileChanged()
                                         0,
                                         (parts.count()<4? "" : parts.at(3)),
                                         true,
-                                        addressVal,
-                                        memAddress.count()-1,
+                                        memAddress.at(0),
                                         offsets,
                                         ToMemType(parts.at(2).trimmed())
                                     });
@@ -881,11 +884,12 @@ bool LH_DataViewerConnector::readMemoryValues()
     }
     else
     {
-        setup_feedback_->setValue( feedbackMessage );
+        if(feedbackMessage!="")
+            setup_feedback_->setValue( feedbackMessage );
         if(needsClearing_)
         {
             rootNode->clearValues();
-            sharedData->expiresAt = QDateTime::currentDateTime().addSecs(1).toString("yyyyMMddHHmmss.zzz");
+            sharedData->expiresAt = QDateTime::currentDateTime().addSecs(5).toString("yyyyMMddHHmmss.zzz");
             sharedData->valid = true;
             needsClearing_ = false;
         }

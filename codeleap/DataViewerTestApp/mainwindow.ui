@@ -89,7 +89,7 @@
     <property name="geometry">
      <rect>
       <x>260</x>
-      <y>150</y>
+      <y>110</y>
       <width>110</width>
       <height>23</height>
      </rect>
@@ -102,7 +102,7 @@
     <property name="geometry">
      <rect>
       <x>380</x>
-      <y>150</y>
+      <y>110</y>
       <width>110</width>
       <height>23</height>
      </rect>
@@ -111,10 +111,60 @@
      <string>Take Damage</string>
     </property>
    </widget>
+   <widget class="QPushButton" name="changeName">
+    <property name="geometry">
+     <rect>
+      <x>380</x>
+      <y>160</y>
+      <width>111</width>
+      <height>23</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Change Name</string>
+    </property>
+   </widget>
+   <widget class="QLineEdit" name="lineEdit">
+    <property name="geometry">
+     <rect>
+      <x>260</x>
+      <y>140</y>
+      <width>231</width>
+      <height>20</height>
+     </rect>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="changeRace">
+    <property name="geometry">
+     <rect>
+      <x>380</x>
+      <y>220</y>
+      <width>111</width>
+      <height>23</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Change Race</string>
+    </property>
+   </widget>
+   <widget class="QComboBox" name="racesList">
+    <property name="geometry">
+     <rect>
+      <x>260</x>
+      <y>190</y>
+      <width>231</width>
+      <height>22</height>
+     </rect>
+    </property>
+   </widget>
    <zorder>frame</zorder>
    <zorder>textEdit</zorder>
    <zorder>castButton</zorder>
    <zorder>damageButton</zorder>
+   <zorder>changeName</zorder>
+   <zorder>lineEdit</zorder>
+   <zorder>changeRace</zorder>
+   <zorder>racesList</zorder>
   </widget>
   <widget class="QMenuBar" name="menuBar">
    <property name="geometry">

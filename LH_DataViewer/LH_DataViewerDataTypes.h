@@ -34,6 +34,7 @@ struct itemDefinition
     QString formatting;
     bool hasData;
     uint memory;
+    int offsetCount;
     uint *offsets;
     MemoryDataType memoryDataType;
 };
@@ -101,7 +102,7 @@ class dataNode
     HANDLE processHandle_;
     DWORD processID_;
 
-    bool getProcessValue(uint address, uint offsets[], void *dest, SIZE_T len)
+    bool getProcessValue(uint address, int offsetCount, uint* offsets, void *dest, SIZE_T len)
     {
         SIZE_T r;
         HANDLE hProcess = processHandle(); //get the handle from the root node
@@ -111,10 +112,10 @@ class dataNode
         {
             if(offsets)
             {
-                int offsetCount = sizeof(offsets)/sizeof(uint);
+                //int offsetCount = sizeof(offsets)/sizeof(uint);
                 for(int i = 0; i<offsetCount; i++)
                 {
-                    if(!getProcessValue(address, NULL, &address, 4))
+                    if(!getProcessValue(address, 0, NULL, &address, 4))
                        return false;
                     address += offsets[i];
                 }
@@ -135,22 +136,22 @@ class dataNode
         switch(definition_.memoryDataType)
         {
         case MEMTYPE_4BYTE:
-            ok = getProcessValue(definition_.memory, definition_.offsets, &val_int, 4);
+            ok = getProcessValue(definition_.memory, definition_.offsetCount, definition_.offsets, &val_int, 4);
             if(ok)
                 return QString::number(val_int);
             break;
         case MEMTYPE_8BYTE:
-            ok = getProcessValue(definition_.memory, definition_.offsets, &val_lng, 8);
+            ok = getProcessValue(definition_.memory, definition_.offsetCount, definition_.offsets, &val_lng, 8);
             if(ok)
                 return QString::number(val_lng);
             break;
         case MEMTYPE_FLOAT:
-            ok = getProcessValue(definition_.memory, definition_.offsets, &val_flt, 4);
+            ok = getProcessValue(definition_.memory, definition_.offsetCount, definition_.offsets, &val_flt, 4);
             if(ok)
                 return QString::number(val_flt);
             break;
         case MEMTYPE_DOUBLE:
-            ok = getProcessValue(definition_.memory, definition_.offsets, &val_dbl, 8);
+            ok = getProcessValue(definition_.memory, definition_.offsetCount, definition_.offsets, &val_dbl, 8);
             if(ok)
                 return QString::number(val_dbl);
             break;
@@ -296,7 +297,7 @@ public:
         cursorPositions_.clear();
     }
 
-    dataNode(dataNode* parentNode = 0, itemDefinition def = (itemDefinition){"","",-1,-1,"",false,0,NULL,MEMTYPE_NONE }, QString nodeValue = "" )
+    dataNode(dataNode* parentNode = 0, itemDefinition def = (itemDefinition){"","",-1,-1,"",false,0,0,NULL,MEMTYPE_NONE }, QString nodeValue = "" )
     {
         mutex = new QMutex(QMutex::Recursive);
         value_ = nodeValue;
@@ -311,7 +312,7 @@ public:
         mutex->lock();
         if(definition_.offsets)
         {
-            delete definition_.offsets; // TODO: should this be delete[]?
+            delete[] definition_.offsets;
             definition_.offsets = NULL;
         }
 #ifdef Q_WS_WIN
@@ -349,7 +350,7 @@ public:
     }
     dataNode* addChild(QString name, QString val = "")
     {
-        return addChild((itemDefinition){name,"",-1,-1,"",false,0,NULL,MEMTYPE_NONE}, val);
+        return addChild((itemDefinition){name,"",-1,-1,"",false,0,0,NULL,MEMTYPE_NONE}, val);
     }
     dataNode* addChild(itemDefinition def, QString val = "")
     {
@@ -391,7 +392,7 @@ public:
             cursorPositions_.insert(name,0);
 
         if(cursorPositions_[name] >= childNodes_[name].count())
-            childNodes_[name].append(new dataNode(this,(itemDefinition){name,"",-1,-1,"",false,0,NULL,MEMTYPE_NONE}, val));
+            childNodes_[name].append(new dataNode(this,(itemDefinition){name,"",-1,-1,"",false,0,0,NULL,MEMTYPE_NONE}, val));
         else
             childNodes_[name][cursorPositions_[name]]->setValue(val);
 

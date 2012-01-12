@@ -25,7 +25,7 @@ protected:
 public:
     LH_HWiNFOData( LH_QtObject *parent, LH_MonitoringUI *ui, monitoringDataMode dataMode = mdmNumbers, bool includeGroups = false );
 
-    QString appName() { return "GPU-Z"; }
+    QString appName() { return "HWiNFO"; }
     monitoringDataType getType();
     QString getText(bool addUnits, bool round);
 };

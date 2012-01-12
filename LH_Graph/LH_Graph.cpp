@@ -185,26 +185,6 @@ LH_Graph::LH_Graph( float defaultMin, float defaultMax )
     return;
 }
 
-LH_Graph::~LH_Graph()
-{
-    if (isDebug) qDebug() << "graph: destroy: begin";
-
-    disconnect( setup_fg_type_, SIGNAL(changed()) );
-    disconnect( setup_max_samples_, SIGNAL(changed()) );
-    disconnect( setup_sample_rate_, SIGNAL(changed()) );
-    disconnect( setup_line_selection_, SIGNAL(changed()) );
-    disconnect( setup_pencolor_, SIGNAL(changed()) );
-    disconnect( setup_fillcolor1_, SIGNAL(changed()) );
-    disconnect( setup_fillcolor2_, SIGNAL(changed()) );
-    disconnect( setup_fg_image_, SIGNAL(changed()) );
-    disconnect( setup_fg_alpha_, SIGNAL(changed()) );
-    disconnect( setup_show_y_max_, SIGNAL(changed()) );
-    disconnect( setup_show_y_min_, SIGNAL(changed()) );
-    disconnect( setup_show_real_limits_, SIGNAL(changed()) );
-    disconnect( setup_max_grow_, SIGNAL(changed()) );
-    if (isDebug) qDebug() << "graph: destroy: done";
-}
-
 qreal LH_Graph::max()
 {
     if (setup_min_->value() < setup_max_->value())

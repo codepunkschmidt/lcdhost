@@ -49,7 +49,7 @@ const char *LH_MonitoringGraph::userInit()
     ui_ = new LH_MonitoringUI(this, mdmNumbers, true);
 
     setUserDefinableLimits(true);
-    canGrow(true);
+    //canGrow(true);
 
     setup_auto_scale_y_max_->setValue(true);
     setup_auto_scale_y_min_->setValue(true);
@@ -65,6 +65,13 @@ const char *LH_MonitoringGraph::userInit()
 
     was_empty_ = true;
 
+    connect(this, SIGNAL(initialized()), SLOT(doInitialize()) );
+
+    return 0;
+}
+
+void LH_MonitoringGraph::doInitialize()
+{
     connect(ui_, SIGNAL(appChanged()), this, SLOT(configChanged()) );
     connect(ui_, SIGNAL(typeChanged()), this, SLOT(configChanged()) );
     connect(ui_, SIGNAL(groupChanged()), this, SLOT(configChanged()) );
@@ -73,7 +80,11 @@ const char *LH_MonitoringGraph::userInit()
 
     connect(ui_->setup_unit_selection_, SIGNAL(changed()), SLOT(clearData()) );
 
-    return 0;
+    if(canGrow())
+        clear(min(), min()+1, canGrow());
+    else
+        clear(min(), max(), canGrow());
+    updateUnits();
 }
 
 int LH_MonitoringGraph::notify(int n, void *p)
@@ -129,9 +140,14 @@ QImage *LH_MonitoringGraph::render_qimage( int w, int h )
     return image_;
 }
 
+void LH_MonitoringGraph::configChanged()  {
+    clearData();
+    updateUnits();
+}
+
 void LH_MonitoringGraph::clearData()
 {
-    clear();
+    clear(min(), max(), canGrow());
     updateUnits();
     callback(lh_cb_render,NULL);
 }

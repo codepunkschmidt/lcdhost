@@ -48,28 +48,17 @@ public:
     //  lh_type_string_button
     
     LH_Qt_QString( LH_QtObject *parent, QString name, QString value, int flags = 0, lh_setup_type subtype = lh_type_string )
-        : LH_QtSetupItem( parent, name, subtype, flags ), str_(value), array_(value.toUtf8())
+        : LH_QtSetupItem( parent, name, subtype, flags ),
+          str_(value),
+          array_(value.toUtf8())
     {
         item_.param.size = array_.capacity();
         item_.data.s = array_.data();
         return;
     }
 
-    virtual void setup_resize( size_t needed )
-    {
-        array_.resize(needed);
-        item_.param.size = array_.capacity();
-        item_.data.s = array_.data();
-        return;
-    }
-
-    virtual void setup_change()
-    {
-        str_ = QString::fromUtf8( item_.data.s );
-        emit change( str_ );
-        LH_QtSetupItem::setup_change();
-        return;
-    }
+    virtual void setup_resize( size_t needed );
+    virtual void setup_change();
 
     virtual void setup_input( int flags, int value )
     {
@@ -81,18 +70,7 @@ public:
         return str_;
     }
 
-    void setValue(const QString &s)
-    {
-        if( s != str_ )
-        {
-            str_ = s;
-            array_ = str_.toUtf8();
-            item_.param.size = array_.capacity();
-            item_.data.s = array_.data();
-            refresh();
-            emit set();
-        }
-    }
+    void setValue(const QString &s);
 };
 
 #endif // LH_QT_QSTRING_H

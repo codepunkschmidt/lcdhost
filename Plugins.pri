@@ -53,14 +53,16 @@ PLUGIN_SOURCES = \
     $$QTSUPPORT/LH_QtObject.cpp \
     $$QTSUPPORT/LH_QtPlugin.cpp \
     $$QTSUPPORT/LH_QtInstance.cpp \
-    $$QTSUPPORT/LH_QtSetupItem.cpp
+    $$QTSUPPORT/LH_QtSetupItem.cpp \
+    $$QTSUPPORT/LH_Qt_QString.cpp
 
 PLUGIN_HEADERS += \
     $$LINKDATA/lh_plugin.h \
     $$QTSUPPORT/LH_QtObject.h \
     $$QTSUPPORT/LH_QtPlugin.h \
     $$QTSUPPORT/LH_QtInstance.h \
-    $$QTSUPPORT/LH_QtSetupItem.h
+    $$QTSUPPORT/LH_QtSetupItem.h \
+    $$QTSUPPORT/LH_Qt_QString.h
 
 load($$PWD/PluginsConfig.prf)
 

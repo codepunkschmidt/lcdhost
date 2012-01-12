@@ -78,7 +78,8 @@ char __lcdhostplugin_xml[] =
 //------------------------------------------------------------------------------------------------------------------
 
 
-LH_QtPlugin_Weather::LH_QtPlugin_Weather() : translator("Weather", this), weather_data(){}
+LH_QtPlugin_Weather::LH_QtPlugin_Weather() : weather_data(), translator("Weather", this)
+{}
 
 const char *LH_QtPlugin_Weather::userInit()
 {

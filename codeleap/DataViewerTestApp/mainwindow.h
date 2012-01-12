@@ -43,9 +43,9 @@ struct fltAttribute
 
 class character
 {
-
+    char* charName;
+    char* charRace;
 public:
-    QString name;
     intAttribute strength;
     intAttribute dexterity;
     intAttribute willpower;
@@ -55,6 +55,47 @@ public:
     fltAttribute health;
     fltAttribute mana;
     qlonglong gold;
+
+
+    character()
+    {
+        charName = 0;
+        charRace = 0;
+    }
+
+    void setName( QString n)
+    {
+        int len = n.length();
+        if(charName)
+            delete[] charName;
+        charName = new char[len+1];
+        for(int i=0; i<len; i++)
+            charName[i] = n.toUtf8().at(i);
+        charName[len] = '\0';
+    }
+    QString name()
+    {
+        QString nameVal = QString::fromUtf8(charName);
+        int p = nameVal.indexOf(QChar('\0'), Qt::CaseInsensitive);
+        return nameVal.left(p-1);
+    }
+
+    void setRace( QString n)
+    {
+        int len = n.length();
+        if(charRace)
+            delete[] charRace;
+        charRace = new char[len+1];
+        for(int i=0; i<len; i++)
+            charRace[i] = n.toAscii().at(i);
+        charRace[len] = '\0';
+    }
+    QString race()
+    {
+        QString raceVal = QString::fromAscii(charRace);
+        int p = raceVal.indexOf(QChar('\0'), Qt::CaseInsensitive);
+        return raceVal.left(p-1);
+    }
 
     void resetAllStats()
     {
@@ -178,6 +219,8 @@ public slots:
     void drinkSelectedPotion();
     void castSpell();
     void damagePlayer();
+    void changeName();
+    void changeRace();
 };
 
 #endif // MAINWINDOW_H

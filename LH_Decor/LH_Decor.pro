@@ -8,7 +8,8 @@ SOURCES += \
     $$PLUGIN_SOURCES \
     LH_QtPlugin_Decor.cpp \
     LH_Rectangle.cpp \
-    LH_Background.cpp
+    LH_Background.cpp \
+    LH_RectangleStatic.cpp
 
 HEADERS += \
     $$PLUGIN_HEADERS \

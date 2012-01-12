@@ -39,24 +39,6 @@
 
 #include "LH_Rectangle.h"
 
-LH_PLUGIN_CLASS(LH_Rectangle)
-
-lh_class *LH_Rectangle::classInfo()
-{
-    static lh_class classInfo =
-    {
-        sizeof(lh_class),
-        "Static",
-        "StaticRectangle",
-        "Rounded rectangle",
-        48,48,
-        lh_object_calltable_NULL,
-        lh_instance_calltable_NULL
-    };
-
-    return &classInfo;
-}
-
 LH_Rectangle::LH_Rectangle()
 {
     setup_penwidth_ = new LH_Qt_QSlider(this,tr("Pen width"),0,0,1000,LH_FLAG_AUTORENDER);

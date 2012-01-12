@@ -23,6 +23,7 @@
  **/
 
 #include "LH_QtPlugin_Cursor.h"
+#include <QDebug>
 
 LH_PLUGIN(LH_QtPlugin_Cursor)
 
@@ -56,3 +57,81 @@ char __lcdhostplugin_xml[] =
 "</longdesc>"
 "</lcdhostplugin>";
 
+//LH_QtPlugin_Cursor::LH_QtPlugin_Cursor() : setup_keys_(){}
+
+const char *LH_QtPlugin_Cursor::userInit() {
+    keyDelay.start();
+
+    setup_enable_favourite_shortcut_ = new LH_Qt_bool(this, "^Enable Favourite Layout Shortcut", false, LH_FLAG_NOSINK | LH_FLAG_NOSOURCE);
+    setup_enable_favourite_shortcut_->setHelp("Enabling this box will allow you to assign a series of key presses that will always load a certain layout, e.g. a menu layout.");
+
+    setup_favourite_layout_ = new LH_Qt_QFileInfo(this, "Favourite Layout", QFileInfo(), LH_FLAG_NOSINK | LH_FLAG_NOSOURCE | LH_FLAG_READONLY);
+    setup_favourite_layout_->setHelp("This is the layout the key sequence will load");
+
+    setup_key_presses_ = new LH_Qt_int (this, "Key Presses", 2, 1, MAX_KEYS, LH_FLAG_NOSINK | LH_FLAG_NOSOURCE | LH_FLAG_READONLY);
+    setup_key_presses_->setHelp("How many key presses the sequence contains.");
+
+    setup_key_press_timout_ = new LH_Qt_QSlider(this, "Press Delay", 250, 50, 1000, LH_FLAG_NOSINK | LH_FLAG_NOSOURCE | LH_FLAG_READONLY);
+    setup_key_press_timout_->setHelp("The maximum delay between key presses to trigger the sequence.");
+
+    for(int i=1; i<=MAX_KEYS; i++)
+    {
+        setup_keys_.append(new LH_Qt_InputState(this,QString("Key #%1").arg(i),"",LH_FLAG_NOSINK | LH_FLAG_NOSOURCE | LH_FLAG_READONLY | (i<=setup_key_presses_->value()? 0 : LH_FLAG_HIDDEN)));
+        connect(setup_keys_.at(i-1), SIGNAL(input(QString,int,int)), this, SLOT(keyPressed(QString,int,int)));
+    }
+
+    connect(setup_enable_favourite_shortcut_, SIGNAL(changed()), this, SLOT(enableFavouriteShortcut()));
+    connect(setup_key_presses_, SIGNAL(changed()), this, SLOT(changeKeyPresses()));
+
+    return 0;
+}
+
+void LH_QtPlugin_Cursor::enableFavouriteShortcut()
+{
+    bool enabled = setup_enable_favourite_shortcut_->value();
+    setup_favourite_layout_->setReadonly(!enabled);
+    setup_key_presses_->setReadonly(!enabled);
+    setup_key_press_timout_->setReadonly(!enabled);
+    for(int i=1; i<=MAX_KEYS; i++)
+        setup_keys_.at(i-1)->setReadonly(!enabled);
+}
+
+void LH_QtPlugin_Cursor::changeKeyPresses()
+{
+    for(int i=1; i<=MAX_KEYS; i++)
+        setup_keys_.at(i-1)->setVisible(i<=setup_key_presses_->value());
+}
+
+
+void LH_QtPlugin_Cursor::keyPressed(QString key,int flags,int value)
+{
+    Q_UNUSED(flags);
+    Q_UNUSED(value);
+    if( !setup_enable_favourite_shortcut_->value() )
+        return;
+    if(keyDelay.elapsed() < 25)
+        return;
+    bool ok;
+    int keyID = ((LH_Qt_InputState*)QObject::sender())->objectName().remove("Key #").toInt(&ok);
+    if(!ok)
+        return;
+    if(keyDelay.elapsed() > setup_key_press_timout_->value())
+        favourite_combo_step_ = 0;
+    if(favourite_combo_step_ == keyID-1)
+    {
+        qDebug() << keyID << ":" << key;
+        favourite_combo_step_ = keyID;
+        if(favourite_combo_step_ == setup_key_presses_->value())
+        {
+            favourite_combo_step_ = 0;
+            if(setup_favourite_layout_->value().isFile())
+            {
+                static QByteArray ary;
+                ary = setup_favourite_layout_->value().absoluteFilePath().toUtf8();
+                callback(lh_cb_load_layout, ary.data() );
+            }
+        }
+        else
+            keyDelay.restart();
+    }
+}

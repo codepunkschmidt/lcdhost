@@ -3,6 +3,7 @@ TEMPLATE = lib
 QT += network \
     xml
 DEFINES += LH_CURSOR_LIBRARY
+DEFINES += VERSION=2.10
 CONFIG += cf json
 
 include(../Plugins.pri)

@@ -3,6 +3,7 @@ TEMPLATE = lib
 DEFINES += LH_MONITORING_LIBRARY
 DEFINES += COMMON_OBJECT_NAME="Monitoring"
 DEFINES += "MONITORING_FOLDER=\"3rdParty/System Monitoring\""
+DEFINES += VERSION=2.11
 QT += xml
 CONFIG += cf
 
@@ -77,3 +78,6 @@ SOURCES += \
     Sources/LH_MonitoringUI.cpp \
     Sources/LH_HWMonData.cpp \
     Sources/LH_HWiNFOData.cpp
+
+RESOURCES += \
+    LH_Monitoring.qrc

@@ -71,6 +71,7 @@ bool LH_DriveStatsData::getData(float& value, QString& text, QString& units)
         if(dataMode_ & mdmPie) ui_->append(mon_item, "Disk Space");
 
         ui_->refresh(mon_item);
+        ui_->changeItemSelection();
     }
     else
         driveInfo.update();

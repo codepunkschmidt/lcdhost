@@ -43,9 +43,9 @@
 class tickObject
 {
 public:
-    tickObject(int _count, int _width, float _length, float _gap, QColor _color = Qt::black)
+    tickObject(int _count, int _width, float _length, float _gap)//, QColor _color = Qt::black)
     {
-        color = _color;
+        //color = _color;
         width = _width;
         count = _count;
         length = _length;
@@ -54,7 +54,7 @@ public:
 
     int count;
     int width;
-    QColor color;
+    //QColor color;
     float gap;
     float length;
 };
@@ -151,6 +151,7 @@ protected:
     LH_Qt_QColor *setup_face_fillcolor2_;
     LH_Qt_QFileInfo* setup_face_image_;
     LH_Qt_bool *setup_face_ticks_;
+    LH_Qt_QColor *setup_face_tickcolor_;
 
     LH_Qt_QStringList *setup_needle_selection_;
 
@@ -226,6 +227,7 @@ public:
 public slots:
     void changeType();
     void changeFaceStyle();
+    void changeTicks();
     void changeNeedleStyle();
     void changeUnusedStyle();
     void changeSelectedNeedle();

@@ -74,7 +74,7 @@ const char *LH_Dial::userInit()
     setup_face_style_->setHelp( "<p>How the face of the dial should be drawn - if at all.</p>");
 
     setup_face_pencolor_ = new LH_Qt_QColor(this,"Pen color",Qt::black,LH_FLAG_AUTORENDER);
-    setup_face_pencolor_->setHelp( "<p>The colour used for any lines on the face (i.e. outline & ticks).</p>");
+    setup_face_pencolor_->setHelp( "<p>The colour used for the face's outline.</p>");
 
     setup_face_fillcolor1_ = new LH_Qt_QColor(this,"Fill color (start)",Qt::white,LH_FLAG_AUTORENDER);
     setup_face_fillcolor1_->setHelp( "<p>The color used to fill dial's face at the top</p>");
@@ -87,6 +87,10 @@ const char *LH_Dial::userInit()
 
     setup_face_ticks_ = new LH_Qt_bool(this,"Show Ticks",false,LH_FLAG_AUTORENDER);
     setup_face_ticks_->setHelp( "<p>Whether to overlay marks denoting significant points along the dial.</p>");
+    connect( setup_face_ticks_, SIGNAL(changed()), this, SLOT(changeTicks()));
+
+    setup_face_tickcolor_ = new LH_Qt_QColor(this,"Tick color",Qt::black,LH_FLAG_AUTORENDER | LH_FLAG_HIDDEN);
+    setup_face_tickcolor_->setHelp( "<p>The colour used for the tick marks.</p>");
 
     connect( setup_face_style_, SIGNAL(changed()), this, SLOT(changeFaceStyle()));
 
@@ -305,7 +309,7 @@ QImage LH_Dial::getFace()
         faceCode = QString("%1;%2;").arg(colString(setup_face_fillcolor1_->value())).arg(colString(setup_face_fillcolor2_->value()));
     case 1: // Line
         faceCode = QString("%1,%2;%3,%4;").arg(w).arg(h).arg(maxDegrees()).arg(startDegrees()) + faceCode;
-        faceCode += QString("%1;%2;%3").arg(colString(setup_bgcolor_->value())).arg(colString(setup_face_pencolor_->value())).arg(setup_face_ticks_->value());
+        faceCode += QString("%1;%2;%3;%4;").arg(colString(setup_bgcolor_->value())).arg(colString(setup_face_pencolor_->value())).arg(setup_face_ticks_->value()).arg(colString(setup_face_tickcolor_->value()));
         break;
     case 3: //Image
         faceCode = QString("%1,%2;%3").arg(w).arg(h).arg(setup_face_image_->value().absoluteFilePath());
@@ -426,7 +430,7 @@ QImage LH_Dial::getFace()
                             int m = (setup_type_->value() == 0? 1 : 0); // fix for full circle having an overlapping last/first tick
                             for(int i=0; i<tick.count+m; i++)
                             {
-                                QPen pen = QPen(tick.color);
+                                QPen pen = QPen(setup_face_tickcolor_->value());
                                 pen.setWidth(tick.width);
                                 paintLine(painter, pen, startDegrees(), maxDegrees() / (tick.count+m-1) * i, tick.length, tick.gap );
                             }
@@ -814,14 +818,14 @@ QImage LH_Dial::getSlice(int sliceID, qreal degrees, qreal offsetAngle, int& sli
 
 void LH_Dial::paintLine(QPainter& painter, QPen& pen, qreal startAngle, qreal angle, qreal relLength, qreal gap)
 {
-    float x1; float y1; float radW; float radH; float radians;
-    getRotationData(startAngle, angle, x1, y1, radW, radH, radians);
+    float centerX; float centerY; float radW; float radH; float radians;
+    getRotationData(startAngle, angle, centerX, centerY, radH, radW, radians);
 
-    int x2 = (qSin(radians) * (gap+relLength) * radW) + x1;
-    int y2 = (qCos(radians) * (gap+relLength) * radH) + y1;
+    int x1 = centerX - (qSin(radians) * radW * gap);
+    int x2 = centerX - (qSin(radians) * radW * (gap+relLength));
 
-    x1 = (qSin(radians) * gap * radW) + x1;
-    y1 = (qCos(radians) * gap * radH) + y1;
+    int y1 = centerY + (qCos(radians) * radH * gap);
+    int y2 = centerY + (qCos(radians) * radH * (gap+relLength));
 
     painter.setPen(pen);
     painter.drawLine(x1,y1,x2,y2);
@@ -1102,7 +1106,13 @@ void LH_Dial::changeFaceStyle()
     setup_face_fillcolor1_->setFlag(LH_FLAG_HIDDEN, setup_face_style_->value()!=2);
     setup_face_fillcolor2_->setFlag(LH_FLAG_HIDDEN, setup_face_style_->value()!=2);
     setup_face_ticks_->setFlag(LH_FLAG_HIDDEN, setup_face_style_->value()==0 || setup_face_style_->value()==3);
+    setup_face_tickcolor_->setFlag(LH_FLAG_HIDDEN, setup_face_style_->value()==0 || setup_face_style_->value()==3 || !setup_face_ticks_->value());
     setup_face_image_->setFlag(LH_FLAG_HIDDEN, setup_face_style_->value()!=3);
+}
+
+void LH_Dial::changeTicks()
+{
+    setup_face_tickcolor_->setFlag(LH_FLAG_HIDDEN, setup_face_style_->value()==0 || setup_face_style_->value()==3 || !setup_face_ticks_->value());
 }
 
 void LH_Dial::changeNeedleStyle()

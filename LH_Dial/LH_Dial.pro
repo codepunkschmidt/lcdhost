@@ -2,7 +2,7 @@ TARGET = LH_Dial
 TEMPLATE = lib
 CONFIG += systemstats
 DEFINES += LH_DIAL_LIBRARY
-DEFINES += VERSION=1.04
+DEFINES += VERSION=1.05
 
 include(../Plugins.pri)
 

@@ -40,6 +40,7 @@
 
 #include "LH_QtPlugin.h"
 #include "LH_Qt_QString.h"
+#include "LH_Qt_int.h"
 #include "LH_Qt_InputState.h"
 #include "LH_Qt_bool.h"
 #include "Player.h"
@@ -55,6 +56,7 @@
 #include <QTime>
 #include <QTimer>
 #include <QDebug>
+#include <QStringList>
 
 
 extern CPlayer* player;
@@ -85,6 +87,8 @@ class LH_QtPlugin_NowPlaying : public LH_QtPlugin
 #endif
     HWND hWnd_iTunes_warn_cache_;
     HWND hWnd_Foobar_warn_cache_;
+
+    QStringList priorities_;
 
 
     QString getWindowClass(LPCSTR windowCaption)
@@ -125,20 +129,22 @@ class LH_QtPlugin_NowPlaying : public LH_QtPlugin
     }
 
 public:
-    LH_Qt_QString *setup_control_play_pause_;
-    LH_Qt_QString *setup_control_stop_;
-    LH_Qt_QString *setup_control_next_;
-    LH_Qt_QString *setup_control_prev_;
-    LH_Qt_QString *setup_control_close_;
-    LH_Qt_QString *setup_control_repeat_;
-    LH_Qt_QString *setup_control_shuffle_;
+    QList<LH_Qt_int*> setup_priorities_;
 
-    LH_Qt_QString *setup_source_player_;
-    LH_Qt_QString *setup_source_artist_;
-    LH_Qt_QString *setup_source_album_;
-    LH_Qt_QString *setup_source_title_;
-    LH_Qt_QString *setup_source_status_;
+    LH_Qt_QString *setup_page_playerConfig_;
+    LH_Qt_QString *setup_page_keyBindings_;
+    LH_Qt_QString *setup_page_remoteControl_;
+    LH_Qt_QString *setup_page_advanced_;
 
+    LH_Qt_QString *setup_heading_playerConfig_;
+    LH_Qt_QString *setup_heading_playerConfig_break1_;
+    QHash<QString, LH_Qt_bool*> setup_enable_players_;
+    LH_Qt_QString *setup_vlc_port_;
+
+    LH_Qt_QString *setup_heading_keyBindings_;
+    LH_Qt_QString *setup_heading_keyBindings_break1_;
+    LH_Qt_QString *setup_heading_keyBindings_break2_;
+    LH_Qt_bool *setup_media_keys_VLC_;
     LH_Qt_InputState *setup_input_play_pause_;
     LH_Qt_InputState *setup_input_stop_;
     LH_Qt_InputState *setup_input_next_;
@@ -147,14 +153,21 @@ public:
     LH_Qt_InputState *setup_input_repeat_;
     LH_Qt_InputState *setup_input_close_;
 
-    LH_Qt_bool *setup_media_keys_iTunes_;
-    LH_Qt_bool *setup_media_keys_Winamp_;
-    LH_Qt_bool *setup_media_keys_Foobar_;
-    LH_Qt_bool *setup_media_keys_Spotify_;
-    LH_Qt_bool *setup_media_keys_VLC_;
-    LH_Qt_bool *setup_media_keys_WLM_;
+    LH_Qt_QString *setup_heading_remoteControl_;
+    LH_Qt_QString *setup_control_play_pause_;
+    LH_Qt_QString *setup_control_stop_;
+    LH_Qt_QString *setup_control_next_;
+    LH_Qt_QString *setup_control_prev_;
+    LH_Qt_QString *setup_control_close_;
+    LH_Qt_QString *setup_control_repeat_;
+    LH_Qt_QString *setup_control_shuffle_;
 
-    LH_Qt_QString *setup_vlc_port_;
+    LH_Qt_QString *setup_heading_advanced_;
+    LH_Qt_QString *setup_source_player_;
+    LH_Qt_QString *setup_source_artist_;
+    LH_Qt_QString *setup_source_album_;
+    LH_Qt_QString *setup_source_title_;
+    LH_Qt_QString *setup_source_status_;
 
     const char *userInit();
     void userTerm();
@@ -169,6 +182,10 @@ public slots:
     void controlCloseClick();
     void controlRepeatClick();
     void controlShuffleClick();
+    void reorderPriorities();
+    void updatePriorities();
+    void selectPage(QObject *sender = NULL);
+    void doneInitialize();
 
 signals:
     void updated_data();

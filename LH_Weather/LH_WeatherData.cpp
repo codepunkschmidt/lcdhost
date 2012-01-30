@@ -51,6 +51,9 @@ weatherData::weatherData(QString jsonData, bool& ok)
             forecast[i].text = forecastMap["text"].toString();
             forecast[i].code = forecastMap["code"].toString();
         }
+
+        isNight = jobject["isNight"].toBool();
+
     }
 }
 
@@ -103,6 +106,7 @@ QString weatherData::serialize()
     }
 
     jobject.insert("isNight",isNight);
+
     jobject.insert("location",locationMap);
     jobject.insert("units",unitsMap);
     jobject.insert("wind",windMap);

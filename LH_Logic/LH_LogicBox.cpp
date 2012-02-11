@@ -54,6 +54,8 @@ void LH_LogicBox::refreshOutput()
 
 QImage *LH_LogicBox::render_qimage(int w, int h)
 {
+    Q_UNUSED(w);
+    Q_UNUSED(h);
     delete image_;
     uchar *data = new uchar[4];
     data[0] = 255;

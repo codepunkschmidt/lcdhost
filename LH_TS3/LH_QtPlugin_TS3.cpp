@@ -106,6 +106,7 @@ const char *LH_QtPlugin_TS3::userInit()
 
 int LH_QtPlugin_TS3::notify( int code, void *param )
 {
+    Q_UNUSED(param);
     if( code & LH_NOTE_SECOND && server_action_ == sa_disconnected  && tryConnectTimer_.elapsed() >= 5000)
         openConnection();
     return LH_NOTE_SECOND;

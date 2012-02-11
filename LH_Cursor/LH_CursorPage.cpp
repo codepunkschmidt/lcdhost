@@ -35,6 +35,8 @@ lh_class *LH_CursorPage::classInfo()
         "CursorPage",
         "Cursor Page",
         -1, -1,
+        lh_object_calltable_NULL,
+        lh_instance_calltable_NULL
     };
 
     return &classinfo;
@@ -50,6 +52,8 @@ const char *LH_CursorPage::userInit()
 
 QImage *LH_CursorPage::render_qimage(int w, int h)
 {
+    Q_UNUSED(w);
+    Q_UNUSED(h);
     delete image_;
     uchar *data = new uchar[4];
     data[0] = 255;

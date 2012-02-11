@@ -34,6 +34,7 @@
 
 #include <QFile>
 #include <QDebug>
+#include <QCoreApplication>
 
 #include <stdarg.h>
 
@@ -102,13 +103,11 @@ void LH_Lg320x240::userTerm()
     {
         g19thread_->timeToDie();
 
-        for( int n=0; n<10; ++n )
+        for( int n=0; n<100; ++n )
         {
-            if( !g19thread_->wait(1000) )
-            {
-                qWarning() << "LH_Lg320x240: worker thread not responding";
-                g19thread_->quit();
-            }
+            if( g19thread_->wait(100) ) break;
+            g19thread_->quit();
+            QCoreApplication::processEvents();
         }
 
         if( g19thread_->wait(1000) )

@@ -50,7 +50,7 @@ WebKitServerWindow::WebKitServerWindow(QWidget *parent) :
 
     rps_ = 0;
     heart_ = new WebKitHeart(this);
-    heart_->rate = settings.value("heartrate",15).toInt();
+    heart_->rate = settings.value("heartrate",30).toInt();
     heart_->start( QThread::HighPriority );
     lastbeat_ = QTime::currentTime();
     ui->spinBoxMaxFPS->setValue(heart_->rate);

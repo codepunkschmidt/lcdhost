@@ -92,9 +92,20 @@ void LH_QtSetupItem::setOrder( int n )
 
 void LH_QtSetupItem::setLink( QString s )
 {
-    if( s.startsWith('@') ) setPublishPath( s.right(s.length()-1) );
-    else if( s.startsWith('=') ) setSubscribePath( s.right(s.length()-1) );
-    else setSubscribePath(s);
+    if( s.startsWith('@') || s.startsWith('=') )
+    {
+        qWarning() << parent()->metaObject()->className()
+                   << "setup item"
+                   << objectName()
+                   << "using old link style"
+                   << s;
+        if( flags() & LH_FLAG_NOSAVE_DATA )
+            setFlag( LH_FLAG_NOSAVE_LINK, true );
+        if( s.startsWith('=') ) setSubscribePath( s.right(s.length()-1) );
+        else setPublishPath( s.right(s.length()-1) );
+    }
+    else
+        setSubscribePath(s);
     return;
 }
 

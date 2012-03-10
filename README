@@ -5,7 +5,7 @@ extra attention to doing it using Qt. By default, simply opening the
 lcdhost.pro file in Qt Creator should let you build unsigned versions
 all of the plugins.
 
-Some plugins may not build on all platforms, or build but provide 
+Some plugins may not build on all platforms, or build but provide
 only limited features.
 
 *********************************************************************
@@ -76,8 +76,8 @@ that the private key file is at c:/Users/UserName/private.pem and the
 public key can be downloaded from http://my.website/public.pem:
 
     LH_PLUGINS_LIST = MyPlugin
-	CONFIG(debug): LH_DESTDIR=$$PWD/Debug
-	else: LH_DESTDIR=$$PWD/Release
+	CONFIG(debug): LH_DESTDIR=$$PWD/debug
+	else: LH_DESTDIR=$$PWD/release
     SIGNATURE_PRIVATE_FILE = c:/Users/UserName/private.pem
     SIGNATURE_PUBLIC_URL = http://my.website/public.pem
     load($$PWD/linkdata/PluginsBase.prf)
@@ -175,11 +175,11 @@ In the directory with lcdhost.pro, create a text file named
 *** Creating a LH_QtPlugin descendant with Qt Creator
 
 Now you need to add in the LCDHost bits. First, add this line to your
-LH_MyLCDHostPlugin.pro file, after the 
-"DEFINES += LH_MYLCDHOSTPLUGIN_LIBRARY" line but before 
+LH_MyLCDHostPlugin.pro file, after the
+"DEFINES += LH_MYLCDHOSTPLUGIN_LIBRARY" line but before
 "SOURCES += LH_MyLCDHostPlugin.cpp"
 
-	load(../lcdhost.prf)
+	load(../../lcdhost.prf)
 
 This tells qmake to first try including the lcdhost.prf file we
 just made.
@@ -215,7 +215,7 @@ Next, we need to modify the newly created header so it includes the
 base class. Add the line
 
 	#include "LH_QtPlugin.h"
-	
+
 before the line
 
 	class LH_QtPlugin_MyLCDHostPlugin : public LH_QtPlugin

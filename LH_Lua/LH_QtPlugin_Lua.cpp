@@ -43,16 +43,7 @@
 
 #include <QtGlobal>
 
-/*
-  This is a butt-ugly hack until Qt gets it's act together and exports it's deeply
-  hidden CTFontRef using the therefore intended handle() method.
-  http://bugreports.qt.nokia.com/browse/QTBUG-17890
-  */
 #ifdef Q_WS_MAC
-#define private public
-#include <QFont>
-#include "private/qfontengine_p.h"
-#undef private
 #include <ApplicationServices/ApplicationServices.h>
 #include <cairo-quartz.h>
 #endif
@@ -241,15 +232,7 @@ extern "C" int lh_lua_font_face_create(lua_State *L)
 #endif
 #ifdef Q_WS_MAC
 #ifdef __LP64__
-    {
-        // Until http://bugreports.qt.nokia.com/browse/QTBUG-17890 gets fixed
-        QFontEngine *fe = font.d->engineForScript(QUnicodeTables::Common);
-        if (fe && fe->type() == QFontEngine::Mac)
-        {
-            QCoreTextFontEngine *cte = static_cast<QCoreTextFontEngine*>(fe);
-            if( cte ) v = cairo_quartz_font_face_create_for_cgfont( cte->cgFont );
-        }
-    }
+    v = cairo_quartz_font_face_create_for_cgfont( (CGFontRef) font.handle() );
 #else
     v = cairo_quartz_font_face_create_for_atsu_font_id ((ATSUFontID)font.macFontID());
 #endif

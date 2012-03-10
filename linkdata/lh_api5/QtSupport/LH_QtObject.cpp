@@ -145,6 +145,7 @@ lh_setup_item **LH_QtObject::setup_data()
 
 void LH_QtObject::setup_resize(lh_setup_item *item,size_t needed)
 {
+    if( item == 0 ) return;
     for( QObjectList::const_iterator i = children().constBegin(); i != children().constEnd(); ++i )
     {
         LH_QtSetupItem *si = qobject_cast<LH_QtSetupItem *>(*i);
@@ -154,12 +155,16 @@ void LH_QtObject::setup_resize(lh_setup_item *item,size_t needed)
             return;
         }
     }
-    Q_ASSERT(0);
+    qCritical() << "LH_QtObject::setup_resize():"
+                << metaObject()->className() << objectName()
+                << "has no setup item called"
+                << item->name;
     return;
 }
 
 void LH_QtObject::setup_change(lh_setup_item *item)
 {
+    if( item == 0 ) return;
     for( QObjectList::const_iterator i = children().constBegin(); i != children().constEnd(); ++i )
     {
         LH_QtSetupItem *si = qobject_cast<LH_QtSetupItem *>(*i);
@@ -169,12 +174,16 @@ void LH_QtObject::setup_change(lh_setup_item *item)
             return;
         }
     }
-    Q_ASSERT(0);
+    qCritical() << "LH_QtObject::setup_change():"
+                << metaObject()->className() << objectName()
+                << "has no setup item called"
+                << item->name;
     return;
 }
 
 void LH_QtObject::setup_input(lh_setup_item *item, int flags, int value)
 {
+    if( item == 0 ) return;
     for( QObjectList::const_iterator i = children().constBegin(); i != children().constEnd(); ++i )
     {
         LH_QtSetupItem *si = qobject_cast<LH_QtSetupItem *>(*i);
@@ -184,7 +193,10 @@ void LH_QtObject::setup_input(lh_setup_item *item, int flags, int value)
             return;
         }
     }
-    Q_ASSERT(0);
+    qCritical() << "LH_QtObject::setup_input():"
+                << metaObject()->className() << objectName()
+                << "has no setup item called"
+                << item->name;
     return;
 }
 

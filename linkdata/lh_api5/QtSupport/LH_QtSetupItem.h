@@ -46,7 +46,6 @@ class LH_QtSetupItem : public QObject
 {
     Q_OBJECT
     QByteArray name_array_;
-    QByteArray link_array_;
     int order_;
     QByteArray help_;
 
@@ -73,8 +72,18 @@ public:
     QString name() const { return objectName(); }
     void setHelp(QString s);
     QString help();
+
     void setLink(QString s);
-    QString link();
+    QString link() { return subscribePath(); }
+
+    void setPublishPath( QString s );
+    QString publishPath() { return QString::fromAscii(item_.link.publish); }
+
+    void setSubscribePath( QString s );
+    QString subscribePath() { return QString::fromAscii(item_.link.subscribe); }
+
+    void setMimeType( const char * s );
+    const char *mimeType() const { return item_.link.mime; }
 
     lh_setup_item *item() { return &item_; }
 
@@ -101,6 +110,8 @@ public slots:
     void setReadonly( bool b ) { setFlag( LH_FLAG_READONLY, b ); }
     void setWriteable( bool b ) { setFlag( LH_FLAG_READONLY, !b ); }
     void setSaving( bool b ) { setFlag( LH_FLAG_NOSAVE, !b ); }
+    void setSavingData( bool b ) { setFlag( LH_FLAG_NOSAVE_DATA, !b ); }
+    void setSavingLink( bool b ) { setFlag( LH_FLAG_NOSAVE_LINK, !b ); }
 
     virtual void setValue( bool ) { emit set(); }
     virtual void setValue( int ) { emit set(); }

@@ -33,6 +33,7 @@
   */
 
 #include <QDebug>
+#include <QTimer>
 #include "LH_QtCFInstance.h"
 
 #include "cf_rule.h"
@@ -41,6 +42,8 @@
 LH_QtCFInstance::LH_QtCFInstance() : LH_QtInstance()
 {
     cf_initialized_ = false;
+    cf_applying_rules_ = false;
+    connect(this, SIGNAL(initialized()), this, SLOT(cf_apply_rules()));
     return;
 }
 
@@ -85,7 +88,7 @@ void LH_QtCFInstance::cf_initialize()
         new LH_Qt_QString(this,tr("CF-Area-Rule"),"<hr>",LH_FLAG_LAST | LH_FLAG_UI | LH_FLAG_HIDETITLE,lh_type_string_html );
         setup_cf_enabled_ = new LH_Qt_bool(this, "^Enable Conditional Formatting", false, LH_FLAG_LAST | LH_FLAG_AUTORENDER);
         setup_cf_enabled_->setHelp("<p>Conditional Formatting allows a number of properties on the object to change automatically.</p><p>E.g. a text object could change it's fore or background colour or its font.</p>");
-        new LH_Qt_QString(this,tr("^comment"),"<span style='color:grey'>(Conditional Formatting is still experimental)</span>",LH_FLAG_LAST | LH_FLAG_UI,lh_type_string_html );
+        //new LH_Qt_QString(this,tr("^comment"),"<span style='color:grey'>(Conditional Formatting is still experimental)</span>",LH_FLAG_LAST | LH_FLAG_UI,lh_type_string_html );
 
         setup_cf_state_ = new LH_Qt_QString(this, "State", "", LH_FLAG_NOSAVE  | LH_FLAG_LAST | LH_FLAG_HIDDEN);
         setup_cf_state_->setHelp("<p>One way to simplify the Conditional Formatting rules is to have one set of rules that set this \"State\" value and another set that change colours, fonts, images, etc based on it.</p>");
@@ -132,6 +135,7 @@ void LH_QtCFInstance::cf_initialize()
         setup_cf_XML_ = new LH_Qt_QTextEdit(this, "Conditions XML", "<rules/>", LH_FLAG_LAST | LH_FLAG_HIDDEN);
 
         connect(setup_cf_enabled_, SIGNAL(changed()), this, SLOT(cf_enabled_changed()));
+        connect(setup_cf_enabled_, SIGNAL(set()), this, SLOT(cf_enabled_changed()));
         connect(setup_cf_source_, SIGNAL(changed()), this, SLOT(cf_source_changed()));
         connect(setup_cf_source_, SIGNAL(set()), this, SLOT(cf_source_changed()));
         connect(setup_cf_target_, SIGNAL(changed()), this, SLOT(cf_target_changed()));
@@ -190,7 +194,7 @@ void LH_QtCFInstance::add_cf_source(QString name, LH_QtSetupItem* si)
     else
     {
         sources_[name]->setValue();
-        if(si!=setup_cf_state_)
+        //if(si!=setup_cf_state_)
         {
             connect(si, SIGNAL(changed()), this, SLOT(cf_apply_rules()));
             connect(si, SIGNAL(set()), this, SLOT(cf_apply_rules()));
@@ -212,6 +216,15 @@ void LH_QtCFInstance::add_cf_target(LH_QtSetupItem *si)
         targets_.insert(i, si);
         setup_cf_target_->list().insert(i, si->name());
     }
+
+    //This forces a recheck on the rules whenever the value is changed manually
+    if(si!=NULL)
+        if(si!=setup_cf_state_)
+        {
+            connect(si, SIGNAL(changed()), this, SLOT(cf_apply_rules()));
+            connect(si, SIGNAL(set()), this, SLOT(cf_apply_rules()));
+        }
+
     setup_cf_target_->refreshList();
 }
 
@@ -391,6 +404,10 @@ void LH_QtCFInstance::cf_apply_rules(bool allowRender)
     if(!setup_cf_enabled_->value())
         return;
 
+    if(cf_applying_rules_)
+        return; //already applying rules
+    else
+        cf_applying_rules_ = true;
     if (QObject::sender()!=NULL)
     {
         QString senderName = ((LH_QtSetupItem*)QObject::sender())->name();
@@ -399,15 +416,20 @@ void LH_QtCFInstance::cf_apply_rules(bool allowRender)
     }
 
     QDomDocument doc("");
-    doc.setContent(setup_cf_XML_->value());
-    QDomElement root = doc.firstChild().toElement();
+    if(setup_cf_XML_)
+    {
+        doc.setContent(setup_cf_XML_->value());
+        QDomElement root = doc.firstChild().toElement();
 
-    bool doRender = false;
+        bool doRender = false;
 
-    for(uint i=0; i<root.childNodes().length(); i++)
-        doRender |= cf_rule(root.childNodes().at(i)).apply(this, sources_, targets_);
+        for(uint i=0; i<root.childNodes().length(); i++)
+            doRender |= cf_rule(root.childNodes().at(i)).apply(this, sources_, targets_);
 
-    if(doRender && allowRender) this->requestRender();
+        if(doRender && allowRender) this->requestRender();
+    }
+    cf_applying_rules_ = false;
+    return;
 }
 
 void LH_QtCFInstance::cf_copy_rules()

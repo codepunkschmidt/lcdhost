@@ -13,7 +13,7 @@
 # LH_DESTDIR is used by linkdata/linkdata.prf to set a default
 #   DESTDIR for applications, dynamic and static libraries.
 #
-# LH_ROOT_LIST is a list which subdirectories in the repository
+# LH_LCDHOST_LIST is a list which subdirectories in the repository
 #   root to build. Recommended setting is "linkdata plugins"
 #
 # LH_PLUGINS_LIST is used by plugins/plugins.pro. It's a list
@@ -52,6 +52,6 @@ TEMPLATE = subdirs
 CONFIG += ordered
 
 load($$PWD/lcdhost.prf)
-isEmpty(LH_ROOT_LIST): LH_ROOT_LIST=linkdata plugins
+isEmpty(LH_LCDHOST_LIST): LH_LCDHOST_LIST = linkdata plugins
 
-SUBDIRS = $$LH_ROOT_LIST
+SUBDIRS = $$LH_LCDHOST_LIST

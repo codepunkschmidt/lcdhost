@@ -279,6 +279,12 @@ const char *LH_QtPlugin_NowPlaying::userInit() {
 void LH_QtPlugin_NowPlaying::userTerm() {
     //currentTrack->clearArtwork();
     timer_.stop();
+    while( currentTrack->isRunning() )
+    {
+        currentTrack->quit();
+        if( currentTrack->wait(1000) ) break;
+        qCritical() << "LH_NowPlaying_Reader not responding";
+    }
     currentTrack->deleteLater();
 }
 

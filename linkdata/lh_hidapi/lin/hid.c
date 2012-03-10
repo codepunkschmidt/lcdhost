@@ -326,6 +326,7 @@ void  HID_API_EXPORT hid_free_enumeration(struct hid_device_info *devs)
 		free(d->serial_number);
 		free(d->manufacturer_string);
 		free(d->product_string);
+        memset( d, 0, sizeof(*d) );
 		free(d);
 		d = next;
 	}
@@ -421,6 +422,7 @@ hid_device * HID_API_EXPORT hid_open_path(const char *path)
 	}
 	else {
 		// Unable to open any devices.
+        memset( dev, 0, sizeof(*dev) );
 		free(dev);
 		return NULL;
 	}
@@ -509,6 +511,7 @@ void HID_API_EXPORT hid_close(hid_device *dev)
 	if (!dev)
 		return;
 	close(dev->device_handle);
+    memset( dev, 0, sizeof(*dev) );
 	free(dev);
 }
 

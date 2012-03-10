@@ -15,8 +15,8 @@ class plugin : public service
 public:
     typedef void (*loader)(object&);
 
-    plugin( const QString & objectname = QString() ) :
-        service( objectname )
+    plugin( const QString & objectname = QString(), QObject * parent = 0 ) :
+        service( objectname, parent )
     {}
 
     bool init();

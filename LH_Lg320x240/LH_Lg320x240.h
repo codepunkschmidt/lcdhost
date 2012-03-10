@@ -46,7 +46,8 @@ class LH_Lg320x240 : public LH_QtPlugin
     LogitechG19Thread *g19thread_;
 
 public:
-    LH_Lg320x240() : LH_QtPlugin() { g19thread_ = 0; }
+    LH_Lg320x240() : LH_QtPlugin(), g19thread_(0) {}
+    ~LH_Lg320x240();
     virtual const char *userInit();
     virtual void userTerm();
 

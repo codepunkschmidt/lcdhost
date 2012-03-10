@@ -188,7 +188,7 @@ static int parse_interface(libusb_context *ctx,
 	int len;
 	int r;
 	int parsed = 0;
-	int tmp;
+	size_t tmp;
 	struct usb_descriptor_header header;
 	struct libusb_interface_descriptor *ifp;
 	unsigned char *begin;
@@ -257,11 +257,13 @@ static int parse_interface(libusb_context *ctx,
 		}
 
 		/* Did we hit an unexpected descriptor? */
-		usbi_parse_descriptor(buffer, "bb", &header, 0);
-		if ((size >= DESC_HEADER_LENGTH) &&
-				((header.bDescriptorType == LIBUSB_DT_CONFIG) ||
-				 (header.bDescriptorType == LIBUSB_DT_DEVICE)))
-			return parsed;
+		if (size >= DESC_HEADER_LENGTH) {
+			usbi_parse_descriptor(buffer, "bb", &header, 0);
+			if ((header.bDescriptorType == LIBUSB_DT_CONFIG) ||
+			    (header.bDescriptorType == LIBUSB_DT_DEVICE)) {
+				return parsed;
+			}
+		}
 
 		if (ifp->bNumEndpoints > USB_MAXENDPOINTS) {
 			usbi_err(ctx, "too many endpoints (%d)", ifp->bNumEndpoints);
@@ -334,7 +336,7 @@ static int parse_configuration(struct libusb_context *ctx,
 	int i;
 	int r;
 	int size;
-	int tmp;
+	size_t tmp;
 	struct usb_descriptor_header header;
 	struct libusb_interface *usb_interface;
 

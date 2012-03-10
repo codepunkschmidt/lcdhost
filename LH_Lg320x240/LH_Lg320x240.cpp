@@ -34,6 +34,7 @@
 
 #include <QFile>
 #include <QDebug>
+#include <QCoreApplication>
 
 #include <stdarg.h>
 
@@ -80,6 +81,22 @@ extern "C"
     }
 }
 
+LH_Lg320x240::~LH_Lg320x240()
+{
+    if( g19thread_ )
+    {
+        while( g19thread_->isRunning() )
+        {
+            g19thread_->timeToDie();
+            QCoreApplication::processEvents();
+            if( g19thread_->wait(1000) ) break;
+            qWarning() << "LH_Lg320x240: worker thread not responding";
+        }
+        delete g19thread_;
+        g19thread_ = 0;
+    }
+}
+
 const char *LH_Lg320x240::userInit()
 {
     Q_ASSERT( g19thread_ == 0 );
@@ -98,15 +115,5 @@ const char *LH_Lg320x240::userInit()
 
 void LH_Lg320x240::userTerm()
 {
-    if( g19thread_ )
-    {
-        g19thread_->timeToDie();
-        if( !g19thread_->wait(4000) )
-        {
-            qWarning() << "LH_Lg320x240: worker thread not responding";
-            g19thread_->terminate();
-        }
-        else delete g19thread_;
-    }
-    g19thread_ = 0;
+    if( g19thread_ ) g19thread_->timeToDie();
 }

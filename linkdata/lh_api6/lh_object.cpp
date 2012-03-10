@@ -84,6 +84,13 @@ bool object::lh_init( const id_ptr & id )
     return lh_id_->lh_init_result( send_properties( init() ) );
 }
 
+void object::lh_create()
+{
+    if( object * p = qobject_cast<object *>(parent()) )
+        if( !id() && p->id() ) p->id()->lh_create_child( *this );
+    return;
+}
+
 void object::customEvent( QEvent *event )
 {
     switch( event::fromType( event->type() ) )

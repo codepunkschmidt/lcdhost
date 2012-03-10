@@ -22,11 +22,11 @@ win32 {
 
 macx {
         DEFINES += OS_DARWIN THREADS_POSIX HAVE_SYS_TIME_H HAVE_POLL_H
-        SOURCES += os/darwin_usb.c
+        SOURCES += os/darwin_usb.c os/threads_posix.c
 }
 
 unix:!macx {
         DEFINES += OS_LINUX THREADS_POSIX HAVE_SYS_TIME_H HAVE_POLL_H
-        SOURCES += os/linux_usbfs.c
+        SOURCES += os/linux_usbfs.c os/threads_posix.c
 }
 

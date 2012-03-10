@@ -120,7 +120,7 @@ static volatile LONG compat_spinlock = 0;
 // platform headers, we hook into the Kernel32 system DLL directly to seek it.
 static BOOL (__stdcall *pCancelIoEx)(HANDLE, LPOVERLAPPED) = NULL;
 #define CancelIoEx_Available (pCancelIoEx != NULL)
-__inline BOOL cancel_io(int _index)
+static __inline BOOL cancel_io(int _index)
 {
 	if ((_index < 0) || (_index >= MAX_FDS)) {
 		return FALSE;
@@ -199,7 +199,7 @@ int _fd_to_index_and_lock(int fd)
 
 OVERLAPPED *create_overlapped(void)
 {
-	OVERLAPPED *overlapped = calloc(1, sizeof(OVERLAPPED));
+	OVERLAPPED *overlapped = (OVERLAPPED*) calloc(1, sizeof(OVERLAPPED));
 	if (overlapped == NULL) {
 		return NULL;
 	}
@@ -292,7 +292,7 @@ int usbi_pipe(int filedes[2])
 
 	CHECK_INIT_POLLING;
 
-	overlapped = calloc(1, sizeof(OVERLAPPED));
+	overlapped = (OVERLAPPED*) calloc(1, sizeof(OVERLAPPED));
 	if (overlapped == NULL) {
 		return -1;
 	}
@@ -590,8 +590,8 @@ int usbi_poll(struct pollfd *fds, unsigned int nfds, int timeout)
 	CHECK_INIT_POLLING;
 
 	triggered = 0;
-	handles_to_wait_on = malloc((nfds+1)*sizeof(HANDLE));	// +1 for fd_update
-	handle_to_index = malloc(nfds*sizeof(int));
+	handles_to_wait_on = (HANDLE*) calloc(nfds+1, sizeof(HANDLE));	// +1 for fd_update
+	handle_to_index = (int*) calloc(nfds, sizeof(int));
 	if ((handles_to_wait_on == NULL) || (handle_to_index == NULL)) {
 		errno = ENOMEM;
 		triggered = -1;

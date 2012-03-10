@@ -57,12 +57,12 @@ class object : public QObject
 
     /**
       The only objects that may be constructed without
-      a parent are services and plugins, which are
-      instantiated directly by LCDHost.
+      a lh_object parent are services and plugins, which
+      are instantiated directly by LCDHost.
       */
     friend class service;
-    object( const QString & objectname ) :
-        QObject()
+    object( const QString & objectname, QObject * parent = 0 ) :
+        QObject( parent )
     {
         setObjectName( objectname );
     }
@@ -97,14 +97,6 @@ public:
     {
         lh_destroy();
         return;
-    }
-
-    /**
-      Override to return lh_object *
-      */
-    object * parent() const
-    {
-        return static_cast<object *>( QObject::parent() );
     }
 
     /**
@@ -146,12 +138,7 @@ public:
       there is no parent object, or if the parent
       is not initialized, the call has no effect.
       */
-    void lh_create()
-    {
-        if( !id() && parent() && parent()->id() )
-            parent()->id()->lh_create_child( *this );
-        return;
-    }
+    void lh_create();
 
     /**
       De-register this object with LCDHost. This requests

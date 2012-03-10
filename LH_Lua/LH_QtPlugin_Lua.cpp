@@ -241,6 +241,8 @@ extern "C" int lh_lua_font_face_create(lua_State *L)
 #endif
 #ifdef Q_WS_MAC
 #ifdef __LP64__
+    v = cairo_quartz_font_face_create_for_cgfont( (CGFontRef) font.handle() );
+#if 0
     {
         // Until http://bugreports.qt.nokia.com/browse/QTBUG-17890 gets fixed
         QFontEngine *fe = font.d->engineForScript(QUnicodeTables::Common);
@@ -250,6 +252,7 @@ extern "C" int lh_lua_font_face_create(lua_State *L)
             if( cte ) v = cairo_quartz_font_face_create_for_cgfont( cte->cgFont );
         }
     }
+#endif
 #else
     v = cairo_quartz_font_face_create_for_atsu_font_id ((ATSUFontID)font.macFontID());
 #endif

@@ -129,10 +129,14 @@ void LH_LgLcdMan::userTerm()
 {
     if( thread_ )
     {
-        thread_->timeToDie();
-        if( !thread_->wait(4000) )
-            qDebug() << "LH_LgLcdMan: Logitech drivers not responding, expect problems";
-        thread_ = NULL;
+        while( thread_->isRunning() )
+        {
+            thread_->timeToDie();
+            if( thread_->wait(1000) ) break;
+            qWarning() << "LH_LgLcdMan: Logitech drivers not responding";
+        }
+        delete thread_;
+        thread_ = 0;
     }
     return;
 }

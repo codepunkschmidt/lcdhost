@@ -39,13 +39,8 @@ const struct usbi_os_backend * const usbi_backend = &windows_backend;
 #error "Unsupported OS"
 #endif
 
-#ifdef QT_CORE_LIB
-void libusb_log( const char *fmt, va_list args );
-#endif
-
 struct libusb_context *usbi_default_context = NULL;
-const struct libusb_version libusb_version_internal = { LIBUSB_VERSION_MAJOR,
-LIBUSB_VERSION_MINOR, LIBUSB_VERSION_MICRO, LIBUSB_VERSION_NANO};
+const struct libusb_version libusb_version_internal = { LIBUSB_MAJOR, LIBUSB_MINOR, LIBUSB_MICRO, LIBUSB_NANO};
 static int default_context_refcnt = 0;
 static usbi_mutex_static_t default_context_lock = USBI_MUTEX_INITIALIZER;
 
@@ -460,7 +455,7 @@ libusb_free_device_list(list, 1);
 static struct discovered_devs *discovered_devs_alloc(void)
 {
 	struct discovered_devs *ret =
-		malloc(sizeof(*ret) + (sizeof(void *) * DISCOVERED_DEVICES_SIZE_STEP));
+        calloc(1,sizeof(*ret) + (sizeof(void *) * DISCOVERED_DEVICES_SIZE_STEP));
 
 	if (ret) {
 		ret->len = 0;
@@ -514,21 +509,24 @@ struct libusb_device *usbi_alloc_device(struct libusb_context *ctx,
 	unsigned long session_id)
 {
 	size_t priv_size = usbi_backend->device_priv_size;
-	struct libusb_device *dev = calloc(1, sizeof(*dev) + priv_size);
+    struct libusb_device *dev = calloc(1, sizeof(struct libusb_device) + priv_size);
 	int r;
 
 	if (!dev)
 		return NULL;
 
 	r = usbi_mutex_init(&dev->lock, NULL);
-	if (r) {
-		free(dev);
+    if (r) {
+        memset( dev, 0, sizeof(struct libusb_device) + priv_size );
+        free(dev);
 		return NULL;
 	}
 
 	dev->ctx = ctx;
 	dev->refcnt = 1;
+    dev->parent_dev = NULL;
 	dev->session_data = session_id;
+	dev->speed = LIBUSB_SPEED_UNKNOWN;
 	memset(&dev->os_priv, 0, priv_size);
 
 	usbi_mutex_lock(&ctx->usb_devs_lock);
@@ -555,10 +553,8 @@ int usbi_sanitize_device(struct libusb_device *dev)
 	if (num_configurations > USB_MAXCONFIG) {
 		usbi_err(DEVICE_CTX(dev), "too many configurations");
 		return LIBUSB_ERROR_IO;
-	} else if (num_configurations < 1) {
-		usbi_dbg("no configurations?");
-		return LIBUSB_ERROR_IO;
-	}
+	} else if (0 == num_configurations)
+		usbi_dbg("zero configurations, maybe an unauthorized device");
 
 	dev->num_configurations = num_configurations;
 	return 0;
@@ -601,8 +597,8 @@ struct libusb_device *usbi_get_device_by_session_id(struct libusb_context *ctx,
  * \param ctx the context to operate on, or NULL for the default context
  * \param list output location for a list of devices. Must be later freed with
  * libusb_free_device_list().
- * \returns the number of devices in the outputted list, or LIBUSB_ERROR_NO_MEM
- * on memory allocation failure.
+ * \returns the number of devices in the outputted list, or any
+ * \ref libusb_error according to errors encountered by the backend.
  */
 ssize_t API_EXPORTED libusb_get_device_list(libusb_context *ctx,
 	libusb_device ***list)
@@ -625,7 +621,7 @@ ssize_t API_EXPORTED libusb_get_device_list(libusb_context *ctx,
 
 	/* convert discovered_devs into a list */
 	len = discdevs->len;
-	ret = malloc(sizeof(void *) * (len + 1));
+    ret = calloc(sizeof(void *), (len + 1));
 	if (!ret) {
 		len = LIBUSB_ERROR_NO_MEM;
 		goto out;
@@ -740,6 +736,17 @@ libusb_device * LIBUSB_CALL libusb_get_parent(libusb_device *dev)
 uint8_t API_EXPORTED libusb_get_device_address(libusb_device *dev)
 {
 	return dev->device_address;
+}
+
+/** \ingroup dev
+ * Get the negotiated connection speed for a device.
+ * \param dev a device
+ * \returns a \ref libusb_speed code, where LIBUSB_SPEED_UNKNOWN means that
+ * the OS doesn't know or doesn't support returning the negotiated speed.
+ */
+int API_EXPORTED libusb_get_device_speed(libusb_device *dev)
+{
+	return dev->speed;
 }
 
 static const struct libusb_endpoint_descriptor *find_endpoint(
@@ -893,8 +900,10 @@ void API_EXPORTED libusb_unref_device(libusb_device *dev)
 	refcnt = --dev->refcnt;
 	usbi_mutex_unlock(&dev->lock);
 
-	if (refcnt == 0) {
+    if (refcnt < 1) {
 		usbi_dbg("destroy device %d.%d", dev->bus_number, dev->device_address);
+        if( refcnt < 0 )
+            usbi_err( dev->ctx, "refcnt error" );
 
 		if (usbi_backend->destroy_device)
 			usbi_backend->destroy_device(dev);
@@ -904,6 +913,7 @@ void API_EXPORTED libusb_unref_device(libusb_device *dev)
 		usbi_mutex_unlock(&dev->ctx->usb_devs_lock);
 
 		usbi_mutex_destroy(&dev->lock);
+        memset( dev, 0, sizeof(*dev) + usbi_backend->device_priv_size );
 		free(dev);
 	}
 }
@@ -980,7 +990,7 @@ int API_EXPORTED libusb_open(libusb_device *dev,
 	int r;
 	usbi_dbg("open %d.%d", dev->bus_number, dev->device_address);
 
-	_handle = malloc(sizeof(*_handle) + priv_size);
+    _handle = calloc(1, sizeof(*_handle) + priv_size);
 	if (!_handle)
 		return LIBUSB_ERROR_NO_MEM;
 
@@ -996,6 +1006,7 @@ int API_EXPORTED libusb_open(libusb_device *dev,
 
 	r = usbi_backend->open(_handle);
 	if (r < 0) {
+		usbi_dbg("open %d.%d returns %d", dev->bus_number, dev->device_address, r);
 		libusb_unref_device(dev);
 		usbi_mutex_destroy(&_handle->lock);
 		free(_handle);
@@ -1073,6 +1084,51 @@ out:
 static void do_close(struct libusb_context *ctx,
 	struct libusb_device_handle *dev_handle)
 {
+	struct usbi_transfer *itransfer;
+	struct usbi_transfer *tmp;
+
+	libusb_lock_events(ctx);
+
+	/* remove any transfers in flight that are for this device */
+	usbi_mutex_lock(&ctx->flying_transfers_lock);
+
+	/* safe iteration because transfers may be being deleted */
+	list_for_each_entry_safe(itransfer, tmp, &ctx->flying_transfers, list, struct usbi_transfer) {
+		struct libusb_transfer *transfer =
+		        USBI_TRANSFER_TO_LIBUSB_TRANSFER(itransfer);
+
+		if (transfer->dev_handle != dev_handle)
+			continue;
+
+		if (!(itransfer->flags & USBI_TRANSFER_DEVICE_DISAPPEARED)) {
+			usbi_err(ctx, "Device handle closed while transfer was still being processed, but the device is still connected as far as we know");
+
+			if (itransfer->flags & USBI_TRANSFER_CANCELLING)
+				usbi_warn(ctx, "A cancellation for an in-flight transfer hasn't completed but closing the device handle");
+			else
+				usbi_err(ctx, "A cancellation hasn't even been scheduled on the transfer for which the device is closing");
+		}
+
+		/* remove from the list of in-flight transfers and make sure
+		 * we don't accidentally use the device handle in the future
+		 * (or that such accesses will be easily caught and identified as a crash)
+		 */
+		usbi_mutex_lock(&itransfer->lock);
+		list_del(&itransfer->list);
+		transfer->dev_handle = NULL;
+		usbi_mutex_unlock(&itransfer->lock);
+
+		/* it is up to the user to free up the actual transfer struct.  this is
+		 * just making sure that we don't attempt to process the transfer after
+		 * the device handle is invalid
+		 */
+		usbi_dbg("Removed transfer %p from the in-flight list because device handle %p closed",
+			 transfer, dev_handle);
+	}
+	usbi_mutex_unlock(&ctx->flying_transfers_lock);
+
+	libusb_unlock_events(ctx);
+
 	usbi_mutex_lock(&ctx->open_devs_lock);
 	list_del(&dev_handle->list);
 	usbi_mutex_unlock(&ctx->open_devs_lock);
@@ -1287,7 +1343,7 @@ int API_EXPORTED libusb_claim_interface(libusb_device_handle *dev,
 	int r = 0;
 
 	usbi_dbg("interface %d", interface_number);
-	if (interface_number >= sizeof(dev->claimed_interfaces) * 8)
+	if (interface_number >= USB_MAXINTERFACES)
 		return LIBUSB_ERROR_INVALID_PARAM;
 
 	usbi_mutex_lock(&dev->lock);
@@ -1324,7 +1380,7 @@ int API_EXPORTED libusb_release_interface(libusb_device_handle *dev,
 	int r;
 
 	usbi_dbg("interface %d", interface_number);
-	if (interface_number >= sizeof(dev->claimed_interfaces) * 8)
+	if (interface_number >= USB_MAXINTERFACES)
 		return LIBUSB_ERROR_INVALID_PARAM;
 
 	usbi_mutex_lock(&dev->lock);
@@ -1368,7 +1424,7 @@ int API_EXPORTED libusb_set_interface_alt_setting(libusb_device_handle *dev,
 {
 	usbi_dbg("interface %d altsetting %d",
 		interface_number, alternate_setting);
-	if (interface_number >= sizeof(dev->claimed_interfaces) * 8)
+	if (interface_number >= USB_MAXINTERFACES)
 		return LIBUSB_ERROR_INVALID_PARAM;
 
 	usbi_mutex_lock(&dev->lock);
@@ -1578,7 +1634,7 @@ int API_EXPORTED libusb_init(libusb_context **context)
 		return 0;
 	}
 
-	ctx = malloc(sizeof(*ctx));
+    ctx = calloc(1, sizeof(*ctx));
 	if (!ctx) {
 		r = LIBUSB_ERROR_NO_MEM;
 		goto err_unlock;
@@ -1678,6 +1734,22 @@ void API_EXPORTED libusb_exit(struct libusb_context *ctx)
 	free(ctx);
 }
 
+/** \ingroup misc
+ * Check at runtime if the loaded library has a given capability.
+ *
+ * \param capability the \ref libusb_capability to check for
+ * \returns 1 if the running library has the capability, 0 otherwise
+ */
+int API_EXPORTED libusb_has_capability(uint32_t capability)
+{
+	enum libusb_capability cap = capability;
+	switch (cap) {
+	case LIBUSB_CAP_HAS_CAPABILITY:
+		return 1;
+	}
+	return 0;
+}
+
 void usbi_log_v(struct libusb_context *ctx, enum usbi_log_level level,
 	const char *function, const char *format, va_list args)
 {
@@ -1719,9 +1791,7 @@ void usbi_log_v(struct libusb_context *ctx, enum usbi_log_level level,
 		prefix = "unknown";
 		break;
 	}
-#ifdef QT_CORE_LIB
-        libusb_log( format, args );
-#endif
+
 	fprintf(stream, "libusb:%s [%s] ", prefix, function);
 
 	vfprintf(stream, format, args);

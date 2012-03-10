@@ -125,6 +125,7 @@ static void free_hid_device(hid_device *dev)
 	}
 
 	/* Free the structure itself. */
+    memset( dev, 0, sizeof(*dev) );
 	free(dev);
 	
 }

@@ -83,3 +83,4 @@ int usbi_cond_broadcast(usbi_cond_t *cond);
 int usbi_cond_signal(usbi_cond_t *cond);
 
 #endif /* LIBUSB_THREADS_WINDOWS_H */
+

@@ -25,18 +25,6 @@
 
 #include "libusbi.h"
 
-// Workaround for MinGW-w64 multilib bug
-#if defined(_MSC_VER) || defined(_WIN64)
-#define INIT_INTERLOCKEDEXCHANGE
-#define pInterlockedExchange InterlockedExchange
-#else
-static LONG (WINAPI *pInterlockedExchange)(LONG volatile *, LONG) = NULL;
-#define INIT_INTERLOCKEDEXCHANGE if (pInterlockedExchange == NULL) {		\
-	pInterlockedExchange = (LONG (WINAPI *)(LONG volatile *, LONG))			\
-		GetProcAddress(GetModuleHandleA("KERNEL32"), "InterlockedExchange");\
-	if (pInterlockedExchange == NULL) return ((errno=ENOENT));				\
-	}
-#endif
 
 int usbi_mutex_init(usbi_mutex_t *mutex,
 					const usbi_mutexattr_t *attr) {
@@ -80,8 +68,7 @@ int usbi_mutex_unlock(usbi_mutex_t *mutex) {
 
 int usbi_mutex_static_lock(usbi_mutex_static_t *mutex) {
 	if(!mutex)               return ((errno=EINVAL));
-	INIT_INTERLOCKEDEXCHANGE;
-	while (pInterlockedExchange((LONG *)mutex, 1) == 1) {
+	while (InterlockedExchange((LONG *)mutex, 1) == 1) {
 		SleepEx(0, TRUE);
 	}
 	return 0;
@@ -156,7 +143,7 @@ static int __inline usbi_cond_intwait(usbi_cond_t *cond,
 		}
 	}
 	if(!found) {
-		pos      = (struct usbi_cond_perthread*) calloc(1, sizeof(struct usbi_cond_perthread));
+		pos      = malloc(sizeof(struct usbi_cond_perthread));
 		if(!pos) return ((errno=ENOMEM)); // This errno is not POSIX-allowed.
 		pos->tid = tid;
 		pos->event = CreateEvent(NULL, FALSE, FALSE, NULL); // auto-reset.

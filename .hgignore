@@ -1,9 +1,11 @@
 syntax: glob
 *.pro.user
+*.orig
+*.o
+moc_*
+debug/*
+release/*
 lcdhost.prf
-Plugins.pro
 PluginsConfig.prf
-Debug/
-Release/
 codeleap/GoogleTranslator/TranslationAPIKey.h
 .DS_Store

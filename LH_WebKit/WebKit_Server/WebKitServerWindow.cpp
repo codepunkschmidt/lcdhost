@@ -1,6 +1,7 @@
 
 #include <QSettings>
 #include <QNetworkProxy>
+#include <QDebug>
 
 #include "WebKitServerWindow.h"
 #include "ui_WebKitServerWindow.h"
@@ -61,7 +62,8 @@ WebKitServerWindow::~WebKitServerWindow()
     QSettings settings;
     settings.setValue("heartrate",heart_->rate);
     heart_->alive = false;
-    heart_->wait(2000/heart_->rate);
+    while( !heart_->wait(1000) )
+        qCritical() << "WebKitServer waiting for heart to stop";
     if( manager_ )
     {
         delete manager_;

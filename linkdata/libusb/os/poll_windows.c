@@ -77,22 +77,6 @@ extern int _snprintf(char *buffer, size_t count, const char *format, ...);
 
 #define CHECK_INIT_POLLING do {if(!is_polling_set) init_polling();} while(0)
 
-// Workaround for MinGW-w64 multilib bug
-#if defined(_MSC_VER) || defined(_WIN64)
-#define INIT_INTERLOCKEDEXCHANGE
-#define pInterlockedExchange InterlockedExchange
-#else
-static LONG (WINAPI *pInterlockedExchange)(LONG volatile *, LONG) = NULL;
-#define INIT_INTERLOCKEDEXCHANGE if (pInterlockedExchange == NULL) {		\
-	pInterlockedExchange = (LONG (WINAPI *)(LONG volatile *, LONG))			\
-		GetProcAddress(GetModuleHandleA("KERNEL32"), "InterlockedExchange");\
-	if (pInterlockedExchange == NULL) {										\
-		usbi_err(NULL, "InterlockedExchange is unavailable");				\
-		return;																\
-	}																		\
-}
-#endif
-
 // public fd data
 const struct winfd INVALID_WINFD = {-1, INVALID_HANDLE_VALUE, NULL, RW_NONE};
 struct winfd poll_fd[MAX_FDS];
@@ -120,7 +104,7 @@ static volatile LONG compat_spinlock = 0;
 // platform headers, we hook into the Kernel32 system DLL directly to seek it.
 static BOOL (__stdcall *pCancelIoEx)(HANDLE, LPOVERLAPPED) = NULL;
 #define CancelIoEx_Available (pCancelIoEx != NULL)
-__inline BOOL cancel_io(int _index)
+static __inline BOOL cancel_io(int _index)
 {
 	if ((_index < 0) || (_index >= MAX_FDS)) {
 		return FALSE;
@@ -145,8 +129,7 @@ void init_polling(void)
 {
 	int i;
 
-	INIT_INTERLOCKEDEXCHANGE;
-	while (pInterlockedExchange((LONG *)&compat_spinlock, 1) == 1) {
+	while (InterlockedExchange((LONG *)&compat_spinlock, 1) == 1) {
 		SleepEx(0, TRUE);
 	}
 	if (!is_polling_set) {
@@ -241,8 +224,7 @@ void exit_polling(void)
 {
 	int i;
 
-	INIT_INTERLOCKEDEXCHANGE;
-	while (pInterlockedExchange((LONG *)&compat_spinlock, 1) == 1) {
+	while (InterlockedExchange((LONG *)&compat_spinlock, 1) == 1) {
 		SleepEx(0, TRUE);
 	}
 	if (is_polling_set) {

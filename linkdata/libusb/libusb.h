@@ -18,8 +18,8 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-#ifndef __LIBUSB_H__
-#define __LIBUSB_H__
+#ifndef LIBUSB_H
+#define LIBUSB_H
 
 #ifdef _MSC_VER
 /* on MS environments, the inline keyword is available in C++ only */
@@ -40,6 +40,7 @@
 #if defined(_MSC_VER) && (_MSC_VER < 1600) && (!defined(_STDINT)) && (!defined(_STDINT_H))
 typedef unsigned __int8   uint8_t;
 typedef unsigned __int16  uint16_t;
+typedef unsigned __int32  uint32_t;
 #else
 #include <stdint.h>
 #endif
@@ -96,7 +97,7 @@ typedef unsigned __int16  uint16_t;
  * return type, before the function name. See internal documentation for
  * API_EXPORTED.
  */
-#if defined(_WIN32)
+#if defined(_WIN32) || defined(__CYGWIN__)
 #define LIBUSB_CALL WINAPI
 #else
 #define LIBUSB_CALL
@@ -155,11 +156,15 @@ enum libusb_class_code {
 	/** Human Interface Device class */
 	LIBUSB_CLASS_HID = 3,
 
-	/** Printer dclass */
+	/** Physical */
+	LIBUSB_CLASS_PHYSICAL = 5,
+
+	/** Printer class */
 	LIBUSB_CLASS_PRINTER = 7,
 
-	/** Picture transfer protocol class */
-	LIBUSB_CLASS_PTP = 6,
+	/** Image class */
+	LIBUSB_CLASS_PTP = 6, /* legacy name from libusb-0.1 usb.h */
+	LIBUSB_CLASS_IMAGE = 6,
 
 	/** Mass storage class */
 	LIBUSB_CLASS_MASS_STORAGE = 8,
@@ -169,6 +174,21 @@ enum libusb_class_code {
 
 	/** Data class */
 	LIBUSB_CLASS_DATA = 10,
+
+	/** Smart Card */
+	LIBUSB_CLASS_SMART_CARD = 0x0b,
+
+	/** Content Security */
+	LIBUSB_CLASS_CONTENT_SECURITY = 0x0d,
+
+	/** Video */
+	LIBUSB_CLASS_VIDEO = 0x0e,
+
+	/** Personal Healthcare */
+	LIBUSB_CLASS_PERSONAL_HEALTHCARE = 0x0f,
+
+	/** Diagnostic Device */
+	LIBUSB_CLASS_DIAGNOSTIC_DEVICE = 0xdc,
 
 	/** Wireless class */
 	LIBUSB_CLASS_WIRELESS = 0xe0,
@@ -208,7 +228,7 @@ enum libusb_descriptor_type {
 	LIBUSB_DT_PHYSICAL = 0x23,
 
 	/** Hub descriptor */
-	LIBUSB_DT_HUB = 0x29
+	LIBUSB_DT_HUB = 0x29,
 };
 
 /* Descriptor sizes per descriptor type */
@@ -292,7 +312,7 @@ enum libusb_standard_request {
 	LIBUSB_REQUEST_SET_INTERFACE = 0x0B,
 
 	/** Set then report an endpoint's synchronization frame */
-	LIBUSB_REQUEST_SYNCH_FRAME = 0x0C
+	LIBUSB_REQUEST_SYNCH_FRAME = 0x0C,
 };
 
 /** \ingroup misc
@@ -328,7 +348,7 @@ enum libusb_request_recipient {
 	LIBUSB_RECIPIENT_ENDPOINT = 0x02,
 
 	/** Other */
-	LIBUSB_RECIPIENT_OTHER = 0x03
+	LIBUSB_RECIPIENT_OTHER = 0x03,
 };
 
 #define LIBUSB_ISO_SYNC_TYPE_MASK		0x0C
@@ -367,7 +387,7 @@ enum libusb_iso_usage_type {
 	LIBUSB_ISO_USAGE_TYPE_FEEDBACK = 1,
 
 	/** Implicit feedback Data endpoint */
-	LIBUSB_ISO_USAGE_TYPE_IMPLICIT = 2
+	LIBUSB_ISO_USAGE_TYPE_IMPLICIT = 2,
 };
 
 /** \ingroup desc
@@ -619,16 +639,6 @@ struct libusb_device;
 struct libusb_device_handle;
 
 /** \ingroup lib
- * Structure providing the version of libusb being used
- */
-struct libusb_version {
-	uint16_t major;
-	uint16_t minor;
-	uint16_t micro;
-	uint16_t nano;
-};
-
-/** \ingroup lib
  * Structure representing a libusb session. The concept of individual libusb
  * sessions allows for your program to use two libraries (or dynamically
  * load two modules) which both independently use libusb. This will prevent
@@ -675,12 +685,31 @@ typedef struct libusb_device libusb_device;
  */
 typedef struct libusb_device_handle libusb_device_handle;
 
+/** \ingroup dev
+ * Speed codes. Indicates the speed at which the device is operating.
+ */
+enum libusb_speed {
+    /** The OS doesn't report or know the device speed. */
+    LIBUSB_SPEED_UNKNOWN = 0,
+
+    /** The device is operating at low speed (1.5MBit/s). */
+    LIBUSB_SPEED_LOW = 1,
+
+    /** The device is operating at full speed (12MBit/s). */
+    LIBUSB_SPEED_FULL = 2,
+
+    /** The device is operating at high speed (480MBit/s). */
+    LIBUSB_SPEED_HIGH = 3,
+
+    /** The device is operating at super speed (5000MBit/s). */
+    LIBUSB_SPEED_SUPER = 4,
+};
 
 /** \ingroup misc
  * Error codes. Most libusb functions return 0 on success or one of these
  * codes on failure.
- * You can use libusb_strerror() to retrieve a short string description of
- * a libusb_error enumeration value.
+ * You can call \ref libusb_error_name() to retrieve a string representation
+ * of an error code.
  */
 enum libusb_error {
 	/** Success (no error) */
@@ -722,11 +751,11 @@ enum libusb_error {
 	/** Operation not supported or unimplemented on this platform */
 	LIBUSB_ERROR_NOT_SUPPORTED = -12,
 
-	/** Other error */
-	LIBUSB_ERROR_OTHER = -99
+	/* NB! Remember to update libusb_error_name()
+	   when adding new error codes here. */
 
-	/* IMPORTANT: when adding new values to this enum, remember to
-	   update the libusb_strerror() function implementation! */
+	/** Other error */
+	LIBUSB_ERROR_OTHER = -99,
 };
 
 /** \ingroup asyncio
@@ -753,7 +782,7 @@ enum libusb_transfer_status {
 	LIBUSB_TRANSFER_NO_DEVICE,
 
 	/** Device sent more data than requested */
-	LIBUSB_TRANSFER_OVERFLOW
+	LIBUSB_TRANSFER_OVERFLOW,
 };
 
 /** \ingroup asyncio
@@ -769,7 +798,32 @@ enum libusb_transfer_flags {
 	 * If this flag is set, it is illegal to call libusb_free_transfer()
 	 * from your transfer callback, as this will result in a double-free
 	 * when this flag is acted upon. */
-	LIBUSB_TRANSFER_FREE_TRANSFER = 1<<2
+	LIBUSB_TRANSFER_FREE_TRANSFER = 1<<2,
+
+	/** Terminate transfers that are a multiple of the endpoint's
+	 * wMaxPacketSize with an extra zero length packet. This is useful
+	 * when a device protocol mandates that each logical request is
+	 * terminated by an incomplete packet (i.e. the logical requests are
+	 * not separated by other means).
+	 *
+	 * This flag only affects host-to-device transfers to bulk and interrupt
+	 * endpoints. In other situations, it is ignored.
+	 *
+	 * This flag only affects transfers with a length that is a multiple of
+	 * the endpoint's wMaxPacketSize. On transfers of other lengths, this
+	 * flag has no effect. Therefore, if you are working with a device that
+	 * needs a ZLP whenever the end of the logical request falls on a packet
+	 * boundary, then it is sensible to set this flag on <em>every</em>
+	 * transfer (you do not have to worry about only setting it on transfers
+	 * that end on the boundary).
+	 *
+	 * This flag is currently only supported on Linux.
+	 * On other systems, libusb_submit_transfer() will return
+	 * LIBUSB_ERROR_NOT_SUPPORTED for every transfer where this flag is set.
+	 *
+	 * Available since libusb-1.0.9.
+	 */
+	LIBUSB_TRANSFER_ADD_ZERO_PACKET = 1 << 3,
 };
 
 /** \ingroup asyncio
@@ -862,11 +916,21 @@ struct libusb_transfer {
 	;
 };
 
+/** \ingroup misc
+ * Capabilities supported by this instance of libusb. Test if the loaded
+ * library supports a given capability by calling
+ * \ref libusb_has_capability().
+ */
+enum libusb_capability {
+	/** The libusb_has_capability() API is available. */
+	LIBUSB_CAP_HAS_CAPABILITY = 0,
+};
+
 int LIBUSB_CALL libusb_init(libusb_context **ctx);
 void LIBUSB_CALL libusb_exit(libusb_context *ctx);
 void LIBUSB_CALL libusb_set_debug(libusb_context *ctx, int level);
-const char * LIBUSB_CALL libusb_strerror(enum libusb_error errcode);
-const struct libusb_version * LIBUSB_CALL libusb_getversion(void);
+int LIBUSB_CALL libusb_has_capability(uint32_t capability);
+const char * LIBUSB_CALL libusb_error_name(int errcode);
 
 ssize_t LIBUSB_CALL libusb_get_device_list(libusb_context *ctx,
 	libusb_device ***list);
@@ -888,10 +952,8 @@ int LIBUSB_CALL libusb_get_config_descriptor_by_value(libusb_device *dev,
 void LIBUSB_CALL libusb_free_config_descriptor(
 	struct libusb_config_descriptor *config);
 uint8_t LIBUSB_CALL libusb_get_bus_number(libusb_device *dev);
-uint8_t LIBUSB_CALL libusb_get_port_number(libusb_device *dev);
-libusb_device * LIBUSB_CALL libusb_get_parent(libusb_device *dev);
-int LIBUSB_CALL libusb_get_port_path(libusb_context *ctx, libusb_device *dev, uint8_t* path, uint8_t path_length);
 uint8_t LIBUSB_CALL libusb_get_device_address(libusb_device *dev);
+int LIBUSB_CALL libusb_get_device_speed(libusb_device *dev);
 int LIBUSB_CALL libusb_get_max_packet_size(libusb_device *dev,
 	unsigned char endpoint);
 int LIBUSB_CALL libusb_get_max_iso_packet_size(libusb_device *dev,
@@ -1276,7 +1338,7 @@ static inline int libusb_get_string_descriptor(libusb_device_handle *dev,
 	uint8_t desc_index, uint16_t langid, unsigned char *data, int length)
 {
 	return libusb_control_transfer(dev, LIBUSB_ENDPOINT_IN,
-		LIBUSB_REQUEST_GET_DESCRIPTOR, (LIBUSB_DT_STRING << 8) | desc_index,
+		LIBUSB_REQUEST_GET_DESCRIPTOR, (uint16_t)((LIBUSB_DT_STRING << 8) | desc_index),
 		langid, data, (uint16_t) length, 1000);
 }
 
@@ -1296,7 +1358,10 @@ int LIBUSB_CALL libusb_wait_for_event(libusb_context *ctx, struct timeval *tv);
 
 int LIBUSB_CALL libusb_handle_events_timeout(libusb_context *ctx,
 	struct timeval *tv);
+int LIBUSB_CALL libusb_handle_events_timeout_completed(libusb_context *ctx,
+	struct timeval *tv, int *completed);
 int LIBUSB_CALL libusb_handle_events(libusb_context *ctx);
+int LIBUSB_CALL libusb_handle_events_completed(libusb_context *ctx, int *completed);
 int LIBUSB_CALL libusb_handle_events_locked(libusb_context *ctx,
 	struct timeval *tv);
 int LIBUSB_CALL libusb_pollfds_handle_timeouts(libusb_context *ctx);

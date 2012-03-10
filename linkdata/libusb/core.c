@@ -33,19 +33,15 @@
 const struct usbi_os_backend * const usbi_backend = &linux_usbfs_backend;
 #elif defined(OS_DARWIN)
 const struct usbi_os_backend * const usbi_backend = &darwin_backend;
+#elif defined(OS_OPENBSD)
+const struct usbi_os_backend * const usbi_backend = &openbsd_backend;
 #elif defined(OS_WINDOWS)
 const struct usbi_os_backend * const usbi_backend = &windows_backend;
 #else
 #error "Unsupported OS"
 #endif
 
-#ifdef QT_CORE_LIB
-void libusb_log( const char *fmt, va_list args );
-#endif
-
 struct libusb_context *usbi_default_context = NULL;
-const struct libusb_version libusb_version_internal = { LIBUSB_VERSION_MAJOR,
-LIBUSB_VERSION_MINOR, LIBUSB_VERSION_MICRO, LIBUSB_VERSION_NANO};
 static int default_context_refcnt = 0;
 static usbi_mutex_static_t default_context_lock = USBI_MUTEX_INITIALIZER;
 
@@ -289,6 +285,14 @@ if (cfg != desired)
  * kernel where boundaries occur between logical libusb-level transfers. When
  * a short transfer (or other error) occurs, the kernel will cancel all the
  * subtransfers until the boundary without allowing those transfers to start.
+ *
+ * \section zlp Zero length packets
+ *
+ * - libusb is able to send a packet of zero length to an endpoint simply by
+ * submitting a transfer of zero length. On Linux, this did not work with
+ * libusb versions prior to 1.0.3 and kernel versions prior to 2.6.31.
+ * - The \ref libusb_transfer_flags::LIBUSB_TRANSFER_ADD_ZERO_PACKET
+ * "LIBUSB_TRANSFER_ADD_ZERO_PACKET" flag is currently only supported on Linux.
  */
 
 /**
@@ -529,6 +533,7 @@ struct libusb_device *usbi_alloc_device(struct libusb_context *ctx,
 	dev->ctx = ctx;
 	dev->refcnt = 1;
 	dev->session_data = session_id;
+	dev->speed = LIBUSB_SPEED_UNKNOWN;
 	memset(&dev->os_priv, 0, priv_size);
 
 	usbi_mutex_lock(&ctx->usb_devs_lock);
@@ -555,10 +560,8 @@ int usbi_sanitize_device(struct libusb_device *dev)
 	if (num_configurations > USB_MAXCONFIG) {
 		usbi_err(DEVICE_CTX(dev), "too many configurations");
 		return LIBUSB_ERROR_IO;
-	} else if (num_configurations < 1) {
-		usbi_dbg("no configurations?");
-		return LIBUSB_ERROR_IO;
-	}
+	} else if (0 == num_configurations)
+		usbi_dbg("zero configurations, maybe an unauthorized device");
 
 	dev->num_configurations = num_configurations;
 	return 0;
@@ -601,8 +604,8 @@ struct libusb_device *usbi_get_device_by_session_id(struct libusb_context *ctx,
  * \param ctx the context to operate on, or NULL for the default context
  * \param list output location for a list of devices. Must be later freed with
  * libusb_free_device_list().
- * \returns the number of devices in the outputted list, or LIBUSB_ERROR_NO_MEM
- * on memory allocation failure.
+ * \returns The number of devices in the outputted list, or any
+ * \ref libusb_error according to errors encountered by the backend.
  */
 ssize_t API_EXPORTED libusb_get_device_list(libusb_context *ctx,
 	libusb_device ***list)
@@ -677,62 +680,6 @@ uint8_t API_EXPORTED libusb_get_bus_number(libusb_device *dev)
 }
 
 /** \ingroup dev
- * Get the number of the port that a device is connected to
- * \param dev a device
- * \returns the port number (0 if not available)
- */
-uint8_t API_EXPORTED libusb_get_port_number(libusb_device *dev)
-{
-	return dev->port_number;
-}
-
-/** \ingroup dev
- * Get the list of all port numbers from root for the specified device
- * \param dev a device
- * \param path the array that should contain the port numbers
- * \param path_len the maximum length of the array
- * \returns the number of elements filled
- * \returns LIBUSB_ERROR_OVERFLOW if the array is too small
- */
-int API_EXPORTED libusb_get_port_path(libusb_context *ctx, libusb_device *dev, uint8_t* path, uint8_t path_len)
-{
-	int i = path_len;
-	ssize_t r;
-	struct libusb_device **devs;
-
-	/* The device needs to be open, else the parents may have been destroyed */
-	r = libusb_get_device_list(ctx, &devs);
-	if (r < 0)
-		return (int)r;
-
-	while(dev) {
-		// HCDs can be listed as devices and would have port #0
-		// TODO: see how the other backends want to implement HCDs as parents
-		if (dev->port_number == 0)
-			break;
-		if (--i<0) {
-			return LIBUSB_ERROR_OVERFLOW;
-		}
-		path[i] = dev->port_number;
-		dev = dev->parent_dev;
-	}
-	libusb_free_device_list(devs, 1);
-	memmove(path, &path[i], path_len-i);
-	return path_len-i;
-}
-
-/** \ingroup dev
- * Get the the parent from the specified device
- * \param dev a device
- * \returns the device parent or NULL if not available
- */
-DEFAULT_VISIBILITY
-libusb_device * LIBUSB_CALL libusb_get_parent(libusb_device *dev)
-{
-	return dev->parent_dev;
-}
-
-/** \ingroup dev
  * Get the address of the device on the bus it is connected to.
  * \param dev a device
  * \returns the device address
@@ -740,6 +687,17 @@ libusb_device * LIBUSB_CALL libusb_get_parent(libusb_device *dev)
 uint8_t API_EXPORTED libusb_get_device_address(libusb_device *dev)
 {
 	return dev->device_address;
+}
+
+/** \ingroup dev
+ * Get the negotiated connection speed for a device.
+ * \param dev a device
+ * \returns a \ref libusb_speed code, where LIBUSB_SPEED_UNKNOWN means that
+ * the OS doesn't know or doesn't support returning the negotiated speed.
+ */
+int API_EXPORTED libusb_get_device_speed(libusb_device *dev)
+{
+	return dev->speed;
 }
 
 static const struct libusb_endpoint_descriptor *find_endpoint(
@@ -996,6 +954,7 @@ int API_EXPORTED libusb_open(libusb_device *dev,
 
 	r = usbi_backend->open(_handle);
 	if (r < 0) {
+		usbi_dbg("open %d.%d returns %d", dev->bus_number, dev->device_address, r);
 		libusb_unref_device(dev);
 		usbi_mutex_destroy(&_handle->lock);
 		free(_handle);
@@ -1073,6 +1032,51 @@ out:
 static void do_close(struct libusb_context *ctx,
 	struct libusb_device_handle *dev_handle)
 {
+	struct usbi_transfer *itransfer;
+	struct usbi_transfer *tmp;
+
+	libusb_lock_events(ctx);
+
+	/* remove any transfers in flight that are for this device */
+	usbi_mutex_lock(&ctx->flying_transfers_lock);
+
+	/* safe iteration because transfers may be being deleted */
+	list_for_each_entry_safe(itransfer, tmp, &ctx->flying_transfers, list, struct usbi_transfer) {
+		struct libusb_transfer *transfer =
+		        USBI_TRANSFER_TO_LIBUSB_TRANSFER(itransfer);
+
+		if (transfer->dev_handle != dev_handle)
+			continue;
+
+		if (!(itransfer->flags & USBI_TRANSFER_DEVICE_DISAPPEARED)) {
+			usbi_err(ctx, "Device handle closed while transfer was still being processed, but the device is still connected as far as we know");
+
+			if (itransfer->flags & USBI_TRANSFER_CANCELLING)
+				usbi_warn(ctx, "A cancellation for an in-flight transfer hasn't completed but closing the device handle");
+			else
+				usbi_err(ctx, "A cancellation hasn't even been scheduled on the transfer for which the device is closing");
+		}
+
+		/* remove from the list of in-flight transfers and make sure
+		 * we don't accidentally use the device handle in the future
+		 * (or that such accesses will be easily caught and identified as a crash)
+		 */
+		usbi_mutex_lock(&itransfer->lock);
+		list_del(&itransfer->list);
+		transfer->dev_handle = NULL;
+		usbi_mutex_unlock(&itransfer->lock);
+
+		/* it is up to the user to free up the actual transfer struct.  this is
+		 * just making sure that we don't attempt to process the transfer after
+		 * the device handle is invalid
+		 */
+		usbi_dbg("Removed transfer %p from the in-flight list because device handle %p closed",
+			 transfer, dev_handle);
+	}
+	usbi_mutex_unlock(&ctx->flying_transfers_lock);
+
+	libusb_unlock_events(ctx);
+
 	usbi_mutex_lock(&ctx->open_devs_lock);
 	list_del(&dev_handle->list);
 	usbi_mutex_unlock(&ctx->open_devs_lock);
@@ -1287,7 +1291,7 @@ int API_EXPORTED libusb_claim_interface(libusb_device_handle *dev,
 	int r = 0;
 
 	usbi_dbg("interface %d", interface_number);
-	if (interface_number >= sizeof(dev->claimed_interfaces) * 8)
+	if (interface_number >= USB_MAXINTERFACES)
 		return LIBUSB_ERROR_INVALID_PARAM;
 
 	usbi_mutex_lock(&dev->lock);
@@ -1324,7 +1328,7 @@ int API_EXPORTED libusb_release_interface(libusb_device_handle *dev,
 	int r;
 
 	usbi_dbg("interface %d", interface_number);
-	if (interface_number >= sizeof(dev->claimed_interfaces) * 8)
+	if (interface_number >= USB_MAXINTERFACES)
 		return LIBUSB_ERROR_INVALID_PARAM;
 
 	usbi_mutex_lock(&dev->lock);
@@ -1368,7 +1372,7 @@ int API_EXPORTED libusb_set_interface_alt_setting(libusb_device_handle *dev,
 {
 	usbi_dbg("interface %d altsetting %d",
 		interface_number, alternate_setting);
-	if (interface_number >= sizeof(dev->claimed_interfaces) * 8)
+	if (interface_number >= USB_MAXINTERFACES)
 		return LIBUSB_ERROR_INVALID_PARAM;
 
 	usbi_mutex_lock(&dev->lock);
@@ -1567,11 +1571,10 @@ int API_EXPORTED libusb_init(libusb_context **context)
 {
 	char *dbg = getenv("LIBUSB_DEBUG");
 	struct libusb_context *ctx;
-	int r;
+	int r = 0;
 
 	usbi_mutex_static_lock(&default_context_lock);
 	if (!context && usbi_default_context) {
-		r = 0;
 		usbi_dbg("reusing default context");
 		default_context_refcnt++;
 		usbi_mutex_static_unlock(&default_context_lock);
@@ -1589,12 +1592,6 @@ int API_EXPORTED libusb_init(libusb_context **context)
 		ctx->debug = atoi(dbg);
 		if (ctx->debug)
 			ctx->debug_fixed = 1;
-	}
-
-	// default context should be initialized before any call to usbi_dbg
-	if (!usbi_default_context) {
-		usbi_default_context = ctx;
-		usbi_dbg("created default context");
 	}
 
 	usbi_dbg("");
@@ -1629,8 +1626,6 @@ int API_EXPORTED libusb_init(libusb_context **context)
 	return 0;
 
 err_destroy_mutex:
-	if (usbi_default_context == ctx)
-		usbi_default_context = NULL;
 	usbi_mutex_destroy(&ctx->open_devs_lock);
 	usbi_mutex_destroy(&ctx->usb_devs_lock);
 err_free_ctx:
@@ -1647,8 +1642,8 @@ err_unlock:
  */
 void API_EXPORTED libusb_exit(struct libusb_context *ctx)
 {
-	USBI_GET_CONTEXT(ctx);
 	usbi_dbg("");
+	USBI_GET_CONTEXT(ctx);
 
 	/* if working with default context, only actually do the deinitialization
 	 * if we're the last user */
@@ -1678,6 +1673,22 @@ void API_EXPORTED libusb_exit(struct libusb_context *ctx)
 	free(ctx);
 }
 
+/** \ingroup misc
+ * Check at runtime if the loaded library has a given capability.
+ *
+ * \param capability the \ref libusb_capability to check for
+ * \returns 1 if the running library has the capability, 0 otherwise
+ */
+int API_EXPORTED libusb_has_capability(uint32_t capability)
+{
+	enum libusb_capability cap = capability;
+	switch (cap) {
+	case LIBUSB_CAP_HAS_CAPABILITY:
+		return 1;
+	}
+	return 0;
+}
+
 void usbi_log_v(struct libusb_context *ctx, enum usbi_log_level level,
 	const char *function, const char *format, va_list args)
 {
@@ -1686,15 +1697,11 @@ void usbi_log_v(struct libusb_context *ctx, enum usbi_log_level level,
 
 #ifndef ENABLE_DEBUG_LOGGING
 	USBI_GET_CONTEXT(ctx);
-	if (ctx == NULL)
-		return;
 	if (!ctx->debug)
 		return;
 	if (level == LOG_LEVEL_WARNING && ctx->debug < 2)
 		return;
 	if (level == LOG_LEVEL_INFO && ctx->debug < 3)
-		return;
-	if (level == LOG_LEVEL_DEBUG && ctx->debug < 4)
 		return;
 #endif
 
@@ -1719,9 +1726,7 @@ void usbi_log_v(struct libusb_context *ctx, enum usbi_log_level level,
 		prefix = "unknown";
 		break;
 	}
-#ifdef QT_CORE_LIB
-        libusb_log( format, args );
-#endif
+
 	fprintf(stream, "libusb:%s [%s] ", prefix, function);
 
 	vfprintf(stream, format, args);
@@ -1740,61 +1745,45 @@ void usbi_log(struct libusb_context *ctx, enum usbi_log_level level,
 }
 
 /** \ingroup misc
- * Returns a constant NULL-terminated string with an English short description
- * of the given error code. The caller should never free() the returned pointer
- * since it points to a constant string.
- * The returned string is encoded in ASCII form and always starts with a
- * capital letter and ends without any punctuation.
- * Future versions of libusb may return NULL if the library is compiled without
- * these messages included (e.g. for embedded systems).
- * This function is intended to be used for debugging purposes only.
+ * Returns a constant NULL-terminated string with the ASCII name of a libusb
+ * error code. The caller must not free() the returned string.
  *
- * \param errcode the error code whose description is desired
- * \returns a short description of the error code in English, or NULL if the
- * error descriptions are unavailable
+ * \param error_code The \ref libusb_error code to return the name of.
+ * \returns The error name, or the string **UNKNOWN** if the value of
+ * error_code is not a known error code.
  */
-DEFAULT_VISIBILITY
-const char * LIBUSB_CALL libusb_strerror(enum libusb_error error_code)
+DEFAULT_VISIBILITY const char * LIBUSB_CALL libusb_error_name(int error_code)
 {
-	switch (error_code) {
+	enum libusb_error error = error_code;
+	switch (error) {
 	case LIBUSB_SUCCESS:
-		return "Success";
+		return "LIBUSB_SUCCESS";
 	case LIBUSB_ERROR_IO:
-		return "Input/output error";
+		return "LIBUSB_ERROR_IO";
 	case LIBUSB_ERROR_INVALID_PARAM:
-		return "Invalid parameter";
+		return "LIBUSB_ERROR_INVALID_PARAM";
 	case LIBUSB_ERROR_ACCESS:
-		return "Access denied (insufficient permissions)";
+		return "LIBUSB_ERROR_ACCESS";
 	case LIBUSB_ERROR_NO_DEVICE:
-		return "No such device (it may have been disconnected)";
+		return "LIBUSB_ERROR_NO_DEVICE";
 	case LIBUSB_ERROR_NOT_FOUND:
-		return "Entity not found";
+		return "LIBUSB_ERROR_NOT_FOUND";
 	case LIBUSB_ERROR_BUSY:
-		return "Resource busy";
+		return "LIBUSB_ERROR_BUSY";
 	case LIBUSB_ERROR_TIMEOUT:
-		return "Operation timed out";
+		return "LIBUSB_ERROR_TIMEOUT";
 	case LIBUSB_ERROR_OVERFLOW:
-		return "Overflow";
+		return "LIBUSB_ERROR_OVERFLOW";
 	case LIBUSB_ERROR_PIPE:
-		return "Pipe error";
+		return "LIBUSB_ERROR_PIPE";
 	case LIBUSB_ERROR_INTERRUPTED:
-		return "System call interrupted (perhaps due to signal)";
+		return "LIBUSB_ERROR_INTERRUPTED";
 	case LIBUSB_ERROR_NO_MEM:
-		return "Insufficient memory";
+		return "LIBUSB_ERROR_NO_MEM";
 	case LIBUSB_ERROR_NOT_SUPPORTED:
-		return "Operation not supported or unimplemented on this platform";
+		return "LIBUSB_ERROR_NOT_SUPPORTED";
 	case LIBUSB_ERROR_OTHER:
-		return "Other error";
+		return "LIBUSB_ERROR_OTHER";
 	}
-	return "Unknown error";
-}
-
-/** \ingroup misc
- * Fills a libusb_version struct with the full version (major, minor,
- * micro, nano) of this library
- */
-DEFAULT_VISIBILITY
-const struct libusb_version * LIBUSB_CALL libusb_getversion(void)
-{
-	return &libusb_version_internal;
+	return "**UNKNOWN**";
 }

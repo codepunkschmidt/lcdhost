@@ -14,11 +14,11 @@ win32 {
 
 macx {
         DEFINES += OS_DARWIN THREADS_POSIX HAVE_SYS_TIME_H HAVE_POLL_H
-        SOURCES += $$PWD/os/darwin_usb.c
+        SOURCES += $$PWD/os/darwin_usb.c $$PWD/os/threads_posix.c
 	LIBS += -framework CoreFoundation -framework IOKit
 }
 
 unix:!macx {
         DEFINES += OS_LINUX THREADS_POSIX HAVE_SYS_TIME_H HAVE_POLL_H
-        SOURCES += $$PWD/os/linux_usbfs.c
+        SOURCES += $$PWD/os/linux_usbfs.c $$PWD/os/threads_posix.c
 }

@@ -25,7 +25,7 @@
 #ifndef LH_WEATHERTEXT_H
 #define LH_WEATHERTEXT_H
 
-#include "LH_Text/LH_Text.h"
+#include "../LH_Text/LH_Text.h"
 
 #include "LH_WeatherData.h"
 

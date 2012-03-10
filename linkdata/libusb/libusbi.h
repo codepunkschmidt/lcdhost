@@ -18,20 +18,20 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-#ifndef __LIBUSBI_H__
-#define __LIBUSBI_H__
+#ifndef LIBUSBI_H
+#define LIBUSBI_H
 
 #include <config.h>
 
 #include <stddef.h>
 #include <stdint.h>
 #include <time.h>
+#include <stdarg.h>
 #ifdef HAVE_POLL_H
 #include <poll.h>
 #endif
 
 #include <libusb.h>
-#include "libusb_version.h"
 
 /* Inside the libusb code, mark all public functions as follows:
  *   return_type API_EXPORTED function_name(params) { ... }
@@ -110,8 +110,8 @@ static inline void list_del(struct list_head *entry)
 }
 
 #define container_of(ptr, type, member) ({                      \
-        const typeof( ((type *)0)->member ) *__mptr = (ptr);    \
-        (type *)( (char *)__mptr - offsetof(type,member) );})
+        const typeof( ((type *)0)->member ) *mptr = (ptr);    \
+        (type *)( (char *)mptr - offsetof(type,member) );})
 
 #define MIN(a, b)	((a) < (b) ? (a) : (b))
 #define MAX(a, b)	((a) > (b) ? (a) : (b))
@@ -128,15 +128,18 @@ enum usbi_log_level {
 void usbi_log(struct libusb_context *ctx, enum usbi_log_level level,
 	const char *function, const char *format, ...);
 
+void usbi_log_v(struct libusb_context *ctx, enum usbi_log_level level,
+	const char *function, const char *format, va_list args);
+
 #if !defined(_MSC_VER) || _MSC_VER > 1200
 
 #ifdef ENABLE_LOGGING
 #define _usbi_log(ctx, level, ...) usbi_log(ctx, level, __FUNCTION__, __VA_ARGS__)
 #else
-#define _usbi_log(ctx, level, ...) do {} while(0)
+#define _usbi_log(ctx, level, ...) do { (void)(ctx); } while(0)
 #endif
 
-#if defined(ENABLE_DEBUG_LOGGING) || defined(INCLUDE_DEBUG_LOGGING)
+#ifdef ENABLE_DEBUG_LOGGING
 #define usbi_dbg(...) _usbi_log(NULL, LOG_LEVEL_DEBUG, __VA_ARGS__)
 #else
 #define usbi_dbg(...) do {} while(0)
@@ -148,9 +151,6 @@ void usbi_log(struct libusb_context *ctx, enum usbi_log_level level,
 
 #else /* !defined(_MSC_VER) || _MSC_VER > 1200 */
 
-void usbi_log_v(struct libusb_context *ctx, enum usbi_log_level level,
-	const char *function, const char *format, va_list args);
-
 #ifdef ENABLE_LOGGING
 #define LOG_BODY(ctxt, level) \
 {                             \
@@ -160,7 +160,7 @@ void usbi_log_v(struct libusb_context *ctx, enum usbi_log_level level,
 	va_end(args);             \
 }
 #else
-#define LOG_BODY(ctxt, level) { }
+#define LOG_BODY(ctxt, level) do { (void)(ctxt); } while(0)
 #endif
 
 static inline void usbi_info(struct libusb_context *ctx, const char *format,
@@ -174,7 +174,7 @@ static inline void usbi_err( struct libusb_context *ctx, const char *format,
 	LOG_BODY(ctx,LOG_LEVEL_ERROR)
 
 static inline void usbi_dbg(const char *format, ...)
-#if defined(ENABLE_DEBUG_LOGGING) || defined(INCLUDE_DEBUG_LOGGING)
+#ifdef ENABLE_DEBUG_LOGGING
 	LOG_BODY(NULL,LOG_LEVEL_DEBUG)
 #else
 { }
@@ -187,7 +187,7 @@ static inline void usbi_dbg(const char *format, ...)
 #define HANDLE_CTX(handle) (DEVICE_CTX((handle)->dev))
 #define TRANSFER_CTX(transfer) (HANDLE_CTX((transfer)->dev_handle))
 #define ITRANSFER_CTX(transfer) \
-	(TRANSFER_CTX(__USBI_TRANSFER_TO_LIBUSB_TRANSFER(transfer)))
+	(TRANSFER_CTX(USBI_TRANSFER_TO_LIBUSB_TRANSFER(transfer)))
 
 /* Internal abstractions for thread synchronization and poll */
 #if defined(THREADS_POSIX)
@@ -196,7 +196,7 @@ static inline void usbi_dbg(const char *format, ...)
 #include <os/threads_windows.h>
 #endif
 
-#if defined(OS_LINUX) || defined(OS_DARWIN)
+#if defined(OS_LINUX) || defined(OS_DARWIN) || defined(OS_OPENBSD)
 #include <unistd.h>
 #include <os/poll_posix.h>
 #elif defined(OS_WINDOWS)
@@ -275,10 +275,9 @@ struct libusb_device {
 	struct libusb_context *ctx;
 
 	uint8_t bus_number;
-	uint8_t port_number;
-	struct libusb_device* parent_dev;
 	uint8_t device_address;
 	uint8_t num_configurations;
+	enum libusb_speed speed;
 
 	struct list_head list;
 	unsigned long session_data;
@@ -335,13 +334,19 @@ enum usbi_transfer_flags {
 	USBI_TRANSFER_TIMED_OUT = 1 << 0,
 
 	/* Set by backend submit_transfer() if the OS handles timeout */
-	USBI_TRANSFER_OS_HANDLES_TIMEOUT = 1 << 1
+	USBI_TRANSFER_OS_HANDLES_TIMEOUT = 1 << 1,
+
+	/* Cancellation was requested via libusb_cancel_transfer() */
+	USBI_TRANSFER_CANCELLING = 1 << 2,
+
+	/* Operation on the transfer failed because the device disappeared */
+	USBI_TRANSFER_DEVICE_DISAPPEARED = 1 << 3,
 };
 
-#define __USBI_TRANSFER_TO_LIBUSB_TRANSFER(transfer) \
+#define USBI_TRANSFER_TO_LIBUSB_TRANSFER(transfer) \
 	((struct libusb_transfer *)(((unsigned char *)(transfer)) \
 		+ sizeof(struct usbi_transfer)))
-#define __LIBUSB_TRANSFER_TO_USBI_TRANSFER(transfer) \
+#define LIBUSB_TRANSFER_TO_USBI_TRANSFER(transfer) \
 	((struct usbi_transfer *)(((unsigned char *)(transfer)) \
 		- sizeof(struct usbi_transfer)))
 
@@ -879,6 +884,7 @@ extern const struct usbi_os_backend * const usbi_backend;
 
 extern const struct usbi_os_backend linux_usbfs_backend;
 extern const struct usbi_os_backend darwin_backend;
+extern const struct usbi_os_backend openbsd_backend;
 extern const struct usbi_os_backend windows_backend;
 
 #endif

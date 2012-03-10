@@ -18,8 +18,8 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-#ifndef __LIBUSB_THREADS_WINDOWS_H__
-#define __LIBUSB_THREADS_WINDOWS_H__
+#ifndef LIBUSB_THREADS_WINDOWS_H
+#define LIBUSB_THREADS_WINDOWS_H
 
 #define usbi_mutex_static_t     volatile LONG
 #define USBI_MUTEX_INITIALIZER  0
@@ -58,6 +58,8 @@ struct timespec {
 #define usbi_mutexattr_t void
 #define usbi_condattr_t  void
 
+// all Windows mutexes are recursive
+#define usbi_mutex_init_recursive(mutex, attr) usbi_mutex_init((mutex), (attr))
 
 int usbi_mutex_static_lock(usbi_mutex_static_t *mutex);
 int usbi_mutex_static_unlock(usbi_mutex_static_t *mutex);
@@ -80,5 +82,5 @@ int usbi_cond_timedwait(usbi_cond_t *cond,
 int usbi_cond_broadcast(usbi_cond_t *cond);
 int usbi_cond_signal(usbi_cond_t *cond);
 
-#endif /* __LIBUSB_THREADS_WINDOWS_H__ */
+#endif /* LIBUSB_THREADS_WINDOWS_H */
 

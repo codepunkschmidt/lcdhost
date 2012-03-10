@@ -33,7 +33,7 @@ lh_class *LH_MonitoringGraph::classInfo()
     static lh_class classInfo =
     {
         sizeof(lh_class),
-        "3rdParty/"STRINGIZE(MONITORING_FOLDER)" Monitoring",
+        STRINGIZE(MONITORING_FOLDER),
         STRINGIZE(COMMON_OBJECT_NAME)"Graph",
         STRINGIZE(COMMON_OBJECT_NAME)" (Graph)",
         48,48
@@ -49,9 +49,7 @@ const char *LH_MonitoringGraph::userInit()
     ui_ = new LH_MonitoringUI(this, mdmNumbers, true);
 
     setUserDefinableLimits(true);
-    canGrow(true);
-
-    (new LH_Qt_QString(this,("image-hr1"), QString("<hr>"), LH_FLAG_NOSAVE | LH_FLAG_NOSOURCE | LH_FLAG_NOSINK | LH_FLAG_HIDETITLE,lh_type_string_html ))->setOrder(-3);
+    //canGrow(true);
 
     setup_auto_scale_y_max_->setValue(true);
     setup_auto_scale_y_min_->setValue(true);
@@ -67,13 +65,26 @@ const char *LH_MonitoringGraph::userInit()
 
     was_empty_ = true;
 
+    connect(this, SIGNAL(initialized()), SLOT(doInitialize()) );
+
+    return 0;
+}
+
+void LH_MonitoringGraph::doInitialize()
+{
     connect(ui_, SIGNAL(appChanged()), this, SLOT(configChanged()) );
     connect(ui_, SIGNAL(typeChanged()), this, SLOT(configChanged()) );
     connect(ui_, SIGNAL(groupChanged()), this, SLOT(configChanged()) );
     connect(ui_, SIGNAL(itemChanged()), this, SLOT(configChanged()) );
     connect(ui_, SIGNAL(initialized()), this, SLOT(configChanged()) );
 
-    return 0;
+    connect(ui_->setup_unit_selection_, SIGNAL(changed()), SLOT(clearData()) );
+
+    if(canGrow())
+        clear(min(), min()+1, canGrow());
+    else
+        clear(min(), max(), canGrow());
+    updateUnits();
 }
 
 int LH_MonitoringGraph::notify(int n, void *p)
@@ -111,7 +122,7 @@ int LH_MonitoringGraph::notify(int n, void *p)
             was_empty_ = graph_empty_;
             callback(lh_cb_render,NULL);
         }
-    return LH_Graph::notify(n,p) | LH_NOTE_SECOND;
+    return LH_QtInstance::notify(n,p) | LH_NOTE_SECOND;
 }
 
 void LH_MonitoringGraph::updateLines()
@@ -129,9 +140,14 @@ QImage *LH_MonitoringGraph::render_qimage( int w, int h )
     return image_;
 }
 
+void LH_MonitoringGraph::configChanged()  {
+    clearData();
+    updateUnits();
+}
+
 void LH_MonitoringGraph::clearData()
 {
-    clear();
+    clear(min(), max(), canGrow());
     updateUnits();
     callback(lh_cb_render,NULL);
 }

@@ -69,6 +69,8 @@ public:
     QString populateLookupCode(QString lookupTemplate, bool getNames = false, bool preventEmpty = false)
     {
         QString templateResult = QString(lookupTemplate);
+
+        // look for the old index-style references, e.g. {0} {2} {34}
         QRegExp rx = QRegExp("\\{([0-9]*)\\}");
         bool blankValues = true;
         int hitCount = templateResult.count(rx);
@@ -79,7 +81,8 @@ public:
             templateResult.replace(rx.cap(0), strVal);
         }
 
-        rx = QRegExp("\\{([a-zA-Z0-9.[\\]]*)\\}");
+        // look for new address-based references, e.g. {player.name}
+        rx = QRegExp("\\{([a-zA-Z0-9.[\\]]*(?:@[a-zA-Z0-9]+)?)\\}");
         hitCount += templateResult.count(rx);
         while (rx.indexIn(templateResult) != -1)
         {
@@ -88,12 +91,16 @@ public:
             templateResult.replace(rx.cap(0), strVal);
         }
 
-        rx = QRegExp("\\{=([^}=:]*)(?:\\:(.*))?\\}");
-        hitCount += templateResult.count(rx);
-        while (rx.indexIn(templateResult) != -1)
+        if(!getNames)
         {
-            QString strVal = parseMath(rx.cap(1),0,rx.cap(2));
-            templateResult.replace(rx.cap(0), strVal);
+            // look for formatting commands, e.g. {=<something>:%.2f}
+            rx = QRegExp("\\{=([^}=:]*)(?:\\:(.*))?\\}");
+            hitCount += templateResult.count(rx);
+            while (rx.indexIn(templateResult) != -1)
+            {
+                QString strVal = parseMath(rx.cap(1),0,rx.cap(2));
+                templateResult.replace(rx.cap(0), strVal);
+            }
         }
 
         if (blankValues && hitCount!=0) templateResult = "";
@@ -129,6 +136,7 @@ public:
             return valueAddress;
         else
         {
+            QString attrName = "";
             QStringList path = valueAddress.split(".");
             dataNode* curNode = rootNode;
             QRegExp rx("^(.*)\\[([0-9]+)\\]$");
@@ -136,6 +144,13 @@ public:
             {
                 QString nodeName = path.first();
                 path.removeFirst();
+                if(!nodeName.contains("@"))
+                    attrName = "";
+                else
+                {
+                    attrName = nodeName.split('@')[1];
+                    nodeName = nodeName.split('@')[0];
+                }
 
                 int nodeIndex = 0;
                 if(rx.indexIn(nodeName) != -1)
@@ -153,7 +168,10 @@ public:
             while(curNode->defaultItem()!="")
                 curNode = curNode->child(curNode->defaultItem())[0];
 
-            resultText = curNode->value();
+            if(attrName == "")
+                resultText = curNode->value();
+            else
+                resultText = curNode->attributes.value(attrName);
         }
 
         return resultText;

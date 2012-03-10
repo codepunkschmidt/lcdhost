@@ -1,17 +1,27 @@
 #include "LH_MonitoringUI.h"
+#include <QDebug>
 
-LH_MonitoringUI::LH_MonitoringUI(LH_QtObject *parent, monitoringDataMode dataMode, bool includeGroups) : QObject(parent)
+LH_MonitoringUI::LH_MonitoringUI(LH_QtObject *parent, monitoringDataMode dataMode, bool includeGroups, bool adaptiveUnits) : QObject(parent)
 {
     dataMode_ = dataMode;
     includeGroups_ = includeGroups;
+    adaptiveUnits_ = adaptiveUnits;
 
     data_ = NULL;
     mode_ = ui_mode_items;
     initializationState_ = 0;
 
-    int LH_FLAG_SAVEOBJECT_VISIBILITY = LH_FLAG_READONLY; //for debugging, set this to LH_FLAG_READONLY
+    int LH_FLAG_SAVEOBJECT_VISIBILITY = LH_FLAG_HIDDEN; //for debugging, set this to LH_FLAG_READONLY
 
-    setup_monitoring_app_ = new LH_Qt_QStringList(parent, "Application", QStringList() << "(Please Select)" << "Aida64" << "ATI Tray Tools" << "Core Temp" << "Fraps" << "GPU-Z" << "HWiNFO" << "HWMonitor + HWMonTray" << "Logitech Monitoring Gadget" << "MSI Afterburner" << "RivaTuner" << "SpeedFan", LH_FLAG_READONLY | LH_FLAG_NOSAVE);
+    setup_monitoring_app_ = new LH_Qt_QStringList(parent, "Application",
+                                              #ifdef LH_MONITORING_LIBRARY
+                                                  QStringList() << "(Please Select)" << "Aida64" << "ATI Tray Tools" << "Core Temp" << "Fraps" << "GPU-Z" << "HWiNFO" << "HWMonitor + HWMonTray" << "Logitech Monitoring Gadget" << "MSI Afterburner" << "RivaTuner" << "SpeedFan"
+                                              #elif LH_DRIVESTATS_LIBRARY
+                                                  QStringList() << "Drive Stats"
+                                              #endif
+                                                  , LH_FLAG_READONLY | LH_FLAG_NOSAVE);
+    setup_monitoring_app_->setHidden(setup_monitoring_app_->list().count()==1);
+
     setup_monitoring_app_->setHelp( "<p>The 3rd party application you are using used to monitor your system.</p>");
     setup_monitoring_app_->setOrder(-4);
 
@@ -58,6 +68,12 @@ LH_MonitoringUI::LH_MonitoringUI(LH_QtObject *parent, monitoringDataMode dataMod
     setup_value_format_ = new LH_Qt_bool(parent,"Use Formatted Data", false, LH_FLAG_HIDDEN);
     setup_value_format_->setHelp( "<p>Relates to RivaTuner's \"raw data transforming mode\" or Afterburner's \"Formatted Data\".</p><p>(If you don't know what this is, leave it disabled and ignore it.)</p>");
     setup_value_format_->setOrder(-4);
+
+    (new LH_Qt_QString(parent,("image-hr-data"), QString("<hr>"), LH_FLAG_NOSAVE | LH_FLAG_NOSOURCE | LH_FLAG_NOSINK | LH_FLAG_HIDETITLE,lh_type_string_html ))->setOrder(-4);
+
+    setup_unit_selection_ = new LH_Qt_QStringList(parent, "Units", QStringList(), LH_FLAG_HIDDEN);
+    setup_unit_selection_->setHelp( "<p>The units used by this control.</p>");
+    setup_unit_selection_->setOrder(-3);
 
     connect(parent, SIGNAL(initialized()), this, SLOT(connectChangeEvents()));
 }
@@ -275,6 +291,24 @@ bool LH_MonitoringUI::applyFormat()
     return setup_value_format_->value();
 }
 
+void LH_MonitoringUI::updateUnitOptions()
+{
+    if(data_)
+    {
+        unitOptionsType options;
+        bool hasOptions = data_->adaptiveUnitsAllowed() &&
+                //!data_->adaptiveUnits() &&
+                data_->getAdaptiveUnitOptions(options);
+        setup_unit_selection_->setVisible(hasOptions);
+        if(hasOptions)
+        {
+            if(data_->adaptiveUnits())
+                options.addAuto();
+            setup_unit_selection_->setList(options.list());
+        }
+    }
+}
+
 void LH_MonitoringUI::setTypeSelection()
 {
     switch(mode_)
@@ -287,6 +321,7 @@ void LH_MonitoringUI::setTypeSelection()
     case ui_mode_index:
         setIndex();
         break;
+#ifdef LH_MONITORING_LIBRARY
     case ui_mode_aida64:
         if (((LH_Aida64Data*)data_)->loadXML(true))
         {
@@ -300,6 +335,7 @@ void LH_MonitoringUI::setTypeSelection()
             setup_value_type_->setValue(setup_value_type_->list().count()-1);
         }
         break;
+#endif
     }
 }
 
@@ -316,6 +352,7 @@ void LH_MonitoringUI::changeTypeSelection()
         loadItemsList( setup_value_type_->value() );
         setup_value_index_->setValue( getIndex() );
         break;
+#ifdef LH_MONITORING_LIBRARY
     case ui_mode_aida64:
         if (setup_value_type_->list().length()!=0)
         {
@@ -328,7 +365,9 @@ void LH_MonitoringUI::changeTypeSelection()
             changeGroupSelection();
         }
         break;
+#endif
     }
+    updateUnitOptions();
     emit typeChanged();
 }
 
@@ -343,6 +382,7 @@ void LH_MonitoringUI::setGroupSelection()
     case ui_mode_index:
         //N/A
         break;
+#ifdef LH_MONITORING_LIBRARY
     case ui_mode_aida64:
         if (((LH_Aida64Data*)data_)->loadXML(true))
         {
@@ -357,6 +397,7 @@ void LH_MonitoringUI::setGroupSelection()
             setup_value_group_->setValue(setup_value_group_->list().count()-1);
         }
         break;
+#endif
     }
 }
 
@@ -372,6 +413,7 @@ void LH_MonitoringUI::changeGroupSelection()
     case ui_mode_index:
         //N/A
         break;
+#ifdef LH_MONITORING_LIBRARY
     case ui_mode_aida64:
         if (setup_value_group_->list().length()!=0)
         {
@@ -384,7 +426,9 @@ void LH_MonitoringUI::changeGroupSelection()
             setup_value_item_->setFlag(LH_FLAG_HIDDEN, (setup_value_item_->list().count()<=1) );
         }
         break;
+#endif
     }
+    updateUnitOptions();
     emit groupChanged();
 }
 
@@ -398,6 +442,7 @@ void LH_MonitoringUI::setItemSelection()
         break;
     case ui_mode_index:
         break;
+#ifdef LH_MONITORING_LIBRARY
     case ui_mode_aida64:
         if (((LH_Aida64Data*)data_)->loadXML(true))
         {
@@ -412,6 +457,7 @@ void LH_MonitoringUI::setItemSelection()
             setup_value_item_->setValue(setup_value_item_->list().count()-1);
         }
         break;
+#endif
     }
 }
 
@@ -426,6 +472,7 @@ void LH_MonitoringUI::changeItemSelection()
     case ui_mode_index:
         setup_value_index_->setValue(getIndex());
         break;
+#ifdef LH_MONITORING_LIBRARY
     case ui_mode_aida64:
         if (setup_value_item_->list().length()!=0)
             if(setup_value_item_->value()!=-1)
@@ -433,7 +480,9 @@ void LH_MonitoringUI::changeItemSelection()
                     setup_value_item_name_->setValue(setup_value_item_->list().at(setup_value_item_->value()));
         data_->setIsGroup(setup_value_item_name_->value() == "All");
         break;
+#endif
     }
+    updateUnitOptions();
     emit itemChanged();
 }
 
@@ -446,8 +495,10 @@ void LH_MonitoringUI::setIndexSelection()
     case ui_mode_index:
         setIndex();
         break;
+#ifdef LH_MONITORING_LIBRARY
     case ui_mode_aida64:
         break;
+#endif
     }
 }
 
@@ -544,8 +595,14 @@ void LH_MonitoringUI::acquireAppData()
         data_ = new LH_HWMonData((LH_QtObject*)parent(), this, dataMode_, includeGroups_);
     if(setup_monitoring_app_->valueText() == "HWiNFO")
         data_ = new LH_HWiNFOData((LH_QtObject*)parent(), this, dataMode_, includeGroups_);
-#elif LH_TORRENTMON_LIBRARY
+#elif LH_DRIVESTATS_LIBRARY
+    data_ = new LH_DriveStatsData((LH_QtObject*)parent(), this, dataMode_, includeGroups_);
 #endif
 
-    if(!data_) reset();
+    if(data_)
+        data_->setAdaptiveUnits(adaptiveUnits_);
+    else
+        reset();
+
+    updateUnitOptions();
 }

@@ -189,6 +189,8 @@ void LH_Text::makeTextImage( int forheight )
     QPainter painter;
     int flags = Qt::AlignTop|Qt::AlignLeft|Qt::TextSingleLine|Qt::TextIncludeTrailingSpaces;
 
+    if( state() == 0 ) return;
+
     // make sure forheight is reasonable if given
     if( forheight < 0 ) forheight = 0;
     if( forheight && forheight < 4 )

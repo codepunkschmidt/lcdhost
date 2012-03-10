@@ -44,19 +44,20 @@
 #include "LH_Qt_QStringList.h"
 #include "LH_Qt_int.h"
 #include "LH_Qt_QTextEdit.h"
+#include "LH_Qt_bool.h"
 
 #include <stdio.h>
 
 #include "LH_WeatherData.h"
-#include "GoogleTranslator.h"
-
-#define VERSION 1.40
+#include "SimpleTranslator.h"
 
 class LH_QtPlugin_Weather : public LH_QtPlugin
 {
     Q_OBJECT
 
     typedef void (LH_QtPlugin_Weather::*xmlParserFunc)();
+
+    weatherData weather_data;
 
     QDateTime lastrefresh_;
     static const bool get5Day = true;
@@ -107,17 +108,18 @@ protected:
     LH_Qt_QStringList *setup_method_;
     LH_Qt_int *setup_refresh_;
     LH_Qt_QStringList *setup_units_type_;
-    //LH_Qt_InputState *setup_browser_;
-    //LH_Qt_QString *setup_current_url_;
 
     LH_Qt_QStringList *setup_languages_;
     LH_Qt_QString *setup_language_;
+    LH_Qt_bool *setup_show_all_languages_;
 
-    GoogleTranslator translator;
+    LH_Qt_QString *setup_json_weather_;
+
+    SimpleTranslator translator;
 public:
     LH_QtPlugin_Weather();
-    ~LH_QtPlugin_Weather();
 
+    const char *userInit();
     int notify(int code,void* param);
 
     bool checkNight();

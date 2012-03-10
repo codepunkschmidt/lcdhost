@@ -54,26 +54,29 @@ lh_class *LH_WeatherBrowserOpener::classInfo()
     return &classInfo;
 }
 
-LH_WeatherBrowserOpener::LH_WeatherBrowserOpener()
-{
+const char *LH_WeatherBrowserOpener::userInit(){
+    if( const char *err = LH_QtInstance::userInit() ) return err;
+    hide();
+
     setup_browser_ = new LH_Qt_InputState(this,tr("Open in browser"),QString(),LH_FLAG_AUTORENDER);
     setup_browser_->setHelp("Defining a key here will allow you to open the forecast in your browser for more details");
     setup_browser_->setOrder(-4);
     connect( setup_browser_, SIGNAL(input(QString,int,int)), this, SLOT(openBrowser(QString,int,int)) );
-}
 
-LH_WeatherBrowserOpener::~LH_WeatherBrowserOpener()
-{
-    return ;
-}
+    setup_json_weather_ = new LH_Qt_QString(this, "JSON Data", "", LH_FLAG_NOSOURCE | LH_FLAG_HIDDEN);
+    setup_json_weather_->setLink("=/JSON_Weather_Data");
+    setup_json_weather_->setMimeType("application/x-weather");
 
+    return NULL;
+}
 
 void LH_WeatherBrowserOpener::openBrowser(QString key,int flags,int value)
 {
-    qDebug() << "Open Browser";
     Q_UNUSED(key);
     Q_UNUSED(flags);
     Q_UNUSED(value);
+    bool ok;
+    weatherData weather_data(setup_json_weather_->value(), ok);
     if( weather_data.url !="" )
         QDesktopServices::openUrl( QUrl::fromUserInput(weather_data.url) );
 }

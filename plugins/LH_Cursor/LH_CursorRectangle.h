@@ -28,36 +28,30 @@
 
 #include "../LH_Decor/LH_Rectangle.h"
 #include "LH_Qt_bool.h"
-#include "LH_Qt_QSlider.h"
-#include "LH_Qt_QColor.h"
-#include "LH_Qt_QString.h"
 #include "LH_Qt_QFileInfo.h"
-#include "LH_Qt_QStringList.h"
 
-#include "LH_CursorData.h"
+#include "LH_CursorReceiver.h"
 
 #include <QHash>
 
 class LH_CursorRectangle : public LH_Rectangle
 {
     Q_OBJECT
+    LH_CursorReceiver* rcvr_;
 
 protected:
-    LH_Qt_QString *setup_coordinate_;
-    LH_Qt_QStringList *setup_cursor_state_;
-    LH_Qt_QString *setup_json_data_;
-
     LH_Qt_bool *setup_layout_trigger_;
     LH_Qt_QFileInfo *setup_layout_;
 
 public:
-    LH_CursorRectangle();
-
+    LH_CursorRectangle(): LH_Rectangle(), rcvr_(NULL) {}
+    const char *userInit();
     static lh_class *classInfo();
+
 
 public slots:
     void changeLayoutTrigger();
-    bool updateState();
+    void stateChangeAction(bool,bool);
 };
 
 #endif // LH_CURSORRECTANGLE_H

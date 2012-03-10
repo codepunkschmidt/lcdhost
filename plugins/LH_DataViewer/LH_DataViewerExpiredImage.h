@@ -56,7 +56,6 @@ public:
 
 public slots:
     void fileChanged();
-    void updateImage(bool rerender = false);
 };
 
 #endif // LH_DATAVIEWEREXPIREDIMAGE_H

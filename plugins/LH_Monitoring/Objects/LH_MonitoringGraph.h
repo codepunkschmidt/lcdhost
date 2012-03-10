@@ -24,12 +24,12 @@ public:
 
     void updateScale();
     void updateLines();
-    void clearData();
 
 public slots:
+    void doInitialize();
+    void clearData();
     void updateUnits();
-
-    void configChanged()  { clearData(); updateUnits();}
+    void configChanged();
 };
 
 #endif // LH_MONITORINGGRAPH_H

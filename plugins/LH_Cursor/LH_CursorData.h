@@ -170,17 +170,6 @@ public:
 
         return QString("%1%2").arg(newActive? "ON" : "OFF").arg(newSelected? "_SEL" : "");
     }
-
-    /*void postback(LH_Qt_QString *setup_json_postback_, LH_Qt_QString *setup_json_data_)
-    {
-        QString key = setup_json_data_->linkPath();
-        if(postback_data.contains(key))
-            postback_data.remove(key);
-        postback_data.insert(key, serialize());
-
-        setup_json_postback_->setValue( QString::number(QDateTime::currentMSecsSinceEpoch()) );
-    }*/
-
 };
 
 #endif // LH_CURSORDATA_H

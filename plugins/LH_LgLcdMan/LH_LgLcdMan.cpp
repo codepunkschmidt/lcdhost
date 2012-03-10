@@ -125,7 +125,7 @@ const char *LH_LgLcdMan::userInit()
     return NULL;
 }
 
-void LH_LgLcdMan::userTerm()
+void LH_LgLcdMan::~LH_LgLcdMan()
 {
     if( thread_ )
     {
@@ -138,6 +138,11 @@ void LH_LgLcdMan::userTerm()
         delete thread_;
         thread_ = 0;
     }
+}
+
+void LH_LgLcdMan::userTerm()
+{
+    if( thread_ ) thread_->timeToDie();
     return;
 }
 

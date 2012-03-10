@@ -52,8 +52,9 @@ char __lcdhostplugin_xml[] =
   "</shortdesc>"
   "<longdesc>"
   "<p>The weather plugin draws on Yahoo's weather feeds and makes data available via a text and image class. Additionally, "
-  "translation is also supported (from English as Yahoo's API is only available in that one language) using Google's "
-  "translation API, although this can be a little unreliable.</p>"
+  "translation is also supported (from English as Yahoo's API is only available in that one language), but it has to be "
+  "done manually: select your language from the list and unknown words will be stored in a file in the LCDHost folder. "
+  "Edit this file to add the missing translations.</p>"
   "<p>To configure the plugin, use the plugin settings panel to the right, entering in your location and selecting the "
   "units you want to use, etc. These settings are then stored globally and will be applied to any layout which displays "
   "the weather.</p>"
@@ -77,79 +78,79 @@ char __lcdhostplugin_xml[] =
 //------------------------------------------------------------------------------------------------------------------
 
 
-LH_QtPlugin_Weather::LH_QtPlugin_Weather() : translator("Weather", this)
+LH_QtPlugin_Weather::LH_QtPlugin_Weather() : weather_data(), translator("Weather", this)
+{}
+
+const char *LH_QtPlugin_Weather::userInit()
 {
-    translator.requestLanguages("en");
-    connect(&translator, SIGNAL(languages_updated()), this, SLOT(updateLanguagesList()));
-
+    if( const char *err = LH_QtPlugin::userInit() ) return err;
     lastrefresh_ = QDateTime::currentDateTime();
+    translator.setTargetLanguage("en");
 
-    setup_languages_ = new LH_Qt_QStringList(this, "Language", QStringList(), LH_FLAG_NOSAVE);
-    setup_languages_->setHelp("<p>Yahoo's Weather API doesn't have multilingual support; the translation is instead done using Google Translate.</p>"
-                              "<p>Bad translations can be corrected by editing the translation cache located in the LCDHost directory.</p>");
-    setup_language_ = new LH_Qt_QString(this, "^Language Code", "en", LH_FLAG_HIDDEN);
+    setup_show_all_languages_ = new LH_Qt_bool(this,"^Show Untranslated Languages", false, LH_FLAG_NOSAVE | LH_FLAG_NOSINK | LH_FLAG_NOSOURCE);
+    connect(setup_show_all_languages_, SIGNAL(changed()), this, SLOT(updateLanguagesList()));
+    setup_show_all_languages_->setHelp("<p>Ticking this box will allow you choose a language with no current translation. Unknown items will be added to a translation cache located in the LCDHost directory. Simply edit this cache to complete the translation.</p>");
+
+    setup_languages_ = new LH_Qt_QStringList(this, "Language", QStringList(), LH_FLAG_NOSINK | LH_FLAG_NOSOURCE);
+    setup_languages_->setHelp("<p>Yahoo's Weather API doesn't have multilingual support; the translation is instead done manually.</p>"
+                              "<p>Missing translations can be corrected by editing the translation cache located in the LCDHost directory.</p>");
     connect(setup_languages_, SIGNAL(changed()), this, SLOT(selectLanguage()));
+
+    setup_language_ = new LH_Qt_QString(this, "Language Code", "en", LH_FLAG_HIDDEN | LH_FLAG_NOSINK | LH_FLAG_NOSOURCE | LH_FLAG_BLANKTITLE);
     connect(setup_language_, SIGNAL(changed()), this, SLOT(setLanguage()));
 
-    setup_location_name_ = new LH_Qt_QString(this,"Location",QString("London UK"));
+    setup_location_name_ = new LH_Qt_QString(this,"Location",QString("London UK"), LH_FLAG_NOSINK | LH_FLAG_NOSOURCE);
     setup_location_name_->setHelp("The location whose weather you want to display");
     setup_location_name_->setOrder(-5);
     connect( setup_location_name_, SIGNAL(changed()), this, SLOT(fetchWOEID()));
 
-    setup_yahoo_woeid_ = new LH_Qt_QString(this,"Y! WOEID",QString("26459500"), LH_FLAG_HIDDEN);
+    setup_yahoo_woeid_ = new LH_Qt_QString(this,"Y! WOEID",QString("26459500"), LH_FLAG_HIDDEN | LH_FLAG_NOSINK | LH_FLAG_NOSOURCE);
     setup_yahoo_woeid_->setHelp("Internal use only: Yahoo Where On Earth ID");
     setup_yahoo_woeid_->setOrder(-4);
 
-    setup_longlat_ = new LH_Qt_QString(this,"LongLat",QString(""), LH_FLAG_HIDDEN);
+    setup_longlat_ = new LH_Qt_QString(this,"LongLat",QString(""), LH_FLAG_HIDDEN | LH_FLAG_NOSINK | LH_FLAG_NOSOURCE);
     setup_longlat_->setHelp("Internal use only: Longitude & Latitude");
     setup_longlat_->setOrder(-4);
 
-    setup_yahoo_5dayid_ = new LH_Qt_QString(this,"Y! 5Day ID",QString("UKXX1726"), LH_FLAG_HIDDEN);
+    setup_yahoo_5dayid_ = new LH_Qt_QString(this,"Y! 5Day ID",QString("UKXX1726"), LH_FLAG_HIDDEN | LH_FLAG_NOSINK | LH_FLAG_NOSOURCE);
     setup_yahoo_5dayid_->setHelp("Internal use only: Yahoo id code for the 5-day feed");
     setup_yahoo_5dayid_->setOrder(-4);
 
-    setup_city_ = new LH_Qt_QString(this," ",QString(), LH_FLAG_READONLY);
+    setup_city_ = new LH_Qt_QString(this," ",QString(), LH_FLAG_READONLY | LH_FLAG_NOSINK | LH_FLAG_NOSOURCE);
     setup_city_->setHelp("<p>The location whose weather is currently being displayed.</p>"
                          "<p>The weather connector tries to look up the city as entered in the \"Location\" box, and displays the best result here.</p>");
     setup_city_->setOrder(-4);
 
-    //setup_browser_ = new LH_Qt_InputState(this,tr("Open in browser"),QString(),LH_FLAG_AUTORENDER);
-    //setup_browser_->setHelp("Defining a key here will allow you to open the forecast in your browser for more details");
-    //setup_browser_->setOrder(-4);
-    //connect( setup_browser_, SIGNAL(input(QString,int,int)), this, SLOT(openBrowser(QString,int,int)) );
-
     QStringList unitTypes = QStringList();
     unitTypes.append("Metric (Centigrade, Kilometers, etc)");
     unitTypes.append("Imperial (Fahrenheit, Miles, etc)");
-    setup_units_type_ = new LH_Qt_QStringList(this, "Units", unitTypes, 0);
+    setup_units_type_ = new LH_Qt_QStringList(this, "Units", unitTypes, LH_FLAG_NOSINK | LH_FLAG_NOSOURCE);
     setup_units_type_->setHelp("Select whether you want metric (European) units or imperial (British Commonwealth & USA)");
     setup_units_type_->setOrder(-1);
     connect( setup_units_type_, SIGNAL(changed()), this, SLOT(fetch2DayU()) );
 
     setup_method_ = NULL;
 
-    setup_refresh_ = new LH_Qt_int(this,tr("Refresh (minutes)"),5);
+    setup_refresh_ = new LH_Qt_int(this,tr("Refresh (minutes)"),5, LH_FLAG_NOSINK | LH_FLAG_NOSOURCE);
     setup_refresh_->setHelp("How long to wait before checking for an update to the feed (in minutes)");
     connect( setup_refresh_, SIGNAL(changed()), this, SLOT(requestPolling()) );
-
-    //setup_current_url_ = new LH_Qt_QString(this,"Full Weather URL",QString("N/A"),LH_FLAG_READONLY | LH_FLAG_HIDDEN);
-    //setup_current_url_->setHelp("Internal use only: URL to the page showing the full forecast");
 
     connectionId_WOEID = NULL;
     connectionId_2Day = NULL;
     connectionId_5Day = NULL;
 
+    setup_json_weather_ = new LH_Qt_QString(this, "JSON Data", "", LH_FLAG_NOSINK | LH_FLAG_HIDDEN);
+    setup_json_weather_->setLink("@/JSON_Weather_Data");
+    setup_json_weather_->setMimeType("application/x-weather");
+
     connect(&nam2Day,  SIGNAL(finished(QNetworkReply*)), this, SLOT(finished2Day(QNetworkReply*)));
     connect(&nam5Day,  SIGNAL(finished(QNetworkReply*)), this, SLOT(finished5Day(QNetworkReply*)));
     connect(&namWOEID, SIGNAL(finished(QNetworkReply*)), this, SLOT(finishedWOEID(QNetworkReply*)));
 
-}
+    updateLanguagesList();
 
-LH_QtPlugin_Weather::~LH_QtPlugin_Weather()
-{
-    return ;
+    return 0;
 }
-
 
 void LH_QtPlugin_Weather::fetch2Day()
 {
@@ -317,18 +318,10 @@ void LH_QtPlugin_Weather::processResponse(QByteArray xmlData, QString name, QXml
         if(debugSaveXML)saveXMLResponse(xmlData,name);
         xmlReader.addData(xmlData);
         (this->*xmlParser)();
+        QString weatherJSON = weather_data.serialize();
+        setup_json_weather_->setValue(weatherJSON);
     }
 }
-
-//void LH_QtPlugin_Weather::openBrowser(QString key,int flags,int value)
-//{
-//    qDebug() << "Open Browser";
-//    Q_UNUSED(key);
-//    Q_UNUSED(flags);
-//    Q_UNUSED(value);
-//    if( setup_current_url_->value() !="" )
-//        QDesktopServices::openUrl( QUrl::fromUserInput(setup_current_url_->value()) );
-//}
 
 void LH_QtPlugin_Weather::saveXMLResponse(QByteArray data, QString docType)
 {
@@ -648,8 +641,6 @@ bool LH_QtPlugin_Weather::checkNight()
 
 void LH_QtPlugin_Weather::requestTranslation()
 {
-    translator.clear();
-
     translator.addItem(&weather_data.atmosphere.barometricReading);
 
     translator.addItem(&weather_data.location.city, ttNoun);
@@ -669,11 +660,12 @@ void LH_QtPlugin_Weather::requestTranslation()
         translator.addItem(&weather_data.forecast[i].text);
     }
 
-    translator.request();
+    translator.saveCache();
 }
 
 void LH_QtPlugin_Weather::updateLanguagesList()
 {
+    translator.loadLanguages(setup_show_all_languages_->value());
     setup_languages_->list().clear();
     foreach(QString name, translator.languages.names())
         setup_languages_->list().append(name);

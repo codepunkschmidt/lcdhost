@@ -15,13 +15,11 @@ public:
     const char *userInit()
     {
         if( const char *err = LH_Text::userInit() ) return err;
-        //setup_text_->setTitle("Talking");
         setup_text_->setFlag(LH_FLAG_READONLY, true);
         setup_text_->setFlag(LH_FLAG_HIDDEN, true);
         setup_text_->setFlag(LH_FLAG_NOSAVE, true);
         setText("");
-        setup_text_->setLink("=/Monitoring/3rdParty/TeamSpeak3/Talking");
-        //setup_text_->refreshData();
+        setup_text_->setLink("=/3rdParty/TeamSpeak 3/Speaking");
         return 0;
     }
 
@@ -33,7 +31,9 @@ public:
             "3rdParty/TeamSpeak 3",
             "TS3SpeakingText",
             "TS3 Speaking (Text)",
-            -1, -1
+            -1, -1,
+            lh_object_calltable_NULL,
+            lh_instance_calltable_NULL
         };
 
         if( classInfo.width == -1 )

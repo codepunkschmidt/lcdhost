@@ -23,9 +23,6 @@
  **/
 
 #include "LH_CursorPage.h"
-#include <QtGlobal>
-#include <QDebug>
-#include <QSharedMemory>
 
 LH_PLUGIN_CLASS(LH_CursorPage)
 
@@ -45,70 +42,29 @@ lh_class *LH_CursorPage::classInfo()
     return &classinfo;
 }
 
-
-LH_CursorPage::LH_CursorPage()
-{
-    setup_coordinate_ = new LH_Qt_QString(this, "Coordinate", "1,1", LH_FLAG_AUTORENDER);
-    setup_coordinate_->setHelp("This is the coordinate of this object, i.e. when the cursor is at the point specified here this object is selected. <br/>"
-                               "<br/>"
-                               "Note that many objects can have the same coordinate if the user requires.<br/>"
-                               "<br/>"
-                               "The format is [x],[y] <br/>"
-                               "e.g.: 1,1<br/>"
-                               "<br/>"
-                               "When selected a page (and all its children) is visible. When not selected it (and all its children) are hidden, although they can still be selected in the Instances tree."
-                               );
-    active = false;
-    selected = false;
-}
-
 const char *LH_CursorPage::userInit()
 {
-    setVisible(selected);
-    return NULL;
+    if( const char *err = LH_QtInstance::userInit() ) return err;
+    hide();
+    rcvr_ = new LH_CursorReceiver(this, SLOT(stateChangeAction(bool,bool)));
+    return 0;
 }
 
-int LH_CursorPage::polling()
-{
-    if(updateState()) callback(lh_cb_render,NULL);
-    return 100;
-}
-
-
-QImage *LH_CursorPage::render_qimage( int w, int h )
+QImage *LH_CursorPage::render_qimage(int w, int h)
 {
     Q_UNUSED(w);
     Q_UNUSED(h);
+    delete image_;
+    uchar *data = new uchar[4];
+    data[0] = 255;
+    data[1] = 0;
+    data[2] = 0;
+    data[3] = 0;
+    image_ = new QImage(data,1,1,QImage::Format_ARGB32);
     return image_;
 }
-
-
-bool LH_CursorPage::updateState()
+void LH_CursorPage::stateChangeAction(bool newSelected, bool newActive)
 {
-    QStringList mycoords = setup_coordinate_->value().split(';');
-
-    bool newSelected = false;
-    bool newActive = false;
-    foreach (QString mycoord_str, mycoords)
-    {
-        QStringList mycoord = mycoord_str.split(',');
-        if(mycoord.length()==2)
-        {
-            int myX = mycoord.at(0).toInt();
-            int myY = mycoord.at(1).toInt();
-
-            newSelected = newSelected || ( cursor_data.selState && cursor_data.selX==myX && cursor_data.selY==myY );
-            newActive = newActive ||  ( cursor_data.active && cursor_data.x==myX && cursor_data.y==myY );
-        }
-    }
-    if(selected!=newSelected || active != newActive)
-    {
-        selected = newSelected;
-        setVisible(selected);
-        active = newActive;
-        return true;
-    }
-    else
-        return false;
+    Q_UNUSED(newActive);
+    setVisible(newSelected);
 }
-

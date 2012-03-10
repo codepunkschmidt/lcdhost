@@ -4,8 +4,33 @@
 #include <QString>
 #include <QHash>
 #include <QMutex>
+#include <QList>
+#include <QDebug>
+#include <QStringList>
 
 #define polling_rate 200
+
+#ifdef Q_WS_WIN
+#include <windows.h>
+#include <winbase.h>
+#include <Psapi.h>
+#include <tlhelp32.h>
+#else
+    typedef unsigned long DWORD;
+#endif
+
+extern QHash<QString, uint> modules_;
+
+enum MemoryDataType
+{
+    MEMTYPE_NONE = 0,
+    MEMTYPE_4BYTE,
+    MEMTYPE_8BYTE,
+    MEMTYPE_FLOAT,
+    MEMTYPE_DOUBLE,
+    MEMTYPE_TEXT_ASCII,
+    MEMTYPE_TEXT_UNICODE
+};
 
 struct itemDefinition
 {
@@ -15,6 +40,9 @@ struct itemDefinition
     int y;
     QString formatting;
     bool hasData;
+    QString startAddress;
+    QList<uint> offsets;
+    MemoryDataType memoryDataType;
 };
 
 struct sharedItem
@@ -75,172 +103,91 @@ class dataNode
     dataNode* parentNode_;
 
     QHash<QString, int> cursorPositions_;
+
+#ifdef Q_WS_WIN
+    HANDLE processHandle_;
+    DWORD processID_;
+
+    QString getProcessValue();
+
+    bool getProcessValue(uint address, QList<uint> offsets, void *dest, SIZE_T len);
+
+    bool getProcessValue(uint address, QList<uint> offsets, QString *dest, bool unicode = true);
+
+    bool validatePID(DWORD pid, QString exeFile);
+
+    DWORD getProcessId(QString exeFile);
+
+    void indexModules(DWORD pid);
+
+    QString getProcessVersion(QString exeFile);
+
+#endif
+
 protected:
     QMutex* mutex;
 
-    void divorce()
-    {
-        parentNode_ = 0;
-    }
-    void clear()
-    {
-        foreach(QString key, childNodes_.keys())
-        {
-            while (childNodes_[key].count()>0)
-            {
-                dataNode* temp = childNodes_[key].last();
-                childNodes_[key].removeLast();
-                delete temp;
-            }
-        }
-    }
+    void divorce();
+    void clear();
+
 public:
-    void resetCursors()
-    {
-        cursorPositions_.clear();
-    }
+    QHash<QString,QString> attributes;
 
-    dataNode(dataNode* parentNode = 0, itemDefinition def = (itemDefinition){"","",-1,-1,"",false}, QString nodeValue = "" )
-    {
-        mutex = new QMutex(QMutex::Recursive);
-        value_ = nodeValue;
-        definition_ = def;
-        parentNode_ = parentNode;
-        childNodes_ = QHash<QString, QList<dataNode*> >();
-    }
+    void clearValues();
 
-    ~dataNode()
-    {
-        mutex->lock();
-        clear();
-        divorce();
-        mutex->unlock();
-        delete mutex;
-    }
+    void resetCursors();
 
-    dataNode *parentNode()
-    {
-        return parentNode_;
-    }
+    dataNode(dataNode* parentNode = 0, itemDefinition def = (itemDefinition){"","",-1,-1,"",false,"",QList<uint>(),MEMTYPE_NONE }, QString nodeValue = "" );
 
-    QString value()
-    {
-        return value_;
-    }
-    QString name()
-    {
-        return definition_.name;
-    }
-    itemDefinition definition()
-    {
-        return definition_;
-    }
-    void setValue(QString val)
-    {
-        mutex->lock();
-        value_ = val;
-        mutex->unlock();
-    }
-    dataNode* addChild(QString name, QString val = "")
-    {
-        return addChild((itemDefinition){name,"",-1,-1,"",false}, val);
-    }
-    dataNode* addChild(itemDefinition def, QString val = "")
-    {
-        mutex->lock();
-        //remove the * if present and set as default item
-        if(def.name.startsWith("*"))
-        {
-            Q_ASSERT(defaultItem_ == "");
-            def.name = def.name.remove(0,1);
-            defaultItem_ = def.name.toLower();
-        }
+    ~dataNode();
 
-        //if new, add a new entry in the children collection
-        if(!childNodes_.contains(def.name.toLower()))
-            childNodes_.insert(def.name.toLower(), QList<dataNode*>());
+    dataNode *parentNode();
 
-        //add a new node to the collection for this named child
-        childNodes_[def.name.toLower()].append(new dataNode(this,def,val));
-        return childNodes_[def.name.toLower()].last();
-        mutex->unlock();
-    }
+    QString value();
 
-    dataNode* openChild(QString name, QString val = "")
-    {
-        name = name.toLower();
+    QString name();
 
-        if(name.startsWith("*"))
-        {
-            name = name.remove(0,1);
-            Q_ASSERT(defaultItem_ == "" || defaultItem_ == name);
-            defaultItem_ = name.toLower();
-        }
+    itemDefinition definition();
 
-        //if new, add a new entry in the children collection
-        if(!childNodes_.contains(name))
-            childNodes_.insert(name, QList<dataNode*>());
+    void setValue(QString val);
 
-        if(!cursorPositions_.contains(name))
-            cursorPositions_.insert(name,0);
+    dataNode* addChild(QString name, QString val = "");
+    dataNode* addChild(itemDefinition def, QString val = "");
 
-        if(cursorPositions_[name] >= childNodes_[name].count())
-            childNodes_[name].append(new dataNode(this,(itemDefinition){name,"",-1,-1,"",false}, val));
-        else
-            childNodes_[name][cursorPositions_[name]]->setValue(val);
+    dataNode* openChild(QString name, QString val = "");
 
-        cursorPositions_[name]++;
-        childNodes_[name][cursorPositions_[name]-1]->resetCursors();
-        return childNodes_[name][cursorPositions_[name]-1];
-    }
+    QList<dataNode*> operator[](QString name);
+
+    QList<dataNode*> child(QString name);
+
+    QString defaultItem();
+
+    bool contains(QString name);
+
+    QList<QString> keys();
+
+    bool hasData();
+
+    bool hasChildren();
+
+    QString address(QString childNode = "");
+
+    void debugTree();
+
+    bool refreshProcessValues();
+
+    bool openProcess(QString exeFile, QString targetVersion, QString &feedbackMessage);
+
+    QList<uint> memoryOffsets();
 
 
-    QList<dataNode*> operator[](QString name)
-    {
-        return childNodes_[name.toLower()];
-    }
-    QList<dataNode*> child(QString name)
-    {
-        return childNodes_[name.toLower()];
-    }
-    QString defaultItem()
-    {
-        return defaultItem_;
-    }
+    bool getModuleAddress(QString moduleName, uint &moduleAddress);
 
-    bool contains(QString name)
-    {
-        return childNodes_.contains(name.toLower());
-    }
+#ifdef Q_WS_WIN
+    HANDLE processHandle();
 
-    QList<QString> keys()
-    {
-        return childNodes_.keys();
-    }
-
-    bool hasData()
-    {
-        return definition_.hasData;
-    }
-
-    bool hasChildren()
-    {
-        return (childNodes_.count()!=0);
-    }
-
-    QString address(QString childNode = "")
-    {
-        QString nodeAddress = "";
-        dataNode* currentNode = this;
-        while (currentNode != 0 && currentNode->parentNode()!=0)
-        {
-            nodeAddress = QString("%1%2%3").arg(currentNode->name()).arg(nodeAddress==""?"":".").arg(nodeAddress);
-            currentNode = currentNode->parentNode();
-        }
-        if(childNode!="")
-            nodeAddress = QString("%1%2%3").arg(nodeAddress).arg(nodeAddress==""?"":".").arg(childNode);
-        return nodeAddress.toLower();
-    }
+    uint memoryAddress();
+#endif
 };
 
 

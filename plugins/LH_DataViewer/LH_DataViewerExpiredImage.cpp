@@ -67,7 +67,11 @@ LH_DataViewerExpiredImage::~LH_DataViewerExpiredImage()
 
 int LH_DataViewerExpiredImage::polling()
 {
-    updateImage();
+    if (data_.open())
+        setVisible(data_.expired);
+    else
+        setVisible(false);
+
     return polling_rate;
 }
 
@@ -89,40 +93,14 @@ QImage *LH_DataViewerExpiredImage::render_qimage(int w, int h)
 {
     delete image_;
     if( setup_file_->value().isFile() )
-    {
-        //setup_file_->value;
-        //QString folderPath = setup_file_->value().dir().path() + "/";
-        //QString imageName = getImageName();
-
-
-        if ( isExpired )
-        {
-            image_ = new QImage(setup_file_->value().absoluteFilePath());
-        } else
-        {
-            uchar *data = new uchar[4];
-            data[0] = 255;
-            data[1] = 0;
-            data[2] = 0;
-            data[3] = 0;
-
-            image_ = new QImage(data,1,1,QImage::Format_ARGB32);
-        }            
-    } else
+        image_ = new QImage(setup_file_->value().absoluteFilePath());
+    else
         image_ = new QImage(w,h,QImage::Format_Invalid);
     return image_;
 }
 
 void LH_DataViewerExpiredImage::fileChanged()
 {
-    updateImage(true);
+    callback(lh_cb_render,NULL);
 }
 
-void LH_DataViewerExpiredImage::updateImage(bool rerender)
-{
-    if (data_.open()) {
-        if(isExpired != data_.expired) rerender = true;
-        isExpired = data_.expired;
-    }
-    if (rerender) callback(lh_cb_render,NULL);
-}

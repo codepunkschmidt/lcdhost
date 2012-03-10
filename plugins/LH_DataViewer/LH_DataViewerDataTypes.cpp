@@ -1,0 +1,567 @@
+#include "LH_DataViewerDataTypes.h"
+
+#define MAX_STRING 256
+
+QHash<QString, uint> modules_;
+
+QString dataNode::getProcessValue() {
+    int val_int;
+    float val_flt;
+    double val_dbl;
+    qlonglong val_lng;
+    QString val_string;
+
+    bool ok;
+    switch(definition_.memoryDataType)
+    {
+    case MEMTYPE_4BYTE:
+        ok = getProcessValue(memoryAddress(), definition_.offsets, &val_int, 4);
+        if(ok)
+            return QString::number(val_int);
+        break;
+    case MEMTYPE_8BYTE:
+        ok = getProcessValue(memoryAddress(), definition_.offsets, &val_lng, 8);
+        if(ok)
+            return QString::number(val_lng);
+        break;
+    case MEMTYPE_FLOAT:
+        ok = getProcessValue(memoryAddress(), definition_.offsets, &val_flt, 4);
+        if(ok)
+            return QString::number(val_flt);
+        break;
+    case MEMTYPE_DOUBLE:
+        ok = getProcessValue(memoryAddress(), definition_.offsets, &val_dbl, 8);
+        if(ok)
+            return QString::number(val_dbl);
+        break;
+    case MEMTYPE_TEXT_UNICODE:
+        ok = getProcessValue(memoryAddress(), definition_.offsets, &val_string);
+        if(ok)
+            return val_string;
+        break;
+    case MEMTYPE_TEXT_ASCII:
+        ok = getProcessValue(memoryAddress(), definition_.offsets, &val_string, false);
+        if(ok)
+            return val_string;
+        break;
+    case MEMTYPE_NONE:
+        return "??";
+    }
+    return "??";
+}
+
+bool dataNode::getProcessValue(uint address, QList<uint> offsets, void *dest, SIZE_T len)
+{
+    SIZE_T r;
+    HANDLE hProcess = processHandle(); //get the handle from the root node
+    if(!hProcess)
+        return false;
+    else
+    {
+        if(offsets.count()>0)
+        {
+            //int offsetCount = sizeof(offsets)/sizeof(uint);
+            for(int i = 0; i<offsets.count(); i++)
+            {
+                if(!getProcessValue(address, QList<uint>(), &address, 4))
+                   return false;
+                address += offsets.at(i);
+            }
+        }
+        if(len==0) len = sizeof(typeof(dest));
+        BOOL ok=ReadProcessMemory(hProcess, (BYTE *) address, dest, len, &r);
+        return (ok && (r == len));
+    }
+}
+
+bool dataNode::getProcessValue(uint address, QList<uint> offsets, QString *dest, bool unicode)
+{
+    SIZE_T r;
+    HANDLE hProcess = processHandle(); //get the handle from the root node
+    if(!hProcess)
+        return false;
+    else
+    {
+        if(offsets.count()>0)
+        {
+            for(int i = 0; i<offsets.count(); i++)
+            {
+                if(!getProcessValue(address, QList<uint>(), &address, 4))
+                   return false;
+                address += offsets.at(i);
+            }
+        }
+
+        BOOL ok = false;
+        for(int i=0; i<MAX_STRING; i++)
+        {
+            char chr;
+            ok=ReadProcessMemory(hProcess, (BYTE *) address, &chr, (SIZE_T)1, &r);
+            if(r != (SIZE_T)1)
+                ok = false;
+            if(ok && chr!='\0')
+            {
+                QString newChar;
+                if(unicode) newChar = QString::fromUtf8(&chr,1);
+                else newChar = QString::fromAscii(&chr,1);
+                (*dest).append(newChar);
+            }
+            else
+                break;
+            address++;
+        }
+        return ok;
+    }
+}
+
+bool dataNode::validatePID(DWORD pid, QString exeFile)
+{
+    PROCESSENTRY32 processInfo;
+    processInfo.dwSize = sizeof(processInfo);
+
+    HANDLE processesSnapshot = CreateToolhelp32Snapshot(TH32CS_SNAPPROCESS, NULL);
+    if ( processesSnapshot == INVALID_HANDLE_VALUE )
+        return false;
+
+    bool searching = Process32First(processesSnapshot, &processInfo);
+    while(searching)
+    {
+        if ( pid == processInfo.th32ProcessID )
+        {
+            CloseHandle(processesSnapshot);
+            return ( exeFile == QString::fromWCharArray(processInfo.szExeFile) );
+        }
+        searching = Process32Next(processesSnapshot, &processInfo);
+    }
+
+    CloseHandle(processesSnapshot);
+    return false;
+}
+
+DWORD dataNode::getProcessId(QString exeFile)
+{
+    PROCESSENTRY32 processInfo;
+    processInfo.dwSize = sizeof(processInfo);
+
+    HANDLE processesSnapshot = CreateToolhelp32Snapshot(TH32CS_SNAPPROCESS, NULL);
+    if ( processesSnapshot == INVALID_HANDLE_VALUE )
+        return 0;
+
+    bool searching = Process32First(processesSnapshot, &processInfo);
+    while(searching)
+    {
+        if ( exeFile == QString::fromWCharArray(processInfo.szExeFile) )
+        {
+            CloseHandle(processesSnapshot);
+            return processInfo.th32ProcessID;
+        }
+        searching = Process32Next(processesSnapshot, &processInfo);
+    }
+
+    CloseHandle(processesSnapshot);
+    return 0;
+}
+
+void dataNode::indexModules(DWORD pid)
+{
+    MODULEENTRY32 moduleInfo;
+    moduleInfo.dwSize = sizeof(moduleInfo);
+
+    modules_.clear();
+
+    HANDLE modulesSnapshot = CreateToolhelp32Snapshot(TH32CS_SNAPMODULE, pid);
+    if ( modulesSnapshot == INVALID_HANDLE_VALUE )
+        return;
+
+    bool searching = Module32First(modulesSnapshot, &moduleInfo);
+    while(searching)
+    {
+        QString moduleName = QString::fromWCharArray(moduleInfo.szModule);
+        uint moduleAddr = reinterpret_cast<UINT_PTR>(moduleInfo.modBaseAddr);
+        modules_.insert(moduleName, moduleAddr);
+        modules_.insert(QString("\"%1\"").arg(moduleName), moduleAddr);
+        //qDebug() << moduleName << ":" << moduleAddr;
+        searching = Module32Next(modulesSnapshot, &moduleInfo);
+    }
+
+    CloseHandle(modulesSnapshot);
+}
+
+QString dataNode::getProcessVersion(QString exeFile)
+{
+#ifdef Q_WS_WIN
+    QString version = "";
+
+    HANDLE moduleSnapshot = CreateToolhelp32Snapshot(TH32CS_SNAPMODULE, processID_);
+    if ( moduleSnapshot == INVALID_HANDLE_VALUE )
+        return "";
+
+    MODULEENTRY32 moduleInfo;
+    moduleInfo.dwSize = sizeof(moduleInfo);
+    bool searching = Module32First(moduleSnapshot, &moduleInfo);
+    while(searching)
+    {
+        if(QString::fromWCharArray(moduleInfo.szExePath).endsWith("\\" + exeFile))
+        {
+            DWORD verLength;
+            DWORD verSize = GetFileVersionInfoSize(moduleInfo.szExePath, &verLength);
+            if(verSize)
+            {
+                LPBYTE lpBuffer = NULL;
+                UINT size = 0;
+                LPSTR verData = new char[verSize];
+                if( GetFileVersionInfo(moduleInfo.szExePath, verLength, verSize, verData) )
+                    if (VerQueryValueA(verData,QString("\\").toAscii().data(),(VOID FAR* FAR*)&lpBuffer,&size) && size)
+                    {
+                        VS_FIXEDFILEINFO *verInfo = (VS_FIXEDFILEINFO *)lpBuffer;
+                        if (verInfo->dwSignature == 0xfeef04bd)
+                        {
+                                int major = HIWORD(verInfo->dwFileVersionMS);
+                                int minor = LOWORD(verInfo->dwFileVersionMS);
+                                int build = HIWORD(verInfo->dwFileVersionLS);
+                                int revision = LOWORD(verInfo->dwFileVersionLS);
+
+                                version = QString("%1.%2.%3.%4").arg(major).arg(minor).arg(build).arg(revision);
+                                break;
+                        }
+                    }
+                delete verData;
+            }
+        }
+        searching = Module32Next(moduleSnapshot, &moduleInfo);
+    }
+    CloseHandle(moduleSnapshot);
+    return version;
+#else
+    return "";
+#endif
+}
+
+void dataNode::divorce()
+{
+    parentNode_ = 0;
+}
+
+void dataNode::clear()
+{
+    foreach(QString key, childNodes_.keys())
+    {
+        while (childNodes_[key].count()>0)
+        {
+            dataNode* temp = childNodes_[key].last();
+            childNodes_[key].removeLast();
+            delete temp;
+        }
+    }
+}
+
+void dataNode::clearValues()
+{
+    setValue("");
+    foreach(QString key, childNodes_.keys())
+        for(int i = 0; i < childNodes_[key].count(); i++)
+            childNodes_[key][i]->clearValues();
+}
+
+void dataNode::resetCursors()
+{
+    cursorPositions_.clear();
+}
+
+dataNode::dataNode(dataNode* parentNode, itemDefinition def, QString nodeValue )
+{
+    mutex = new QMutex(QMutex::Recursive);
+    value_ = nodeValue;
+    definition_ = def;
+    parentNode_ = parentNode;
+    childNodes_ = QHash<QString, QList<dataNode*> >();
+    processHandle_ = NULL;
+    processID_ = -1;
+}
+
+dataNode::~dataNode()
+{
+    mutex->lock();
+#ifdef Q_WS_WIN
+    if(processHandle_)
+        CloseHandle(processHandle_);
+#endif
+    clear();
+    divorce();
+    mutex->unlock();
+    delete mutex;
+}
+
+dataNode *dataNode::parentNode()
+{
+    return parentNode_;
+}
+
+QString dataNode::value()
+{
+    return value_;
+}
+
+QString dataNode::name()
+{
+    return definition_.name;
+}
+
+itemDefinition dataNode::definition()
+{
+    return definition_;
+}
+
+void dataNode::setValue(QString val)
+{
+    mutex->lock();
+    value_ = val;
+    mutex->unlock();
+}
+
+dataNode* dataNode::addChild(QString name, QString val)
+{
+    return addChild((itemDefinition){name,"",-1,-1,"",false,"",QList<uint>(),MEMTYPE_NONE}, val);
+}
+
+dataNode* dataNode::addChild(itemDefinition def, QString val)
+{
+    mutex->lock();
+    //remove the * if present and set as default item
+    if(def.name.startsWith("*"))
+    {
+        Q_ASSERT(defaultItem_ == "");
+        def.name = def.name.remove(0,1);
+        defaultItem_ = def.name.toLower();
+    }
+
+    //if new, add a new entry in the children collection
+    if(!childNodes_.contains(def.name.toLower()))
+        childNodes_.insert(def.name.toLower(), QList<dataNode*>());
+
+    //add a new node to the collection for this named child
+    childNodes_[def.name.toLower()].append(new dataNode(this,def,val));
+    return childNodes_[def.name.toLower()].last();
+    mutex->unlock();
+}
+
+dataNode* dataNode::openChild(QString name, QString val)
+{
+    name = name.toLower();
+
+    if(name.startsWith("*"))
+    {
+        name = name.remove(0,1);
+        Q_ASSERT(defaultItem_ == "" || defaultItem_ == name);
+        defaultItem_ = name.toLower();
+    }
+
+    //if new, add a new entry in the children collection
+    if(!childNodes_.contains(name))
+        childNodes_.insert(name, QList<dataNode*>());
+
+    if(!cursorPositions_.contains(name))
+        cursorPositions_.insert(name,0);
+
+    if(cursorPositions_[name] >= childNodes_[name].count())
+        childNodes_[name].append(new dataNode(this,(itemDefinition){name,"",-1,-1,"",false,"",QList<uint>(),MEMTYPE_NONE}, val));
+    else
+        childNodes_[name][cursorPositions_[name]]->setValue(val);
+
+    cursorPositions_[name]++;
+    childNodes_[name][cursorPositions_[name]-1]->resetCursors();
+    return childNodes_[name][cursorPositions_[name]-1];
+}
+
+QList<dataNode*> dataNode::operator[](QString name)
+{
+    return childNodes_[name.toLower()];
+}
+
+QList<dataNode*> dataNode::child(QString name)
+{
+    return childNodes_[name.toLower()];
+}
+
+QString dataNode::defaultItem()
+{
+    return defaultItem_;
+}
+
+bool dataNode::contains(QString name)
+{
+    return childNodes_.contains(name.toLower());
+}
+
+QList<QString> dataNode::keys()
+{
+    return childNodes_.keys();
+}
+
+bool dataNode::hasData()
+{
+    return definition_.hasData;
+}
+
+bool dataNode::hasChildren()
+{
+    return (childNodes_.count()!=0);
+}
+
+QString dataNode::address(QString childNode)
+{
+    QString nodeAddress = "";
+    dataNode* currentNode = this;
+    while (currentNode != 0 && currentNode->parentNode()!=0)
+    {
+        nodeAddress = QString("%1%2%3").arg(currentNode->name()).arg(nodeAddress==""?"":".").arg(nodeAddress);
+        currentNode = currentNode->parentNode();
+    }
+    if(childNode!="")
+        nodeAddress = QString("%1%2%3").arg(nodeAddress).arg(nodeAddress==""?"":".").arg(childNode);
+    return nodeAddress.toLower();
+}
+
+void dataNode::debugTree()
+{
+    qDebug() << this->address() << " = " << this->value();
+    for(int i = 0; i < childNodes_.count(); i++)
+    {
+        QList<dataNode*> childList = child(keys().at(i));
+        for(int j = 0; j < childList.count(); j++)
+            childList[j]->debugTree();
+    }
+}
+
+bool dataNode::refreshProcessValues()
+{
+    bool changed = false;
+#ifdef Q_WS_WIN
+    QString newVal = getProcessValue();
+    if(newVal!=value_)
+    {
+        setValue( newVal );
+        changed |= true;
+    }
+
+    foreach(QString key, childNodes_.keys())
+        for(int i = 0; i < childNodes_[key].count(); i++)
+            changed |= childNodes_[key][i]->refreshProcessValues();
+#endif
+    return changed;
+}
+
+bool dataNode::openProcess(QString exeFile, QString targetVersion, QString &feedbackMessage)
+{
+#ifdef Q_WS_WIN
+    DWORD pid = processID_;
+    feedbackMessage = "";
+    if(processHandle_)
+    {
+        if(validatePID(processID_, exeFile))
+            return true;
+        else
+        {
+            feedbackMessage = "LH_DataViewer: Process ID no longer valid.";
+            processID_ = 0;
+            CloseHandle(processHandle_);
+            processHandle_ = NULL;
+        }
+    }
+
+    if (exeFile=="")
+    {
+        feedbackMessage = "No process specified";
+        return false;
+    }
+
+    processID_ = getProcessId(exeFile);
+    if(processID_ == pid)
+        return (processID_!=0);
+    else
+    {
+        if ( !processID_ )
+        {
+            feedbackMessage = QString("Could not find process \"%1\"").arg(exeFile);
+            return false;
+        }
+
+        if(targetVersion!="")
+        {
+            QString processVersion = getProcessVersion(exeFile);
+            if(targetVersion != processVersion)
+            {
+                feedbackMessage = QString("Incorrect version (layout is for v%1, not v%2)").arg(targetVersion).arg(processVersion);
+                return false;
+            }
+        }
+
+        indexModules(processID_);
+
+        processHandle_ = OpenProcess(PROCESS_QUERY_INFORMATION | PROCESS_VM_READ, false, processID_);
+        if ( !processHandle_ )
+        {
+            feedbackMessage = QString("Could not open process \"%1\"").arg(exeFile);
+            return false;
+        }
+
+        refreshProcessValues();
+        return true;
+    }
+#else
+    Q_UNUSED(exeFile);
+    feedbackMessage = "Direct memory access is unsupported on this operating system"
+    return false;
+#endif
+}
+
+QList<uint> dataNode::memoryOffsets()
+{
+    return definition_.offsets;
+}
+
+bool dataNode::getModuleAddress(QString moduleName, uint &moduleAddress)
+{
+    moduleAddress = 0;
+    if (modules_.contains(moduleName))
+    {
+        moduleAddress = modules_[moduleName];
+        return true;
+    }
+    if (modules_.contains(QString("%1").arg(moduleName)))
+    {
+        moduleAddress = modules_[QString("%1").arg(moduleName)];
+        return true;
+    }
+    return false;
+}
+
+#ifdef Q_WS_WIN
+HANDLE dataNode::processHandle()
+{
+    if(parentNode_)
+        return parentNode()->processHandle();
+    else
+        return processHandle_;
+}
+
+uint dataNode::memoryAddress()
+{
+    //return definition_.memory;
+    uint addressVal;
+    if(definition_.startAddress.contains("+"))
+    {
+        uint moduleAddress;
+        QStringList baseParts = definition_.startAddress.split('+',QString::SkipEmptyParts);
+        if(getModuleAddress(baseParts.at(0), moduleAddress))
+        {
+            sscanf(baseParts.at(1).toAscii().data(), "%x", &addressVal);
+            addressVal += moduleAddress;
+        } else
+            addressVal = 0;
+    } else
+        sscanf(definition_.startAddress.toAscii().data(), "%x", &addressVal);
+    return addressVal;
+}
+#endif
+

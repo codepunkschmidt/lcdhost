@@ -26,7 +26,7 @@ public:
         //setup_show_placeholder_->setTitle("Use default images");
 
         setup_connection_status_ = new LH_Qt_QStringList(this, "Connection Status", QStringList() << "Not Running" << "Not Connected" << "Connected", LH_FLAG_HIDDEN | LH_FLAG_READONLY | LH_FLAG_NOSOURCE | LH_FLAG_NOSAVE | LH_FLAG_AUTORENDER);
-        setup_connection_status_->setLink("=/Monitoring/3rdParty/TeamSpeak3/Connection Status");
+        setup_connection_status_->setLink("=/3rdParty/TeamSpeak 3/Connection Status");
         //setup_connection_status_->refreshData();
 
         add_cf_target(setup_image_file_);
@@ -44,7 +44,9 @@ public:
             "3rdParty/TeamSpeak 3",
             "TS3ConnectionImage",
             "TS3 Connection Status (Image)",
-            16,16
+            16,16,
+            lh_object_calltable_NULL,
+            lh_instance_calltable_NULL
         };
         return &classInfo;
     }

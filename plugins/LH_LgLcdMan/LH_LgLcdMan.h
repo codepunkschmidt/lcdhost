@@ -63,6 +63,7 @@ class LH_LgLcdMan : public LH_QtPlugin
 
 public:
     LH_LgLcdMan() : LH_QtPlugin(), thread_(NULL), bw_(NULL), qvga_(NULL) {}
+    ~LH_LgLcdMan();
 
     virtual const char *userInit();
     virtual void userTerm();

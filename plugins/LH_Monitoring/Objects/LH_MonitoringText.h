@@ -26,9 +26,8 @@ public:
 
     static lh_class *classInfo();
 
-    void updateText(bool rerender = false);
-
 public slots:
+    void updateText(bool rerender = false);
     void configChanged()  { updateText(); }
 
 };

@@ -42,7 +42,7 @@ lh_class *LH_MonitoringImage::classInfo()
     static lh_class classInfo =
     {
         sizeof(lh_class),
-        "3rdParty/"STRINGIZE(MONITORING_FOLDER)" Monitoring",
+        STRINGIZE(MONITORING_FOLDER),
         STRINGIZE(COMMON_OBJECT_NAME)"Image",
         STRINGIZE(COMMON_OBJECT_NAME)" (Image)",
         48,48
@@ -61,11 +61,9 @@ const char *LH_MonitoringImage::userInit()
 {
     if( const char *err = LH_QImage::userInit() ) return err;
 
-    ui_ = new LH_MonitoringUI(this, mdmAll, false);
+    ui_ = new LH_MonitoringUI(this, mdmAll, false, false);
 
     setup_image_file_->setFlags( LH_FLAG_AUTORENDER | LH_FLAG_READONLY | LH_FLAG_NOSAVE );
-
-    (new LH_Qt_QString(this,("image-hr1"), QString("<hr>"), LH_FLAG_NOSAVE | LH_FLAG_NOSOURCE | LH_FLAG_NOSINK | LH_FLAG_HIDETITLE,lh_type_string_html ))->setOrder(-1);
 
     setup_value_ = new LH_Qt_QString( this, ("Current Value"), "N/A", LH_FLAG_READONLY|LH_FLAG_NOSAVE );
     setup_value_->setOrder(-1);

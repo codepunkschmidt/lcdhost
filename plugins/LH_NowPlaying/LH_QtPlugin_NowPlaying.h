@@ -39,84 +39,156 @@
 #define LH_QTPLUGIN_NOWPLAYING_H
 
 #include "LH_QtPlugin.h"
-#include "utils.h"
-#include <QFile>
-#include <QThread>
-#include <QDebug>
+#include "LH_Qt_QString.h"
+#include "LH_Qt_int.h"
+#include "LH_Qt_InputState.h"
+#include "LH_Qt_bool.h"
+#include "Player.h"
+
+
+#include "PlayerITunes.h"
+#include "PlayerWinamp.h"
+#include "PlayerFoobar.h"
+#include "PlayerSpotify.h"
+#include "PlayerVLC.h"
+#include "PlayerWLM.h"
+
+#include <QTime>
 #include <QTimer>
-
-#define VERSION 2.10
-
-class LH_NowPlaying_Reader: public QThread
-{
-    Q_OBJECT
-    bool playerFound_;
-    QString artworkCachePath_;
-    TrackInfo info_;
-    artworkDescription cachedArtwork_;
-    bool storeInfo(TrackInfo newInfo);
-
-public:
-    LH_NowPlaying_Reader(LH_QtPlugin *parent): QThread((QObject*)parent)
-    {
-        // get the data directory. we will save a temporary "art.jpg" file
-        // here whilst it is valid. When the album changes or the plugin is
-        // unloaded this file is automatically cleaned up.
-        artworkCachePath_ = QString::fromUtf8(parent->state()->dir_data);
-        Q_ASSERT( artworkCachePath_.endsWith('/') );
-        return;
-    }
-
-    ~LH_NowPlaying_Reader();
-
-    TrackInfo info() { return info_; }
-    bool playerFound() { return playerFound_; }
-    QString artworkFileName()
-    {
-        return cachedArtwork_.fileName;
-    }
-    void clearArtwork()
-    {
-        /*
-        qDebug() << "Clean up requested: " << cachedArtwork_.fileName;
-        if(cachedArtwork_.fileName!="" && QFile::exists(cachedArtwork_.fileName))
-            qDebug() << "Clean up suceeded: " << QFile::remove(cachedArtwork_.fileName);
-        else
-            qDebug() << "Clean up skipped";
-        */
-        if(cachedArtwork_.fileName!="" && QFile::exists(cachedArtwork_.fileName))
-        {
-            #ifdef Q_OS_WIN
-                SetFileAttributes((LPCTSTR)cachedArtwork_.fileName.utf16(), 0);
-            #endif
-            QFile::remove(cachedArtwork_.fileName);
-        }
-        cachedArtwork_ = (artworkDescription){amNone, "","","",""};
-    }
-
-    void refresh();
-    virtual void run() { refresh(); }
-
-signals:
-    void changed();
-    void artworkChanged();
-};
+#include <QDebug>
+#include <QStringList>
 
 
-
-extern LH_NowPlaying_Reader* currentTrack;
+extern CPlayer* player;
+extern ArtworkCache* artworkCache;
+extern bool isElevated;
 
 class LH_QtPlugin_NowPlaying : public LH_QtPlugin
 {
+    enum elevationState
+    {
+        ELEVATION_UNKNOWN = -1,
+        ELEVATION_NORMAL = 0,
+        ELEVATION_ELEVATED = 1
+    };
+
+    typedef enum _TOKEN_ELEVATION_TYPE {
+        TokenElevationTypeDefault = 1,
+        TokenElevationTypeFull,
+        TokenElevationTypeLimited
+    } TOKEN_ELEVATION_TYPE, *PTOKEN_ELEVATION_TYPE;
+
     Q_OBJECT
     QTimer timer_;
 
+#ifdef ITUNES_AUTO_CLOSING
+    QTime elapsedTime_;
+    bool forceClose_;
+#endif
+    HWND hWnd_iTunes_warn_cache_;
+    HWND hWnd_Foobar_warn_cache_;
+
+    QStringList priorities_;
+
+
+    QString getWindowClass(LPCSTR windowCaption)
+    {
+        HWND hwnd = FindWindowA(NULL,windowCaption);
+        if (hwnd != 0)
+        {
+            WCHAR winTitle[100];
+            GetClassName(hwnd,winTitle,100);
+            return QString::fromWCharArray(winTitle);
+        } else
+            return "Not found.";
+    }
+
+    bool playerControlCheck();
+
+    elevationState GetElevationState(DWORD PID);
+
+    QString getLastErrorMessage()
+    {
+        DWORD dwError;
+        wchar_t errBuf[256];
+
+        dwError = GetLastError();
+        FormatMessage(FORMAT_MESSAGE_FROM_SYSTEM, NULL, dwError, MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT), (LPTSTR)errBuf, sizeof(errBuf),NULL);
+
+        return QString("Err Code: %1 - %2").arg(dwError).arg(QString::fromWCharArray(errBuf));
+    }
+
+    void CloseWindow(HWND hWnd)
+    {
+        UINT uExitCode = 0;
+        DWORD dwProcessId;
+        GetWindowThreadProcessId( hWnd, &dwProcessId );
+        HANDLE hProcess = OpenProcess(PROCESS_QUERY_INFORMATION | PROCESS_VM_READ | PROCESS_TERMINATE, false, dwProcessId);
+        if (hProcess != NULL)
+            TerminateProcess(hProcess, uExitCode);
+    }
+
 public:
+    QList<LH_Qt_int*> setup_priorities_;
+
+    LH_Qt_QString *setup_page_playerConfig_;
+    LH_Qt_QString *setup_page_keyBindings_;
+    LH_Qt_QString *setup_page_remoteControl_;
+    LH_Qt_QString *setup_page_advanced_;
+
+    LH_Qt_QString *setup_heading_playerConfig_;
+    LH_Qt_QString *setup_heading_playerConfig_break1_;
+    QHash<QString, LH_Qt_bool*> setup_enable_players_;
+    LH_Qt_QString *setup_vlc_port_;
+
+    LH_Qt_QString *setup_heading_keyBindings_;
+    LH_Qt_QString *setup_heading_keyBindings_break1_;
+    LH_Qt_QString *setup_heading_keyBindings_break2_;
+    LH_Qt_bool *setup_media_keys_VLC_;
+    LH_Qt_InputState *setup_input_play_pause_;
+    LH_Qt_InputState *setup_input_stop_;
+    LH_Qt_InputState *setup_input_next_;
+    LH_Qt_InputState *setup_input_prev_;
+    LH_Qt_InputState *setup_input_shuffle_;
+    LH_Qt_InputState *setup_input_repeat_;
+    LH_Qt_InputState *setup_input_close_;
+
+    LH_Qt_QString *setup_heading_remoteControl_;
+    LH_Qt_QString *setup_control_play_pause_;
+    LH_Qt_QString *setup_control_stop_;
+    LH_Qt_QString *setup_control_next_;
+    LH_Qt_QString *setup_control_prev_;
+    LH_Qt_QString *setup_control_close_;
+    LH_Qt_QString *setup_control_repeat_;
+    LH_Qt_QString *setup_control_shuffle_;
+
+    LH_Qt_QString *setup_heading_advanced_;
+    LH_Qt_QString *setup_source_player_;
+    LH_Qt_QString *setup_source_artist_;
+    LH_Qt_QString *setup_source_album_;
+    LH_Qt_QString *setup_source_title_;
+    LH_Qt_QString *setup_source_status_;
+
     const char *userInit();
     void userTerm();
+    void clearPlayer();
 
 public slots:
     void refresh_data();
+    void controlPlayPauseClick(QString key="",int flags=0,int value=0);
+    void controlStopClick(QString key="",int flags=0,int value=0);
+    void controlNextClick(QString key="",int flags=0,int value=0);
+    void controlPrevClick(QString key="",int flags=0,int value=0);
+    void controlCloseClick();
+    void controlRepeatClick();
+    void controlShuffleClick();
+    void reorderPriorities();
+    void updatePriorities();
+    void selectPage(QObject *sender = NULL);
+    void doneInitialize();
+
+signals:
+    void updated_data();
 };
 
 #endif // LH_QTPLUGIN_NOWPLAYING_H

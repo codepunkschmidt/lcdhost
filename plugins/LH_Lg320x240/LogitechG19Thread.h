@@ -11,8 +11,8 @@ class LogitechG19Thread : public QThread
 {
     Q_OBJECT
 
-    LogitechG19 *g19_;
-    bool time_to_die_;
+    LogitechG19 * g19_;
+    volatile bool time_to_die_;
     QSemaphore sem_;
     QImage img_;
 

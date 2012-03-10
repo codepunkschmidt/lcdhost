@@ -78,7 +78,12 @@ public:
     int notify(int n, void *p)
     {
         changeUnits();
-        if(!n || n&LH_NOTE_SECOND)
+        if(n&LH_NOTE_NET)
+        {
+            valCache+=net_.outRate();
+            valCount+=1;
+        }
+        if(n&LH_NOTE_SECOND)
         {
             if (valCount!=0) {
                 lastVal = valCache/valCount;
@@ -87,9 +92,6 @@ public:
             }
             valCache = 0;
             valCount = 0;
-        } else {
-            valCache+=net_.outRate();
-            valCount+=1;
         }
         return LH_Graph::notify(n,p) | net_.notify(n,p) | LH_NOTE_SECOND;
     }

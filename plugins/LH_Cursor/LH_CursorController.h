@@ -61,6 +61,7 @@ class LH_CursorController : public LH_QtInstance
     void updateLinkData();
 
     cursorData cursor_data_;
+    bool updating_link_data_;
 protected:
 
     LH_Qt_QString *setup_coordinate_;

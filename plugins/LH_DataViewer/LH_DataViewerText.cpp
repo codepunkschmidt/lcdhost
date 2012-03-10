@@ -56,8 +56,9 @@ lh_class *LH_DataViewerText::classInfo()
     return &classInfo;
 }
 
-LH_DataViewerText::LH_DataViewerText() : data_(this)
+const char *LH_DataViewerText::userInit()
 {
+    if( const char *err = LH_Text::userInit() ) return err;
     setup_text_->setValue(" ");
     setup_text_->setFlags(LH_FLAG_READONLY | LH_FLAG_NOSAVE);
 
@@ -71,7 +72,10 @@ LH_DataViewerText::LH_DataViewerText() : data_(this)
 
     updateTimer_.start();
     scrollTimer_.start();
-    return;
+    setText("");
+    setText(" ");
+    callback(lh_cb_render,NULL);
+    return 0;
 }
 
 int LH_DataViewerText::polling()
@@ -87,7 +91,7 @@ int LH_DataViewerText::polling()
         scrollTimer_.restart();
     }
     return (scroll_poll_<polling_rate && scroll_poll_!=0? scroll_poll_ : polling_rate);
-};
+}
 
 void LH_DataViewerText::updateText()
 {
@@ -95,7 +99,6 @@ void LH_DataViewerText::updateText()
     {
         setup_item_name_->setValue( data_.populateLookupCode(setup_lookup_code_->value(), true) );
         QString txtVal = data_.populateLookupCode(setup_lookup_code_->value(), false, true);
-        if( setText( txtVal ) )
-            callback(lh_cb_render,NULL); // only render if the text changed
+        if( setText( txtVal ) ) callback(lh_cb_render,NULL);
     }
 }

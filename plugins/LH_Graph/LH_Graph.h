@@ -113,9 +113,7 @@ protected:
 
 public:
     LH_Graph( float defaultMin = 0, float defaultMax = 0 );
-    ~LH_Graph();
 
-    int notify(int code,void* param);
     QImage *render_qimage( int w, int h );
 
     qreal max();

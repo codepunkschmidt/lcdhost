@@ -88,6 +88,12 @@ static const char *usbfs_path = NULL;
  */
 static int supports_flag_bulk_continuation = -1;
 
+/* Linux 2.6.31 fixes support for the zero length packet URB flag. This
+ * allows us to mark URBs that should be followed by a zero length data
+ * packet, which can be required by device- or class-specific protocols.
+ */
+static int supports_flag_zero_packet = -1;
+
 /* clock ID for monotonic clock, as not all clock sources are available on all
  * systems. appropriate choice made at initialization time. */
 static clockid_t monotonic_clkid = -1;
@@ -216,37 +222,35 @@ static clockid_t find_monotonic_clock(void)
 	return CLOCK_REALTIME;
 }
 
-/* bulk continuation URB flag available from Linux 2.6.32 */
-static int check_flag_bulk_continuation(void)
+static int kernel_version_ge(int major, int minor, int sublevel)
 {
 	struct utsname uts;
-	int atoms, major, minor, sublevel;
+	int atoms, kmajor, kminor, ksublevel;
 
 	if (uname(&uts) < 0)
 		return -1;
-	atoms = sscanf(uts.release, "%d.%d.%d", &major, &minor, &sublevel);
+	atoms = sscanf(uts.release, "%d.%d.%d", &kmajor, &kminor, &ksublevel);
 	if (atoms < 1)
 		return -1;
 
-	if (major > 2)
+	if (kmajor > major)
 		return 1;
-	if (major < 2)
+	if (kmajor < major)
 		return 0;
 
+	/* kmajor == major */
 	if (atoms < 2)
+		return 0 == minor && 0 == sublevel;
+	if (kminor > minor)
+		return 1;
+	if (kminor < minor)
 		return 0;
 
-	/* major == 2 */
-	if (minor < 6)
-		return 0;
-	if (minor > 6) /* Does not exist, just here for correctness */
-		return 1;
+	/* kminor == minor */
+	if (atoms < 3)
+		return 0 == sublevel;
 
-	/* 2.6.x */
-	if (3 == atoms && sublevel >= 32)
-		return 1;
-
-	return 0;
+	return ksublevel >= sublevel;
 }
 
 /* Return 1 if filename exists inside dirname in sysfs.
@@ -280,7 +284,8 @@ static int op_init(struct libusb_context *ctx)
 		monotonic_clkid = find_monotonic_clock();
 
 	if (supports_flag_bulk_continuation == -1) {
-		supports_flag_bulk_continuation = check_flag_bulk_continuation();
+		/* bulk continuation URB flag available from Linux 2.6.32 */
+		supports_flag_bulk_continuation = kernel_version_ge(2,6,32);
 		if (supports_flag_bulk_continuation == -1) {
 			usbi_err(ctx, "error checking for bulk continuation support");
 			return LIBUSB_ERROR_OTHER;
@@ -289,6 +294,18 @@ static int op_init(struct libusb_context *ctx)
 
 	if (supports_flag_bulk_continuation)
 		usbi_dbg("bulk continuation flag supported");
+
+	if (-1 == supports_flag_zero_packet) {
+		/* zero length packet URB flag fixed since Linux 2.6.31 */
+		supports_flag_zero_packet = kernel_version_ge(2,6,31);
+		if (-1 == supports_flag_zero_packet) {
+			usbi_err(ctx, "error checking for zero length packet support");
+			return LIBUSB_ERROR_OTHER;
+		}
+	}
+
+	if (supports_flag_zero_packet)
+		usbi_dbg("zero length packet flag supported");
 
 	r = stat(SYSFS_DEVICE_PATH, &statbuf);
 	if (r == 0 && S_ISDIR(statbuf.st_mode)) {
@@ -1081,74 +1098,6 @@ static int sysfs_scan_device(struct libusb_context *ctx,
 		devname);
 }
 
-static void sysfs_analyze_topology(struct discovered_devs *discdevs)
-{
-	struct linux_device_priv *priv;
-	int i, j;
-	struct libusb_device *dev1, *dev2;
-	const char *sysfs_dir1, *sysfs_dir2;
-	const char *p;
-	int n, boundary_char;
-
-	/* Fill in the port_number and parent_dev fields for each device */
-
-	for (i = 0; i < discdevs->len; ++i) {
-		dev1 = discdevs->devices[i];
-		priv = _device_priv(dev1);
-		if (!priv)
-			continue;
-		sysfs_dir1 = priv->sysfs_dir;
-
-		/* Root hubs have sysfs_dir names of the form "usbB",
-		 * where B is the bus number.  All other devices have
-		 * sysfs_dir names of the form "B-P[.P ...]", where the
-		 * P values are port numbers leading from the root hub
-		 * to the device.
-		 */
-
-		/* Root hubs don't have parents or port numbers */
-		if (sysfs_dir1[0] == 'u')
-			continue;
-
-		/* The rightmost component is the device's port number */
-		p = strrchr(sysfs_dir1, '.');
-		if (!p) {
-			p = strchr(sysfs_dir1, '-');
-			if (!p)
-				continue;	/* Should never happen */
-		}
-		dev1->port_number = atoi(p + 1);
-
-		/* Search for the parent device */
-		boundary_char = *p;
-		n = p - sysfs_dir1;
-		for (j = 0; j < discdevs->len; ++j) {
-			dev2 = discdevs->devices[j];
-			priv = _device_priv(dev2);
-			if (!priv)
-				continue;
-			sysfs_dir2 = priv->sysfs_dir;
-
-			if (boundary_char == '-') {
-				/* The parent's name must begin with 'usb';
-				 * skip past that part of sysfs_dir2.
-				 */
-				if (sysfs_dir2[0] != 'u')
-					continue;
-				sysfs_dir2 += 3;
-			}
-
-			/* The remainder of the parent's name must be equal to
-			 * the first n bytes of sysfs_dir1.
-			 */
-			if (memcmp(sysfs_dir1, sysfs_dir2, n) == 0 && !sysfs_dir2[n]) {
-				dev1->parent_dev = dev2;
-				break;
-			}
-		}
-	}
-}
-
 static int sysfs_get_device_list(struct libusb_context *ctx,
 	struct discovered_devs **_discdevs)
 {
@@ -1181,7 +1130,6 @@ static int sysfs_get_device_list(struct libusb_context *ctx,
 	if (!r)
 		*_discdevs = discdevs;
 	closedir(devices);
-	sysfs_analyze_topology(discdevs);
 	return r;
 }
 
@@ -1580,6 +1528,10 @@ static int submit_bulk_transfer(struct usbi_transfer *itransfer,
 	if (tpriv->urbs)
 		return LIBUSB_ERROR_BUSY;
 
+	if (is_out && transfer->flags & LIBUSB_TRANSFER_ADD_ZERO_PACKET &&
+	    !supports_flag_zero_packet)
+		return LIBUSB_ERROR_NOT_SUPPORTED;
+
 	/* usbfs places a 16kb limit on bulk URBs. we divide up larger requests
 	 * into smaller units to meet such restriction, then fire off all the
 	 * units at once. it would be simpler if we just fired one unit at a time,
@@ -1623,6 +1575,11 @@ static int submit_bulk_transfer(struct usbi_transfer *itransfer,
 
 		if (i > 0 && supports_flag_bulk_continuation)
 			urb->flags |= USBFS_URB_BULK_CONTINUATION;
+
+		/* we have already checked that the flag is supported */
+		if (is_out && i == num_urbs - 1 &&
+		    transfer->flags & LIBUSB_TRANSFER_ADD_ZERO_PACKET)
+			urb->flags |= USBFS_URB_ZERO_PACKET;
 
 		r = ioctl(dpriv->fd, IOCTL_USBFS_SUBMITURB, urb);
 		if (r < 0) {

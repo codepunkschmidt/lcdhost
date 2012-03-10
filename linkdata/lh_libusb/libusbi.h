@@ -32,7 +32,6 @@
 #endif
 
 #include <libusb.h>
-#include "libusb_version.h"
 
 /* Inside the libusb code, mark all public functions as follows:
  *   return_type API_EXPORTED function_name(params) { ... }
@@ -140,7 +139,7 @@ void usbi_log_v(struct libusb_context *ctx, enum usbi_log_level level,
 #define _usbi_log(ctx, level, ...) do { (void)(ctx); } while(0)
 #endif
 
-#if defined(ENABLE_DEBUG_LOGGING) || defined(INCLUDE_DEBUG_LOGGING)
+#ifdef ENABLE_DEBUG_LOGGING
 #define usbi_dbg(...) _usbi_log(NULL, LOG_LEVEL_DEBUG, __VA_ARGS__)
 #else
 #define usbi_dbg(...) do {} while(0)
@@ -175,7 +174,7 @@ static inline void usbi_err( struct libusb_context *ctx, const char *format,
 	LOG_BODY(ctx,LOG_LEVEL_ERROR)
 
 static inline void usbi_dbg(const char *format, ...)
-#if defined(ENABLE_DEBUG_LOGGING) || defined(INCLUDE_DEBUG_LOGGING)
+#ifdef ENABLE_DEBUG_LOGGING
 	LOG_BODY(NULL,LOG_LEVEL_DEBUG)
 #else
 { }
@@ -197,7 +196,7 @@ static inline void usbi_dbg(const char *format, ...)
 #include <os/threads_windows.h>
 #endif
 
-#if defined(OS_LINUX) || defined(OS_DARWIN)
+#if defined(OS_LINUX) || defined(OS_DARWIN) || defined(OS_OPENBSD)
 #include <unistd.h>
 #include <os/poll_posix.h>
 #elif defined(OS_WINDOWS)
@@ -276,8 +275,6 @@ struct libusb_device {
 	struct libusb_context *ctx;
 
 	uint8_t bus_number;
-	uint8_t port_number;
-	struct libusb_device* parent_dev;
 	uint8_t device_address;
 	uint8_t num_configurations;
 	enum libusb_speed speed;
@@ -887,6 +884,7 @@ extern const struct usbi_os_backend * const usbi_backend;
 
 extern const struct usbi_os_backend linux_usbfs_backend;
 extern const struct usbi_os_backend darwin_backend;
+extern const struct usbi_os_backend openbsd_backend;
 extern const struct usbi_os_backend windows_backend;
 
 #endif

@@ -36,10 +36,6 @@
 
 #include "libusbi.h"
 
-/* The timercmp from MinGW's _timeval.h produces a warning */
-#define	libusb_timercmp(a, b, CMP) (((a)->tv_sec == (b)->tv_sec) ? \
-	((a)->tv_usec CMP (b)->tv_usec):((a)->tv_sec CMP (b)->tv_sec))
-
 /**
  * \page io Synchronous and asynchronous device I/O
  *
@@ -1285,6 +1281,8 @@ void API_EXPORTED libusb_free_transfer(struct libusb_transfer *transfer)
  * \returns 0 on success
  * \returns LIBUSB_ERROR_NO_DEVICE if the device has been disconnected
  * \returns LIBUSB_ERROR_BUSY if the transfer has already been submitted.
+ * \returns LIBUSB_ERROR_NOT_SUPPORTED if the transfer flags are not supported
+ * by the operating system.
  * \returns another LIBUSB_ERROR code on other failure
  */
 int API_EXPORTED libusb_submit_transfer(struct libusb_transfer *transfer)
@@ -1443,7 +1441,7 @@ int usbi_handle_transfer_completion(struct usbi_transfer *itransfer,
 		USBI_TRANSFER_TO_LIBUSB_TRANSFER(itransfer);
 	struct libusb_context *ctx = TRANSFER_CTX(transfer);
 	uint8_t flags;
-	int r;
+	int r = 0;
 
 	/* FIXME: could be more intelligent with the timerfd here. we don't need
 	 * to disarm the timerfd if there was no timer running, and we only need
@@ -1452,12 +1450,13 @@ int usbi_handle_transfer_completion(struct usbi_transfer *itransfer,
 
 	usbi_mutex_lock(&ctx->flying_transfers_lock);
 	list_del(&itransfer->list);
-	r = arm_timerfd_for_next_timeout(ctx);
+	if (usbi_using_timerfd(ctx))
+		r = arm_timerfd_for_next_timeout(ctx);
 	usbi_mutex_unlock(&ctx->flying_transfers_lock);
 
-	if (r < 0) {
-		return r;
-	} else if (r == 0) {
+	if (usbi_using_timerfd(ctx)) {
+		if (r < 0)
+			return r;
 		r = disarm_timerfd(ctx);
 		if (r < 0)
 			return r;
@@ -1964,7 +1963,7 @@ static int get_next_timeout(libusb_context *ctx, struct timeval *tv,
 			return 1;
 
 		/* choose the smallest of next URB timeout or user specified timeout */
-		if (libusb_timercmp(&timeout, tv, <))
+		if (timercmp(&timeout, tv, <))
 			*out = timeout;
 		else
 			*out = *tv;
@@ -2269,7 +2268,7 @@ int API_EXPORTED libusb_get_next_timeout(libusb_context *ctx,
 	}
 	TIMESPEC_TO_TIMEVAL(&cur_tv, &cur_ts);
 
-	if (!libusb_timercmp(&cur_tv, next_timeout, <)) {
+	if (!timercmp(&cur_tv, next_timeout, <)) {
 		usbi_dbg("first timeout already expired");
 		timerclear(tv);
 	} else {

@@ -33,6 +33,7 @@
   */
 
 #include "LH_QtSetupItem.h"
+#include <QDebug>
 
 LH_QtSetupItem::LH_QtSetupItem( LH_QtObject *parent, QString name, lh_setup_type type, int flags ) : QObject( parent )
 {
@@ -89,26 +90,46 @@ void LH_QtSetupItem::setOrder( int n )
     order_ = n;
 }
 
-void LH_QtSetupItem::setLink(QString s)
+void LH_QtSetupItem::setLink( QString s )
 {
-    if( s.isEmpty() )
+    if( s.startsWith('@') || s.startsWith('=') )
     {
-        link_array_.clear();
-        item_.link = 0;
+        qWarning() << parent()->metaObject()->className()
+                   << "setup item"
+                   << objectName()
+                   << "using old link style"
+                   << s;
+        if( flags() & LH_FLAG_NOSAVE_DATA )
+            setFlag( LH_FLAG_NOSAVE_LINK, true );
+        if( s.startsWith('=') ) setSubscribePath( s.right(s.length()-1) );
+        else setPublishPath( s.right(s.length()-1) );
     }
     else
-    {
-        link_array_ = s.toUtf8();
-        item_.link = link_array_.constData();
-    }
+        setSubscribePath(s);
+    return;
+}
+
+void LH_QtSetupItem::setMimeType( const char * s )
+{
+    item_.link.mime = s;
     parent()->callback( lh_cb_setup_refresh, item() );
     return;
 }
 
-QString LH_QtSetupItem::link()
+void LH_QtSetupItem::setPublishPath( QString s )
 {
-    if( item_.link ) return QString::fromUtf8( item_.link );
-    return QString();
+    memset( item_.link.publish, 0, sizeof(item_.link.publish) );
+    strncpy( item_.link.publish, s.toAscii().constData(), sizeof(item_.link.publish)-1 );
+    parent()->callback( lh_cb_setup_refresh, item() );
+    return;
+}
+
+void LH_QtSetupItem::setSubscribePath( QString s )
+{
+    memset( item_.link.subscribe, 0, sizeof(item_.link.subscribe) );
+    strncpy( item_.link.subscribe, s.toAscii().constData(), sizeof(item_.link.subscribe)-1 );
+    parent()->callback( lh_cb_setup_refresh, item() );
+    return;
 }
 
 void LH_QtSetupItem::setHelp(QString s)

@@ -18,6 +18,9 @@ defineTest(cfgLine) {
 }
 
 load($$PWD/plugins.prf)
-isEmpty(LH_PLUGINS_LIST): LH_PLUGINS_LIST=$$files(LH_*)
+isEmpty(LH_PLUGINS_LIST) {
+    warning("plugins.pro: LH_PLUGINS_LIST not set")
+    LH_PLUGINS_LIST=$$files(LH_*)
+}
 
 SUBDIRS += $$LH_PLUGINS_LIST

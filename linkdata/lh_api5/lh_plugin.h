@@ -264,12 +264,15 @@ typedef enum lh_setup_type_t
 #define LH_FLAG_AUTORENDER  0x0008 /* Request a render when changed */
 #define LH_FLAG_FIRST       0x0010 /* Used with LH_QtSetupItem's - Same as calling setOrder(-1) */
 #define LH_FLAG_LAST        0x0020 /* Used with LH_QtSetupItem's - Same as calling setOrder(1) */
-#define LH_FLAG_NOSAVE      0x0040 /* Setup item won't be saved to or loaded from layout */
+#define LH_FLAG_NOSAVE_DATA 0x0040 /* Setup item won't be saved to or loaded from layout */
 #define LH_FLAG_BLANKTITLE  0x0080 /* Setup item title is not shown in GUI (blank space is shown) */
 #define LH_FLAG_NOSOURCE    0x0100 /* Setup item must not be used as a data source */
 #define LH_FLAG_NOSINK      0x0200 /* Setup item must not be used as a data sink */
 #define LH_FLAG_HIDETITLE   0x0400 /* Setup item title is not shown in GUI (all space to value) */
 #define LH_FLAG_HIDEVALUE   0x0800 /* Setup item value is not shown in GUI (all space to title) */
+#define LH_FLAG_NOSAVE_LINK 0x1000
+
+#define LH_FLAG_NOSAVE      LH_FLAG_NOSAVE_DATA
 
 typedef union lh_setup_param_t
 {
@@ -293,14 +296,6 @@ typedef union lh_setup_data_t
 } lh_setup_data;
 
 /**
- Setup items are the main information link between LCDHost and it's plugins.
-
- Start a setup item name with '^' to not display the name, leaving the name column blank.
- Obsoleted. Use LH_FLAG_BLANKTITLE.
-
- Start a setup item name with '~' to extend the setup item into the name column.
- Obsoleted. Use LH_FLAG_HIDETITLE.
-
  You can have LCDHost automatically update a setup item with data from another item.
  The 'link' member, if not NULL, specifies how data linking is handled. The first
  character specifies if it's a data source or a data sink. The rest is a path
@@ -314,17 +309,67 @@ typedef union lh_setup_data_t
     link = "=/system/Mail count"; // ok, data sink reading the above source
     link = "/system/cpu/count"; // error, missing command character
     link = "=system/cpu/count"; // error, missing initial path slash
+*/
 
+#define LH_LINK_SIZE 128
+
+/**
+    You can have LCDHost automatically update a setup item with data
+    from another item. All setup items have a link path associated with
+    them. If you don't specify a path explicitly, one will be generated
+    using the id of the item and it's parents.
+
+    Programatically, you can link any two items. If the data can be
+    converted, it will be transferred when updated at the source.
+
+    The UI will show a data linking button for a setup item if
+    the LH_FLAG_NOSINK is not set. If clicked, the UI will list
+    all setup items that do not have the LH_FLAG_NOSOURCE flag and
+    have a compatible mimetype, meaning that the sink may be less
+    specialized than the source (as in, you can link 'text/plain'
+    to 'text') or identical.
+
+    Both the link paths and mime type text are ASCIIZ. Link path
+    separator is a forward slash.
+
+    The maximum length is LH_LINK_SIZE, including NUL.
+
+    \c mime
+        Mime type - this is not enforced, currently just used
+        to filter sources in user UI. If NULL, a default mime
+        type will be selected matching the setup item type.
+    \c publish
+        When this setup item is changed, notify all items that
+        are subscribing to the link path 'publish'.
+    \c subscribe
+        When the setup items that publish to the link path 'subscribe'
+        are changed, send the (possibly converted) data to this item.
+*/
+typedef struct lh_setup_link_t
+{
+    const char * mime;
+    char publish[LH_LINK_SIZE];
+    char subscribe[LH_LINK_SIZE];
+} lh_setup_link;
+
+/**
+ Setup items are the main information link between LCDHost and it's plugins.
+
+ Start a setup item name with '^' to not display the name, leaving the name column blank.
+ Obsoleted. Use LH_FLAG_BLANKTITLE.
+
+ Start a setup item name with '~' to extend the setup item into the name column.
+ Obsoleted. Use LH_FLAG_HIDETITLE.
 */
 typedef struct lh_setup_item_t
 {
-    const char *name; /* name to identify this item uniquely, and display to the user (start with ~ to hide from display */
-    const char *help; /* short HTML help text shows as tooltip, may be NULL */
-    const char *link; /* data link, see comment above, may be NULL */
+    const char * name; /* name to identify this item uniquely, and display to the user (start with ~ to hide from display */
+    const char * help; /* short HTML help text shows as tooltip, may be NULL */
     lh_setup_type type; /* type of data, see enum above */
     int flags; /* LH_FLAG_xxx */
     lh_setup_param param;
     lh_setup_data data;
+    lh_setup_link link;
 } lh_setup_item;
 
 /**
@@ -474,6 +519,7 @@ typedef struct lh_device_t
 typedef struct lh_instance_calltable_t
 {
     int size; // sizeof(lh_instance_calltable)
+    // lh_object_calltable o;
     void * (*obj_new)(const lh_class*); /**< return a new instance of the class */
     void (*obj_prerender)(void*); /**< called right before width/height/render_xxx as a notification */
     int (*obj_width)(void*,int); /**< return suggested width given a height (or -1 for default width) */

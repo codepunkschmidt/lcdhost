@@ -81,6 +81,22 @@ extern "C"
     }
 }
 
+LH_Lg320x240::~LH_Lg320x240()
+{
+    if( g19thread_ )
+    {
+        while( g19thread_->isRunning() )
+        {
+            g19thread_->timeToDie();
+            QCoreApplication::processEvents();
+            if( g19thread_->wait(1000) ) break;
+            qWarning() << "LH_Lg320x240: worker thread not responding";
+        }
+        delete g19thread_;
+        g19thread_ = 0;
+    }
+}
+
 const char *LH_Lg320x240::userInit()
 {
     Q_ASSERT( g19thread_ == 0 );
@@ -99,19 +115,5 @@ const char *LH_Lg320x240::userInit()
 
 void LH_Lg320x240::userTerm()
 {
-    if( g19thread_ )
-    {
-        g19thread_->timeToDie();
-
-        for( int n=0; n<100; ++n )
-        {
-            if( g19thread_->wait(100) ) break;
-            g19thread_->quit();
-            QCoreApplication::processEvents();
-        }
-
-        if( g19thread_->wait(1000) )
-            delete g19thread_;
-    }
-    g19thread_ = 0;
+    if( g19thread_ ) g19thread_->timeToDie();
 }

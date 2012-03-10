@@ -40,7 +40,6 @@
 
 	LINKDATA = $$PWD/linkdata
 	CODELEAP = $$PWD/codeleap
-
 	QTSUPPORT = $$LINKDATA/QtSupport
 
 	INCLUDEPATH += \

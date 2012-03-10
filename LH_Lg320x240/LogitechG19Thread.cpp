@@ -1,7 +1,8 @@
 
-#include <QDebug>
 #include "LogitechG19Thread.h"
 #include "libusb.h"
+#include <QDebug>
+#include <QTime>
 
 LogitechG19Thread::LogitechG19Thread(QObject *parent) : QThread(parent)
 {
@@ -17,12 +18,13 @@ bool LogitechG19Thread::waitToDie(int secs)
 
 void LogitechG19Thread::run()
 {
-    while( !time_to_die_ )
+    while( !waitToDie(2) )
     {
         libusb_context *ctx = 0;
         if( !libusb_init(&ctx) && ctx )
         {
-            while( !time_to_die_ )
+            libusb_set_debug( ctx, 1 );
+            while( !waitToDie(1) )
             {
                 struct libusb_device_descriptor dd;
                 libusb_device *g19dev = 0;
@@ -32,15 +34,14 @@ void LogitechG19Thread::run()
                 {
                     for( int i = 0; i<device_count; ++i )
                     {
-                        if( !libusb_get_device_descriptor( device_list[i], &dd ) )
+                        if( g19dev == 0 && !time_to_die_ && !libusb_get_device_descriptor( device_list[i], &dd ) )
                         {
-                            if( dd.idVendor == 0x046d && dd.idProduct == 0xc229 ) // Logitech G19
-                            {
+                            if( dd.idVendor == 0x046d && dd.idProduct == 0x046d ) // Logitech G19
                                 g19dev = device_list[i];
-                            }
-                            else libusb_unref_device( device_list[i] );
                         }
-                        else libusb_unref_device( device_list[i] );
+                        if( g19dev != device_list[i] )
+                            libusb_unref_device( device_list[i] );
+                        device_list[i] = 0;
                     }
                     libusb_free_device_list( device_list, 0 );
                 }
@@ -60,12 +61,9 @@ void LogitechG19Thread::run()
                     delete the_g19;
                     libusb_unref_device( g19dev );
                 }
-
-                if( waitToDie(1) ) break;
             }
             libusb_exit(ctx);
             ctx = 0;
         }
-        if( waitToDie(2) ) break;
     }
 }

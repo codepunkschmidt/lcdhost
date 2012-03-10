@@ -10,7 +10,7 @@
 # and URL's if you want to use it.
 #
 
-!exists($$PWD/../lcdhost.prf) {
+!exists($$PWD/plugins.prf) {
 	CONFIG(debug, debug|release):RELDEB = Debug
 	else:RELDEB = Release
 
@@ -40,7 +40,6 @@
 
 	LINKDATA = $$PWD/linkdata
 	CODELEAP = $$PWD/codeleap
-
 	QTSUPPORT = $$LINKDATA/QtSupport
 
 	INCLUDEPATH += \
@@ -94,4 +93,13 @@
 	}
 }
 
-exists($$PWD/../lcdhost.prf): load($$PWD/../lcdhost.prf)
+exists($$PWD/plugins.prf) {
+    CONFIG += lh_api5_plugin
+    load($$PWD/plugins.prf)
+    LINKDATA = $$PWD/../linkdata
+    CODELEAP = $$PWD/../codeleap
+    QTSUPPORT = $$LINKDATA/QtSupport
+    cf: include($$CODELEAP/ConditionalFormatting/ConditionalFormatting.pri)
+    json: include($$CODELEAP/json/json.pri)
+    translator: include($$CODELEAP/GoogleTranslator/GoogleTranslator.pri)
+}

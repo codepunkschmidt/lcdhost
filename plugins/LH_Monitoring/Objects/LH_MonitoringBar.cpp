@@ -33,7 +33,7 @@ lh_class *LH_MonitoringBar::classInfo()
     static lh_class classInfo =
     {
         sizeof(lh_class),
-        "3rdParty/"STRINGIZE(MONITORING_FOLDER)" Monitoring",
+        STRINGIZE(MONITORING_FOLDER),
         STRINGIZE(COMMON_OBJECT_NAME)"Bar",
         STRINGIZE(COMMON_OBJECT_NAME)" (Bar)",
         48,48
@@ -52,9 +52,7 @@ const char *LH_MonitoringBar::userInit()
 {
     if( const char *err = LH_Bar::userInit() ) return err;
 
-    ui_ = new LH_MonitoringUI(this, mdmNumbers, true);
-
-    (new LH_Qt_QString(this,("image-hr1"), QString("<hr>"), LH_FLAG_NOSAVE | LH_FLAG_NOSOURCE | LH_FLAG_NOSINK | LH_FLAG_HIDETITLE,lh_type_string_html ))->setOrder(-3);
+    ui_ = new LH_MonitoringUI(this, mdmNumbers, true, false);
 
     setup_max_ = new LH_Qt_int(this, "Maximum", 100, 0, 99999);
     setup_max_->setHelp( "<p>The bar's maximum value.</p>");
@@ -93,6 +91,19 @@ QImage *LH_MonitoringBar::render_qimage( int w, int h )
     if( LH_Bar::render_qimage(w,h) == NULL ) return NULL;
     if(ui_ && ui_->data_)
     {
+        float max;
+        if(ui_->data_->getUpperLimit(max))
+        {
+            this->setup_max_->setHidden(true);
+            this->setup_min_->setHidden(true);
+            this->setMax((qreal)max);
+            this->setMin((qreal)0);
+        }
+        else
+        {
+            this->setup_max_->setHidden(false);
+            this->setup_min_->setHidden(false);
+        }
         if(!ui_->data_->isGroup())
         {
             float currVal=0;

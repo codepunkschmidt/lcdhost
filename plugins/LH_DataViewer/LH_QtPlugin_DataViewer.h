@@ -28,8 +28,6 @@
 
 #include "LH_QtPlugin.h"
 
-#define VERSION 1.03
-
 class LH_QtPlugin_DataViewer : public LH_QtPlugin
 {
 public:

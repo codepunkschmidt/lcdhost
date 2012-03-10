@@ -4,6 +4,8 @@
 #include <QObject>
 #include "LH_QtObject.h"
 #include <QStringList>
+#include <QHash>
+#include "qmath.h"
 
 class LH_MonitoringUI;
 
@@ -11,7 +13,8 @@ enum monitoringDataMode
 {
     mdmNumbers = 1,
     mdmText = 2,
-    mdmAll = mdmNumbers + mdmText
+    mdmAll = mdmNumbers + mdmText,
+    mdmPie = 4
 };
 
 enum monitoringDataType
@@ -19,6 +22,61 @@ enum monitoringDataType
     mdtInt = 0,
     mdtFloat = 1,
     mdtText = 2
+};
+
+class unitOptionsType
+{
+    int divisor_;
+    QStringList options_;
+    QHash<QString, int> lookup_;
+public:
+    QString convert(float &value, QString unit = "")
+    {
+        if(divisor_!=0)
+        {
+            int i = 0;
+            if(unit=="")
+            {
+                unit = options_[0];
+                while(value >= divisor_ && ++i<options_.length())
+                {
+                    value /= divisor_;
+                    unit = options_[i];
+                }
+            }
+            else
+                value /= qPow(divisor_, lookup_.value(unit, 0));
+        }
+        return unit;
+    }
+
+    QStringList list() { return QStringList(options_); }
+
+    unitOptionsType(int divisor = 0, QStringList *options = NULL)
+    {
+        set(divisor, options);
+    }
+
+    void addAuto()
+    {
+        options_.insert(0,"(Auto)");
+        lookup_.insert("(Auto)",-1);
+    }
+
+    void set(int divisor = 0, QStringList *options = NULL)
+    {
+        if(!options)
+            divisor_ = 0;
+        else
+        {
+            divisor_ = divisor;
+            for(int i = 0; i<options->length(); i++)
+            {
+                options_.append(options->at(i));
+                lookup_.insert(options->at(i),i);
+            }
+        }
+    }
 };
 
 class LH_MonitoringData : public QObject
@@ -29,6 +87,9 @@ protected:
 
     bool includeGroups_;
     bool is_group_;
+    bool adaptiveUnitsAllowed_;
+    bool adaptiveUnits_;
+    QString desiredUnits_;
 
     LH_MonitoringUI *ui_;
     monitoringDataMode dataMode_;
@@ -44,7 +105,7 @@ protected:
     //template<typename T> float getValueFromSet(int& index, int& count, T valueSet[]);
 
 public:
-    LH_MonitoringData(LH_QtObject *parent, LH_MonitoringUI *ui, monitoringDataMode dataMode, bool includeGroups = false);
+    LH_MonitoringData(LH_QtObject *parent, LH_MonitoringUI *ui, monitoringDataMode dataMode, bool includeGroups = false, bool allowAdaptiveUnits = false);
 
     virtual QString appName() { /*Q_Assert(false);*/ return "Unknown"; }  //must override
 
@@ -56,6 +117,7 @@ public:
     virtual int getThreshMax();
     virtual bool getGraphMin(float& ) {return false;}
     virtual bool getGraphMax(float& ) {return false;}
+    virtual bool getUpperLimit(float& ) {return false;}
     virtual bool getNames(QStringList& names);
     virtual bool getValue(float& value);
     virtual bool getValue(float& value, int index);
@@ -72,6 +134,25 @@ public:
 
     virtual bool isGroup() { return is_group_; }
     virtual void setIsGroup(bool b) { is_group_  = b; }
+
+    virtual bool getAdaptiveUnitOptions(unitOptionsType &options) {Q_UNUSED(options); return false;}
+    virtual bool adaptiveUnitsAllowed() { return adaptiveUnitsAllowed_; }
+    virtual bool adaptiveUnits() { return adaptiveUnits_; }
+    virtual void setAdaptiveUnits(bool b) { adaptiveUnits_ = b; }
+    virtual QStringList adaptiveUnitOptions()  {
+        unitOptionsType options;
+        if(getAdaptiveUnitOptions(options))
+            return options.list();
+        else
+            return QStringList();
+    }
+    virtual bool setUnits(QString s) {
+        if(!adaptiveUnitsAllowed_) return false;
+        setAdaptiveUnits(false);
+        desiredUnits_ = s;
+        return true;
+    }
+
 };
 
 #endif // LH_MONITORINGDATA_H

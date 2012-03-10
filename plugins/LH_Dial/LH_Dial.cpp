@@ -47,12 +47,13 @@ static inline uint PREMUL(uint x)
     return x;
 }
 
-LH_Dial::LH_Dial(DialType dialType)
+LH_Dial::LH_Dial(DialType dialType, QString unusedCapacityStyle)
 {
     min_ = max_ = 0.0;
     polling_on_ = false;
     isClock = false;
     dialType_ = dialType;
+    unusedCapacityStyleLock_ = unusedCapacityStyle;
 }
 
 const char *LH_Dial::userInit()
@@ -73,7 +74,7 @@ const char *LH_Dial::userInit()
     setup_face_style_->setHelp( "<p>How the face of the dial should be drawn - if at all.</p>");
 
     setup_face_pencolor_ = new LH_Qt_QColor(this,"Pen color",Qt::black,LH_FLAG_AUTORENDER);
-    setup_face_pencolor_->setHelp( "<p>The colour used for any lines on the face (i.e. outline & ticks).</p>");
+    setup_face_pencolor_->setHelp( "<p>The colour used for the face's outline.</p>");
 
     setup_face_fillcolor1_ = new LH_Qt_QColor(this,"Fill color (start)",Qt::white,LH_FLAG_AUTORENDER);
     setup_face_fillcolor1_->setHelp( "<p>The color used to fill dial's face at the top</p>");
@@ -86,6 +87,10 @@ const char *LH_Dial::userInit()
 
     setup_face_ticks_ = new LH_Qt_bool(this,"Show Ticks",false,LH_FLAG_AUTORENDER);
     setup_face_ticks_->setHelp( "<p>Whether to overlay marks denoting significant points along the dial.</p>");
+    connect( setup_face_ticks_, SIGNAL(changed()), this, SLOT(changeTicks()));
+
+    setup_face_tickcolor_ = new LH_Qt_QColor(this,"Tick color",Qt::black,LH_FLAG_AUTORENDER | LH_FLAG_HIDDEN);
+    setup_face_tickcolor_->setHelp( "<p>The colour used for the tick marks.</p>");
 
     connect( setup_face_style_, SIGNAL(changed()), this, SLOT(changeFaceStyle()));
 
@@ -104,18 +109,18 @@ const char *LH_Dial::userInit()
 
     if(dialType_==DIALTYPE_DIAL)
     {
-    setup_needle_style_ = new LH_Qt_QStringList(this, "Needle Style",QStringList()<<"Line"<<"Image [Needle Only]"<<"Image [Full Face] (Full Circle Only)", LH_FLAG_AUTORENDER|LH_FLAG_NOSAVE);
+    setup_needle_style_ = new LH_Qt_QStringList(this, "Needle Style",QStringList()<<"Line"<<"Image [Needle Only]"<<"Image [Full Face]", LH_FLAG_AUTORENDER|LH_FLAG_NOSAVE);
     setup_needle_style_->setHelp( "<p>How the selected needle should be drawn.</p>"
                                   "<p>Needle images can be created in one of two ways:<ul>"
                                   "<li>\"Needle Only\": "
                                   "<br/>This type of image is only as wide and as long as the needle. The image will be stretched or compressed as required to match the needle's length; the width will be scaled so as to preserve the aspect ratio. "
                                   "<br/>The needle is assumed to be in the vertical position and will be rotated around the image's <i>base</i> as required.</li>"
-                                  "<li>\"Needle Only\": "
+                                  "<li>\"Full Face\": "
                                   "<br/>This type of image is the size of the entire dial. The image will be stretched or compressed as required to completely fill the dial (and may therefore not preserve the aspect ratio). "
                                   "<br/>The needle is assumed to be in the vertical position and will be rotated around the image's <i>center point</i> as required.</li>"
                                   "</ul></p>");
     } else {
-        setup_needle_style_ = new LH_Qt_QStringList(this, "Segment Style",QStringList()<<"Fill"<<"Image (Anchored)"<<"Image (Moving)", LH_FLAG_AUTORENDER|LH_FLAG_NOSAVE);
+        setup_needle_style_ = new LH_Qt_QStringList(this, "Segment Style",QStringList()<<"Fill"<<"Image (Minimum Aligned)"<<"Image (Maximum Aligned)", LH_FLAG_AUTORENDER|LH_FLAG_NOSAVE);
         setup_needle_style_->setHelp( "<p>How the selected segment should be drawn.</p>");
     }
     setup_needle_color_ = new LH_Qt_QColor(this,QString("%1 Color").arg(nameText1),Qt::red,LH_FLAG_AUTORENDER|LH_FLAG_NOSAVE);
@@ -123,6 +128,10 @@ const char *LH_Dial::userInit()
         setup_needle_color_->setHelp( "<p>The colour used do draw \"Line\" needles.</p>");
     else
         setup_needle_color_->setHelp( "<p>The colour used do fill \"Fill\" segments.</p>");
+
+    setup_needle_gradient_ = new LH_Qt_bool(this,"Gradient Fill",false,LH_FLAG_AUTORENDER|LH_FLAG_NOSAVE);
+    setup_needle_color2_ = new LH_Qt_QColor(this,QString("%1 Color 2").arg(nameText1),Qt::yellow,LH_FLAG_AUTORENDER|LH_FLAG_NOSAVE);
+
 
     setup_needle_thickness_ = new LH_Qt_int(this,"Needle Thickness",3,1,20,LH_FLAG_AUTORENDER|LH_FLAG_NOSAVE|(dialType_!=DIALTYPE_DIAL?LH_FLAG_HIDDEN:0));
     setup_needle_thickness_->setHelp( "<p>The width of a \"Line\" needle.</p>");
@@ -139,10 +148,12 @@ const char *LH_Dial::userInit()
 
     if(dialType_==DIALTYPE_PIE)
     {
-        setup_unused_style_ = new LH_Qt_QStringList(this, "Unused Capacity Style", QStringList() << "Empty" << "Hidden" << "Fill" << "Image (Anchored)" << "Image (Moving)", LH_FLAG_AUTORENDER);
+        setup_unused_style_ = new LH_Qt_QStringList(this, "Unused Capacity Style", QStringList() << "Empty" << "Hidden" << "Fill" << "Image (Minimum Aligned)" << "Image (Maximum Aligned)", LH_FLAG_AUTORENDER);
 
         setup_unused_color_ = new LH_Qt_QColor(this,QString("%1 Color").arg("Unused Capacity"),Qt::white,LH_FLAG_AUTORENDER|LH_FLAG_HIDDEN);
         setup_unused_color_->setHelp( "<p>The colour used do fill the unused capacity area.</p>");
+        setup_unused_gradient_ = new LH_Qt_bool(this,"Unused Capacity Gradient Fill",false,LH_FLAG_AUTORENDER|LH_FLAG_HIDDEN);
+        setup_unused_color2_ = new LH_Qt_QColor(this,QString("%1 Color2").arg("Unused Capacity"),Qt::white,LH_FLAG_AUTORENDER|LH_FLAG_HIDDEN);
 
         setup_unused_length_ = new LH_Qt_int(this,QString("%1 Length (%)").arg("Unused Capacity"),90,0,100,LH_FLAG_AUTORENDER|LH_FLAG_HIDDEN);
         setup_unused_length_->setHelp( QString("<p>The %1's length as a percentage of the dial's radius.</p>").arg(nameText2));
@@ -150,7 +161,14 @@ const char *LH_Dial::userInit()
         setup_unused_image_ = new LH_Qt_QFileInfo( this, QString("%1 Image").arg("Unused Capacity"), QFileInfo(), LH_FLAG_AUTORENDER | LH_FLAG_HIDDEN);
         setup_unused_image_->setHelp( QString("<p>Image file to load and use for this %2 (see \"%1 Style\" for more information about how the image will be used).</p>").arg(nameText1).arg(nameText2));
 
-        connect( setup_unused_style_, SIGNAL(changed()), this, SLOT(changeUnusedStyle()));
+        if(unusedCapacityStyleLock_!="")
+        {
+            setup_unused_style_->setValue(unusedCapacityStyleLock_);
+            setup_unused_style_->setVisible(false);
+            changeUnusedStyle();
+        } else
+            connect( setup_unused_style_, SIGNAL(changed()), this, SLOT(changeUnusedStyle()));
+
     }
 
     setup_needle_configs_ = new LH_Qt_QTextEdit(this, QString("%1 Configs").arg(nameText1),"", LH_FLAG_HIDDEN);
@@ -159,9 +177,12 @@ const char *LH_Dial::userInit()
 
     addNeedle("Default");
     connect( setup_type_, SIGNAL(changed()), this, SLOT(changeType()));
+    connect( setup_needle_configs_, SIGNAL(changed()), this, SLOT(changeSelectedNeedle()) );
     connect( setup_needle_selection_, SIGNAL(changed()), this, SLOT(changeSelectedNeedle()) );
     connect( setup_needle_style_, SIGNAL(changed()), this, SLOT(updateSelectedNeedle()) );
     connect( setup_needle_color_, SIGNAL(changed()), this, SLOT(updateSelectedNeedle()) );
+    connect( setup_needle_gradient_, SIGNAL(changed()), this, SLOT(updateSelectedNeedle()) );
+    connect( setup_needle_color2_, SIGNAL(changed()), this, SLOT(updateSelectedNeedle()) );
     connect( setup_needle_thickness_, SIGNAL(changed()), this, SLOT(updateSelectedNeedle()) );
     connect( setup_needle_length_, SIGNAL(changed()), this, SLOT(updateSelectedNeedle()) );
     connect( setup_needle_gap_, SIGNAL(changed()), this, SLOT(updateSelectedNeedle()) );
@@ -188,7 +209,7 @@ LH_Dial::~LH_Dial()
     delete unusedImage_;
 }
 
-void LH_Dial::addNeedle(QString name)
+void LH_Dial::addNeedle(QString name, QColor defaultColor)
 {
     setup_needle_selection_->list().append(name);
     setup_needle_selection_->refreshList();
@@ -199,17 +220,30 @@ void LH_Dial::addNeedle(QString name)
     needleCode_.append("");
     needleImage_.append( new QImage() );
 
-    syncNeedleConfigs();
+    syncNeedleConfigs(defaultColor);
 }
 
-void LH_Dial::syncNeedleConfigs()
+void LH_Dial::syncNeedleConfigs(QColor defaultColor)
 {
     QStringList configs = setup_needle_configs_->value().split('~',QString::SkipEmptyParts);
     if (configs.length()<needleCount())
     {
-        QString configString = buildNeedleConfig();
+        QColor newColor = defaultColor;
         while(configs.length()<needleCount())
+        {
+            if (newColor==Qt::transparent)
+                switch (configs.length() % 6)
+                {
+                case 0: newColor = QColor::fromRgb(192,0,0); break;   // red
+                case 1: newColor = QColor::fromRgb(0,0,192); break;   // blue
+                case 2: newColor = QColor::fromRgb(0,192,0); break;   // green
+                case 3: newColor = QColor::fromRgb(192,192,0); break; // yellow
+                case 4: newColor = QColor::fromRgb(0,192,192); break; // cyan
+                case 5: newColor = QColor::fromRgb(192,0,192); break; // mageneta
+                }
+            QString configString = buildNeedleConfig(newColor);
             configs.append(configString);
+        }
         setup_needle_configs_->setValue(configs.join("~"));
     }
     setup_needle_selection_->setFlag(LH_FLAG_HIDDEN, setup_needle_selection_->list().count()==1);
@@ -275,7 +309,7 @@ QImage LH_Dial::getFace()
         faceCode = QString("%1;%2;").arg(colString(setup_face_fillcolor1_->value())).arg(colString(setup_face_fillcolor2_->value()));
     case 1: // Line
         faceCode = QString("%1,%2;%3,%4;").arg(w).arg(h).arg(maxDegrees()).arg(startDegrees()) + faceCode;
-        faceCode += QString("%1;%2;%3").arg(colString(setup_bgcolor_->value())).arg(colString(setup_face_pencolor_->value())).arg(setup_face_ticks_->value());
+        faceCode += QString("%1;%2;%3;%4;").arg(colString(setup_bgcolor_->value())).arg(colString(setup_face_pencolor_->value())).arg(setup_face_ticks_->value()).arg(colString(setup_face_tickcolor_->value()));
         break;
     case 3: //Image
         faceCode = QString("%1,%2;%3").arg(w).arg(h).arg(setup_face_image_->value().absoluteFilePath());
@@ -396,7 +430,7 @@ QImage LH_Dial::getFace()
                             int m = (setup_type_->value() == 0? 1 : 0); // fix for full circle having an overlapping last/first tick
                             for(int i=0; i<tick.count+m; i++)
                             {
-                                QPen pen = QPen(tick.color);
+                                QPen pen = QPen(setup_face_tickcolor_->value());
                                 pen.setWidth(tick.width);
                                 paintLine(painter, pen, startDegrees(), maxDegrees() / (tick.count+m-1) * i, tick.length, tick.gap );
                             }
@@ -414,14 +448,70 @@ QImage LH_Dial::getFace()
     return *faceImage_;
 }
 
-void LH_Dial::getDimensions(qreal degrees, int& h, int& w, int& relH, int& relW, float& radians, float& drawLen)
+
+void LH_Dial::getDimensions(qreal degrees, int& h, int& w, float& radH, float& radW, float& radians, float& drawLen)
 {
+    float radiansM;
     h = image_->height();
     w = image_->width();
 
-    relH = h/2;
-    relW = w/2;
-    float radiansM = 0;
+    getRadii(radH, radW);
+    radians = getRadians(degrees, radiansM);
+    drawLen = getDrawLen(radH, radW, radiansM);
+}
+
+float LH_Dial::getRadians(qreal degrees, float& offsetRadians)
+{
+    float radians = degrees * M_PI/180;
+    offsetRadians = radians;
+    switch(setup_type_->value())
+    {
+    case 0: //full circle
+        break;
+    case 1: //semi-circle
+        switch(setup_orientation_->value())
+        {
+        case 0: //left / bottom left
+            break;
+        case 1: //top / top left
+            offsetRadians += M_PI/2;
+            break;
+        case 2: //right / top right
+            offsetRadians += M_PI;
+            break;
+        case 3: //bottom / bottom right
+            offsetRadians += -M_PI/2;
+            break;
+        }
+        break;
+    case 2: //quarter circle
+        break;
+    }
+    return radians;
+}
+
+float LH_Dial::getDrawLen(float boxHeight, float boxWidth, float radians)
+{
+    float denom = qSqrt( qPow(boxHeight * qSin(radians),2) + qPow(boxWidth * qCos(radians),2) );    
+    if(denom == 0) return 0;
+    float drawLen = boxHeight * boxWidth / denom;
+    if( drawLen != drawLen )
+    {
+        qDebug() << "UNABLE TO CALCULATE drawLen!";
+        qDebug() << "boxHeight/Width: " << boxHeight << ", " << boxWidth;
+        qDebug() << "denominator: " << qSqrt( qPow(boxHeight * qSin(radians),2) + qPow(boxWidth * qCos(radians),2) );
+        qDebug() << "Radians:" << radians << "; Sin: " << qSin(radians) << "; Cos: " << qCos(radians);
+        Q_ASSERT(drawLen == drawLen);
+    }
+    return drawLen;
+}
+
+void LH_Dial::getRadii(float& radH, float& radW)
+{
+    float w = image_->width();
+    float h = image_->height();
+    radH = h/2;
+    radW = w/2;
 
     switch(setup_type_->value())
     {
@@ -431,50 +521,109 @@ void LH_Dial::getDimensions(qreal degrees, int& h, int& w, int& relH, int& relW,
         switch(setup_orientation_->value())
         {
         case 0: //left / bottom left
-            relW = w;
+            radW = w;
             break;
         case 1: //top / top left
-            relH = h;
-            radiansM = M_PI/2;
+            radH = h;
             break;
         case 2: //right / top right
-            relW = w;
-            radiansM = M_PI;
+            radW = w;
             break;
         case 3: //bottom / bottom right
-            relH = h;
-            radiansM = -M_PI/2;
+            radH = h;
             break;
         }
         break;
     case 2: //quarter circle
-        relW = (setup_needles_reverse_->value()? h : w);
-        relH = (setup_needles_reverse_->value()? w : h);
+        radW = (setup_needles_reverse_->value()? h : w);
+        radH = (setup_needles_reverse_->value()? w : h);
         break;
     }
-
-    radians = degrees * M_PI/180;
-    radiansM += radians;
-    drawLen = qSqrt( qPow(relH,2) * qPow(relW,2) / ( qPow(relH * qSin(radiansM),2) + qPow(relW * qCos(radiansM),2) ) );
 }
 
-QString LH_Dial::generateNeedleCode(float drawLen, QColor needleColor, int needleThick, int needleLength, int needleGap, int h, int w, QString needleImagePath, int needleStyle)
+void LH_Dial::getCenter(QPointF& center)
+{
+    float w = image_->width();
+    float h = image_->height();
+
+    //h*0.9, w*0.9
+    center.setX(w/2-.5) ;
+    center.setY(h/2-.5) ;
+
+    switch(setup_type_->value())
+    {
+    case 0: //full circle
+        break;
+    case 1: //semi-circle
+        switch(setup_orientation_->value())
+        {
+        case 0: //left / bottom left
+            center.setX( 0 );
+            break;
+        case 1: //top / top left
+            center.setY( 0 );
+            break;
+        case 2: //right / top right
+            center.setX( w );
+            break;
+        case 3: //bottom / bottom right
+            center.setY( h );
+            break;
+        }
+        break;
+    case 2: //quarter circle
+        switch(setup_orientation_->value())
+        {
+        case 0: //left / bottom left
+            center.setX( 0 );
+            center.setY( h );
+            break;
+        case 1: //top / top left
+            center.setX( 0 );
+            center.setY( 0 );
+            break;
+        case 2: //right / top right
+            center.setX( w );
+            center.setY( 0 );
+            break;
+        case 3: //bottom / bottom right
+            center.setX( w );
+            center.setY( h );
+            break;
+        }
+        break;
+    }
+}
+
+void LH_Dial::getRotationData(qreal startAngle, qreal angle, float& centerX, float& centerY, float& radH, float& radW, float& radians)
+{
+    radians = (180+(angle+startAngle)) * M_PI/180;
+    getRadii(radH, radW);
+    getCenter(centerX, centerY);
+}
+
+QString LH_Dial::generateNeedleCode(float drawLen, QColor needleColor, int needleThick, int needleLength, int needleGap, int h, int w, QString needleImagePath, int needleStyle, bool sliceGradient, QColor sliceColor2)
 {
     // Generates a description of the current needle settings used to check if the "cached" needle image is still correct
     QString needleCode = "";
     switch(needleStyle)
     {
     case 0: // Line
-        needleCode = QString("%1;%2;%3;%4;%5").arg(drawLen).arg(colString(needleColor)).arg(needleThick).arg(needleLength).arg(needleGap);
+        needleCode = QString("%1;%2;%3;%4;%5;%6;%7").arg(drawLen).arg(colString(needleColor)).arg(needleThick).arg(needleLength).arg(needleGap).arg(sliceGradient).arg(colString(sliceColor2));
         break;
     case 1: // Image (needle only)
     case 2: // Image (full face)
-        needleCode = QString("%1;%2;%3;%4").arg(drawLen).arg(needleImagePath).arg(h).arg(w);
+        needleCode = QString("%1;%2;%3;%4;%5;%6").arg(drawLen).arg(needleImagePath).arg(h).arg(w).arg(dialType_==DIALTYPE_PIE? needleThick : 0).arg(dialType_==DIALTYPE_PIE? needleGap : 0);
         break;
     }
     return QString::number(needleStyle) + ":" + needleCode;
 }
 
+/**
+    getNeedle returns the image of the needle in the vertical position (i.e. at 12 o'clock). Although the needle is vertical
+    it still needs to know what angle it will be rotated to later on so that is can be sized accordingly - otherwise dials
+    with non-constant radii (i.e. ovals) would not see their needle change size correctly.
+**/
 QImage LH_Dial::getNeedle(int needleID, qreal degrees, int& needleStyle)
 {
     QColor needleColor = QColor();
@@ -482,15 +631,15 @@ QImage LH_Dial::getNeedle(int needleID, qreal degrees, int& needleStyle)
     int needleLength;
     int needleGap;
     QString needleImagePath;
+    bool needleGradient;
+    QColor needleColor2 = QColor();
 
-    loadNeedleConfig(needleID, needleStyle, needleColor, needleThick, needleLength, needleGap, needleImagePath);
+    loadNeedleConfig(needleID, needleStyle, needleColor, needleThick, needleLength, needleGap, needleImagePath, needleGradient, needleColor2);
 
-    int h; int w; int relH; int relW; float radians; float drawLen;
-    getDimensions(degrees, h, w, relH, relW, radians, drawLen);
+    int h; int w; float radH; float radW; float radians; float drawLen;
+    getDimensions(degrees, h, w, radH, radW, radians, drawLen);
 
-    QPainter painter;
-    int drawWid = 2;
-    QString needleCode = generateNeedleCode(drawLen, needleColor, needleThick, needleLength, needleGap, h, w, needleImagePath, needleStyle);
+    QString needleCode = generateNeedleCode(drawLen, needleColor, needleThick, needleLength, needleGap, h, w, needleImagePath, needleStyle, needleGradient, needleColor2);
     if (needleCode_[needleID] != needleCode)
     {
         delete needleImage_[needleID];
@@ -499,11 +648,14 @@ QImage LH_Dial::getNeedle(int needleID, qreal degrees, int& needleStyle)
         if(needleStyle == 1 && f.isFile())
         {
             QImage needle_img(f.absoluteFilePath());
-            drawWid = qCeil(((float)(needle_img.width() * drawLen)) / needle_img.height());
+            //rescale needle image width to match the required height
+            int drawWid = qCeil(((float)(needle_img.width() * drawLen)) / needle_img.height());
 
             needleImage_[needleID] = new QImage(drawWid,drawLen,QImage::Format_ARGB32_Premultiplied);
             needleImage_[needleID]->fill( PREMUL( QColor(Qt::transparent).rgba() ) );
 
+            //create the resized needle image
+            QPainter painter;
             if( painter.begin( needleImage_[needleID] ) )
             {
                 painter.drawImage(QRectF( 0, 0, drawWid, drawLen ), needle_img);
@@ -512,12 +664,15 @@ QImage LH_Dial::getNeedle(int needleID, qreal degrees, int& needleStyle)
         }else
         if(needleStyle == 2 && f.isFile())
         {
-            float drawWid = qSqrt( qPow(relH,2) * qPow(relW,2) / ( qPow(relW * qSin(radians),2) + qPow(relH * qCos(radians),2) ) );
             QImage needle_img(f.absoluteFilePath());
+            //rescale needle image width to match the required height
+            float drawWid = getDrawLen(radW, radH, radians);
 
             needleImage_[needleID] = new QImage(drawWid*2,drawLen*2,QImage::Format_ARGB32_Premultiplied);
             needleImage_[needleID]->fill( PREMUL( QColor(Qt::transparent).rgba() ) );
 
+            //create the resized needle image
+            QPainter painter;
             if( painter.begin( needleImage_[needleID] ) )
             {
                 painter.drawImage(QRectF( 0, 0, drawWid*2, drawLen*2 ), needle_img);
@@ -526,14 +681,25 @@ QImage LH_Dial::getNeedle(int needleID, qreal degrees, int& needleStyle)
         }
         else
         {
-            drawWid = needleThick;
+            int drawWid = needleThick;
             needleImage_[needleID] = new QImage(drawWid,drawLen,QImage::Format_ARGB32_Premultiplied);
             needleImage_[needleID]->fill( PREMUL( QColor(Qt::transparent).rgba() ) );
 
+            QPainter painter;
             if( painter.begin( needleImage_[needleID] ) )
             {
                 int y =  drawLen * (1.0 - (needleLength + needleGap)/100.0);
-                painter.fillRect(0,y,drawWid, drawLen * needleLength/100.0, needleColor);
+                QBrush brush = QBrush(needleColor);
+                if (needleGradient)
+                {
+                    QLinearGradient gradient;
+                    gradient.setStart( 0, y );
+                    gradient.setFinalStop( 0, drawLen * needleLength/100.0 );
+                    gradient.setColorAt(0,needleColor);
+                    gradient.setColorAt(1,needleColor2);
+                    brush = QBrush(gradient);
+                }
+                painter.fillRect(0,y,drawWid, drawLen * needleLength/100.0, brush);
                 painter.end();
             }
         }
@@ -548,61 +714,88 @@ QImage LH_Dial::getSlice(int sliceID, qreal degrees, qreal offsetAngle, int& sli
     QColor sliceColor = QColor();
     int sliceLength;
     QString sliceImagePath;
-    loadSliceConfig(sliceID, sliceStyle, sliceColor, sliceLength, sliceImagePath);
+    int sliceImageAlpha;
+    bool sliceGradient;
+    QColor sliceColor2 = QColor();
+    loadSliceConfig(sliceID, sliceStyle, sliceColor, sliceLength, sliceImagePath, sliceImageAlpha, sliceGradient, sliceColor2);
 
-    int h; int w; int relH; int relW; float radians; float drawLen;
-    getDimensions(degrees, h, w, relH, relW, radians, drawLen);
+    int h; int w; float radH; float radW; float radians; float drawLen;
+    getDimensions(degrees, h, w, radH, radW, radians, drawLen);
 
     QPainter painter;
-    QString needleCode = generateNeedleCode(drawLen, sliceColor, qRound(degrees*16), sliceLength, offsetAngle, h, w, sliceImagePath, sliceStyle);
+    QString needleCode = generateNeedleCode(drawLen, sliceColor, qRound(degrees*16), sliceLength, offsetAngle, h, w, QString("%1@%2").arg(sliceImagePath).arg(sliceImageAlpha), sliceStyle, sliceGradient, sliceColor2);
 
     if (needleCode != (sliceID==UNUSED_AREA? unusedAreaCode_ : needleCode_[sliceID]))
     {
+        float circleW = radW * 2;
+        float circleH = radH * 2;
         QImage* sliceImage;
 
-        /*
         QFileInfo f(sliceImagePath);
-        if(needleStyle == 1 && f.isFile())
+        if((sliceStyle == 1 || sliceStyle == 2) && f.isFile())
         {
-            QImage needle_img(f.absoluteFilePath());
-            drawWid = qCeil(((float)(needle_img.width() * drawLen)) / needle_img.height());
+            if(!fgImgs_.contains(sliceImagePath) && f.isFile())
+                 fgImgs_.insert(sliceImagePath,QImage(sliceImagePath));
+            Q_ASSERT(fgImgs_.contains(sliceImagePath));
 
-            sliceImage = new QImage(drawWid,drawLen,QImage::Format_ARGB32_Premultiplied);
-            sliceImage->fill( PREMUL( QColor(Qt::transparent).rgba() ) );
-
-            if( painter.begin( sliceImage ) )
+            //build mask
+            QImage maskImg = QImage(circleW, circleH,QImage::Format_ARGB32_Premultiplied);
+            maskImg.fill( PREMUL( QColor(Qt::transparent).rgba() ) );
+            if( painter.begin( &maskImg ) )
             {
-                painter.drawImage(QRectF( 0, 0, drawWid, drawLen ), needle_img);
+                painter.setRenderHint( QPainter::Antialiasing, true );
+                QColor maskCol = QColor(0,0,0,sliceImageAlpha);
+                painter.setPen(maskCol);
+                painter.setBrush(QBrush(maskCol));
+                painter.drawPie(circleW*(100-sliceLength)/200.0,circleH*(100-sliceLength)/200.0, circleW*sliceLength/100.0, circleH*sliceLength/100.0, (startDegrees()+offsetAngle-90)*-16,qRound(degrees*-16));
                 painter.end();
             }
-        }else
-        if(needleStyle == 2 && f.isFile())
-        {
-            float drawWid = qSqrt( qPow(relH,2) * qPow(relW,2) / ( qPow(relW * qSin(radians),2) + qPow(relH * qCos(radians),2) ) );
-            QImage needle_img(f.absoluteFilePath());
 
-            sliceImage = new QImage(drawWid*2,drawLen*2,QImage::Format_ARGB32_Premultiplied);
-            sliceImage->fill( PREMUL( QColor(Qt::transparent).rgba() ) );
+            QImage tempImg = QImage(fgImgs_.value(sliceImagePath).width(), fgImgs_.value(sliceImagePath).height(),QImage::Format_ARGB32_Premultiplied);
+            tempImg.fill( PREMUL( QColor(Qt::transparent).rgba() ) );
 
-            if( painter.begin( sliceImage ) )
+            //Rotate the image
+            if( painter.begin( &tempImg ) )
             {
-                painter.drawImage(QRectF( 0, 0, drawWid*2, drawLen*2 ), needle_img);
+                paintImage(painter, fgImgs_.value(sliceImagePath), ROT_CENTER, startDegrees(), offsetAngle+( sliceStyle == 2? degrees : 0));
                 painter.end();
             }
+
+            sliceImage = new QImage(circleW, circleH,QImage::Format_ARGB32_Premultiplied);
+            sliceImage->fill( PREMUL( QColor(Qt::transparent).rgba() ) );
+
+            //Rescale the image & apply mask to create slice image
+            if( painter.begin( sliceImage ) )
+            {
+                painter.drawImage(QRectF( 0,0, circleW, circleH ), tempImg);
+                painter.setCompositionMode(QPainter::CompositionMode_DestinationIn);
+                painter.drawImage(QPointF( 0,0 ), maskImg);
+                painter.end();
+            }
+
         }
         else
-*/
-
         {
-            relW*=2; relH*=2;
-            sliceImage = new QImage(relW, relH,QImage::Format_ARGB32_Premultiplied);
+            sliceImage = new QImage(circleW, circleH,QImage::Format_ARGB32_Premultiplied);
             sliceImage->fill( PREMUL( QColor(Qt::transparent).rgba() ) );
 
             if( painter.begin( sliceImage ) )
             {
-                painter.setBrush(QBrush(sliceColor));
+
+                QBrush brush = QBrush(sliceColor);
+                if (sliceGradient)
+                {
+                    QLinearGradient gradient;
+                    gradient.setStart( 0, 0 );
+                    gradient.setFinalStop( 0, circleH * sliceLength/100.0 );
+                    gradient.setColorAt(0,sliceColor);
+                    gradient.setColorAt(1,sliceColor2);
+                    brush = QBrush(gradient);
+                }
+
+                painter.setBrush(brush);
                 painter.setPen(QPen(sliceColor));
-                painter.drawPie(relW*(100-sliceLength)/200.0,relH*(100-sliceLength)/200.0, relW*sliceLength/100.0, relH*sliceLength/100.0, (startDegrees()+offsetAngle-90)*-16,qRound(degrees*-16));
+                painter.drawPie(radW*(100-sliceLength)/100.0,radH*(100-sliceLength)/100.0, circleW*sliceLength/100.0, circleH*sliceLength/100.0, (startDegrees()+offsetAngle-90)*-16,qRound(degrees*-16));
                 painter.end();
             }
         }
@@ -623,132 +816,93 @@ QImage LH_Dial::getSlice(int sliceID, qreal degrees, qreal offsetAngle, int& sli
 
 }
 
-void LH_Dial::getCenter(QPointF& center)
-{
-    float horzSize;
-    float vertSize;
-    getCenter(center, horzSize, vertSize);
-}
-
-void LH_Dial::getCenter(QPointF& center, float& horzSize, float& vertSize)
-{
-    float w = image_->width();
-    float h = image_->height();
-
-    //h*0.9, w*0.9
-    center.setX(w/2-.5) ;
-    center.setY(h/2-.5) ;
-    horzSize = w/2;
-    vertSize = h/2;
-
-    switch(setup_type_->value())
-    {
-    case 0: //full circle
-        break;
-    case 1: //semi-circle
-        switch(setup_orientation_->value())
-        {
-        case 0: //left / bottom left
-            center.setX( 0 );
-            horzSize = w;
-            break;
-        case 1: //top / top left
-            center.setY( 0 );
-            vertSize = h;
-            break;
-        case 2: //right / top right
-            center.setX( w );
-            horzSize = w;
-            break;
-        case 3: //bottom / bottom right
-            center.setY( h );
-            vertSize = h;
-            break;
-        }
-        break;
-    case 2: //quarter circle
-        horzSize = w;
-        vertSize = h;
-        switch(setup_orientation_->value())
-        {
-        case 0: //left / bottom left
-            center.setX( 0 );
-            center.setY( h );
-            break;
-        case 1: //top / top left
-            center.setX( 0 );
-            center.setY( 0 );
-            break;
-        case 2: //right / top right
-            center.setX( w );
-            center.setY( 0 );
-            break;
-        case 3: //bottom / bottom right
-            center.setX( w );
-            center.setY( h );
-            break;
-        }
-        break;
-    }
-}
-
-void LH_Dial::getRotationData(qreal startAngle, qreal angle, float& centerX, float& centerY, float& horzSize, float& vertSize, float& radians)
-{
-    radians = (180+(angle+startAngle)) * M_PI/180;
-    QPointF center;
-    getCenter(center, horzSize, vertSize);
-    centerX = center.x();
-    centerY = center.y();
-}
-
 void LH_Dial::paintLine(QPainter& painter, QPen& pen, qreal startAngle, qreal angle, qreal relLength, qreal gap)
 {
-    float x1; float y1; float horzSize; float vertSize; float radians;
-    getRotationData(startAngle, angle, x1, y1, horzSize, vertSize, radians);
+    float centerX; float centerY; float radW; float radH; float radians;
+    getRotationData(startAngle, angle, centerX, centerY, radH, radW, radians);
 
-    int x2 = (qSin(radians) * (gap+relLength) * horzSize) + x1;
-    int y2 = (qCos(radians) * (gap+relLength) * vertSize) + y1;
+    int x1 = centerX - (qSin(radians) * radW * gap);
+    int x2 = centerX - (qSin(radians) * radW * (gap+relLength));
 
-    x1 = (qSin(radians) * gap * horzSize) + x1;
-    y1 = (qCos(radians) * gap * vertSize) + y1;
+    int y1 = centerY + (qCos(radians) * radH * gap);
+    int y2 = centerY + (qCos(radians) * radH * (gap+relLength));
 
     painter.setPen(pen);
     painter.drawLine(x1,y1,x2,y2);
 }
 
-void LH_Dial::paintImage(QPainter& painter, QImage needleImage, qreal startAngle, qreal angle, bool reverseOffsetting, qreal pieOffsetAngle)
+void LH_Dial::paintImage(QPainter& painter, QImage srcImage, RotationType rotationType, qreal startAngle, qreal angle)
 {
-    float x; float y; float horzSize; float vertSize; float radians;
+    float x; float y; float radW; float radH; float radians;
 
-    //int m = (setup_needles_reverse_->value() ? -1 : 1);
-    getRotationData(startAngle, (dialType_==DIALTYPE_DIAL? angle : pieOffsetAngle), x, y, horzSize, vertSize, radians);
+    getRotationData(startAngle, (rotationType == ROT_NONE? 0 : angle), x, y, radW, radH, radians);
 
     painter.save();
 
-    float A = (x!=0? qAtan(y/x) : M_PI/2);
-    float Hyp = qSqrt( qPow(y,2) + qPow(x,2) );
-    float drawLen = qSqrt( qPow(y,2) * qPow(x,2) / ( qPow(y * qSin(radians),2) + qPow(x * qCos(radians),2) ) );
-
-    if(dialType_==DIALTYPE_DIAL)
+    switch(rotationType)
     {
-        x = Hyp * qCos(A - (radians-M_PI));
-        y = Hyp * qSin(A - (radians-M_PI));
+    case ROT_NONE:
+        x -= (srcImage.width()/2.0);
+        y -= (srcImage.height()/2.0);
+        break;
+    case ROT_CENTER:
+        //ROT_CENTER is a special case that doesn't use the dial's dimensions, but rather uses the dimensions of srcImage.
+        x = (srcImage.width()/2.0);
+        y = (srcImage.height()/2.0);
+    case ROT_FACE:
+    case ROT_NEEDLE:
+        float A = (x!=0? qAtan(y/x) : M_PI/2);
+        float Hyp = qSqrt( qPow(y,2) + qPow(x,2) );
+        float drawLen = getDrawLen(y,x,radians);
 
         painter.rotate(startAngle + angle);
-
-        x-=(needleImage.width()/2.0);
-        y-=(needleImage.height());
-        if(reverseOffsetting) y+=drawLen;
-    } else {
-        x -= (needleImage.width()/2.0);
-        y -= (needleImage.height()/2.0);
+        x = Hyp * qCos(A - (radians-M_PI)) - (srcImage.width()/2.0);
+        y = Hyp * qSin(A - (radians-M_PI)) - (srcImage.height());
+        if(rotationType==ROT_CENTER)
+            y +=drawLen;
+        if(rotationType==ROT_FACE)
+        {
+            y +=drawLen;
+            switch(setup_type_->value())
+            {
+            case 0: //full circle
+                break;
+            case 1: //semi-circle
+                switch(setup_orientation_->value())
+                {
+                case 0: //left / bottom left
+                case 1: //top / top left
+                    y += (srcImage.height()/2);
+                    break;
+                case 2: //right / top right
+                case 3: //bottom / bottom right
+                    break;
+                }
+                break;
+            case 2: //quarter circle
+                switch(setup_orientation_->value())
+                {
+                case 0: //left / bottom left
+                case 1: //top / top left
+                case 2: //right / top right
+                    y += (srcImage.height()/2);
+                    break;
+                case 3: //bottom / bottom right
+                    break;
+                }
+                break;
+            }
+        }
+        break;
     }
 
     painter.setRenderHints(QPainter::Antialiasing | QPainter::SmoothPixmapTransform);
-    painter.drawImage(QPointF(x,y),needleImage);
+    painter.drawImage(QPointF(x,y),srcImage);
 
     painter.restore();
 }
+
+
 
 bool LH_Dial::setVal(qreal value, int i, bool repoll )
 {
@@ -856,32 +1010,34 @@ void LH_Dial::drawDial()
         {
             qreal pos = needle_pos_[i];
             if(dialType_ == DIALTYPE_PIE)
-                if(setup_unused_style_->valueText()=="Hidden")
+                if(setup_unused_style_->valueText()=="Hidden" && usedCapacity!=0)
                     pos *= max() / usedCapacity;
+
+            if(max_ == min_) max_ ++;
             qreal angle = maxDegrees() * (pos-min_) / (max_-min_);
             int needleStyle;
             bool reverse = setup_needles_reverse_->value();
             if(dialType_ == DIALTYPE_DIAL)
             {
                 QImage needleImage = getNeedle(i, angle, needleStyle);
-                paintImage(painter, needleImage, startDegrees()+(reverse? maxDegrees() : 0), angle*(reverse? -1 : 1), (needleStyle==2));
+                paintImage(painter, needleImage, (needleStyle==2? ROT_FACE : ROT_NEEDLE), startDegrees()+(reverse? maxDegrees() : 0), angle*(reverse? -1 : 1));
             } else {
                 QImage sliceImage = getSlice(i, angle, totalAngle, needleStyle);
-                paintImage(painter, sliceImage, startDegrees()+(reverse? maxDegrees() : 0), angle*(reverse? -1 : 1), true);
+                paintImage(painter, sliceImage, ROT_NONE, startDegrees()+(reverse? maxDegrees() : 0));
             }
             totalAngle += angle*(reverse? -1 : 1);
         }
         if(dialType_ == DIALTYPE_PIE)
         {
-            if(setup_unused_style_->valueText()=="Fill" || setup_unused_style_->valueText()=="Image")
+            if(setup_unused_style_->valueText()=="Fill" || setup_unused_style_->valueText().contains("Image"))
             {
                 int needleStyle;
                 bool reverse = setup_needles_reverse_->value();
-                //something here to add a extra segment
+
                 qreal pos = max()-usedCapacity;
                 qreal angle = maxDegrees() * (pos-min_) / (max_-min_);
                 QImage sliceImage = getSlice(UNUSED_AREA, angle, totalAngle, needleStyle);
-                paintImage(painter, sliceImage, startDegrees()+(reverse? maxDegrees() : 0), angle*(reverse? -1 : 1), true);
+                paintImage(painter, sliceImage, ROT_NONE, startDegrees()+(reverse? maxDegrees() : 0));
             }
         }
 
@@ -950,16 +1106,22 @@ void LH_Dial::changeFaceStyle()
     setup_face_fillcolor1_->setFlag(LH_FLAG_HIDDEN, setup_face_style_->value()!=2);
     setup_face_fillcolor2_->setFlag(LH_FLAG_HIDDEN, setup_face_style_->value()!=2);
     setup_face_ticks_->setFlag(LH_FLAG_HIDDEN, setup_face_style_->value()==0 || setup_face_style_->value()==3);
+    setup_face_tickcolor_->setFlag(LH_FLAG_HIDDEN, setup_face_style_->value()==0 || setup_face_style_->value()==3 || !setup_face_ticks_->value());
     setup_face_image_->setFlag(LH_FLAG_HIDDEN, setup_face_style_->value()!=3);
+}
+
+void LH_Dial::changeTicks()
+{
+    setup_face_tickcolor_->setFlag(LH_FLAG_HIDDEN, setup_face_style_->value()==0 || setup_face_style_->value()==3 || !setup_face_ticks_->value());
 }
 
 void LH_Dial::changeNeedleStyle()
 {
     if(dialType_==DIALTYPE_DIAL)
     {
-        if(setup_needle_style_->value()==2 && setup_type_->value()!=0)
-            setup_needle_style_->setValue(1);
         setup_needle_color_->setFlag(LH_FLAG_HIDDEN, setup_needle_style_->value()!=0);
+        setup_needle_gradient_->setFlag(LH_FLAG_HIDDEN, setup_needle_style_->value()!=0);
+        setup_needle_color2_->setFlag(LH_FLAG_HIDDEN, setup_needle_style_->value()!=0);
         setup_needle_thickness_->setFlag(LH_FLAG_HIDDEN, setup_needle_style_->value()!=0);
         setup_needle_length_->setFlag(LH_FLAG_HIDDEN, setup_needle_style_->value()!=0);
         setup_needle_gap_->setFlag(LH_FLAG_HIDDEN, setup_needle_style_->value()!=0);
@@ -967,25 +1129,32 @@ void LH_Dial::changeNeedleStyle()
     }
     else
     {
-        setup_needle_color_->setFlag(LH_FLAG_HIDDEN, setup_needle_style_->value()==2);
+        setup_needle_color_->setFlag(LH_FLAG_HIDDEN, setup_needle_style_->value()!=0);
+        setup_needle_gradient_->setFlag(LH_FLAG_HIDDEN, setup_needle_style_->value()!=0);
+        setup_needle_color2_->setFlag(LH_FLAG_HIDDEN, setup_needle_style_->value()!=0);
         setup_needle_thickness_->setFlag(LH_FLAG_HIDDEN, true);
-        setup_needle_length_->setFlag(LH_FLAG_HIDDEN, setup_needle_style_->value()==2);
+        setup_needle_length_->setFlag(LH_FLAG_HIDDEN, false);
         setup_needle_gap_->setFlag(LH_FLAG_HIDDEN, true);
-        setup_needle_image_->setFlag(LH_FLAG_HIDDEN, setup_needle_style_->value()!=2);
+        setup_needle_image_->setFlag(LH_FLAG_HIDDEN, setup_needle_style_->value()==0);
     }
 }
 
 void LH_Dial::changeUnusedStyle()
 {
     setup_unused_color_->setFlag(LH_FLAG_HIDDEN, setup_unused_style_->value()!=2);
-    setup_unused_length_->setFlag(LH_FLAG_HIDDEN, setup_unused_style_->value()!=2);
-    setup_unused_image_->setFlag(LH_FLAG_HIDDEN, setup_unused_style_->value()!=3);
+    setup_unused_gradient_->setFlag(LH_FLAG_HIDDEN, setup_unused_style_->value()!=2);
+    setup_unused_color2_->setFlag(LH_FLAG_HIDDEN, setup_unused_style_->value()!=2);
+    setup_unused_length_->setFlag(LH_FLAG_HIDDEN, setup_unused_style_->value()<2);
+    setup_unused_image_->setFlag(LH_FLAG_HIDDEN, setup_unused_style_->value()<3);
 }
 
-QString LH_Dial::buildNeedleConfig()
+QString LH_Dial::buildNeedleConfig(QColor forceColor)
 {
     int needleStyle = setup_needle_style_->value();
-    QColor needleColor = setup_needle_color_->value();
+    QColor needleColor = ( forceColor == Qt::transparent? setup_needle_color_->value() : forceColor );
+    bool needleGradient = ( forceColor == Qt::transparent? setup_needle_gradient_->value() : false);
+    QColor needleColor2 = ( forceColor == Qt::transparent? setup_needle_color2_->value() : forceColor );
+
     int needleThick = setup_needle_thickness_->value();
     int needleLength = setup_needle_length_->value();
     int needleGap = setup_needle_gap_->value();
@@ -1006,26 +1175,34 @@ QString LH_Dial::buildNeedleConfig()
     config.append(QString::number(needleLength));
     config.append(QString::number(needleGap));
     config.append(needleImg.replace(",","?"));
+    config.append(QString::number(needleGradient));
+    config.append(QString::number(needleColor2.red()));
+    config.append(QString::number(needleColor2.green()));
+    config.append(QString::number(needleColor2.blue()));
+    config.append(QString::number(needleColor2.alpha()));
 
     return config.join(",");
 }
 
-void LH_Dial::loadSliceConfig(int sliceID, int& sliceStyle, QColor& sliceColor, int& sliceLength, QString& sliceImage)
+void LH_Dial::loadSliceConfig(int sliceID, int& sliceStyle, QColor& sliceColor, int& sliceLength, QString& sliceImage, int& sliceImageAlpha, bool &sliceGradient, QColor &sliceColor2)
 {
+    sliceImageAlpha = 255;
     if(sliceID == UNUSED_AREA)
     {
         sliceStyle = setup_unused_style_->value() - 2;
         sliceColor = setup_unused_color_->value();
         sliceLength = setup_unused_length_->value();
         sliceImage = setup_unused_image_->value().absoluteFilePath();
+        sliceGradient = setup_unused_gradient_->value();
+        sliceColor2 = setup_unused_color2_->value();
     } else {
         int unused_gap;
         int unused_thick;
-        loadNeedleConfig(sliceID, sliceStyle, sliceColor, unused_thick, sliceLength, unused_gap, sliceImage);
+        loadNeedleConfig(sliceID, sliceStyle, sliceColor, unused_thick, sliceLength, unused_gap, sliceImage, sliceGradient, sliceColor2);
     }
 }
 
-void LH_Dial::loadNeedleConfig(int needleID, int& needleStyle, QColor& needleColor, int& needleThick, int& needleLength, int& needleGap, QString& needleImage)
+void LH_Dial::loadNeedleConfig(int needleID, int& needleStyle, QColor& needleColor, int& needleThick, int& needleLength, int& needleGap, QString& needleImage, bool& needleGradient, QColor& needleColor2)
 {
     if (isDebug) qDebug() << "dial: load needle config: begin " << needleID;
 
@@ -1046,7 +1223,6 @@ void LH_Dial::loadNeedleConfig(int needleID, int& needleStyle, QColor& needleCol
     QStringList config = configString.split(',');
 
     needleStyle = (config.at(0)).toInt();
-    if(needleStyle==2 && setup_type_->value()!=0) needleStyle=1;
 
     needleColor.setRed(QString(config.at(1)).toInt());
     needleColor.setGreen(QString(config.at(2)).toInt());
@@ -1059,6 +1235,15 @@ void LH_Dial::loadNeedleConfig(int needleID, int& needleStyle, QColor& needleCol
     if(config.length()>8)
         needleImage = QString(config.at(8)).replace('?',',');
     if(needleImage!="") needleImage = state()->dir_layout + needleImage;
+    if(config.length()>9)
+        needleGradient = QString(config.at(9)) == "1";
+    if(config.length()>10)
+    {
+        needleColor2.setRed(QString(config.at(10)).toInt());
+        needleColor2.setGreen(QString(config.at(11)).toInt());
+        needleColor2.setBlue(QString(config.at(12)).toInt());
+        needleColor2.setAlpha(QString(config.at(13)).toInt());
+    }
 
     if (isDebug) qDebug() << "dial: load needle config: end ";
 }
@@ -1067,12 +1252,14 @@ void LH_Dial::changeSelectedNeedle()
 {
     int needleStyle;
     QColor needleColor = QColor();
+    bool needleGradient;
+    QColor needleColor2 = QColor();
     int needleThick;
     int needleLength;
     int needleGap;
     QString needleImage;
 
-    loadNeedleConfig(setup_needle_selection_->value(), needleStyle, needleColor, needleThick, needleLength, needleGap, needleImage);
+    loadNeedleConfig(setup_needle_selection_->value(), needleStyle, needleColor, needleThick, needleLength, needleGap, needleImage, needleGradient, needleColor2);
 
     setup_needle_length_->setMaximum(100 - needleGap);
     setup_needle_gap_->setMaximum(100 - needleLength);
@@ -1083,6 +1270,8 @@ void LH_Dial::changeSelectedNeedle()
     setup_needle_length_->setValue(needleLength);
     setup_needle_gap_->setValue(needleGap);
     setup_needle_image_->setValue(QFileInfo(needleImage));
+    setup_needle_gradient_->setValue(needleGradient);
+    setup_needle_color2_->setValue(needleColor2);
 
     changeNeedleStyle();
 }

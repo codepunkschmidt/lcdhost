@@ -75,8 +75,6 @@ public:
     QColor bgcolor1() const { return setup_bgcolor1_->value(); }
     QColor bgcolor2() const { return setup_bgcolor2_->value(); }
 
-    static lh_class *classInfo();
-
 public slots:
     void enableGradient(bool);
 };

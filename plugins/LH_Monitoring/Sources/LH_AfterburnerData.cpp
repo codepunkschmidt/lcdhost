@@ -2,6 +2,7 @@
 #include <QRegExp>
 #include <QSharedMemory>
 #include <algorithm>
+#include <limits>
 
 #include "LH_AfterburnerData.h"
 
@@ -224,6 +225,7 @@ void LH_AfterburnerData::getSelectedValue(MAHM_SHARED_MEMORY_HEADER* MAHMHeader,
         value = MAHMMemory->data;
         text = "";
         units = QString(MAHMMemory->szSrcUnits);
+        if(units=="FPS" && value==std::numeric_limits<float>::max()) value = 0; //fix for non-game fps being float max
         format = QString(MAHMMemory->szRecommendedFormat);
         min = MAHMMemory->minLimit;
         max = MAHMMemory->maxLimit;

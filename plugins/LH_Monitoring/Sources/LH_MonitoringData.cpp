@@ -3,12 +3,15 @@
 #include <QDebug>
 
 
-LH_MonitoringData::LH_MonitoringData(LH_QtObject *parent, LH_MonitoringUI *ui, monitoringDataMode dataMode, bool includeGroups) : QObject(parent)
+LH_MonitoringData::LH_MonitoringData(LH_QtObject *parent, LH_MonitoringUI *ui, monitoringDataMode dataMode, bool includeGroups, bool allowAdaptiveUnits) : QObject(parent)
 {
     dataMode_ = dataMode;
     ui_ = ui;
     includeGroups_ = includeGroups;
     is_group_ = false;
+    adaptiveUnitsAllowed_ = allowAdaptiveUnits;
+    adaptiveUnits_ = false;
+    desiredUnits_ = "";
 }
 
 int LH_MonitoringData::getThreshMax()

@@ -19,8 +19,7 @@ public:
         setup_text_->setFlag(LH_FLAG_HIDDEN, true);
         setup_text_->setFlag(LH_FLAG_NOSAVE, true);
         setText("");
-        setup_text_->setLink("=/Monitoring/3rdParty/TeamSpeak3/Channel Name");
-        //setup_text_->refreshData();
+        setup_text_->setLink("=/3rdParty/TeamSpeak 3/Channel Name");
 
         return 0;
     }
@@ -33,7 +32,9 @@ public:
             "3rdParty/TeamSpeak 3",
             "TS3ChanNameText",
             "TS3 ChanName (Text)",
-            -1, -1
+            -1, -1,
+            lh_object_calltable_NULL,
+            lh_instance_calltable_NULL
         };
 
         if( classInfo.width == -1 )

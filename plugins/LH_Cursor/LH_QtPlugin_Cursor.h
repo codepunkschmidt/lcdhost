@@ -26,11 +26,38 @@
 #define LH_QTPLUGIN_CURSOR_H
 
 #include "LH_QtPlugin.h"
+#include "LH_Qt_bool.h"
+#include "LH_Qt_int.h"
+#include "LH_Qt_QSlider.h"
+#include "LH_Qt_InputState.h"
+#include "LH_Qt_QFileInfo.h"
 
-#define VERSION 2.00
+#include <QList>
+#include <QTime>
+
+#define MAX_KEYS 4
 
 class LH_QtPlugin_Cursor: public LH_QtPlugin
 {
+    Q_OBJECT
+    int favourite_combo_step_;
+    QTime keyDelay;
+
+protected:
+    LH_Qt_bool *setup_enable_favourite_shortcut_;
+    LH_Qt_int *setup_key_presses_;
+    LH_Qt_QSlider *setup_key_press_timout_;
+    QList<LH_Qt_InputState*> setup_keys_;
+    LH_Qt_QFileInfo *setup_favourite_layout_;
+
+public:
+    //LH_QtPlugin_Cursor();
+    const char *userInit();
+
+public slots:
+    void enableFavouriteShortcut();
+    void changeKeyPresses();
+    void keyPressed(QString key,int flags,int value);
 };
 
 #endif // LH_QTPLUGIN_CURSOR_H

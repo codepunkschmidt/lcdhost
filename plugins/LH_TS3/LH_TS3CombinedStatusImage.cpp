@@ -10,30 +10,29 @@ const char *LH_TS3CombinedStatusImage::userInit()
 
     int LH_FLAG_SOURCEITEM =  LH_FLAG_HIDDEN | LH_FLAG_READONLY | LH_FLAG_NOSOURCE | LH_FLAG_NOSAVE | LH_FLAG_AUTORENDER;
 
-    setup_combined_status_ = new LH_Qt_QStringList(this, "Combined Status", QStringList() << "Not Running" << "Not Connected" << "No Speaker" << "Me Speaking" << "Other Speaking" << "Both Speaking", LH_FLAG_SOURCEITEM);
+    setup_combined_status_ = new LH_Qt_QStringList(this, "Combined Status", QStringList() << "Not Running" << "Not Connected" << "No Speaker" << "Self Speaking" << "Other Speaking" << "Both Speaking", LH_FLAG_SOURCEITEM);
 
     setup_connection_status_ = new LH_Qt_QStringList(this, "Connection Status", QStringList() << "Not Running" << "Not Connected" << "Connected", LH_FLAG_SOURCEITEM);
-    setup_connection_status_->setLink("=/Monitoring/3rdParty/TeamSpeak3/Connection Status");
+    setup_connection_status_->setLink("=/3rdParty/TeamSpeak 3/Connection Status");
     connect(setup_connection_status_, SIGNAL(changed()), this, SLOT(updateCombinedStatus()));
 
     setup_talking_ = new LH_Qt_QString(this, "Talking", "", LH_FLAG_SOURCEITEM);
-    setup_talking_->setLink("=/Monitoring/3rdParty/TeamSpeak3/Talking");
+    setup_talking_->setLink("=/3rdParty/TeamSpeak 3/Speaking");
     connect(setup_talking_, SIGNAL(changed()), this, SLOT(updateCombinedStatus()));
 
     setup_talking_me_ = new LH_Qt_bool(this, "Me Talking", false, LH_FLAG_SOURCEITEM);
-    setup_talking_me_->setLink("=/Monitoring/3rdParty/TeamSpeak3/Me Talking");//, true);
+    setup_talking_me_->setLink("=/3rdParty/TeamSpeak 3/Self Speaking");//, true);
     connect(setup_talking_me_, SIGNAL(changed()), this, SLOT(updateCombinedStatus()));
 
     setup_nickname_ = new LH_Qt_QString(this, "Nickname", "", LH_FLAG_SOURCEITEM);
-    setup_nickname_->setLink("=/Monitoring/3rdParty/TeamSpeak3/Nickname");
+    setup_nickname_->setLink("=/3rdParty/TeamSpeak 3/Nickname");
     connect(setup_nickname_, SIGNAL(changed()), this, SLOT(updateCombinedStatus()));
-    //setup_connection_status_->refreshData();
 
     setup_mute_status_spk_ = new LH_Qt_QStringList(this, "Speaker Mute Status", QStringList() << "N/A" << "None" << "Muted" << "Active", LH_FLAG_SOURCEITEM);
-    setup_mute_status_spk_->setLink("=/Monitoring/3rdParty/TeamSpeak3/Speaker Status");
+    setup_mute_status_spk_->setLink("=/3rdParty/TeamSpeak 3/Speaker Status");
 
     setup_mute_status_mic_ = new LH_Qt_QStringList(this, "Microphone Mute Status", QStringList() << "N/A" << "None" << "Muted" << "Active", LH_FLAG_SOURCEITEM);
-    setup_mute_status_mic_->setLink("=/Monitoring/3rdParty/TeamSpeak3/Microphone Status");
+    setup_mute_status_mic_->setLink("=/3rdParty/TeamSpeak 3/Microphone Status");
 
     add_cf_target(setup_image_file_);
     add_cf_source(setup_combined_status_);
@@ -51,7 +50,9 @@ lh_class *LH_TS3CombinedStatusImage::classInfo()
         "3rdParty/TeamSpeak 3",
         "TS3CombinedStatusImage",
         "TS3 Combined Status (Image)",
-        16,16
+        16,16,
+        lh_object_calltable_NULL,
+        lh_instance_calltable_NULL
     };
     return &classInfo;
 }
@@ -81,8 +82,7 @@ void LH_TS3CombinedStatusImage::updateCombinedStatus()
                 status=="Not Connected"?"Not Connected":
                 talking==""?"No Speaker":
                 setup_talking_me_->value()==false?"Other Speaking":
-                talking==setup_nickname_->value()?"Me Speaking":"Both Speaking"
+                talking==setup_nickname_->value()?"Self Speaking":"Both Speaking"
                 );
     setup_combined_status_->setValue(combinedStatus);
-    qDebug() << setup_combined_status_->valueText();
 }

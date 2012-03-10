@@ -108,7 +108,12 @@ public:
 
             for(int i =0; i<cpu_.count(); i++ )
             {
-                if(!n || n&LH_NOTE_SECOND)
+                if(n&LH_NOTE_CPU)
+                {
+                    valCache[i]+=cpu_.coreload(i)/100;
+                    valCount[i]+=1;
+                }
+                if(n&LH_NOTE_SECOND)
                 {
                     if (valCount[i]!=0)
                     {
@@ -117,9 +122,6 @@ public:
                     }
                     valCache[i] = 0;
                     valCount[i] = 0;
-                } else {
-                    valCache[i]+=cpu_.coreload(i)/100;
-                    valCount[i]+=1;
                 }
             }
         }

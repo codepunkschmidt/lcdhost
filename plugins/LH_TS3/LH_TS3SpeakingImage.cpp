@@ -26,7 +26,7 @@ public:
         //setup_show_placeholder_->setTitle("Use default images");
 
         setup_talking_ = new LH_Qt_QString(this, "Talking", "", LH_FLAG_HIDDEN | LH_FLAG_READONLY | LH_FLAG_NOSAVE | LH_FLAG_NOSOURCE | LH_FLAG_AUTORENDER);
-        setup_talking_->setLink("=/Monitoring/3rdParty/TeamSpeak3/Talking");
+        setup_talking_->setLink("=/3rdParty/TeamSpeak 3/Speaking");
         //setup_talking_->refreshData();
 
         add_cf_target(setup_image_file_);
@@ -43,7 +43,9 @@ public:
             "3rdParty/TeamSpeak 3",
             "TS3SpeakingStatusImage",
             "TS3 Speaking Status (Image)",
-            16,16
+            16,16,
+            lh_object_calltable_NULL,
+            lh_instance_calltable_NULL
         };
         return &classInfo;
     }

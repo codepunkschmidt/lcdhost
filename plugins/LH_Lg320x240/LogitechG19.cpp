@@ -64,7 +64,7 @@ LogitechG19::~LogitechG19()
     leave();
 }
 
-#define ASSERT_USB(x) do { int retv_ = x; if( retv_ ) { qDebug() << #x << libusb_strerror((libusb_error)retv_); return libusb_strerror((libusb_error) retv_); } } while(0)
+#define ASSERT_USB(x) do { int retv_ = x; if( retv_ ) { qDebug() << #x << libusb_error_name((libusb_error)retv_); return libusb_error_name((libusb_error) retv_); } } while(0)
 
 const char* LogitechG19::open()
 {
@@ -99,7 +99,9 @@ int LogitechG19::buttons()
     if( usberr == LIBUSB_ERROR_TIMEOUT && len == 0 ) return 0;
     if( usberr )
     {
-        qDebug() << "LogitechG19::buttons() error" << QString::fromAscii(libusb_strerror((libusb_error)usberr) ) << "endpoint" << QString::number(endpoint_in_,16);
+        qDebug() << "LogitechG19::buttons() error"
+                 << QString::fromAscii(libusb_error_name((libusb_error)usberr) )
+                 << "endpoint" << QString::number(endpoint_in_,16);
         return 0;
     }
 
@@ -188,8 +190,8 @@ const char* LogitechG19::render_qimage(QImage *img)
     if( usberr || len != sizeof(lcd_buffer) )
     {
         offline_ = true;
-        qDebug() << "LogitechG19::render_qimage():" << libusb_strerror((libusb_error)usberr);
-        return libusb_strerror((libusb_error)usberr);
+        qDebug() << "LogitechG19::render_qimage():" << libusb_error_name((libusb_error)usberr);
+        return libusb_error_name((libusb_error)usberr);
     }
 
     return NULL;

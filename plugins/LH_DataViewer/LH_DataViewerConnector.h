@@ -36,20 +36,33 @@
 #include "LH_Qt_int.h"
 #include "LH_Qt_QTextEdit.h"
 
-// #include <stdio.h>
-// #include <windows.h>
-
 #include "LH_DataViewerData.h"
+
+#ifdef Q_WS_WIN
+#include <windows.h>
+#include <winbase.h>
+#include <tlhelp32.h>
+
+#endif
 
 struct thresholdItem
 {
     float levelBase;
+    bool adaptiveBase;
     QStringList levelNames;
 };
 
 struct thresholdList
 {
     QList<thresholdItem> levels;
+};
+
+enum SourceType
+{
+    SOURCETYPE_XML = 1,
+    SOURCETYPE_TXT = 2,
+    SOURCETYPE_INI = 3,
+    SOURCETYPE_MEM = 4
 };
 
 class LH_DataViewerConnector : public LH_QtInstance
@@ -62,19 +75,24 @@ class LH_DataViewerConnector : public LH_QtInstance
 
     bool repolled_;
 
-    int sourceType_;
+    SourceType sourceType_;
     bool isDelimited_;
     int updateLength_;
     char delimiter_;
     int columnWidth_;
     bool isSingleWrite_;
+    bool needsClearing_;
     int completeCount_;
     int dataExpiry_;
+
+    QString processName_;
+    QString processVersion_;
 
     QList<QStringList> parsingList;
 
     void populateValues(dataNode* node, QStringList sourceLines);
     void updateNodes(QStringList sourceLines);
+    void updateNodes(QDomNode n, dataNode* currentNode = NULL);
     QString getTextValue(QStringList lines, itemDefinition def);
     QString formatData(QString data, QString formatting);
     QStringList splitByWidth(QString str, int w);
@@ -82,6 +100,9 @@ class LH_DataViewerConnector : public LH_QtInstance
 
     void parseAddress(dataNode* currentNode, QStringList addresses, QStringList parseData, QHash<QString,int> indexes);
     dataNode* findNode(QString address, QHash<QString,int> indexes);
+
+    MemoryDataType ToMemType(QString);
+    bool readMemoryValues();
 
 protected:
     LH_Qt_QString *setup_feedback_;
@@ -94,8 +115,7 @@ protected:
 public:
     LH_DataViewerConnector();
     ~LH_DataViewerConnector();
-    const char *userInit(){ hide(); return NULL; }
-
+    const char *userInit();
     int polling();
 
     static lh_class *classInfo();
@@ -103,7 +123,7 @@ public:
 public slots:
     void sourceFileChanged();
     void mapFileChanged();
-    void sourceFileUpdated(const QString &path);
+    void sourceFileUpdated(const QString &path = "");
     void languageFileChanged();
 };
 

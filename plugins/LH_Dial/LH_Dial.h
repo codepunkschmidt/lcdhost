@@ -37,13 +37,15 @@
 
 #include <QList>
 #include <QStringList>
+#include <QHash>
+#include <QString>
 
 class tickObject
 {
 public:
-    tickObject(int _count, int _width, float _length, float _gap, QColor _color = Qt::black)
+    tickObject(int _count, int _width, float _length, float _gap)//, QColor _color = Qt::black)
     {
-        color = _color;
+        //color = _color;
         width = _width;
         count = _count;
         length = _length;
@@ -52,7 +54,7 @@ public:
 
     int count;
     int width;
-    QColor color;
+    //QColor color;
     float gap;
     float length;
 };
@@ -70,6 +72,14 @@ enum DialType
     DIALTYPE_PIE
 };
 
+enum RotationType
+{
+    ROT_NONE,
+    ROT_FACE,
+    ROT_NEEDLE,
+    ROT_CENTER
+};
+
 class LH_Dial : public LH_QtInstance
 {
     Q_OBJECT
@@ -80,19 +90,27 @@ class LH_Dial : public LH_QtInstance
     qreal max_;
 
     QString faceCode_;
+    QString unusedCapacityStyleLock_;
     QImage *faceImage_;
+    //QSize img_size_;
+    QHash<QString,QImage> fgImgs_;
 
-    void getDimensions(qreal degrees, int& h, int& w, int& relH, int& relW, float& radians, float& drawLen);
-    QString generateNeedleCode(float drawLen, QColor needleColor, int needleThick, int needleLength, int needleGap, int h, int w, QString needleImagePath, int needleStyle);
+    void getRadii(float& radH, float& radW);
+    float getRadians(qreal degrees, float& offsetRadians);
+    float getRadians(qreal degrees) {float offsetRadians; return getRadians(degrees, offsetRadians);}
+    float getDrawLen(float boxHeight, float boxWidth, float radians);
+    void getDimensions(qreal degrees, int& h, int& w, float& radH, float& radW, float& radians, float& drawLen);
+    QString generateNeedleCode(float drawLen, QColor needleColor, int needleThick, int needleLength, int needleGap, int h, int w, QString needleImagePath, int needleStyle, bool sliceGradient, QColor sliceColor2);
 
     QImage getFace();
     QImage getNeedle(int needleID, qreal degrees, int& needleStyle);
     QImage getSlice(int needleID, qreal degrees, qreal offsetAngle, int& needleStyle);
     void getCenter(QPointF& center);
-    void getCenter(QPointF& center, float& horzSize, float& vertSize);
-    void getRotationData(qreal startAngle, qreal angle, float& centerX, float& centerY, float& xlen, float& ylen, float& radians);
+    void getCenter(float& centerX, float& centerY) { QPointF center; getCenter(center); centerX = center.x(); centerY = center.y(); }
+
+    void getRotationData(qreal startAngle, qreal angle, float& centerX, float& centerY, float& radH, float& radW, float& radians);
     void paintLine(QPainter& painter, QPen& pen, qreal startAngle, qreal angle, qreal relLength, qreal gap = 0);
-    void paintImage(QPainter& painter, QImage needleImage, qreal startAngle, qreal angle, bool reverseOffsetting = false, qreal pieOffsetAngle = 0);
+    void paintImage(QPainter& painter, QImage needleImage, RotationType rotationType, qreal startAngle, qreal angle = 0);
     QString colString(QColor col);
 
     QList<float> needle_pos_;
@@ -104,17 +122,18 @@ class LH_Dial : public LH_QtInstance
     QList<QImage*> needleImage_;
     QList<bool> needle_vis_;
 
-    void loadNeedleConfig(int lineID, int& needleStyle, QColor& needleColor, int& needleThick, int& needleLength, int& needleGap, QString& needleImage);
-    void loadSliceConfig(int sliceID, int& sliceStyle, QColor& sliceColor, int& sliceLength, QString& sliceImage);
+    void loadNeedleConfig(int lineID, int& needleStyle, QColor& needleColor, int& needleThick, int& needleLength, int& needleGap, QString& needleImage, bool& needleGradient, QColor& needleColor2);
+    void loadSliceConfig(int sliceID, int& sliceStyle, QColor& sliceColor, int& sliceLength, QString& sliceImage, int& sliceImageAlpha, bool &sliceGradient, QColor &sliceColor2);
 
     static const bool isDebug = false;
 
-    QString buildNeedleConfig();
+    QString buildNeedleConfig(QColor forceColor = Qt::transparent);
 
     bool polling_on_;
 
     float maxDegrees();
     float startDegrees();
+
 protected:
     bool isClock;
 
@@ -132,17 +151,22 @@ protected:
     LH_Qt_QColor *setup_face_fillcolor2_;
     LH_Qt_QFileInfo* setup_face_image_;
     LH_Qt_bool *setup_face_ticks_;
+    LH_Qt_QColor *setup_face_tickcolor_;
 
     LH_Qt_QStringList *setup_needle_selection_;
 
     LH_Qt_QStringList *setup_needle_style_;
     LH_Qt_QColor *setup_needle_color_;
+    LH_Qt_bool *setup_needle_gradient_;
+    LH_Qt_QColor *setup_needle_color2_;
     LH_Qt_int *setup_needle_thickness_;
     LH_Qt_int *setup_needle_length_;
     LH_Qt_int *setup_needle_gap_;
     LH_Qt_QFileInfo* setup_needle_image_;
 
     LH_Qt_QColor* setup_unused_color_;
+    LH_Qt_bool* setup_unused_gradient_;
+    LH_Qt_QColor* setup_unused_color2_;
     LH_Qt_int* setup_unused_length_;
     LH_Qt_QFileInfo* setup_unused_image_;
 
@@ -150,10 +174,10 @@ protected:
     LH_Qt_QStringList *setup_unused_style_;
 
     void setNeedleVisibility(bool visible, int index = 0);
-    void syncNeedleConfigs();
+    void syncNeedleConfigs(QColor defaultColor = Qt::transparent);
 
 public:    
-    LH_Dial(DialType dialType = DIALTYPE_DIAL);
+    LH_Dial(DialType dialType = DIALTYPE_DIAL, QString unusedCapacityStyle = "");
     ~LH_Dial();
 
     virtual const char *userInit();
@@ -178,7 +202,7 @@ public:
             repoll = setVal( values.at(i), i, repoll );
     }
 
-    void addNeedle(QString name);
+    void addNeedle(QString name, QColor defaultColor = Qt::transparent);
     int needleCount();
     void clearNeedles();
     void setNeedles(QStringList names) {
@@ -203,6 +227,7 @@ public:
 public slots:
     void changeType();
     void changeFaceStyle();
+    void changeTicks();
     void changeNeedleStyle();
     void changeUnusedStyle();
     void changeSelectedNeedle();

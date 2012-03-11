@@ -101,5 +101,5 @@ exists($$PWD/plugins.prf) {
     QTSUPPORT = $$LINKDATA/QtSupport
     cf: include($$CODELEAP/ConditionalFormatting/ConditionalFormatting.pri)
     json: include($$CODELEAP/json/json.pri)
-    translator: include($$CODELEAP/GoogleTranslator/GoogleTranslator.pri)
+    translator: include($$CODELEAP/SimpleTranslator/SimpleTranslator.pri)
 }

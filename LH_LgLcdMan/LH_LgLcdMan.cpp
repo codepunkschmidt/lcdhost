@@ -125,7 +125,7 @@ const char *LH_LgLcdMan::userInit()
     return NULL;
 }
 
-void LH_LgLcdMan::~LH_LgLcdMan()
+LH_LgLcdMan::~LH_LgLcdMan()
 {
     if( thread_ )
     {

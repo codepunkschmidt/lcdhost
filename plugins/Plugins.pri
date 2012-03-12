@@ -65,6 +65,14 @@
             $$QTSUPPORT/LH_Qt_QString.h
 
     load($$PWD/PluginsConfig.prf)
+
+    contains( TEMPLATE, lib ): exists($$PWD/../lcdhost-private.pem) {
+        QMAKE_POST_LINK = \
+            $$LCDHOST_BINARIES/SignPlugin -c -o \
+            $$PWD/../lcdhost-private.pem \
+            http://www.linkdata.se/downloads/software/lcdhost/lcdhost-public.pem \
+            $$DESTDIR/$$TARGET
+    }
 } else {
     CONFIG += lh_api5_plugin
     load($$PWD/plugins.prf)

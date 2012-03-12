@@ -59,7 +59,7 @@ to the LCDHost repository.
 *** Configuring your build preferences
 *********************************************************************
 
-You must create a file named "lcdhost.prf" in the top level repository
+You should create a file named "lcdhost.prf" in the top level repository
 directory. This is fine as it's both in ".hgignore" and you're not going
 to add it to the repository.
 
@@ -80,7 +80,7 @@ public key can be downloaded from http://my.website/public.pem:
 	else: LH_DESTDIR=$$PWD/release
     SIGNATURE_PRIVATE_FILE = c:/Users/UserName/private.pem
     SIGNATURE_PUBLIC_URL = http://my.website/public.pem
-    load($$PWD/linkdata/PluginsBase.prf)
+    load($$PWD/linkdata/linkdata.prf)
     include($$PWD/linkdata/SignPlugin.pri)
 
 *********************************************************************

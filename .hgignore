@@ -6,6 +6,5 @@ moc_*
 debug/*
 release/*
 lcdhost.prf
-plugins.prf
 codeleap/GoogleTranslator/TranslationAPIKey.h
 .DS_Store

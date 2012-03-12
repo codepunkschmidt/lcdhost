@@ -8,7 +8,7 @@ TARGET = lh_libusb
 TEMPLATE = lib
 CONFIG += staticlib
 
-load($$PWD/../../lcdhost.prf)
+load($$[LCDHOST_PRF])
 
 QMAKE_CFLAGS_WARN_ON = -w
 

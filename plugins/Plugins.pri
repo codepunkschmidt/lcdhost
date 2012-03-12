@@ -10,7 +10,7 @@
 # and URL's if you want to use it.
 #
 
-!exists($$PWD/plugins.prf) {
+!exists($$[LCDHOST_PRF]) {
     CONFIG(debug, debug|release):RELDEB = Debug
     else:RELDEB = Release
 
@@ -75,7 +75,7 @@
     }
 } else {
     CONFIG += lh_api5_plugin
-    load($$PWD/plugins.prf)
+    load($$[LCDHOST_PRF])
     LINKDATA = $$PWD/../linkdata
     CODELEAP = $$PWD/../codeleap
     QTSUPPORT = $$LINKDATA/QtSupport

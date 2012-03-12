@@ -7,7 +7,7 @@
 TEMPLATE = lib
 CONFIG += staticlib
 
-load($$PWD/../../lcdhost.prf)
+load($$[LCDHOST_PRF])
 TARGET = lh_api5
 
 HEADERS += \

@@ -59,6 +59,12 @@ CHANGESET_REVISION = $$system($$quote(cd $$_PRO_FILE_PWD_ && hg log -l 1 --templ
 INCLUDEPATH += $$PWD
 LIBS += -L$$LH_DESTDIR
 
+# LCDHost supplied zlib
+lh_zlib {
+    LIBS += -llh_zlib
+    unix: POST_TARGETDEPS += $$LH_DESTDIR/liblh_zlib.a
+}
+
 # API 5 compatibility CONFIG's
 lh_api5_plugin {
         lh_api6: error($$_PRO_FILE_ ": Can't have both lh_api6 and lh_api5_plugin: INCLUDEPATH's will conflict")

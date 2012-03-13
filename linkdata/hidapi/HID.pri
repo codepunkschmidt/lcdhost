@@ -5,16 +5,16 @@ INCLUDEPATH += $$PWD
 HEADERS += $$PWD/hidapi.h
 
 win32 {
-        SOURCES += $$PWD/win/hid.c
+        SOURCES += $$PWD/windows/hid.c
 	LIBS += -lsetupapi
 }
 
 macx {
-        SOURCES += $$PWD/osx/hid.c
+        SOURCES += $$PWD/mac/hid.c
 	LIBS += -framework CoreFoundation -framework IOKit
 }
 
 unix:!macx {
-        SOURCES += $$PWD/lin/hid.c
+        SOURCES += $$PWD/linux/hid.c
         LIBS += -ludev
 }

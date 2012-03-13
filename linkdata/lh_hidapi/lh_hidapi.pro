@@ -12,6 +12,8 @@ load($$[LCDHOST_PRF])
 
 QMAKE_CFLAGS_WARN_ON = -w
 
+OTHER_FILES += lh_hidapi.prf
+
 HEADERS += hidapi.h
 
 win32:SOURCES += windows/hid.c

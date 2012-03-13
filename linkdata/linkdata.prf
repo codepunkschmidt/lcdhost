@@ -59,12 +59,6 @@ CHANGESET_REVISION = $$system($$quote(cd $$_PRO_FILE_PWD_ && hg log -l 1 --templ
 INCLUDEPATH += $$PWD
 LIBS += -L$$LH_DESTDIR
 
-# LCDHost supplied zlib
-lh_zlib {
-    LIBS += -llh_zlib
-    unix: POST_TARGETDEPS += $$LH_DESTDIR/liblh_zlib.a
-}
-
 # API 5 compatibility CONFIG's
 lh_api5_plugin {
     lh_api6: error($$_PRO_FILE_ ": Can't have both lh_api6 and lh_api5_plugin: INCLUDEPATH's will conflict")
@@ -77,37 +71,6 @@ lh_api5_plugin {
     INCLUDEPATH += $$PWD/lh_api5/QtSupport
 }
 
-# API 5
-lh_api5 {
-    LIBS += -llh_api5
-    unix: POST_TARGETDEPS += $$LH_DESTDIR/liblh_api5.a
-    PRECOMPILED_HEADER = $$PWD/lh_api5/lh_api5.h
-}
-
-# API 6
-lh_api6 {
-    LIBS += -llh_api6
-    unix: POST_TARGETDEPS += $$LH_DESTDIR/liblh_api6.a
-    PRECOMPILED_HEADER = $$PWD/lh_api6/lh_api6.h
-}
-
-# LCDHost supplied hidapi library
-lh_hidapi {
-    LIBS += -llh_hidapi
-    unix: POST_TARGETDEPS += $$LH_DESTDIR/liblh_hidapi.a
-    win32: LIBS += -lsetupapi
-    macx: LIBS += -framework CoreFoundation -framework IOKit
-    unix:!macx: LIBS += -ludev
-}
-
-# LCDHost supplied libusb library
-lh_libusb {
-    LIBS += -llh_libusb
-    unix: POST_TARGETDEPS += $$LH_DESTDIR/liblh_libusb.a
-    win32: DEFINES += OS_WINDOWS
-    win32: LIBS += -lole32 -lsetupapi -lcfgmgr32
-    macx: DEFINES += OS_DARWIN THREADS_POSIX HAVE_SYS_TIME_H HAVE_POLL_H
-    macx: LIBS += -framework CoreFoundation -framework IOKit
-    unix:!macx: DEFINES += OS_LINUX THREADS_POSIX HAVE_SYS_TIME_H HAVE_POLL_H
-}
-
+# Load library prf files
+LH_LIB_LIST=$$files($$PWD/lh_*)
+for( file, LH_LIB_LIST ): load( $${file}/$$basename(file).prf )

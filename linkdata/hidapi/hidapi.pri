@@ -3,7 +3,7 @@ INCLUDEPATH += $$PWD
 HEADERS += $$PWD/hidapi.h
 
 win32 {
-        SOURCES += $$PWD/win/hid.cpp
+        SOURCES += $$PWD/win/hid.c
 	LIBS += -lsetupapi
 }
 

@@ -1,0 +1,4 @@
+lh_zlib {
+    LIBS += -llh_zlib
+    unix: POST_TARGETDEPS += $$LH_DESTDIR/liblh_zlib.a
+}

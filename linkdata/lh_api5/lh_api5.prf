@@ -1,0 +1,5 @@
+lh_api5 {
+    LIBS += -llh_api5
+    unix: POST_TARGETDEPS += $$LH_DESTDIR/liblh_api5.a
+    PRECOMPILED_HEADER = $$PWD/lh_api5.h
+}

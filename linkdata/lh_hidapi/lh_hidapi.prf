@@ -1,0 +1,7 @@
+lh_hidapi {
+    LIBS += -llh_hidapi
+    unix: POST_TARGETDEPS += $$LH_DESTDIR/liblh_hidapi.a
+    win32: LIBS += -lsetupapi
+    macx: LIBS += -framework CoreFoundation -framework IOKit
+    unix:!macx: LIBS += -ludev
+}

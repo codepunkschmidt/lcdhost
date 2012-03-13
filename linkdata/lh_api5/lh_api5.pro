@@ -4,11 +4,13 @@
 # Builds the LCDHost plugin API5 library
 #
 
+TARGET = lh_api5
 TEMPLATE = lib
 CONFIG += staticlib
 
 load($$[LCDHOST_PRF])
-TARGET = lh_api5
+
+OTHER_FILES += lh_api5.prf
 
 HEADERS += \
     lh_api5.h \
@@ -18,7 +20,3 @@ HEADERS += \
 SOURCES += \
     lh_plugin.c \
     $$files(QtSupport/*.cpp)
-
-
-
-

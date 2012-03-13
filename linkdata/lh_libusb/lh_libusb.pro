@@ -12,6 +12,7 @@ load($$[LCDHOST_PRF])
 
 QMAKE_CFLAGS_WARN_ON = -w
 
+OTHER_FILES += lh_libusb.prf
 HEADERS += libusb.h
 SOURCES += core.c descriptor.c io.c sync.c
 

@@ -10,6 +10,8 @@ CONFIG += staticlib
 
 load($$[LCDHOST_PRF])
 
+OTHER_FILES += lh_api6.prf
+
 HEADERS = \
     lh_api6.h \
     lh_loader.h \

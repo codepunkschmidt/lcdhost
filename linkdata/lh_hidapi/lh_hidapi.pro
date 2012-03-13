@@ -14,7 +14,6 @@ QMAKE_CFLAGS_WARN_ON = -w
 
 HEADERS += hidapi.h
 
-win32:SOURCES += win/hid.cpp
-macx:SOURCES += osx/hid.c
-unix:!macx:SOURCES += lin/hid.c
-
+win32:SOURCES += windows/hid.c
+macx:SOURCES += mac/hid.c
+unix:!macx:SOURCES += linux/hid.c

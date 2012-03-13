@@ -1,0 +1,9 @@
+lh_libusb {
+    LIBS += -llh_libusb
+    unix: POST_TARGETDEPS += $$LH_DESTDIR/liblh_libusb.a
+    win32: DEFINES += OS_WINDOWS
+    win32: LIBS += -lole32 -lsetupapi -lcfgmgr32
+    macx: DEFINES += OS_DARWIN THREADS_POSIX HAVE_SYS_TIME_H HAVE_POLL_H
+    macx: LIBS += -framework CoreFoundation -framework IOKit
+    unix:!macx: DEFINES += OS_LINUX THREADS_POSIX HAVE_SYS_TIME_H HAVE_POLL_H
+}

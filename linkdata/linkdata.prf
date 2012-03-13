@@ -67,12 +67,12 @@ lh_zlib {
 
 # API 5 compatibility CONFIG's
 lh_api5_plugin {
-        lh_api6: error($$_PRO_FILE_ ": Can't have both lh_api6 and lh_api5_plugin: INCLUDEPATH's will conflict")
-	CONFIG += lh_api5
-	hid: CONFIG += lh_hidapi
-	hidapi: CONFIG += lh_hidapi
-	usb: CONFIG += lh_libusb
-	libusb: CONFIG += lh_libusb
+    lh_api6: error($$_PRO_FILE_ ": Can't have both lh_api6 and lh_api5_plugin: INCLUDEPATH's will conflict")
+    CONFIG += lh_api5
+    hid: CONFIG += lh_hidapi
+    hidapi: CONFIG += lh_hidapi
+    usb: CONFIG += lh_libusb
+    libusb: CONFIG += lh_libusb
     INCLUDEPATH += $$PWD/lh_api5
     INCLUDEPATH += $$PWD/lh_api5/QtSupport
 }

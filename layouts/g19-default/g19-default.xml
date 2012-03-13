@@ -1,0 +1,1301 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<instance>
+  <identity name="LH_LgLcdMan:QVGA" id="3zdqyw"/>
+  <state alerts="1"/>
+  <origin x="0" y="0"/>
+  <size w="320" h="240"/>
+  <plugin_size w="-1" h="-1"/>
+  <pos x="0" y="0" z="0"/>
+  <x_ref id="0" align="0" ref_align="0"/>
+  <y_ref id="0" align="0" ref_align="0"/>
+  <w_ref id="0" mod="0" units="0"/>
+  <h_ref id="0" mod="0" units="0"/>
+  <instance class="LH_Image/StaticImage">
+    <identity name="Background image" id="7m9u14"/>
+    <state alerts="1"/>
+    <origin x="0" y="0"/>
+    <size w="320" h="240"/>
+    <plugin_size w="-1" h="-1"/>
+    <pos x="0" y="0" z="0"/>
+    <x_ref id="3zdqyw" align="0" ref_align="0"/>
+    <y_ref id="3zdqyw" align="0" ref_align="0"/>
+    <w_ref id="3zdqyw" mod="0" units="0"/>
+    <h_ref id="3zdqyw" mod="0" units="0"/>
+    <item id="Filename">
+      <value>Autumn Leaves.jpg</value>
+    </item>
+  </instance>
+  <instance class="LH_Decor/StaticRectangle">
+    <identity name="Date, time and mail display" id="7m9t9k"/>
+    <state alerts="1"/>
+    <origin x="0" y="0"/>
+    <size w="320" h="20"/>
+    <plugin_size w="-1" h="-1"/>
+    <pos x="0" y="0" z="1"/>
+    <x_ref id="3zdqyw" align="0" ref_align="0"/>
+    <y_ref id="3zdqyw" align="0" ref_align="0"/>
+    <w_ref id="3zdqyw" mod="0" units="0"/>
+    <h_ref id="0" mod="20" units="4"/>
+    <instance class="LH_Text/SystemDateText">
+      <identity name="DateTopLeft" id="7m9uso"/>
+      <state alerts="1"/>
+      <origin x="0" y="0"/>
+      <size w="136" h="20"/>
+      <plugin_size w="136" h="-1"/>
+      <pos x="0" y="0" z="0"/>
+      <x_ref id="7m9t9k" align="0" ref_align="0"/>
+      <y_ref id="7m9t9k" align="0" ref_align="0"/>
+      <w_ref id="0" mod="0" units="0"/>
+      <h_ref id="7m9t9k" mod="0" units="0"/>
+      <item id="Text">
+        <value> 2011-08-23 tisdag</value>
+      </item>
+      <item id="Font">
+        <value>Arial,10,-1,5,75,0,0,0,0,0</value>
+      </item>
+      <item id="^Adjust font size to instance height">
+        <value>true</value>
+      </item>
+      <item id="Color">
+        <value>black</value>
+      </item>
+      <item id="Background">
+        <value>transparent</value>
+      </item>
+      <item id="Horizontal">
+        <value>Center</value>
+      </item>
+      <item id="Vertical">
+        <value>Center</value>
+      </item>
+      <item id="Scroll rate">
+        <value>15</value>
+      </item>
+      <item id="Scroll step">
+        <value>2</value>
+      </item>
+      <item id="Scroll gap">
+        <value>10</value>
+      </item>
+      <item id="(a href='http:||doc.trolltech.com|4.6|qdate.html#toString')Form">
+        <value> yyyy-MM-dd dddd</value>
+      </item>
+      <item id="Enable Conditional Formatting">
+        <value>false</value>
+      </item>
+      <item id="Conditions XML">
+        <value>&lt;rules/&gt;</value>
+      </item>
+    </instance>
+    <instance class="LH_Mailcount/SystemMailIcon">
+      <identity name="MailTopMiddle" id="7m9uew"/>
+      <state alerts="1"/>
+      <origin x="136" y="0"/>
+      <size w="114" h="20"/>
+      <plugin_size w="-1" h="-1"/>
+      <pos x="136" y="0" z="1"/>
+      <x_ref id="7m9uso" align="0" ref_align="2"/>
+      <y_ref id="7m9t9k" align="0" ref_align="0"/>
+      <w_ref id="7m9v6g" mod="0" units="2"/>
+      <h_ref id="7m9uso" mod="0" units="0"/>
+      <item id="Mail envelope image">
+        <value></value>
+      </item>
+      <item id="Flash when there is mail">
+        <value>true</value>
+      </item>
+      <item id="Use smooth flashes">
+        <value>false</value>
+      </item>
+    </instance>
+    <instance class="LH_Text/SystemTimeText">
+      <identity name="TimeTopRight" id="7m9v6g"/>
+      <state alerts="1"/>
+      <origin x="250" y="0"/>
+      <size w="70" h="20"/>
+      <plugin_size w="70" h="-1"/>
+      <pos x="250" y="0" z="2"/>
+      <x_ref id="7m9t9k" align="2" ref_align="2"/>
+      <y_ref id="7m9t9k" align="0" ref_align="0"/>
+      <w_ref id="0" mod="0" units="0"/>
+      <h_ref id="7m9t9k" mod="0" units="0"/>
+      <item id="Text">
+        <value>21:35:51 </value>
+      </item>
+      <item id="Font">
+        <value>Arial,10,-1,5,75,0,0,0,0,0</value>
+      </item>
+      <item id="^Adjust font size to instance height">
+        <value>true</value>
+      </item>
+      <item id="Color">
+        <value>white</value>
+      </item>
+      <item id="Background">
+        <value>transparent</value>
+      </item>
+      <item id="Horizontal">
+        <value>Center</value>
+      </item>
+      <item id="Vertical">
+        <value>Center</value>
+      </item>
+      <item id="Scroll rate">
+        <value>15</value>
+      </item>
+      <item id="Scroll step">
+        <value>2</value>
+      </item>
+      <item id="Scroll gap">
+        <value>10</value>
+      </item>
+      <item id="(a href='http:||doc.trolltech.com|4.6|qtime.html#toString')Form">
+        <value>HH:mm:ss </value>
+      </item>
+      <item id="Enable Conditional Formatting">
+        <value>false</value>
+      </item>
+      <item id="Conditions XML">
+        <value>&lt;rules/&gt;</value>
+      </item>
+    </instance>
+    <item id="Pen width">
+      <value>0</value>
+    </item>
+    <item id="Corner rounding">
+      <value>0</value>
+    </item>
+    <item id="Pen color">
+      <value>black</value>
+    </item>
+    <item id="Fill color 1">
+      <value>white</value>
+    </item>
+    <item id="^Background is a gradient">
+      <value>true</value>
+    </item>
+    <item id="Fill color 2">
+      <value>black</value>
+    </item>
+    <item id="^Gradient is horizontal">
+      <value>true</value>
+    </item>
+  </instance>
+  <instance class="LH_Text/SystemTimeText">
+    <identity name="Time (large, shaded)" id="7m9tgg"/>
+    <state alerts="1"/>
+    <origin x="153" y="166"/>
+    <size w="167" h="74"/>
+    <plugin_size w="167" h="74"/>
+    <pos x="151" y="166" z="2"/>
+    <x_ref id="3zdqyw" align="2" ref_align="2"/>
+    <y_ref id="3zdqyw" align="2" ref_align="2"/>
+    <w_ref id="0" mod="0" units="0"/>
+    <h_ref id="0" mod="0" units="0"/>
+    <instance class="LH_Text/SystemTimeText">
+      <identity name="Time (Text) [3]" id="7m9uls"/>
+      <state alerts="1"/>
+      <origin x="0" y="0"/>
+      <size w="167" h="74"/>
+      <plugin_size w="-1" h="-1"/>
+      <pos x="-3" y="-1" z="0"/>
+      <x_ref id="7m9tgg" align="0" ref_align="0"/>
+      <y_ref id="7m9tgg" align="0" ref_align="0"/>
+      <w_ref id="7m9tgg" mod="0" units="0"/>
+      <h_ref id="7m9tgg" mod="0" units="0"/>
+      <item id="Text">
+        <value>21:35</value>
+      </item>
+      <item id="Font">
+        <value>Arial,48,-1,5,75,0,0,0,0,0</value>
+      </item>
+      <item id="^Adjust font size to instance height">
+        <value>false</value>
+      </item>
+      <item id="Color">
+        <value>#ac7300</value>
+      </item>
+      <item id="Background">
+        <value>transparent</value>
+      </item>
+      <item id="Horizontal">
+        <value>Center</value>
+      </item>
+      <item id="Vertical">
+        <value>Center</value>
+      </item>
+      <item id="Scroll rate">
+        <value>15</value>
+      </item>
+      <item id="Scroll step">
+        <value>2</value>
+      </item>
+      <item id="Scroll gap">
+        <value>10</value>
+      </item>
+      <item id="(a href='http:||doc.trolltech.com|4.6|qtime.html#toString')Form">
+        <value>HH:mm</value>
+      </item>
+      <item id="Enable Conditional Formatting">
+        <value>false</value>
+      </item>
+      <item id="Conditions XML">
+        <value>&lt;rules/&gt;</value>
+      </item>
+    </instance>
+    <item id="Text">
+      <value>21:35</value>
+    </item>
+    <item id="Font">
+      <value>Arial,48,-1,5,75,1,0,0,0,0</value>
+    </item>
+    <item id="^Adjust font size to instance height">
+      <value>false</value>
+    </item>
+    <item id="Color">
+      <value>black @ 127</value>
+    </item>
+    <item id="Background">
+      <value>transparent</value>
+    </item>
+    <item id="Horizontal">
+      <value>Center</value>
+    </item>
+    <item id="Vertical">
+      <value>Center</value>
+    </item>
+    <item id="Scroll rate">
+      <value>15</value>
+    </item>
+    <item id="Scroll step">
+      <value>2</value>
+    </item>
+    <item id="Scroll gap">
+      <value>10</value>
+    </item>
+    <item id="(a href='http:||doc.trolltech.com|4.6|qtime.html#toString')Form">
+      <value>HH:mm</value>
+    </item>
+    <item id="Enable Conditional Formatting">
+      <value>false</value>
+    </item>
+    <item id="Conditions XML">
+      <value>&lt;rules/&gt;</value>
+    </item>
+  </instance>
+  <instance class="LH_Text/SystemDateText">
+    <identity name="Date (large, shaded)" id="7m9uzk"/>
+    <state alerts="1"/>
+    <origin x="170" y="217"/>
+    <size w="150" h="23"/>
+    <plugin_size w="150" h="23"/>
+    <pos x="170" y="217" z="3"/>
+    <x_ref id="3zdqyw" align="2" ref_align="2"/>
+    <y_ref id="3zdqyw" align="2" ref_align="2"/>
+    <w_ref id="0" mod="0" units="0"/>
+    <h_ref id="0" mod="0" units="0"/>
+    <instance class="LH_Text/SystemDateText">
+      <identity name="Date (Text) [5]" id="7m9tu8"/>
+      <state alerts="1"/>
+      <origin x="0" y="0"/>
+      <size w="150" h="23"/>
+      <plugin_size w="-1" h="-1"/>
+      <pos x="-1" y="-2" z="0"/>
+      <x_ref id="7m9uzk" align="0" ref_align="0"/>
+      <y_ref id="7m9uzk" align="0" ref_align="0"/>
+      <w_ref id="7m9uzk" mod="0" units="0"/>
+      <h_ref id="7m9uzk" mod="0" units="0"/>
+      <item id="Text">
+        <value>tisdag 23 augusti</value>
+      </item>
+      <item id="Font">
+        <value>Arial,14,-1,5,50,0,0,0,0,0</value>
+      </item>
+      <item id="^Adjust font size to instance height">
+        <value>false</value>
+      </item>
+      <item id="Color">
+        <value>yellow</value>
+      </item>
+      <item id="Background">
+        <value>transparent</value>
+      </item>
+      <item id="Horizontal">
+        <value>Center</value>
+      </item>
+      <item id="Vertical">
+        <value>Center</value>
+      </item>
+      <item id="Scroll rate">
+        <value>15</value>
+      </item>
+      <item id="Scroll step">
+        <value>2</value>
+      </item>
+      <item id="Scroll gap">
+        <value>10</value>
+      </item>
+      <item id="(a href='http:||doc.trolltech.com|4.6|qdate.html#toString')Form">
+        <value>dddd d MMMM</value>
+      </item>
+      <item id="Enable Conditional Formatting">
+        <value>false</value>
+      </item>
+      <item id="Conditions XML">
+        <value>&lt;rules/&gt;</value>
+      </item>
+    </instance>
+    <item id="Text">
+      <value>tisdag 23 augusti</value>
+    </item>
+    <item id="Font">
+      <value>Arial,14,-1,5,50,1,0,0,0,0</value>
+    </item>
+    <item id="^Adjust font size to instance height">
+      <value>false</value>
+    </item>
+    <item id="Color">
+      <value>black @ 127</value>
+    </item>
+    <item id="Background">
+      <value>transparent</value>
+    </item>
+    <item id="Horizontal">
+      <value>Center</value>
+    </item>
+    <item id="Vertical">
+      <value>Center</value>
+    </item>
+    <item id="Scroll rate">
+      <value>15</value>
+    </item>
+    <item id="Scroll step">
+      <value>2</value>
+    </item>
+    <item id="Scroll gap">
+      <value>10</value>
+    </item>
+    <item id="(a href='http:||doc.trolltech.com|4.6|qdate.html#toString')Form">
+      <value>dddd d MMMM</value>
+    </item>
+    <item id="Enable Conditional Formatting">
+      <value>false</value>
+    </item>
+    <item id="Conditions XML">
+      <value>&lt;rules/&gt;</value>
+    </item>
+  </instance>
+  <instance class="LH_Decor/StaticRectangle">
+    <identity name="CPU display" id="7m9vdc"/>
+    <state alerts="1"/>
+    <origin x="0" y="192"/>
+    <size w="60" h="48"/>
+    <plugin_size w="-1" h="48"/>
+    <pos x="3" y="189" z="4"/>
+    <x_ref id="3zdqyw" align="0" ref_align="0"/>
+    <y_ref id="3zdqyw" align="2" ref_align="2"/>
+    <w_ref id="0" mod="60" units="4"/>
+    <h_ref id="0" mod="0" units="0"/>
+    <instance class="LH_Text/StaticText">
+      <identity name="&quot;CPU&quot;" id="7m9u80"/>
+      <state alerts="1"/>
+      <origin x="0" y="0"/>
+      <size w="26" h="14"/>
+      <plugin_size w="26" h="-1"/>
+      <pos x="2" y="2" z="0"/>
+      <x_ref id="7m9vdc" align="0" ref_align="0"/>
+      <y_ref id="7m9vdc" align="0" ref_align="0"/>
+      <w_ref id="0" mod="0" units="0"/>
+      <h_ref id="7m9vdc" mod="300" units="1"/>
+      <item id="Text">
+        <value>CPU</value>
+      </item>
+      <item id="Font">
+        <value>Arial,7,-1,5,50,0,0,0,0,0</value>
+      </item>
+      <item id="^Adjust font size to instance height">
+        <value>true</value>
+      </item>
+      <item id="Color">
+        <value>white</value>
+      </item>
+      <item id="Background">
+        <value>transparent</value>
+      </item>
+      <item id="Horizontal">
+        <value>Center</value>
+      </item>
+      <item id="Vertical">
+        <value>Center</value>
+      </item>
+      <item id="Scroll rate">
+        <value>15</value>
+      </item>
+      <item id="Scroll step">
+        <value>2</value>
+      </item>
+      <item id="Scroll gap">
+        <value>10</value>
+      </item>
+      <item id="Enable Conditional Formatting">
+        <value>false</value>
+      </item>
+      <item id="Conditions XML">
+        <value>&lt;rules/&gt;</value>
+      </item>
+    </instance>
+    <instance class="LH_Text/SystemCPUText">
+      <identity name="Average Load (Text) [2]" id="406bq8"/>
+      <state alerts="1"/>
+      <origin x="42" y="2"/>
+      <size w="18" h="14"/>
+      <plugin_size w="18" h="-1"/>
+      <pos x="40" y="2" z="1"/>
+      <x_ref id="7m9vdc" align="2" ref_align="2"/>
+      <y_ref id="7m9u80" align="0" ref_align="0"/>
+      <w_ref id="0" mod="0" units="0"/>
+      <h_ref id="7m9u80" mod="0" units="0"/>
+      <item id="Text">
+        <value>0%</value>
+      </item>
+      <item id="Font">
+        <value>Arial,7,-1,5,50,0,0,0,0,0</value>
+      </item>
+      <item id="^Adjust font size to instance height">
+        <value>true</value>
+      </item>
+      <item id="Color">
+        <value>white</value>
+      </item>
+      <item id="Background">
+        <value>transparent</value>
+      </item>
+      <item id="Horizontal">
+        <value>Center</value>
+      </item>
+      <item id="Vertical">
+        <value>Center</value>
+      </item>
+      <item id="Scroll rate">
+        <value>15</value>
+      </item>
+      <item id="Scroll step">
+        <value>2</value>
+      </item>
+      <item id="Scroll gap">
+        <value>10</value>
+      </item>
+      <item id="LinkCPULoad">
+        <meta link="/system/cpu/load"/>
+        <value>0</value>
+      </item>
+      <item id="Enable Conditional Formatting">
+        <value>false</value>
+      </item>
+      <item id="Conditions XML">
+        <value>&lt;rules/&gt;</value>
+      </item>
+    </instance>
+    <instance class="LH_Bar/SystemCPUHistogram">
+      <identity name="CPU Core Bars [2]" id="406dg8"/>
+      <state alerts="1"/>
+      <origin x="2" y="16"/>
+      <size w="56" h="30"/>
+      <plugin_size w="-1" h="-1"/>
+      <pos x="2" y="16" z="2"/>
+      <x_ref id="7m9vdc" align="1" ref_align="1"/>
+      <y_ref id="7m9u80" align="0" ref_align="2"/>
+      <w_ref id="7m9vdc" mod="-4" units="0"/>
+      <h_ref id="7m9vdc" mod="-2" units="3"/>
+      <item id="Bar Style">
+        <value>Gradient Fill</value>
+      </item>
+      <item id="Bar Image">
+        <value></value>
+      </item>
+      <item id="Masking">
+        <value>None</value>
+      </item>
+      <item id="Transparency Mask">
+        <value></value>
+      </item>
+      <item id="Bar color (start)">
+        <value>lime</value>
+      </item>
+      <item id="Bar color (end)">
+        <value>red</value>
+      </item>
+      <item id="Bar Background Image">
+        <value></value>
+      </item>
+      <item id="Background color">
+        <value>transparent</value>
+      </item>
+      <item id="Direction">
+        <value>Bottom to top</value>
+      </item>
+      <item id="Spacing">
+        <value>0</value>
+      </item>
+      <item id="Discrete Segments">
+        <value>false</value>
+      </item>
+      <item id="Number of Segments">
+        <value>20</value>
+      </item>
+      <item id="Smoothing">
+        <value>3</value>
+      </item>
+      <item id="Enable Conditional Formatting">
+        <value>false</value>
+      </item>
+      <item id="Conditions XML">
+        <value>&lt;rules/&gt;</value>
+      </item>
+    </instance>
+    <item id="Pen width">
+      <value>0</value>
+    </item>
+    <item id="Corner rounding">
+      <value>27</value>
+    </item>
+    <item id="Pen color">
+      <value>black</value>
+    </item>
+    <item id="Fill color 1">
+      <value>black @ 50%</value>
+    </item>
+    <item id="^Background is a gradient">
+      <value>false</value>
+    </item>
+    <item id="Fill color 2">
+      <value>silver</value>
+    </item>
+    <item id="^Gradient is horizontal">
+      <value>false</value>
+    </item>
+  </instance>
+  <instance class="LH_Decor/StaticRectangle">
+    <identity name="Network display" id="406chs"/>
+    <state alerts="1"/>
+    <origin x="3" y="141"/>
+    <size w="60" h="48"/>
+    <plugin_size w="-1" h="48"/>
+    <pos x="3" y="139" z="5"/>
+    <x_ref id="7m9vdc" align="0" ref_align="0"/>
+    <y_ref id="7m9vdc" align="2" ref_align="0"/>
+    <w_ref id="0" mod="60" units="4"/>
+    <h_ref id="0" mod="0" units="0"/>
+    <instance class="LH_Text/StaticText">
+      <identity name="&quot;Network&quot;" id="406e7s"/>
+      <state alerts="1"/>
+      <origin x="0" y="0"/>
+      <size w="43" h="14"/>
+      <plugin_size w="43" h="-1"/>
+      <pos x="2" y="2" z="0"/>
+      <x_ref id="406chs" align="0" ref_align="0"/>
+      <y_ref id="406chs" align="0" ref_align="0"/>
+      <w_ref id="0" mod="0" units="0"/>
+      <h_ref id="406chs" mod="300" units="1"/>
+      <item id="Text">
+        <value>Network</value>
+      </item>
+      <item id="Font">
+        <value>Arial,7,-1,5,50,0,0,0,0,0</value>
+      </item>
+      <item id="^Adjust font size to instance height">
+        <value>true</value>
+      </item>
+      <item id="Color">
+        <value>white</value>
+      </item>
+      <item id="Background">
+        <value>transparent</value>
+      </item>
+      <item id="Horizontal">
+        <value>Center</value>
+      </item>
+      <item id="Vertical">
+        <value>Center</value>
+      </item>
+      <item id="Scroll rate">
+        <value>15</value>
+      </item>
+      <item id="Scroll step">
+        <value>2</value>
+      </item>
+      <item id="Scroll gap">
+        <value>10</value>
+      </item>
+      <item id="Enable Conditional Formatting">
+        <value>false</value>
+      </item>
+      <item id="Conditions XML">
+        <value>&lt;rules/&gt;</value>
+      </item>
+    </instance>
+    <instance class="LH_Bar/SystemNetworkInboundBar">
+      <identity name="Inbound" id="406c40"/>
+      <state alerts="1"/>
+      <origin x="21" y="22"/>
+      <size w="31" h="4"/>
+      <plugin_size w="-1" h="-1"/>
+      <pos x="27" y="23" z="1"/>
+      <x_ref id="406gig" align="0" ref_align="2"/>
+      <y_ref id="406bx4" align="1" ref_align="1"/>
+      <w_ref id="406chs" mod="-2" units="3"/>
+      <h_ref id="406bx4" mod="300" units="1"/>
+      <item id="Bar Style">
+        <value>Gradient Fill</value>
+      </item>
+      <item id="Bar Image">
+        <value></value>
+      </item>
+      <item id="Masking">
+        <value>None</value>
+      </item>
+      <item id="Transparency Mask">
+        <value></value>
+      </item>
+      <item id="Bar color (start)">
+        <value>lime</value>
+      </item>
+      <item id="Bar color (end)">
+        <value>red</value>
+      </item>
+      <item id="Bar Background Image">
+        <value></value>
+      </item>
+      <item id="Background color">
+        <value>transparent</value>
+      </item>
+      <item id="Direction">
+        <value>Automatic</value>
+      </item>
+      <item id="Spacing">
+        <value>0</value>
+      </item>
+      <item id="Discrete Segments">
+        <value>false</value>
+      </item>
+      <item id="Number of Segments">
+        <value>20</value>
+      </item>
+      <item id="Smoothing">
+        <value>3</value>
+      </item>
+      <item id="Enable Conditional Formatting">
+        <value>false</value>
+      </item>
+      <item id="Conditions XML">
+        <value>&lt;rules/&gt;</value>
+      </item>
+    </instance>
+    <instance class="LH_Bar/SystemNetworkOutboundBar">
+      <identity name="Outbound" id="406gw8"/>
+      <state alerts="1"/>
+      <origin x="27" y="37"/>
+      <size w="31" h="4"/>
+      <plugin_size w="-1" h="-1"/>
+      <pos x="27" y="38" z="2"/>
+      <x_ref id="406c40" align="0" ref_align="0"/>
+      <y_ref id="406gig" align="1" ref_align="1"/>
+      <w_ref id="406chs" mod="-2" units="3"/>
+      <h_ref id="406c40" mod="0" units="0"/>
+      <item id="Bar Style">
+        <value>Gradient Fill</value>
+      </item>
+      <item id="Bar Image">
+        <value></value>
+      </item>
+      <item id="Masking">
+        <value>None</value>
+      </item>
+      <item id="Transparency Mask">
+        <value></value>
+      </item>
+      <item id="Bar color (start)">
+        <value>lime</value>
+      </item>
+      <item id="Bar color (end)">
+        <value>red</value>
+      </item>
+      <item id="Bar Background Image">
+        <value></value>
+      </item>
+      <item id="Background color">
+        <value>transparent</value>
+      </item>
+      <item id="Direction">
+        <value>Automatic</value>
+      </item>
+      <item id="Spacing">
+        <value>0</value>
+      </item>
+      <item id="Discrete Segments">
+        <value>false</value>
+      </item>
+      <item id="Number of Segments">
+        <value>20</value>
+      </item>
+      <item id="Smoothing">
+        <value>3</value>
+      </item>
+      <item id="Enable Conditional Formatting">
+        <value>false</value>
+      </item>
+      <item id="Conditions XML">
+        <value>&lt;rules/&gt;</value>
+      </item>
+    </instance>
+    <instance class="LH_Text/StaticText">
+      <identity name="&quot;In&quot;" id="406bx4"/>
+      <state alerts="1"/>
+      <origin x="0" y="16"/>
+      <size w="11" h="14"/>
+      <plugin_size w="11" h="-1"/>
+      <pos x="2" y="17" z="3"/>
+      <x_ref id="406chs" align="0" ref_align="0"/>
+      <y_ref id="406e7s" align="0" ref_align="2"/>
+      <w_ref id="0" mod="0" units="0"/>
+      <h_ref id="406e7s" mod="0" units="0"/>
+      <item id="Text">
+        <value>In</value>
+      </item>
+      <item id="Font">
+        <value>Arial,7,-1,5,50,0,0,0,0,0</value>
+      </item>
+      <item id="^Adjust font size to instance height">
+        <value>true</value>
+      </item>
+      <item id="Color">
+        <value>white</value>
+      </item>
+      <item id="Background">
+        <value>transparent</value>
+      </item>
+      <item id="Horizontal">
+        <value>Center</value>
+      </item>
+      <item id="Vertical">
+        <value>Center</value>
+      </item>
+      <item id="Scroll rate">
+        <value>15</value>
+      </item>
+      <item id="Scroll step">
+        <value>2</value>
+      </item>
+      <item id="Scroll gap">
+        <value>10</value>
+      </item>
+      <item id="Enable Conditional Formatting">
+        <value>false</value>
+      </item>
+      <item id="Conditions XML">
+        <value>&lt;rules/&gt;</value>
+      </item>
+    </instance>
+    <instance class="LH_Text/StaticText">
+      <identity name="&quot;Out&quot;" id="406gig"/>
+      <state alerts="1"/>
+      <origin x="0" y="31"/>
+      <size w="19" h="14"/>
+      <plugin_size w="19" h="-1"/>
+      <pos x="2" y="32" z="4"/>
+      <x_ref id="406chs" align="0" ref_align="0"/>
+      <y_ref id="406bx4" align="0" ref_align="2"/>
+      <w_ref id="0" mod="0" units="0"/>
+      <h_ref id="406e7s" mod="0" units="0"/>
+      <item id="Text">
+        <value>Out</value>
+      </item>
+      <item id="Font">
+        <value>Arial,7,-1,5,50,0,0,0,0,0</value>
+      </item>
+      <item id="^Adjust font size to instance height">
+        <value>true</value>
+      </item>
+      <item id="Color">
+        <value>white</value>
+      </item>
+      <item id="Background">
+        <value>transparent</value>
+      </item>
+      <item id="Horizontal">
+        <value>Center</value>
+      </item>
+      <item id="Vertical">
+        <value>Center</value>
+      </item>
+      <item id="Scroll rate">
+        <value>15</value>
+      </item>
+      <item id="Scroll step">
+        <value>2</value>
+      </item>
+      <item id="Scroll gap">
+        <value>10</value>
+      </item>
+      <item id="Enable Conditional Formatting">
+        <value>false</value>
+      </item>
+      <item id="Conditions XML">
+        <value>&lt;rules/&gt;</value>
+      </item>
+    </instance>
+    <item id="Pen width">
+      <value>0</value>
+    </item>
+    <item id="Corner rounding">
+      <value>27</value>
+    </item>
+    <item id="Pen color">
+      <value>black</value>
+    </item>
+    <item id="Fill color 1">
+      <value>black @ 50%</value>
+    </item>
+    <item id="^Background is a gradient">
+      <value>false</value>
+    </item>
+    <item id="Fill color 2">
+      <value>silver</value>
+    </item>
+    <item id="^Gradient is horizontal">
+      <value>false</value>
+    </item>
+  </instance>
+  <instance class="LH_WebKit/DynamicRSSFeedText">
+    <identity name="BBC News Ticker" id="406bjc"/>
+    <state alerts="1"/>
+    <origin x="0" y="20"/>
+    <size w="320" h="18"/>
+    <plugin_size w="-1" h="-1"/>
+    <pos x="0" y="22" z="6"/>
+    <x_ref id="3zdqyw" align="0" ref_align="0"/>
+    <y_ref id="7m9t9k" align="0" ref_align="2"/>
+    <w_ref id="0" mod="320" units="4"/>
+    <h_ref id="0" mod="18" units="4"/>
+    <item id="URL">
+      <value>http://feeds.bbci.co.uk/news/rss.xml</value>
+    </item>
+    <item id="Font">
+      <value>Arial,10,-1,5,50,0,0,0,0,0</value>
+    </item>
+    <item id="^Adjust font size to instance height">
+      <value>true</value>
+    </item>
+    <item id="Color">
+      <value>#00ff29</value>
+    </item>
+    <item id="Background">
+      <value>#5b5b5b @ 168</value>
+    </item>
+    <item id="Horizontal">
+      <value>Center</value>
+    </item>
+    <item id="Vertical">
+      <value>Center</value>
+    </item>
+    <item id="Scroll rate">
+      <value>15</value>
+    </item>
+    <item id="Scroll step">
+      <value>2</value>
+    </item>
+    <item id="Scroll gap">
+      <value>10</value>
+    </item>
+    <item id="Switch delay">
+      <value>5</value>
+    </item>
+    <item id="Open in browser">
+      <value>LH_LgLcdMan:QVGA:Keys/+1024/1005</value>
+    </item>
+    <item id="Previous Headline">
+      <value>LH_LgLcdMan:QVGA:Keys/+256/1005</value>
+    </item>
+    <item id="Next Headline">
+      <value>LH_LgLcdMan:QVGA:Keys/+512/1005</value>
+    </item>
+    <item id="Refresh (minutes)">
+      <value>5</value>
+    </item>
+    <item id="Modify Visible">
+      <value>0</value>
+    </item>
+    <item id="Enable Conditional Formatting">
+      <value>false</value>
+    </item>
+    <item id="Conditions XML">
+      <value>&lt;rules/&gt;</value>
+    </item>
+  </instance>
+  <instance class="LH_Decor/StaticRectangle">
+    <identity name="Clock" id="406gpc"/>
+    <state alerts="1"/>
+    <origin x="208" y="54"/>
+    <size w="112" h="112"/>
+    <plugin_size w="48" h="48"/>
+    <pos x="208" y="-10" z="7"/>
+    <x_ref id="3zdqyw" align="2" ref_align="2"/>
+    <y_ref id="7m9tgg" align="2" ref_align="0"/>
+    <w_ref id="0" mod="64" units="0"/>
+    <h_ref id="0" mod="64" units="0"/>
+    <instance class="LH_Dial/SystemTimeDial">
+      <identity name="Time (Dial) [1]" id="406coo"/>
+      <state alerts="1"/>
+      <origin x="0" y="0"/>
+      <size w="112" h="112"/>
+      <plugin_size w="-1" h="-1"/>
+      <pos x="0" y="0" z="0"/>
+      <x_ref id="406gpc" align="0" ref_align="0"/>
+      <y_ref id="406gpc" align="0" ref_align="0"/>
+      <w_ref id="406gpc" mod="0" units="0"/>
+      <h_ref id="406gpc" mod="0" units="0"/>
+      <item id="Manual Adjust">
+        <value>false</value>
+      </item>
+      <item id="Adjust Seconds">
+        <value>0</value>
+      </item>
+      <item id="Adjust Minutes">
+        <value>0</value>
+      </item>
+      <item id="Adjust Hours">
+        <value>0</value>
+      </item>
+      <item id="Orientation">
+        <value>N/A</value>
+      </item>
+      <item id="Background color">
+        <value>transparent</value>
+      </item>
+      <item id="Face Style">
+        <value>Line</value>
+      </item>
+      <item id="Pen color">
+        <value>black</value>
+      </item>
+      <item id="Fill color (start)">
+        <value>white</value>
+      </item>
+      <item id="Fill color (end)">
+        <value>silver</value>
+      </item>
+      <item id="Face Image">
+        <value></value>
+      </item>
+      <item id="Show Ticks">
+        <value>true</value>
+      </item>
+      <item id="Dial Max">
+        <value>60</value>
+      </item>
+      <item id="Dial Min">
+        <value>0</value>
+      </item>
+      <item id="Reverse Needles">
+        <value>false</value>
+      </item>
+      <item id="Smooth Needles">
+        <value>true</value>
+      </item>
+      <item id="Needle Style">
+        <value>Line</value>
+      </item>
+      <item id="Needle Color">
+        <value>4278190080,4278190080,4294901760</value>
+      </item>
+      <item id="Needle Thickness">
+        <value>4,3,3</value>
+      </item>
+      <item id="Needle Length (%)">
+        <value>60,80,90</value>
+      </item>
+      <item id="Needle Gap (%)">
+        <value>0,0,0</value>
+      </item>
+      <item id="Needle Image">
+        <value></value>
+      </item>
+    </instance>
+    <instance class="LH_Decor/StaticRectangle">
+      <identity name="Rounded rectangle [2]" id="406fqw"/>
+      <state alerts="1"/>
+      <origin x="0" y="0"/>
+      <size w="8" h="8"/>
+      <plugin_size w="-1" h="-1"/>
+      <pos x="51" y="51" z="1"/>
+      <x_ref id="406gpc" align="0" ref_align="0"/>
+      <y_ref id="406gpc" align="0" ref_align="0"/>
+      <w_ref id="0" mod="8" units="4"/>
+      <h_ref id="0" mod="8" units="4"/>
+      <item id="Pen width">
+        <value>0</value>
+      </item>
+      <item id="Corner rounding">
+        <value>100</value>
+      </item>
+      <item id="Pen color">
+        <value>black</value>
+      </item>
+      <item id="Fill color 1">
+        <value>red</value>
+      </item>
+      <item id="^Background is a gradient">
+        <value>false</value>
+      </item>
+      <item id="Fill color 2">
+        <value>silver</value>
+      </item>
+      <item id="^Gradient is horizontal">
+        <value>false</value>
+      </item>
+    </instance>
+    <item id="Pen width">
+      <value>0</value>
+    </item>
+    <item id="Corner rounding">
+      <value>99</value>
+    </item>
+    <item id="Pen color">
+      <value>black</value>
+    </item>
+    <item id="Fill color 1">
+      <value>white</value>
+    </item>
+    <item id="^Background is a gradient">
+      <value>false</value>
+    </item>
+    <item id="Fill color 2">
+      <value>silver</value>
+    </item>
+    <item id="^Gradient is horizontal">
+      <value>false</value>
+    </item>
+  </instance>
+  <instance class="LH_Text/StaticText">
+    <identity name="LH_Text/StaticText [1]" id="406caw"/>
+    <state alerts="1"/>
+    <origin x="0" y="0"/>
+    <size w="105" h="19"/>
+    <plugin_size w="105" h="19"/>
+    <pos x="115" y="131" z="8"/>
+    <x_ref id="3zdqyw" align="0" ref_align="0"/>
+    <y_ref id="3zdqyw" align="0" ref_align="0"/>
+    <w_ref id="0" mod="0" units="0"/>
+    <h_ref id="0" mod="0" units="0"/>
+    <item id="Text">
+      <value>192.168.2.104</value>
+    </item>
+    <item id="Font">
+      <value>Arial,10,-1,5,50,0,0,0,0,0</value>
+    </item>
+    <item id="^Adjust font size to instance height">
+      <value>true</value>
+    </item>
+    <item id="Color">
+      <value>black</value>
+    </item>
+    <item id="Background">
+      <value>transparent</value>
+    </item>
+    <item id="Horizontal">
+      <value>Center</value>
+    </item>
+    <item id="Vertical">
+      <value>Center</value>
+    </item>
+    <item id="Scroll rate">
+      <value>15</value>
+    </item>
+    <item id="Scroll step">
+      <value>2</value>
+    </item>
+    <item id="Scroll gap">
+      <value>10</value>
+    </item>
+    <item id="Enable Conditional Formatting">
+      <value>false</value>
+    </item>
+    <item id="Conditions XML">
+      <value>&lt;rules/&gt;</value>
+    </item>
+  </instance>
+  <instance class="LH_Mailcount/SystemMailText">
+    <identity name="LH_Mailcount/SystemMailText [1]" id="406d2g"/>
+    <state alerts="1"/>
+    <origin x="0" y="0"/>
+    <size w="9" h="19"/>
+    <plugin_size w="9" h="19"/>
+    <pos x="239" y="84" z="9"/>
+    <x_ref id="3zdqyw" align="0" ref_align="0"/>
+    <y_ref id="3zdqyw" align="0" ref_align="0"/>
+    <w_ref id="0" mod="0" units="0"/>
+    <h_ref id="0" mod="0" units="0"/>
+    <item id="Font">
+      <value>Arial,10,-1,5,50,0,0,0,0,0</value>
+    </item>
+    <item id="^Adjust font size to instance height">
+      <value>true</value>
+    </item>
+    <item id="Color">
+      <value>black</value>
+    </item>
+    <item id="Background">
+      <value>transparent</value>
+    </item>
+    <item id="Horizontal">
+      <value>Center</value>
+    </item>
+    <item id="Vertical">
+      <value>Center</value>
+    </item>
+    <item id="Scroll rate">
+      <value>15</value>
+    </item>
+    <item id="Scroll step">
+      <value>2</value>
+    </item>
+    <item id="Scroll gap">
+      <value>10</value>
+    </item>
+    <item id="Hide when less than">
+      <value>0</value>
+    </item>
+    <item id="Enable Conditional Formatting">
+      <value>false</value>
+    </item>
+    <item id="Conditions XML">
+      <value>&lt;rules/&gt;</value>
+    </item>
+  </instance>
+  <instance class="LH_Cursor/CursorController">
+    <identity name="LH_Cursor/CursorController [1]" id="406fk0"/>
+    <state alerts="1"/>
+    <origin x="0" y="0"/>
+    <size w="0" h="0"/>
+    <plugin_size w="-1" h="-1"/>
+    <pos x="136" y="62" z="9"/>
+    <x_ref id="3zdqyw" align="0" ref_align="0"/>
+    <y_ref id="3zdqyw" align="0" ref_align="0"/>
+    <w_ref id="0" mod="0" units="0"/>
+    <h_ref id="0" mod="0" units="0"/>
+    <item id="Cursor Mode">
+      <value>Activate, Move &amp; Select / Deselect</value>
+    </item>
+    <item id="Boundries">
+      <value>1,1,3,3</value>
+    </item>
+    <item id="Loop at edges">
+      <value>false</value>
+    </item>
+    <item id="Invalid Points&#10;(x,y;x,y;x,y)">
+      <value></value>
+    </item>
+    <item id="Jump over invalid points">
+      <value>true</value>
+    </item>
+    <item id="Up">
+      <value></value>
+    </item>
+    <item id="Down">
+      <value></value>
+    </item>
+    <item id="Left">
+      <value></value>
+    </item>
+    <item id="Right">
+      <value></value>
+    </item>
+    <item id="Select">
+      <value></value>
+    </item>
+    <item id="Reselect">
+      <value></value>
+    </item>
+    <item id="Enable">
+      <value></value>
+    </item>
+    <item id="Persistent Selection">
+      <value>false</value>
+    </item>
+    <item id="Auto-reselect">
+      <value>false</value>
+    </item>
+    <item id="Persistence File">
+      <value></value>
+    </item>
+    <item id="Enable Conditional Formatting">
+      <value>false</value>
+    </item>
+    <item id="Conditions XML">
+      <value>&lt;rules/&gt;</value>
+    </item>
+  </instance>
+  <instance class="LH_Cursor/CursorController">
+    <identity name="LH_Cursor/CursorController [2]" id="406d9c"/>
+    <state alerts="1"/>
+    <origin x="0" y="0"/>
+    <size w="0" h="0"/>
+    <plugin_size w="-1" h="-1"/>
+    <pos x="107" y="112" z="10"/>
+    <x_ref id="3zdqyw" align="0" ref_align="0"/>
+    <y_ref id="3zdqyw" align="0" ref_align="0"/>
+    <w_ref id="0" mod="0" units="0"/>
+    <h_ref id="0" mod="0" units="0"/>
+    <item id="Cursor Mode">
+      <value>Activate, Move &amp; Select / Deselect</value>
+    </item>
+    <item id="Boundries">
+      <value>1,1,3,3</value>
+    </item>
+    <item id="Loop at edges">
+      <value>false</value>
+    </item>
+    <item id="Invalid Points&#10;(x,y;x,y;x,y)">
+      <value></value>
+    </item>
+    <item id="Jump over invalid points">
+      <value>true</value>
+    </item>
+    <item id="Up">
+      <value></value>
+    </item>
+    <item id="Down">
+      <value></value>
+    </item>
+    <item id="Left">
+      <value></value>
+    </item>
+    <item id="Right">
+      <value></value>
+    </item>
+    <item id="Select">
+      <value></value>
+    </item>
+    <item id="Reselect">
+      <value></value>
+    </item>
+    <item id="Enable">
+      <value></value>
+    </item>
+    <item id="Persistent Selection">
+      <value>false</value>
+    </item>
+    <item id="Auto-reselect">
+      <value>false</value>
+    </item>
+    <item id="Persistence File">
+      <value></value>
+    </item>
+    <item id="Enable Conditional Formatting">
+      <value>false</value>
+    </item>
+    <item id="Conditions XML">
+      <value>&lt;rules/&gt;</value>
+    </item>
+  </instance>
+</instance>

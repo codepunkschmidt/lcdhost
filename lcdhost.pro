@@ -57,6 +57,5 @@ TEMPLATE = subdirs
 CONFIG += ordered
 
 load($$[LCDHOST_PRF])
-isEmpty(LH_LCDHOST_LIST): LH_LCDHOST_LIST = plugins
-
+isEmpty(LH_LCDHOST_LIST): LH_LCDHOST_LIST = linkdata plugins
 SUBDIRS = $$LH_LCDHOST_LIST

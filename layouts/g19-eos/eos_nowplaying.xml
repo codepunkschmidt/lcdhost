@@ -1,0 +1,1362 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<instance>
+    <identity name="Logitech QVGA device" id="nhks8"/>
+    <state modifiable="0" selectable="0" alerts="1"/>
+    <origin x="0" y="0"/>
+    <size w="320" h="240"/>
+    <plugin_size w="-1" h="-1"/>
+    <pos x="0" y="0" z="0"/>
+    <x_ref id="0" align="0" ref_align="0"/>
+    <y_ref id="0" align="0" ref_align="0"/>
+    <w_ref id="0" mod="0" units="0"/>
+    <h_ref id="0" mod="0" units="0"/>
+    <instance class="LH_Image/StaticImage">
+        <identity name="Image [1]" id="s2r5k"/>
+        <state modifiable="1" selectable="1" alerts="1"/>
+        <origin x="0" y="0"/>
+        <size w="320" h="240"/>
+        <plugin_size w="-1" h="-1"/>
+        <pos x="0" y="0" z="0"/>
+        <x_ref id="nhks8" align="0" ref_align="0"/>
+        <y_ref id="nhks8" align="0" ref_align="0"/>
+        <w_ref id="nhks8" mod="0" units="0"/>
+        <h_ref id="nhks8" mod="0" units="0"/>
+        <setupitem>
+            <identity name="Filename" type="10"/>
+            <value type="QString">EosBG/Eos_gray.jpg</value>
+        </setupitem>
+    </instance>
+    <instance class="LH_NowPlaying/NowPlayingAlbumArt">
+        <identity name="Now Playing (Album Art) [2]" id="s2qzc"/>
+        <state modifiable="1" selectable="1" alerts="1"/>
+        <origin x="0" y="0"/>
+        <size w="240" h="240"/>
+        <plugin_size w="-1" h="-1"/>
+        <pos x="40" y="1" z="1"/>
+        <x_ref id="nhks8" align="0" ref_align="0"/>
+        <y_ref id="nhks8" align="0" ref_align="0"/>
+        <w_ref id="0" mod="240" units="4"/>
+        <h_ref id="nhks8" mod="240" units="4"/>
+    </instance>
+    <instance class="LH_Decor/StaticBackground">
+        <identity name="Top Details" id="s2qt4"/>
+        <state modifiable="1" selectable="1" alerts="1"/>
+        <origin x="0" y="0"/>
+        <size w="322" h="56"/>
+        <plugin_size w="-1" h="-1"/>
+        <pos x="-2" y="-1" z="2"/>
+        <x_ref id="nhks8" align="0" ref_align="0"/>
+        <y_ref id="nhks8" align="0" ref_align="0"/>
+        <w_ref id="nhks8" mod="2" units="0"/>
+        <h_ref id="0" mod="56" units="4"/>
+        <setupitem>
+            <identity name="First color" type="3"/>
+            <value type="QString">-2132746016</value>
+        </setupitem>
+        <setupitem>
+            <identity name="^Background is a gradient" type="2"/>
+            <value type="QString">true</value>
+        </setupitem>
+        <setupitem>
+            <identity name="Second color" type="3"/>
+            <value type="QString">-2143272896</value>
+        </setupitem>
+        <setupitem>
+            <identity name="^Gradient is horizontal" type="2"/>
+            <value type="QString">false</value>
+        </setupitem>
+        <instance class="LH_NowPlaying/NowPlayingText">
+            <identity name="Track Title" id="s2t88"/>
+            <state modifiable="1" selectable="1" alerts="1"/>
+            <origin x="0" y="0"/>
+            <size w="322" h="26"/>
+            <plugin_size w="-1" h="-1"/>
+            <pos x="0" y="0" z="0"/>
+            <x_ref id="s2qt4" align="0" ref_align="0"/>
+            <y_ref id="s2qt4" align="0" ref_align="0"/>
+            <w_ref id="s2qt4" mod="0" units="0"/>
+            <h_ref id="0" mod="26" units="4"/>
+            <setupitem>
+                <identity name="Item" type="6"/>
+                <value type="QString">0</value>
+            </setupitem>
+            <setupitem>
+                <identity name="^Custom" type="8"/>
+                <value type="QString">{artist}{artist?: &quot;}{title}{artist?:&quot;} {status?[}{status}{status?]}</value>
+            </setupitem>
+            <setupitem>
+                <identity name="Hide &quot;Playing&quot; State" type="2"/>
+                <value type="QString">false</value>
+            </setupitem>
+            <setupitem>
+                <identity name="Font" type="11"/>
+                <value type="QString">Arial,14,-1,5,75,0,0,0,0,0</value>
+            </setupitem>
+            <setupitem>
+                <identity name="^Adjust font size to instance height" type="2"/>
+                <value type="QString">false</value>
+            </setupitem>
+            <setupitem>
+                <identity name="Color" type="3"/>
+                <value type="QString">-2147483648</value>
+            </setupitem>
+            <setupitem>
+                <identity name="Background" type="3"/>
+                <value type="QString">16777215</value>
+            </setupitem>
+            <setupitem>
+                <identity name="Horizontal" type="6"/>
+                <value type="QString">0</value>
+            </setupitem>
+            <setupitem>
+                <identity name="Vertical" type="6"/>
+                <value type="QString">0</value>
+            </setupitem>
+            <setupitem>
+                <identity name="Scroll rate" type="4"/>
+                <value type="QString">15</value>
+            </setupitem>
+            <setupitem>
+                <identity name="Scroll step" type="4"/>
+                <value type="QString">2</value>
+            </setupitem>
+            <setupitem>
+                <identity name="Scroll gap" type="4"/>
+                <value type="QString">10</value>
+            </setupitem>
+            <setupitem>
+                <identity name="^Enable Conditional Formatting" type="2"/>
+                <value type="bool">false</value>
+            </setupitem>
+            <setupitem>
+                <identity name="Conditions XML" type="9"/>
+                <value type="QString">&lt;rules/&gt;</value>
+            </setupitem>
+            <instance class="LH_NowPlaying/NowPlayingText">
+                <identity name="Now Playing (Text) [5]" id="s2tko"/>
+                <state modifiable="1" selectable="1" alerts="1"/>
+                <origin x="0" y="0"/>
+                <size w="322" h="26"/>
+                <plugin_size w="-1" h="-1"/>
+                <pos x="2" y="2" z="0"/>
+                <x_ref id="s2t88" align="0" ref_align="0"/>
+                <y_ref id="s2t88" align="0" ref_align="0"/>
+                <w_ref id="s2t88" mod="0" units="0"/>
+                <h_ref id="s2t88" mod="0" units="0"/>
+                <setupitem>
+                    <identity name="Item" type="6"/>
+                    <value type="QString">0</value>
+                </setupitem>
+                <setupitem>
+                    <identity name="^Custom" type="8"/>
+                    <value type="QString">{artist}{artist?: &quot;}{title}{artist?:&quot;} {status?[}{status}{status?]}</value>
+                </setupitem>
+                <setupitem>
+                    <identity name="Hide &quot;Playing&quot; State" type="2"/>
+                    <value type="QString">false</value>
+                </setupitem>
+                <setupitem>
+                    <identity name="Font" type="11"/>
+                    <value type="QString">Arial,14,-1,5,75,0,0,0,0,0</value>
+                </setupitem>
+                <setupitem>
+                    <identity name="^Adjust font size to instance height" type="2"/>
+                    <value type="QString">false</value>
+                </setupitem>
+                <setupitem>
+                    <identity name="Color" type="3"/>
+                    <value type="QString">-2147483648</value>
+                </setupitem>
+                <setupitem>
+                    <identity name="Background" type="3"/>
+                    <value type="QString">0</value>
+                </setupitem>
+                <setupitem>
+                    <identity name="Horizontal" type="6"/>
+                    <value type="QString">0</value>
+                </setupitem>
+                <setupitem>
+                    <identity name="Vertical" type="6"/>
+                    <value type="QString">0</value>
+                </setupitem>
+                <setupitem>
+                    <identity name="Scroll rate" type="4"/>
+                    <value type="QString">15</value>
+                </setupitem>
+                <setupitem>
+                    <identity name="Scroll step" type="4"/>
+                    <value type="QString">2</value>
+                </setupitem>
+                <setupitem>
+                    <identity name="Scroll gap" type="4"/>
+                    <value type="QString">10</value>
+                </setupitem>
+                <setupitem>
+                    <identity name="^Enable Conditional Formatting" type="2"/>
+                    <value type="bool">false</value>
+                </setupitem>
+                <setupitem>
+                    <identity name="Conditions XML" type="9"/>
+                    <value type="QString">&lt;rules/&gt;</value>
+                </setupitem>
+            </instance>
+            <instance class="LH_NowPlaying/NowPlayingText">
+                <identity name="Now Playing (Text) [6]" id="s2tqw"/>
+                <state modifiable="1" selectable="1" alerts="1"/>
+                <origin x="0" y="0"/>
+                <size w="322" h="26"/>
+                <plugin_size w="-1" h="-1"/>
+                <pos x="1" y="1" z="1"/>
+                <x_ref id="s2t88" align="0" ref_align="0"/>
+                <y_ref id="s2t88" align="0" ref_align="0"/>
+                <w_ref id="s2t88" mod="0" units="0"/>
+                <h_ref id="s2t88" mod="0" units="0"/>
+                <setupitem>
+                    <identity name="Item" type="6"/>
+                    <value type="QString">0</value>
+                </setupitem>
+                <setupitem>
+                    <identity name="^Custom" type="8"/>
+                    <value type="QString">{artist}{artist?: &quot;}{title}{artist?:&quot;} {status?[}{status}{status?]}</value>
+                </setupitem>
+                <setupitem>
+                    <identity name="Hide &quot;Playing&quot; State" type="2"/>
+                    <value type="QString">false</value>
+                </setupitem>
+                <setupitem>
+                    <identity name="Font" type="11"/>
+                    <value type="QString">Arial,14,-1,5,75,0,0,0,0,0</value>
+                </setupitem>
+                <setupitem>
+                    <identity name="^Adjust font size to instance height" type="2"/>
+                    <value type="QString">false</value>
+                </setupitem>
+                <setupitem>
+                    <identity name="Color" type="3"/>
+                    <value type="QString">-1</value>
+                </setupitem>
+                <setupitem>
+                    <identity name="Background" type="3"/>
+                    <value type="QString">0</value>
+                </setupitem>
+                <setupitem>
+                    <identity name="Horizontal" type="6"/>
+                    <value type="QString">0</value>
+                </setupitem>
+                <setupitem>
+                    <identity name="Vertical" type="6"/>
+                    <value type="QString">0</value>
+                </setupitem>
+                <setupitem>
+                    <identity name="Scroll rate" type="4"/>
+                    <value type="QString">15</value>
+                </setupitem>
+                <setupitem>
+                    <identity name="Scroll step" type="4"/>
+                    <value type="QString">2</value>
+                </setupitem>
+                <setupitem>
+                    <identity name="Scroll gap" type="4"/>
+                    <value type="QString">10</value>
+                </setupitem>
+                <setupitem>
+                    <identity name="^Enable Conditional Formatting" type="2"/>
+                    <value type="bool">false</value>
+                </setupitem>
+                <setupitem>
+                    <identity name="Conditions XML" type="9"/>
+                    <value type="QString">&lt;rules/&gt;</value>
+                </setupitem>
+            </instance>
+        </instance>
+        <instance class="LH_NowPlaying/NowPlayingText">
+            <identity name="Artist Text" id="s2tx4"/>
+            <state modifiable="1" selectable="1" alerts="1"/>
+            <origin x="0" y="0"/>
+            <size w="322" h="18"/>
+            <plugin_size w="-1" h="-1"/>
+            <pos x="0" y="28" z="1"/>
+            <x_ref id="s2qt4" align="0" ref_align="0"/>
+            <y_ref id="s2qt4" align="0" ref_align="0"/>
+            <w_ref id="s2qt4" mod="0" units="0"/>
+            <h_ref id="0" mod="18" units="4"/>
+            <setupitem>
+                <identity name="Item" type="6"/>
+                <value type="QString">1</value>
+            </setupitem>
+            <setupitem>
+                <identity name="^Custom" type="8"/>
+                <value type="QString">{artist}{artist?: &quot;}{title}{artist?:&quot;}</value>
+            </setupitem>
+            <setupitem>
+                <identity name="Hide &quot;Playing&quot; State" type="2"/>
+                <value type="QString">false</value>
+            </setupitem>
+            <setupitem>
+                <identity name="Font" type="11"/>
+                <value type="QString">Arial,11,-1,5,50,0,0,0,0,0</value>
+            </setupitem>
+            <setupitem>
+                <identity name="^Adjust font size to instance height" type="2"/>
+                <value type="QString">false</value>
+            </setupitem>
+            <setupitem>
+                <identity name="Color" type="3"/>
+                <value type="QString">-2147483648</value>
+            </setupitem>
+            <setupitem>
+                <identity name="Background" type="3"/>
+                <value type="QString">0</value>
+            </setupitem>
+            <setupitem>
+                <identity name="Horizontal" type="6"/>
+                <value type="QString">0</value>
+            </setupitem>
+            <setupitem>
+                <identity name="Vertical" type="6"/>
+                <value type="QString">0</value>
+            </setupitem>
+            <setupitem>
+                <identity name="Scroll rate" type="4"/>
+                <value type="QString">15</value>
+            </setupitem>
+            <setupitem>
+                <identity name="Scroll step" type="4"/>
+                <value type="QString">2</value>
+            </setupitem>
+            <setupitem>
+                <identity name="Scroll gap" type="4"/>
+                <value type="QString">10</value>
+            </setupitem>
+            <setupitem>
+                <identity name="^Enable Conditional Formatting" type="2"/>
+                <value type="bool">false</value>
+            </setupitem>
+            <setupitem>
+                <identity name="Conditions XML" type="9"/>
+                <value type="QString">&lt;rules/&gt;</value>
+            </setupitem>
+            <instance class="LH_NowPlaying/NowPlayingText">
+                <identity name="Now Playing (Text) [12]" id="s2u3c"/>
+                <state modifiable="1" selectable="1" alerts="1"/>
+                <origin x="0" y="0"/>
+                <size w="322" h="17"/>
+                <plugin_size w="-1" h="17"/>
+                <pos x="4" y="4" z="0"/>
+                <x_ref id="s2tx4" align="0" ref_align="0"/>
+                <y_ref id="s2tx4" align="0" ref_align="0"/>
+                <w_ref id="s2tx4" mod="0" units="0"/>
+                <h_ref id="0" mod="0" units="0"/>
+                <setupitem>
+                    <identity name="Item" type="6"/>
+                    <value type="QString">1</value>
+                </setupitem>
+                <setupitem>
+                    <identity name="^Custom" type="8"/>
+                    <value type="QString">{artist}{artist?: &quot;}{title}{artist?:&quot;} {status?[}{status}{status?]}</value>
+                </setupitem>
+                <setupitem>
+                    <identity name="Hide &quot;Playing&quot; State" type="2"/>
+                    <value type="QString">false</value>
+                </setupitem>
+                <setupitem>
+                    <identity name="Font" type="11"/>
+                    <value type="QString">Arial,11,-1,5,50,0,0,0,0,0</value>
+                </setupitem>
+                <setupitem>
+                    <identity name="^Adjust font size to instance height" type="2"/>
+                    <value type="QString">false</value>
+                </setupitem>
+                <setupitem>
+                    <identity name="Color" type="3"/>
+                    <value type="QString">-2147483648</value>
+                </setupitem>
+                <setupitem>
+                    <identity name="Background" type="3"/>
+                    <value type="QString">0</value>
+                </setupitem>
+                <setupitem>
+                    <identity name="Horizontal" type="6"/>
+                    <value type="QString">0</value>
+                </setupitem>
+                <setupitem>
+                    <identity name="Vertical" type="6"/>
+                    <value type="QString">0</value>
+                </setupitem>
+                <setupitem>
+                    <identity name="Scroll rate" type="4"/>
+                    <value type="QString">15</value>
+                </setupitem>
+                <setupitem>
+                    <identity name="Scroll step" type="4"/>
+                    <value type="QString">2</value>
+                </setupitem>
+                <setupitem>
+                    <identity name="Scroll gap" type="4"/>
+                    <value type="QString">10</value>
+                </setupitem>
+                <setupitem>
+                    <identity name="^Enable Conditional Formatting" type="2"/>
+                    <value type="bool">false</value>
+                </setupitem>
+                <setupitem>
+                    <identity name="Conditions XML" type="9"/>
+                    <value type="QString">&lt;rules/&gt;</value>
+                </setupitem>
+            </instance>
+            <instance class="LH_NowPlaying/NowPlayingText">
+                <identity name="Now Playing (Text) [13]" id="s2ufs"/>
+                <state modifiable="1" selectable="1" alerts="1"/>
+                <origin x="0" y="0"/>
+                <size w="322" h="17"/>
+                <plugin_size w="-1" h="17"/>
+                <pos x="2" y="2" z="1"/>
+                <x_ref id="s2tx4" align="0" ref_align="0"/>
+                <y_ref id="s2tx4" align="0" ref_align="0"/>
+                <w_ref id="s2tx4" mod="0" units="0"/>
+                <h_ref id="0" mod="0" units="0"/>
+                <setupitem>
+                    <identity name="Item" type="6"/>
+                    <value type="QString">1</value>
+                </setupitem>
+                <setupitem>
+                    <identity name="^Custom" type="8"/>
+                    <value type="QString">{artist}{artist?: &quot;}{title}{artist?:&quot;} {status?[}{status}{status?]}</value>
+                </setupitem>
+                <setupitem>
+                    <identity name="Hide &quot;Playing&quot; State" type="2"/>
+                    <value type="QString">false</value>
+                </setupitem>
+                <setupitem>
+                    <identity name="Font" type="11"/>
+                    <value type="QString">Arial,11,-1,5,50,0,0,0,0,0</value>
+                </setupitem>
+                <setupitem>
+                    <identity name="^Adjust font size to instance height" type="2"/>
+                    <value type="QString">false</value>
+                </setupitem>
+                <setupitem>
+                    <identity name="Color" type="3"/>
+                    <value type="QString">-1</value>
+                </setupitem>
+                <setupitem>
+                    <identity name="Background" type="3"/>
+                    <value type="QString">0</value>
+                </setupitem>
+                <setupitem>
+                    <identity name="Horizontal" type="6"/>
+                    <value type="QString">0</value>
+                </setupitem>
+                <setupitem>
+                    <identity name="Vertical" type="6"/>
+                    <value type="QString">0</value>
+                </setupitem>
+                <setupitem>
+                    <identity name="Scroll rate" type="4"/>
+                    <value type="QString">15</value>
+                </setupitem>
+                <setupitem>
+                    <identity name="Scroll step" type="4"/>
+                    <value type="QString">2</value>
+                </setupitem>
+                <setupitem>
+                    <identity name="Scroll gap" type="4"/>
+                    <value type="QString">10</value>
+                </setupitem>
+                <setupitem>
+                    <identity name="^Enable Conditional Formatting" type="2"/>
+                    <value type="bool">false</value>
+                </setupitem>
+                <setupitem>
+                    <identity name="Conditions XML" type="9"/>
+                    <value type="QString">&lt;rules/&gt;</value>
+                </setupitem>
+            </instance>
+        </instance>
+    </instance>
+    <instance class="LH_Decor/StaticBackground">
+        <identity name="Bottom Details" id="s2um0"/>
+        <state modifiable="1" selectable="1" alerts="1"/>
+        <origin x="0" y="-52"/>
+        <size w="322" h="52"/>
+        <plugin_size w="-1" h="-1"/>
+        <pos x="-2" y="188" z="3"/>
+        <x_ref id="nhks8" align="0" ref_align="0"/>
+        <y_ref id="nhks8" align="2" ref_align="0"/>
+        <w_ref id="nhks8" mod="2" units="0"/>
+        <h_ref id="0" mod="52" units="4"/>
+        <setupitem>
+            <identity name="First color" type="3"/>
+            <value type="QString">-2132746016</value>
+        </setupitem>
+        <setupitem>
+            <identity name="^Background is a gradient" type="2"/>
+            <value type="QString">true</value>
+        </setupitem>
+        <setupitem>
+            <identity name="Second color" type="3"/>
+            <value type="QString">-2143272896</value>
+        </setupitem>
+        <setupitem>
+            <identity name="^Gradient is horizontal" type="2"/>
+            <value type="QString">false</value>
+        </setupitem>
+        <instance class="LH_NowPlaying/NowPlayingText">
+            <identity name="Album Text" id="s2us8"/>
+            <state modifiable="1" selectable="1" alerts="1"/>
+            <origin x="0" y="38"/>
+            <size w="322" h="14"/>
+            <plugin_size w="-1" h="14"/>
+            <pos x="0" y="36" z="0"/>
+            <x_ref id="s2um0" align="0" ref_align="0"/>
+            <y_ref id="s2um0" align="2" ref_align="2"/>
+            <w_ref id="s2um0" mod="0" units="0"/>
+            <h_ref id="0" mod="0" units="0"/>
+            <setupitem>
+                <identity name="Item" type="6"/>
+                <value type="QString">8</value>
+            </setupitem>
+            <setupitem>
+                <identity name="^Custom" type="8"/>
+                <value type="QString">{album?from the Album &quot;}{album}{album?&quot;}</value>
+            </setupitem>
+            <setupitem>
+                <identity name="Hide &quot;Playing&quot; State" type="2"/>
+                <value type="QString">false</value>
+            </setupitem>
+            <setupitem>
+                <identity name="Font" type="11"/>
+                <value type="QString">Arial,8,-1,5,50,0,0,0,0,0</value>
+            </setupitem>
+            <setupitem>
+                <identity name="^Adjust font size to instance height" type="2"/>
+                <value type="QString">false</value>
+            </setupitem>
+            <setupitem>
+                <identity name="Color" type="3"/>
+                <value type="QString">-1073741824</value>
+            </setupitem>
+            <setupitem>
+                <identity name="Background" type="3"/>
+                <value type="QString">0</value>
+            </setupitem>
+            <setupitem>
+                <identity name="Horizontal" type="6"/>
+                <value type="QString">0</value>
+            </setupitem>
+            <setupitem>
+                <identity name="Vertical" type="6"/>
+                <value type="QString">0</value>
+            </setupitem>
+            <setupitem>
+                <identity name="Scroll rate" type="4"/>
+                <value type="QString">15</value>
+            </setupitem>
+            <setupitem>
+                <identity name="Scroll step" type="4"/>
+                <value type="QString">2</value>
+            </setupitem>
+            <setupitem>
+                <identity name="Scroll gap" type="4"/>
+                <value type="QString">10</value>
+            </setupitem>
+            <setupitem>
+                <identity name="^Enable Conditional Formatting" type="2"/>
+                <value type="bool">false</value>
+            </setupitem>
+            <setupitem>
+                <identity name="Conditions XML" type="9"/>
+                <value type="QString">&lt;rules/&gt;</value>
+            </setupitem>
+            <instance class="LH_NowPlaying/NowPlayingText">
+                <identity name="Now Playing (Text) [14]" id="s2v4o"/>
+                <state modifiable="1" selectable="1" alerts="1"/>
+                <origin x="0" y="0"/>
+                <size w="322" h="14"/>
+                <plugin_size w="-1" h="14"/>
+                <pos x="2" y="2" z="0"/>
+                <x_ref id="s2us8" align="0" ref_align="0"/>
+                <y_ref id="s2us8" align="0" ref_align="0"/>
+                <w_ref id="s2us8" mod="0" units="0"/>
+                <h_ref id="0" mod="0" units="0"/>
+                <setupitem>
+                    <identity name="Item" type="6"/>
+                    <value type="QString">8</value>
+                </setupitem>
+                <setupitem>
+                    <identity name="^Custom" type="8"/>
+                    <value type="QString">{album?from the Album &quot;}{album}{album?&quot;}</value>
+                </setupitem>
+                <setupitem>
+                    <identity name="Hide &quot;Playing&quot; State" type="2"/>
+                    <value type="QString">false</value>
+                </setupitem>
+                <setupitem>
+                    <identity name="Font" type="11"/>
+                    <value type="QString">Arial,8,-1,5,50,0,0,0,0,0</value>
+                </setupitem>
+                <setupitem>
+                    <identity name="^Adjust font size to instance height" type="2"/>
+                    <value type="QString">false</value>
+                </setupitem>
+                <setupitem>
+                    <identity name="Color" type="3"/>
+                    <value type="QString">-1073741824</value>
+                </setupitem>
+                <setupitem>
+                    <identity name="Background" type="3"/>
+                    <value type="QString">0</value>
+                </setupitem>
+                <setupitem>
+                    <identity name="Horizontal" type="6"/>
+                    <value type="QString">0</value>
+                </setupitem>
+                <setupitem>
+                    <identity name="Vertical" type="6"/>
+                    <value type="QString">0</value>
+                </setupitem>
+                <setupitem>
+                    <identity name="Scroll rate" type="4"/>
+                    <value type="QString">15</value>
+                </setupitem>
+                <setupitem>
+                    <identity name="Scroll step" type="4"/>
+                    <value type="QString">2</value>
+                </setupitem>
+                <setupitem>
+                    <identity name="Scroll gap" type="4"/>
+                    <value type="QString">10</value>
+                </setupitem>
+                <setupitem>
+                    <identity name="^Enable Conditional Formatting" type="2"/>
+                    <value type="bool">false</value>
+                </setupitem>
+                <setupitem>
+                    <identity name="Conditions XML" type="9"/>
+                    <value type="QString">&lt;rules/&gt;</value>
+                </setupitem>
+            </instance>
+            <instance class="LH_NowPlaying/NowPlayingText">
+                <identity name="Now Playing (Text) [15]" id="s2vaw"/>
+                <state modifiable="1" selectable="1" alerts="1"/>
+                <origin x="0" y="0"/>
+                <size w="322" h="14"/>
+                <plugin_size w="-1" h="14"/>
+                <pos x="1" y="1" z="1"/>
+                <x_ref id="s2us8" align="0" ref_align="0"/>
+                <y_ref id="s2us8" align="0" ref_align="0"/>
+                <w_ref id="s2us8" mod="0" units="0"/>
+                <h_ref id="0" mod="0" units="0"/>
+                <setupitem>
+                    <identity name="Item" type="6"/>
+                    <value type="QString">8</value>
+                </setupitem>
+                <setupitem>
+                    <identity name="^Custom" type="8"/>
+                    <value type="QString">{album?from the Album &quot;}{album}{album?&quot;}</value>
+                </setupitem>
+                <setupitem>
+                    <identity name="Hide &quot;Playing&quot; State" type="2"/>
+                    <value type="QString">false</value>
+                </setupitem>
+                <setupitem>
+                    <identity name="Font" type="11"/>
+                    <value type="QString">Arial,8,-1,5,50,0,0,0,0,0</value>
+                </setupitem>
+                <setupitem>
+                    <identity name="^Adjust font size to instance height" type="2"/>
+                    <value type="QString">false</value>
+                </setupitem>
+                <setupitem>
+                    <identity name="Color" type="3"/>
+                    <value type="QString">-1</value>
+                </setupitem>
+                <setupitem>
+                    <identity name="Background" type="3"/>
+                    <value type="QString">0</value>
+                </setupitem>
+                <setupitem>
+                    <identity name="Horizontal" type="6"/>
+                    <value type="QString">0</value>
+                </setupitem>
+                <setupitem>
+                    <identity name="Vertical" type="6"/>
+                    <value type="QString">0</value>
+                </setupitem>
+                <setupitem>
+                    <identity name="Scroll rate" type="4"/>
+                    <value type="QString">15</value>
+                </setupitem>
+                <setupitem>
+                    <identity name="Scroll step" type="4"/>
+                    <value type="QString">2</value>
+                </setupitem>
+                <setupitem>
+                    <identity name="Scroll gap" type="4"/>
+                    <value type="QString">10</value>
+                </setupitem>
+                <setupitem>
+                    <identity name="^Enable Conditional Formatting" type="2"/>
+                    <value type="bool">false</value>
+                </setupitem>
+                <setupitem>
+                    <identity name="Conditions XML" type="9"/>
+                    <value type="QString">&lt;rules/&gt;</value>
+                </setupitem>
+            </instance>
+        </instance>
+        <instance class="LH_Decor/StaticRectangle">
+            <identity name="Progress" id="s2vh4"/>
+            <state modifiable="1" selectable="1" alerts="1"/>
+            <origin x="0" y="20"/>
+            <size w="308" h="16"/>
+            <plugin_size w="-1" h="-1"/>
+            <pos x="7" y="18" z="1"/>
+            <x_ref id="s2um0" align="0" ref_align="0"/>
+            <y_ref id="s2us8" align="2" ref_align="0"/>
+            <w_ref id="s2um0" mod="-14" units="0"/>
+            <h_ref id="0" mod="16" units="4"/>
+            <setupitem>
+                <identity name="Pen width" type="4"/>
+                <value type="QString">139</value>
+            </setupitem>
+            <setupitem>
+                <identity name="Corner rounding" type="4"/>
+                <value type="QString">0</value>
+            </setupitem>
+            <setupitem>
+                <identity name="Pen color" type="3"/>
+                <value type="QString">-1</value>
+            </setupitem>
+            <setupitem>
+                <identity name="Fill color 1" type="3"/>
+                <value type="QString">0</value>
+            </setupitem>
+            <setupitem>
+                <identity name="^Background is a gradient" type="2"/>
+                <value type="QString">false</value>
+            </setupitem>
+            <setupitem>
+                <identity name="Fill color 2" type="3"/>
+                <value type="QString">-4144960</value>
+            </setupitem>
+            <setupitem>
+                <identity name="^Gradient is horizontal" type="2"/>
+                <value type="QString">false</value>
+            </setupitem>
+            <instance class="LH_Decor/StaticRectangle">
+                <identity name="Rounded rectangle [33]" id="s2vnc"/>
+                <state modifiable="1" selectable="1" alerts="1"/>
+                <origin x="0" y="0"/>
+                <size w="306" h="14"/>
+                <plugin_size w="-1" h="-1"/>
+                <pos x="1" y="1" z="0"/>
+                <x_ref id="s2vh4" align="0" ref_align="0"/>
+                <y_ref id="s2vh4" align="0" ref_align="0"/>
+                <w_ref id="s2vh4" mod="-2" units="0"/>
+                <h_ref id="s2vh4" mod="-2" units="0"/>
+                <setupitem>
+                    <identity name="Pen width" type="4"/>
+                    <value type="QString">148</value>
+                </setupitem>
+                <setupitem>
+                    <identity name="Corner rounding" type="4"/>
+                    <value type="QString">0</value>
+                </setupitem>
+                <setupitem>
+                    <identity name="Pen color" type="3"/>
+                    <value type="QString">-16777216</value>
+                </setupitem>
+                <setupitem>
+                    <identity name="Fill color 1" type="3"/>
+                    <value type="QString">16777215</value>
+                </setupitem>
+                <setupitem>
+                    <identity name="^Background is a gradient" type="2"/>
+                    <value type="QString">false</value>
+                </setupitem>
+                <setupitem>
+                    <identity name="Fill color 2" type="3"/>
+                    <value type="QString">-4144960</value>
+                </setupitem>
+                <setupitem>
+                    <identity name="^Gradient is horizontal" type="2"/>
+                    <value type="QString">false</value>
+                </setupitem>
+                <instance class="LH_NowPlaying/NowPlayingBar">
+                    <identity name="Now Playing (Progress Bar) [2]" id="s2vtk"/>
+                    <state modifiable="1" selectable="1" alerts="1"/>
+                    <origin x="0" y="0"/>
+                    <size w="304" h="12"/>
+                    <plugin_size w="-1" h="-1"/>
+                    <pos x="1" y="1" z="0"/>
+                    <x_ref id="s2vnc" align="0" ref_align="0"/>
+                    <y_ref id="s2vnc" align="0" ref_align="0"/>
+                    <w_ref id="s2vnc" mod="-2" units="0"/>
+                    <h_ref id="s2vnc" mod="-2" units="0"/>
+                    <setupitem>
+                        <identity name="Bar Style" type="6"/>
+                        <value type="QString">0</value>
+                    </setupitem>
+                    <setupitem>
+                        <identity name="Bar Image" type="10"/>
+                        <value type="QString"></value>
+                    </setupitem>
+                    <setupitem>
+                        <identity name="Masking" type="6"/>
+                        <value type="QString">0</value>
+                    </setupitem>
+                    <setupitem>
+                        <identity name="Transparency Mask" type="10"/>
+                        <value type="QString"></value>
+                    </setupitem>
+                    <setupitem>
+                        <identity name="Bar color (start)" type="3"/>
+                        <value type="QString">-1090518913</value>
+                    </setupitem>
+                    <setupitem>
+                        <identity name="Bar color (end)" type="3"/>
+                        <value type="QString">-1087678847</value>
+                    </setupitem>
+                    <setupitem>
+                        <identity name="Bar Background Image" type="10"/>
+                        <value type="QString"></value>
+                    </setupitem>
+                    <setupitem>
+                        <identity name="Background color" type="3"/>
+                        <value type="QString">-1597980480</value>
+                    </setupitem>
+                    <setupitem>
+                        <identity name="Direction" type="6"/>
+                        <value type="QString">0</value>
+                    </setupitem>
+                    <setupitem>
+                        <identity name="Spacing" type="4"/>
+                        <value type="QString">0</value>
+                    </setupitem>
+                    <setupitem>
+                        <identity name="Discrete Segments" type="2"/>
+                        <value type="QString">false</value>
+                    </setupitem>
+                    <setupitem>
+                        <identity name="Number of Segments" type="1"/>
+                        <value type="QString">20</value>
+                    </setupitem>
+                    <setupitem>
+                        <identity name="^Enable Conditional Formatting" type="2"/>
+                        <value type="bool">false</value>
+                    </setupitem>
+                    <setupitem>
+                        <identity name="Conditions XML" type="9"/>
+                        <value type="QString">&lt;rules/&gt;</value>
+                    </setupitem>
+                </instance>
+            </instance>
+            <instance class="LH_NowPlaying/NowPlayingText">
+                <identity name="Paused" id="s2vzs"/>
+                <state modifiable="1" selectable="1" alerts="1"/>
+                <origin x="0" y="0"/>
+                <size w="308" h="16"/>
+                <plugin_size w="-1" h="-1"/>
+                <pos x="0" y="-1" z="1"/>
+                <x_ref id="s2vh4" align="0" ref_align="0"/>
+                <y_ref id="s2vh4" align="0" ref_align="0"/>
+                <w_ref id="s2vh4" mod="0" units="0"/>
+                <h_ref id="s2vh4" mod="0" units="0"/>
+                <setupitem>
+                    <identity name="Item" type="6"/>
+                    <value type="QString">8</value>
+                </setupitem>
+                <setupitem>
+                    <identity name="^Custom" type="8"/>
+                    <value type="QString">{status?[}{status}{status?]}</value>
+                </setupitem>
+                <setupitem>
+                    <identity name="Hide &quot;Playing&quot; State" type="2"/>
+                    <value type="QString">true</value>
+                </setupitem>
+                <setupitem>
+                    <identity name="Font" type="11"/>
+                    <value type="QString">Arial,8,-1,5,75,0,0,0,0,0</value>
+                </setupitem>
+                <setupitem>
+                    <identity name="^Adjust font size to instance height" type="2"/>
+                    <value type="QString">false</value>
+                </setupitem>
+                <setupitem>
+                    <identity name="Color" type="3"/>
+                    <value type="QString">-8355840</value>
+                </setupitem>
+                <setupitem>
+                    <identity name="Background" type="3"/>
+                    <value type="QString">0</value>
+                </setupitem>
+                <setupitem>
+                    <identity name="Horizontal" type="6"/>
+                    <value type="QString">0</value>
+                </setupitem>
+                <setupitem>
+                    <identity name="Vertical" type="6"/>
+                    <value type="QString">0</value>
+                </setupitem>
+                <setupitem>
+                    <identity name="Scroll rate" type="4"/>
+                    <value type="QString">15</value>
+                </setupitem>
+                <setupitem>
+                    <identity name="Scroll step" type="4"/>
+                    <value type="QString">2</value>
+                </setupitem>
+                <setupitem>
+                    <identity name="Scroll gap" type="4"/>
+                    <value type="QString">10</value>
+                </setupitem>
+                <setupitem>
+                    <identity name="^Enable Conditional Formatting" type="2"/>
+                    <value type="bool">false</value>
+                </setupitem>
+                <setupitem>
+                    <identity name="Conditions XML" type="9"/>
+                    <value type="QString">&lt;rules/&gt;</value>
+                </setupitem>
+            </instance>
+        </instance>
+        <instance class="LH_NowPlaying/NowPlayingText">
+            <identity name="Time Played" id="s2w60"/>
+            <state modifiable="1" selectable="1" alerts="1"/>
+            <origin x="7" y="3"/>
+            <size w="111" h="15"/>
+            <plugin_size w="-1" h="15"/>
+            <pos x="6" y="0" z="2"/>
+            <x_ref id="s2vh4" align="0" ref_align="0"/>
+            <y_ref id="s2vh4" align="2" ref_align="0"/>
+            <w_ref id="0" mod="111" units="4"/>
+            <h_ref id="0" mod="0" units="0"/>
+            <setupitem>
+                <identity name="Item" type="6"/>
+                <value type="QString">4</value>
+            </setupitem>
+            <setupitem>
+                <identity name="^Custom" type="8"/>
+                <value type="QString">{artist}{artist?: &quot;}{title}{artist?:&quot;} {status?[}{status}{status?]}</value>
+            </setupitem>
+            <setupitem>
+                <identity name="Hide &quot;Playing&quot; State" type="2"/>
+                <value type="QString">false</value>
+            </setupitem>
+            <setupitem>
+                <identity name="Font" type="11"/>
+                <value type="QString">Arial,9,-1,5,50,0,0,0,0,0</value>
+            </setupitem>
+            <setupitem>
+                <identity name="^Adjust font size to instance height" type="2"/>
+                <value type="QString">false</value>
+            </setupitem>
+            <setupitem>
+                <identity name="Color" type="3"/>
+                <value type="QString">-1090519040</value>
+            </setupitem>
+            <setupitem>
+                <identity name="Background" type="3"/>
+                <value type="QString">0</value>
+            </setupitem>
+            <setupitem>
+                <identity name="Horizontal" type="6"/>
+                <value type="QString">1</value>
+            </setupitem>
+            <setupitem>
+                <identity name="Vertical" type="6"/>
+                <value type="QString">0</value>
+            </setupitem>
+            <setupitem>
+                <identity name="Scroll rate" type="4"/>
+                <value type="QString">15</value>
+            </setupitem>
+            <setupitem>
+                <identity name="Scroll step" type="4"/>
+                <value type="QString">2</value>
+            </setupitem>
+            <setupitem>
+                <identity name="Scroll gap" type="4"/>
+                <value type="QString">10</value>
+            </setupitem>
+            <setupitem>
+                <identity name="^Enable Conditional Formatting" type="2"/>
+                <value type="bool">false</value>
+            </setupitem>
+            <setupitem>
+                <identity name="Conditions XML" type="9"/>
+                <value type="QString">&lt;rules/&gt;</value>
+            </setupitem>
+            <instance class="LH_NowPlaying/NowPlayingText">
+                <identity name="Now Playing (Text) [29]" id="s2wc8"/>
+                <state modifiable="1" selectable="1" alerts="1"/>
+                <origin x="0" y="0"/>
+                <size w="111" h="15"/>
+                <plugin_size w="-1" h="-1"/>
+                <pos x="2" y="2" z="0"/>
+                <x_ref id="s2w60" align="0" ref_align="0"/>
+                <y_ref id="s2w60" align="0" ref_align="0"/>
+                <w_ref id="s2w60" mod="0" units="0"/>
+                <h_ref id="s2w60" mod="0" units="0"/>
+                <setupitem>
+                    <identity name="Item" type="6"/>
+                    <value type="QString">4</value>
+                </setupitem>
+                <setupitem>
+                    <identity name="^Custom" type="8"/>
+                    <value type="QString">{artist}{artist?: &quot;}{title}{artist?:&quot;} {status?[}{status}{status?]}</value>
+                </setupitem>
+                <setupitem>
+                    <identity name="Hide &quot;Playing&quot; State" type="2"/>
+                    <value type="QString">false</value>
+                </setupitem>
+                <setupitem>
+                    <identity name="Font" type="11"/>
+                    <value type="QString">Arial,9,-1,5,50,0,0,0,0,0</value>
+                </setupitem>
+                <setupitem>
+                    <identity name="^Adjust font size to instance height" type="2"/>
+                    <value type="QString">false</value>
+                </setupitem>
+                <setupitem>
+                    <identity name="Color" type="3"/>
+                    <value type="QString">-1090519040</value>
+                </setupitem>
+                <setupitem>
+                    <identity name="Background" type="3"/>
+                    <value type="QString">0</value>
+                </setupitem>
+                <setupitem>
+                    <identity name="Horizontal" type="6"/>
+                    <value type="QString">1</value>
+                </setupitem>
+                <setupitem>
+                    <identity name="Vertical" type="6"/>
+                    <value type="QString">0</value>
+                </setupitem>
+                <setupitem>
+                    <identity name="Scroll rate" type="4"/>
+                    <value type="QString">15</value>
+                </setupitem>
+                <setupitem>
+                    <identity name="Scroll step" type="4"/>
+                    <value type="QString">2</value>
+                </setupitem>
+                <setupitem>
+                    <identity name="Scroll gap" type="4"/>
+                    <value type="QString">10</value>
+                </setupitem>
+                <setupitem>
+                    <identity name="^Enable Conditional Formatting" type="2"/>
+                    <value type="bool">false</value>
+                </setupitem>
+                <setupitem>
+                    <identity name="Conditions XML" type="9"/>
+                    <value type="QString">&lt;rules/&gt;</value>
+                </setupitem>
+            </instance>
+            <instance class="LH_NowPlaying/NowPlayingText">
+                <identity name="Now Playing (Text) [30]" id="s2wig"/>
+                <state modifiable="1" selectable="1" alerts="1"/>
+                <origin x="0" y="0"/>
+                <size w="111" h="15"/>
+                <plugin_size w="-1" h="-1"/>
+                <pos x="1" y="1" z="1"/>
+                <x_ref id="s2w60" align="0" ref_align="0"/>
+                <y_ref id="s2w60" align="0" ref_align="0"/>
+                <w_ref id="s2w60" mod="0" units="0"/>
+                <h_ref id="s2w60" mod="0" units="0"/>
+                <setupitem>
+                    <identity name="Item" type="6"/>
+                    <value type="QString">4</value>
+                </setupitem>
+                <setupitem>
+                    <identity name="^Custom" type="8"/>
+                    <value type="QString">{artist}{artist?: &quot;}{title}{artist?:&quot;} {status?[}{status}{status?]}</value>
+                </setupitem>
+                <setupitem>
+                    <identity name="Hide &quot;Playing&quot; State" type="2"/>
+                    <value type="QString">false</value>
+                </setupitem>
+                <setupitem>
+                    <identity name="Font" type="11"/>
+                    <value type="QString">Arial,9,-1,5,50,0,0,0,0,0</value>
+                </setupitem>
+                <setupitem>
+                    <identity name="^Adjust font size to instance height" type="2"/>
+                    <value type="QString">false</value>
+                </setupitem>
+                <setupitem>
+                    <identity name="Color" type="3"/>
+                    <value type="QString">-1</value>
+                </setupitem>
+                <setupitem>
+                    <identity name="Background" type="3"/>
+                    <value type="QString">0</value>
+                </setupitem>
+                <setupitem>
+                    <identity name="Horizontal" type="6"/>
+                    <value type="QString">1</value>
+                </setupitem>
+                <setupitem>
+                    <identity name="Vertical" type="6"/>
+                    <value type="QString">0</value>
+                </setupitem>
+                <setupitem>
+                    <identity name="Scroll rate" type="4"/>
+                    <value type="QString">15</value>
+                </setupitem>
+                <setupitem>
+                    <identity name="Scroll step" type="4"/>
+                    <value type="QString">2</value>
+                </setupitem>
+                <setupitem>
+                    <identity name="Scroll gap" type="4"/>
+                    <value type="QString">10</value>
+                </setupitem>
+                <setupitem>
+                    <identity name="^Enable Conditional Formatting" type="2"/>
+                    <value type="bool">false</value>
+                </setupitem>
+                <setupitem>
+                    <identity name="Conditions XML" type="9"/>
+                    <value type="QString">&lt;rules/&gt;</value>
+                </setupitem>
+            </instance>
+        </instance>
+        <instance class="LH_NowPlaying/NowPlayingText">
+            <identity name="Duration" id="s2woo"/>
+            <state modifiable="1" selectable="1" alerts="1"/>
+            <origin x="157" y="3"/>
+            <size w="158" h="15"/>
+            <plugin_size w="-1" h="15"/>
+            <pos x="156" y="0" z="3"/>
+            <x_ref id="s2vh4" align="2" ref_align="2"/>
+            <y_ref id="s2vh4" align="2" ref_align="0"/>
+            <w_ref id="0" mod="158" units="4"/>
+            <h_ref id="0" mod="0" units="0"/>
+            <setupitem>
+                <identity name="Item" type="6"/>
+                <value type="QString">3</value>
+            </setupitem>
+            <setupitem>
+                <identity name="^Custom" type="8"/>
+                <value type="QString">{artist}{artist?: &quot;}{title}{artist?:&quot;} {status?[}{status}{status?]}</value>
+            </setupitem>
+            <setupitem>
+                <identity name="Hide &quot;Playing&quot; State" type="2"/>
+                <value type="QString">false</value>
+            </setupitem>
+            <setupitem>
+                <identity name="Font" type="11"/>
+                <value type="QString">Arial,9,-1,5,50,0,0,0,0,0</value>
+            </setupitem>
+            <setupitem>
+                <identity name="^Adjust font size to instance height" type="2"/>
+                <value type="QString">false</value>
+            </setupitem>
+            <setupitem>
+                <identity name="Color" type="3"/>
+                <value type="QString">-1090519040</value>
+            </setupitem>
+            <setupitem>
+                <identity name="Background" type="3"/>
+                <value type="QString">0</value>
+            </setupitem>
+            <setupitem>
+                <identity name="Horizontal" type="6"/>
+                <value type="QString">2</value>
+            </setupitem>
+            <setupitem>
+                <identity name="Vertical" type="6"/>
+                <value type="QString">0</value>
+            </setupitem>
+            <setupitem>
+                <identity name="Scroll rate" type="4"/>
+                <value type="QString">15</value>
+            </setupitem>
+            <setupitem>
+                <identity name="Scroll step" type="4"/>
+                <value type="QString">2</value>
+            </setupitem>
+            <setupitem>
+                <identity name="Scroll gap" type="4"/>
+                <value type="QString">10</value>
+            </setupitem>
+            <setupitem>
+                <identity name="^Enable Conditional Formatting" type="2"/>
+                <value type="bool">false</value>
+            </setupitem>
+            <setupitem>
+                <identity name="Conditions XML" type="9"/>
+                <value type="QString">&lt;rules/&gt;</value>
+            </setupitem>
+            <instance class="LH_NowPlaying/NowPlayingText">
+                <identity name="Now Playing (Text) [31]" id="s2wuw"/>
+                <state modifiable="1" selectable="1" alerts="1"/>
+                <origin x="0" y="0"/>
+                <size w="158" h="15"/>
+                <plugin_size w="-1" h="-1"/>
+                <pos x="2" y="2" z="0"/>
+                <x_ref id="s2woo" align="0" ref_align="0"/>
+                <y_ref id="s2woo" align="0" ref_align="0"/>
+                <w_ref id="s2woo" mod="0" units="0"/>
+                <h_ref id="s2woo" mod="0" units="0"/>
+                <setupitem>
+                    <identity name="Item" type="6"/>
+                    <value type="QString">3</value>
+                </setupitem>
+                <setupitem>
+                    <identity name="^Custom" type="8"/>
+                    <value type="QString">{artist}{artist?: &quot;}{title}{artist?:&quot;} {status?[}{status}{status?]}</value>
+                </setupitem>
+                <setupitem>
+                    <identity name="Hide &quot;Playing&quot; State" type="2"/>
+                    <value type="QString">false</value>
+                </setupitem>
+                <setupitem>
+                    <identity name="Font" type="11"/>
+                    <value type="QString">Arial,9,-1,5,50,0,0,0,0,0</value>
+                </setupitem>
+                <setupitem>
+                    <identity name="^Adjust font size to instance height" type="2"/>
+                    <value type="QString">false</value>
+                </setupitem>
+                <setupitem>
+                    <identity name="Color" type="3"/>
+                    <value type="QString">-1090519040</value>
+                </setupitem>
+                <setupitem>
+                    <identity name="Background" type="3"/>
+                    <value type="QString">0</value>
+                </setupitem>
+                <setupitem>
+                    <identity name="Horizontal" type="6"/>
+                    <value type="QString">2</value>
+                </setupitem>
+                <setupitem>
+                    <identity name="Vertical" type="6"/>
+                    <value type="QString">0</value>
+                </setupitem>
+                <setupitem>
+                    <identity name="Scroll rate" type="4"/>
+                    <value type="QString">15</value>
+                </setupitem>
+                <setupitem>
+                    <identity name="Scroll step" type="4"/>
+                    <value type="QString">2</value>
+                </setupitem>
+                <setupitem>
+                    <identity name="Scroll gap" type="4"/>
+                    <value type="QString">10</value>
+                </setupitem>
+                <setupitem>
+                    <identity name="^Enable Conditional Formatting" type="2"/>
+                    <value type="bool">false</value>
+                </setupitem>
+                <setupitem>
+                    <identity name="Conditions XML" type="9"/>
+                    <value type="QString">&lt;rules/&gt;</value>
+                </setupitem>
+            </instance>
+            <instance class="LH_NowPlaying/NowPlayingText">
+                <identity name="Now Playing (Text) [32]" id="2ecp40"/>
+                <state modifiable="1" selectable="1" alerts="1"/>
+                <origin x="0" y="0"/>
+                <size w="158" h="15"/>
+                <plugin_size w="-1" h="-1"/>
+                <pos x="1" y="1" z="1"/>
+                <x_ref id="s2woo" align="0" ref_align="0"/>
+                <y_ref id="s2woo" align="0" ref_align="0"/>
+                <w_ref id="s2woo" mod="0" units="0"/>
+                <h_ref id="s2woo" mod="0" units="0"/>
+                <setupitem>
+                    <identity name="Item" type="6"/>
+                    <value type="QString">3</value>
+                </setupitem>
+                <setupitem>
+                    <identity name="^Custom" type="8"/>
+                    <value type="QString">{artist}{artist?: &quot;}{title}{artist?:&quot;} {status?[}{status}{status?]}</value>
+                </setupitem>
+                <setupitem>
+                    <identity name="Hide &quot;Playing&quot; State" type="2"/>
+                    <value type="QString">false</value>
+                </setupitem>
+                <setupitem>
+                    <identity name="Font" type="11"/>
+                    <value type="QString">Arial,9,-1,5,50,0,0,0,0,0</value>
+                </setupitem>
+                <setupitem>
+                    <identity name="^Adjust font size to instance height" type="2"/>
+                    <value type="QString">false</value>
+                </setupitem>
+                <setupitem>
+                    <identity name="Color" type="3"/>
+                    <value type="QString">-1</value>
+                </setupitem>
+                <setupitem>
+                    <identity name="Background" type="3"/>
+                    <value type="QString">0</value>
+                </setupitem>
+                <setupitem>
+                    <identity name="Horizontal" type="6"/>
+                    <value type="QString">2</value>
+                </setupitem>
+                <setupitem>
+                    <identity name="Vertical" type="6"/>
+                    <value type="QString">0</value>
+                </setupitem>
+                <setupitem>
+                    <identity name="Scroll rate" type="4"/>
+                    <value type="QString">15</value>
+                </setupitem>
+                <setupitem>
+                    <identity name="Scroll step" type="4"/>
+                    <value type="QString">2</value>
+                </setupitem>
+                <setupitem>
+                    <identity name="Scroll gap" type="4"/>
+                    <value type="QString">10</value>
+                </setupitem>
+                <setupitem>
+                    <identity name="^Enable Conditional Formatting" type="2"/>
+                    <value type="bool">false</value>
+                </setupitem>
+                <setupitem>
+                    <identity name="Conditions XML" type="9"/>
+                    <value type="QString">&lt;rules/&gt;</value>
+                </setupitem>
+            </instance>
+        </instance>
+    </instance>
+    <instance class="LH_Cursor/QuickAction">
+        <identity name="Quick Action [5]" id="2ecpa8"/>
+        <state modifiable="1" selectable="1" alerts="1"/>
+        <origin x="0" y="0"/>
+        <size w="26" h="26"/>
+        <plugin_size w="-1" h="-1"/>
+        <pos x="287" y="61" z="4"/>
+        <x_ref id="nhks8" align="0" ref_align="0"/>
+        <y_ref id="nhks8" align="0" ref_align="0"/>
+        <w_ref id="0" mod="26" units="4"/>
+        <h_ref id="0" mod="26" units="4"/>
+        <setupitem>
+            <identity name="Trigger key" type="12"/>
+            <value type="QString">Menu pressed @ QVGA</value>
+            <extra str="Menu" int="5"/>
+        </setupitem>
+        <setupitem>
+            <identity name="Enable Auto Trigger" type="2"/>
+            <value type="QString">false</value>
+        </setupitem>
+        <setupitem>
+            <identity name="Auto Trigger Timeout" type="1"/>
+            <value type="QString">30</value>
+        </setupitem>
+        <setupitem>
+            <identity name="Layout" type="10"/>
+            <value type="QString">Eos_Menu.xml</value>
+        </setupitem>
+    </instance>
+</instance>

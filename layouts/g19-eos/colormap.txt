@@ -1,0 +1,2 @@
+OFF	silver	192	gray	192
+ON	silver	255	gray	255

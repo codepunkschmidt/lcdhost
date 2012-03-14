@@ -37,8 +37,8 @@ DEFINES += LCDHOST_PLATFORM=\"\\\"$$LCDHOST_PLATFORM\\\"\"
 # See if we have a reasonable default for DESTDIR based on TEMPLATE and CONFIG
 # If nothing else fit, just dump it in LH_DESTDIR.
 # In particular, the linkdata/ static libraries must end up there.
+isEmpty(DESTDIR): contains(TEMPLATE,app): !contains(CONFIG,app_bundle): DESTDIR = $$LCDHOST_BINARIES
 isEmpty(DESTDIR): contains(TEMPLATE,lib): !staticlib: DESTDIR = $$LCDHOST_PLUGINS
-isEmpty(DESTDIR): contains(TEMPLATE,app): DESTDIR = $$LCDHOST_BINARIES
 isEmpty(DESTDIR): DESTDIR = $$LH_DESTDIR
 
 # Pull revision data from mercurial and put it in the
@@ -70,5 +70,5 @@ lh_api5_plugin {
 }
 
 # Load library prf files
-LH_LIB_LIST=$$files($$PWD/lh_*)
-for( file, LH_LIB_LIST ): load( $${file}/$$basename(file).prf )
+LH_LIB_LIST=$$files($$PWD/*)
+for(FILE,LH_LIB_LIST): exists($${FILE}/$$basename(FILE).prf): load($${FILE}/$$basename(FILE).prf)

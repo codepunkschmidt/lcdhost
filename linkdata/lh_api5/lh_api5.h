@@ -1,5 +1,5 @@
-#ifndef LH_API5_H
-#define LH_API5_H
+#ifndef LH_LIB5__H
+#define LH_LIB5__H
 
 #include "lh_plugin.h"
 
@@ -27,4 +27,4 @@
 #include "QtSupport/LH_Qt_QTextEdit.h"
 #endif
 
-#endif // LH_API5_H
+#endif // LH_LIB5__H

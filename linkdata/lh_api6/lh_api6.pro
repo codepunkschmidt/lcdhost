@@ -7,39 +7,45 @@
 TARGET = lh_api6
 TEMPLATE = lib
 CONFIG += staticlib
+INCLUDEPATH += $$PWD
 
 load($$[LCDHOST_PRF])
 
 OTHER_FILES += lh_api6.prf
 
 HEADERS = \
-    lh_api6.h \
-    lh_loader.h \
-    lh_id.h \
-    lh_input.h \
-    lh_event.h \
-    lh_qvariant.h \
-    lh_object.h \
-    lh_service.h \
-    lh_plugin.h \
-    lh_linkable.h \
-    lh_source.h \
-    lh_sink.h \
-    lh_setup.h \
-    lh_layoutclass.h \
-    lh_layoutitem.h
+    LH/Event_Base.h \
+    LH/Event_CreateChild.h \
+    LH/Event_Log.h \
+    LH/Event_InitChild.h \
+    LH/Event_SetProperty.h \
+    LH/Lib6.h \
+    LH/Lib6_Id.h \
+    LH/Lib6_Loader.h \
+    LH/Lib6_Input.h \
+    LH/Lib6_Variant.h \
+    LH/Lib6_Object.h \
+    LH/Lib6_Service.h \
+    LH/Lib6_Plugin.h \
+    LH/Lib6_Linkable.h \
+    LH/Lib6_Source.h \
+    LH/Lib6_Sink.h \
+    LH/Lib6_Setup.h \
+    LH/Lib6_LayoutClass.h \
+    LH/Lib6_LayoutItem.h
 
 SOURCES = \
-    lh_loader.cpp \
-    lh_event.cpp \
-    lh_qvariant.cpp \
-    lh_object.cpp \
-    lh_service.cpp \
-    lh_plugin.cpp \
-    lh_linkable.cpp \
-    lh_source.cpp \
-    lh_sink.cpp \
-    lh_setup.cpp \
-    lh_layoutitem.cpp \
-    lh_layoutclass.cpp
+    LH/Event_Base.cpp \
+    LH/Lib6_Loader.cpp \
+    LH/Lib6_Input.cpp \
+    LH/Lib6_Variant.cpp \
+    LH/Lib6_Object.cpp \
+    LH/Lib6_Service.cpp \
+    LH/Lib6_Plugin.cpp \
+    LH/Lib6_Linkable.cpp \
+    LH/Lib6_Source.cpp \
+    LH/Lib6_Sink.cpp \
+    LH/Lib6_Setup.cpp \
+    LH/Lib6_LayoutClass.cpp \
+    LH/Lib6_LayoutItem.cpp
 

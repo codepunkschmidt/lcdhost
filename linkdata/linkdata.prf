@@ -9,6 +9,9 @@
 # http://code.google.com/p/lcdhost/issues/list
 #
 
+CONFIG *= qt threads
+QT *= core gui network
+
 # LH_DESTDIR must point to the root destination directory.
 # This is usually set in ../lcdhost.prf
 isEmpty(LH_DESTDIR): error("LH_DESTDIR is not set")
@@ -56,8 +59,9 @@ CHANGESET_REVISION = $$system($$quote(cd $$_PRO_FILE_PWD_ && hg log -l 1 --templ
 
 # Add linkdata/ to the include path, and
 # LH_DESTDIR to the static library search path.
-INCLUDEPATH += $$PWD
-LIBS += -L$$LH_DESTDIR
+INCLUDEPATH *= $$PWD
+DEPENDPATH *= $$PWD
+LIBS *= -L$$LH_DESTDIR
 
 # API 5 compatibility CONFIG's
 lh_api5_plugin {
@@ -65,8 +69,10 @@ lh_api5_plugin {
     CONFIG += lh_api5
     hid|hidapi: CONFIG += lh_hidapi
     usb|libusb: CONFIG += lh_libusb
-    INCLUDEPATH += $$PWD/lh_api5
-    INCLUDEPATH += $$PWD/lh_api5/QtSupport
+    INCLUDEPATH *= $$PWD/lh_api5
+    DEPENDPATH *= $$PWD/lh_api5
+    INCLUDEPATH *= $$PWD/lh_api5/QtSupport
+    DEPENDPATH *= $$PWD/lh_api5/QtSupport
 }
 
 # Load library prf files

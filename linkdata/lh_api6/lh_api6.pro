@@ -14,6 +14,11 @@ load($$[LCDHOST_PRF])
 OTHER_FILES += lh_api6.prf
 
 HEADERS = \
+    LH/Type.h \
+    LH/Type_Info.h \
+    LH/Type_Map.h \
+    LH/Type_MetaData.h \
+    LH/MetaType.h \
     LH/Event_Base.h \
     LH/Event_CreateChild.h \
     LH/Event_Log.h \
@@ -35,6 +40,7 @@ HEADERS = \
     LH/Lib6_LayoutItem.h
 
 SOURCES = \
+    LH/Type_MetaData.cpp \
     LH/Event_Base.cpp \
     LH/Lib6_Loader.cpp \
     LH/Lib6_Input.cpp \

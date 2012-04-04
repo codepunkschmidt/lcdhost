@@ -17,8 +17,6 @@ HEADERS = \
     LH/Type.h \
     LH/Type_Info.h \
     LH/Type_Map.h \
-    LH/Type_MetaData.h \
-    LH/MetaType.h \
     LH/Event_Base.h \
     LH/Event_CreateChild.h \
     LH/Event_Log.h \
@@ -37,10 +35,12 @@ HEADERS = \
     LH/Lib6_Sink.h \
     LH/Lib6_Setup.h \
     LH/Lib6_LayoutClass.h \
-    LH/Lib6_LayoutItem.h
+    LH/Lib6_LayoutItem.h \
+    LH/Type_Data.h \
+    LH/Type_Meta.h \
+    LH/Type_Variant.h
 
 SOURCES = \
-    LH/Type_MetaData.cpp \
     LH/Event_Base.cpp \
     LH/Lib6_Loader.cpp \
     LH/Lib6_Input.cpp \
@@ -53,5 +53,7 @@ SOURCES = \
     LH/Lib6_Sink.cpp \
     LH/Lib6_Setup.cpp \
     LH/Lib6_LayoutClass.cpp \
-    LH/Lib6_LayoutItem.cpp
+    LH/Lib6_LayoutItem.cpp \
+    LH/Type_Data.cpp \
+    LH/Type_Variant.cpp
 

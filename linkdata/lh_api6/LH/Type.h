@@ -34,14 +34,12 @@
 #ifndef LH_TYPE_H
 #define LH_TYPE_H
 
-class QVariant;
-
 namespace LH {
 namespace Type {
 
-class MetaData;
-bool convert( const QVariant & from, QVariant & to );
-bool canConvert( const QVariant & from, const QVariant & to );
+class Data;
+class Variant;
+template <typename T> class Meta;
 
 } // namespace Type
 } // namespace LH

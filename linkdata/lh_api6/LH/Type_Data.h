@@ -49,14 +49,13 @@ public:
     typedef bool (* canConvertTo_fn)( int t );
     typedef bool (* canConvertFrom_fn)( int t );
 
-    static void registerType( const int typeId, void (*regFn)(const int) );
     static bool equals( int t1, const void *p1, int t2, const void *p2 );
     static bool lessThan( int t1, const void *p1, int t2, const void *p2 );
     static bool convert( int fromTypeId, const void * p, int toTypeId, void * v );
     static bool canConvert( int fromTypeId, int toTypeId );
 
     explicit Data(
-            const int typeId,
+            int typeId,
             equals_fn equals,
             lessThan_fn lessThan,
             convertTo_fn convertTo,
@@ -72,6 +71,7 @@ public:
     bool convertFrom( void * p, int t, const void * v ) const { return convertFrom_( p, t, v ); }
     bool canConvertTo( int t ) const { return canConvertTo_( t ); }
     bool canConvertFrom( int t ) const { return canConvertFrom_( t ); }
+    const Data * const next() const { return next_; }
 
 private:
     const int typeId_;

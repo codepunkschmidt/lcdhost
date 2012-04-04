@@ -103,19 +103,19 @@ namespace Type {
     LH_TYPE_PAIR(QWidget*, WidgetStar) \
     LH_TYPE_PAIR(QVariant, Variant)
 
-template < typename SELFTYPE, typename DATATYPE, template <typename,typename> class OPERATION >
-static bool Map( SELFTYPE & self, int type, DATATYPE * data )
+template < typename SELFTYPE, typename DATATYPE, template < typename, typename > class METHOD >
+static inline bool map( SELFTYPE & self, int type, DATATYPE * data )
 {
     switch( type )
     {
 #define LH_TYPE_PAIR( OTHERTYPE, NAME ) \
     case QMetaTypeId2< OTHERTYPE >::MetaType : \
-        return OPERATION< SELFTYPE, OTHERTYPE >::call( self, (OTHERTYPE*) data );
+        return METHOD< SELFTYPE, OTHERTYPE >::call( self, (OTHERTYPE*) data );
     LH_TYPE_MAP
 #undef LH_TYPE_PAIR
-    default: break;
+    default: return false;
     }
-    qCritical( "LH::Type::Map: unhandled type %d=%s", type, QMetaType::typeName(type) );
+    /* not reached */
     return false;
 }
 

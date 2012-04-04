@@ -48,23 +48,13 @@ template <class T>
 class Meta
 {
 public:
-    explicit Meta()
-    {
-        typeId( qRegisterMetaType<T>() );
-    }
-
-    explicit Meta( const char * typeName )
-    {
-        typeId( qRegisterMetaType<T>( typeName ) );
-    }
-
-    static const int typeId( const int typeId = 0 )
+    explicit Meta( const char * typeName = 0 )
     {
         static const Data typedata_(
-                    typeId, equals, lessThan,
+                    typeName ? qRegisterMetaType<T>( typeName ) : qRegisterMetaType<T>(),
+                    equals, lessThan,
                     convertTo, convertFrom,
                     canConvertTo, canConvertFrom );
-        return typedata_.typeId();
     }
 
     static bool equals( const void * p1, int t, const void * p2 )

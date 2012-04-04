@@ -32,22 +32,34 @@
   */
 
 #include <LH/Type_Data.h>
-#include <QAtomicPointer>
+#include <QMetaType>
+#include <QMutex>
 
 namespace LH {
 namespace Type {
 
-static QAtomicPointer<const Data> lh_first_info_;
+static QMutex lh_type_data_mutex_;
+static const Data * lh_first_info_ = 0;
 
-void Data::registerType( const int typeId, void (*regFn)(const int) )
+static int lh_lock_and_filter( int typeId )
 {
+    lh_type_data_mutex_.lock();
+    if( typeId < QMetaType::User )
+    {
+        Q_ASSERT( !"LH::Type::Data: type ID < QMetaType::User" );
+        return 0;
+    }
     const Data * mt = lh_first_info_;
     while( mt )
     {
-        if( typeId == mt->typeId_) return;
-        mt = mt->next_;
+        if( typeId == mt->typeId())
+        {
+            Q_ASSERT( !"LH::Type::Data: type ID already registered" );
+            return 0;
+        }
+        mt = mt->next();
     }
-    regFn( typeId );
+    return typeId;
 }
 
 bool Data::equals( int typeId1, const void * p1, int typeId2, const void * p2 )
@@ -100,19 +112,22 @@ bool Data::canConvert( int fromTypeId, int toTypeId )
     return false;
 }
 
-Data::Data(const int typeId,
+Data::Data(int typeId,
            equals_fn equals, lessThan_fn lessThan,
            convertTo_fn convertTo, convertFrom_fn convertFrom,
            canConvertTo_fn canConvertTo, canConvertFrom_fn canConvertFrom ) :
-    typeId_( typeId ),
+    typeId_( lh_lock_and_filter( typeId ) ),
     equals_( equals ),
     lessThan_( lessThan ),
     convertTo_( convertTo ),
     convertFrom_( convertFrom ),
     canConvertTo_( canConvertTo ),
     canConvertFrom_( canConvertFrom ),
-    next_( lh_first_info_.fetchAndStoreAcquire( this ) )
-{}
+    next_( typeId_ ? lh_first_info_ : 0 )
+{
+    if( typeId_ ) lh_first_info_ = this;
+    lh_type_data_mutex_.unlock();
+}
 
 } // namespace Type
 } // namespace LH

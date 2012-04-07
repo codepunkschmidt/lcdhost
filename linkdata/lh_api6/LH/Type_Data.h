@@ -39,7 +39,6 @@
 namespace LH {
 namespace Type {
 
-
 class Data
 {
 public:

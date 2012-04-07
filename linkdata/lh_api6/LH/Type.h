@@ -34,12 +34,18 @@
 #ifndef LH_TYPE_H
 #define LH_TYPE_H
 
+class QVariant;
+
 namespace LH {
 namespace Type {
 
 class Data;
-class Variant;
 template <typename T> class Meta;
+
+bool equals( const QVariant & a, const QVariant & b );
+bool lessThan( const QVariant & a, const QVariant & b );
+bool convert( const QVariant & from, QVariant & to );
+bool canConvert( const QVariant & from, const QVariant & to );
 
 } // namespace Type
 } // namespace LH

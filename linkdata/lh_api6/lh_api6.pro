@@ -15,7 +15,6 @@ OTHER_FILES += lh_api6.prf
 
 HEADERS = \
     LH/Type.h \
-    LH/Type_Info.h \
     LH/Type_Map.h \
     LH/Event_Base.h \
     LH/Event_CreateChild.h \
@@ -38,8 +37,7 @@ HEADERS = \
     LH/Lib6_LayoutItem.h \
     LH/Type_Data.h \
     LH/Type_Meta.h \
-    LH/Type_Variant.h \
-    LH/Type_Callback.h
+    LH/Type_Variant.h
 
 SOURCES = \
     LH/Event_Base.cpp \

@@ -35,12 +35,14 @@
 #define LH_TYPE_META_H
 
 /**
-  To use, replace the call to qRegisterMetaType<T>() with LH::Type::Meta<T>().
+  To use, include this file in your implementation (.cpp file) and
+  put LH_DEFINE_METATYPE( typename ) after you've included both your
+  type's header file and this file.
   */
 
 #include <LH/Type_Data.h>
-// #include <LH/Type_Info.h>
 #include <LH/Type_Map.h>
+#include <QVariant>
 
 namespace LH {
 namespace Type {
@@ -110,11 +112,7 @@ public:
         LH_TYPE_METHOD_TEST( operator Other )
         static bool call( Self * self, Other * other, Bool<true> )
         {
-            // If you get an error here, you forgot LH_TYPE_META( typename )
-            // in the implementation (.cpp file) for your meta type.
             * other = self->operator Other();
-
-            // LH_Cast_Helper<Other,Self>::castToHelper( other, self );
             return true;
         }
     };
@@ -169,6 +167,22 @@ public:
         static bool call(Self*,Other*) { return ConvertFrom<U>::value; }
     };
 
+    template < template <typename> class Method, typename DATATYPE >
+    static inline bool mapType( T * self, int t, DATATYPE * other )
+    {
+    #define LH_TYPE_PAIR( OTHERTYPE, NAME ) \
+        case QMetaTypeId2< OTHERTYPE >::MetaType : \
+            return Method< OTHERTYPE >::call( \
+                static_cast<typename Method< OTHERTYPE >::Self *>(self), \
+                static_cast<typename Method< OTHERTYPE >::Other *>(other) );
+        switch( t )
+        {
+            LH_TYPE_MAP
+            default: return false;
+        }
+    #undef LH_TYPE_PAIR
+    }
+
     static inline Meta<T> wrap( void * self )
     {
         return Meta<T>( static_cast<T *>( self ) );
@@ -179,44 +193,44 @@ public:
         return Meta<const T>( static_cast<const T *>( self ) );
     }
 
-    static bool equals( const void * p1, int t, const void * p2  )
+    static inline bool equals( const void * p1, int t, const void * p2  )
     {
         return wrap( p1 ).equals(t,p2);
     }
 
-    static bool lessThan( const void * p1, int t, const void * p2 )
+    static inline bool lessThan( const void * p1, int t, const void * p2 )
     {
         return wrap(p1).lessThan(t,p2);
     }
 
-    static bool castTo( const void * p, int t, void * v )
+    static inline bool castTo( const void * p, int t, void * v )
     {
         return wrap(p).castTo(t,v);
     }
 
-    static bool convertTo( const void * p, int t, void * v )
+    static inline bool convertTo( const void * p, int t, void * v )
     {
         return wrap(p).convertTo(t,v);
     }
 
-    static bool convertFrom( void * p, int t, const void * v )
+    static inline bool convertFrom( void * p, int t, const void * v )
     {
         return wrap(p).convertFrom(t,v);
     }
 
-    static bool canCastTo( int t )
+    static inline bool canCastTo( int t )
     {
-        return type_switch< T, void, CanCastTo>(0,t,0);
+        return mapType< CanCastTo, void >(0,t,0);
     }
 
-    static bool canConvertTo( int t )
+    static inline bool canConvertTo( int t )
     {
-        return type_switch< T, void, CanConvertTo>(0,t,0);
+        return mapType< CanConvertTo, void >(0,t,0);
     }
 
-    static bool canConvertFrom( int t )
+    static inline bool canConvertFrom( int t )
     {
-        return type_switch< T, const void, CanConvertFrom>(0,t,0);
+        return mapType< CanConvertFrom, const void >(0,t,0);
     }
 
     Meta( T * self ) :
@@ -225,47 +239,57 @@ public:
 
     bool equals( int t, const void * p ) const
     {
-        return type_switch< T, const void, Equals >( self_, t, p );
+        return mapType< Equals, const void >( self_, t, p );
     }
 
     bool lessThan( int t, const void * p ) const
     {
-        return type_switch< T, const void, LessThan >( self_, t, p );
+        return mapType< LessThan, const void >( self_, t, p );
     }
 
     bool assign( int t, const void * p ) const
     {
-        return type_switch< T, const void, Assignment >( self_, t, p );
+        return mapType< Assignment, const void >( self_, t, p );
     }
 
     bool castTo( int t, void * p ) const
     {
-        return type_switch< T, void, CastTo >( self_, t, p );
+        return mapType< CastTo, void >( self_, t, p );
     }
 
     bool convertTo( int t, void * p ) const
     {
-        return type_switch< T, void, ConvertTo >( self_, t, p );
+        return mapType< ConvertTo, void >( self_, t, p );
     }
 
     bool convertFrom( int t, const void * p ) const
     {
-        return type_switch< T, const void, ConvertFrom >( self_, t, p );
+        return mapType< ConvertFrom, const void >( self_, t, p );
     }
 };
 
 template <typename T>
 const Data Meta<T>::typedata_(
-        // typeName ? qRegisterMetaType<T>( typeName ) : qRegisterMetaType<T>(),
-        qRegisterMetaType<T>(),
+        qMetaTypeId< T >(), // qRegisterMetaType<T>(),
         equals, lessThan,
         castTo, convertTo, convertFrom,
         canCastTo, canConvertTo, canConvertFrom );
 
+bool equals( const QVariant & a, const QVariant & b );
+bool lessThan( const QVariant & a, const QVariant & b );
+bool convert( const QVariant & from, QVariant & to );
+bool canConvert( const QVariant & from, const QVariant & to );
+
 } // namespace Type
 } // namespace LH
 
-#define LH_TYPE_META( TYPENAME ) \
-    template class LH::Type::Meta< TYPENAME >;
+#define LH_DEFINE_METATYPE( TYPENAME ) \
+    template class LH::Type::Meta< TYPENAME >; \
+    template <> bool QVariant::canConvert< TYPENAME >() const { \
+        return LH::Type::Data::canConvert( this->userType(), qMetaTypeId< TYPENAME >() ); } \
+    template <> TYPENAME qvariant_cast( const QVariant & v ) { \
+        TYPENAME result; \
+        LH::Type::Meta< TYPENAME >::convertFrom( & result, v.userType(), v.constData() ); \
+        return result; }
 
 #endif // LH_TYPE_META_H

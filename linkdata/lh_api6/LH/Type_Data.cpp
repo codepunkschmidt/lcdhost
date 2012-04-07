@@ -33,10 +33,42 @@
 
 #include <LH/Type_Data.h>
 #include <QMetaType>
+#include <QVariant>
 #include <QMutex>
 
 namespace LH {
 namespace Type {
+
+bool equals( const QVariant & a, const QVariant & b )
+{
+    return ( a == b ) || Data::equals( a.userType(), a.constData(),
+                                           b.userType(), b.constData() );
+}
+
+bool lessThan( const QVariant & a, const QVariant & b )
+{
+    return Data::lessThan( a.userType(), a.constData(),
+                               b.userType(), b.constData() );
+}
+
+bool convert( const QVariant & from, QVariant & to )
+{
+    const QVariant::Type toType = (QVariant::Type) to.userType();
+    if( from.canConvert( toType ) )
+    {
+        to.setValue( from );
+        return to.convert( toType );
+    }
+    return Data::convert(
+                from.userType(), from.constData(),
+                toType, const_cast<void*>(to.constData()) );
+}
+
+bool canConvert( const QVariant & from, const QVariant & to )
+{
+    if( from.canConvert( (QVariant::Type) to.userType() ) ) return true;
+    return Data::canConvert( from.userType(), to.userType() );
+}
 
 static QMutex lh_type_data_mutex_;
 static const Data * lh_first_info_ = 0;

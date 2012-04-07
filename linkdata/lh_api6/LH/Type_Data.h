@@ -39,13 +39,16 @@
 namespace LH {
 namespace Type {
 
+
 class Data
 {
 public:
     typedef bool (* equals_fn)( const void * p1, int t, const void * p2 );
     typedef bool (* lessThan_fn)( const void * p1, int t, const void * p2 );
+    typedef bool (* castTo_fn)( const void * p, int t, void * v );
     typedef bool (* convertTo_fn)( const void * p, int t, void * v );
     typedef bool (* convertFrom_fn)( void * p, int t, const void * v );
+    typedef bool (* canCastTo_fn)( int t );
     typedef bool (* canConvertTo_fn)( int t );
     typedef bool (* canConvertFrom_fn)( int t );
 
@@ -58,8 +61,10 @@ public:
             int typeId,
             equals_fn equals,
             lessThan_fn lessThan,
+            castTo_fn castTo,
             convertTo_fn convertTo,
             convertFrom_fn convertFrom,
+            canCastTo_fn canCastTo,
             canConvertTo_fn canConvertTo,
             canConvertFrom_fn canConvertFrom
             );
@@ -67,8 +72,10 @@ public:
     const int typeId() const { return typeId_; }
     bool equals( const void * p1, int t, const void * p2 ) const { return equals_( p1, t, p2 ); }
     bool lessThan( const void * p1, int t, const void * p2 ) const { return lessThan_( p1, t, p2 ); }
+    bool castTo( const void * p, int t, void * v ) const { return castTo_( p, t, v ); }
     bool convertTo( const void * p, int t, void * v ) const { return convertTo_( p, t, v ); }
     bool convertFrom( void * p, int t, const void * v ) const { return convertFrom_( p, t, v ); }
+    bool canCastTo( int t ) const { return canCastTo_( t ); }
     bool canConvertTo( int t ) const { return canConvertTo_( t ); }
     bool canConvertFrom( int t ) const { return canConvertFrom_( t ); }
     const Data * const next() const { return next_; }
@@ -77,8 +84,10 @@ private:
     const int typeId_;
     const equals_fn equals_;
     const lessThan_fn lessThan_;
+    const castTo_fn castTo_;
     const convertTo_fn convertTo_;
     const convertFrom_fn convertFrom_;
+    const canCastTo_fn canCastTo_;
     const canConvertTo_fn canConvertTo_;
     const canConvertFrom_fn canConvertFrom_;
     const Data * const next_;

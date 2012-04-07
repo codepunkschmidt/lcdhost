@@ -63,8 +63,8 @@ bool Variant::convert( const QVariant & from, QVariant & to )
 
 bool Variant::canConvert( const QVariant & from, const QVariant & to )
 {
-    return from.canConvert( (QVariant::Type) to.userType() ) ||
-            Data::canConvert( from.userType(), to.userType() );
+    if( from.canConvert( (QVariant::Type) to.userType() ) ) return true;
+    return Data::canConvert( from.userType(), to.userType() );
 }
 
 } // namespace Type

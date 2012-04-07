@@ -35,6 +35,7 @@
 #define LH_TYPE_VARIANT_H
 
 #include <LH/Type.h>
+#include <LH/Type_Info.h>
 #include <LH/Type_Meta.h>
 #include <LH/Type_Data.h>
 #include <QMetaType>
@@ -61,7 +62,11 @@ public:
     template <> TYPE qvariant_cast( const QVariant & v ) { \
         TYPE result; \
         LH::Type::Meta< TYPE >::convertFrom( & result, v.userType(), v.constData() ); \
-        return result; }
-
+        return result; } \
+    template <typename U> struct LH_Cast_Helper<U,const TYPE> {\
+        template<typename T, typename> struct identity { typedef T type; }; \
+        static void castToHelper( U * other, const TYPE * self ) \
+        { (*other) = self->identity<const TYPE, U>::type::operator U(); } \
+    };
 
 #endif // LH_TYPE_VARIANT_H

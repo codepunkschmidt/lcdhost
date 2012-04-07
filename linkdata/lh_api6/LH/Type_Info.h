@@ -35,94 +35,189 @@
 #define LH_TYPE_INFO_H
 
 #include <LH/Type.h>
+#include <LH/Type_Map.h>
+#include <QDebug>
+
+template < typename U, typename T >
+struct LH_Cast_Helper
+{
+    static void castToHelper( U *, const T * );
+};
 
 namespace LH {
 namespace Type {
 
-template <bool b> struct Bool { static const bool value = b; };
-template < typename T, typename S, S > struct SFINAE {};
+#define LH_TYPE_METHOD_TEST( NAME ) \
+    template <typename V> static char Test( SFINAE< T, Func, & V::NAME > * ); \
+    template <typename V> static int Test(...); \
+    static const bool value = sizeof( Test<T>(0) ) == sizeof(char); \
+    static bool call( Self * self, Other * other ) { return call( self, other, Bool<value>() ); } \
+    static bool call( Self *, Other *, Bool<false> ) { return false; }
 
-#define LH_TYPE_METHOD_TEST( METHOD ) \
-    template <typename U> static char Test( SFINAE< U, Signature, & U::METHOD > * ); \
-    template <typename U> static int Test(...); \
-    static const bool value = sizeof( Test<SELFTYPE>(0) ) == sizeof(char); \
-    static inline bool call( SELFTYPE &, OTHERTYPE *, Bool<false> ) { return false; } \
-    static inline bool call( SELFTYPE & m, OTHERTYPE * r ) { return call( m, r, Bool<value>() ); }
-
-template < typename SELFTYPE, typename OTHERTYPE >
-struct Equals
+template < typename T >
+class Wrap
 {
-    typedef bool (SELFTYPE::*Signature)( const OTHERTYPE & ) const;
-    static inline bool call( SELFTYPE & m, OTHERTYPE * r, Bool<true> ) { return m.operator ==( * r ); }
-    LH_TYPE_METHOD_TEST( operator == )
-};
+    T * self_;
 
-template < typename SELFTYPE, typename OTHERTYPE >
-struct LessThan
-{
-    typedef bool (SELFTYPE::*Signature)( const OTHERTYPE & ) const;
-    static inline bool call( SELFTYPE & m, OTHERTYPE * r, Bool<true> ) { return m.operator <( * r ); }
-    LH_TYPE_METHOD_TEST( operator < )
-};
+public:
+    Wrap( T * self ) :
+        self_( self )
+    {}
 
-template < typename SELFTYPE, typename OTHERTYPE >
-struct Operator
-{
-    typedef OTHERTYPE (SELFTYPE::*Signature)() const;
-    static inline bool call( SELFTYPE & m, OTHERTYPE * r, Bool<true> ) { * r = m.operator OTHERTYPE(); return true; }
-    LH_TYPE_METHOD_TEST( operator OTHERTYPE )
-};
+    template < bool b > struct Bool { static const bool value = b; };
+    template < typename X, typename Y, Y > struct SFINAE {};
 
-template < typename SELFTYPE, typename OTHERTYPE >
-struct Assignment
-{
-    typedef SELFTYPE & (SELFTYPE::*Signature)(const OTHERTYPE &);
-    static inline bool call( SELFTYPE & m, OTHERTYPE * r, Bool<true> ) { m.operator =( * r ); return true; }
-    LH_TYPE_METHOD_TEST( operator = )
-};
+    template < typename U >
+    struct Equals
+    {
+        typedef const T Self;
+        typedef const U Other;
+        typedef bool (T::*Func)( Other & ) const;
+        LH_TYPE_METHOD_TEST( operator == )
+        static bool call( Self * self, Other * other, Bool<true> )
+        {
+            return (*self).operator ==(*other);
+        }
+    };
 
-template < typename SELFTYPE, typename OTHERTYPE >
-struct ConvertTo
-{
-    typedef bool (SELFTYPE::*Signature)(OTHERTYPE &) const;
-    static inline bool call( SELFTYPE & m, OTHERTYPE * r, Bool<true> ) { return m.convertTo( * r ); }
-    LH_TYPE_METHOD_TEST( convertTo )
-};
+    template < typename U >
+    struct LessThan
+    {
+        typedef const T Self;
+        typedef const U Other;
+        typedef bool (T::*Func)( Other & ) const;
+        LH_TYPE_METHOD_TEST( operator < )
+        static bool call( Self * self, Other * other, Bool<true> )
+        {
+            return (*self).operator <( * other );
+        }
+    };
 
-template < typename SELFTYPE, typename OTHERTYPE >
-struct ConvertFrom
-{
-    typedef bool (SELFTYPE::*Signature)(const OTHERTYPE &);
-    static inline bool call( SELFTYPE & m, OTHERTYPE * r, Bool<true> ) { return m.convertFrom( * r ); }
-    LH_TYPE_METHOD_TEST( convertFrom )
-};
+    template < typename U >
+    struct Assignment
+    {
+        typedef T Self;
+        typedef const U Other;
+        typedef Self & (T::*Func)( Other & );
+        LH_TYPE_METHOD_TEST( operator = )
+        static bool call( Self * self, Other * other, Bool<true> )
+        {
+            return (*self).operator =( * other );
+        }
+    };
 
-template < typename SELFTYPE, typename OTHERTYPE >
-struct CanConvertTo
-{
-    static const bool value = Operator<SELFTYPE,OTHERTYPE>::value || ConvertTo<SELFTYPE,OTHERTYPE>::value;
-    static inline bool call( SELFTYPE &, OTHERTYPE * ) { return value; }
-};
+    template < typename U >
+    struct CastTo
+    {
+        typedef const T Self;
+        typedef U Other;
+        typedef Other (T::*Func)() const;
+        LH_TYPE_METHOD_TEST( operator Other )
+        static bool call( Self * self, Other * other, Bool<true> )
+        {
+            // If you get an error here, you forgot LH_META_TYPE( typename )
+            // in the implementation (.cpp file) for your meta type.
+            * other = self->operator Other();
 
-template < typename SELFTYPE, typename OTHERTYPE >
-struct CanConvertFrom
-{
-    static const bool value = Assignment<SELFTYPE,OTHERTYPE>::value || ConvertFrom<SELFTYPE,OTHERTYPE>::value;
-    static inline bool call( SELFTYPE &, OTHERTYPE * ) { return value; }
-};
+            // LH_Cast_Helper<Other,Self>::castToHelper( other, self );
+            return true;
+        }
+    };
 
-template < typename SELFTYPE, typename OTHERTYPE >
-struct TryConvertTo
-{
-    static inline bool call( SELFTYPE & m, OTHERTYPE * r )
-    { return ConvertTo<SELFTYPE,OTHERTYPE>::call(m,r) || Operator<SELFTYPE,OTHERTYPE>::call(m,r); }
-};
+    template < typename U >
+    struct ConvertTo
+    {
+        typedef const T Self;
+        typedef U Other;
+        typedef bool (T::*Func)( Other & ) const;
+        LH_TYPE_METHOD_TEST( convertTo )
+        static bool call( Self * self, Other * other, Bool<true> )
+        {
+            return (*self).convertTo( * other );
+        }
+    };
 
-template < typename SELFTYPE, typename OTHERTYPE >
-struct TryConvertFrom
-{
-    static inline bool call( SELFTYPE & m, OTHERTYPE * r )
-    { return ConvertFrom<SELFTYPE,OTHERTYPE>::call(m,r) || Assignment<SELFTYPE,OTHERTYPE>::call(m,r); }
+    template < typename U >
+    struct ConvertFrom
+    {
+        typedef T Self;
+        typedef const U Other;
+        typedef bool (T::*Func)( Other & );
+        LH_TYPE_METHOD_TEST( convertFrom )
+        static bool call( Self * self, Other * other, Bool<true> )
+        {
+            return (*self).convertFrom( * other );
+        }
+    };
+
+    template < typename U >
+    struct CanCastTo
+    {
+        typedef const T Self;
+        typedef U Other;
+        static bool call(Self*,Other*) { return CastTo<U>::value; }
+    };
+
+    template < typename U >
+    struct CanConvertTo
+    {
+        typedef const T Self;
+        typedef U Other;
+        static bool call(Self*,Other*) { return ConvertTo<U>::value; }
+    };
+
+    template < typename U >
+    struct CanConvertFrom
+    {
+        typedef T Self;
+        typedef const U Other;
+        static bool call(Self*,Other*) { return ConvertFrom<U>::value; }
+    };
+
+    bool equals( int t, const void * p ) const
+    {
+        return type_switch< T, const void, Equals >( self_, t, p );
+    }
+
+    bool lessThan( int t, const void * p ) const
+    {
+        return type_switch< T, const void, LessThan >( self_, t, p );
+    }
+
+    bool assign( int t, const void * p ) const
+    {
+        return type_switch< T, const void, Assignment >( self_, t, p );
+    }
+
+    bool castTo( int t, void * p ) const
+    {
+        return type_switch< T, void, CastTo >( self_, t, p );
+    }
+
+    bool convertTo( int t, void * p ) const
+    {
+        return type_switch< T, void, ConvertTo >( self_, t, p );
+    }
+
+    bool convertFrom( int t, const void * p ) const
+    {
+        return type_switch< T, const void, ConvertFrom >( self_, t, p );
+    }
+
+    static bool canCastTo( int t )
+    {
+        return type_switch< T, void, CanCastTo>(0,t,0);
+    }
+
+    static bool canConvertTo( int t )
+    {
+        return type_switch< T, void, CanConvertTo>(0,t,0);
+    }
+
+    static bool canConvertFrom( int t )
+    {
+        return type_switch< T, const void, CanConvertFrom>(0,t,0);
+    }
 };
 
 } // namespace Type

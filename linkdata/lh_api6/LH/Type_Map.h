@@ -41,6 +41,10 @@ namespace LH {
 namespace Type {
 
 #define LH_TYPE_MAP \
+    LH_TYPE_MAP_CORE \
+    LH_TYPE_MAP_GUI
+
+#define LH_TYPE_MAP_CORE \
     LH_TYPE_PAIR(bool, Bool) \
     LH_TYPE_PAIR(int, Int) \
     LH_TYPE_PAIR(uint, UInt) \
@@ -65,6 +69,18 @@ namespace Type {
     LH_TYPE_PAIR(QLineF, LineF) \
     LH_TYPE_PAIR(QPoint, Point) \
     LH_TYPE_PAIR(QPointF, PointF) \
+    LH_TYPE_PAIR(void*, VoidStar) \
+    LH_TYPE_PAIR(long, Long) \
+    LH_TYPE_PAIR(short, Short) \
+    LH_TYPE_PAIR(char, Char) \
+    LH_TYPE_PAIR(ulong, ULong) \
+    LH_TYPE_PAIR(ushort, UShort) \
+    LH_TYPE_PAIR(uchar, UChar) \
+    LH_TYPE_PAIR(float, Float) \
+    LH_TYPE_PAIR(QObject*, ObjectStar) \
+    LH_TYPE_PAIR(QWidget*, WidgetStar)
+
+#define LH_TYPE_MAP_GUI \
     LH_TYPE_PAIR(QRegExp, RegExp) \
     LH_TYPE_PAIR(QEasingCurve, EasingCurve) \
     LH_TYPE_PAIR(QFont, Font) \
@@ -89,34 +105,7 @@ namespace Type {
     LH_TYPE_PAIR(QVector2D, Vector2D) \
     LH_TYPE_PAIR(QVector3D, Vector3D) \
     LH_TYPE_PAIR(QVector4D, Vector4D) \
-    LH_TYPE_PAIR(QQuaternion, Quaternion) \
-    LH_TYPE_PAIR(void*, VoidStar) \
-    LH_TYPE_PAIR(long, Long) \
-    LH_TYPE_PAIR(short, Short) \
-    LH_TYPE_PAIR(char, Char) \
-    LH_TYPE_PAIR(ulong, ULong) \
-    LH_TYPE_PAIR(ushort, UShort) \
-    LH_TYPE_PAIR(uchar, UChar) \
-    LH_TYPE_PAIR(float, Float) \
-    LH_TYPE_PAIR(QObject*, ObjectStar) \
-    LH_TYPE_PAIR(QWidget*, WidgetStar) \
-    LH_TYPE_PAIR(QVariant, Variant)
-
-template < typename SELFTYPE, typename DATATYPE, template <typename> class Method >
-bool type_switch( SELFTYPE * self, int t, DATATYPE * other )
-{
-#define LH_TYPE_PAIR( OTHERTYPE, NAME ) \
-    case QMetaTypeId2< OTHERTYPE >::MetaType : \
-        return Method< OTHERTYPE >::call( \
-            static_cast<typename Method< OTHERTYPE >::Self *>(self), \
-            static_cast<typename Method< OTHERTYPE >::Other *>(other) );
-    switch( t )
-    {
-        LH_TYPE_MAP
-        default: return false;
-    }
-#undef LH_TYPE_PAIR
-}
+    LH_TYPE_PAIR(QQuaternion, Quaternion)
 
 } // namespace Type
 } // namespace LH

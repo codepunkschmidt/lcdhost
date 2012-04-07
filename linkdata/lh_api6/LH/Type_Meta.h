@@ -275,11 +275,6 @@ const Data Meta<T>::typedata_(
         castTo, convertTo, convertFrom,
         canCastTo, canConvertTo, canConvertFrom );
 
-bool equals( const QVariant & a, const QVariant & b );
-bool lessThan( const QVariant & a, const QVariant & b );
-bool convert( const QVariant & from, QVariant & to );
-bool canConvert( const QVariant & from, const QVariant & to );
-
 } // namespace Type
 } // namespace LH
 

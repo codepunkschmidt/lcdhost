@@ -36,8 +36,7 @@ HEADERS = \
     LH/Lib6_LayoutClass.h \
     LH/Lib6_LayoutItem.h \
     LH/Type_Data.h \
-    LH/Type_Meta.h \
-    LH/Type_Variant.h
+    LH/Type_Meta.h
 
 SOURCES = \
     LH/Event_Base.cpp \
@@ -53,6 +52,5 @@ SOURCES = \
     LH/Lib6_Setup.cpp \
     LH/Lib6_LayoutClass.cpp \
     LH/Lib6_LayoutItem.cpp \
-    LH/Type_Data.cpp \
-    LH/Type_Variant.cpp
+    LH/Type_Data.cpp
 

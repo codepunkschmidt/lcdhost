@@ -35,7 +35,6 @@
 #define LH_TYPE_MAP_H
 
 #include <LH/Type.h>
-#include <LH/Type_Info.h>
 #include <QMetaType>
 
 namespace LH {
@@ -103,20 +102,20 @@ namespace Type {
     LH_TYPE_PAIR(QWidget*, WidgetStar) \
     LH_TYPE_PAIR(QVariant, Variant)
 
-template < typename SELFTYPE, typename DATATYPE, template < typename, typename > class METHOD >
-static inline bool map( SELFTYPE & self, int type, DATATYPE * data )
+template < typename SELFTYPE, typename DATATYPE, template <typename> class Method >
+bool type_switch( SELFTYPE * self, int t, DATATYPE * other )
 {
-    switch( type )
-    {
 #define LH_TYPE_PAIR( OTHERTYPE, NAME ) \
     case QMetaTypeId2< OTHERTYPE >::MetaType : \
-        return METHOD< SELFTYPE, OTHERTYPE >::call( self, (OTHERTYPE*) data );
-    LH_TYPE_MAP
-#undef LH_TYPE_PAIR
-    default: return false;
+        return Method< OTHERTYPE >::call( \
+            static_cast<typename Method< OTHERTYPE >::Self *>(self), \
+            static_cast<typename Method< OTHERTYPE >::Other *>(other) );
+    switch( t )
+    {
+        LH_TYPE_MAP
+        default: return false;
     }
-    /* not reached */
-    return false;
+#undef LH_TYPE_PAIR
 }
 
 } // namespace Type

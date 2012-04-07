@@ -89,14 +89,29 @@ bool Data::lessThan( int typeId1, const void * p1, int typeId2, const void * p2 
 bool Data::convert( int fromTypeId, const void * p, int toTypeId, void * v )
 {
     const Data * mt = lh_first_info_;
+    bool found = false;
     while( mt )
     {
-        if( fromTypeId == mt->typeId() && mt->canConvertTo( toTypeId ) )
-            return mt->convertTo( p, toTypeId, v );
+        if( fromTypeId == mt->typeId() )
+        {
+            found = true;
+            if( mt->canConvertTo( toTypeId ) )
+            {
+                return mt->convertTo( p, toTypeId, v );
+            }
+            if( mt->canCastTo( toTypeId ) )
+            {
+                return mt->castTo( p, toTypeId, v );
+            }
+        }
         if( toTypeId == mt->typeId() && mt->canConvertFrom( fromTypeId ) )
+        {
+            found = true;
             return mt->convertFrom( v, fromTypeId, p );
+        }
         mt = mt->next_;
     }
+    Q_ASSERT( found );
     return false;
 }
 
@@ -105,8 +120,12 @@ bool Data::canConvert( int fromTypeId, int toTypeId )
     const Data * mt = lh_first_info_;
     while( mt )
     {
-        if( fromTypeId == mt->typeId_ && mt->canConvertTo( toTypeId ) ) return true;
-        if( toTypeId == mt->typeId_ && mt->canConvertFrom( fromTypeId ) ) return true;
+        if( fromTypeId == mt->typeId() )
+        {
+            if( mt->canConvertTo( toTypeId ) ) return true;
+            if( mt->canCastTo( toTypeId ) ) return true;
+        }
+        if( toTypeId == mt->typeId() && mt->canConvertFrom( fromTypeId ) ) return true;
         mt = mt->next_;
     }
     return false;
@@ -114,13 +133,15 @@ bool Data::canConvert( int fromTypeId, int toTypeId )
 
 Data::Data(int typeId,
            equals_fn equals, lessThan_fn lessThan,
-           convertTo_fn convertTo, convertFrom_fn convertFrom,
-           canConvertTo_fn canConvertTo, canConvertFrom_fn canConvertFrom ) :
+           castTo_fn castTo, convertTo_fn convertTo, convertFrom_fn convertFrom,
+           canCastTo_fn canCastTo, canConvertTo_fn canConvertTo, canConvertFrom_fn canConvertFrom ) :
     typeId_( lh_lock_and_filter( typeId ) ),
     equals_( equals ),
     lessThan_( lessThan ),
+    castTo_( castTo ),
     convertTo_( convertTo ),
     convertFrom_( convertFrom ),
+    canCastTo_( canCastTo ),
     canConvertTo_( canConvertTo ),
     canConvertFrom_( canConvertFrom ),
     next_( typeId_ ? lh_first_info_ : 0 )

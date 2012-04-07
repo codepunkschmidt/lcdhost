@@ -38,7 +38,8 @@ HEADERS = \
     LH/Lib6_LayoutItem.h \
     LH/Type_Data.h \
     LH/Type_Meta.h \
-    LH/Type_Variant.h
+    LH/Type_Variant.h \
+    LH/Type_Callback.h
 
 SOURCES = \
     LH/Event_Base.cpp \

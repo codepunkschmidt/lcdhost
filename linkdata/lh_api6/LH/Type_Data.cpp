@@ -54,20 +54,22 @@ bool lessThan( const QVariant & a, const QVariant & b )
 bool convert( const QVariant & from, QVariant & to )
 {
     const QVariant::Type toType = (QVariant::Type) to.userType();
+    if( Data::convert(
+                from.userType(), from.constData(),
+                toType, const_cast<void*>(to.constData()) ) )
+        return true;
     if( from.canConvert( toType ) )
     {
         to.setValue( from );
         return to.convert( toType );
     }
-    return Data::convert(
-                from.userType(), from.constData(),
-                toType, const_cast<void*>(to.constData()) );
+    return false;
 }
 
-bool canConvert( const QVariant & from, const QVariant & to )
+bool canConvert( const QVariant & from, int toType )
 {
-    if( from.canConvert( (QVariant::Type) to.userType() ) ) return true;
-    return Data::canConvert( from.userType(), to.userType() );
+    return from.canConvert( (QVariant::Type) toType ) ||
+        Data::canConvert( from.userType(), toType );
 }
 
 static QMutex lh_type_data_mutex_;

@@ -45,7 +45,7 @@ template <typename T> class Meta;
 bool equals( const QVariant & a, const QVariant & b );
 bool lessThan( const QVariant & a, const QVariant & b );
 bool convert( const QVariant & from, QVariant & to );
-bool canConvert( const QVariant & from, const QVariant & to );
+bool canConvert( const QVariant & from, int toType );
 
 } // namespace Type
 } // namespace LH

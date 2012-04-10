@@ -54,16 +54,14 @@ bool lessThan( const QVariant & a, const QVariant & b )
 bool convert( const QVariant & from, QVariant & to )
 {
     const QVariant::Type toType = (QVariant::Type) to.userType();
-    if( Data::convert(
-                from.userType(), from.constData(),
-                toType, const_cast<void*>(to.constData()) ) )
-        return true;
     if( from.canConvert( toType ) )
     {
         to.setValue( from );
         return to.convert( toType );
     }
-    return false;
+    return Data::convert(
+                from.userType(), from.constData(),
+                toType, const_cast<void*>(to.constData()) );
 }
 
 bool canConvert( const QVariant & from, int toType )
@@ -145,7 +143,6 @@ bool Data::convert( int fromTypeId, const void * p, int toTypeId, void * v )
         }
         mt = mt->next_;
     }
-    Q_ASSERT( found );
     return false;
 }
 

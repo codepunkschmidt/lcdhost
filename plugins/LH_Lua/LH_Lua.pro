@@ -21,20 +21,17 @@ HEADERS += \
     LH_LuaInstance.h
 
 
-macx {
-    # Uglyhack until Qt fixes CGFontRef export: http://bugreports.qt.nokia.com/browse/QTBUG-17890
-    QTBASE = $$replace(QMAKE_QMAKE,/gcc/bin/qmake,/../../..)
-    !exists( $$QTBASE/QtSources ): error(QTBASE is not correctly set or Qt sources not installed)
-    QTSRC = $$quote($$QTBASE/QtSources/$$QT_VERSION/src)
-    !exists( $$QTSRC/corelib ): error(QTSRC is not correctly set or Qt sources not installed)
-    INCLUDEPATH += \
-        $$QTSRC/3rdparty/harfbuzz/src \
-        $$QTSRC/gui/text \
-        $$QTSRC/corelib/kernel \
-        $$QTSRC/corelib/tools \
-        $$QTSRC/gui/painting \
-        $$QTSRC/gui/kernel
-}
+# macx {
+#     # Uglyhack until Qt fixes CGFontRef export: http://bugreports.qt.nokia.com/browse/QTBUG-17890
+#     QTBASE = $$replace(QMAKE_QMAKE,/gcc/bin/qmake,/../../..)
+#     !exists( $$QTBASE/QtSources ): error(QTBASE is not correctly set or Qt sources not installed)
+#     QTSRC = $$quote($$QTBASE/QtSources/$$QT_VERSION/src)
+#     !exists( $$QTSRC/corelib ): error(QTSRC is not correctly set or Qt sources not installed)
+#     INCLUDEPATH += \
+#        $$QTSRC/3rdparty/harfbuzz/src $$QTSRC/gui/text \
+#        $$QTSRC/corelib/kernel $$QTSRC/corelib/tools \
+#        $$QTSRC/gui/painting $$QTSRC/gui/kernel
+#}
 
 DEFINES += LUA_STATIC GD_FREETYPE GD_PNG GD_GIF NONDLL HAVE_LIBZ HAVE_LIBPNG HAVE_LIBFREETYPE HAVE_FT2BUILD_H
 

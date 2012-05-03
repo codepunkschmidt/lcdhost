@@ -114,18 +114,19 @@ QImage *LH_Rectangle::render_qimage( int w, int h )
         else
             painter.setBrush( bgcolor1() );
 
+#if 0
         // There's a bug in Qt 4.5.3 which makes drawRoundedRect fail
         // in the upper-left quadrant. That quadrant becomes too 'small'
         // compared to the others. The simple workaround is to use a
         // QPainterPath with 'addRoundedRect' and then just draw
         // that path instead.
         // see http://bugreports.qt.nokia.com/browse/QTBUG-6073
-
-        // painter.drawRoundedRect( rect, rounding, rounding, Qt::AbsoluteSize );
-
         QPainterPath path;
         path.addRoundedRect( rect, rounding, rounding, Qt::AbsoluteSize );
         painter.drawPath( path );
+#else
+        painter.drawRoundedRect( rect, rounding, rounding, Qt::AbsoluteSize );
+#endif
 
         rounding += penpixels;
         qreal dx = (rect.left() + 0.31 * rounding);

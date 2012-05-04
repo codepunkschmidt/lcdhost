@@ -1,6 +1,6 @@
 TARGET = LH_Logic
 TEMPLATE = lib
-CONFIG  += qaxcontainer
+# CONFIG  += qaxcontainer
 QT += network xml
 DEFINES += LH_LOGIC_LIBRARY
 DEFINES += VERSION=1.00

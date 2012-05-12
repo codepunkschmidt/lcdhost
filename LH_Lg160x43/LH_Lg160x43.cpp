@@ -34,6 +34,8 @@
 
 #include <QFile>
 #include <QDebug>
+#include <QBasicTimer>
+#include <QTime>
 
 #ifdef Q_WS_WIN
 #include <windows.h>
@@ -75,7 +77,7 @@ const char *LH_Lg160x43::userInit()
         FindWindowA( "QWidget", "LCore" ) )
         return "Logitech drivers are loaded";
 #endif
-    scan();
+    timer_.start( 2000, this );
     return NULL;
 }
 

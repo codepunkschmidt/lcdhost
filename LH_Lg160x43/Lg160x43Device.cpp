@@ -114,8 +114,6 @@ const char* Lg160x43Device::render_qimage(QImage *img)
     retv = hid_write( hiddev_, buffer, sizeof(buffer) );
     if( retv != sizeof(buffer) )
     {
-        qDebug() << "Lg160x43Device:" << retv << "bytes written of" << sizeof(buffer);
-        // handle error
         offline_ = true;
         return "hid_write() error";
     }

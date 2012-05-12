@@ -60,10 +60,22 @@ WebKitServerWindow::WebKitServerWindow(QWidget *parent) :
 WebKitServerWindow::~WebKitServerWindow()
 {
     QSettings settings;
-    settings.setValue("heartrate",heart_->rate);
-    heart_->alive = false;
-    while( !heart_->wait(1000) )
-        qCritical() << "WebKitServer waiting for heart to stop";
+    if( heart_ )
+    {
+        settings.setValue("heartrate",heart_->rate);
+        heart_->alive = false;
+        for( int waited = 0; heart_->isRunning(); ++ waited )
+        {
+            QCoreApplication::processEvents();
+            if( ! heart_->wait(100) && waited > 50 )
+            {
+                waited = 40;
+                qWarning( "WebKitServer: waiting for heartbeat thread to stop" );
+            }
+        }
+        delete heart_;
+        heart_ = 0;
+    }
     if( manager_ )
     {
         delete manager_;

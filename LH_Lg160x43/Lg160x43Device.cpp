@@ -19,8 +19,16 @@ Lg160x43Device::Lg160x43Device( const struct hid_device_info *di, LH_QtPlugin *d
     hiddev_ = 0;
     path_ = di->path;
     offline_ = false;
-
-    setDevid(di->path);
+    char buf[64];
+    qsnprintf( buf, sizeof(buf), "Lg160x43-%04x:%04x:%04x",
+               di->vendor_id, di->product_id, di->release_number );
+    QByteArray dev_id( buf );
+    if( di->serial_number && *(di->serial_number) )
+    {
+        dev_id.append( '-' );
+        dev_id.append( QString::fromWCharArray(di->serial_number).toLatin1() );
+    }
+    setDevid( dev_id );
     setName( QString::fromWCharArray(di->product_string) );
     setSize(160,43);
     setDepth(1);

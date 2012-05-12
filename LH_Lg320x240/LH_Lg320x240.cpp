@@ -85,12 +85,16 @@ LH_Lg320x240::~LH_Lg320x240()
 {
     if( g19thread_ )
     {
-        while( g19thread_->isRunning() )
+        g19thread_->timeToDie();
+        g19thread_->quit();
+        for( int waited = 0; g19thread_ && g19thread_->isRunning(); ++ waited )
         {
-            g19thread_->timeToDie();
             QCoreApplication::processEvents();
-            if( g19thread_->wait(1000) ) break;
-            qWarning() << "LH_Lg320x240: worker thread not responding";
+            if( ! g19thread_->wait(100) && waited > 50 )
+            {
+                waited = 40;
+                qWarning( "LH_Lg320x240: worker thread not responding" );
+            }
         }
         delete g19thread_;
         g19thread_ = 0;

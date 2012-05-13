@@ -32,11 +32,11 @@ void LogitechG19Thread::run()
                 int device_count = libusb_get_device_list( ctx, &device_list );
                 if( device_list )
                 {
-                    for( int i = 0; i<device_count; ++i )
+                    for( int i = 0; g19dev == 0 && !time_to_die_ && i < device_count; ++i )
                     {
-                        if( g19dev == 0 && !time_to_die_ && !libusb_get_device_descriptor( device_list[i], &dd ) )
+                        if( !libusb_get_device_descriptor( device_list[i], &dd ) )
                         {
-                            if( dd.idVendor == 0x046d && dd.idProduct == 0x046d ) // Logitech G19
+                            if( dd.idVendor == 0x046d && dd.idProduct == 0xc229 ) // Logitech G19
                                 g19dev = device_list[i];
                         }
                         if( g19dev != device_list[i] )
@@ -48,14 +48,13 @@ void LogitechG19Thread::run()
 
                 if( g19dev )
                 {
-                    LogitechG19 *the_g19 = new LogitechG19(g19dev,&dd,qobject_cast<LH_QtObject*>(parent()));
+                    struct timeval tv = { 0, 1000*100 };
+                    LogitechG19 *the_g19 = new LogitechG19( ctx, g19dev, &dd );
                     g19_ = the_g19;
-                    g19_->setDevid("G19");
-                    // poll the LCD keys
-                    while( !time_to_die_ && g19_ )
+                    while( !time_to_die_ && g19_ && ! g19_->offline() )
                     {
-                        g19_->buttons();
-                        msleep(100);
+                        if( libusb_handle_events_timeout( ctx, & tv ) )
+                            break;
                     }
                     g19_ = 0;
                     delete the_g19;

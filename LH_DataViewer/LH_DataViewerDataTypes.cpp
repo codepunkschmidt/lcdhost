@@ -298,21 +298,6 @@ dataNode::~dataNode()
     delete mutex;
 }
 
-dataNode *dataNode::parentNode()
-{
-    return parentNode_;
-}
-
-QString dataNode::value()
-{
-    return value_;
-}
-
-QString dataNode::name()
-{
-    return definition_.name;
-}
-
 itemDefinition dataNode::definition()
 {
     return definition_;
@@ -516,6 +501,7 @@ bool dataNode::openProcess(QString exeFile, QString targetVersion, QString &feed
     }
 #else
     Q_UNUSED(exeFile);
+    Q_UNUSED(targetVersion);
     feedbackMessage = "Direct memory access is unsupported on this operating system";
     return false;
 #endif
@@ -540,14 +526,6 @@ bool dataNode::getModuleAddress(QString moduleName, uint &moduleAddress)
         return true;
     }
     return false;
-}
-
-HANDLE dataNode::processHandle()
-{
-    if(parentNode_)
-        return parentNode()->processHandle();
-    else
-        return processHandle_;
 }
 
 uint dataNode::memoryAddress()

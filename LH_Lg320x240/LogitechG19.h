@@ -22,7 +22,7 @@ class LogitechG19 : public LH_QtDevice
     volatile quint16 new_buttons_;
 
 public:
-    static void g19_button_cb( struct libusb_transfer * transfer );
+    static void LIBUSB_CALL g19_button_cb( struct libusb_transfer * transfer );
     LogitechG19( libusb_context *ctx, libusb_device *usbdev, libusb_device_descriptor *dd );
     ~LogitechG19();
 

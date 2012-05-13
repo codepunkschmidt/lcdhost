@@ -4,7 +4,7 @@
 #include <QWaitCondition>
 #include "LogitechG19.h"
 
-void LogitechG19::g19_button_cb( struct libusb_transfer * transfer )
+void LIBUSB_CALL LogitechG19::g19_button_cb( struct libusb_transfer * transfer )
 {
     if( transfer && transfer->user_data )
     {

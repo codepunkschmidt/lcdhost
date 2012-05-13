@@ -45,6 +45,8 @@
 class LH_QtSetupItem : public QObject
 {
     Q_OBJECT
+
+    static bool warned_old_link_style_;
     QByteArray name_array_;
     int order_;
     QByteArray help_;

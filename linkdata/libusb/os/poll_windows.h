@@ -26,11 +26,6 @@
 #pragma warning(disable:4127) // conditional expression is constant
 #endif
 
-// Uncomment to have poll return with EINTR as soon as a new transfer (fd) is added
-// This should result in a LIBUSB_ERROR_INTERRUPTED being returned by libusb calls,
-// which should give the app an opportunity to resubmit a new fd set.
-//#define DYNAMIC_FDS
-
 // Handle synchronous completion through the overlapped structure
 #if !defined(STATUS_REPARSE)	// reuse the REPARSE status code
 #define STATUS_REPARSE ((LONG)0x00000104L)
@@ -38,7 +33,7 @@
 #define STATUS_COMPLETED_SYNCHRONOUSLY	STATUS_REPARSE
 #define HasOverlappedIoCompletedSync(lpOverlapped)	(((DWORD)(lpOverlapped)->Internal) == STATUS_COMPLETED_SYNCHRONOUSLY)
 
-#define DUMMY_HANDLE ((HANDLE)(LONG)-2)
+#define DUMMY_HANDLE ((HANDLE)(LONG_PTR)-2)
 
 enum windows_version {
 	WINDOWS_UNSUPPORTED,

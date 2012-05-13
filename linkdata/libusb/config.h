@@ -12,3 +12,5 @@
 
 /* type of second poll() argument */
 #define POLL_NFDS_TYPE unsigned int
+
+#define HAVE_GETTIMEOFDAY

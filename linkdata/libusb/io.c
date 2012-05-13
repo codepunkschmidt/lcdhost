@@ -1353,8 +1353,11 @@ int API_EXPORTED libusb_cancel_transfer(struct libusb_transfer *transfer)
 	usbi_mutex_lock(&itransfer->lock);
 	r = usbi_backend->cancel_transfer(itransfer);
 	if (r < 0) {
-		usbi_err(TRANSFER_CTX(transfer),
-			"cancel transfer failed error %d", r);
+		if (r != LIBUSB_ERROR_NOT_FOUND)
+			usbi_err(TRANSFER_CTX(transfer),
+				"cancel transfer failed error %d", r);
+		else
+			usbi_dbg("cancel transfer failed error %d", r);
 
 		if (r == LIBUSB_ERROR_NO_DEVICE)
 			itransfer->flags |= USBI_TRANSFER_DEVICE_DISAPPEARED;
@@ -1476,6 +1479,7 @@ int usbi_handle_transfer_completion(struct usbi_transfer *itransfer,
 	flags = transfer->flags;
 	transfer->status = status;
 	transfer->actual_length = itransfer->transferred;
+	usbi_dbg("transfer %p has callback %p", transfer, transfer->callback);
 	if (transfer->callback)
 		transfer->callback(transfer);
 	/* transfer might have been freed by the above call, do not use from

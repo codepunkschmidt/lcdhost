@@ -36,6 +36,7 @@
 #include <QDebug>
 
 bool LH_QtSetupItem::warned_old_link_style_ = false;
+bool LH_QtSetupItem::warned_link_nosave_old_ = false;
 
 LH_QtSetupItem::LH_QtSetupItem( LH_QtObject *parent, QString name, lh_setup_type type, int flags ) : QObject( parent )
 {
@@ -72,6 +73,18 @@ void LH_QtSetupItem::setup_input( int flags, int value )
 
 void LH_QtSetupItem::setFlag( int f, bool state )
 {
+    if( f & LH_FLAG_NOSAVE )
+    {
+        if( ! warned_link_nosave_old_ )
+        {
+            warned_link_nosave_old_ = true;
+            qWarning() << parent()->metaObject()->className()
+                       << objectName()
+                       << "uses LH_FLAG_NOSAVE, assuming LH_FLAG_NOSAVE_DATA";
+        }
+        f &= ~LH_FLAG_NOSAVE;
+        f |= LH_FLAG_NOSAVE_DATA;
+    }
     if( state )
     {
         if( (item_.flags & f) == f ) return;
@@ -104,8 +117,6 @@ void LH_QtSetupItem::setLink( QString s )
                        << "using old link style"
                        << s;
         }
-        if( flags() & LH_FLAG_NOSAVE_DATA )
-            setFlag( LH_FLAG_NOSAVE_LINK, true );
         if( s.startsWith('=') ) setSubscribePath( s.right(s.length()-1) );
         else setPublishPath( s.right(s.length()-1) );
     }

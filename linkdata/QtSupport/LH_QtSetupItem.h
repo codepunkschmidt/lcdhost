@@ -47,6 +47,7 @@ class LH_QtSetupItem : public QObject
     Q_OBJECT
 
     static bool warned_old_link_style_;
+    static bool warned_link_nosave_old_;
     QByteArray name_array_;
     int order_;
     QByteArray help_;
@@ -111,7 +112,7 @@ public slots:
     void setHidden( bool b ) { setFlag( LH_FLAG_HIDDEN, b ); }
     void setReadonly( bool b ) { setFlag( LH_FLAG_READONLY, b ); }
     void setWriteable( bool b ) { setFlag( LH_FLAG_READONLY, !b ); }
-    void setSaving( bool b ) { setFlag( LH_FLAG_NOSAVE, !b ); }
+    void setSaving( bool b ) { setFlag( LH_FLAG_NOSAVE_DATA|LH_FLAG_NOSAVE_LINK, !b ); }
     void setSavingData( bool b ) { setFlag( LH_FLAG_NOSAVE_DATA, !b ); }
     void setSavingLink( bool b ) { setFlag( LH_FLAG_NOSAVE_LINK, !b ); }
 

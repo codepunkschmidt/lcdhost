@@ -50,37 +50,29 @@ QString dataNode::getProcessValue() {
     return "??";
 }
 
-bool dataNode::getProcessValue(uint address, QList<uint> offsets, void *dest, SIZE_T len)
+bool dataNode::getProcessValue(uint address, QList<uint> offsets, void *dest, size_t len)
 {
-    SIZE_T r;
-    HANDLE hProcess = processHandle(); //get the handle from the root node
-    if(!hProcess)
-        return false;
-    else
+    SIZE_T r = 0;
+    if(offsets.count()>0)
     {
-        if(offsets.count()>0)
+        //int offsetCount = sizeof(offsets)/sizeof(uint);
+        for(int i = 0; i<offsets.count(); i++)
         {
-            //int offsetCount = sizeof(offsets)/sizeof(uint);
-            for(int i = 0; i<offsets.count(); i++)
-            {
-                if(!getProcessValue(address, QList<uint>(), &address, 4))
-                   return false;
-                address += offsets.at(i);
-            }
+            if(!getProcessValue(address, QList<uint>(), &address, 4))
+               return false;
+            address += offsets.at(i);
         }
-        if(len==0) len = sizeof(typeof(dest));
-        BOOL ok=ReadProcessMemory(hProcess, (BYTE *) address, dest, len, &r);
-        return (ok && (r == len));
     }
+    if( len == 0 ) len = sizeof(dest);
+#ifdef Q_WS_WIN
+    ReadProcessMemory( processHandle(), (BYTE *) address, dest, len, &r );
+#endif
+    return (r == len);
 }
 
 bool dataNode::getProcessValue(uint address, QList<uint> offsets, QString *dest, bool unicode)
 {
-    SIZE_T r;
-    HANDLE hProcess = processHandle(); //get the handle from the root node
-    if(!hProcess)
-        return false;
-    else
+    if( HANDLE hProcess = processHandle() )
     {
         if(offsets.count()>0)
         {
@@ -92,30 +84,31 @@ bool dataNode::getProcessValue(uint address, QList<uint> offsets, QString *dest,
             }
         }
 
-        BOOL ok = false;
-        for(int i=0; i<MAX_STRING; i++)
+        QByteArray srcdata;
+        while( srcdata.size() < MAX_STRING )
         {
-            char chr;
-            ok=ReadProcessMemory(hProcess, (BYTE *) address, &chr, (SIZE_T)1, &r);
-            if(r != (SIZE_T)1)
-                ok = false;
-            if(ok && chr!='\0')
-            {
-                QString newChar;
-                if(unicode) newChar = QString::fromUtf8(&chr,1);
-                else newChar = QString::fromAscii(&chr,1);
-                (*dest).append(newChar);
-            }
-            else
-                break;
-            address++;
+            char ch = '\0';
+#ifdef Q_WS_WIN
+            if( ! ReadProcessMemory(hProcess, (BYTE *) address ++, &ch, 1, 0) )
+                return false;
+#else
+            Q_UNUSED( hProcess );
+#endif
+            if( ch == '\0' ) break;
+            srcdata.append( ch );
         }
-        return ok;
+        if( dest )
+        {
+            if( unicode ) dest->append( QString::fromUtf8( srcdata ) );
+            else dest->append( QString::fromLocal8Bit( srcdata ) );
+        }
     }
+    return false;
 }
 
-bool dataNode::validatePID(DWORD pid, QString exeFile)
+bool dataNode::validatePID( DWORD pid, QString exeFile )
 {
+#ifdef Q_WS_WIN
     PROCESSENTRY32 processInfo;
     processInfo.dwSize = sizeof(processInfo);
 
@@ -135,11 +128,16 @@ bool dataNode::validatePID(DWORD pid, QString exeFile)
     }
 
     CloseHandle(processesSnapshot);
+#else
+    Q_UNUSED( pid );
+    Q_UNUSED( exeFile );
+#endif
     return false;
 }
 
 DWORD dataNode::getProcessId(QString exeFile)
 {
+#ifdef Q_WS_WIN
     PROCESSENTRY32 processInfo;
     processInfo.dwSize = sizeof(processInfo);
 
@@ -159,11 +157,15 @@ DWORD dataNode::getProcessId(QString exeFile)
     }
 
     CloseHandle(processesSnapshot);
+#else
+    Q_UNUSED( exeFile );
+#endif
     return 0;
 }
 
-void dataNode::indexModules(DWORD pid)
+void dataNode::indexModules( DWORD pid )
 {
+#ifdef Q_WS_WIN
     MODULEENTRY32 moduleInfo;
     moduleInfo.dwSize = sizeof(moduleInfo);
 
@@ -185,6 +187,9 @@ void dataNode::indexModules(DWORD pid)
     }
 
     CloseHandle(modulesSnapshot);
+#else
+    Q_UNUSED( pid );
+#endif
 }
 
 QString dataNode::getProcessVersion(QString exeFile)
@@ -233,6 +238,7 @@ QString dataNode::getProcessVersion(QString exeFile)
     CloseHandle(moduleSnapshot);
     return version;
 #else
+    Q_UNUSED( exeFile );
     return "";
 #endif
 }
@@ -510,7 +516,7 @@ bool dataNode::openProcess(QString exeFile, QString targetVersion, QString &feed
     }
 #else
     Q_UNUSED(exeFile);
-    feedbackMessage = "Direct memory access is unsupported on this operating system"
+    feedbackMessage = "Direct memory access is unsupported on this operating system";
     return false;
 #endif
 }
@@ -536,7 +542,6 @@ bool dataNode::getModuleAddress(QString moduleName, uint &moduleAddress)
     return false;
 }
 
-#ifdef Q_WS_WIN
 HANDLE dataNode::processHandle()
 {
     if(parentNode_)
@@ -547,8 +552,9 @@ HANDLE dataNode::processHandle()
 
 uint dataNode::memoryAddress()
 {
+    uint addressVal = 0;
+#ifdef Q_WS_WIN
     //return definition_.memory;
-    uint addressVal;
     if(definition_.startAddress.contains("+"))
     {
         uint moduleAddress;
@@ -561,7 +567,7 @@ uint dataNode::memoryAddress()
             addressVal = 0;
     } else
         sscanf(definition_.startAddress.toAscii().data(), "%x", &addressVal);
+#endif
     return addressVal;
 }
-#endif
 

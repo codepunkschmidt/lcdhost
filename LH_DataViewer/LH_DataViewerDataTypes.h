@@ -16,7 +16,9 @@
 #include <Psapi.h>
 #include <tlhelp32.h>
 #else
-    typedef unsigned long DWORD;
+    typedef size_t SIZE_T;
+    typedef void* HANDLE;
+    typedef quint32 DWORD;
 #endif
 
 extern QHash<QString, uint> modules_;
@@ -104,13 +106,12 @@ class dataNode
 
     QHash<QString, int> cursorPositions_;
 
-#ifdef Q_WS_WIN
     HANDLE processHandle_;
     DWORD processID_;
 
     QString getProcessValue();
 
-    bool getProcessValue(uint address, QList<uint> offsets, void *dest, SIZE_T len);
+    bool getProcessValue(uint address, QList<uint> offsets, void *dest, size_t len);
 
     bool getProcessValue(uint address, QList<uint> offsets, QString *dest, bool unicode = true);
 
@@ -121,8 +122,6 @@ class dataNode
     void indexModules(DWORD pid);
 
     QString getProcessVersion(QString exeFile);
-
-#endif
 
 protected:
     QMutex* mutex;
@@ -180,14 +179,10 @@ public:
 
     QList<uint> memoryOffsets();
 
-
     bool getModuleAddress(QString moduleName, uint &moduleAddress);
 
-#ifdef Q_WS_WIN
     HANDLE processHandle();
-
     uint memoryAddress();
-#endif
 };
 
 

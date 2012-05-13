@@ -140,11 +140,11 @@ public:
 
     ~dataNode();
 
-    dataNode *parentNode();
+    dataNode *parentNode() const { return parentNode_; }
 
-    QString value();
+    QString value() const { return value_; }
 
-    QString name();
+    QString name() const { return definition_.name; }
 
     itemDefinition definition();
 
@@ -181,7 +181,13 @@ public:
 
     bool getModuleAddress(QString moduleName, uint &moduleAddress);
 
-    HANDLE processHandle();
+    HANDLE processHandle() const
+    {
+        if( parentNode() )
+            return parentNode()->processHandle();
+        return processHandle_;
+    }
+
     uint memoryAddress();
 };
 

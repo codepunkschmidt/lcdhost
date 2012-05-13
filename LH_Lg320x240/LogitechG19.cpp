@@ -85,13 +85,11 @@ LogitechG19::LogitechG19( libusb_context *ctx, libusb_device *usbdev, libusb_dev
 #else
     setAutoselect(true);
 #endif
-    arrive();
 }
 
 LogitechG19::~LogitechG19()
 {
     close();
-    leave();
 }
 
 #define ASSERT_USB(x) if( retv == 0 ) { retv = x; if( retv != 0 ) { qDebug() << #x << libusb_error_name( retv ); } }
@@ -99,23 +97,23 @@ LogitechG19::~LogitechG19()
 const char* LogitechG19::open()
 {
     int retv = 0;
-    last_buttons_ = new_buttons_ = 0;
+    const char * errstr = 0;
+
+    Q_ASSERT( button_transfer_ == 0 );
+    Q_ASSERT( button_completed_ == 1 );
     Q_ASSERT( lcdhandle_ == 0 );
 
+    last_buttons_ = new_buttons_ = 0;
+    button_transfer_ = 0;
+    button_completed_ = 1;
+
     ASSERT_USB( libusb_open(usbdev_, &lcdhandle_) );
-    ASSERT_USB( libusb_set_configuration( lcdhandle_, 1 ) );
-    ASSERT_USB( libusb_claim_interface( lcdhandle_, lcd_if_number_ ) );
-    ASSERT_USB( libusb_claim_interface( lcdhandle_, menukeys_if_number_ ) );
-
-    if( retv != 0 )
+    if( lcdhandle_ )
     {
-        offline_ = true;
-        return libusb_error_name( retv );
-    }
-
-    offline_ = false;
-    if( button_transfer_ == 0 )
-    {
+        ASSERT_USB( libusb_set_configuration( lcdhandle_, 1 ) );
+        ASSERT_USB( libusb_claim_interface( lcdhandle_, lcd_if_number_ ) );
+        ASSERT_USB( libusb_claim_interface( lcdhandle_, menukeys_if_number_ ) );
+        offline_ = false;
         button_transfer_ = libusb_alloc_transfer( 0 );
         libusb_fill_interrupt_transfer(
                     button_transfer_,
@@ -126,13 +124,16 @@ const char* LogitechG19::open()
                     g19_button_cb,
                     this, 60000
                     );
+        libusb_submit_transfer( button_transfer_ );
+        button_completed_ = 0;
+        return NULL;
     }
-    libusb_submit_transfer( button_transfer_ );
-    button_completed_ = 0;
 
-    return NULL;
-
-    // libusb_detach_kernel_driver( usbhandle_, menukeys_if_number_ );
+    offline_ = true;
+    if( retv ) errstr = libusb_error_name( retv );
+    if( errstr == 0 || !*errstr ) errstr = "libusb_open() returned NULL handle";
+    qCritical( "LogitechG19::open() failed: '%s'", errstr );
+    return errstr;
 }
 
 const char* LogitechG19::close()

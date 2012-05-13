@@ -35,6 +35,8 @@
 #include "LH_QtSetupItem.h"
 #include <QDebug>
 
+bool LH_QtSetupItem::warned_old_link_style_ = false;
+
 LH_QtSetupItem::LH_QtSetupItem( LH_QtObject *parent, QString name, lh_setup_type type, int flags ) : QObject( parent )
 {
     Q_ASSERT( parent != NULL );
@@ -94,11 +96,14 @@ void LH_QtSetupItem::setLink( QString s )
 {
     if( s.startsWith('@') || s.startsWith('=') )
     {
-        qWarning() << parent()->metaObject()->className()
-                   << "setup item"
-                   << objectName()
-                   << "using old link style"
-                   << s;
+        if( ! warned_old_link_style_ )
+        {
+            warned_old_link_style_ = true;
+            qWarning() << parent()->metaObject()->className()
+                       << objectName()
+                       << "using old link style"
+                       << s;
+        }
         if( flags() & LH_FLAG_NOSAVE_DATA )
             setFlag( LH_FLAG_NOSAVE_LINK, true );
         if( s.startsWith('=') ) setSubscribePath( s.right(s.length()-1) );

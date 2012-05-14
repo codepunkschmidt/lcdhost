@@ -37,6 +37,7 @@
 
 #include <QtGlobal>
 #include <QObject>
+#include <QStringList>
 
 #include "LH_QtObject.h"
 
@@ -90,8 +91,14 @@ public:
 class LH_QtPlugin : public LH_QtObject
 {
     Q_OBJECT
+    lh_object_calltable objtable_;
+
 public:
+    LH_QtPlugin();
+    virtual ~LH_QtPlugin() {}
     virtual const lh_class **class_list();
+    const lh_object_calltable * objtable() { return & objtable_; }
+    int notify( int code, void *param );
 };
 
 /**

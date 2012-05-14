@@ -33,8 +33,11 @@
   */
 
 #include <QDebug>
+#include <QList>
+#include <QByteArray>
 #include "LH_QtObject.h"
 #include "LH_QtSetupItem.h"
+#include "LH_QtPlugin.h"
 
 LH_QtPlugin *LH_QtObject::plugin_ = 0;
 
@@ -115,6 +118,33 @@ LH_QtObject::LH_QtObject( LH_QtObject *parent ) : QObject( parent ), cb_(0), cb_
         cb_ = parent->cb_;
         state_ = parent->state_;
     }
+}
+
+void LH_QtObject::warnings( QByteArray text )
+{
+    static QList<QByteArray> list_;
+    if( text.isEmpty() )
+    {
+        if( ! list_.isEmpty() )
+        {
+            foreach( const QByteArray & s, list_ )
+                qWarning( "%s", s.constData() );
+            list_.clear();
+        }
+    }
+    else
+    {
+         QList<QByteArray>::iterator it = qLowerBound( list_.begin(), list_.end(), text );
+         if( it != list_.end() && (*it) == text ) return;
+         Q_ASSERT( ! list_.contains( text ) );
+         list_.insert( it, text );
+    }
+    return;
+}
+
+void LH_QtObject::warn( QByteArray s )
+{
+    warnings( s.prepend(": ").prepend( metaObject()->className() ) );
 }
 
 const char *LH_QtObject::init( lh_callback_t cb, int cb_id, const char *name, const lh_systemstate* state )

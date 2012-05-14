@@ -43,11 +43,9 @@ LH_SIGNATURE();
 */
 EXPORT const lh_object_calltable* lh_get_object_calltable( void *ref )
 {
-    static lh_object_calltable objtable;
-    Q_UNUSED(ref);
-    if( objtable.size != sizeof(lh_object_calltable) )
-        LH_QtObject::build_object_calltable( &objtable );
-    return &objtable;
+    if( LH_QtPlugin * p = reinterpret_cast<LH_QtPlugin *>( ref ) )
+        return p->objtable();
+    return 0;
 }
 
 const lh_class **LH_QtPlugin::class_list()
@@ -55,3 +53,13 @@ const lh_class **LH_QtPlugin::class_list()
     return LH_QtInstance::auto_class_list();
 }
 
+int LH_QtPlugin::notify( int code, void *param )
+{
+    if( ! code ) warnings();
+    return LH_QtObject::notify( code, param );
+}
+
+LH_QtPlugin::LH_QtPlugin() : LH_QtObject(0)
+{
+    LH_QtObject::build_object_calltable( & objtable_ );
+}

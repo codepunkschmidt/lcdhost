@@ -35,15 +35,13 @@
 #include "LH_QtSetupItem.h"
 #include <QDebug>
 
-bool LH_QtSetupItem::warned_old_link_style_ = false;
-bool LH_QtSetupItem::warned_link_nosave_old_ = false;
-
-LH_QtSetupItem::LH_QtSetupItem( LH_QtObject *parent, QString name, lh_setup_type type, int flags ) : QObject( parent )
+LH_QtSetupItem::LH_QtSetupItem( LH_QtObject *parent, QString name, lh_setup_type type, int flags ) :
+    QObject( parent ),
+    order_(0)
 {
     Q_ASSERT( parent != NULL );
     memset( &item_, 0, sizeof(item_) );
     setName(name);
-    order_ = 0;
     if( flags & LH_FLAG_FIRST ) order_ = -1;
     if( flags & LH_FLAG_LAST ) order_ = 1;
     item_.type = type;
@@ -75,14 +73,8 @@ void LH_QtSetupItem::setFlag( int f, bool state )
 {
     if( f & LH_FLAG_NOSAVE )
     {
-        if( ! warned_link_nosave_old_ )
-        {
-            warned_link_nosave_old_ = true;
-            qWarning() << parent()->metaObject()->className()
-                       << objectName()
-                       << "uses LH_FLAG_NOSAVE, assuming LH_FLAG_NOSAVE_DATA";
-        }
-        f &= ~LH_FLAG_NOSAVE;
+        warn( "uses LH_FLAG_NOSAVE, replacing with NOSAVE_DATA" );
+        f &= LH_FLAG_NOSAVE;
         f |= LH_FLAG_NOSAVE_DATA;
     }
     if( state )
@@ -105,18 +97,17 @@ void LH_QtSetupItem::setOrder( int n )
     order_ = n;
 }
 
+void LH_QtSetupItem::warn( QByteArray s )
+{
+    if( parent() ) parent()->warn( s.prepend(": ").prepend(name_array_) );
+    else qWarning() << objectName() << s;
+}
+
 void LH_QtSetupItem::setLink( QString s )
 {
     if( s.startsWith('@') || s.startsWith('=') )
     {
-        if( ! warned_old_link_style_ )
-        {
-            warned_old_link_style_ = true;
-            qWarning() << parent()->metaObject()->className()
-                       << objectName()
-                       << "using old link style"
-                       << s;
-        }
+        warn( "uses old link style" );
         if( s.startsWith('=') ) setSubscribePath( s.right(s.length()-1) );
         else setPublishPath( s.right(s.length()-1) );
     }

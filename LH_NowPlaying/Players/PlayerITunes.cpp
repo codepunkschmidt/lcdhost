@@ -30,8 +30,8 @@ CPlayer* CPlayerITunes::c_Player = NULL;
 **
 */
 CPlayerITunes::CEventHandler::CEventHandler(CPlayerITunes* player) :
-	m_Player(player),
-	m_RefCount(),
+    m_RefCount(0),
+    m_Player(player),
 	m_ConnectionPoint(),
 	m_ConnectionCookie()
 {

@@ -69,28 +69,30 @@ void LH_QtSetupItem::setup_input( int flags, int value )
     return;
 }
 
-void LH_QtSetupItem::setFlag( int f, bool state )
+void LH_QtSetupItem::setFlags( int f )
 {
-    if( f & LH_FLAG_NOSAVE )
+    if( item_.flags != f )
     {
-        warn( "uses LH_FLAG_NOSAVE, replacing with NOSAVE_DATA" );
-        f &= LH_FLAG_NOSAVE;
-        f |= LH_FLAG_NOSAVE_DATA;
+        item_.flags = f;
+        if( item_.flags & LH_FLAG_NOSAVE )
+        {
+            if( ! (item_.flags & LH_FLAG_NOSAVE_DATA) )
+            {
+                item_.flags |= LH_FLAG_NOSAVE_DATA;
+                warn( "LH_FLAG_NOSAVE: setting LH_FLAG_NOSAVE_DATA" );
+            }
+            if( ! (item_.flags & LH_FLAG_NOSAVE_LINK) )
+            {
+                if( item_.flags & LH_FLAG_HIDDEN )
+                {
+                    item_.flags |= LH_FLAG_NOSAVE_LINK;
+                    warn( "LH_FLAG_NOSAVE|LH_FLAG_HIDDEN: setting LH_FLAG_NOSAVE_LINK" );
+                }
+            }
+        }
+        refresh();
     }
-    if( state )
-    {
-        if( (item_.flags & f) == f ) return;
-        item_.flags |= f;
-    }
-    else
-    {
-        if( !(item_.flags & f) ) return;
-        item_.flags &= ~f;
-    }
-    parent()->callback(lh_cb_setup_refresh, item() );
-    return;
 }
-
 
 void LH_QtSetupItem::setOrder( int n )
 {

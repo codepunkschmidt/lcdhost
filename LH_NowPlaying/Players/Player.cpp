@@ -29,20 +29,20 @@
 */
 CPlayer::CPlayer() :
 	m_Initialized(false),
-	m_InstanceCount(),
-	m_UpdateCount(),
-	m_TrackCount(),
-	m_Measures(),
-	m_State(),
-	m_Shuffle(false),
-	m_Repeat(false),
-	m_Duration(),
-	m_Position(),
-	m_Rating(),
-	m_Volume(),
-    m_InternetThread(),
-    m_artworkCache(),
-    m_PlayerName()
+    m_InstanceCount(0),
+    m_UpdateCount(0),
+    m_TrackCount(0),
+    m_Measures(0),
+    m_State(PLAYER_STOPPED),
+    m_Duration(0),
+    m_Position(0),
+    m_Rating(0),
+    m_Volume(0),
+    m_Shuffle(false),
+    m_Repeat(false),
+    m_artworkCache(0),
+    m_PlayerName(),
+    m_InternetThread(0)
 {
 	// Get temporary file for cover art
 	WCHAR buffer[MAX_PATH];

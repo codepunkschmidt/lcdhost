@@ -62,12 +62,11 @@ public:
     virtual void setup_change();
     virtual void setup_input( int flags, int value );
 
-    void warn( QByteArray s );
     void refresh() { parent()->callback( lh_cb_setup_refresh, item() ); }
 
-    void setFlags( int f );
+    void setFlags( int f ) { if( item_.flags != f ) { item_.flags = f; refresh(); } }
     int flags() const { return item_.flags; }
-    void setFlag( int f, bool state ) { setFlags( state ? (flags()|f) : (flags()&(~f)) ); }
+    void setFlag( int f, bool state ); // set individual flag(s) on or off
     bool hasFlag( int f ) const { return (item_.flags & f) ? true : false; }
 
     void setName(QString s);

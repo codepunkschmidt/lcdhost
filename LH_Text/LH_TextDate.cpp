@@ -55,15 +55,9 @@ public:
                                "<li>yyyy-MM-dd dddd</li>"
                                "<li>MM/dd/yyyy</li>"
                                "<li>ddd MMM d yyyy</li>"
-                               "</ul>"
-                               "<p>Note that this also supports week numbers:</p>"
-                               "<ul>"
-                               "<li>w: week number, no leading 0</li>"
-                               "<li>ww: week number, leading 0</li>"
                                "</ul>");
         setup_text_->setName("Current date");
         setup_text_->setFlag(LH_FLAG_READONLY,true);
-
         return;
     }
 
@@ -84,13 +78,7 @@ public:
         {
             QDateTime now = QDateTime::currentDateTime();
             if( now.time().msec() > 500 ) now = now.addSecs(1);
-            QString dateText = now.toString( setup_format_->value() );
-
-            QString weekNo = QString::number(now.date().weekNumber());
-            dateText.replace("ww", (weekNo.length()==1? "0" : "") + weekNo);
-            dateText.replace("w", weekNo);
-
-            if( setText( dateText ) )
+            if( setText( now.toString( setup_format_->value() ) ) )
                 callback(lh_cb_render,NULL);
         }
         return LH_NOTE_SECOND | LH_Text::notify(n,p);

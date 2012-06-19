@@ -48,13 +48,13 @@ namespace LH {
 namespace Type {
 
 #define LH_TYPE_METHOD_TEST( NAME ) \
-    template <typename V> static char Test( SFINAE< T, Func, & V::NAME > * ); \
-    template <typename V> static int Test(...); \
+    template < typename V > static char Test( SFINAE< T, Func, & V::NAME > * ); \
+    template < typename V > static int Test(...); \
     static const bool value = sizeof( Test<T>(0) ) == sizeof(char); \
     static bool call( Self * self, Other * other ) { return call( self, other, Bool<value>() ); } \
     static bool call( Self *, Other *, Bool<false> ) { return false; }
 
-template <class T>
+template < class T >
 class Meta
 {
     static const Data typedata_;
@@ -170,7 +170,7 @@ public:
     template < template <typename> class Method, typename DATATYPE >
     static inline bool mapType( T * self, int t, DATATYPE * other )
     {
-    #define LH_TYPE_PAIR( OTHERTYPE, NAME ) \
+#define LH_TYPE_PAIR( OTHERTYPE, NAME ) \
         case QMetaTypeId2< OTHERTYPE >::MetaType : \
             return Method< OTHERTYPE >::call( \
                 static_cast<typename Method< OTHERTYPE >::Self *>(self), \
@@ -180,7 +180,7 @@ public:
             LH_TYPE_MAP
             default: return false;
         }
-    #undef LH_TYPE_PAIR
+#undef LH_TYPE_PAIR
     }
 
     static inline Meta<T> wrap( void * self )
@@ -268,9 +268,9 @@ public:
     }
 };
 
-template <typename T>
-const Data Meta<T>::typedata_(
-        qMetaTypeId< T >(), // qRegisterMetaType<T>(),
+template < typename T >
+const Data Meta< T >::typedata_(
+        qRegisterMetaType< T >(),
         equals, lessThan,
         castTo, convertTo, convertFrom,
         canCastTo, canConvertTo, canConvertFrom );

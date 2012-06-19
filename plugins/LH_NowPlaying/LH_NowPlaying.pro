@@ -1,6 +1,6 @@
 TARGET = LH_NowPlaying
 TEMPLATE = lib
-CONFIG  += qaxcontainer
+CONFIG  += QAxContainer
 QT += network xml
 DEFINES += LH_NOWPLAYING_LIBRARY
 DEFINES += VERSION=3.03

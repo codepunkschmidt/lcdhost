@@ -1,0 +1,1515 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<instance>
+    <identity name="Virtual 320x240x32 device" id="qtvbs"/>
+    <state modifiable="0" selectable="0" alerts="1"/>
+    <origin x="0" y="0"/>
+    <size w="320" h="240"/>
+    <plugin_size w="-1" h="-1"/>
+    <pos x="0" y="0" z="0"/>
+    <x_ref id="0" align="0" ref_align="0"/>
+    <y_ref id="0" align="0" ref_align="0"/>
+    <w_ref id="0" mod="0" units="0"/>
+    <h_ref id="0" mod="0" units="0"/>
+    <instance class="LH_Monitoring/MonitoringImage">
+        <identity name="Monitoring (Image) [32]" id="1xqis8"/>
+        <state modifiable="1" selectable="1" alerts="1"/>
+        <origin x="0" y="0"/>
+        <size w="16" h="16"/>
+        <plugin_size w="16" h="16"/>
+        <pos x="80" y="84" z="0"/>
+        <x_ref id="qtvbs" align="0" ref_align="0"/>
+        <y_ref id="qtvbs" align="0" ref_align="0"/>
+        <w_ref id="0" mod="0" units="0"/>
+        <h_ref id="0" mod="0" units="0"/>
+        <setupitem>
+            <identity name="Application" type="6"/>
+        </setupitem>
+        <setupitem>
+            <identity name="(Application Name)" type="8"/>
+            <value type="QString">Fraps</value>
+        </setupitem>
+        <setupitem>
+            <identity name="Value Type" type="6"/>
+        </setupitem>
+        <setupitem>
+            <identity name="(Value Type Name)" type="8"/>
+            <value type="QString"></value>
+        </setupitem>
+        <setupitem>
+            <identity name="Value Group" type="6"/>
+        </setupitem>
+        <setupitem>
+            <identity name="(Value Group Name)" type="8"/>
+            <value type="QString">GPU temperature</value>
+        </setupitem>
+        <setupitem>
+            <identity name="Value Item" type="6"/>
+        </setupitem>
+        <setupitem>
+            <identity name="(Value Item Name)" type="8"/>
+            <value type="QString">Average GPU temperature</value>
+        </setupitem>
+        <setupitem>
+            <identity name="Apply Offsets" type="2"/>
+            <value type="QString">true</value>
+        </setupitem>
+        <setupitem>
+            <identity name="Use Formatted Data" type="2"/>
+            <value type="QString">false</value>
+        </setupitem>
+        <setupitem>
+            <identity name="image-hr-data" type="18"/>
+        </setupitem>
+        <setupitem>
+            <identity name="Units" type="6"/>
+            <value type="QString">0</value>
+        </setupitem>
+        <setupitem>
+            <identity name="Current Value" type="8"/>
+        </setupitem>
+        <setupitem>
+            <identity name="image-hr2" type="18"/>
+        </setupitem>
+        <setupitem>
+            <identity name="Value (Units)" type="8"/>
+        </setupitem>
+        <setupitem>
+            <identity name="Value (String)" type="8"/>
+            <subscribe>/3rdParty/System Monitoring/Fraps//</subscribe>
+        </setupitem>
+        <setupitem>
+            <identity name="Value (Numeric)" type="7"/>
+        </setupitem>
+        <setupitem>
+            <identity name="Monitoring Options" type="8"/>
+            <subscribe>/3rdParty/System Monitoring/Options</subscribe>
+        </setupitem>
+        <setupitem>
+            <identity name="Image" type="10"/>
+        </setupitem>
+        <setupitem>
+            <identity name="Show placholder image when empty" type="2"/>
+            <value type="QString">true</value>
+        </setupitem>
+        <setupitem>
+            <identity name="CF-Area-Rule" type="18"/>
+        </setupitem>
+        <setupitem>
+            <identity name="^Enable Conditional Formatting" type="2"/>
+            <value type="QString">true</value>
+        </setupitem>
+        <setupitem>
+            <identity name="State" type="8"/>
+        </setupitem>
+        <setupitem>
+            <identity name="Visibility" type="2"/>
+        </setupitem>
+        <setupitem>
+            <identity name="^Copy Conditions" type="17"/>
+        </setupitem>
+        <setupitem>
+            <identity name="^Paste Conditions" type="17"/>
+        </setupitem>
+        <setupitem>
+            <identity name="^Conditions" type="16"/>
+        </setupitem>
+        <setupitem>
+            <identity name="^Move Condition Up" type="17"/>
+        </setupitem>
+        <setupitem>
+            <identity name="^Move Condition Down" type="17"/>
+        </setupitem>
+        <setupitem>
+            <identity name="^New Condition" type="17"/>
+        </setupitem>
+        <setupitem>
+            <identity name="^Delete Condition" type="17"/>
+        </setupitem>
+        <setupitem>
+            <identity name="Source" type="6"/>
+        </setupitem>
+        <setupitem>
+            <identity name="Value" type="6"/>
+        </setupitem>
+        <setupitem>
+            <identity name="Condition" type="6"/>
+        </setupitem>
+        <setupitem>
+            <identity name="^Value 1" type="8"/>
+        </setupitem>
+        <setupitem>
+            <identity name="^Value 2" type="8"/>
+        </setupitem>
+        <setupitem>
+            <identity name="Target" type="6"/>
+        </setupitem>
+        <setupitem>
+            <identity name="^New Value - Color" type="3"/>
+        </setupitem>
+        <setupitem>
+            <identity name="^New Value - Font" type="11"/>
+        </setupitem>
+        <setupitem>
+            <identity name="^New Value - String" type="8"/>
+        </setupitem>
+        <setupitem>
+            <identity name="^New Value - Boolean" type="2"/>
+        </setupitem>
+        <setupitem>
+            <identity name="^New Value - File" type="10"/>
+        </setupitem>
+        <setupitem>
+            <identity name="^Save Condition" type="17"/>
+        </setupitem>
+        <setupitem>
+            <identity name="^Cancel Condition Edit" type="17"/>
+        </setupitem>
+        <setupitem>
+            <identity name="Conditions XML" type="9"/>
+            <value type="QString">&lt;rules&gt;
+ &lt;rule&gt;
+  &lt;conditions&gt;
+   &lt;condition test=&quot;Equals&quot;&gt;
+    &lt;source&gt;Current Value&lt;/source&gt;
+    &lt;value id=&quot;1&quot;&gt;N/A&lt;/value&gt;
+   &lt;/condition&gt;
+  &lt;/conditions&gt;
+  &lt;actions&gt;
+   &lt;action type=&quot;property&quot;&gt;
+    &lt;target&gt;State&lt;/target&gt;
+    &lt;value&gt;NA&lt;/value&gt;
+   &lt;/action&gt;
+  &lt;/actions&gt;
+ &lt;/rule&gt;
+ &lt;rule&gt;
+  &lt;conditions&gt;
+   &lt;condition test=&quot;Does not equal&quot;&gt;
+    &lt;source&gt;Current Value&lt;/source&gt;
+    &lt;value id=&quot;1&quot;&gt;N/A&lt;/value&gt;
+   &lt;/condition&gt;
+  &lt;/conditions&gt;
+  &lt;actions&gt;
+   &lt;action type=&quot;property&quot;&gt;
+    &lt;target&gt;State&lt;/target&gt;
+    &lt;value&gt;OK&lt;/value&gt;
+   &lt;/action&gt;
+  &lt;/actions&gt;
+ &lt;/rule&gt;
+ &lt;rule&gt;
+  &lt;conditions&gt;
+   &lt;condition test=&quot;Less than or equal&quot;&gt;
+    &lt;source&gt;Current Value&lt;/source&gt;
+    &lt;value id=&quot;1&quot;&gt;50&lt;/value&gt;
+   &lt;/condition&gt;
+  &lt;/conditions&gt;
+  &lt;actions&gt;
+   &lt;action type=&quot;property&quot;&gt;
+    &lt;target&gt;State&lt;/target&gt;
+    &lt;value&gt;VLO&lt;/value&gt;
+   &lt;/action&gt;
+  &lt;/actions&gt;
+ &lt;/rule&gt;
+ &lt;rule&gt;
+  &lt;conditions&gt;
+   &lt;condition test=&quot;Less than or equal&quot;&gt;
+    &lt;source&gt;Current Value&lt;/source&gt;
+    &lt;value id=&quot;1&quot;&gt;60&lt;/value&gt;
+   &lt;/condition&gt;
+  &lt;/conditions&gt;
+  &lt;actions&gt;
+   &lt;action type=&quot;property&quot;&gt;
+    &lt;target&gt;State&lt;/target&gt;
+    &lt;value&gt;LO&lt;/value&gt;
+   &lt;/action&gt;
+  &lt;/actions&gt;
+ &lt;/rule&gt;
+ &lt;rule&gt;
+  &lt;conditions&gt;
+   &lt;condition test=&quot;Greater than or equal&quot;&gt;
+    &lt;source&gt;Current Value&lt;/source&gt;
+    &lt;value id=&quot;1&quot;&gt;75&lt;/value&gt;
+   &lt;/condition&gt;
+  &lt;/conditions&gt;
+  &lt;actions&gt;
+   &lt;action type=&quot;property&quot;&gt;
+    &lt;target&gt;State&lt;/target&gt;
+    &lt;value&gt;HI&lt;/value&gt;
+   &lt;/action&gt;
+  &lt;/actions&gt;
+ &lt;/rule&gt;
+ &lt;rule&gt;
+  &lt;conditions&gt;
+   &lt;condition test=&quot;Greater than or equal&quot;&gt;
+    &lt;source&gt;Current Value&lt;/source&gt;
+    &lt;value id=&quot;1&quot;&gt;80&lt;/value&gt;
+   &lt;/condition&gt;
+  &lt;/conditions&gt;
+  &lt;actions&gt;
+   &lt;action type=&quot;property&quot;&gt;
+    &lt;target&gt;State&lt;/target&gt;
+    &lt;value&gt;VHI&lt;/value&gt;
+   &lt;/action&gt;
+  &lt;/actions&gt;
+ &lt;/rule&gt;
+ &lt;rule&gt;
+  &lt;conditions&gt;
+   &lt;condition test=&quot;Equals&quot;&gt;
+    &lt;source&gt;State&lt;/source&gt;
+    &lt;value id=&quot;1&quot;&gt;VHI&lt;/value&gt;
+   &lt;/condition&gt;
+  &lt;/conditions&gt;
+  &lt;actions&gt;
+   &lt;action type=&quot;property&quot;&gt;
+    &lt;target&gt;Image&lt;/target&gt;
+    &lt;value&gt;C:/Users/Bridges/Documents/LCDHost/Layouts/__Test_Layouts/LH_Monitoring_Test/Silk 16x16/5_danger.png&lt;/value&gt;
+   &lt;/action&gt;
+  &lt;/actions&gt;
+ &lt;/rule&gt;
+ &lt;rule&gt;
+  &lt;conditions&gt;
+   &lt;condition test=&quot;Equals&quot;&gt;
+    &lt;source&gt;State&lt;/source&gt;
+    &lt;value id=&quot;1&quot;&gt;HI&lt;/value&gt;
+   &lt;/condition&gt;
+  &lt;/conditions&gt;
+  &lt;actions&gt;
+   &lt;action type=&quot;property&quot;&gt;
+    &lt;target&gt;Image&lt;/target&gt;
+    &lt;value&gt;C:/Users/Bridges/Documents/LCDHost/Layouts/__Test_Layouts/LH_Monitoring_Test/Silk 16x16/4_warning.png&lt;/value&gt;
+   &lt;/action&gt;
+  &lt;/actions&gt;
+ &lt;/rule&gt;
+ &lt;rule&gt;
+  &lt;conditions&gt;
+   &lt;condition test=&quot;Equals&quot;&gt;
+    &lt;source&gt;State&lt;/source&gt;
+    &lt;value id=&quot;1&quot;&gt;OK&lt;/value&gt;
+   &lt;/condition&gt;
+  &lt;/conditions&gt;
+  &lt;actions&gt;
+   &lt;action type=&quot;property&quot;&gt;
+    &lt;target&gt;Image&lt;/target&gt;
+    &lt;value&gt;C:/Users/Bridges/Documents/LCDHost/Layouts/__Test_Layouts/LH_Monitoring_Test/Silk 16x16/3_good.png&lt;/value&gt;
+   &lt;/action&gt;
+  &lt;/actions&gt;
+ &lt;/rule&gt;
+ &lt;rule&gt;
+  &lt;conditions&gt;
+   &lt;condition test=&quot;Equals&quot;&gt;
+    &lt;source&gt;State&lt;/source&gt;
+    &lt;value id=&quot;1&quot;&gt;LO&lt;/value&gt;
+   &lt;/condition&gt;
+  &lt;/conditions&gt;
+  &lt;actions&gt;
+   &lt;action type=&quot;property&quot;&gt;
+    &lt;target&gt;Image&lt;/target&gt;
+    &lt;value&gt;C:/Users/Bridges/Documents/LCDHost/Layouts/__Test_Layouts/LH_Monitoring_Test/Silk 16x16/2_good_low.png&lt;/value&gt;
+   &lt;/action&gt;
+  &lt;/actions&gt;
+ &lt;/rule&gt;
+ &lt;rule&gt;
+  &lt;conditions&gt;
+   &lt;condition test=&quot;Equals&quot;&gt;
+    &lt;source&gt;State&lt;/source&gt;
+    &lt;value id=&quot;1&quot;&gt;VLO&lt;/value&gt;
+   &lt;/condition&gt;
+  &lt;/conditions&gt;
+  &lt;actions&gt;
+   &lt;action type=&quot;property&quot;&gt;
+    &lt;target&gt;Image&lt;/target&gt;
+    &lt;value&gt;C:/Users/Bridges/Documents/LCDHost/Layouts/__Test_Layouts/LH_Monitoring_Test/Silk 16x16/1_low.png&lt;/value&gt;
+   &lt;/action&gt;
+  &lt;/actions&gt;
+ &lt;/rule&gt;
+ &lt;rule&gt;
+  &lt;conditions&gt;
+   &lt;condition test=&quot;Equals&quot;&gt;
+    &lt;source&gt;State&lt;/source&gt;
+    &lt;value id=&quot;1&quot;&gt;NA&lt;/value&gt;
+   &lt;/condition&gt;
+  &lt;/conditions&gt;
+  &lt;actions&gt;
+   &lt;action type=&quot;property&quot;&gt;
+    &lt;target&gt;Image&lt;/target&gt;
+    &lt;value&gt;C:/Users/Bridges/Documents/LCDHost/Layouts/__Test_Layouts/LH_Monitoring_Test/Silk 16x16/0_NA.png&lt;/value&gt;
+   &lt;/action&gt;
+  &lt;/actions&gt;
+ &lt;/rule&gt;
+&lt;/rules&gt;
+</value>
+        </setupitem>
+    </instance>
+    <instance class="LH_Monitoring/MonitoringText">
+        <identity name="Monitoring (Text) [37]" id="rh3rs"/>
+        <state modifiable="1" selectable="1" alerts="1"/>
+        <origin x="0" y="0"/>
+        <size w="132" h="0"/>
+        <plugin_size w="-1" h="0"/>
+        <pos x="26" y="105" z="1"/>
+        <x_ref id="qtvbs" align="0" ref_align="0"/>
+        <y_ref id="qtvbs" align="0" ref_align="0"/>
+        <w_ref id="0" mod="132" units="4"/>
+        <h_ref id="0" mod="0" units="0"/>
+        <setupitem>
+            <identity name="Application" type="6"/>
+        </setupitem>
+        <setupitem>
+            <identity name="(Application Name)" type="8"/>
+            <value type="QString">Fraps</value>
+        </setupitem>
+        <setupitem>
+            <identity name="Value Type" type="6"/>
+        </setupitem>
+        <setupitem>
+            <identity name="(Value Type Name)" type="8"/>
+            <value type="QString"></value>
+        </setupitem>
+        <setupitem>
+            <identity name="Value Group" type="6"/>
+        </setupitem>
+        <setupitem>
+            <identity name="(Value Group Name)" type="8"/>
+            <value type="QString">GPU temperature</value>
+        </setupitem>
+        <setupitem>
+            <identity name="Value Item" type="6"/>
+        </setupitem>
+        <setupitem>
+            <identity name="(Value Item Name)" type="8"/>
+            <value type="QString">Maximum GPU temperature</value>
+        </setupitem>
+        <setupitem>
+            <identity name="Apply Offsets" type="2"/>
+            <value type="QString">true</value>
+        </setupitem>
+        <setupitem>
+            <identity name="Use Formatted Data" type="2"/>
+            <value type="QString">false</value>
+        </setupitem>
+        <setupitem>
+            <identity name="image-hr-data" type="18"/>
+        </setupitem>
+        <setupitem>
+            <identity name="Units" type="6"/>
+            <value type="QString">0</value>
+        </setupitem>
+        <setupitem>
+            <identity name="Round" type="2"/>
+            <value type="QString">false</value>
+        </setupitem>
+        <setupitem>
+            <identity name="Append Units" type="2"/>
+            <value type="QString">true</value>
+        </setupitem>
+        <setupitem>
+            <identity name="Pre-Text" type="8"/>
+            <value type="QString"></value>
+        </setupitem>
+        <setupitem>
+            <identity name="Post-Text" type="8"/>
+            <value type="QString"></value>
+        </setupitem>
+        <setupitem>
+            <identity name="image-hr2" type="18"/>
+        </setupitem>
+        <setupitem>
+            <identity name="Text" type="8"/>
+        </setupitem>
+        <setupitem>
+            <identity name="Font" type="11"/>
+            <value type="QString">Arial,10,-1,5,50,0,0,0,0,0</value>
+        </setupitem>
+        <setupitem>
+            <identity name="^Adjust font size to instance height" type="2"/>
+            <value type="QString">true</value>
+        </setupitem>
+        <setupitem>
+            <identity name="Color" type="3"/>
+            <value type="QString">-16777216</value>
+        </setupitem>
+        <setupitem>
+            <identity name="Background" type="3"/>
+            <value type="QString">0</value>
+        </setupitem>
+        <setupitem>
+            <identity name="Horizontal" type="6"/>
+            <value type="QString">0</value>
+        </setupitem>
+        <setupitem>
+            <identity name="Vertical" type="6"/>
+            <value type="QString">0</value>
+        </setupitem>
+        <setupitem>
+            <identity name="Scroll rate" type="4"/>
+            <value type="QString">15</value>
+        </setupitem>
+        <setupitem>
+            <identity name="Scroll step" type="4"/>
+            <value type="QString">2</value>
+        </setupitem>
+        <setupitem>
+            <identity name="Scroll gap" type="4"/>
+            <value type="QString">10</value>
+        </setupitem>
+        <setupitem>
+            <identity name="Value (Units)" type="8"/>
+        </setupitem>
+        <setupitem>
+            <identity name="Value (String)" type="8"/>
+            <subscribe>/3rdParty/System Monitoring/Fraps//</subscribe>
+        </setupitem>
+        <setupitem>
+            <identity name="Value (Numeric)" type="7"/>
+        </setupitem>
+        <setupitem>
+            <identity name="Monitoring Options" type="8"/>
+            <subscribe>/3rdParty/System Monitoring/Options</subscribe>
+        </setupitem>
+        <setupitem>
+            <identity name="CF-Area-Rule" type="18"/>
+        </setupitem>
+        <setupitem>
+            <identity name="^Enable Conditional Formatting" type="2"/>
+            <value type="QString">false</value>
+        </setupitem>
+        <setupitem>
+            <identity name="State" type="8"/>
+        </setupitem>
+        <setupitem>
+            <identity name="Visibility" type="2"/>
+        </setupitem>
+        <setupitem>
+            <identity name="^Copy Conditions" type="17"/>
+        </setupitem>
+        <setupitem>
+            <identity name="^Paste Conditions" type="17"/>
+        </setupitem>
+        <setupitem>
+            <identity name="^Conditions" type="16"/>
+        </setupitem>
+        <setupitem>
+            <identity name="^New Condition" type="17"/>
+        </setupitem>
+        <setupitem>
+            <identity name="Source" type="6"/>
+        </setupitem>
+        <setupitem>
+            <identity name="Value" type="6"/>
+        </setupitem>
+        <setupitem>
+            <identity name="Condition" type="6"/>
+        </setupitem>
+        <setupitem>
+            <identity name="^Value 1" type="8"/>
+        </setupitem>
+        <setupitem>
+            <identity name="^Value 2" type="8"/>
+        </setupitem>
+        <setupitem>
+            <identity name="Target" type="6"/>
+        </setupitem>
+        <setupitem>
+            <identity name="^New Value - Color" type="3"/>
+        </setupitem>
+        <setupitem>
+            <identity name="^New Value - Font" type="11"/>
+        </setupitem>
+        <setupitem>
+            <identity name="^New Value - String" type="8"/>
+        </setupitem>
+        <setupitem>
+            <identity name="^New Value - Boolean" type="2"/>
+        </setupitem>
+        <setupitem>
+            <identity name="^New Value - File" type="10"/>
+        </setupitem>
+        <setupitem>
+            <identity name="^Save Condition" type="17"/>
+        </setupitem>
+        <setupitem>
+            <identity name="^Cancel Condition Edit" type="17"/>
+        </setupitem>
+        <setupitem>
+            <identity name="Conditions XML" type="9"/>
+            <value type="QString">&lt;rules/&gt;</value>
+        </setupitem>
+    </instance>
+    <instance class="LH_Monitoring/MonitoringBar">
+        <identity name="Monitoring (Bar) [29]" id="rh57k"/>
+        <state modifiable="1" selectable="1" alerts="1"/>
+        <origin x="0" y="0"/>
+        <size w="42" h="104"/>
+        <plugin_size w="-1" h="-1"/>
+        <pos x="162" y="40" z="2"/>
+        <x_ref id="qtvbs" align="0" ref_align="0"/>
+        <y_ref id="qtvbs" align="0" ref_align="0"/>
+        <w_ref id="0" mod="42" units="4"/>
+        <h_ref id="0" mod="104" units="4"/>
+        <setupitem>
+            <identity name="Application" type="6"/>
+        </setupitem>
+        <setupitem>
+            <identity name="(Application Name)" type="8"/>
+            <value type="QString">Fraps</value>
+        </setupitem>
+        <setupitem>
+            <identity name="Value Type" type="6"/>
+        </setupitem>
+        <setupitem>
+            <identity name="(Value Type Name)" type="8"/>
+            <value type="QString"></value>
+        </setupitem>
+        <setupitem>
+            <identity name="Value Group" type="6"/>
+        </setupitem>
+        <setupitem>
+            <identity name="(Value Group Name)" type="8"/>
+            <value type="QString">GPU temperature</value>
+        </setupitem>
+        <setupitem>
+            <identity name="Value Item" type="6"/>
+        </setupitem>
+        <setupitem>
+            <identity name="(Value Item Name)" type="8"/>
+            <value type="QString">All</value>
+        </setupitem>
+        <setupitem>
+            <identity name="Apply Offsets" type="2"/>
+            <value type="QString">true</value>
+        </setupitem>
+        <setupitem>
+            <identity name="Use Formatted Data" type="2"/>
+            <value type="QString">false</value>
+        </setupitem>
+        <setupitem>
+            <identity name="image-hr-data" type="18"/>
+        </setupitem>
+        <setupitem>
+            <identity name="Units" type="6"/>
+            <value type="QString">0</value>
+        </setupitem>
+        <setupitem>
+            <identity name="Maximum" type="1"/>
+            <value type="QString">100</value>
+        </setupitem>
+        <setupitem>
+            <identity name="Minimum" type="1"/>
+            <value type="QString">0</value>
+        </setupitem>
+        <setupitem>
+            <identity name="image-hr2" type="18"/>
+        </setupitem>
+        <setupitem>
+            <identity name="Bar Style" type="6"/>
+            <value type="QString">0</value>
+        </setupitem>
+        <setupitem>
+            <identity name="Bar Image" type="10"/>
+            <value type="QString"></value>
+        </setupitem>
+        <setupitem>
+            <identity name="Masking" type="6"/>
+            <value type="QString">0</value>
+        </setupitem>
+        <setupitem>
+            <identity name="Transparency Mask" type="10"/>
+            <value type="QString"></value>
+        </setupitem>
+        <setupitem>
+            <identity name="Bar color (start)" type="3"/>
+            <value type="QString">-16711936</value>
+        </setupitem>
+        <setupitem>
+            <identity name="Bar color (end)" type="3"/>
+            <value type="QString">-65536</value>
+        </setupitem>
+        <setupitem>
+            <identity name="Bar Background Image" type="10"/>
+            <value type="QString"></value>
+        </setupitem>
+        <setupitem>
+            <identity name="Background color" type="3"/>
+            <value type="QString">0</value>
+        </setupitem>
+        <setupitem>
+            <identity name="Direction" type="6"/>
+            <value type="QString">0</value>
+        </setupitem>
+        <setupitem>
+            <identity name="Spacing" type="4"/>
+            <value type="QString">7</value>
+        </setupitem>
+        <setupitem>
+            <identity name="Discrete Segments" type="2"/>
+            <value type="QString">false</value>
+        </setupitem>
+        <setupitem>
+            <identity name="Number of Segments" type="1"/>
+            <value type="QString">20</value>
+        </setupitem>
+        <setupitem>
+            <identity name="Value (Units)" type="8"/>
+        </setupitem>
+        <setupitem>
+            <identity name="Value (String)" type="8"/>
+            <subscribe>/3rdParty/System Monitoring/Fraps//</subscribe>
+        </setupitem>
+        <setupitem>
+            <identity name="Value (Numeric)" type="7"/>
+        </setupitem>
+        <setupitem>
+            <identity name="Monitoring Options" type="8"/>
+            <subscribe>/3rdParty/System Monitoring/Options</subscribe>
+        </setupitem>
+        <setupitem>
+            <identity name="CF-Area-Rule" type="18"/>
+        </setupitem>
+        <setupitem>
+            <identity name="^Enable Conditional Formatting" type="2"/>
+            <value type="QString">false</value>
+        </setupitem>
+        <setupitem>
+            <identity name="State" type="8"/>
+        </setupitem>
+        <setupitem>
+            <identity name="Visibility" type="2"/>
+        </setupitem>
+        <setupitem>
+            <identity name="^Copy Conditions" type="17"/>
+        </setupitem>
+        <setupitem>
+            <identity name="^Paste Conditions" type="17"/>
+        </setupitem>
+        <setupitem>
+            <identity name="^Conditions" type="16"/>
+        </setupitem>
+        <setupitem>
+            <identity name="^New Condition" type="17"/>
+        </setupitem>
+        <setupitem>
+            <identity name="Source" type="6"/>
+        </setupitem>
+        <setupitem>
+            <identity name="Value" type="6"/>
+        </setupitem>
+        <setupitem>
+            <identity name="Condition" type="6"/>
+        </setupitem>
+        <setupitem>
+            <identity name="^Value 1" type="8"/>
+        </setupitem>
+        <setupitem>
+            <identity name="^Value 2" type="8"/>
+        </setupitem>
+        <setupitem>
+            <identity name="Target" type="6"/>
+        </setupitem>
+        <setupitem>
+            <identity name="^New Value - Color" type="3"/>
+        </setupitem>
+        <setupitem>
+            <identity name="^New Value - Font" type="11"/>
+        </setupitem>
+        <setupitem>
+            <identity name="^New Value - String" type="8"/>
+        </setupitem>
+        <setupitem>
+            <identity name="^New Value - Boolean" type="2"/>
+        </setupitem>
+        <setupitem>
+            <identity name="^New Value - File" type="10"/>
+        </setupitem>
+        <setupitem>
+            <identity name="^Save Condition" type="17"/>
+        </setupitem>
+        <setupitem>
+            <identity name="^Cancel Condition Edit" type="17"/>
+        </setupitem>
+        <setupitem>
+            <identity name="Conditions XML" type="9"/>
+            <value type="QString">&lt;rules/&gt;</value>
+        </setupitem>
+    </instance>
+    <instance class="LH_Monitoring/MonitoringDial">
+        <identity name="Monitoring (Dial) [1]" id="1x5auw"/>
+        <state modifiable="1" selectable="1" alerts="1"/>
+        <origin x="0" y="0"/>
+        <size w="48" h="48"/>
+        <plugin_size w="48" h="48"/>
+        <pos x="107" y="40" z="3"/>
+        <x_ref id="qtvbs" align="0" ref_align="0"/>
+        <y_ref id="qtvbs" align="0" ref_align="0"/>
+        <w_ref id="0" mod="0" units="0"/>
+        <h_ref id="0" mod="0" units="0"/>
+    </instance>
+    <instance class="LH_Graph/SystemCPUHistogramGraph">
+        <identity name="Core Load (Graph) [1]" id="rj6ug"/>
+        <state modifiable="1" selectable="1" alerts="1"/>
+        <origin x="0" y="0"/>
+        <size w="244" h="77"/>
+        <plugin_size w="-1" h="-1"/>
+        <pos x="37" y="150" z="4"/>
+        <x_ref id="qtvbs" align="0" ref_align="0"/>
+        <y_ref id="qtvbs" align="0" ref_align="0"/>
+        <w_ref id="0" mod="244" units="4"/>
+        <h_ref id="0" mod="77" units="4"/>
+        <setupitem>
+            <identity name="Graph Style" type="6"/>
+            <value type="QString">0</value>
+        </setupitem>
+        <setupitem>
+            <identity name="Graph Background" type="6"/>
+            <value type="QString">1</value>
+        </setupitem>
+        <setupitem>
+            <identity name="Graph Orientation" type="6"/>
+            <value type="QString">0</value>
+        </setupitem>
+        <setupitem>
+            <identity name="Background color" type="3"/>
+            <value type="QString">0</value>
+        </setupitem>
+        <setupitem>
+            <identity name="Background Image" type="10"/>
+            <value type="QString"></value>
+        </setupitem>
+        <setupitem>
+            <identity name="Max Samples" type="1"/>
+            <value type="QString">30</value>
+        </setupitem>
+        <setupitem>
+            <identity name="Sample Rate" type="1"/>
+            <value type="QString">1</value>
+        </setupitem>
+        <setupitem>
+            <identity name="~" type="8"/>
+        </setupitem>
+        <setupitem>
+            <identity name="Selected Line" type="6"/>
+            <value type="QString">0</value>
+        </setupitem>
+        <setupitem>
+            <identity name="Line color" type="3"/>
+            <value type="QString">-16777216</value>
+        </setupitem>
+        <setupitem>
+            <identity name="Area color (start)" type="3"/>
+            <value type="QString">-16711936</value>
+        </setupitem>
+        <setupitem>
+            <identity name="Area color (end)" type="3"/>
+            <value type="QString">-65536</value>
+        </setupitem>
+        <setupitem>
+            <identity name="Fill Image" type="10"/>
+            <value type="QString"></value>
+        </setupitem>
+        <setupitem>
+            <identity name="Fill Image Opacity" type="1"/>
+            <value type="QString">255</value>
+        </setupitem>
+        <setupitem>
+            <identity name="Graph Ymax" type="7"/>
+            <value type="QString">100</value>
+        </setupitem>
+        <setupitem>
+            <identity name="Ymax Can Grow" type="2"/>
+            <value type="QString">false</value>
+        </setupitem>
+        <setupitem>
+            <identity name="Auto Scale Ymax" type="2"/>
+            <value type="QString">false</value>
+        </setupitem>
+        <setupitem>
+            <identity name="Graph Ymin" type="7"/>
+            <value type="QString">0</value>
+        </setupitem>
+        <setupitem>
+            <identity name="Auto Scale Ymin" type="2"/>
+            <value type="QString">false</value>
+        </setupitem>
+        <setupitem>
+            <identity name="Show Ymax" type="2"/>
+            <value type="QString">false</value>
+        </setupitem>
+        <setupitem>
+            <identity name="Show Ymin" type="2"/>
+            <value type="QString">false</value>
+        </setupitem>
+        <setupitem>
+            <identity name="Hide When Empty" type="2"/>
+            <value type="QString">false</value>
+        </setupitem>
+        <setupitem>
+            <identity name="Show Real Y-Limits" type="2"/>
+            <value type="QString">false</value>
+        </setupitem>
+        <setupitem>
+            <identity name="Y Labels on Right" type="2"/>
+            <value type="QString">false</value>
+        </setupitem>
+        <setupitem>
+            <identity name="Axis Label Font" type="11"/>
+            <value type="QString">Arial,8,-1,5,50,0,0,0,0,0</value>
+        </setupitem>
+        <setupitem>
+            <identity name="Axis Label Color" type="3"/>
+            <value type="QString">-1</value>
+        </setupitem>
+        <setupitem>
+            <identity name="Axis Label Glow" type="3"/>
+            <value type="QString">1543503872</value>
+        </setupitem>
+        <setupitem>
+            <identity name="Smoothing" type="4"/>
+            <value type="QString">3</value>
+        </setupitem>
+        <setupitem>
+            <identity name="Line Configs" type="9"/>
+            <value type="QString">0,0,0,255,0,255,0,255,255,0,0,255,C:/Users/Bridges/Documents/LCDHost/Plugins-build-desktop/LH_Graph,255~0,0,0,255,0,255,0,255,255,0,0,255,C:/Users/Bridges/Documents/LCDHost/Plugins-build-desktop/LH_Graph,255~0,0,0,255,0,255,0,255,255,0,0,255,C:/Users/Bridges/Documents/LCDHost/Plugins-build-desktop/LH_Graph,255~0,0,0,255,0,255,0,255,255,0,0,255,C:/Users/Bridges/Documents/LCDHost/Plugins-build-desktop/LH_Graph,255</value>
+        </setupitem>
+    </instance>
+    <instance class="LH_Graph/SystemCPUAverageGraph">
+        <identity name="Average Load (Graph) [1]" id="1xmeeo"/>
+        <state modifiable="1" selectable="1" alerts="1"/>
+        <origin x="0" y="0"/>
+        <size w="164" h="48"/>
+        <plugin_size w="-1" h="48"/>
+        <pos x="69" y="251" z="5"/>
+        <x_ref id="qtvbs" align="0" ref_align="0"/>
+        <y_ref id="qtvbs" align="0" ref_align="0"/>
+        <w_ref id="0" mod="164" units="4"/>
+        <h_ref id="0" mod="0" units="0"/>
+        <setupitem>
+            <identity name="Graph Style" type="6"/>
+            <value type="QString">0</value>
+        </setupitem>
+        <setupitem>
+            <identity name="Graph Background" type="6"/>
+            <value type="QString">1</value>
+        </setupitem>
+        <setupitem>
+            <identity name="Graph Orientation" type="6"/>
+            <value type="QString">0</value>
+        </setupitem>
+        <setupitem>
+            <identity name="Background color" type="3"/>
+            <value type="QString">0</value>
+        </setupitem>
+        <setupitem>
+            <identity name="Background Image" type="10"/>
+            <value type="QString"></value>
+        </setupitem>
+        <setupitem>
+            <identity name="Max Samples" type="1"/>
+            <value type="QString">30</value>
+        </setupitem>
+        <setupitem>
+            <identity name="Sample Rate" type="1"/>
+            <value type="QString">1</value>
+        </setupitem>
+        <setupitem>
+            <identity name="~" type="8"/>
+        </setupitem>
+        <setupitem>
+            <identity name="Selected Line" type="6"/>
+            <value type="QString">0</value>
+        </setupitem>
+        <setupitem>
+            <identity name="Line color" type="3"/>
+            <value type="QString">-16777216</value>
+        </setupitem>
+        <setupitem>
+            <identity name="Area color (start)" type="3"/>
+            <value type="QString">-16711936</value>
+        </setupitem>
+        <setupitem>
+            <identity name="Area color (end)" type="3"/>
+            <value type="QString">-65536</value>
+        </setupitem>
+        <setupitem>
+            <identity name="Fill Image" type="10"/>
+            <value type="QString"></value>
+        </setupitem>
+        <setupitem>
+            <identity name="Fill Image Opacity" type="1"/>
+            <value type="QString">255</value>
+        </setupitem>
+        <setupitem>
+            <identity name="Graph Ymax" type="7"/>
+            <value type="QString">100</value>
+        </setupitem>
+        <setupitem>
+            <identity name="Ymax Can Grow" type="2"/>
+            <value type="QString">false</value>
+        </setupitem>
+        <setupitem>
+            <identity name="Auto Scale Ymax" type="2"/>
+            <value type="QString">false</value>
+        </setupitem>
+        <setupitem>
+            <identity name="Graph Ymin" type="7"/>
+            <value type="QString">0</value>
+        </setupitem>
+        <setupitem>
+            <identity name="Auto Scale Ymin" type="2"/>
+            <value type="QString">false</value>
+        </setupitem>
+        <setupitem>
+            <identity name="Show Ymax" type="2"/>
+            <value type="QString">false</value>
+        </setupitem>
+        <setupitem>
+            <identity name="Show Ymin" type="2"/>
+            <value type="QString">false</value>
+        </setupitem>
+        <setupitem>
+            <identity name="Hide When Empty" type="2"/>
+            <value type="QString">false</value>
+        </setupitem>
+        <setupitem>
+            <identity name="Show Real Y-Limits" type="2"/>
+            <value type="QString">false</value>
+        </setupitem>
+        <setupitem>
+            <identity name="Y Labels on Right" type="2"/>
+            <value type="QString">false</value>
+        </setupitem>
+        <setupitem>
+            <identity name="Axis Label Font" type="11"/>
+            <value type="QString">Arial,8,-1,5,50,0,0,0,0,0</value>
+        </setupitem>
+        <setupitem>
+            <identity name="Axis Label Color" type="3"/>
+            <value type="QString">-1</value>
+        </setupitem>
+        <setupitem>
+            <identity name="Axis Label Glow" type="3"/>
+            <value type="QString">1543503872</value>
+        </setupitem>
+        <setupitem>
+            <identity name="Smoothing" type="4"/>
+            <value type="QString">3</value>
+        </setupitem>
+        <setupitem>
+            <identity name="Line Configs" type="9"/>
+            <value type="QString">0,0,0,255,0,255,0,255,255,0,0,255,C:/Users/Bridges/Documents/LCDHost/Plugins-build-desktop/LH_Graph,255</value>
+        </setupitem>
+    </instance>
+    <instance class="LH_Graph/SystemMemoryPhysicalGraph">
+        <identity name="Physical memory used (Graph) [1]" id="1x5htc"/>
+        <state modifiable="1" selectable="1" alerts="1"/>
+        <origin x="0" y="0"/>
+        <size w="48" h="48"/>
+        <plugin_size w="48" h="48"/>
+        <pos x="240" y="18" z="6"/>
+        <x_ref id="qtvbs" align="0" ref_align="0"/>
+        <y_ref id="qtvbs" align="0" ref_align="0"/>
+        <w_ref id="0" mod="0" units="0"/>
+        <h_ref id="0" mod="0" units="0"/>
+        <setupitem>
+            <identity name="Graph Style" type="6"/>
+            <value type="QString">0</value>
+        </setupitem>
+        <setupitem>
+            <identity name="Graph Background" type="6"/>
+            <value type="QString">1</value>
+        </setupitem>
+        <setupitem>
+            <identity name="Graph Orientation" type="6"/>
+            <value type="QString">0</value>
+        </setupitem>
+        <setupitem>
+            <identity name="Background color" type="3"/>
+            <value type="QString">0</value>
+        </setupitem>
+        <setupitem>
+            <identity name="Background Image" type="10"/>
+            <value type="QString"></value>
+        </setupitem>
+        <setupitem>
+            <identity name="Max Samples" type="1"/>
+            <value type="QString">30</value>
+        </setupitem>
+        <setupitem>
+            <identity name="Sample Rate" type="1"/>
+            <value type="QString">1</value>
+        </setupitem>
+        <setupitem>
+            <identity name="~" type="8"/>
+        </setupitem>
+        <setupitem>
+            <identity name="Selected Line" type="6"/>
+            <value type="QString">0</value>
+        </setupitem>
+        <setupitem>
+            <identity name="Line color" type="3"/>
+            <value type="QString">-16777216</value>
+        </setupitem>
+        <setupitem>
+            <identity name="Area color (start)" type="3"/>
+            <value type="QString">-16711936</value>
+        </setupitem>
+        <setupitem>
+            <identity name="Area color (end)" type="3"/>
+            <value type="QString">-65536</value>
+        </setupitem>
+        <setupitem>
+            <identity name="Fill Image" type="10"/>
+            <value type="QString"></value>
+        </setupitem>
+        <setupitem>
+            <identity name="Fill Image Opacity" type="1"/>
+            <value type="QString">255</value>
+        </setupitem>
+        <setupitem>
+            <identity name="Graph Ymax" type="7"/>
+            <value type="QString">11.99</value>
+        </setupitem>
+        <setupitem>
+            <identity name="Ymax Can Grow" type="2"/>
+            <value type="QString">false</value>
+        </setupitem>
+        <setupitem>
+            <identity name="Auto Scale Ymax" type="2"/>
+            <value type="QString">false</value>
+        </setupitem>
+        <setupitem>
+            <identity name="Graph Ymin" type="7"/>
+            <value type="QString">0</value>
+        </setupitem>
+        <setupitem>
+            <identity name="Auto Scale Ymin" type="2"/>
+            <value type="QString">false</value>
+        </setupitem>
+        <setupitem>
+            <identity name="Show Ymax" type="2"/>
+            <value type="QString">false</value>
+        </setupitem>
+        <setupitem>
+            <identity name="Show Ymin" type="2"/>
+            <value type="QString">false</value>
+        </setupitem>
+        <setupitem>
+            <identity name="Hide When Empty" type="2"/>
+            <value type="QString">false</value>
+        </setupitem>
+        <setupitem>
+            <identity name="Show Real Y-Limits" type="2"/>
+            <value type="QString">false</value>
+        </setupitem>
+        <setupitem>
+            <identity name="Y Labels on Right" type="2"/>
+            <value type="QString">false</value>
+        </setupitem>
+        <setupitem>
+            <identity name="Axis Label Font" type="11"/>
+            <value type="QString">Arial,8,-1,5,50,0,0,0,0,0</value>
+        </setupitem>
+        <setupitem>
+            <identity name="Axis Label Color" type="3"/>
+            <value type="QString">-1</value>
+        </setupitem>
+        <setupitem>
+            <identity name="Axis Label Glow" type="3"/>
+            <value type="QString">1543503872</value>
+        </setupitem>
+        <setupitem>
+            <identity name="Line Configs" type="9"/>
+            <value type="QString">0,0,0,255,0,255,0,255,255,0,0,255,C:/Users/Bridges/Documents/LCDHost/Plugins-build-desktop/LH_Graph,255</value>
+        </setupitem>
+    </instance>
+    <instance class="LH_Graph/SystemNetworkInboundGraph">
+        <identity name="Inbound Bandwidth Usage (Graph) [1]" id="rhpig"/>
+        <state modifiable="1" selectable="1" alerts="1"/>
+        <origin x="0" y="0"/>
+        <size w="48" h="48"/>
+        <plugin_size w="48" h="48"/>
+        <pos x="-2" y="7" z="7"/>
+        <x_ref id="qtvbs" align="0" ref_align="0"/>
+        <y_ref id="qtvbs" align="0" ref_align="0"/>
+        <w_ref id="0" mod="0" units="0"/>
+        <h_ref id="0" mod="0" units="0"/>
+        <setupitem>
+            <identity name="Graph Style" type="6"/>
+            <value type="QString">0</value>
+        </setupitem>
+        <setupitem>
+            <identity name="Graph Background" type="6"/>
+            <value type="QString">1</value>
+        </setupitem>
+        <setupitem>
+            <identity name="Graph Orientation" type="6"/>
+            <value type="QString">0</value>
+        </setupitem>
+        <setupitem>
+            <identity name="Background color" type="3"/>
+            <value type="QString">0</value>
+        </setupitem>
+        <setupitem>
+            <identity name="Background Image" type="10"/>
+            <value type="QString"></value>
+        </setupitem>
+        <setupitem>
+            <identity name="Max Samples" type="1"/>
+            <value type="QString">60</value>
+        </setupitem>
+        <setupitem>
+            <identity name="Sample Rate" type="1"/>
+            <value type="int">2</value>
+        </setupitem>
+        <setupitem>
+            <identity name="~" type="8"/>
+        </setupitem>
+        <setupitem>
+            <identity name="Selected Line" type="6"/>
+            <value type="QString">0</value>
+        </setupitem>
+        <setupitem>
+            <identity name="Line color" type="3"/>
+            <value type="QString">-16777216</value>
+        </setupitem>
+        <setupitem>
+            <identity name="Area color (start)" type="3"/>
+            <value type="QString">-16711936</value>
+        </setupitem>
+        <setupitem>
+            <identity name="Area color (end)" type="3"/>
+            <value type="QString">-65536</value>
+        </setupitem>
+        <setupitem>
+            <identity name="Fill Image" type="10"/>
+            <value type="QString"></value>
+        </setupitem>
+        <setupitem>
+            <identity name="Fill Image Opacity" type="1"/>
+            <value type="QString">255</value>
+        </setupitem>
+        <setupitem>
+            <identity name="Graph Ymax" type="7"/>
+            <value type="QString">524288</value>
+        </setupitem>
+        <setupitem>
+            <identity name="Ymax Can Grow" type="2"/>
+            <value type="QString">false</value>
+        </setupitem>
+        <setupitem>
+            <identity name="Auto Scale Ymax" type="2"/>
+            <value type="QString">false</value>
+        </setupitem>
+        <setupitem>
+            <identity name="Graph Ymin" type="7"/>
+            <value type="QString">0</value>
+        </setupitem>
+        <setupitem>
+            <identity name="Auto Scale Ymin" type="2"/>
+            <value type="QString">false</value>
+        </setupitem>
+        <setupitem>
+            <identity name="Show Ymax" type="2"/>
+            <value type="QString">false</value>
+        </setupitem>
+        <setupitem>
+            <identity name="Show Ymin" type="2"/>
+            <value type="QString">false</value>
+        </setupitem>
+        <setupitem>
+            <identity name="Hide When Empty" type="2"/>
+            <value type="QString">false</value>
+        </setupitem>
+        <setupitem>
+            <identity name="Show Real Y-Limits" type="2"/>
+            <value type="QString">false</value>
+        </setupitem>
+        <setupitem>
+            <identity name="Y Labels on Right" type="2"/>
+            <value type="QString">false</value>
+        </setupitem>
+        <setupitem>
+            <identity name="Axis Label Font" type="11"/>
+            <value type="QString">Arial,8,-1,5,50,0,0,0,0,0</value>
+        </setupitem>
+        <setupitem>
+            <identity name="Axis Label Color" type="3"/>
+            <value type="QString">-1</value>
+        </setupitem>
+        <setupitem>
+            <identity name="Axis Label Glow" type="3"/>
+            <value type="QString">1543503872</value>
+        </setupitem>
+        <setupitem>
+            <identity name="Smoothing" type="4"/>
+            <value type="QString">3</value>
+        </setupitem>
+        <setupitem>
+            <identity name="Units" type="6"/>
+            <value type="QString">0</value>
+        </setupitem>
+        <setupitem>
+            <identity name="Line Configs" type="9"/>
+            <value type="QString">0,0,0,255,0,255,0,255,255,0,0,255,C:/Users/Bridges/Documents/LCDHost/Plugins-build-desktop/LH_Graph,255</value>
+        </setupitem>
+    </instance>
+    <instance class="LH_Graph/SystemNetworkOutboundGraph">
+        <identity name="Outbound Bandwidth Usage (Graph) [1]" id="1xyjcw"/>
+        <state modifiable="1" selectable="1" alerts="1"/>
+        <origin x="0" y="0"/>
+        <size w="48" h="48"/>
+        <plugin_size w="48" h="48"/>
+        <pos x="-1" y="55" z="8"/>
+        <x_ref id="qtvbs" align="0" ref_align="0"/>
+        <y_ref id="qtvbs" align="0" ref_align="0"/>
+        <w_ref id="0" mod="0" units="0"/>
+        <h_ref id="0" mod="0" units="0"/>
+        <setupitem>
+            <identity name="Graph Style" type="6"/>
+            <value type="QString">0</value>
+        </setupitem>
+        <setupitem>
+            <identity name="Graph Background" type="6"/>
+            <value type="QString">1</value>
+        </setupitem>
+        <setupitem>
+            <identity name="Graph Orientation" type="6"/>
+            <value type="QString">0</value>
+        </setupitem>
+        <setupitem>
+            <identity name="Background color" type="3"/>
+            <value type="QString">0</value>
+        </setupitem>
+        <setupitem>
+            <identity name="Background Image" type="10"/>
+            <value type="QString"></value>
+        </setupitem>
+        <setupitem>
+            <identity name="Max Samples" type="1"/>
+            <value type="QString">60</value>
+        </setupitem>
+        <setupitem>
+            <identity name="Sample Rate" type="1"/>
+            <value type="QString">1</value>
+        </setupitem>
+        <setupitem>
+            <identity name="~" type="8"/>
+        </setupitem>
+        <setupitem>
+            <identity name="Selected Line" type="6"/>
+            <value type="QString">0</value>
+        </setupitem>
+        <setupitem>
+            <identity name="Line color" type="3"/>
+            <value type="QString">-16777216</value>
+        </setupitem>
+        <setupitem>
+            <identity name="Area color (start)" type="3"/>
+            <value type="QString">-16711936</value>
+        </setupitem>
+        <setupitem>
+            <identity name="Area color (end)" type="3"/>
+            <value type="QString">-65536</value>
+        </setupitem>
+        <setupitem>
+            <identity name="Fill Image" type="10"/>
+            <value type="QString"></value>
+        </setupitem>
+        <setupitem>
+            <identity name="Fill Image Opacity" type="1"/>
+            <value type="QString">255</value>
+        </setupitem>
+        <setupitem>
+            <identity name="Graph Ymax" type="7"/>
+            <value type="QString">131072</value>
+        </setupitem>
+        <setupitem>
+            <identity name="Ymax Can Grow" type="2"/>
+            <value type="QString">false</value>
+        </setupitem>
+        <setupitem>
+            <identity name="Auto Scale Ymax" type="2"/>
+            <value type="QString">false</value>
+        </setupitem>
+        <setupitem>
+            <identity name="Graph Ymin" type="7"/>
+            <value type="QString">0</value>
+        </setupitem>
+        <setupitem>
+            <identity name="Auto Scale Ymin" type="2"/>
+            <value type="QString">false</value>
+        </setupitem>
+        <setupitem>
+            <identity name="Show Ymax" type="2"/>
+            <value type="QString">false</value>
+        </setupitem>
+        <setupitem>
+            <identity name="Show Ymin" type="2"/>
+            <value type="QString">false</value>
+        </setupitem>
+        <setupitem>
+            <identity name="Hide When Empty" type="2"/>
+            <value type="QString">false</value>
+        </setupitem>
+        <setupitem>
+            <identity name="Show Real Y-Limits" type="2"/>
+            <value type="QString">false</value>
+        </setupitem>
+        <setupitem>
+            <identity name="Y Labels on Right" type="2"/>
+            <value type="QString">false</value>
+        </setupitem>
+        <setupitem>
+            <identity name="Axis Label Font" type="11"/>
+            <value type="QString">Arial,8,-1,5,50,0,0,0,0,0</value>
+        </setupitem>
+        <setupitem>
+            <identity name="Axis Label Color" type="3"/>
+            <value type="QString">-1</value>
+        </setupitem>
+        <setupitem>
+            <identity name="Axis Label Glow" type="3"/>
+            <value type="QString">1543503872</value>
+        </setupitem>
+        <setupitem>
+            <identity name="Smoothing" type="4"/>
+            <value type="QString">3</value>
+        </setupitem>
+        <setupitem>
+            <identity name="Units" type="6"/>
+            <value type="QString">0</value>
+        </setupitem>
+        <setupitem>
+            <identity name="Line Configs" type="9"/>
+            <value type="QString">0,0,0,255,0,255,0,255,255,0,0,255,C:/Users/Bridges/Documents/LCDHost/Plugins-build-desktop/LH_Graph,255</value>
+        </setupitem>
+    </instance>
+    <instance class="LH_Graph/SystemNetworkInboundGraph">
+        <identity name="Inbound Bandwidth Usage (Graph) [5]" id="1x1kj4"/>
+        <state modifiable="1" selectable="1" alerts="1"/>
+        <origin x="0" y="0"/>
+        <size w="48" h="48"/>
+        <plugin_size w="48" h="48"/>
+        <pos x="50" y="7" z="9"/>
+        <x_ref id="0" align="0" ref_align="0"/>
+        <y_ref id="0" align="0" ref_align="0"/>
+        <w_ref id="0" mod="0" units="0"/>
+        <h_ref id="0" mod="0" units="0"/>
+        <setupitem>
+            <identity name="Graph Style" type="6"/>
+            <value type="int">0</value>
+        </setupitem>
+        <setupitem>
+            <identity name="Graph Background" type="6"/>
+            <value type="int">1</value>
+        </setupitem>
+        <setupitem>
+            <identity name="Graph Orientation" type="6"/>
+            <value type="int">0</value>
+        </setupitem>
+        <setupitem>
+            <identity name="Background color" type="3"/>
+            <value type="int">0</value>
+        </setupitem>
+        <setupitem>
+            <identity name="Background Image" type="10"/>
+            <value type="QString"></value>
+        </setupitem>
+        <setupitem>
+            <identity name="Max Samples" type="1"/>
+            <value type="int">120</value>
+        </setupitem>
+        <setupitem>
+            <identity name="Sample Rate" type="1"/>
+            <value type="int">1</value>
+        </setupitem>
+        <setupitem>
+            <identity name="~" type="8"/>
+        </setupitem>
+        <setupitem>
+            <identity name="Selected Line" type="6"/>
+            <value type="int">0</value>
+        </setupitem>
+        <setupitem>
+            <identity name="Line color" type="3"/>
+            <value type="int">-16777216</value>
+        </setupitem>
+        <setupitem>
+            <identity name="Area color (start)" type="3"/>
+            <value type="int">-16711936</value>
+        </setupitem>
+        <setupitem>
+            <identity name="Area color (end)" type="3"/>
+            <value type="int">-65536</value>
+        </setupitem>
+        <setupitem>
+            <identity name="Fill Image" type="10"/>
+            <value type="QString"></value>
+        </setupitem>
+        <setupitem>
+            <identity name="Fill Image Opacity" type="1"/>
+            <value type="int">255</value>
+        </setupitem>
+        <setupitem>
+            <identity name="Graph Ymax" type="7"/>
+            <value type="float">1000</value>
+        </setupitem>
+        <setupitem>
+            <identity name="Ymax Can Grow" type="2"/>
+            <value type="bool">false</value>
+        </setupitem>
+        <setupitem>
+            <identity name="Auto Scale Ymax" type="2"/>
+            <value type="bool">false</value>
+        </setupitem>
+        <setupitem>
+            <identity name="Graph Ymin" type="7"/>
+            <value type="float">0</value>
+        </setupitem>
+        <setupitem>
+            <identity name="Auto Scale Ymin" type="2"/>
+            <value type="bool">false</value>
+        </setupitem>
+        <setupitem>
+            <identity name="Show Ymax" type="2"/>
+            <value type="bool">false</value>
+        </setupitem>
+        <setupitem>
+            <identity name="Show Ymin" type="2"/>
+            <value type="bool">false</value>
+        </setupitem>
+        <setupitem>
+            <identity name="Hide When Empty" type="2"/>
+            <value type="bool">false</value>
+        </setupitem>
+        <setupitem>
+            <identity name="Show Real Y-Limits" type="2"/>
+            <value type="bool">false</value>
+        </setupitem>
+        <setupitem>
+            <identity name="Y Labels on Right" type="2"/>
+            <value type="bool">false</value>
+        </setupitem>
+        <setupitem>
+            <identity name="Axis Label Font" type="11"/>
+            <value type="QString">Arial,8,-1,5,50,0,0,0,0,0</value>
+        </setupitem>
+        <setupitem>
+            <identity name="Axis Label Color" type="3"/>
+            <value type="int">-1</value>
+        </setupitem>
+        <setupitem>
+            <identity name="Axis Label Glow" type="3"/>
+            <value type="int">1543503872</value>
+        </setupitem>
+        <setupitem>
+            <identity name="Smoothing" type="4"/>
+            <value type="int">3</value>
+        </setupitem>
+        <setupitem>
+            <identity name="Units" type="6"/>
+            <value type="int">0</value>
+        </setupitem>
+        <setupitem>
+            <identity name="Line Configs" type="9"/>
+            <value type="QString">0,0,0,255,0,255,0,255,255,0,0,255,C:/Users/Bridges/Documents/LCDHost/Plugins-build-desktop/LH_Graph,255</value>
+        </setupitem>
+    </instance>
+</instance>

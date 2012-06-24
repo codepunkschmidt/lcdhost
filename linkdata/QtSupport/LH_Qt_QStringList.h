@@ -101,7 +101,7 @@ public:
     void setIndex(int i)
     {
         if( i < -1 ) i = -1;
-        if( i >= list_.size() ) i = list_.size();
+        if( i >= list_.size() ) i = list_.size()-1;
         if( item_.data.i != i )
         {
             item_.data.i = i;

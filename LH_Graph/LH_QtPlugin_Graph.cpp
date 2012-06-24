@@ -28,6 +28,13 @@
 
 LH_PLUGIN(LH_QtPlugin_Graph)
 
+DataLineCollection* cpu_histogram_;
+DataLineCollection* cpu_average_;
+DataLineCollection* mem_physical_;
+DataLineCollection* mem_virtual_;
+DataLineCollection* net_in_;
+DataLineCollection* net_out_;
+
 char __lcdhostplugin_xml[] =
 "<?xml version=\"1.0\"?>"
 "<lcdhostplugin>"
@@ -47,3 +54,28 @@ char __lcdhostplugin_xml[] =
     "Graphs can span 5 seconds to 2 hours by taking up to 600 samples at intervals of up to 12 seconds.</p>"
 "</longdesc>"
 "</lcdhostplugin>";
+
+const char *LH_QtPlugin_Graph::userInit() {
+    cpu_histogram_ = new DataLineCollection(2048);
+    cpu_average_ = new DataLineCollection(2048);
+    mem_physical_ = new DataLineCollection(2048);
+    mem_virtual_ = new DataLineCollection(2048);
+    net_in_ = new DataLineCollection(2048);
+    net_out_ = new DataLineCollection(2048);
+
+    cpu_.smoothingHidden(true);
+    cpu_timer_.start();
+    mem_timer_.start();
+    net_timer_.start();
+    return 0;
+}
+
+void LH_QtPlugin_Graph::userTerm()
+{
+    delete cpu_histogram_;
+    delete cpu_average_;
+    delete mem_physical_;
+    delete mem_virtual_;
+    delete net_in_;
+    delete net_out_;
+}

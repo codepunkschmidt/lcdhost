@@ -28,6 +28,8 @@
 #include "QDebug"
 #include "LH_QtCPU.h"
 
+#include "LH_QtPlugin_Graph.h"
+
 class LH_GraphCPUHistogram : public LH_Graph
 {
     LH_QtCPU cpu_;
@@ -60,7 +62,7 @@ class LH_GraphCPUHistogram : public LH_Graph
     }
 
 public:
-    explicit LH_GraphCPUHistogram() : LH_Graph(), cpu_(this)
+    explicit LH_GraphCPUHistogram() : LH_Graph(gdmExternallyManaged,cpu_histogram_), cpu_(this)
     {
         initialized = false;
 
@@ -102,29 +104,34 @@ public:
 
     int notify(int n, void *p)
     {
-        if (cpu_.count()!=0)
+        if (dataMode() != gdmExternallyManaged)
         {
-            if (!initialized) initialize(cpu_.count());
-
-            for(int i =0; i<cpu_.count(); i++ )
+            if (cpu_.count()!=0)
             {
-                if(n&LH_NOTE_CPU)
+                if (!initialized) initialize(cpu_.count());
+
+                for(int i =0; i<cpu_.count(); i++ )
                 {
-                    valCache[i]+=cpu_.coreload(i)/100;
-                    valCount[i]+=1;
-                }
-                if(n&LH_NOTE_SECOND)
-                {
-                    if (valCount[i]!=0)
+                    if(n&LH_NOTE_CPU)
                     {
-                        lastVal[i] = valCache[i]/valCount[i];
-                        addValue(lastVal[i], i);
+                        valCache[i]+=cpu_.coreload(i)/100;
+                        valCount[i]+=1;
                     }
-                    valCache[i] = 0;
-                    valCount[i] = 0;
+                    if(n&LH_NOTE_SECOND)
+                    {
+                        if (valCount[i]!=0)
+                        {
+                            lastVal[i] = valCache[i]/valCount[i];
+                            addValue(lastVal[i], i);
+                        }
+                        valCache[i] = 0;
+                        valCount[i] = 0;
+                    }
                 }
             }
         }
+        else
+            callback(lh_cb_render,NULL);
         return LH_Graph::notify(n,p) | cpu_.notify(n,p) | LH_NOTE_SECOND;
     }
 

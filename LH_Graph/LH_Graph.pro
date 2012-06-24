@@ -1,7 +1,9 @@
 TARGET = LH_Graph
 TEMPLATE = lib
 DEFINES += LH_GRAPH_LIBRARY
-CONFIG += systemstats
+DEFINES += VERSION=2.00
+
+CONFIG += systemstats datacollection
 
 include(../Plugins.pri)
 

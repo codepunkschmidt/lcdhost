@@ -26,6 +26,7 @@
 
 #include "LH_Graph.h"
 #include "LH_QtNetwork.h"
+#include "LH_QtPlugin_Graph.h"
 
 class LH_GraphNetOut : public LH_Graph
 {
@@ -38,7 +39,7 @@ protected:
     LH_Qt_QStringList *setup_units_;
 
 public:
-    LH_GraphNetOut() : net_(this)
+    LH_GraphNetOut() : LH_Graph(gdmExternallyManaged, net_out_), net_(this)
     {
         QStringList valuesList;
         valuesList.append("kb/s (kilobits per second)");
@@ -78,20 +79,28 @@ public:
     int notify(int n, void *p)
     {
         changeUnits();
-        if(n&LH_NOTE_NET)
+        if (dataMode() != gdmExternallyManaged)
         {
-            valCache+=net_.outRate();
-            valCount+=1;
-        }
-        if(n&LH_NOTE_SECOND)
-        {
-            if (valCount!=0) {
-                lastVal = valCache/valCount;
-                setMax( state()->net_max_out);
-                addValue(lastVal);
+            if(n&LH_NOTE_NET)
+            {
+                valCache+=net_.outRate();
+                valCount+=1;
             }
-            valCache = 0;
-            valCount = 0;
+            if(n&LH_NOTE_SECOND)
+            {
+                if (valCount!=0) {
+                    lastVal = valCache/valCount;
+                    setMax( state()->net_max_out);
+                    addValue(lastVal);
+                }
+                valCache = 0;
+                valCount = 0;
+            }
+        }
+        else
+        {
+            setMax( state()->net_max_out);
+            callback(lh_cb_render,NULL);
         }
         return LH_Graph::notify(n,p) | net_.notify(n,p) | LH_NOTE_SECOND;
     }

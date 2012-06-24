@@ -24,6 +24,10 @@ json {
     include($$CODELEAP/json/json.pri)
 }
 
+datacollection {
+    include($$CODELEAP/DataCollection/DataCollection.pri)
+}
+
 translator {
     include($$CODELEAP/SimpleTranslator/SimpleTranslator.pri)
 }

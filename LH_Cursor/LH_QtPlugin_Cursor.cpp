@@ -119,7 +119,7 @@ void LH_QtPlugin_Cursor::keyPressed(QString key,int flags,int value)
         favourite_combo_step_ = 0;
     if(favourite_combo_step_ == keyID-1)
     {
-        qDebug() << keyID << ":" << key;
+        //qDebug() << keyID << ":" << key;
         favourite_combo_step_ = keyID;
         if(favourite_combo_step_ == setup_key_presses_->value())
         {

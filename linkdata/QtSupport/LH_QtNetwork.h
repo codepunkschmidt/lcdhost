@@ -42,14 +42,14 @@
 
 class LH_QtNetwork
 {
-    LH_QtInstance *parent_;
+    LH_QtObject *parent_;
     QQueue<lh_netdata*> data_;
 
 protected:
     LH_Qt_QSlider *setup_smoothing_;
 
 public:
-    explicit LH_QtNetwork( LH_QtInstance *parent );
+    explicit LH_QtNetwork( LH_QtObject *parent );
     ~LH_QtNetwork();
 
     int notify(int n, void *p);

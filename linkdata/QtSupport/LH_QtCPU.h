@@ -43,7 +43,7 @@
 class LH_QtCPU
 {
     QQueue<lh_cpudata*> load_;
-    LH_QtInstance *parent_;
+    LH_QtObject *parent_;
 
     int load( lh_cpudata *from, lh_cpudata *to );
 
@@ -51,7 +51,7 @@ protected:
     LH_Qt_QSlider *setup_smoothing_;
 
 public:
-    explicit LH_QtCPU(LH_QtInstance *parent);
+    explicit LH_QtCPU(LH_QtObject *parent);
     ~LH_QtCPU();
 
     int notify(int n, void *p);

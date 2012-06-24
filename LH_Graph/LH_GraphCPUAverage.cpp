@@ -27,6 +27,8 @@
 #include "LH_Graph.h"
 #include "LH_QtCPU.h"
 
+#include "LH_QtPlugin_Graph.h"
+
 class LH_GraphCPUAverage : public LH_Graph
 {
     LH_QtCPU cpu_;
@@ -35,7 +37,7 @@ class LH_GraphCPUAverage : public LH_Graph
     qreal lastVal;
 
 public:
-    LH_GraphCPUAverage() : cpu_( this )
+    LH_GraphCPUAverage() : LH_Graph(gdmExternallyManaged, cpu_average_), cpu_( this )
     {
         valCount = 0;
         valCache = 0;
@@ -66,20 +68,25 @@ public:
 
     int notify(int n, void *p)
     {
-        if(n&LH_NOTE_CPU)
+        if (dataMode() != gdmExternallyManaged)
         {
-            valCache+=cpu_.averageload()/100;
-            valCount+=1;
-        }
-        if(n&LH_NOTE_SECOND)
-        {
-            if (valCount!=0) {
-                lastVal = valCache/valCount;
-                addValue(lastVal);
+            if(n&LH_NOTE_CPU)
+            {
+                valCache+=cpu_.averageload()/100;
+                valCount+=1;
             }
-            valCache = 0;
-            valCount = 0;
+            if(n&LH_NOTE_SECOND)
+            {
+                if (valCount!=0) {
+                    lastVal = valCache/valCount;
+                    addValue(lastVal);
+                }
+                valCache = 0;
+                valCount = 0;
+            }
         }
+        else
+            callback(lh_cb_render,NULL);
         return LH_Graph::notify(n,p) | cpu_.notify(n,p) | LH_NOTE_SECOND;
     }
 

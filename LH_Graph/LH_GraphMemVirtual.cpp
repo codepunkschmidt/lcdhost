@@ -26,23 +26,23 @@
 
 #include "LH_Graph.h"
 
+#include "LH_QtPlugin_Graph.h"
+
 class LH_GraphMemVirtual : public LH_Graph
 {
     bool initialized;
-    qreal unitBase;
 
     void initialize(){
         if( state()->mem_data.tot_virt ) {
             initialized = true;
-            setMax( state()->mem_data.tot_virt / unitBase );
+            setMax( state()->mem_data.tot_virt / GRAPH_MEM_UNIT_BASE );
         }
     }
 
 
 public:
-    LH_GraphMemVirtual()
+    LH_GraphMemVirtual() : LH_Graph(gdmExternallyManaged, mem_virtual_)
     {
-        unitBase = 1024 * 1024 * 1024;
         setMin(0.0);
         setMax(1000.0);
         setYUnit("GB");
@@ -77,14 +77,18 @@ public:
         if( state()->mem_data.tot_virt )
         {
             if (!initialized) initialize();
-            if(!n || n&LH_NOTE_SECOND)
+            if (dataMode() != gdmExternallyManaged)
             {
-                qreal used_mem = ( state()->mem_data.tot_virt - state()->mem_data.free_virt ) / unitBase;
-                addValue(used_mem);
-                callback(lh_cb_render,NULL);
+                if(!n || n&LH_NOTE_SECOND)
+                {
+                    qreal used_mem = ( state()->mem_data.tot_virt - state()->mem_data.free_virt ) / GRAPH_MEM_UNIT_BASE;
+                    addValue(used_mem);
+                }
             }
+            else
+                callback(lh_cb_render,NULL);
         }
-        return LH_NOTE_SECOND;
+        return LH_Graph::notify(n,p) | LH_NOTE_SECOND;
     }
 
     QImage *render_qimage( int w, int h )

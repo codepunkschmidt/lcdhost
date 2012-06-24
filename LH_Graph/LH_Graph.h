@@ -41,11 +41,32 @@
 #include "QList"
 #include "QHash"
 
+#include "DataCollection.h"
+
+enum GraphDataMode
+{
+    /* Internally Managed Data means the graph uses it's own internal data store.   *
+     * Data points are added to the store (usually via a decendant class) using the *
+     * "addValue" routine.                                                          */
+    gdmInternallyManaged,
+
+    /* Externally Managed Data means the graph makes no use of it's internal store. *
+     * Instead, some 3rd party (possibly a decendant, but not necessarily) is going *
+     * to maintain it's own DataLineCollection object which the graph will make use *
+     * of.                                                                          */
+    gdmExternallyManaged,
+
+    /* "Hybrid" management exists where a 3rd party will be maintaining it's own    *
+     * record of data values (in a DataLineCollection object), which will be copied *
+     * into the graph object when the data is initialised. However, once this has   *
+     * been done, the graph will maintain it's own collection and changes to the    *
+     * 3rd party collection will be ignored.                                         */
+    gdmHybrid
+};
+
 class LH_Graph : public LH_QtInstance
 {
     Q_OBJECT
-
-    int len_;
 
     const static bool isDebug = false;
 
@@ -65,7 +86,7 @@ class LH_Graph : public LH_QtInstance
     QHash<int,QImage> fgImgs_;
     void reload_images();
 
-    QList< QList<qreal> > values_;
+    DataLineCollection lines_;
     QVector<int> cacheCount_;
     QVector<qreal> cacheVal_;
 
@@ -76,6 +97,10 @@ class LH_Graph : public LH_QtInstance
 
     bool hasDeadValue_;
     qreal deadValue_;
+
+    GraphDataMode dataMode_;
+    DataLineCollection* externalSource_;
+    DataLineCollection* lineData_;
 protected:
     bool graph_empty_;
 
@@ -111,8 +136,17 @@ protected:
     LH_Qt_QFileInfo *setup_bg_image_;
     LH_Qt_int *setup_fg_alpha_;
 
+    void __ctor( float defaultMin, float defaultMax, GraphDataMode dataMode, DataLineCollection* externalSource );
+
 public:
-    LH_Graph( float defaultMin = 0, float defaultMax = 0 );
+    LH_Graph( float defaultMin = 0, float defaultMax = 0) : lines_(30)
+    { __ctor(defaultMin, defaultMax, gdmInternallyManaged, NULL); }
+
+    LH_Graph( GraphDataMode dataMode, DataLineCollection* externalSource) : lines_(30)
+    { __ctor(0, 0, dataMode, externalSource); }
+
+    LH_Graph( float defaultMin, float defaultMax, GraphDataMode dataMode, DataLineCollection* externalSource ) : lines_(30)
+    { __ctor(defaultMin, defaultMax, dataMode, externalSource); }
 
     QImage *render_qimage( int w, int h );
 
@@ -151,6 +185,8 @@ public:
 
     bool userDefinableLimits();
     bool setUserDefinableLimits(bool v);
+
+    GraphDataMode dataMode() { return dataMode_; }
 
     void setDeadValue(qreal v){
         hasDeadValue_ = true;

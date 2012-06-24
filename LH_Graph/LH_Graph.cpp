@@ -32,6 +32,32 @@
 #include "LH_Graph.h"
 #include <math.h>
 
+enum graph_orientation
+{
+    TimeHorizontal_NowRight_MaxTop = 0,
+    TimeHorizontal_NowRight_MaxBottom = 1,
+    TimeHorizontal_NowLeft_MaxTop = 2,
+    TimeHorizontal_NowLeft_MaxBottom = 3,
+    TimeVertical_NowTop_MaxLeft = 4,
+    TimeVertical_NowTop_MaxRight = 5,
+    TimeVertical_NowBottom_MaxLeft = 6,
+    TimeVertical_NowBottom_MaxRight = 7
+};
+
+enum background_type
+{
+    Background_None = 0,
+    Background_AreaFill = 1,
+    Background_Image = 2
+};
+
+enum foreground_type
+{
+    Foreground_LineOnly = 0,
+    Foreground_AreaFill = 1,
+    Foreground_Image = 2
+};
+
 static inline uint PREMUL(uint x) {
     uint a = x >> 24;
     uint t = (x & 0xff00ff) * a;
@@ -45,15 +71,30 @@ static inline uint PREMUL(uint x) {
     return x;
 }
 
-LH_Graph::LH_Graph( float defaultMin, float defaultMax )
+void LH_Graph::__ctor( float defaultMin, float defaultMax, GraphDataMode dataMode, DataLineCollection* externalSource )
 {
+    dataMode_ = dataMode;
+    externalSource_ = externalSource;
+    int default_sample_rate = 1;
+
+    switch(dataMode_)
+    {
+    case gdmExternallyManaged:
+        lineData_ = externalSource;
+        break;
+    case gdmHybrid:
+        lines_.copyFrom((*externalSource_).averageOver(default_sample_rate * 1000));
+        lineData_ = &lines_;
+        break;
+    case gdmInternallyManaged:
+        lineData_ = &lines_;
+        break;
+    }
     if (isDebug) qDebug() << "graph: init: begin";
     userDefinableLimits_ = false;
     graphMinY_ = graphMaxY_ = 0.0;
-    values_.clear();
     cacheCount_.clear();
     cacheVal_.clear();
-    len_ = 30;
     divisorY_ = 1;
     unitText_ = "";
 
@@ -90,10 +131,10 @@ LH_Graph::LH_Graph( float defaultMin, float defaultMax )
     setup_bg_image_ = new LH_Qt_QFileInfo(this, "Background Image", QFileInfo(""), LH_FLAG_AUTORENDER | LH_FLAG_HIDDEN);
     setup_bgcolor_->setHelp( "<p>The image used for the background.</p>");
 
-    setup_max_samples_ = new LH_Qt_int(this,"Max Samples",len_,5,600,LH_FLAG_AUTORENDER);
+    setup_max_samples_ = new LH_Qt_int(this,"Max Samples",lines_.limit(),5,600,LH_FLAG_AUTORENDER);
     setup_max_samples_->setHelp( "<p>How many data points to store &amp; plot.</p>");
 
-    setup_sample_rate_ = new LH_Qt_int(this,"Sample Rate",1,1,12,LH_FLAG_AUTORENDER);
+    setup_sample_rate_ = new LH_Qt_int(this,"Sample Rate",default_sample_rate,1,12,LH_FLAG_AUTORENDER);
     setup_sample_rate_->setHelp( "<p>How frequently to log data.</p>");
 
     setup_description_ = new LH_Qt_QString(this,"~","...",LH_FLAG_READONLY|LH_FLAG_NOSAVE);
@@ -162,6 +203,8 @@ LH_Graph::LH_Graph( float defaultMin, float defaultMax )
     setup_label_shadow_ = new LH_Qt_QColor(this,"Axis Label Glow",QColor(0,0,0,92),LH_FLAG_AUTORENDER|LH_FLAG_HIDDEN);
     setup_label_shadow_->setHelp( "<p>The color used for for the \"Glow/Shadow\" effect around Axis labels (designed to improve legibility).</p>"
                                   "<p>Set the transparency to 0 to remove the effect.</p>");
+
+
 
     addLine("Default");
 
@@ -239,9 +282,9 @@ void LH_Graph::findDataBounds()
         qreal valueMax = min();
         bool isConstant = true;
         float constantValue = 0;
-        for(int i=0;i<values_[lineID].length() && i<len_;i++)
+        for(int i=0;i<(*lineData_)[lineID].length() && i<(*lineData_).limit();i++)
         {
-            qreal y = values_[lineID].at(i);
+            qreal y = (*lineData_).at(lineID).at(i).value;
             if(i==0)
                 constantValue = y;
             else
@@ -306,6 +349,7 @@ void LH_Graph::findDataBounds()
 void LH_Graph::drawSingle( int lineID )
 {
     if (lineID>=lineCount()) return;
+    if (lineID>=(*lineData_).count()) return;
 
     if (isDebug) qDebug() << "graph: draw line: begin " << lineID;
     QColor penColor = QColor();
@@ -319,7 +363,7 @@ void LH_Graph::drawSingle( int lineID )
 
     QPainter painter;
 
-    QPointF points[len_+2];
+    QPointF points[(*lineData_).limit()+2];
 
     int w = image_->width();
     int h = image_->height();
@@ -334,23 +378,21 @@ void LH_Graph::drawSingle( int lineID )
 
         switch(setup_bg_type_->value())
         {
-        case 2:
+        case Background_Image:
             if(setup_bg_image_->value().isFile())
             {
                 image_ = new QImage(bgImg_);
                 break;
             }
-        case 0:
+        case Background_None:
             image_ = new QImage(w,h,QImage::Format_ARGB32_Premultiplied);
             image_->fill( PREMUL( QColor(0,0,0,0).rgba() ) );
             break;
-        case 1:
+        case Background_AreaFill:
             image_ = new QImage(w,h,QImage::Format_ARGB32_Premultiplied);
             image_->fill( PREMUL( setup_bgcolor_->value().rgba() ) );
             break;
         }
-
-
 
         findDataBounds();
     }
@@ -358,104 +400,128 @@ void LH_Graph::drawSingle( int lineID )
     //assemble the array of points for the graph (based on values & orientation)
     bool isConstant = true;
     float constantValue = 0;
-    int i;
-    for(i=0;i<values_[lineID].length() && i<len_;i++)
+    qreal point_position = 0;
+
+    int desired_duration = (setup_sample_rate_->value() * 1000);
+    DataLineCollection avgData;
+    switch(dataMode_)
     {
+    case gdmInternallyManaged:
+    case gdmHybrid:
+        avgData = (*lineData_);
+        break;
+    case gdmExternallyManaged:
+        avgData = (*lineData_).averageOver(desired_duration);
+        break;
+    }
+
+    qreal axis_max = (qMin(setup_max_samples_->value(), avgData.limit())-1) * desired_duration;
+
+    int point_count = 0;
+    for(int i=0; i<avgData[lineID].length() && i<(setup_max_samples_->value()); i++)
+    {       
+        qreal point_value = ((avgData.at(lineID).at(i).value) - graphMinY_);
+        qreal point_duration = (qreal)avgData.at(lineID).at(i).duration;
+
+        if(point_count!=0)
+            point_position += point_duration;
+
         qreal x = 0; qreal y=0;
         switch(setup_orientation_->value())
         {
-        case 0:
-            x = ((len_-1) - i) * w / (len_-1);
-            y = h - (((values_[lineID].at(i) ) - graphMinY_) * h / (graphMaxY_ - graphMinY_));
+        case TimeHorizontal_NowRight_MaxTop:
+            x = w * (1 - point_position / axis_max);
+            y = h - (point_value * h / (graphMaxY_ - graphMinY_));
             break;
-        case 1:
-            x = ((len_-1) - i) * w / (len_-1);
-            y = (((values_[lineID].at(i) ) - graphMinY_) * h / (graphMaxY_ - graphMinY_));
+        case TimeHorizontal_NowRight_MaxBottom:
+            x = w * (1 - point_position / axis_max);
+            y = (point_value * h / (graphMaxY_ - graphMinY_));
             break;
-        case 2:
-            x = w - ((len_-1) - i) * w / (len_-1);
-            y = h - (((values_[lineID].at(i) ) - graphMinY_) * h / (graphMaxY_ - graphMinY_));
+        case TimeHorizontal_NowLeft_MaxTop:
+            x = w * (point_position / axis_max);
+            y = h - (point_value * h / (graphMaxY_ - graphMinY_));
             break;
-        case 3:
-            x = w - ((len_-1) - i) * w / (len_-1);
-            y = (((values_[lineID].at(i) ) - graphMinY_) * h / (graphMaxY_ - graphMinY_));
+        case TimeHorizontal_NowLeft_MaxBottom:
+            x = w * (point_position / axis_max);
+            y = (point_value * h / (graphMaxY_ - graphMinY_));
             break;
-        case 4:
-            x = w - (((values_[lineID].at(i) ) - graphMinY_) * w / (graphMaxY_ - graphMinY_));
-            y = h - ((len_-1) - i) * h / (len_-1);
+        case TimeVertical_NowTop_MaxLeft:
+            x = w - (point_value * w / (graphMaxY_ - graphMinY_));
+            y = h * (point_position / axis_max);
             break;
-        case 5:
-            x = (((values_[lineID].at(i) ) - graphMinY_) * w / (graphMaxY_ - graphMinY_));
-            y = h - ((len_-1) - i) * h / (len_-1);
+        case TimeVertical_NowTop_MaxRight:
+            x = (point_value * w / (graphMaxY_ - graphMinY_));
+            y = h * (point_position / axis_max);
             break;
-        case 6:
-            x = w - (((values_[lineID].at(i) ) - graphMinY_) * w / (graphMaxY_ - graphMinY_));
-            y = ((len_-1) - i) * h / (len_-1);
+        case TimeVertical_NowBottom_MaxLeft:
+            x = w - (point_value * w / (graphMaxY_ - graphMinY_));
+            y = h * (1 - point_position / axis_max);
             break;
-        case 7:
-            x = (((values_[lineID].at(i) ) - graphMinY_) * w / (graphMaxY_ - graphMinY_));
-            y = ((len_-1) - i) * h / (len_-1);
+        case TimeVertical_NowBottom_MaxRight:
+            x = (point_value * w / (graphMaxY_ - graphMinY_));
+            y = h * (1 - point_position / axis_max);
             break;
         }
-        if(i==0)
-            constantValue = values_[lineID].at(i);
+        if(point_count==0)
+            constantValue = avgData.at(lineID).at(i).value;
         else
-            isConstant = isConstant && (constantValue == values_[lineID].at(i));
-        points[i] = QPointF(x, y);
+            isConstant = isConstant && (constantValue == avgData.at(lineID).at(i).value);
+        points[point_count] = QPointF(x, y);
+        point_count++;
     }
 
 
     //apply point corrections & prep gradient
     QLinearGradient gradient;
-    qreal x = points[i-1].x();
-    qreal y = points[i-1].y();
+    qreal x = points[point_count-1].x();
+    qreal y = points[point_count-1].y();
     switch(setup_orientation_->value())
     {
-    case 0:
-        points[i++] =  QPointF(x, h+10);
-        points[i++] =  QPointF(w, h+10);
+    case TimeHorizontal_NowRight_MaxTop:
+        points[point_count++] =  QPointF(x, h+10);
+        points[point_count++] =  QPointF(w, h+10);
         gradient.setStart( QPointF(0, 0) );
         gradient.setFinalStop( QPointF(0,h) );
         break;
-    case 1:
-        points[i++] =  QPointF(x, -10);
-        points[i++] =  QPointF(w, -10);
+    case TimeHorizontal_NowRight_MaxBottom:
+        points[point_count++] =  QPointF(x, -10);
+        points[point_count++] =  QPointF(w, -10);
         gradient.setStart( QPointF(0, h) );
         gradient.setFinalStop( QPointF(0,0) );
         break;
-    case 2:
-        points[i++] =  QPointF(x, h+10);
-        points[i++] =  QPointF(0, h+10);
+    case TimeHorizontal_NowLeft_MaxTop:
+        points[point_count++] =  QPointF(x, h+10);
+        points[point_count++] =  QPointF(0, h+10);
         gradient.setStart( QPointF(0, 0) );
         gradient.setFinalStop( QPointF(0,h) );
         break;
-    case 3:
-        points[i++] =  QPointF(x, -10);
-        points[i++] =  QPointF(0, -10);
+    case TimeHorizontal_NowLeft_MaxBottom:
+        points[point_count++] =  QPointF(x, -10);
+        points[point_count++] =  QPointF(0, -10);
         gradient.setStart( QPointF(0, h) );
         gradient.setFinalStop( QPointF(0,0) );
         break;
-    case 4:
-        points[i++] =  QPointF(w+10, y);
-        points[i++] =  QPointF(w+10, 0);
+    case TimeVertical_NowTop_MaxLeft:
+        points[point_count++] =  QPointF(w+10, y);
+        points[point_count++] =  QPointF(w+10, 0);
         gradient.setStart( QPointF( 0,0 ) );
         gradient.setFinalStop( QPointF(w, 0) );
         break;
-    case 5:
-        points[i++] =  QPointF(-10, y);
-        points[i++] =  QPointF(-10, 0);
+    case TimeVertical_NowTop_MaxRight:
+        points[point_count++] =  QPointF(-10, y);
+        points[point_count++] =  QPointF(-10, 0);
         gradient.setStart( QPointF(w, 0) );
         gradient.setFinalStop( QPointF(0,0) );
         break;
-    case 6:
-        points[i++] =  QPointF(w+10, y);
-        points[i++] =  QPointF(w+10, h);
+    case TimeVertical_NowBottom_MaxLeft:
+        points[point_count++] =  QPointF(w+10, y);
+        points[point_count++] =  QPointF(w+10, h);
         gradient.setStart( QPointF( 0,0 ) );
         gradient.setFinalStop( QPointF(w, 0) );
         break;
-    case 7:
-        points[i++] =  QPointF(-10, y);
-        points[i++] =  QPointF(-10, h);
+    case TimeVertical_NowBottom_MaxRight:
+        points[point_count++] =  QPointF(-10, y);
+        points[point_count++] =  QPointF(-10, h);
         gradient.setStart( QPointF(w, 0) );
         gradient.setFinalStop( QPointF(0,0) );
         break;
@@ -474,14 +540,14 @@ void LH_Graph::drawSingle( int lineID )
         {
             switch(setup_fg_type_->value())
             {
-            case 0:
-                painter.drawPolyline(points, values_[lineID].length());
+            case Foreground_LineOnly:
+                painter.drawPolyline(points, point_count-2);
                 break;
-            case 1:
+            case Foreground_AreaFill:
                 painter.setBrush(QBrush(gradient));
-                painter.drawPolygon(points, values_[lineID].length()+2);
+                painter.drawPolygon(points, point_count);
                 break;
-            case 2:
+            case Foreground_Image:
                 {
                     QRectF graph_area = QRectF( 0,0, w, h );
 
@@ -495,7 +561,7 @@ void LH_Graph::drawSingle( int lineID )
                         QColor maskCol = QColor(0,0,0,fgImgAlpha);
                         maskPaint.setPen(maskCol);
                         maskPaint.setBrush(QBrush(maskCol));
-                        maskPaint.drawPolygon(points, values_[lineID].length()+2);
+                        maskPaint.drawPolygon(points, point_count);
                         maskPaint.end();
                     }
 
@@ -514,7 +580,7 @@ void LH_Graph::drawSingle( int lineID )
                         }
                         painter.drawImage(graph_area, tempImg);
                     }
-                    painter.drawPolyline(points, values_[lineID].length());
+                    painter.drawPolyline(points, (*lineData_).at(lineID).length());
                 }
                 break;
             }
@@ -532,32 +598,32 @@ void LH_Graph::drawSingle( int lineID )
             bool emptyHide = setup_hide_when_empty_->value() && graph_empty_;
             switch(setup_orientation_->value())
             {
-            case 0:
-            case 2:
+            case TimeHorizontal_NowRight_MaxTop:
+            case TimeHorizontal_NowLeft_MaxTop:
                 flags = flags | (setup_y_labels_right_->value() ? Qt::AlignRight : Qt::AlignLeft);
                 if(setup_show_y_max_->value() && !emptyHide) addText(painter, image_->rect(), flags|Qt::AlignTop,    maxLabel);
                 if(setup_show_y_min_->value() && !emptyHide) addText(painter, image_->rect(), flags|Qt::AlignBottom, minLabel);
                 break;
-            case 1:
-            case 3:
+            case TimeHorizontal_NowRight_MaxBottom:
+            case TimeHorizontal_NowLeft_MaxBottom:
                 flags = flags | (setup_y_labels_right_->value() ? Qt::AlignRight : Qt::AlignLeft);
                 if(setup_show_y_max_->value() && !emptyHide) addText(painter, image_->rect(), flags|Qt::AlignBottom, maxLabel);
                 if(setup_show_y_min_->value() && !emptyHide) addText(painter, image_->rect(), flags|Qt::AlignTop,    minLabel);
                 break;
-            case 4:
-            case 6:
+            case TimeVertical_NowTop_MaxLeft:
+            case TimeVertical_NowBottom_MaxLeft:
                 flags = flags | (setup_y_labels_right_->value() ? Qt::AlignTop : Qt::AlignBottom);
                 if(setup_show_y_max_->value() && !emptyHide) addText(painter, image_->rect(), flags|Qt::AlignLeft,   maxLabel);
                 if(setup_show_y_min_->value() && !emptyHide) addText(painter, image_->rect(), flags|Qt::AlignRight,  minLabel);
                 break;
-            case 5:
-            case 7:
+            case TimeVertical_NowTop_MaxRight:
+            case TimeVertical_NowBottom_MaxRight:
                 flags = flags | (setup_y_labels_right_->value() ? Qt::AlignTop : Qt::AlignBottom);
                 if(setup_show_y_max_->value()) addText(painter, image_->rect(), flags|Qt::AlignRight,  maxLabel);
                 if(setup_show_y_min_->value()) addText(painter, image_->rect(), flags|Qt::AlignLeft,   minLabel);
                 break;
             }
-        }
+        }      
 
         painter.end();
     }
@@ -606,7 +672,7 @@ void LH_Graph::addLine(QString name)
     setup_line_selection_->refreshList();
     cacheCount_.append(0);
     cacheVal_.append(0);
-    values_.append( QList<qreal>() );
+    lines_.add(name);
 
     QStringList configs = setup_line_configs_->value().split('~',QString::SkipEmptyParts);
     if (configs.length()<lineCount())
@@ -632,7 +698,14 @@ void LH_Graph::clearLines()
     setup_line_selection_->refreshList();
     cacheCount_.clear();
     cacheVal_.clear();
-    values_.clear();
+    lines_.clear();
+
+    if (dataMode_ == gdmHybrid)
+    {
+        int desired_duration = (setup_sample_rate_->value() * 1000);
+        lines_.copyFrom((*externalSource_).averageOver(desired_duration));
+    }
+
     setup_line_selection_->setFlag(LH_FLAG_HIDDEN, false);
 }
 
@@ -676,8 +749,7 @@ void LH_Graph::addValue(float value, int lineID )
     cacheVal_[lineID] += (qreal)value;
     if(cacheCount_[lineID] >= setup_sample_rate_->value())
     {
-        if (values_[lineID].length()>=len_) values_[lineID].pop_back();
-        values_[lineID].push_front(cacheVal_[lineID] / cacheCount_[lineID]);
+        lines_[lineID].addValue(cacheVal_[lineID] / cacheCount_[lineID], setup_sample_rate_->value() * 1000);
         cacheCount_[lineID] = 0;
         cacheVal_[lineID] = 0;
     }
@@ -747,13 +819,7 @@ QString LH_Graph::buildColorConfig()
 
 void LH_Graph::changeMaxSamples()
 {
-    len_ = setup_max_samples_->value();
-
-    for(int i =0; i<lineCount(); i++ )
-    {
-        while(len_<values_[i].length())
-            values_[i].removeLast();
-    }
+    lines_.setLimit( setup_max_samples_->value() );
     updateDescText();
 }
 
@@ -764,7 +830,7 @@ void LH_Graph::changeSampleRate()
 
 void LH_Graph::updateDescText()
 {
-    int sTotal = len_ * setup_sample_rate_->value();
+    int sTotal = setup_max_samples_->value() * setup_sample_rate_->value();
     int s = sTotal % 60;
     int m = ((sTotal - s)/60) % 60;
     int h = ((sTotal - s)/60 - m) / 60;
@@ -839,9 +905,7 @@ void LH_Graph::updateLabelSelection()
 void LH_Graph::clear(float newMin, float newMax, bool newGrow)
 {
     for(int lineID=0;lineID<lineCount(); lineID++)
-    {
-        values_[lineID].clear();
-    }
+        lines_[lineID].clear();
     graphMinY_ = graphMaxY_ = 0.0;
     min(newMin);
     max(newMax);

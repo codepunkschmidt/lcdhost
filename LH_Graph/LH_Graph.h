@@ -85,6 +85,7 @@ class LH_Graph : public LH_QtInstance
     QImage bgImg_;
     QHash<int,QImage> fgImgs_;
     void reload_images();
+    void findDataBounds(DataLineCollection* lineData);
 
     DataLineCollection lines_;
     QVector<int> cacheCount_;
@@ -166,8 +167,8 @@ public:
 
     void setYUnit( QString str, qreal divisor = 1);
 
-    void drawSingle( int lineID = 0 );
-    void drawAll( ) { for( int i=0; i<lineCount(); i++ ) drawSingle( i ); }
+    void drawSingle( int lineID = 0, DataLineCollection* dlc = NULL );
+    void drawAll( DataLineCollection* dlc = NULL ) { for( int i=0; i<lineCount(); i++ ) drawSingle( i, dlc ); }
 
     void addValue(float value, int lineID = 0);
     void addValues(QVector<float> values ) { for( int i=0; i<values.size(); ++i ) addValue( values.at(i), i ); }

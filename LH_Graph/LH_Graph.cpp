@@ -262,7 +262,7 @@ bool LH_Graph::canGrow(bool val)
     return canGrow();
 }
 
-void LH_Graph::findDataBounds()
+void LH_Graph::findDataBounds(DataLineCollection* lineData)
 {
     if (isDebug) qDebug() << "graph: find bounds: begin";
 
@@ -282,9 +282,9 @@ void LH_Graph::findDataBounds()
         qreal valueMax = min();
         bool isConstant = true;
         float constantValue = 0;
-        for(int i=0;i<(*lineData_)[lineID].length() && i<(*lineData_).limit();i++)
+        for(int i=0;i<(*lineData)[lineID].length() && i<(*lineData).limit();i++)
         {
-            qreal y = (*lineData_).at(lineID).at(i).value;
+            qreal y = (*lineData).at(lineID).at(i).value;
             if(i==0)
                 constantValue = y;
             else
@@ -346,10 +346,14 @@ void LH_Graph::findDataBounds()
     if (isDebug) qDebug() << "graph: find bounds: done";
 }
 
-void LH_Graph::drawSingle( int lineID )
+void LH_Graph::drawSingle( int lineID, DataLineCollection* dlc)
 {
+    DataLineCollection* lineData = dlc;
+    if(lineData == NULL)
+        lineData = lineData_;
+
     if (lineID>=lineCount()) return;
-    if (lineID>=(*lineData_).count()) return;
+    if (lineID>=(*lineData).count()) return;
 
     if (isDebug) qDebug() << "graph: draw line: begin " << lineID;
     QColor penColor = QColor();
@@ -363,10 +367,28 @@ void LH_Graph::drawSingle( int lineID )
 
     QPainter painter;
 
-    QPointF points[(*lineData_).limit()+2];
+    QPointF points[(*lineData).limit()+2];
 
     int w = image_->width();
     int h = image_->height();
+
+    //assemble the array of points for the graph (based on values & orientation)
+    bool isConstant = true;
+    float constantValue = 0;
+    qreal point_position = 0;
+
+    int desired_duration = (setup_sample_rate_->value() * 1000);
+    DataLineCollection avgData;
+    switch(dataMode_)
+    {
+    case gdmInternallyManaged:
+    case gdmHybrid:
+        avgData = (*lineData);
+        break;
+    case gdmExternallyManaged:
+        avgData = (*lineData).averageOver(desired_duration);
+        break;
+    }
 
     //empty the graph when drawing line 0
     if(lineID==0)
@@ -394,25 +416,7 @@ void LH_Graph::drawSingle( int lineID )
             break;
         }
 
-        findDataBounds();
-    }
-
-    //assemble the array of points for the graph (based on values & orientation)
-    bool isConstant = true;
-    float constantValue = 0;
-    qreal point_position = 0;
-
-    int desired_duration = (setup_sample_rate_->value() * 1000);
-    DataLineCollection avgData;
-    switch(dataMode_)
-    {
-    case gdmInternallyManaged:
-    case gdmHybrid:
-        avgData = (*lineData_);
-        break;
-    case gdmExternallyManaged:
-        avgData = (*lineData_).averageOver(desired_duration);
-        break;
+        findDataBounds(&avgData);
     }
 
     qreal axis_max = (qMin(setup_max_samples_->value(), avgData.limit())-1) * desired_duration;
@@ -580,7 +584,7 @@ void LH_Graph::drawSingle( int lineID )
                         }
                         painter.drawImage(graph_area, tempImg);
                     }
-                    painter.drawPolyline(points, (*lineData_).at(lineID).length());
+                    painter.drawPolyline(points, (*lineData).at(lineID).length());
                 }
                 break;
             }

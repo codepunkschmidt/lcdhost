@@ -64,6 +64,7 @@ const char *LH_QtPlugin_Graph::userInit() {
     net_out_ = new DataLineCollection(2048);
 
     cpu_.smoothingHidden(true);
+    net_.smoothingHidden(true);
     cpu_timer_.start();
     mem_timer_.start();
     net_timer_.start();

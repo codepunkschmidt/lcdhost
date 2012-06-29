@@ -63,7 +63,8 @@ int LH_QtNetwork::notify(int n, void *p)
             memcpy( data, & state()->net_data, sizeof(lh_netdata) );
             while( data_.size() >= samples() ) delete data_.dequeue();
             data_.enqueue( data );
-            parent_->requestRender();
+            if(!parent_->inherits(LH_QtPlugin::staticMetaObject.className()))
+                parent_->requestRender();
         }
     }
     return LH_NOTE_NET;

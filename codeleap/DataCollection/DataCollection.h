@@ -7,7 +7,12 @@
 
 typedef struct {qreal value; int duration;} DataPoint;
 
-class DataLine : public QList<DataPoint>
+class DataPointCollection : public QList<DataPoint> {
+public:
+    DataPointCollection() : QList<DataPoint>() {}
+};
+
+class DataLine : public DataPointCollection
 {
     friend class DataLineCollection;
 
@@ -29,20 +34,35 @@ class DataLine : public QList<DataPoint>
             append( src[i] );
     }
 
-    DataLine() : QList<DataPoint>()
+#ifndef LH_MONITORING_LIBRARY
+    DataLine() : DataPointCollection()
     {
         name = "Unnamed";
         limit_ = 0;
         totalDuration_ = 0;
         popDuration_ = 0;
     }
+#endif
 
 public:
+
+#ifdef LH_MONITORING_LIBRARY
+    bool aggregate;
+    bool group;
+    DataLine() : DataPointCollection()
+    {
+        name = "Unnamed";
+        limit_ = DATA_CACHE_MAX_POINTS;
+        totalDuration_ = 0;
+        popDuration_ = 0;
+    }
+#endif
+
     QString name;
 
-    DataLine(QString name, int limit) : QList<DataPoint>()
+    DataLine(QString name, int limit) : DataPointCollection()
     {
-        name = name;
+        this->name = name;
         limit_ = limit;
         totalDuration_ = 0;
         popDuration_ = 0;
@@ -72,7 +92,7 @@ public:
 
     void clear()
     {
-        QList<DataPoint>::clear();
+        DataPointCollection::clear();
         totalDuration_ = 0;
     }
 
@@ -98,7 +118,7 @@ public:
     }
 };
 
-class DataLineCollection : public QList<DataLine>
+class DataLineCollection : private QList<DataLine>
 {
     int limit_;
 
@@ -118,6 +138,52 @@ public:
         limit_ = limit;
     }
 
+#ifdef LH_MONITORING_LIBRARY
+    DataLine &operator[](QString name)
+    {
+        for(int i = 0; i<this->count(); i++)
+            if(QList<DataLine>::operator [](i).name == name)
+                return QList<DataLine>::operator [](i);
+        Q_ASSERT_X(false,"DataLineCollection","List out of bounds");
+        return QList<DataLine>::operator [](-1);
+    }
+
+    bool contains(QString name)
+    {
+        for(int i = 0; i<this->count(); i++)
+            if(QList<DataLine>::operator [](i).name == name)
+                return true;
+        return false;
+    }
+
+    bool indexOf(QString name)
+    {
+        for(int i = 0; i<this->count(); i++)
+            if(QList<DataLine>::operator [](i).name == name)
+                return i;
+        return -1;
+    }
+#endif
+
+    //const DataLine &operator[](int i) const;
+    DataLine &operator[](int i)
+    {
+        return  QList<DataLine>::operator [](i);
+    }
+    const DataLine &operator[](int i) const
+    {
+        return  QList<DataLine>::operator [](i);
+    }
+    const DataLine at(int i) const
+    {
+        return QList<DataLine>::at(i);
+    }
+
+    void clear()
+    {
+        QList<DataLine>::clear();
+    }
+
     int limit() { return limit_; }
 
     int pointLength()
@@ -125,9 +191,19 @@ public:
         return (length()==0? 0 : (*this)[0].length());
     }
 
+    int count() const
+    {
+        return QList<DataLine>::count();
+    }
+
     void add(QString name)
     {
-        this->append( DataLine(name, limit_) );
+        QList<DataLine>::append( DataLine(name, limit_) );
+    }
+
+    void append(DataLine dl)
+    {
+        QList<DataLine>::append( dl );
     }
 
     void setCount(int c, QString nameTemplate = "line %1")
@@ -196,6 +272,27 @@ public:
             append( dl );
         }
     }
+
+
+
+    class const_iterator
+    {
+    private:
+        int index_;
+        const DataLineCollection *dlc_;
+    public:
+        enum etype{START,END};
+        const_iterator(const DataLineCollection *dlc, etype t)
+        {
+            dlc_ = dlc;
+            index_ = (t==START? 0 : dlc_->count());
+        }
+        const DataLine &operator*() const { return (*dlc_)[index_]; }
+        bool operator!=(const const_iterator& it) { return (index_!=it.index_); }
+        const_iterator& operator++() { index_++; return *this; }
+    };
+    const_iterator begin() const { return const_iterator(this, const_iterator::START); }
+    const_iterator end() const { return const_iterator(this, const_iterator::END); }
 }
 ;
 

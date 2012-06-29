@@ -477,61 +477,63 @@ void LH_Graph::drawSingle( int lineID, DataLineCollection* dlc)
 
     //apply point corrections & prep gradient
     QLinearGradient gradient;
-    qreal x = points[point_count-1].x();
-    qreal y = points[point_count-1].y();
-    switch(setup_orientation_->value())
     {
-    case TimeHorizontal_NowRight_MaxTop:
-        points[point_count++] =  QPointF(x, h+10);
-        points[point_count++] =  QPointF(w, h+10);
-        gradient.setStart( QPointF(0, 0) );
-        gradient.setFinalStop( QPointF(0,h) );
-        break;
-    case TimeHorizontal_NowRight_MaxBottom:
-        points[point_count++] =  QPointF(x, -10);
-        points[point_count++] =  QPointF(w, -10);
-        gradient.setStart( QPointF(0, h) );
-        gradient.setFinalStop( QPointF(0,0) );
-        break;
-    case TimeHorizontal_NowLeft_MaxTop:
-        points[point_count++] =  QPointF(x, h+10);
-        points[point_count++] =  QPointF(0, h+10);
-        gradient.setStart( QPointF(0, 0) );
-        gradient.setFinalStop( QPointF(0,h) );
-        break;
-    case TimeHorizontal_NowLeft_MaxBottom:
-        points[point_count++] =  QPointF(x, -10);
-        points[point_count++] =  QPointF(0, -10);
-        gradient.setStart( QPointF(0, h) );
-        gradient.setFinalStop( QPointF(0,0) );
-        break;
-    case TimeVertical_NowTop_MaxLeft:
-        points[point_count++] =  QPointF(w+10, y);
-        points[point_count++] =  QPointF(w+10, 0);
-        gradient.setStart( QPointF( 0,0 ) );
-        gradient.setFinalStop( QPointF(w, 0) );
-        break;
-    case TimeVertical_NowTop_MaxRight:
-        points[point_count++] =  QPointF(-10, y);
-        points[point_count++] =  QPointF(-10, 0);
-        gradient.setStart( QPointF(w, 0) );
-        gradient.setFinalStop( QPointF(0,0) );
-        break;
-    case TimeVertical_NowBottom_MaxLeft:
-        points[point_count++] =  QPointF(w+10, y);
-        points[point_count++] =  QPointF(w+10, h);
-        gradient.setStart( QPointF( 0,0 ) );
-        gradient.setFinalStop( QPointF(w, 0) );
-        break;
-    case TimeVertical_NowBottom_MaxRight:
-        points[point_count++] =  QPointF(-10, y);
-        points[point_count++] =  QPointF(-10, h);
-        gradient.setStart( QPointF(w, 0) );
-        gradient.setFinalStop( QPointF(0,0) );
-        break;
+        qreal x = points[point_count-1].x();
+        qreal y = points[point_count-1].y();
+        gradient.setColorAt(0,fillColor2);
+        gradient.setColorAt(1,fillColor1);
+        switch(setup_orientation_->value())
+        {
+        case TimeHorizontal_NowRight_MaxTop:
+            points[point_count++] =  QPointF(x, h+10);
+            points[point_count++] =  QPointF(w, h+10);
+            gradient.setStart( QPointF(0, 0) );
+            gradient.setFinalStop( QPointF(0,h) );
+            break;
+        case TimeHorizontal_NowRight_MaxBottom:
+            points[point_count++] =  QPointF(x, -10);
+            points[point_count++] =  QPointF(w, -10);
+            gradient.setStart( QPointF(0, h) );
+            gradient.setFinalStop( QPointF(0,0) );
+            break;
+        case TimeHorizontal_NowLeft_MaxTop:
+            points[point_count++] =  QPointF(x, h+10);
+            points[point_count++] =  QPointF(0, h+10);
+            gradient.setStart( QPointF(0, 0) );
+            gradient.setFinalStop( QPointF(0,h) );
+            break;
+        case TimeHorizontal_NowLeft_MaxBottom:
+            points[point_count++] =  QPointF(x, -10);
+            points[point_count++] =  QPointF(0, -10);
+            gradient.setStart( QPointF(0, h) );
+            gradient.setFinalStop( QPointF(0,0) );
+            break;
+        case TimeVertical_NowTop_MaxLeft:
+            points[point_count++] =  QPointF(w+10, y);
+            points[point_count++] =  QPointF(w+10, 0);
+            gradient.setStart( QPointF( 0,0 ) );
+            gradient.setFinalStop( QPointF(w, 0) );
+            break;
+        case TimeVertical_NowTop_MaxRight:
+            points[point_count++] =  QPointF(-10, y);
+            points[point_count++] =  QPointF(-10, 0);
+            gradient.setStart( QPointF(w, 0) );
+            gradient.setFinalStop( QPointF(0,0) );
+            break;
+        case TimeVertical_NowBottom_MaxLeft:
+            points[point_count++] =  QPointF(w+10, y);
+            points[point_count++] =  QPointF(w+10, h);
+            gradient.setStart( QPointF( 0,0 ) );
+            gradient.setFinalStop( QPointF(w, 0) );
+            break;
+        case TimeVertical_NowBottom_MaxRight:
+            points[point_count++] =  QPointF(-10, y);
+            points[point_count++] =  QPointF(-10, h);
+            gradient.setStart( QPointF(w, 0) );
+            gradient.setFinalStop( QPointF(0,0) );
+            break;
+        }
     }
-    gradient.setColorAt(0,fillColor2);
-    gradient.setColorAt(1,fillColor1);
 
     if( painter.begin( image_ ) )
     {

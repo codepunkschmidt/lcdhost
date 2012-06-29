@@ -77,7 +77,8 @@ int LH_QtCPU::notify(int n, void *p)
                 if( olddata ) delete[] olddata;
             }
             load_.enqueue( data );
-            parent_->requestRender();
+            if(!parent_->inherits(LH_QtPlugin::staticMetaObject.className()))
+                parent_->requestRender();
         }
     }
     return LH_NOTE_CPU;

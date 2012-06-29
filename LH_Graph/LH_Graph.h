@@ -139,6 +139,10 @@ protected:
 
     void __ctor( float defaultMin, float defaultMax, GraphDataMode dataMode, DataLineCollection* externalSource );
 
+    void setExternalSource(DataLineCollection* externalSource) {
+        if(externalSource_!=externalSource)
+            externalSource_=externalSource;
+    }
 public:
     LH_Graph( float defaultMin = 0, float defaultMax = 0) : lines_(30)
     { __ctor(defaultMin, defaultMax, gdmInternallyManaged, NULL); }
@@ -168,7 +172,18 @@ public:
     void setYUnit( QString str, qreal divisor = 1);
 
     void drawSingle( int lineID = 0, DataLineCollection* dlc = NULL );
-    void drawAll( DataLineCollection* dlc = NULL ) { for( int i=0; i<lineCount(); i++ ) drawSingle( i, dlc ); }
+    void drawAll( DataLineCollection* dlc = NULL ) {
+        for( int i=0; i<lineCount(); i++ )
+        {
+#ifdef LH_MONITORING_LIBRARY
+            if( dlc->at(i).aggregate )
+                continue;
+            if( dlc->at(i).group )
+                continue;
+#endif
+            drawSingle( i, dlc );
+        }
+    }
 
     void addValue(float value, int lineID = 0);
     void addValues(QVector<float> values ) { for( int i=0; i<values.size(); ++i ) addValue( values.at(i), i ); }

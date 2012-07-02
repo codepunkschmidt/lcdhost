@@ -41,7 +41,7 @@ class LH_GraphMemVirtual : public LH_Graph
 
 
 public:
-    LH_GraphMemVirtual() : LH_Graph(gdmExternallyManaged, mem_virtual_)
+    LH_GraphMemVirtual() : LH_Graph(gdmHybrid, mem_virtual_)
     {
         setMin(0.0);
         setMax(1000.0);

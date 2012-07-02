@@ -29,7 +29,7 @@ class DataLine : public DataPointCollection
         popDuration_ = src.popDuration_;
         name = src.name;
 
-        qDebug() << src.count();
+        //qDebug() << src.count();
         for(int i = 0; i<src.count(); i++)
             append( src[i] );
     }
@@ -49,6 +49,7 @@ public:
 #ifdef LH_MONITORING_LIBRARY
     bool aggregate;
     bool group;
+    bool hidden;
     DataLine() : DataPointCollection()
     {
         name = "Unnamed";
@@ -98,20 +99,23 @@ public:
 
     void addValue(qreal value, int duration)
     {
-        int popped_duration = 0;
-        bool popped_once = false;
+        Q_ASSERT_X(limit_!=0, "DataLineCollection::addValue", "This instance of DataLineCollection has a limit of zero!" );
         if (length()>=limit_)
         {
-            if(popDuration_ != 0) qDebug() << "popDuration_: " << popDuration_;
+            int popped_duration = 0;
+            bool popped_once = false;
+            //if(popDuration_ != 0) qDebug() << "popDuration_: " << popDuration_;
             while( (!popped_once) || (popped_duration + last().duration) <= popDuration_ )
             {
                 popped_once = true;
                 popped_duration += last().duration;
                 totalDuration_ -= last().duration;
                 pop_back();
-                if(popDuration_ != 0) qDebug() << "pop";
+                //if(popDuration_ != 0) qDebug() << "pop";
+                if(length()==0)
+                    break;
             }
-            if(popDuration_ != 0) qDebug() << "popped: " << popped_duration;
+            //if(popDuration_ != 0) qDebug() << "popped: " << popped_duration;
         }
         push_front( (DataPoint){value, duration} );
         totalDuration_ += duration;
@@ -132,7 +136,11 @@ private:
 
 public:
     DataLineCollection() : QList<DataLine>() {
+#ifdef DATA_CACHE_MAX_POINTS
+        limit_ = DATA_CACHE_MAX_POINTS;
+#else
         limit_ = 0;
+#endif
     }
     DataLineCollection(int limit) : QList<DataLine>() {
         limit_ = limit;
@@ -156,7 +164,7 @@ public:
         return false;
     }
 
-    bool indexOf(QString name)
+    int indexOf(QString name)
     {
         for(int i = 0; i<this->count(); i++)
             if(QList<DataLine>::operator [](i).name == name)
@@ -168,6 +176,7 @@ public:
     //const DataLine &operator[](int i) const;
     DataLine &operator[](int i)
     {
+        Q_ASSERT_X(i >= 0 && i < this->count(), "DataLineCollection::operator[]", QString("index (%1) out of range (0-%2)").arg(i).arg(this->count()-1).toLocal8Bit());
         return  QList<DataLine>::operator [](i);
     }
     const DataLine &operator[](int i) const

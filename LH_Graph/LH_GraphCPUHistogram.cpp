@@ -41,7 +41,7 @@ class LH_GraphCPUHistogram : public LH_Graph
     void initialize(int cpuCount){
         if (cpuCount != 0) {
             initialized = true;
-            if(lineCount() != cpuCount)
+            if(linesCount() != cpuCount)
             {
                 clearLines();
                 for( int i=0; i<cpu_.count(); i++ )
@@ -62,7 +62,7 @@ class LH_GraphCPUHistogram : public LH_Graph
     }
 
 public:
-    explicit LH_GraphCPUHistogram() : LH_Graph(gdmExternallyManaged,cpu_histogram_), cpu_(this)
+    explicit LH_GraphCPUHistogram() : LH_Graph(gdmHybrid,cpu_histogram_), cpu_(this)
     {
         initialized = false;
 

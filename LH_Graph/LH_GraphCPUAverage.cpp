@@ -37,7 +37,7 @@ class LH_GraphCPUAverage : public LH_Graph
     qreal lastVal;
 
 public:
-    LH_GraphCPUAverage() : LH_Graph(gdmExternallyManaged, cpu_average_), cpu_( this )
+    LH_GraphCPUAverage() : LH_Graph(gdmHybrid, cpu_average_), cpu_( this )
     {
         valCount = 0;
         valCache = 0;

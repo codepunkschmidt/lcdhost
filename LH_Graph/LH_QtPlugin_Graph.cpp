@@ -55,13 +55,15 @@ char __lcdhostplugin_xml[] =
 "</longdesc>"
 "</lcdhostplugin>";
 
+#define GRAPH_POINT_CACHE 2048
+
 const char *LH_QtPlugin_Graph::userInit() {
-    cpu_histogram_ = new DataLineCollection(2048);
-    cpu_average_ = new DataLineCollection(2048);
-    mem_physical_ = new DataLineCollection(2048);
-    mem_virtual_ = new DataLineCollection(2048);
-    net_in_ = new DataLineCollection(2048);
-    net_out_ = new DataLineCollection(2048);
+    cpu_histogram_ = new DataLineCollection(GRAPH_POINT_CACHE);
+    cpu_average_ = new DataLineCollection(GRAPH_POINT_CACHE);
+    mem_physical_ = new DataLineCollection(GRAPH_POINT_CACHE);
+    mem_virtual_ = new DataLineCollection(GRAPH_POINT_CACHE);
+    net_in_ = new DataLineCollection(GRAPH_POINT_CACHE);
+    net_out_ = new DataLineCollection(GRAPH_POINT_CACHE);
 
     cpu_.smoothingHidden(true);
     net_.smoothingHidden(true);

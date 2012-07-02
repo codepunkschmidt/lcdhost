@@ -32,6 +32,9 @@
 #include "LH_Graph.h"
 #include <math.h>
 
+#define DEFAULT_SAMPLE_RATE 1
+
+
 enum graph_orientation
 {
     TimeHorizontal_NowRight_MaxTop = 0,
@@ -74,22 +77,8 @@ static inline uint PREMUL(uint x) {
 void LH_Graph::__ctor( float defaultMin, float defaultMax, GraphDataMode dataMode, DataLineCollection* externalSource )
 {
     dataMode_ = dataMode;
-    externalSource_ = externalSource;
-    int default_sample_rate = 1;
+    setExternalSource( externalSource );
 
-    switch(dataMode_)
-    {
-    case gdmExternallyManaged:
-        lineData_ = externalSource;
-        break;
-    case gdmHybrid:
-        lines_.copyFrom((*externalSource_).averageOver(default_sample_rate * 1000));
-        lineData_ = &lines_;
-        break;
-    case gdmInternallyManaged:
-        lineData_ = &lines_;
-        break;
-    }
     if (isDebug) qDebug() << "graph: init: begin";
     userDefinableLimits_ = false;
     graphMinY_ = graphMaxY_ = 0.0;
@@ -134,7 +123,7 @@ void LH_Graph::__ctor( float defaultMin, float defaultMax, GraphDataMode dataMod
     setup_max_samples_ = new LH_Qt_int(this,"Max Samples",lines_.limit(),5,600,LH_FLAG_AUTORENDER);
     setup_max_samples_->setHelp( "<p>How many data points to store &amp; plot.</p>");
 
-    setup_sample_rate_ = new LH_Qt_int(this,"Sample Rate",default_sample_rate,1,12,LH_FLAG_AUTORENDER);
+    setup_sample_rate_ = new LH_Qt_int(this,"Sample Rate",DEFAULT_SAMPLE_RATE,1,12,LH_FLAG_AUTORENDER);
     setup_sample_rate_->setHelp( "<p>How frequently to log data.</p>");
 
     setup_description_ = new LH_Qt_QString(this,"~","...",LH_FLAG_READONLY|LH_FLAG_NOSAVE);
@@ -224,9 +213,30 @@ void LH_Graph::__ctor( float defaultMin, float defaultMax, GraphDataMode dataMod
     connect( setup_show_real_limits_, SIGNAL(changed()), this, SLOT(updateLabelSelection()) );
     connect( setup_max_grow_, SIGNAL(changed()), this, SLOT(updateLimitControls()) );
 
+    connect( this, SIGNAL(initialized()), this, SLOT(updateDescText()) );
+    connect( this, SIGNAL(initialized()), this, SLOT(updateLabelSelection()) );
+
     if (isDebug) qDebug() << "graph: init: done";
     return;
 }
+
+void LH_Graph::setExternalSource(DataLineCollection* externalSource) {
+    externalSource_=externalSource;
+    switch(dataMode_)
+    {
+    case gdmExternallyManaged:
+        lineData_ = externalSource;
+        break;
+    case gdmHybrid:
+        lines_.copyFrom((*externalSource_).averageOver(DEFAULT_SAMPLE_RATE * 1000));
+        lineData_ = &lines_;
+        break;
+    case gdmInternallyManaged:
+        lineData_ = &lines_;
+        break;
+    }
+}
+
 
 qreal LH_Graph::max()
 {
@@ -276,7 +286,7 @@ void LH_Graph::findDataBounds(DataLineCollection* lineData)
     dataMaxY_ = min();
 
     // examine data points for each line and shift the data boundries accordingly
-    for(int lineID=0;lineID<lineCount(); lineID++)
+    for(int lineID=0;lineID<linesCount(); lineID++)
     {
         qreal valueMin = max();
         qreal valueMax = min();
@@ -346,14 +356,21 @@ void LH_Graph::findDataBounds(DataLineCollection* lineData)
     if (isDebug) qDebug() << "graph: find bounds: done";
 }
 
-void LH_Graph::drawSingle( int lineID, DataLineCollection* dlc)
+int LH_Graph::lastVisibleLine()
 {
-    DataLineCollection* lineData = dlc;
-    if(lineData == NULL)
-        lineData = lineData_;
+#ifdef LH_MONITORING_LIBRARY
+    for( int i=lineData_->count()-1; i>=0; i-- )
+        if( !lineData_->at(i).group && !lineData_->at(i).hidden )
+            return i;
+    return 0;
+#else
+    return linesCount() - 1;
+#endif
+}
 
-    if (lineID>=lineCount()) return;
-    if (lineID>=(*lineData).count()) return;
+void LH_Graph::drawSingle(int lineID)
+{
+    if (lineID>=linesCount()) return;
 
     if (isDebug) qDebug() << "graph: draw line: begin " << lineID;
     QColor penColor = QColor();
@@ -363,11 +380,11 @@ void LH_Graph::drawSingle( int lineID, DataLineCollection* dlc)
     int fgImgAlpha = 255;
 
     //get the colours required for this line & it's fill area
-    loadColors(lineID, penColor, fillColor1, fillColor2, fgImgPath, fgImgAlpha);
+    loadColors(lineID, penColor, fillColor1, fillColor2, fgImgPath, fgImgAlpha, true);
 
     QPainter painter;
 
-    QPointF points[(*lineData).limit()+2];
+    QPointF points[(*lineData_).limit()+2];
 
     int w = image_->width();
     int h = image_->height();
@@ -383,10 +400,10 @@ void LH_Graph::drawSingle( int lineID, DataLineCollection* dlc)
     {
     case gdmInternallyManaged:
     case gdmHybrid:
-        avgData = (*lineData);
+        avgData = (*lineData_);
         break;
     case gdmExternallyManaged:
-        avgData = (*lineData).averageOver(desired_duration);
+        avgData = (*lineData_).averageOver(desired_duration);
         break;
     }
 
@@ -586,14 +603,14 @@ void LH_Graph::drawSingle( int lineID, DataLineCollection* dlc)
                         }
                         painter.drawImage(graph_area, tempImg);
                     }
-                    painter.drawPolyline(points, (*lineData).at(lineID).length());
+                    painter.drawPolyline(points, (*lineData_).at(lineID).length());
                 }
                 break;
             }
         }
 
         // when completing the last line, add any labels if required
-        if(lineID == lineCount() - 1)
+        if(lineID == lastVisibleLine())
         {
             painter.setFont( setup_label_font_->value() );
             int flags = Qt::TextSingleLine|Qt::TextIncludeTrailingSpaces;
@@ -681,10 +698,10 @@ void LH_Graph::addLine(QString name)
     lines_.add(name);
 
     QStringList configs = setup_line_configs_->value().split('~',QString::SkipEmptyParts);
-    if (configs.length()<lineCount())
+    if (configs.length()<lineConfigsCount())
     {
         QString configString = buildColorConfig();
-        while(configs.length()<lineCount())
+        while(configs.length()<lineConfigsCount())
             configs.append(configString);
         setup_line_configs_->setValue(configs.join("~"));
     }
@@ -693,10 +710,16 @@ void LH_Graph::addLine(QString name)
     setup_line_selection_->setValue(0);
 }
 
-int LH_Graph::lineCount()
+int LH_Graph::linesCount()
+{
+    return lineData_->count();
+}
+
+int LH_Graph::lineConfigsCount()
 {
     return setup_line_selection_->list().count();
 }
+
 
 void LH_Graph::clearLines()
 {
@@ -749,7 +772,9 @@ QImage *LH_Graph::render_qimage( int w, int h )
 
 void LH_Graph::addValue(float value, int lineID )
 {
-    if (lineID>=lineCount()) return;
+    Q_ASSERT_X(dataMode_!=gdmExternallyManaged, "LH_Graph::addValue", "Cannot add a value to the internal cache if the data is managed externally.");
+    Q_ASSERT_X(lineID<linesCount(), "LH_Graph::addValue", "Line out of bounds.");
+
     if (isDebug) qDebug() << "graph: add value: begin " << lineID;
     cacheCount_[lineID] ++;
     cacheVal_[lineID] += (qreal)value;
@@ -762,12 +787,23 @@ void LH_Graph::addValue(float value, int lineID )
     if (isDebug) qDebug() << "graph: add value: end ";
 }
 
-void LH_Graph::loadColors(int lineID, QColor& penColor, QColor& fillColor1, QColor& fillColor2, QString& fgImgPath, int& fgImgAlpha)
+void LH_Graph::loadColors(int lineID, QColor& penColor, QColor& fillColor1, QColor& fillColor2, QString& fgImgPath, int& fgImgAlpha, bool compensateForHidden)
 {
     if (isDebug) qDebug() << "graph: load colours: begin " << lineID;
     QStringList configs = setup_line_configs_->value().split('~',QString::SkipEmptyParts);
 
     if( lineID < 0 ) lineID = 0;
+#ifdef LH_MONITORING_LIBRARY
+    if (compensateForHidden)
+    {
+        int realLineID = lineID;
+        lineID = 0;
+        for(int i = 0; i<realLineID; i++)
+            if(!lineData_->at(i).hidden)
+                lineID++;
+
+    }
+#endif
     if( lineID >= configs.length() ) lineID = configs.length()-1;
 
     QString configString = configs.at(lineID);
@@ -873,10 +909,10 @@ void LH_Graph::changeSelectedLine()
     QString fgImgPath = "";
     int fgImgAlpha = 255;
 
-    if (setup_line_selection_->value() >= lineCount()) setup_line_selection_->setValue(lineCount()-1);
+    if (setup_line_selection_->value() >= lineConfigsCount()) setup_line_selection_->setValue(lineConfigsCount()-1);
     if (setup_line_selection_->value() < 0) setup_line_selection_->setValue(0);
 
-    loadColors(setup_line_selection_->value(), penColor, fillColor1, fillColor2, fgImgPath, fgImgAlpha);
+    loadColors(setup_line_selection_->value(), penColor, fillColor1, fillColor2, fgImgPath, fgImgAlpha, false);
 
     setup_pencolor_->setValue(penColor);
     setup_fillcolor1_->setValue(fillColor1);
@@ -910,8 +946,9 @@ void LH_Graph::updateLabelSelection()
 
 void LH_Graph::clear(float newMin, float newMax, bool newGrow)
 {
-    for(int lineID=0;lineID<lineCount(); lineID++)
-        lines_[lineID].clear();
+    if(dataMode_!=gdmExternallyManaged)
+        for(int lineID=0;lineID<linesCount(); lineID++)
+            lines_[lineID].clear();
     graphMinY_ = graphMaxY_ = 0.0;
     min(newMin);
     max(newMax);
@@ -970,7 +1007,7 @@ void LH_Graph::reload_images()
     if(setup_bg_image_->value().isFile())
         bgImg_ = QImage(setup_bg_image_->value().absoluteFilePath()).scaled(w,h);
 
-    for(int lineID=0;lineID<lineCount(); lineID++)
+    for(int lineID=0;lineID<linesCount(); lineID++)
     {
         QColor penColor = QColor();
         QColor fillColor1 = QColor();
@@ -978,7 +1015,7 @@ void LH_Graph::reload_images()
         QString fgImgPath = "";
         int fgImgAlpha = 255;
 
-        loadColors(lineID, penColor, fillColor1, fillColor2, fgImgPath, fgImgAlpha);
+        loadColors(lineID, penColor, fillColor1, fillColor2, fgImgPath, fgImgAlpha, true);
 
         fgImgs_.remove(lineID);
         if(QFileInfo(fgImgPath).isFile())

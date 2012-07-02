@@ -102,6 +102,7 @@ class LH_Graph : public LH_QtInstance
     GraphDataMode dataMode_;
     DataLineCollection* externalSource_;
     DataLineCollection* lineData_;
+    int lastVisibleLine();
 protected:
     bool graph_empty_;
 
@@ -139,18 +140,20 @@ protected:
 
     void __ctor( float defaultMin, float defaultMax, GraphDataMode dataMode, DataLineCollection* externalSource );
 
-    void setExternalSource(DataLineCollection* externalSource) {
-        if(externalSource_!=externalSource)
-            externalSource_=externalSource;
+    void setExternalSource(DataLineCollection* externalSource);
+
+    DataLineCollection* lineData() {
+        return lineData_;
     }
+
 public:
-    LH_Graph( float defaultMin = 0, float defaultMax = 0) : lines_(30)
+    LH_Graph( float defaultMin = 0, float defaultMax = 0) : lines_(30), lineData_(&lines_)
     { __ctor(defaultMin, defaultMax, gdmInternallyManaged, NULL); }
 
-    LH_Graph( GraphDataMode dataMode, DataLineCollection* externalSource) : lines_(30)
+    LH_Graph( GraphDataMode dataMode, DataLineCollection* externalSource) : lines_(30), lineData_(&lines_)
     { __ctor(0, 0, dataMode, externalSource); }
 
-    LH_Graph( float defaultMin, float defaultMax, GraphDataMode dataMode, DataLineCollection* externalSource ) : lines_(30)
+    LH_Graph( float defaultMin, float defaultMax, GraphDataMode dataMode, DataLineCollection* externalSource ) : lines_(30), lineData_(&lines_)
     { __ctor(defaultMin, defaultMax, dataMode, externalSource); }
 
     QImage *render_qimage( int w, int h );
@@ -164,32 +167,32 @@ public:
     bool setMax( qreal r, bool b = false ); // return true if rendering needed
 
     void addLine(QString name);
-    int lineCount();
+    int linesCount();
+    int lineConfigsCount();
     void clearLines();
     void setLines(QStringList names) {clearLines(); for(int i=0; i<names.length(); i++) addLine(names[i]);}
 
 
     void setYUnit( QString str, qreal divisor = 1);
 
-    void drawSingle( int lineID = 0, DataLineCollection* dlc = NULL );
-    void drawAll( DataLineCollection* dlc = NULL ) {
-        for( int i=0; i<lineCount(); i++ )
+    void drawSingle( int lineID = 0 );
+    void drawAll() {
+        for( int i=0; i<lineData_->count(); i++ )
         {
 #ifdef LH_MONITORING_LIBRARY
-            if( dlc->at(i).aggregate )
+            if( lineData_->at(i).group )
                 continue;
-            if( dlc->at(i).group )
+            if( lineData_->at(i).hidden )
                 continue;
 #endif
-            drawSingle( i, dlc );
+            drawSingle( i );
         }
     }
 
     void addValue(float value, int lineID = 0);
     void addValues(QVector<float> values ) { for( int i=0; i<values.size(); ++i ) addValue( values.at(i), i ); }
 
-    void updateDescText();
-    void loadColors(int lineID, QColor& penColor, QColor& fillColor1, QColor& fillColor2, QString& fgImgPath, int& fgImgAlpha);
+    void loadColors(int lineID, QColor& penColor, QColor& fillColor1, QColor& fillColor2, QString& fgImgPath, int& fgImgAlpha, bool compensateForHidden);
     QString buildColorConfig();
 
     void findDataBounds();
@@ -217,6 +220,7 @@ public slots:
     void updateSelectedLine();
     void updateLabelSelection();
     void updateLimitControls();
+    void updateDescText();
     void updateFGImage();
     void updateBGImage();
 };

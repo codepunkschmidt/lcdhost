@@ -41,7 +41,7 @@ class LH_GraphMemPhysical : public LH_Graph
 
 
 public:
-    LH_GraphMemPhysical() : LH_Graph(gdmExternallyManaged, mem_physical_)
+    LH_GraphMemPhysical() : LH_Graph(gdmHybrid, mem_physical_)
     {
         setMin(0.0);
         setMax(1000.0);

@@ -39,7 +39,7 @@ protected:
     LH_Qt_QStringList *setup_units_;
 
 public:
-    LH_GraphNetOut() : LH_Graph(gdmExternallyManaged, net_out_), net_(this)
+    LH_GraphNetOut() : LH_Graph(gdmHybrid, net_out_), net_(this)
     {
         QStringList valuesList;
         valuesList.append("kb/s (kilobits per second)");

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <instance>
-    <identity name="Logitech QVGA device" id="ubge0"/>
+    <identity name="Logitech QVGA device" id="u98mo"/>
     <state modifiable="0" selectable="0" alerts="1"/>
     <origin x="0" y="0"/>
     <size w="320" h="240"/>
@@ -11,14 +11,14 @@
     <w_ref id="0" mod="0" units="0"/>
     <h_ref id="0" mod="0" units="0"/>
     <instance class="LH_Monitoring/MonitoringImage">
-        <identity name="Monitoring (Image) [32]" id="ur9tc"/>
+        <identity name="Monitoring (Image) [32]" id="ur394"/>
         <state modifiable="1" selectable="1" alerts="1"/>
         <origin x="0" y="0"/>
         <size w="16" h="16"/>
         <plugin_size w="16" h="16"/>
         <pos x="80" y="84" z="0"/>
-        <x_ref id="ubge0" align="0" ref_align="0"/>
-        <y_ref id="ubge0" align="0" ref_align="0"/>
+        <x_ref id="u98mo" align="0" ref_align="0"/>
+        <y_ref id="u98mo" align="0" ref_align="0"/>
         <w_ref id="0" mod="0" units="0"/>
         <h_ref id="0" mod="0" units="0"/>
         <setupitem>
@@ -29,18 +29,12 @@
             <value type="QString">SpeedFan</value>
         </setupitem>
         <setupitem>
-            <identity name="Value Type" type="6"/>
-        </setupitem>
-        <setupitem>
             <identity name="(Value Type Name)" type="8"/>
             <value type="QString">Temperature</value>
         </setupitem>
         <setupitem>
             <identity name="(Value Group Name)" type="8"/>
             <value type="QString">GPU temperature</value>
-        </setupitem>
-        <setupitem>
-            <identity name="Value Item" type="6"/>
         </setupitem>
         <setupitem>
             <identity name="(Value Item Name)" type="8"/>
@@ -62,15 +56,12 @@
         </setupitem>
         <setupitem>
             <identity name="Value (String)" type="8"/>
-            <subscribe>/3rdParty/System Monitoring/SpeedFan/Temperature/Temperature #1/String</subscribe>
         </setupitem>
         <setupitem>
             <identity name="Value (Numeric)" type="7"/>
-            <subscribe>/3rdParty/System Monitoring/SpeedFan/Temperature/Temperature #1</subscribe>
         </setupitem>
         <setupitem>
             <identity name="Value (ArrayPtr)" type="1"/>
-            <subscribe>/3rdParty/System Monitoring/SpeedFan/Temperature/__array_ptr</subscribe>
         </setupitem>
         <setupitem>
             <identity name="Value (Valid)" type="2"/>
@@ -304,14 +295,14 @@
         </setupitem>
     </instance>
     <instance class="LH_Monitoring/MonitoringText">
-        <identity name="Monitoring (Text) [37]" id="uh6co"/>
+        <identity name="Monitoring (Text) [37]" id="uo6yo"/>
         <state modifiable="1" selectable="1" alerts="1"/>
         <origin x="0" y="0"/>
         <size w="132" h="19"/>
         <plugin_size w="-1" h="19"/>
         <pos x="26" y="106" z="1"/>
-        <x_ref id="ubge0" align="0" ref_align="0"/>
-        <y_ref id="ubge0" align="0" ref_align="0"/>
+        <x_ref id="u98mo" align="0" ref_align="0"/>
+        <y_ref id="u98mo" align="0" ref_align="0"/>
         <w_ref id="0" mod="132" units="4"/>
         <h_ref id="0" mod="0" units="0"/>
         <setupitem>
@@ -322,9 +313,6 @@
             <value type="QString">SpeedFan</value>
         </setupitem>
         <setupitem>
-            <identity name="Value Type" type="6"/>
-        </setupitem>
-        <setupitem>
             <identity name="(Value Type Name)" type="8"/>
             <value type="QString">Temperature</value>
         </setupitem>
@@ -333,11 +321,8 @@
             <value type="QString">GPU temperature</value>
         </setupitem>
         <setupitem>
-            <identity name="Value Item" type="6"/>
-        </setupitem>
-        <setupitem>
             <identity name="(Value Item Name)" type="8"/>
-            <value type="QString">Maximum GPU temperature</value>
+            <value type="QString">Temperature #1</value>
         </setupitem>
         <setupitem>
             <identity name="Apply Offsets" type="2"/>
@@ -355,15 +340,12 @@
         </setupitem>
         <setupitem>
             <identity name="Value (String)" type="8"/>
-            <subscribe>/3rdParty/System Monitoring/SpeedFan/Temperature/Temperature #1/String</subscribe>
         </setupitem>
         <setupitem>
             <identity name="Value (Numeric)" type="7"/>
-            <subscribe>/3rdParty/System Monitoring/SpeedFan/Temperature/Temperature #1</subscribe>
         </setupitem>
         <setupitem>
             <identity name="Value (ArrayPtr)" type="1"/>
-            <subscribe>/3rdParty/System Monitoring/SpeedFan/Temperature/__array_ptr</subscribe>
         </setupitem>
         <setupitem>
             <identity name="Value (Valid)" type="2"/>
@@ -445,14 +427,14 @@
         </setupitem>
     </instance>
     <instance class="LH_Monitoring/MonitoringBar">
-        <identity name="Monitoring (Bar) [29]" id="ury8w"/>
+        <identity name="Monitoring (Bar) [29]" id="uvf08"/>
         <state modifiable="1" selectable="1" alerts="1"/>
         <origin x="0" y="0"/>
         <size w="42" h="104"/>
         <plugin_size w="-1" h="-1"/>
         <pos x="163" y="39" z="2"/>
-        <x_ref id="ubge0" align="0" ref_align="0"/>
-        <y_ref id="ubge0" align="0" ref_align="0"/>
+        <x_ref id="u98mo" align="0" ref_align="0"/>
+        <y_ref id="u98mo" align="0" ref_align="0"/>
         <w_ref id="0" mod="42" units="4"/>
         <h_ref id="0" mod="104" units="4"/>
         <setupitem>
@@ -463,18 +445,12 @@
             <value type="QString">SpeedFan</value>
         </setupitem>
         <setupitem>
-            <identity name="Value Type" type="6"/>
-        </setupitem>
-        <setupitem>
             <identity name="(Value Type Name)" type="8"/>
             <value type="QString">Temperature</value>
         </setupitem>
         <setupitem>
             <identity name="(Value Group Name)" type="8"/>
             <value type="QString">GPU temperature</value>
-        </setupitem>
-        <setupitem>
-            <identity name="Value Item" type="6"/>
         </setupitem>
         <setupitem>
             <identity name="(Value Item Name)" type="8"/>
@@ -496,14 +472,12 @@
         </setupitem>
         <setupitem>
             <identity name="Value (String)" type="8"/>
-            <subscribe>/3rdParty/System Monitoring/SpeedFan/Temperature/All/String</subscribe>
         </setupitem>
         <setupitem>
             <identity name="Value (Numeric)" type="7"/>
         </setupitem>
         <setupitem>
             <identity name="Value (ArrayPtr)" type="1"/>
-            <subscribe>/3rdParty/System Monitoring/SpeedFan/Temperature/__array_ptr</subscribe>
         </setupitem>
         <setupitem>
             <identity name="Value (Valid)" type="2"/>
@@ -589,14 +563,14 @@
         </setupitem>
     </instance>
     <instance class="LH_Monitoring/MonitoringDial">
-        <identity name="Monitoring (Dial) [1]" id="usb7s"/>
+        <identity name="Monitoring (Dial) [1]" id="uvrj4"/>
         <state modifiable="1" selectable="1" alerts="1"/>
         <origin x="0" y="0"/>
         <size w="48" h="48"/>
         <plugin_size w="48" h="48"/>
         <pos x="107" y="40" z="3"/>
-        <x_ref id="ubge0" align="0" ref_align="0"/>
-        <y_ref id="ubge0" align="0" ref_align="0"/>
+        <x_ref id="u98mo" align="0" ref_align="0"/>
+        <y_ref id="u98mo" align="0" ref_align="0"/>
         <w_ref id="0" mod="0" units="0"/>
         <h_ref id="0" mod="0" units="0"/>
         <setupitem>
@@ -607,18 +581,12 @@
             <value type="QString">SpeedFan</value>
         </setupitem>
         <setupitem>
-            <identity name="Value Type" type="6"/>
-        </setupitem>
-        <setupitem>
             <identity name="(Value Type Name)" type="8"/>
             <value type="QString">Temperature</value>
         </setupitem>
         <setupitem>
             <identity name="(Value Group Name)" type="8"/>
             <value type="QString"></value>
-        </setupitem>
-        <setupitem>
-            <identity name="Value Item" type="6"/>
         </setupitem>
         <setupitem>
             <identity name="(Value Item Name)" type="8"/>
@@ -640,14 +608,12 @@
         </setupitem>
         <setupitem>
             <identity name="Value (String)" type="8"/>
-            <subscribe>/3rdParty/System Monitoring/SpeedFan/Temperature/All/String</subscribe>
         </setupitem>
         <setupitem>
             <identity name="Value (Numeric)" type="7"/>
         </setupitem>
         <setupitem>
             <identity name="Value (ArrayPtr)" type="1"/>
-            <subscribe>/3rdParty/System Monitoring/SpeedFan/Temperature/__array_ptr</subscribe>
         </setupitem>
         <setupitem>
             <identity name="Value (Valid)" type="2"/>
@@ -748,209 +714,5 @@
             <identity name="Needle Configs" type="9"/>
             <value type="QString">0,192,0,0,255,3,90,0,,0,192,0,0,255~0,0,0,192,255,3,90,0,,0,0,0,192,255~0,0,192,0,255,3,90,0,,0,0,192,0,255~0,192,192,0,255,3,90,0,,0,192,192,0,255~0,0,192,192,255,3,90,0,,0,0,192,192,255~0,192,0,192,255,3,90,0,,0,192,0,192,255</value>
         </setupitem>
-    </instance>
-    <instance class="LH_Monitoring/MonitoringGraph">
-        <identity name="Monitoring (Graph) [1]" id="usqb4"/>
-        <state modifiable="1" selectable="1" alerts="1"/>
-        <origin x="0" y="0"/>
-        <size w="189" h="86"/>
-        <plugin_size w="-1" h="-1"/>
-        <pos x="38" y="149" z="4"/>
-        <x_ref id="ubge0" align="0" ref_align="0"/>
-        <y_ref id="ubge0" align="0" ref_align="0"/>
-        <w_ref id="0" mod="189" units="4"/>
-        <h_ref id="0" mod="86" units="4"/>
-        <setupitem>
-            <identity name="Application" type="6"/>
-        </setupitem>
-        <setupitem>
-            <identity name="(Application Name)" type="8"/>
-            <value type="QString">SpeedFan</value>
-        </setupitem>
-        <setupitem>
-            <identity name="Value Type" type="6"/>
-        </setupitem>
-        <setupitem>
-            <identity name="(Value Type Name)" type="8"/>
-            <value type="QString">Temperature</value>
-        </setupitem>
-        <setupitem>
-            <identity name="(Value Group Name)" type="8"/>
-            <value type="QString"></value>
-        </setupitem>
-        <setupitem>
-            <identity name="Value Item" type="6"/>
-        </setupitem>
-        <setupitem>
-            <identity name="(Value Item Name)" type="8"/>
-            <value type="QString">All</value>
-        </setupitem>
-        <setupitem>
-            <identity name="Apply Offsets" type="2"/>
-            <value type="QString">true</value>
-        </setupitem>
-        <setupitem>
-            <identity name="Use Formatted Data" type="2"/>
-            <value type="QString">false</value>
-        </setupitem>
-        <setupitem>
-            <identity name="image-hr-data" type="18"/>
-        </setupitem>
-        <setupitem>
-            <identity name="Value (Units)" type="8"/>
-        </setupitem>
-        <setupitem>
-            <identity name="Value (String)" type="8"/>
-            <subscribe>/3rdParty/System Monitoring/SpeedFan/Temperature/All/String</subscribe>
-        </setupitem>
-        <setupitem>
-            <identity name="Value (Numeric)" type="7"/>
-        </setupitem>
-        <setupitem>
-            <identity name="Value (ArrayPtr)" type="1"/>
-            <subscribe>/3rdParty/System Monitoring/SpeedFan/Temperature/__array_ptr</subscribe>
-        </setupitem>
-        <setupitem>
-            <identity name="Value (Valid)" type="2"/>
-            <subscribe>/3rdParty/System Monitoring/SpeedFan///dataAvailable</subscribe>
-        </setupitem>
-        <setupitem>
-            <identity name="Monitoring Options" type="8"/>
-            <subscribe>/3rdParty/System Monitoring/Options</subscribe>
-        </setupitem>
-        <setupitem>
-            <identity name="Units" type="6"/>
-            <value type="QString">0</value>
-        </setupitem>
-        <setupitem>
-            <identity name="Append Units" type="2"/>
-            <value type="QString">true</value>
-        </setupitem>
-        <setupitem>
-            <identity name="image-hr2" type="18"/>
-        </setupitem>
-        <setupitem>
-            <identity name="Graph Style" type="6"/>
-            <value type="QString">0</value>
-        </setupitem>
-        <setupitem>
-            <identity name="Graph Background" type="6"/>
-            <value type="QString">0</value>
-        </setupitem>
-        <setupitem>
-            <identity name="Graph Orientation" type="6"/>
-            <value type="QString">0</value>
-        </setupitem>
-        <setupitem>
-            <identity name="Background color" type="3"/>
-            <value type="QString">0</value>
-        </setupitem>
-        <setupitem>
-            <identity name="Background Image" type="10"/>
-            <value type="QString"></value>
-        </setupitem>
-        <setupitem>
-            <identity name="Max Samples" type="1"/>
-            <value type="QString">60</value>
-        </setupitem>
-        <setupitem>
-            <identity name="Sample Rate" type="1"/>
-            <value type="QString">1</value>
-        </setupitem>
-        <setupitem>
-            <identity name="~" type="8"/>
-        </setupitem>
-        <setupitem>
-            <identity name="Selected Line" type="6"/>
-            <value type="int">0</value>
-        </setupitem>
-        <setupitem>
-            <identity name="Line color" type="3"/>
-            <value type="QString">-65536</value>
-        </setupitem>
-        <setupitem>
-            <identity name="Area color (start)" type="3"/>
-            <value type="QString">-16711936</value>
-        </setupitem>
-        <setupitem>
-            <identity name="Area color (end)" type="3"/>
-            <value type="QString">-65536</value>
-        </setupitem>
-        <setupitem>
-            <identity name="Fill Image" type="10"/>
-            <value type="QString">C:/Users/Bridges/Documents/LCDHost/Plugins-build-desktop/LH_Monitoring</value>
-        </setupitem>
-        <setupitem>
-            <identity name="Fill Image Opacity" type="1"/>
-            <value type="QString">255</value>
-        </setupitem>
-        <setupitem>
-            <identity name="Graph Ymax" type="7"/>
-            <value type="float">86.1454</value>
-        </setupitem>
-        <setupitem>
-            <identity name="Ymax Can Grow" type="2"/>
-            <value type="QString">true</value>
-        </setupitem>
-        <setupitem>
-            <identity name="Auto Scale Ymax" type="2"/>
-            <value type="QString">true</value>
-        </setupitem>
-        <setupitem>
-            <identity name="Graph Ymin" type="7"/>
-            <value type="QString">0</value>
-        </setupitem>
-        <setupitem>
-            <identity name="Auto Scale Ymin" type="2"/>
-            <value type="QString">true</value>
-        </setupitem>
-        <setupitem>
-            <identity name="Show Ymax" type="2"/>
-            <value type="QString">true</value>
-        </setupitem>
-        <setupitem>
-            <identity name="Show Ymin" type="2"/>
-            <value type="QString">true</value>
-        </setupitem>
-        <setupitem>
-            <identity name="Hide When Empty" type="2"/>
-            <value type="bool">false</value>
-        </setupitem>
-        <setupitem>
-            <identity name="Show Real Y-Limits" type="2"/>
-            <value type="bool">false</value>
-        </setupitem>
-        <setupitem>
-            <identity name="Y Labels on Right" type="2"/>
-            <value type="bool">false</value>
-        </setupitem>
-        <setupitem>
-            <identity name="Axis Label Font" type="11"/>
-            <value type="QString">Arial,8,-1,5,50,0,0,0,0,0</value>
-        </setupitem>
-        <setupitem>
-            <identity name="Axis Label Color" type="3"/>
-            <value type="int">-1</value>
-        </setupitem>
-        <setupitem>
-            <identity name="Axis Label Glow" type="3"/>
-            <value type="int">1543503872</value>
-        </setupitem>
-        <setupitem>
-            <identity name="Line Configs" type="9"/>
-            <value type="QString">255,0,0,255,0,255,0,255,255,0,0,255,C:/Users/Bridges/Documents/LCDHost/Plugins-build-desktop/LH_Monitoring,255~255,165,0,255,0,255,0,255,255,0,0,255,C:/Users/Bridges/Documents/LCDHost/Plugins-build-desktop/LH_Monitoring,255~170,170,0,255,0,255,0,255,255,0,0,255,C:/Users/Bridges/Documents/LCDHost/Plugins-build-desktop/LH_Monitoring,255~0,128,0,255,0,255,0,255,255,0,0,255,C:/Users/Bridges/Documents/LCDHost/Plugins-build-desktop/LH_Monitoring,255~0,0,255,255,0,255,0,255,255,0,0,255,C:/Users/Bridges/Documents/LCDHost/Plugins-build-desktop/LH_Monitoring,255~128,0,128,255,0,255,0,255,255,0,0,255,C:/Users/Bridges/Documents/LCDHost/Plugins-build-desktop/LH_Monitoring,255~0,0,0,255,0,255,0,255,255,0,0,255,C:/Users/Bridges/Documents/LCDHost/Plugins-build-desktop/LH_Monitoring,255~0,0,0,255,0,255,0,255,255,0,0,255,C:/Users/Bridges/Documents/LCDHost/Plugins-build-desktop/LH_Monitoring,255~0,0,0,255,0,255,0,255,255,0,0,255,C:/Users/Bridges/Documents/LCDHost/Plugins-build-desktop/LH_Monitoring,255~0,0,0,255,0,255,0,255,255,0,0,255,C:/Users/Bridges/Documents/LCDHost/Plugins-build-desktop/LH_Monitoring,255</value>
-        </setupitem>
-    </instance>
-    <instance class="LH_Monitoring/RivaWriter">
-        <identity name="RivaTuner DataWriter [1]" id="24ox00"/>
-        <state modifiable="1" selectable="1" alerts="1"/>
-        <origin x="0" y="0"/>
-        <size w="-1" h="-1"/>
-        <plugin_size w="-1" h="-1"/>
-        <pos x="175" y="284" z="5"/>
-        <x_ref id="0" align="0" ref_align="0"/>
-        <y_ref id="0" align="0" ref_align="0"/>
-        <w_ref id="0" mod="0" units="0"/>
-        <h_ref id="0" mod="0" units="0"/>
     </instance>
 </instance>

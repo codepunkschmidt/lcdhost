@@ -46,55 +46,44 @@ lh_class *LH_MonitoringImage::classInfo()
         STRINGIZE(COMMON_OBJECT_NAME)"Image",
         STRINGIZE(COMMON_OBJECT_NAME)" (Image)",
         48,48
-
     };
 
     return &classInfo;
 }
 
-LH_MonitoringImage::LH_MonitoringImage() : LH_QImage()
+LH_MonitoringImage::LH_MonitoringImage() : LH_QImage(), LH_MonitoringObject(this, mdmAll, false, false)
 {
-    ui_ = NULL;
+    monitoringInit(SLOT(refreshMonitoringOptions()),
+                   SLOT(connectChangeEvents()),
+                   SLOT(changeAppSelection()),
+                   SLOT(changeTypeSelection()),
+                   SLOT(changeGroupSelection()),
+                   SLOT(changeItemSelection()),
+                   SLOT(dataValidityChanged()));
 }
 
 const char *LH_MonitoringImage::userInit()
 {
     if( const char *err = LH_QImage::userInit() ) return err;
 
-    ui_ = new LH_MonitoringUI(this, mdmAll, false, false);
+    this->LH_QImage::connect( setup_value_str_, SIGNAL(changed()), this, SLOT(updateValue()) );
+    this->LH_QImage::connect( setup_value_str_, SIGNAL(set()), this, SLOT(updateValue()) );
 
-    setup_image_file_->setFlags( LH_FLAG_AUTORENDER | LH_FLAG_READONLY | LH_FLAG_NOSAVE );
+    setup_image_file_->setFlags( LH_FLAG_AUTORENDER | LH_FLAG_READONLY | LH_FLAG_NOSAVE_LINK | LH_FLAG_NOSAVE_DATA );
 
-    setup_value_ = new LH_Qt_QString( this, ("Current Value"), "N/A", LH_FLAG_READONLY|LH_FLAG_NOSAVE );
+    setup_value_ = new LH_Qt_QString( this, "Current Value", "N/A", LH_FLAG_READONLY|LH_FLAG_NOSAVE_LINK | LH_FLAG_NOSAVE_DATA );
     setup_value_->setOrder(-1);
 
-    (new LH_Qt_QString(this,("image-hr2"), QString("<hr>"), LH_FLAG_NOSAVE | LH_FLAG_NOSOURCE | LH_FLAG_NOSINK | LH_FLAG_HIDETITLE,lh_type_string_html ))->setOrder(-1);
+    (new LH_Qt_QString(this,("image-hr2"), QString("<hr>"), LH_FLAG_NOSAVE_LINK | LH_FLAG_NOSAVE_DATA | LH_FLAG_NOSOURCE | LH_FLAG_NOSINK | LH_FLAG_HIDETITLE,lh_type_string_html ))->setOrder(-1);
 
     add_cf_target(setup_image_file_);
     add_cf_source(setup_value_);
 
-    connect(ui_, SIGNAL(appChanged()), this, SLOT(configChanged()) );
-    connect(ui_, SIGNAL(typeChanged()), this, SLOT(configChanged()) );
-    connect(ui_, SIGNAL(groupChanged()), this, SLOT(configChanged()) );
-    connect(ui_, SIGNAL(itemChanged()), this, SLOT(configChanged()) );
-    connect(ui_, SIGNAL(initialized()), this, SLOT(configChanged()) );
 
     return 0;
 }
 
-int LH_MonitoringImage::notify(int n,void* p)
-{
-    Q_UNUSED(p);
-    if( !n || n&LH_NOTE_SECOND )
-        updateValue();
-    return LH_QImage::notify(n,p) | LH_NOTE_SECOND;
-}
-
 void LH_MonitoringImage::updateValue()
 {
-    QString val;
-    if(ui_ && ui_->data_)
-    {
-        setup_value_->setValue(ui_->data_->getText(false));
-    }
+    setup_value_->setValue(setup_value_str_->value());
 }

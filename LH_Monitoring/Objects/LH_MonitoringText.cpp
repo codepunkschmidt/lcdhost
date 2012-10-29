@@ -58,21 +58,28 @@ lh_class *LH_MonitoringText::classInfo()
     return &classInfo;
 }
 
-LH_MonitoringText::LH_MonitoringText() : LH_Text()
+LH_MonitoringText::LH_MonitoringText() : LH_Text(), LH_MonitoringObject(this, mdmAll, false, true)
 {
-    ui_ = NULL;
+    monitoringInit(SLOT(refreshMonitoringOptions()),
+                   SLOT(connectChangeEvents()),
+                   SLOT(changeAppSelection()),
+                   SLOT(changeTypeSelection()),
+                   SLOT(changeGroupSelection()),
+                   SLOT(changeItemSelection()),
+                   SLOT(dataValidityChanged()));
 }
 
 const char *LH_MonitoringText::userInit()
 {
     if( const char *err = LH_Text::userInit() ) return err;
 
-    ui_ = new LH_MonitoringUI(this, mdmAll, false, true);
+    this->LH_Text::connect( setup_value_str_, SIGNAL(changed()), this, SLOT(updateText()) );
+    this->LH_Text::connect( setup_value_str_, SIGNAL(set()), this, SLOT(updateText()) );
 
     setup_value_round_ = new LH_Qt_bool(this,"Round",false, LH_FLAG_AUTORENDER);
     setup_value_round_->setHelp( "<p>Round non integer values.</p>");
     setup_value_round_->setOrder(-3);
-    connect( setup_value_round_, SIGNAL(changed()), this, SLOT(updateText()) );
+    this->LH_Text::connect( setup_value_round_, SIGNAL(changed()), this, SLOT(updateText()) );
 
     setup_append_units_ = new LH_Qt_bool(this, "Append Units", true, 0);
     setup_append_units_->setHelp( "<p>Append the units to the text.</p>");
@@ -89,39 +96,36 @@ const char *LH_MonitoringText::userInit()
     setup_post_text_->setOrder(-3);
     connect( setup_post_text_, SIGNAL(changed()), this, SLOT(updateText()) );
 
-    (new LH_Qt_QString(this,("image-hr2"), QString("<hr>"), LH_FLAG_NOSAVE | LH_FLAG_NOSOURCE | LH_FLAG_NOSINK | LH_FLAG_HIDETITLE,lh_type_string_html ))->setOrder(-3);
+    (new LH_Qt_QString(this,("image-hr2"), QString("<hr>"), LH_FLAG_NOSAVE_LINK | LH_FLAG_NOSAVE_DATA | LH_FLAG_NOSOURCE | LH_FLAG_NOSINK | LH_FLAG_HIDETITLE,lh_type_string_html ))->setOrder(-3);
 
     setup_text_->setFlag( LH_FLAG_HIDDEN, true );
-    setup_text_->setFlag( LH_FLAG_NOSAVE, true );
+    setup_text_->setFlag( LH_FLAG_NOSAVE_LINK | LH_FLAG_NOSAVE_DATA, true );
     setText(" ");
-
-    connect(ui_, SIGNAL(appChanged()), this, SLOT(configChanged()) );
-    connect(ui_, SIGNAL(typeChanged()), this, SLOT(configChanged()) );
-    connect(ui_, SIGNAL(groupChanged()), this, SLOT(configChanged()) );
-    connect(ui_, SIGNAL(itemChanged()), this, SLOT(configChanged()) );
-    connect(ui_, SIGNAL(initialized()), this, SLOT(configChanged()) );
-
 
     return 0;
 }
 
-int LH_MonitoringText::notify(int n,void* p)
+void LH_MonitoringText::updateText()
 {
-    if( !n || n&LH_NOTE_SECOND )
-        updateText();
-    return LH_Text::notify(n,p) | LH_NOTE_SECOND;
-}
+    QString val = setup_value_str_->value();
 
-void LH_MonitoringText::updateText(bool rerender)
-{
-    if(ui_->data_)
+    bool ok;
+    float valFlt = (val.toFloat(&ok));
+    if(ok)
     {
-        QString valueString = ui_->data_->getText(setup_append_units_->value(), setup_value_round_->value());
-        QString resultText = setup_pre_text_->value() + valueString + setup_post_text_->value();
-
-        rerender = setText( resultText ) || rerender;
-
-        if( rerender ) callback(lh_cb_render,NULL);
+        if(setup_value_round_->value())
+            val = QString::number(valFlt,'f',0);
+        else
+            val = QString::number(qRound(valFlt * 10000) / 10000.0);
     }
-}
 
+    QString units = (!setup_append_units_->value()? "" : setup_value_units_->value());
+    val = QString("%1%2%3%4")
+            .arg(setup_pre_text_->value())
+            .arg(val)
+            .arg(ok? units : "")
+            .arg(setup_post_text_->value())
+            ;
+    if(setText(val))
+        this->requestRender();
+}

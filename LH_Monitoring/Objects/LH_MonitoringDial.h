@@ -1,33 +1,58 @@
 #ifndef LH_MONITORINGDIAL_H
 #define LH_MONITORINGDIAL_H
 
-#include "Sources/LH_MonitoringUI.h"
 #include "LH_Dial/LH_Dial.h"
 #include <QTime>
 
-class LH_MonitoringDial : public LH_Dial
+#include "Objects/LH_MonitoringObject.h"
+
+class LH_MonitoringDial : public LH_Dial, public LH_MonitoringObject
 {
     Q_OBJECT
-    QTime pollTimer_;
 
 protected:
-    LH_MonitoringUI *ui_;
     LH_Qt_int *setup_max_;
     LH_Qt_int *setup_min_;
 
 public:
-    LH_MonitoringDial() : LH_Dial(), setup_max_(0), setup_min_(0) {ui_ = NULL;}
+    LH_MonitoringDial();
     const char *userInit();
-    int polling();
+
     static lh_class *classInfo();
 
     void refresh();
-    void updateNeedles();
+    void updateNeedlesList(QStringList *names = NULL);
 
 public slots:
     void updateBounds();
-    void configChanged()  { updateBounds(); updateNeedles();}
+    void updateNeedles();
 
+    void refreshMonitoringOptions() {
+        LH_MonitoringObject::refreshMonitoringOptions();
+    }
+    void connectChangeEvents() {
+        LH_MonitoringObject::connectChangeEvents();
+        updateBounds(); updateNeedlesList();
+    }
+    void changeAppSelection() {
+        LH_MonitoringObject::changeAppSelection();
+        updateBounds(); updateNeedlesList();
+    }
+    void changeTypeSelection() {
+        LH_MonitoringObject::changeTypeSelection();
+        updateBounds(); updateNeedlesList();
+    }
+    void changeGroupSelection() {
+        LH_MonitoringObject::changeGroupSelection();
+        updateBounds(); updateNeedlesList();
+    }
+    void changeItemSelection() {
+        LH_MonitoringObject::changeItemSelection();
+        updateBounds(); updateNeedlesList();
+    }
+    void dataValidityChanged() {
+        LH_MonitoringObject::dataValidityChanged();
+    }
 };
 
 #endif // LH_MONITORINGDIAL_H

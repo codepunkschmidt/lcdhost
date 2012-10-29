@@ -18,6 +18,10 @@
 
 #pragma pack(1)
 
+#ifdef Q_WS_WIN
+# include <windows.h>
+#endif
+
 typedef struct _HWiNFO_SENSORS_READING_LIST {
 
   BOOL fValid;                              // If this reading has a valid value

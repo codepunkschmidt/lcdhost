@@ -17,7 +17,7 @@ exists($$PWD/PluginsConfig.prf) {
     CHANGESET_REVISION = $$system(hg log -l 1 --template {node}/{rev} $$PWD/$$TARGET)
     CHANGESET = $$section(CHANGESET_REVISION,"/",0,0)
     REVISION = $$section(CHANGESET_REVISION,"/",1,1)
-    isEmpty( REVISION ): REVISION = 0
+    isEmpty( REVISION ): REVISION = 1
     DEFINES += CHANGESET=\"\\\"$$CHANGESET\\\"\"
     DEFINES += REVISION=$$REVISION
 

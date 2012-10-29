@@ -263,6 +263,52 @@ static int is_absolute( const char *filename )
 }
 
 /**
+    lh_binaryfile_to_blob()
+
+    Reads a file and converts it into a lh_blob structure.
+
+    \param filename
+        Name of the file to load into a blob.
+    \return
+        A pointer to a malloc()'d lh_blob. The caller must
+        free this when done with it.
+*/
+lh_blob *lh_binaryfile_to_blob( const char *filename )
+{
+    lh_blob *blob = NULL;
+    long filesize = 0;
+    FILE *f;
+
+    if( filename == NULL ) return NULL;
+
+    f = fopen( filename, "rb" );
+    if( f != NULL )
+    {
+        if( fseek( f, 0, SEEK_END ) == 0 ) filesize = ftell( f );
+        if( filesize > 0 )
+        {
+            fseek( f, 0, SEEK_SET );
+            blob = malloc( sizeof(lh_blob) + filesize );
+            if( blob )
+            {
+                blob->sign = 0xDEADBEEF;
+                blob->len = filesize;
+                if( fread( & blob->data, 1, filesize, f ) != (size_t) filesize )
+                {
+                    blob->sign = 0;
+                    blob->len = 0;
+                    free( blob );
+                    blob = NULL;
+                }
+            }
+        }
+        fclose( f );
+    }
+
+    return blob;
+}
+
+/**
   We'll just use the provided lh_binaryfile_to_blob()
   function to allocate and fill a blob with the file
   data. Let LCDHost handle B/W color matching and
@@ -378,15 +424,16 @@ static const char *plugin_init(void*ref,lh_callback_t cb,int cb_id,const char*na
     return 0;
 }
 
+static const lh_class *lh_image_classes[2] =
+{
+    & class_image,
+    NULL
+};
+
 static const lh_class ** plugin_class_list(void*ref)
 {
     Q_UNUSED(ref);
-    static const lh_class *lh_classes[] =
-    {
-        & class_image,
-        NULL
-    };
-    return lh_classes;
+    return lh_image_classes;
 }
 
 EXPORT void *lh_create()
@@ -394,23 +441,24 @@ EXPORT void *lh_create()
     return & class_image;
 }
 
+static lh_object_calltable lh_image_objtable =
+{
+    sizeof(lh_object_calltable),
+    plugin_init, /* init */
+    0, /* setup_data */
+    0, /* setup_resize */
+    0, /* setup_change */
+    0, /* input */
+    0, /* polling */
+    0, /* notify */
+    plugin_class_list, /* class list */
+    0 /* term */
+};
+
 EXPORT const lh_object_calltable* lh_get_object_calltable( void *ref )
 {
     Q_UNUSED(ref);
-    static lh_object_calltable objtable =
-    {
-        sizeof(lh_object_calltable),
-        plugin_init, /* init */
-        0, /* setup_data */
-        0, /* setup_resize */
-        0, /* setup_change */
-        0, /* input */
-        0, /* polling */
-        0, /* notify */
-        plugin_class_list, /* class list */
-        0 /* term */
-    };
-    return & objtable;
+    return & lh_image_objtable;
 }
 
 EXPORT void lh_destroy( void *ref )

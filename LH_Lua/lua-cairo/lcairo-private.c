@@ -158,8 +158,9 @@ static void* get_userdata (lua_State *L, int ud, const char *tname) {
 
 static double get_numfield(lua_State* L, const char* key)
 {
+    double value;
     lua_getfield(L, -1, key);
-    double value = luaL_optnumber(L, -1, 0.0);
+    value = luaL_optnumber(L, -1, 0.0);
     lua_pop(L, 1); /* remove value */
     return value;
 }

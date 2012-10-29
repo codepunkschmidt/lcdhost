@@ -1011,7 +1011,7 @@ void LH_Dial::drawDial()
             qreal pos = needle_pos_[i];
             if(dialType_ == DIALTYPE_PIE)
                 if(setup_unused_style_->valueText()=="Hidden" && usedCapacity!=0)
-                    pos *= max() / usedCapacity;
+                    pos *= max_val() / usedCapacity;
 
             if(max_ == min_) max_ ++;
             qreal angle = maxDegrees() * (pos-min_) / (max_-min_);
@@ -1034,7 +1034,7 @@ void LH_Dial::drawDial()
                 int needleStyle;
                 bool reverse = setup_needles_reverse_->value();
 
-                qreal pos = max()-usedCapacity;
+                qreal pos = max_val()-usedCapacity;
                 qreal angle = maxDegrees() * (pos-min_) / (max_-min_);
                 QImage sliceImage = getSlice(UNUSED_AREA, angle, totalAngle, needleStyle);
                 paintImage(painter, sliceImage, ROT_NONE, startDegrees()+(reverse? maxDegrees() : 0));

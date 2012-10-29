@@ -8,7 +8,7 @@
 #include "LH_Qt_QString.h"
 #include "LH_Qt_int.h"
 #include "LH_Qt_bool.h"
-#include "json.h"
+#include "../json/json.h"
 
 #include "LH_MonitoringSources.h"
 

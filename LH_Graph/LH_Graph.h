@@ -41,7 +41,7 @@
 #include "QList"
 #include "QHash"
 
-#include "DataCollection.h"
+#include "../DataCollection/DataCollection.h"
 
 enum GraphDataMode
 {
@@ -93,8 +93,8 @@ class LH_Graph : public LH_QtInstance
 
     bool userDefinableLimits_;
 
-    qreal max(qreal);
-    qreal min(qreal);
+    qreal max_val(qreal);
+    qreal min_val(qreal);
 
     bool hasDeadValue_;
     qreal deadValue_;
@@ -160,8 +160,8 @@ public:
 
     QImage *render_qimage( int w, int h );
 
-    qreal max();
-    qreal min();
+    qreal max_val();
+    qreal min_val();
     bool canGrow();
     bool canGrow(bool);
 

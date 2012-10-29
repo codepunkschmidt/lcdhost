@@ -79,12 +79,12 @@ LH_CursorController::LH_CursorController()
     setup_coordinate_ = new LH_Qt_QString(this, "Coordinate", "1,1", LH_FLAG_NOSAVE_DATA | LH_FLAG_READONLY | LH_FLAG_FIRST | LH_FLAG_HIDDEN);
     setup_coordinate_->setHelp("The current cursor location.");
 
-    cursorModes.append((cursorMode){smSelectDeselect, true , "Activate, Move & Select / Deselect"});
-    cursorModes.append((cursorMode){smSelect        , true , "Activate, Move & Select Only (one is always selected)"});
-    cursorModes.append((cursorMode){smNone          , true , "Activate & Move Only (Highlighted option is selected)"});
-    cursorModes.append((cursorMode){smNone          , false, "Move Only (Highlighted option is selected, always activated)"});
-    cursorModes.append((cursorMode){smSelectDeselect, false, "Move & Select / Deselect Only (Always activated)"});
-    cursorModes.append((cursorMode){smSelect        , false, "Move & Select Only (Always activated)"});
+    cursorModes.append(cursorMode(smSelectDeselect, true , "Activate, Move & Select / Deselect"));
+    cursorModes.append(cursorMode(smSelect        , true , "Activate, Move & Select Only (one is always selected)"));
+    cursorModes.append(cursorMode(smNone          , true , "Activate & Move Only (Highlighted option is selected)"));
+    cursorModes.append(cursorMode(smNone          , false, "Move Only (Highlighted option is selected, always activated)"));
+    cursorModes.append(cursorMode(smSelectDeselect, false, "Move & Select / Deselect Only (Always activated)"));
+    cursorModes.append(cursorMode(smSelect        , false, "Move & Select Only (Always activated)"));
 
     //cursor_data_ = (cursorData){1,1,false,0,0,false,0,0,false,false,0,0,(bounds){(minmax){0,0},(minmax){0,0}}};
 
@@ -388,8 +388,8 @@ void LH_CursorController::updateLocation(int xMod, int yMod, bool absolute)
 
     if (boundsList.length()>=4)
     {
-        cursor_data_.range.x = (minmax){boundsList.at(0).toInt(), boundsList.at(2).toInt()};
-        cursor_data_.range.y = (minmax){boundsList.at(1).toInt(), boundsList.at(3).toInt()};
+        cursor_data_.range.x = minmax(boundsList.at(0).toInt(), boundsList.at(2).toInt());
+        cursor_data_.range.y = minmax(boundsList.at(1).toInt(), boundsList.at(3).toInt());
 
         if (absolute)
         {
@@ -472,8 +472,8 @@ void LH_CursorController::changeBounds()
 {
     QStringList bounds = setup_boundry_->value().split(',');
 
-    cursor_data_.range.x = (minmax){bounds.at(0).toInt(), bounds.at(2).toInt()};
-    cursor_data_.range.y = (minmax){bounds.at(1).toInt(), bounds.at(3).toInt()};
+    cursor_data_.range.x = minmax(bounds.at(0).toInt(), bounds.at(2).toInt());
+    cursor_data_.range.y = minmax(bounds.at(1).toInt(), bounds.at(3).toInt());
 
     bool showHorz = false;
     bool showVert = false;

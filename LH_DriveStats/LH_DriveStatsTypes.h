@@ -85,8 +85,8 @@ public:
     QStringList getDrives()
     {
         DWORD len = GetLogicalDriveStrings( 0, NULL );
-        TCHAR buf[ len ];
-        int buf_size = sizeof(buf) / sizeof(TCHAR);
+        TCHAR *buf = new TCHAR[ len ];
+        int buf_size = len;
         GetLogicalDriveStrings( buf_size, buf );
 
         QStringList ret_list;
@@ -101,6 +101,7 @@ public:
             else
                 tmp += (char)buf[ix];
         }
+        delete[] buf;
 
         return ret_list;
     }

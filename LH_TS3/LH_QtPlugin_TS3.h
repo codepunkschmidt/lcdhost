@@ -62,6 +62,9 @@ struct responseResult
     int errorCode;
     QString errorMessage;
     QString extraMessage;
+    responseResult() : isResult(false), isValid(false), errorCode(0) {}
+    responseResult(bool a, bool b, int c, const QString & d, const QString & e) :
+        isResult(a), isValid(b), errorCode(c), errorMessage(d), extraMessage(e) {}
 };
 
 class LH_QtPlugin_TS3 : public LH_QtPlugin

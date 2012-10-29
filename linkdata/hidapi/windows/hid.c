@@ -93,8 +93,8 @@ extern "C" {
 		USHORT Reserved[17];
 		USHORT fields_not_used_by_hidapi[10];
 	} HIDP_CAPS, *PHIDP_CAPS;
-	typedef char* HIDP_PREPARSED_DATA;
-	#define HIDP_STATUS_SUCCESS 0x0
+	typedef void* PHIDP_PREPARSED_DATA;
+	#define HIDP_STATUS_SUCCESS 0x110000
 
 	typedef BOOLEAN (__stdcall *HidD_GetAttributes_)(HANDLE device, PHIDD_ATTRIBUTES attrib);
 	typedef BOOLEAN (__stdcall *HidD_GetSerialNumberString_)(HANDLE device, PVOID buffer, ULONG buffer_len);
@@ -103,9 +103,9 @@ extern "C" {
 	typedef BOOLEAN (__stdcall *HidD_SetFeature_)(HANDLE handle, PVOID data, ULONG length);
 	typedef BOOLEAN (__stdcall *HidD_GetFeature_)(HANDLE handle, PVOID data, ULONG length);
 	typedef BOOLEAN (__stdcall *HidD_GetIndexedString_)(HANDLE handle, ULONG string_index, PVOID buffer, ULONG buffer_len);
-	typedef BOOLEAN (__stdcall *HidD_GetPreparsedData_)(HANDLE handle, HIDP_PREPARSED_DATA **preparsed_data);
-	typedef BOOLEAN (__stdcall *HidD_FreePreparsedData_)(HIDP_PREPARSED_DATA *preparsed_data);
-	typedef BOOLEAN (__stdcall *HidP_GetCaps_)(HIDP_PREPARSED_DATA *preparsed_data, HIDP_CAPS *caps);
+	typedef BOOLEAN (__stdcall *HidD_GetPreparsedData_)(HANDLE handle, PHIDP_PREPARSED_DATA *preparsed_data);
+	typedef BOOLEAN (__stdcall *HidD_FreePreparsedData_)(PHIDP_PREPARSED_DATA preparsed_data);
+	typedef NTSTATUS (__stdcall *HidP_GetCaps_)(PHIDP_PREPARSED_DATA preparsed_data, HIDP_CAPS *caps);
 
 	static HidD_GetAttributes_ HidD_GetAttributes;
 	static HidD_GetSerialNumberString_ HidD_GetSerialNumberString;
@@ -264,11 +264,13 @@ struct hid_device_info HID_API_EXPORT * HID_API_CALL hid_enumerate(unsigned shor
 	SP_DEVICE_INTERFACE_DETAIL_DATA_A *device_interface_detail_data = NULL;
 	HDEVINFO device_info_set = INVALID_HANDLE_VALUE;
 	int device_index = 0;
+	int i;
 
 	if (hid_init() < 0)
 		return NULL;
 
 	// Initialize the Windows objects.
+	memset(&devinfo_data, 0x0, sizeof(devinfo_data));
 	devinfo_data.cbSize = sizeof(SP_DEVINFO_DATA);
 	device_interface_data.cbSize = sizeof(SP_DEVICE_INTERFACE_DATA);
 
@@ -324,6 +326,31 @@ struct hid_device_info HID_API_EXPORT * HID_API_CALL hid_enumerate(unsigned shor
 			goto cont;
 		}
 
+		// Make sure this device is of Setup Class "HIDClass" and has a
+		// driver bound to it.
+		for (i = 0; ; i++) {
+			char driver_name[256];
+
+			// Populate devinfo_data. This function will return failure
+			// when there are no more interfaces left.
+			res = SetupDiEnumDeviceInfo(device_info_set, i, &devinfo_data);
+			if (!res)
+				goto cont;
+
+			res = SetupDiGetDeviceRegistryPropertyA(device_info_set, &devinfo_data,
+			               SPDRP_CLASS, NULL, (PBYTE)driver_name, sizeof(driver_name), NULL);
+			if (!res)
+				goto cont;
+
+			if (strcmp(driver_name, "HIDClass") == 0) {
+				// See if there's a driver bound.
+				res = SetupDiGetDeviceRegistryPropertyA(device_info_set, &devinfo_data,
+				           SPDRP_DRIVER, NULL, (PBYTE)driver_name, sizeof(driver_name), NULL);
+				if (res)
+					break;
+			}
+		}
+
 		//wprintf(L"HandleName: %s\n", device_interface_detail_data->DevicePath);
 
 		// Open a handle to the device
@@ -350,7 +377,7 @@ struct hid_device_info HID_API_EXPORT * HID_API_CALL hid_enumerate(unsigned shor
 			#define WSTR_LEN 512
 			const char *str;
 			struct hid_device_info *tmp;
-			HIDP_PREPARSED_DATA *pp_data = NULL;
+			PHIDP_PREPARSED_DATA pp_data = NULL;
 			HIDP_CAPS caps;
 			BOOLEAN res;
 			NTSTATUS nt_res;
@@ -512,7 +539,7 @@ HID_API_EXPORT hid_device * HID_API_CALL hid_open_path(const char *path)
 {
 	hid_device *dev;
 	HIDP_CAPS caps;
-	HIDP_PREPARSED_DATA *pp_data = NULL;
+	PHIDP_PREPARSED_DATA pp_data = NULL;
 	BOOLEAN res;
 	NTSTATUS nt_res;
 

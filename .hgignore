@@ -1,0 +1,8 @@
+syntax: glob
+*.user
+*.orig
+*.?pre?
+moc_*.*
+*.o
+.DS_Store
+codeleap/GoogleTranslator/TranslationAPIKey.h

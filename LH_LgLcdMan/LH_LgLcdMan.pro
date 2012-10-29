@@ -23,7 +23,7 @@ HEADERS += \
     LH_LgLcdCallbackThread.h \
     LH_LgLcdThread.h
 
-win32:LIBS += $$PWD/win/lglcd.lib
+win32:LIBS += $$PWD/win/lglcd.lib -ladvapi32
 macx:LIBS += $$PWD/mac/liblgLcd.a -framework CoreFoundation
 
 RESOURCES += LgLcdManResources.qrc

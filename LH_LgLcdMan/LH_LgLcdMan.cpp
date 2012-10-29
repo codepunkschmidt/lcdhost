@@ -220,7 +220,8 @@ const char* LH_LgLcdMan::lglcd_Err( int result, const char *filename, unsigned l
     FormatMessageW(FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_FROM_SYSTEM,
                    NULL, result, MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT),
                    (LPWSTR) &lpMsgBuf, 0, NULL);
-    qWarning( "LH_LgLcdMan: Unknown LCD error '%ls' (%x)\n", lpMsgBuf, result );
+    qWarning( "LH_LgLcdMan: %s(%d) Unknown LCD error '%ls' (%x)\n",
+              filename, line, lpMsgBuf, result );
     LocalFree(lpMsgBuf);
 #else
     qWarning( "LH_LgLcdMan: %s(%d) Unknown LCD error %x\n", filename, line, result );

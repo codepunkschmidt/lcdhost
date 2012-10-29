@@ -1,13 +1,13 @@
 BUILD_TAGLIB {
-
 } else {
-    DEFINES += TAGLIB
-    LIBS += -L"$$PWD/taglib-release" -ltaglib
+#    DEFINES += TAGLIB
+#    LIBS += -L$$PWD/taglib-release -ltaglib
 }
 
 include($$PWD/../zlib/zlib.pri)
 
-DEFINES += MAKE_TAGLIB_LIB
+DEFINES += TAGLIB
+DEFINES += TAGLIB_STATIC
 DEFINES += TAGLIB_NO_CONFIG
 DEFINES += WITH_ASF
 DEFINES += WITH_MP4

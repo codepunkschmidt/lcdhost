@@ -193,8 +193,6 @@ void LH_Graph::__ctor( float defaultMin, float defaultMax, GraphDataMode dataMod
     setup_label_shadow_->setHelp( "<p>The color used for for the \"Glow/Shadow\" effect around Axis labels (designed to improve legibility).</p>"
                                   "<p>Set the transparency to 0 to remove the effect.</p>");
 
-
-
     addLine("Default");
 
     connect( setup_fg_type_, SIGNAL(changed()), this, SLOT(changeType()) );
@@ -228,7 +226,10 @@ void LH_Graph::setExternalSource(DataLineCollection* externalSource) {
         lineData_ = externalSource;
         break;
     case gdmHybrid:
-        lines_.copyFrom((*externalSource_).averageOver(DEFAULT_SAMPLE_RATE * 1000));
+        if(externalSource_)
+            lines_.copyFrom((*externalSource_).averageOver(DEFAULT_SAMPLE_RATE * 1000));
+        else
+            lines_.clear();
         lineData_ = &lines_;
         break;
     case gdmInternallyManaged:
@@ -358,6 +359,8 @@ void LH_Graph::findDataBounds(DataLineCollection* lineData)
 
 int LH_Graph::lastVisibleLine()
 {
+    if(!lineData_)
+        return -1;
 #ifdef LH_MONITORING_LIBRARY
     for( int i=lineData_->count()-1; i>=0; i-- )
         if( !lineData_->at(i).group && !lineData_->at(i).hidden )
@@ -370,6 +373,8 @@ int LH_Graph::lastVisibleLine()
 
 void LH_Graph::drawSingle(int lineID)
 {
+    if(!lineData_)
+        return;
     if (lineID>=linesCount()) return;
 
     if (isDebug) qDebug() << "graph: draw line: begin " << lineID;
@@ -697,6 +702,14 @@ void LH_Graph::addLine(QString name)
     cacheVal_.append(0);
     lines_.add(name);
 
+    addMissingConfigs();
+
+    setup_line_selection_->setFlag(LH_FLAG_HIDDEN, setup_line_selection_->list().count()==1);
+    setup_line_selection_->setValue(0);
+}
+
+void LH_Graph::addMissingConfigs()
+{
     QStringList configs = setup_line_configs_->value().split('~',QString::SkipEmptyParts);
     if (configs.length()<lineConfigsCount())
     {
@@ -705,13 +718,12 @@ void LH_Graph::addLine(QString name)
             configs.append(configString);
         setup_line_configs_->setValue(configs.join("~"));
     }
-
-    setup_line_selection_->setFlag(LH_FLAG_HIDDEN, setup_line_selection_->list().count()==1);
-    setup_line_selection_->setValue(0);
 }
 
 int LH_Graph::linesCount()
 {
+    if(!lineData_)
+        return 0;
     return lineData_->count();
 }
 
@@ -793,8 +805,9 @@ void LH_Graph::loadColors(int lineID, QColor& penColor, QColor& fillColor1, QCol
     QStringList configs = setup_line_configs_->value().split('~',QString::SkipEmptyParts);
 
     if( lineID < 0 ) lineID = 0;
+
 #ifdef LH_MONITORING_LIBRARY
-    if (compensateForHidden)
+    if (compensateForHidden && lineData_)
     {
         int realLineID = lineID;
         lineID = 0;
@@ -803,7 +816,10 @@ void LH_Graph::loadColors(int lineID, QColor& penColor, QColor& fillColor1, QCol
                 lineID++;
 
     }
+#else
+    Q_UNUSED(compensateForHidden);
 #endif
+
     if( lineID >= configs.length() ) lineID = configs.length()-1;
 
     QString configString = configs.at(lineID);

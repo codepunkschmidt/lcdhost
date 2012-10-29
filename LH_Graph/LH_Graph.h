@@ -103,6 +103,7 @@ class LH_Graph : public LH_QtInstance
     DataLineCollection* externalSource_;
     DataLineCollection* lineData_;
     int lastVisibleLine();
+    void addMissingConfigs();
 protected:
     bool graph_empty_;
 
@@ -141,6 +142,7 @@ protected:
     void __ctor( float defaultMin, float defaultMax, GraphDataMode dataMode, DataLineCollection* externalSource );
 
     void setExternalSource(DataLineCollection* externalSource);
+    DataLineCollection* externalSource() {return externalSource_;}
 
     DataLineCollection* lineData() {
         return lineData_;
@@ -177,6 +179,9 @@ public:
 
     void drawSingle( int lineID = 0 );
     void drawAll() {
+        if(!lineData_)
+            return;
+        addMissingConfigs();
         for( int i=0; i<lineData_->count(); i++ )
         {
 #ifdef LH_MONITORING_LIBRARY

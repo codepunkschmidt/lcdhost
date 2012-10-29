@@ -47,6 +47,7 @@ class DataLine : public DataPointCollection
 public:
 
 #ifdef LH_MONITORING_LIBRARY
+    QString units;
     bool aggregate;
     bool group;
     bool hidden;

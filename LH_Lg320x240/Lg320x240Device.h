@@ -2,7 +2,9 @@
 #define LG320x240DEVICE_H
 
 #include "LH_QtDevice.h"
-#include "libusb.h"
+extern "C" {
+    #include "libusb.h"
+}
 
 class Lg320x240Device : public LH_QtDevice
 {

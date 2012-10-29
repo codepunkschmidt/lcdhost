@@ -3,81 +3,102 @@ TEMPLATE = lib
 DEFINES += LH_MONITORING_LIBRARY
 DEFINES += COMMON_OBJECT_NAME="Monitoring"
 DEFINES += "MONITORING_FOLDER=\"3rdParty/System Monitoring\""
-DEFINES += VERSION=2.12
+DEFINES += DATA_CACHE_MAX_POINTS=2048
+DEFINES += VERSION=3.00
+
 QT += xml
-CONFIG += cf
+CONFIG += cf json datacollection
 
 include(../Plugins.pri)
 
 INCLUDEPATH += $$PWD/LH_QImage
+INCLUDEPATH += $$PWD/Sources \
+               $$PWD/Objects \
+               $$PWD/Types
+
+MONOBJECTS_HEADERS = \
+    ../LH_Text/LH_Text.h \
+    Objects/LH_MonitoringText.h \
+    $$PWD/LH_QImage/LH_QImage.h \
+    Objects/LH_MonitoringImage.h \
+    ../LH_Graph/LH_Graph.h \
+    Objects/LH_MonitoringGraph.h \
+    ../LH_Dial/LH_Dial.h \
+    Objects/LH_MonitoringDial.h \
+    ../LH_Bar/LH_Bar.h \
+    Objects/LH_MonitoringBar.h
+
+MONOBJECTS_SOURCES = \
+    ../LH_Text/LH_Text.cpp \
+    Objects/LH_MonitoringText.cpp \
+    $$PWD/LH_QImage/logo_blob.c \
+    $$PWD/LH_QImage/LH_QImage.cpp \
+    Objects/LH_MonitoringImage.cpp \
+    ../LH_Graph/LH_Graph.cpp \
+    Objects/LH_MonitoringGraph.cpp \
+    ../LH_Dial/LH_Dial.cpp \
+    Objects/LH_MonitoringDial.cpp \
+    ../LH_Bar/LH_Bar.cpp \
+    Objects/LH_MonitoringBar.cpp
+
+MONTYPES_HEADERS = \
+    Types/LH_MonitoringTypes_Afterburner.h \
+    Types/LH_MonitoringTypes_ATITrayTools.h \
+    Types/LH_MonitoringTypes_CoreTemp.h \
+    Types/LH_MonitoringTypes_Fraps.h \
+    Types/LH_MonitoringTypes_GPUZ.h \
+    Types/LH_MonitoringTypes_HWiNFO.h \
+    Types/LH_MonitoringTypes_RivaTuner.h \
+    Types/LH_MonitoringTypes_SpeedFan.h
+
+MONSOURCES_HEADERS = \
+    Sources/LH_MonitoringSource_Afterburner.h \
+    Sources/LH_MonitoringSource_Aida64.h \
+    Sources/LH_MonitoringSource_ATITrayTools.h \
+    Sources/LH_MonitoringSource_CoreTemp.h \
+    Sources/LH_MonitoringSource_Fraps.h \
+    Sources/LH_MonitoringSource_GPUZ.h \
+    Sources/LH_MonitoringSource_HWiNFO.h \
+    Sources/LH_MonitoringSource_HWMonitor.h \
+    Sources/LH_MonitoringSource_Logitech.h \
+    Sources/LH_MonitoringSource_RivaTuner.h \
+    Sources/LH_MonitoringSource_SpeedFan.h
+
+MONSOURCES_SOURCES = \
+    Sources/LH_MonitoringSource_Afterburner.cpp \
+    Sources/LH_MonitoringSource_Aida64.cpp \
+    Sources/LH_MonitoringSource_ATITrayTools.cpp \
+    Sources/LH_MonitoringSource_CoreTemp.cpp \
+    Sources/LH_MonitoringSource_Fraps.cpp \
+    Sources/LH_MonitoringSource_GPUZ.cpp \
+    Sources/LH_MonitoringSource_HWiNFO.cpp \
+    Sources/LH_MonitoringSource_HWMonitor.cpp \
+    Sources/LH_MonitoringSource_Logitech.cpp \
+    Sources/LH_MonitoringSource_RivaTuner.cpp \
+    Sources/LH_MonitoringSource_SpeedFan.cpp
 
 HEADERS += \
     $$PLUGIN_HEADERS \
-    ../LH_Graph/LH_Graph.h \
-    ../LH_Text/LH_Text.h \
-    ../LH_Bar/LH_Bar.h \
-    ../LH_Dial/LH_Dial.h \
+    $$MONTYPES_HEADERS \
     LH_QtPlugin_Monitoring.h \
-    LH_QImage/LH_QImage.h \
+    Objects/LH_MonitoringObject.h \
+    Sources/LH_MonitoringSources.h \
+    Sources/LH_MonitoringSource.h \
+    $$MONOBJECTS_HEADERS \
+    $$MONSOURCES_HEADERS \
     LH_AidaWriter.h \
-    LH_RivaWriter.h \
-    Sources/LH_SpeedFanTypes.h \
-    Objects/LH_MonitoringText.h \
-    Objects/LH_MonitoringImage.h \
-    Objects/LH_MonitoringGraph.h \
-    Objects/LH_MonitoringDial.h \
-    Objects/LH_MonitoringBar.h \
-    Sources/LH_SpeedFanData.h \
-    Sources/LH_RivaTunerTypes.h \
-    Sources/LH_RivaTunerData.h \
-    Sources/LH_MonitoringData.h \
-    Sources/LH_LogitechData.h \
-    Sources/LH_GPUZTypes.h \
-    Sources/LH_GPUZData.h \
-    Sources/LH_FrapsTypes.h \
-    Sources/LH_FrapsData.h \
-    Sources/LH_CoreTempTypes.h \
-    Sources/LH_CoreTempData.h \
-    Sources/LH_ATITrayToolsTypes.h \
-    Sources/LH_ATITrayToolsData.h \
-    Sources/LH_Aida64Types.h \
-    Sources/LH_Aida64Data.h \
-    Sources/LH_AfterburnerTypes.h \
-    Sources/LH_AfterburnerData.h \
-    Sources/LH_MonitoringUI.h \
-    Sources/LH_HWMonData.h \
-    Sources/LH_HWiNFOTypes.h \
-    Sources/LH_HWiNFOData.h
+    LH_RivaWriter.h
 
 SOURCES += \
     $$PLUGIN_SOURCES \
-    ../LH_Graph/LH_Graph.cpp \
-    ../LH_Text/LH_Text.cpp \
-    ../LH_Bar/LH_Bar.cpp \
-    ../LH_Dial/LH_Dial.cpp \
     LH_QtPlugin_Monitoring.cpp \
-    LH_QImage/logo_blob.c \
-    LH_QImage/LH_QImage.cpp \
+    Objects/LH_MonitoringObject.cpp \
+    Sources/LH_MonitoringSources.cpp \
+    Sources/LH_MonitoringSource.cpp \
+    $$MONOBJECTS_SOURCES \
+    $$MONSOURCES_SOURCES \
     LH_AidaWriter.cpp \
-    LH_RivaWriter.cpp \
-    Objects/LH_MonitoringText.cpp \
-    Objects/LH_MonitoringImage.cpp \
-    Objects/LH_MonitoringGraph.cpp \
-    Objects/LH_MonitoringDial.cpp \
-    Objects/LH_MonitoringBar.cpp \
-    Sources/LH_SpeedFanData.cpp \
-    Sources/LH_RivaTunerData.cpp \
-    Sources/LH_MonitoringData.cpp \
-    Sources/LH_LogitechData.cpp \
-    Sources/LH_GPUZData.cpp \
-    Sources/LH_FrapsData.cpp \
-    Sources/LH_CoreTempData.cpp \
-    Sources/LH_ATITrayToolsData.cpp \
-    Sources/LH_Aida64Data.cpp \
-    Sources/LH_AfterburnerData.cpp \
-    Sources/LH_MonitoringUI.cpp \
-    Sources/LH_HWMonData.cpp \
-    Sources/LH_HWiNFOData.cpp
+    LH_RivaWriter.cpp
 
 RESOURCES += \
     LH_Monitoring.qrc

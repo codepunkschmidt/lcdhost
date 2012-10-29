@@ -28,27 +28,45 @@
 #include "LH_QImage.h"
 #include "LH_Qt_QString.h"
 
-#include "Sources/LH_MonitoringUI.h"
+#include "Objects/LH_MonitoringObject.h"
 
-class LH_MonitoringImage : public LH_QImage
+class LH_MonitoringImage : public LH_QImage, public LH_MonitoringObject
 {
     Q_OBJECT
 
 protected:
-    LH_MonitoringUI *ui_;
     LH_Qt_QString *setup_value_;
 
 public:
     LH_MonitoringImage();
     const char *userInit();
-    int notify(int n,void* p);
     static lh_class *classInfo();
 
-    void updateValue();
 
 public slots:
-    void configChanged()  { updateValue(); }
+    void updateValue();
 
+    void refreshMonitoringOptions() {
+        LH_MonitoringObject::refreshMonitoringOptions();
+    }
+    void connectChangeEvents() {
+        LH_MonitoringObject::connectChangeEvents();
+    }
+    void changeAppSelection() {
+        LH_MonitoringObject::changeAppSelection();
+    }
+    void changeTypeSelection() {
+        LH_MonitoringObject::changeTypeSelection();
+    }
+    void changeGroupSelection() {
+        LH_MonitoringObject::changeGroupSelection();
+    }
+    void changeItemSelection() {
+        LH_MonitoringObject::changeItemSelection();
+    }
+    void dataValidityChanged() {
+        LH_MonitoringObject::dataValidityChanged();
+    }
 };
 
 #endif // LH_MONITORINGIMAGE_H

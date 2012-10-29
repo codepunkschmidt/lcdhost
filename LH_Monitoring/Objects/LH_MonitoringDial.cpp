@@ -43,86 +43,41 @@ lh_class *LH_MonitoringDial::classInfo()
     return &classInfo;
 }
 
+LH_MonitoringDial::LH_MonitoringDial() : LH_Dial(), LH_MonitoringObject(this, mdmAll, true, false), setup_max_(0), setup_min_(0)
+{
+    monitoringInit(SLOT(refreshMonitoringOptions()),
+                   SLOT(connectChangeEvents()),
+                   SLOT(changeAppSelection()),
+                   SLOT(changeTypeSelection()),
+                   SLOT(changeGroupSelection()),
+                   SLOT(changeItemSelection()),
+                   SLOT(dataValidityChanged()));
+}
+
+
 const char *LH_MonitoringDial::userInit()
 {
     if( const char *err = LH_Dial::userInit() ) return err;
-    ui_ = new LH_MonitoringUI(this, mdmNumbers, true, false);
+
+    this->LH_Dial::connect( setup_value_str_, SIGNAL(changed()), this, SLOT(updateNeedles()) );
+    this->LH_Dial::connect( setup_value_str_, SIGNAL(set()), this, SLOT(updateNeedles()) );
 
     setup_max_ = new LH_Qt_int(this, "Maximum", 100, 0, 99999);
     setup_max_->setHelp( "<p>The dial's maximum value.</p>");
     setup_max_->setOrder(-3);
-    connect( setup_max_, SIGNAL(changed()), this, SLOT(updateBounds()) );
+    this->LH_Dial::connect( setup_max_, SIGNAL(changed()), this, SLOT(updateBounds()) );
 
     setup_min_ = new LH_Qt_int(this, "Minimum", 0, 0, 99999);
     setup_min_->setHelp( "<p>The dial's minimum value.</p>");
     setup_min_->setOrder(-3);
-    connect( setup_min_, SIGNAL(changed()), this, SLOT(updateBounds()) );
+    this->LH_Dial::connect( setup_min_, SIGNAL(changed()), this, SLOT(updateBounds()) );
 
-    (new LH_Qt_QString(this,("image-hr2"), QString("<hr>"), LH_FLAG_NOSAVE | LH_FLAG_NOSOURCE | LH_FLAG_NOSINK | LH_FLAG_HIDETITLE,lh_type_string_html ))->setOrder(-3);
+    (new LH_Qt_QString(this,("image-hr2"), QString("<hr>"), LH_FLAG_NOSAVE_LINK | LH_FLAG_NOSAVE_DATA | LH_FLAG_NOSOURCE | LH_FLAG_NOSINK | LH_FLAG_HIDETITLE,lh_type_string_html ))->setOrder(-3);
 
     updateBounds();
 
-    connect(ui_, SIGNAL(appChanged()), this, SLOT(configChanged()) );
-    connect(ui_, SIGNAL(typeChanged()), this, SLOT(configChanged()) );
-    connect(ui_, SIGNAL(groupChanged()), this, SLOT(configChanged()) );
-    connect(ui_, SIGNAL(itemChanged()), this, SLOT(configChanged()) );
-    connect(ui_, SIGNAL(initialized()), this, SLOT(configChanged()) );
-
-    pollTimer_.start();
     return 0;
 }
-
-int LH_MonitoringDial::polling()
-{
-    if(pollTimer_.elapsed()>=190 && ui_ && ui_->data_)
-    {
-        pollTimer_.restart();
-        float deadVal;
-        bool hasDead = (ui_->data_->getDeadValue_Transformed(deadVal));
-
-        int count;
-        ui_->data_->getCount(count);
-        if(needleCount() != count)
-            updateNeedles();
-
-        float max;
-        if(ui_->data_->getUpperLimit(max))
-        {
-            this->setup_max_->setHidden(true);
-            this->setup_min_->setHidden(true);
-            this->setMax((qreal)max);
-            this->setMin((qreal)0);
-        }
-        else
-        {
-            this->setup_max_->setHidden(false);
-            this->setup_min_->setHidden(false);
-        }
-
-        if(!ui_->data_->isGroup())
-        {
-            float currVal=0;
-            bool hasData = ui_->data_->getValue(currVal);
-            bool isDead = (hasDead && (deadVal == currVal));
-            setNeedleVisibility( hasData && !isDead );
-            setVal( currVal );
-        } else {
-            QVector<qreal> currVals;
-            for(int i=0; i<count; i++)
-            {
-                float currVal=0;
-                bool hasData = ui_->data_->getValue(currVal, i);
-                bool isDead = (hasDead && (deadVal == currVal));
-                setNeedleVisibility( hasData && !isDead, i );
-                currVals.append(currVal);
-            }
-            setVal(currVals);
-        }
-    }
-    int basePoll = LH_Dial::polling();
-    return (basePoll==0? 200 : basePoll);
-}
-
 
 void LH_MonitoringDial::refresh()
 {
@@ -138,8 +93,53 @@ void LH_MonitoringDial::updateBounds()
 
 void LH_MonitoringDial::updateNeedles()
 {
-    QStringList names;
-    if(ui_ && ui_->data_)
-        ui_->data_->getNames(names);
-    setNeedles(names);
+    bool ok;
+    SensorItem si = this->selectedSensor(&ok);
+    if(ok)
+    {
+        QStringList names;
+        if(!si.group)
+        {
+            names.append(setup_value_item_->valueText());
+            if(needleCount() != 1)
+                updateNeedlesList(&names);
+
+            float valFlt = (setup_value_str_->value().toFloat(&ok));
+            if(ok)
+                setVal( valFlt );
+        } else {
+            QVector<qreal> currVals = getValuesVector(false, 0, ok, &names);
+            if(ok)
+            {
+                if(needleCount() != currVals.count())
+                    updateNeedlesList(&names);
+                setVal(currVals);
+            }
+        }
+    }
+    else if(needleCount() != 0)
+    {
+        QStringList names;
+        updateNeedlesList(&names);
+    }
+}
+
+void LH_MonitoringDial::updateNeedlesList(QStringList *names)
+{
+    if(names!=NULL)
+        setNeedles(*names);
+    else
+    {
+        bool ok;
+        QStringList namesList;
+        SensorItem si = this->selectedSensor(&ok);
+        if(ok)
+        {
+            if(!si.group)
+                namesList.append(setup_value_item_->valueText());
+            else
+                getValuesVector(false, 0, ok, &namesList);            
+        }
+        setNeedles(namesList);
+    }
 }

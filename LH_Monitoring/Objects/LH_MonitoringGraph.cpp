@@ -26,6 +26,8 @@
 
 #include "LH_MonitoringGraph.h"
 
+#include <QDebug>
+
 LH_PLUGIN_CLASS(LH_MonitoringGraph)
 
 lh_class *LH_MonitoringGraph::classInfo()
@@ -43,10 +45,27 @@ lh_class *LH_MonitoringGraph::classInfo()
     return &classInfo;
 }
 
+LH_MonitoringGraph::LH_MonitoringGraph() :
+    LH_Graph(0, 2, gdmExternallyManaged, NULL),
+    LH_MonitoringObject(this, mdmNumbers, true, false),
+    was_empty_(true),
+    setup_append_units_(0)
+{
+    monitoringInit(SLOT(refreshMonitoringOptions()),
+                   SLOT(connectChangeEvents()),
+                   SLOT(changeAppSelection()),
+                   SLOT(changeTypeSelection()),
+                   SLOT(changeGroupSelection()),
+                   SLOT(changeItemSelection()),
+                   SLOT(dataValidityChanged()));
+}
+
 const char *LH_MonitoringGraph::userInit()
 {
     if( const char *err = LH_Graph::userInit() ) return err;
-    ui_ = new LH_MonitoringUI(this, mdmNumbers, true);
+
+    //this->LH_Text::connect( setup_value_str_, SIGNAL(changed()), this, SLOT(updateText()) );
+    //this->LH_Text::connect( setup_value_str_, SIGNAL(set()), this, SLOT(updateText()) );
 
     setUserDefinableLimits(true);
     //canGrow(true);
@@ -61,7 +80,7 @@ const char *LH_MonitoringGraph::userInit()
     setup_append_units_->setOrder(-3);
     connect( setup_append_units_, SIGNAL(changed()), this, SLOT(updateUnits()) );
 
-    (new LH_Qt_QString(this,("image-hr2"), QString("<hr>"), LH_FLAG_NOSAVE | LH_FLAG_NOSOURCE | LH_FLAG_NOSINK | LH_FLAG_HIDETITLE,lh_type_string_html ))->setOrder(-3);
+    (new LH_Qt_QString(this,("image-hr2"), QString("<hr>"), LH_FLAG_NOSAVE_LINK | LH_FLAG_NOSAVE_DATA | LH_FLAG_NOSOURCE | LH_FLAG_NOSINK | LH_FLAG_HIDETITLE,lh_type_string_html ))->setOrder(-3);
 
     was_empty_ = true;
 
@@ -72,18 +91,13 @@ const char *LH_MonitoringGraph::userInit()
 
 void LH_MonitoringGraph::doInitialize()
 {
-    connect(ui_, SIGNAL(appChanged()), this, SLOT(configChanged()) );
-    connect(ui_, SIGNAL(typeChanged()), this, SLOT(configChanged()) );
-    connect(ui_, SIGNAL(groupChanged()), this, SLOT(configChanged()) );
-    connect(ui_, SIGNAL(itemChanged()), this, SLOT(configChanged()) );
-    connect(ui_, SIGNAL(initialized()), this, SLOT(configChanged()) );
-
-    connect(ui_->setup_unit_selection_, SIGNAL(changed()), SLOT(clearData()) );
+    //connect(ui_->setup_unit_selection_, SIGNAL(changed()), SLOT(clearData()) );
 
     if(canGrow())
-        clear(min(), min()+1, canGrow());
+        LH_Graph::clear(min(), min()+1, canGrow());
     else
-        clear(min(), max(), canGrow());
+        LH_Graph::clear(min(), max(), canGrow());
+    updateDataCache();
     updateUnits();
 }
 
@@ -92,6 +106,8 @@ int LH_MonitoringGraph::notify(int n, void *p)
     Q_UNUSED(p);
 
     if(!n || n&LH_NOTE_SECOND)
+        callback(lh_cb_render,NULL);
+    /*
         if(ui_ && ui_->data_)
         {
             float deadVal;
@@ -121,22 +137,26 @@ int LH_MonitoringGraph::notify(int n, void *p)
             if(was_empty_ && !graph_empty_) updateUnits();
             was_empty_ = graph_empty_;
             callback(lh_cb_render,NULL);
-        }
+        }*/
     return LH_QtInstance::notify(n,p) | LH_NOTE_SECOND;
 }
 
 void LH_MonitoringGraph::updateLines()
 {
     QStringList names;
-    if(ui_ && ui_->data_)
-        ui_->data_->getNames(names);
-    setLines(names);
+    bool ok;
+    getValuesVector(false, 0, ok, &names);
+    if(ok)
+        setLines(names);
 }
 
 QImage *LH_MonitoringGraph::render_qimage( int w, int h )
 {
     if( LH_Graph::render_qimage(w,h) == NULL ) return NULL;
-    drawAll();
+
+    if(setup_value_ptr_->value()==(int)(externalSource()))
+        drawAll();
+
     return image_;
 }
 
@@ -147,7 +167,7 @@ void LH_MonitoringGraph::configChanged()  {
 
 void LH_MonitoringGraph::clearData()
 {
-    clear(min(), max(), canGrow());
+    LH_Graph::clear(min(), max(), canGrow());
     updateUnits();
     callback(lh_cb_render,NULL);
 }
@@ -155,7 +175,43 @@ void LH_MonitoringGraph::clearData()
 void LH_MonitoringGraph::updateUnits()
 {
     QString units = "";
-    if(ui_ && ui_->data_)
-        if(setup_append_units_->value()) units = ui_->data_->getUnits();
+    if(setup_append_units_->value())
+    {
+        bool ok;
+        SensorItem item = selectedSensor(&ok);
+        if(ok)
+            units = item.units;
+    }
     setYUnit(units);
+}
+
+void LH_MonitoringGraph::updateDataCache()
+{
+    bool ok1;
+    bool ok2;
+    int selectedIndex;
+
+    SensorGroup* group = selectedSensorGroup(&ok1);
+    SensorItem item = selectedSensor(&ok2, &selectedIndex);
+
+    if(ok1 && ok2)
+    {
+        LH_Graph::setExternalSource(&(group->items));
+        clearLines();
+        for(int i=0; i<group->items.count(); i++)
+        {
+            if(item.group)
+                group->items[i].hidden = (group->items[i].aggregate || group->items[i].group);
+            else
+                group->items[i].hidden = (i!=selectedIndex);
+
+            if(!group->items[i].hidden)
+                addLine(group->items[i].name);
+        }
+    }
+    else
+    {
+        LH_Graph::setExternalSource(NULL);
+        clearLines();
+    }
 }

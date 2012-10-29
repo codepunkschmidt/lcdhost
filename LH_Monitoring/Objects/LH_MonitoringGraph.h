@@ -1,20 +1,21 @@
 #ifndef LH_MONITORINGGRAPH_H
 #define LH_MONITORINGGRAPH_H
 
-#include "Sources/LH_MonitoringUI.h"
 #include "LH_Graph/LH_Graph.h"
+#include "Objects/LH_MonitoringObject.h"
 
-class LH_MonitoringGraph : public LH_Graph
+#include "DataCollection.h"
+
+class LH_MonitoringGraph : public LH_Graph, public LH_MonitoringObject
 {
     Q_OBJECT
     bool was_empty_;
 
 protected:
-    LH_MonitoringUI *ui_;
     LH_Qt_bool *setup_append_units_;
 
 public:
-    LH_MonitoringGraph() : LH_Graph(0,2), was_empty_(true), setup_append_units_(0) {ui_ = NULL;}
+    LH_MonitoringGraph();
 
     const char *userInit();
     int notify( int, void* );
@@ -25,11 +26,40 @@ public:
     void updateScale();
     void updateLines();
 
+    void updateDataCache();
+
 public slots:
     void doInitialize();
     void clearData();
     void updateUnits();
     void configChanged();
+
+    void refreshMonitoringOptions() {
+        LH_MonitoringObject::refreshMonitoringOptions();
+        updateDataCache();
+    }
+    void connectChangeEvents() {
+        LH_MonitoringObject::connectChangeEvents();
+    }
+    void changeAppSelection() {
+        LH_MonitoringObject::changeAppSelection();
+        updateDataCache();
+    }
+    void changeTypeSelection() {
+        LH_MonitoringObject::changeTypeSelection();
+        updateDataCache();
+    }
+    void changeGroupSelection() {
+        LH_MonitoringObject::changeGroupSelection();
+        updateDataCache();
+    }
+    void changeItemSelection() {
+        LH_MonitoringObject::changeItemSelection();
+        updateDataCache();
+    }
+    void dataValidityChanged() {
+        LH_MonitoringObject::dataValidityChanged();
+    }
 };
 
 #endif // LH_MONITORINGGRAPH_H

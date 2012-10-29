@@ -14,3 +14,5 @@ HEADERS += \
     $$PLUGIN_HEADERS \
     LH_Lg160x43.h \
     Lg160x43Device.h
+
+win32: LIBS += -luser32

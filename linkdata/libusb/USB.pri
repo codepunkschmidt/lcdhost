@@ -9,7 +9,8 @@ SOURCES += $$PWD/core.c $$PWD/descriptor.c $$PWD/io.c $$PWD/sync.c
 win32 {
         DEFINES += OS_WINDOWS
         SOURCES += $$PWD/os/windows_usb.c $$PWD/os/threads_windows.c $$PWD/os/poll_windows.c
-        LIBS += -lole32 -lsetupapi -lcfgmgr32
+        LIBS += -luser32 -lole32 -lsetupapi
+# -lcfgmgr32
 }
 
 macx {

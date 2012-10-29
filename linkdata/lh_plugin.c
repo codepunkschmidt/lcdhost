@@ -39,6 +39,7 @@
 
 #include "lh_plugin.h"
 
+#if 0
 /**
 	lh_binaryfile_to_blob()
 
@@ -143,6 +144,7 @@ void lh_blob_to_headerfile( lh_blob *blob, const char *filename, const char *var
     }
     return;
 }
+#endif
 
 /**
   Given two lh_cpudata, calculate the average CPU load between them.
@@ -150,9 +152,14 @@ void lh_blob_to_headerfile( lh_blob *blob, const char *filename, const char *var
   */
 int lh_cpuload( lh_cpudata *from, lh_cpudata *to )
 {
-    if( from == NULL || to == NULL ) return 0;
-    if( to->total == from->total ) return 0;
-    if( to->total > from->total ) return (((to->system - from->system)+(to->user - from->user)) * 10000) / (to->total - from->total);
-    return (((from->system - to->system)+(from->user - to->user)) * 10000) / (from->total - to->total);
+    qint64 result = 0;
+    if( from && to && to->total != from->total )
+    {
+        if( to->total > from->total )
+            result = (((to->system - from->system)+(to->user - from->user)) * 10000) / (to->total - from->total);
+        else
+            result = (((from->system - to->system)+(from->user - to->user)) * 10000) / (from->total - to->total);
+    }
+    return (int) result;
 }
 

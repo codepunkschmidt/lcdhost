@@ -11,8 +11,8 @@ LH_MonitoringObject::LH_MonitoringObject(LH_QtObject *object, monitoringDataMode
     adaptiveUnits_ = adaptiveUnits;
     desiredUnits_ = "";
 
-    int LH_FLAG_SAVEOBJECT_VISIBILITY = LH_FLAG_READONLY; //for debugging, set this to LH_FLAG_READONLY, or LH_FLAG_HIDDEN for normal operation
-    int LH_FLAG_LINKOBJECT_VISIBILITY = LH_FLAG_READONLY; //for debugging, set this to LH_FLAG_READONLY, or LH_FLAG_HIDDEN for normal operation
+    int LH_FLAG_SAVEOBJECT_VISIBILITY = LH_FLAG_HIDDEN; //for debugging, set this to LH_FLAG_READONLY, or LH_FLAG_HIDDEN for normal operation
+    int LH_FLAG_LINKOBJECT_VISIBILITY = LH_FLAG_HIDDEN; //for debugging, set this to LH_FLAG_READONLY, or LH_FLAG_HIDDEN for normal operation
 
     setup_value_units_ = new LH_Qt_QString(object, "Value (Units)", "",  LH_FLAG_LINKOBJECT_VISIBILITY | LH_FLAG_NOSAVE_LINK | LH_FLAG_NOSAVE_DATA);
     setup_value_units_->setOrder(-3);

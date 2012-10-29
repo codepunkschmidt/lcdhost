@@ -7,7 +7,8 @@ LgBacklightDevice::LgBacklightDevice( const struct hid_device_info *di, LH_LgBac
 {
     parent_ = parent;
     name_ = QString::fromWCharArray(di->product_string);
-    to_remove_ = false;
+    // name_ = di->path;
+    to_remove_ = true;
     product_id_ = di->product_id;
     hiddev_ = 0;
     path_ = di->path;
@@ -29,13 +30,17 @@ LgBacklightDevice::LgBacklightDevice( const struct hid_device_info *di, LH_LgBac
             b = report[3] * 255 / 150;
             if( b > 255 ) b = 255;
             color_ = QColor( r, g, b );
+            to_remove_ = false;
+            // qDebug() << "LgBacklightDevice:" << path_.constData() << r << g << b;
         }
         else
             qDebug() << "LgBacklightDevice can't get feature report for" << name_;
         hid_close( dev );
     }
     else
-        qDebug() << "LgBacklightDevice can't open" << name_;
+    {
+        qDebug() << "LgBacklightDevice can't open" << name_ << "at" << path_.constData();
+    }
 }
 
 // automatic intensity correction
@@ -53,11 +58,9 @@ void LgBacklightDevice::setColor( QColor c )
         report[4] = 0;
         int retv = hid_send_feature_report( dev, report, sizeof(report) );
         if( retv != sizeof(report) )
-        {
-            qDebug() << "Backlight: failed to set color for" << name() << "only" << retv << "bytes sent";
-        }
+            qDebug() << "Backlight::setColor() failed for" << name() << "only" << retv << "bytes sent";
         hid_close( dev );
     }
     else
-        qDebug() << "Backlight: failed to open" << name();
+        qDebug() << "Backlight::setColor() failed to open" << name() << "at" << path_.constData();
 }

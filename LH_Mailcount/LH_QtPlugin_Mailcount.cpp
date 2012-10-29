@@ -15,7 +15,7 @@ typedef HRESULT (WINAPI *SHGetUnreadMailCountW_t)(
     int cchShellExecuteCommand
 );
 static HANDLE hShell32Dll = (HANDLE)0;
-static SHGetUnreadMailCountW_t SHGetUnreadMailCountW = NULL;
+static SHGetUnreadMailCountW_t SHGetUnreadMailCountW_p = NULL;
 #endif
 
 LH_PLUGIN(LH_QtPlugin_Mailcount)
@@ -68,7 +68,7 @@ const char *LH_QtPlugin_Mailcount::userInit()
 #ifdef Q_WS_WIN
     hShell32Dll = LoadLibraryW( L"SHELL32.DLL" );
     if( hShell32Dll != NULL )
-        SHGetUnreadMailCountW = (SHGetUnreadMailCountW_t) GetProcAddress( (HMODULE) hShell32Dll, "SHGetUnreadMailCountW" );
+        SHGetUnreadMailCountW_p = (SHGetUnreadMailCountW_t) GetProcAddress( (HMODULE) hShell32Dll, "SHGetUnreadMailCountW" );
 #endif
     return NULL;
 }
@@ -97,7 +97,7 @@ void LH_QtPlugin_Mailcount::userTerm()
     {
             FreeLibrary( (HMODULE) hShell32Dll );
             hShell32Dll = NULL;
-            SHGetUnreadMailCountW = 0;
+            SHGetUnreadMailCountW_p = 0;
     }
 #endif
     return;
@@ -108,7 +108,7 @@ void LH_QtPlugin_Mailcount::getUnreadMailcount()
     int total = manual_adjust_->value();
 
 #ifdef Q_WS_WIN
-    if( SHGetUnreadMailCountW )
+    if( SHGetUnreadMailCountW_p )
     {
         HRESULT retv;
         SYSTEMTIME st;
@@ -125,10 +125,10 @@ void LH_QtPlugin_Mailcount::getUnreadMailcount()
         memcpy( &ft, &mailtime, sizeof(mailtime) );
         if( !email_addr_->value().isEmpty() )
         {
-            retv = SHGetUnreadMailCountW( NULL, (LPCTSTR)(void*)email_addr_->value().utf16(), &dwMail, &ft, NULL, 0 );
+            retv = SHGetUnreadMailCountW_p( NULL, (LPCTSTR)(void*)email_addr_->value().utf16(), &dwMail, &ft, NULL, 0 );
         }
         else
-            retv = SHGetUnreadMailCountW( NULL, NULL, &dwMail, &ft, NULL, 0 );
+            retv = SHGetUnreadMailCountW_p( NULL, NULL, &dwMail, &ft, NULL, 0 );
         if( retv != S_OK ) dwMail = 0;
 
         total += dwMail;

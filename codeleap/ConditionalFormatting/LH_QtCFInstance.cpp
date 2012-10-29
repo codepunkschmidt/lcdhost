@@ -79,7 +79,7 @@ void LH_QtCFInstance::cf_initialize()
         return;
     else
     {
-        int LH_FLAG_UI = LH_FLAG_NOSAVE | LH_FLAG_NOSOURCE | LH_FLAG_NOSINK ;
+        int LH_FLAG_UI = LH_FLAG_NOSAVE_DATA | LH_FLAG_NOSAVE_LINK | LH_FLAG_NOSOURCE | LH_FLAG_NOSINK ;
 
         cf_initialized_ = true;
         cf_rule_editing_ = None;
@@ -90,10 +90,10 @@ void LH_QtCFInstance::cf_initialize()
         setup_cf_enabled_->setHelp("<p>Conditional Formatting allows a number of properties on the object to change automatically.</p><p>E.g. a text object could change it's fore or background colour or its font.</p>");
         //new LH_Qt_QString(this,tr("^comment"),"<span style='color:grey'>(Conditional Formatting is still experimental)</span>",LH_FLAG_LAST | LH_FLAG_UI,lh_type_string_html );
 
-        setup_cf_state_ = new LH_Qt_QString(this, "State", "", LH_FLAG_NOSAVE  | LH_FLAG_LAST | LH_FLAG_HIDDEN);
+        setup_cf_state_ = new LH_Qt_QString(this, "State", "", LH_FLAG_NOSAVE_DATA | LH_FLAG_LAST | LH_FLAG_HIDDEN);
         setup_cf_state_->setHelp("<p>One way to simplify the Conditional Formatting rules is to have one set of rules that set this \"State\" value and another set that change colours, fonts, images, etc based on it.</p>");
 
-        setup_cf_visibility_ = new LH_Qt_bool(this, "Visibility", true, LH_FLAG_NOSAVE | LH_FLAG_LAST | LH_FLAG_HIDDEN);
+        setup_cf_visibility_ = new LH_Qt_bool(this, "Visibility", true, LH_FLAG_NOSAVE_DATA | LH_FLAG_NOSAVE_LINK | LH_FLAG_LAST | LH_FLAG_HIDDEN);
 
         setup_cf_copy_ = new LH_Qt_QString(this, "^Copy Conditions", "Copy",  LH_FLAG_UI | LH_FLAG_LAST | LH_FLAG_HIDDEN, lh_type_string_button);
         setup_cf_paste_ = new LH_Qt_QString(this, "^Paste Conditions", "Paste",  LH_FLAG_UI | LH_FLAG_NOSOURCE | LH_FLAG_NOSINK | LH_FLAG_LAST | LH_FLAG_HIDDEN, lh_type_string_button);

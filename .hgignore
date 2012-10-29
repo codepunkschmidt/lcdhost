@@ -1,5 +1,6 @@
 syntax: glob
-*.user
+*.pro.user
+3rdParty/taglib/taglib.pro.user
 *.orig
 *.?pre?
 moc_*.*

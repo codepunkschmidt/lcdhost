@@ -17,7 +17,7 @@ include(../3rdParty/taglib/taglib.pri)
 # We don't want warnings from 3rd party C code
 QMAKE_CFLAGS_WARN_ON = -w
 
-LIBS += -L"C:/Program Files/Microsoft SDKs/Windows/v7.0/Lib" -lWininet
+LIBS += -L"C:/Program Files/Microsoft SDKs/Windows/v7.0/Lib" -lWininet -lshell32
 
 INCLUDEPATH += \
     SDKs \

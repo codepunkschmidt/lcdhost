@@ -185,8 +185,8 @@ public:
     int polling();
     QImage *render_qimage( int w, int h );
 
-    qreal min() const { return min_; }
-    qreal max() const { return max_; }
+    qreal min_val() const { return min_; }
+    qreal max_val() const { return max_; }
 
     bool setMin( qreal r ); // return true if rendering needed
     bool setMax( qreal r ); // return true if rendering needed

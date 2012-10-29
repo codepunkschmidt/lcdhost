@@ -25,6 +25,8 @@ LH_RSSFeed::LH_RSSFeed(QString feedUrl, int refreshTime, int delayTime)
     notifyTimer_.start();
 }
 
+static RSSItem empty_rss_item = {"", "", "", "", "", {"",0,0}};
+
 RSSItem LH_RSSFeed::item(int mod)
 {
     if( nowshowing_ >= 0 && nowshowing_ < items_.size() )
@@ -35,8 +37,7 @@ RSSItem LH_RSSFeed::item(int mod)
 
         return items_.at(index);
     }
-    else
-        return (RSSItem){"", "", "", "", "", (RSSThumbnail){"",0,0}};
+    return empty_rss_item;
 }
 
 void LH_RSSFeed::openItem(int mod)
@@ -256,7 +257,7 @@ void LH_RSSFeed::parseXml()
             if (xml_.name() == "item")
             {
                 items_ << item;
-                item = (RSSItem){"", "", "", "", "", (RSSThumbnail){"",0,0}};
+                item = empty_rss_item;
             }
         }
         else if (xml_.isCharacters() && !xml_.isWhitespace())

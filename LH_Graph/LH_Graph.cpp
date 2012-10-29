@@ -28,6 +28,7 @@
 #include <QDebug>
 #include <QLinearGradient>
 #include <QPainter>
+#include <QVarLengthArray>
 
 #include "LH_Graph.h"
 #include <math.h>
@@ -239,27 +240,27 @@ void LH_Graph::setExternalSource(DataLineCollection* externalSource) {
 }
 
 
-qreal LH_Graph::max()
+qreal LH_Graph::max_val()
 {
     if (setup_min_->value() < setup_max_->value())
         return setup_max_->value();
     else
         return setup_min_->value()+1;
 }
-qreal LH_Graph::max(qreal val)
+qreal LH_Graph::max_val(qreal val)
 {
     setup_max_->setValue(val);
-    return max();
+    return max_val();
 }
 
-qreal LH_Graph::min()
+qreal LH_Graph::min_val()
 {
     return setup_min_->value();
 }
-qreal LH_Graph::min(qreal val)
+qreal LH_Graph::min_val(qreal val)
 {
     setup_min_->setValue(val);
-    return min();
+    return min_val();
 }
 
 bool LH_Graph::canGrow()
@@ -278,19 +279,19 @@ void LH_Graph::findDataBounds(DataLineCollection* lineData)
     if (isDebug) qDebug() << "graph: find bounds: begin";
 
     // apply fixes for cases where somehow graph limits have become NaN
-    if(graphMinY_ != graphMinY_) graphMinY_ = min();
-    if(graphMaxY_ != graphMaxY_) graphMaxY_ = max();
+    if(graphMinY_ != graphMinY_) graphMinY_ = min_val();
+    if(graphMaxY_ != graphMaxY_) graphMaxY_ = max_val();
 
     // set the bounds such that min is suitably high (so it can be correctly
     // brought down) and max is suitably low (so it can be correctly raised)
-    dataMinY_ = max();
-    dataMaxY_ = min();
+    dataMinY_ = max_val();
+    dataMaxY_ = min_val();
 
     // examine data points for each line and shift the data boundries accordingly
     for(int lineID=0;lineID<linesCount(); lineID++)
     {
-        qreal valueMin = max();
-        qreal valueMax = min();
+        qreal valueMin = max_val();
+        qreal valueMax = min_val();
         bool isConstant = true;
         float constantValue = 0;
         for(int i=0;i<(*lineData)[lineID].length() && i<(*lineData).limit();i++)
@@ -312,11 +313,11 @@ void LH_Graph::findDataBounds(DataLineCollection* lineData)
     }
 
     // if the set maximum value is allowed to move itself, apply any necessary movement
-    if(canGrow() && dataMaxY_ > max()) max(dataMaxY_ * 1.1);
+    if(canGrow() && dataMaxY_ > max_val()) max_val(dataMaxY_ * 1.1);
 
     // calculate the visible range drawn
-    dataDeltaY_ = (setup_auto_scale_y_max_->value()? dataMaxY_ : max()) -
-                  (setup_auto_scale_y_min_->value()? dataMinY_ : min());
+    dataDeltaY_ = (setup_auto_scale_y_max_->value()? dataMaxY_ : max_val()) -
+                  (setup_auto_scale_y_min_->value()? dataMinY_ : min_val());
 
     //set whether the graph is empty
     graph_empty_ = (dataMaxY_ == dataMinY_) && (dataMinY_ == 0);
@@ -324,31 +325,31 @@ void LH_Graph::findDataBounds(DataLineCollection* lineData)
     // if the range is 0 and is left as such the graph will experience weird behaviour
     // so to fix this a small alteration is made in this case.
     if(dataDeltaY_ == 0)
-        dataDeltaY_ = 0.01 * (max()-min());
+        dataDeltaY_ = 0.01 * (max_val()-min_val());
 
     //set the graph's max
     if (!setup_auto_scale_y_max_->value())
         //unzoomed
-        graphMaxY_ = max();
+        graphMaxY_ = max_val();
     else if (dataMaxY_ > graphMaxY_ || dataMaxY_ + dataDeltaY_ * 0.667 < graphMaxY_)
     {
         //auto-zoom
         graphMaxY_ = dataMaxY_ + dataDeltaY_ * 0.333;
-        if(canGrow() && graphMaxY_ > max())max(graphMaxY_ * 1.1);
-        if(graphMaxY_ > max())
-            graphMaxY_ = max();
+        if(canGrow() && graphMaxY_ > max_val())max_val(graphMaxY_ * 1.1);
+        if(graphMaxY_ > max_val())
+            graphMaxY_ = max_val();
     }
 
     //set the graph's min
     if (!setup_auto_scale_y_min_->value())
          //unzoomed
-        graphMinY_ = min();
+        graphMinY_ = min_val();
     else if (dataMinY_ < graphMinY_ || dataMinY_ - dataDeltaY_ * 0.667 > graphMinY_)
     {
         //auto-zoom
         graphMinY_ = dataMinY_ - dataDeltaY_ * 0.333;
-        if(graphMinY_ < min())
-            graphMinY_ = min();
+        if(graphMinY_ < min_val())
+            graphMinY_ = min_val();
     }
 
     // if a graph min = graph max has slipped through, fix it with a hammer here.
@@ -580,7 +581,7 @@ void LH_Graph::drawSingle(int lineID)
                     QRectF graph_area = QRectF( 0,0, w, h );
 
                     //build mask
-                    uchar *blank_data = (uchar[4]){0,0,0,0};
+                    uchar blank_data[4] = {0,0,0,0};
                     QImage maskImg = QImage(blank_data,1,1,QImage::Format_ARGB32).scaled(w,h);
                     QPainter maskPaint;
                     if( maskPaint.begin( &maskImg ) )
@@ -752,8 +753,8 @@ void LH_Graph::clearLines()
 
 bool LH_Graph::setMin( qreal r )
 {
-    if( min() == r ) return false;
-    min(r);
+    if( min_val() == r ) return false;
+    min_val(r);
     graphMinY_ = r;
     if(graphMaxY_==r) setMax(r+1, canGrow());
     return true;
@@ -763,8 +764,8 @@ bool LH_Graph::setMax( qreal r, bool b )
 {
     if(!userDefinableLimits_) canGrow( b );
     if(graphMinY_==r) r++;
-    if( max() == r ) return false;
-    max(r);
+    if( max_val() == r ) return false;
+    max_val(r);
     graphMaxY_ = r;
     return true;
 }
@@ -966,8 +967,8 @@ void LH_Graph::clear(float newMin, float newMax, bool newGrow)
         for(int lineID=0;lineID<linesCount(); lineID++)
             lines_[lineID].clear();
     graphMinY_ = graphMaxY_ = 0.0;
-    min(newMin);
-    max(newMax);
+    min_val(newMin);
+    max_val(newMax);
     canGrow(newGrow);
 }
 

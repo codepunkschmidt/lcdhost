@@ -45,12 +45,28 @@ struct itemDefinition
     QString startAddress;
     QList<uint> offsets;
     MemoryDataType memoryDataType;
+    itemDefinition() :
+        x(-1), y(-1), hasData(false), memoryDataType(MEMTYPE_NONE)
+    {}
+    itemDefinition(
+        const QString & a, const QString & b,
+            int c, int d, const QString & e, bool f,
+            const QString & g, const QList<uint> & h,
+            MemoryDataType i
+            ) :
+        name(a), address(b), x(c), y(d),
+        formatting(e), hasData(f), startAddress(g),
+        offsets(h), memoryDataType(i)
+    {}
 };
 
 struct sharedItem
 {
     QString name;
     QString value;
+    sharedItem() {}
+    sharedItem(const QString & a, const QString & b) :
+        name(a), value(b) {}
 };
 
 class sharedCollection
@@ -69,7 +85,7 @@ public:
         items_.clear();
 
         for(int i=0; i<createCount; i++)
-            items_.append((sharedItem){"",""});
+            items_.append(sharedItem());
     }
 
     int count()
@@ -136,7 +152,7 @@ public:
 
     void resetCursors();
 
-    dataNode(dataNode* parentNode = 0, itemDefinition def = (itemDefinition){"","",-1,-1,"",false,"",QList<uint>(),MEMTYPE_NONE }, QString nodeValue = "" );
+    dataNode(dataNode* parentNode = 0, itemDefinition def = itemDefinition(), QString nodeValue = "" );
 
     ~dataNode();
 

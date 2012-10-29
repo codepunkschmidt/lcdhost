@@ -224,7 +224,7 @@ QString LH_DataViewerConnector::formatData(QString data, QString formatting)
         if (formatting == "seconds>time")
         {
             int s = result.toInt() ;
-            int d = floor(s / (24 *60 *60));
+            int d = floor( (double)s / (24 *60 *60));
             QTime tm = QTime::fromString("00:00:00.000", "HH:mm:ss.zzz");
             result = QString("%1 day%2 %3").arg(d).arg(d!=1? "s" : "").arg(tm.addSecs(s%(24 *60 *60)).toString("HH:mm:ss"));
         }
@@ -430,14 +430,14 @@ void LH_DataViewerConnector::mapFileChanged()
                             else
                             {
                                 if (sourceType_ == SOURCETYPE_TXT)
-                                    currentNode->addChild( (itemDefinition){
+                                    currentNode->addChild( itemDefinition(
                                         parts.at(0).trimmed(),
                                         parts.at(1).trimmed(),
                                         parts.at(1).trimmed().section(',',0,0).toInt(),
                                         parts.at(1).trimmed().section(',',1,1).toInt(),
                                         (parts.count()<3? "" : parts.at(2)),
                                         true,"",QList<uint>(),MEMTYPE_NONE
-                                    });
+                                    ));
                                 if (sourceType_ == SOURCETYPE_MEM)
                                 {
                                     QStringList memAddress = parts.at(1).trimmed().split('>',QString::SkipEmptyParts);
@@ -452,7 +452,7 @@ void LH_DataViewerConnector::mapFileChanged()
                                         }
                                     }
 
-                                    currentNode->addChild( (itemDefinition){
+                                    currentNode->addChild( itemDefinition(
                                         parts.at(0).trimmed(),
                                         "",
                                         0,
@@ -462,7 +462,7 @@ void LH_DataViewerConnector::mapFileChanged()
                                         memAddress.at(0),
                                         offsets,
                                         ToMemType(parts.at(2).trimmed())
-                                    });
+                                    ));
                                 }
                             }
                         }

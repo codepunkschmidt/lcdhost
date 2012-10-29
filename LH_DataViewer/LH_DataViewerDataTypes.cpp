@@ -312,7 +312,7 @@ void dataNode::setValue(QString val)
 
 dataNode* dataNode::addChild(QString name, QString val)
 {
-    return addChild((itemDefinition){name,"",-1,-1,"",false,"",QList<uint>(),MEMTYPE_NONE}, val);
+    return addChild(itemDefinition(name,"",-1,-1,"",false,"",QList<uint>(),MEMTYPE_NONE), val);
 }
 
 dataNode* dataNode::addChild(itemDefinition def, QString val)
@@ -355,7 +355,7 @@ dataNode* dataNode::openChild(QString name, QString val)
         cursorPositions_.insert(name,0);
 
     if(cursorPositions_[name] >= childNodes_[name].count())
-        childNodes_[name].append(new dataNode(this,(itemDefinition){name,"",-1,-1,"",false,"",QList<uint>(),MEMTYPE_NONE}, val));
+        childNodes_[name].append(new dataNode(this,itemDefinition(name,"",-1,-1,"",false,"",QList<uint>(),MEMTYPE_NONE), val));
     else
         childNodes_[name][cursorPositions_[name]]->setValue(val);
 

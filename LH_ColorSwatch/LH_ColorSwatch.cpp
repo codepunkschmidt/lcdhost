@@ -110,6 +110,9 @@ void LH_ColorSwatch::updateColor()
     int b_lower = setup_lowerbound_color_->value().blue();
     int b_delta = setup_upperbound_color_->value().blue() - setup_lowerbound_color_->value().blue();
 
+    int a_lower = setup_lowerbound_color_->value().alpha();
+    int a_delta = setup_upperbound_color_->value().alpha() - setup_lowerbound_color_->value().alpha();
+
     qreal low = setup_lowerbound_value_->value();
     qreal high = setup_upperbound_value_->value();
     qreal value = setup_current_value_->value();
@@ -127,8 +130,11 @@ void LH_ColorSwatch::updateColor()
     int r_new = qRound(r_lower + r_delta * position);
     int g_new = qRound(g_lower + g_delta * position);
     int b_new = qRound(b_lower + b_delta * position);
+    int a_new = qRound(a_lower + a_delta * position);
 
-    setup_current_color_->setValue(QColor::fromRgb(r_new, g_new, b_new));
+    QColor new_col = QColor::fromRgb(r_new, g_new, b_new, a_new);
 
-    setup_bgcolor1_->setValue(setup_current_color_->value());
+    setup_current_color_->setValue(new_col);
+    setup_bgcolor1_->setValue(new_col);
+    requestRender();
 }

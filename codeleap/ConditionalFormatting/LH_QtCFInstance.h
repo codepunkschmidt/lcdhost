@@ -128,6 +128,8 @@ public:
     LH_Qt_QString     *setup_cf_newValue_String_;
     LH_Qt_QFileInfo   *setup_cf_newValue_File_;
     LH_Qt_bool        *setup_cf_newValue_Bool_;
+    LH_Qt_int         *setup_cf_newValue_Int_;
+    LH_Qt_float       *setup_cf_newValue_Float_;
 
     LH_QtCFInstance();
     int notify(int n,void* p);

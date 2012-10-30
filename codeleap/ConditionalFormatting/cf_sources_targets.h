@@ -11,6 +11,7 @@
 #include "LH_Qt_int.h"
 #include "LH_Qt_QString.h"
 #include "LH_Qt_QStringList.h"
+#include "LH_Qt_float.h"
 //#include "LH_Qt_QTextEdit.h"
 //#include "LH_Qt_QColor.h"
 //#include "LH_Qt_QFont.h"
@@ -134,6 +135,9 @@ public:
                 break;
             case lh_type_integer:
                 value = QString("%1").arg(((LH_Qt_int*)obj_)->value());
+                break;
+            case lh_type_fraction:
+                value = QString("%1").arg(((LH_Qt_float*)obj_)->value());
                 break;
             default:
                 qWarning() << "Unhandled cf source type: " << obj_->type() << " (" << obj_->objectName() << ")";

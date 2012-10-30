@@ -63,14 +63,17 @@ const char *LH_ColorSwatch::userInit()
     setup_horizontal_->setFlags(LH_FLAG_READONLY | LH_FLAG_HIDDEN | LH_FLAG_NOSAVE_DATA | LH_FLAG_NOSAVE_LINK | LH_FLAG_NOSOURCE | LH_FLAG_NOSINK);
     setup_horizontal_->setValue(false);
 
-    setup_lowerbound_value_ = new LH_Qt_float(this,"Lower Bound Value", 0, std::numeric_limits<float>::min(), std::numeric_limits<float>::max(), LH_FLAG_AUTORENDER);
-    setup_lowerbound_color_ = new LH_Qt_QColor(this, "Lower Bound Color", Qt::white, LH_FLAG_AUTORENDER);
+    setup_lowerbound_value_ = new LH_Qt_float(this,"Lower Bound Value", lowVal_, std::numeric_limits<float>::min(), std::numeric_limits<float>::max(), LH_FLAG_AUTORENDER);
+    setup_lowerbound_color_ = new LH_Qt_QColor(this, "Lower Bound Color", lowCol_, LH_FLAG_AUTORENDER);
 
-    setup_upperbound_value_ = new LH_Qt_float(this,"Upper Bound Value", 100, std::numeric_limits<float>::min(), std::numeric_limits<float>::max(), LH_FLAG_AUTORENDER);
-    setup_upperbound_color_ = new LH_Qt_QColor(this, "Upper Bound Color", Qt::black, LH_FLAG_AUTORENDER);
+    setup_upperbound_value_ = new LH_Qt_float(this,"Upper Bound Value", highVal_, std::numeric_limits<float>::min(), std::numeric_limits<float>::max(), LH_FLAG_AUTORENDER);
+    setup_upperbound_color_ = new LH_Qt_QColor(this, "Upper Bound Color", highCol_, LH_FLAG_AUTORENDER);
 
-    setup_current_value_ = new LH_Qt_float(this,"Current Value", 0, std::numeric_limits<float>::min(), std::numeric_limits<float>::max(), LH_FLAG_AUTORENDER);
-    setup_current_color_ = new LH_Qt_QColor(this, "Current Color", Qt::white, LH_FLAG_AUTORENDER | LH_FLAG_READONLY | LH_FLAG_NOSAVE_DATA | LH_FLAG_NOSAVE_LINK | LH_FLAG_NOSINK );
+    setup_current_value_ = new LH_Qt_float(this,"Current Value", lowVal_, std::numeric_limits<float>::min(), std::numeric_limits<float>::max(), LH_FLAG_AUTORENDER);
+    setup_current_color_ = new LH_Qt_QColor(this, "Current Color", lowCol_, LH_FLAG_AUTORENDER | LH_FLAG_READONLY | LH_FLAG_NOSAVE_DATA | LH_FLAG_NOSAVE_LINK | LH_FLAG_NOSINK );
+
+    if(lockDown_)
+        setup_current_value_->setFlag(LH_FLAG_READONLY, true);
 
     connect( setup_lowerbound_color_, SIGNAL(changed()), this, SLOT(updateColor()) );
     connect( setup_lowerbound_value_, SIGNAL(changed()), this, SLOT(updateColor()) );

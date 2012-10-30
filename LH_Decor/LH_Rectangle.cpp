@@ -142,8 +142,8 @@ QImage *LH_Rectangle::render_qimage( int w, int h )
     return image_;
 }
 
-int LH_Rectangle::notify( int n, void* )
+int LH_Rectangle::notify( int code,void* param )
 {
-    if( !n || n&LH_NOTE_DEVICE ) requestRender();
-    return LH_NOTE_DEVICE;
+    if( !code || code&LH_NOTE_DEVICE ) requestRender();
+    return LH_QtCFInstance::notify(code,param) | LH_NOTE_DEVICE;
 }

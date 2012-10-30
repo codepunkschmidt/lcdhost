@@ -26,7 +26,10 @@ MONOBJECTS_HEADERS = \
     ../LH_Dial/LH_Dial.h \
     Objects/LH_MonitoringDial.h \
     ../LH_Bar/LH_Bar.h \
-    Objects/LH_MonitoringBar.h
+    Objects/LH_MonitoringBar.h \
+    ../LH_Decor/LH_Rectangle.h \
+    ../LH_ColorSwatch/LH_ColorSwatch.h \
+    Objects/LH_MonitoringColorSwatch.h
 
 MONOBJECTS_SOURCES = \
     ../LH_Text/LH_Text.cpp \
@@ -39,7 +42,10 @@ MONOBJECTS_SOURCES = \
     ../LH_Dial/LH_Dial.cpp \
     Objects/LH_MonitoringDial.cpp \
     ../LH_Bar/LH_Bar.cpp \
-    Objects/LH_MonitoringBar.cpp
+    Objects/LH_MonitoringBar.cpp \
+    ../LH_Decor/LH_Rectangle.cpp \
+    ../LH_ColorSwatch/LH_ColorSwatch.cpp \
+    Objects/LH_MonitoringColorSwatch.cpp
 
 MONTYPES_HEADERS = \
     Types/LH_MonitoringTypes_Afterburner.h \

@@ -64,7 +64,7 @@ protected:
 public:
     LH_Rectangle();
 
-    virtual int notify( int n, void* );
+    virtual int notify( int code,void* param );
     QImage *render_qimage( int w, int h );
 
     int penwidth() const { return setup_penwidth_->value(); }

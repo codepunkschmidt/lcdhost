@@ -1,5 +1,5 @@
-#ifndef LH_DRIVESTATSTYPES_H
-#define LH_DRIVESTATSTYPES_H
+#ifndef LH_MONITORINGTYPES_DRIVESTATS_H
+#define LH_MONITORINGTYPES_DRIVESTATS_H
 
 #include <windows.h>
 #include <winioctl.h>
@@ -7,6 +7,7 @@
 #include <QStringList>
 #include <QMath.h>
 #include <QHash>
+#include <QDateTime>
 
 struct DISK_PERFORMANCE_STATS {
     LARGE_INTEGER BytesRead;
@@ -30,6 +31,8 @@ class DriveInfo
     bool valid_;
     bool validOld_;
     bool validNew_;
+
+    QDateTime lastUpdate_;
 
     ULARGE_INTEGER TotalBytes_;
     ULARGE_INTEGER FreeBytes_;
@@ -61,12 +64,6 @@ class DriveInfo
         return QString("Err Code: %1 - %2").arg(dwError).arg(QString::fromWCharArray(errBuf));
     }
 
-public:
-    DriveInfo(QString drive = "")
-    {
-        setDrive(drive);
-    }
-
     bool setDrive(QString drive)
     {
         if(drive!="")
@@ -83,13 +80,51 @@ public:
             return false;
     }
 
+
+public:
+    DriveInfo(QString drive = "")
+    {
+        setDrive(drive);
+    }
+
+    /*QStringList getDrives()
+    {
+        DWORD len = GetLogicalDriveStrings( 0, NULL );
+        TCHAR buf[ len ];
+        int buf_size = sizeof(buf) / sizeof(TCHAR);
+        GetLogicalDriveStrings( buf_size, buf );
+
+        QStringList ret_list;
+        QString tmp = "";
+        for( int ix = 0; ix < buf_size-1; ix++ )
+        {
+            if( buf[ix] == '\0' )
+            {
+                ret_list << tmp;
+                tmp = "";
+            }
+            else
+                tmp += (char)buf[ix];
+        }
+
+        return ret_list;
+    }*/
+
+    QString driveLetter() { return drive_; }
+
     bool valid()
     {
         return validOld_ && validNew_;
     }
 
+    QDateTime lastUpdate()
+    {
+        return lastUpdate_;
+    }
+
     bool update()
     {
+        lastUpdate_ = QDateTime::currentDateTime();
         diskPerformanceOld = diskPerformance;
         validOld_ = validNew_;
         validNew_ = (drive_==""? false : GetDrivePerformanceInfo());
@@ -127,36 +162,29 @@ public:
 
     double ReadTime()
     {
-        //return(!valid()? 0 : ((DOUBLE)(diskPerformance.ReadTime.QuadPart - diskPerformanceOld.ReadTime.QuadPart))/10000000);
-
         qlonglong totaltime =
                 (diskPerformance.ReadTime.QuadPart - diskPerformanceOld.ReadTime.QuadPart) +
                 (diskPerformance.WriteTime.QuadPart - diskPerformanceOld.WriteTime.QuadPart) +
                 (diskPerformance.IdleTime.QuadPart - diskPerformanceOld.IdleTime.QuadPart);
-
-        return(!valid()? 0 : ((DOUBLE)(diskPerformance.ReadTime.QuadPart - diskPerformanceOld.ReadTime.QuadPart))/totaltime*100);
+        return(!valid()? 0 : ((double)(diskPerformance.ReadTime.QuadPart - diskPerformanceOld.ReadTime.QuadPart))/totaltime*100);
     }
 
     double WriteTime()
     {
-        //return(!valid()? 0 : ((DOUBLE)(diskPerformance.WriteTime.QuadPart - diskPerformanceOld.WriteTime.QuadPart))/10000000);
-
         qlonglong totaltime =
                 (diskPerformance.ReadTime.QuadPart - diskPerformanceOld.ReadTime.QuadPart) +
                 (diskPerformance.WriteTime.QuadPart - diskPerformanceOld.WriteTime.QuadPart) +
                 (diskPerformance.IdleTime.QuadPart - diskPerformanceOld.IdleTime.QuadPart);
-        return(!valid()? 0 : ((DOUBLE)(diskPerformance.WriteTime.QuadPart - diskPerformanceOld.WriteTime.QuadPart))/totaltime*100);
+        return(!valid()? 0 : ((double)(diskPerformance.WriteTime.QuadPart - diskPerformanceOld.WriteTime.QuadPart))/totaltime*100);
     }
 
     double IdleTime()
     {
-        //return(!valid()? 0 : ((DOUBLE)(diskPerformance.IdleTime.QuadPart - diskPerformanceOld.IdleTime.QuadPart))/10000000);
-
         qlonglong totaltime =
                 (diskPerformance.ReadTime.QuadPart - diskPerformanceOld.ReadTime.QuadPart) +
                 (diskPerformance.WriteTime.QuadPart - diskPerformanceOld.WriteTime.QuadPart) +
                 (diskPerformance.IdleTime.QuadPart - diskPerformanceOld.IdleTime.QuadPart);
-        return(!valid()? 0 : ((DOUBLE)(diskPerformance.IdleTime.QuadPart - diskPerformanceOld.IdleTime.QuadPart))/totaltime*100);
+        return(!valid()? 0 : ((double)(diskPerformance.IdleTime.QuadPart - diskPerformanceOld.IdleTime.QuadPart))/totaltime*100);
     }
 
     qlonglong QueueDepth()
@@ -180,4 +208,49 @@ public:
     }
 };
 
-#endif // LH_DRIVESTATSTYPES_H
+class DrivesList: public QHash<QString,DriveInfo>
+{
+    QStringList getDrives()
+    {
+        DWORD len = GetLogicalDriveStrings( 0, NULL );
+        TCHAR buf[ len ];
+        int buf_size = sizeof(buf) / sizeof(TCHAR);
+        GetLogicalDriveStrings( buf_size, buf );
+
+        QStringList ret_list;
+        /*QString tmp = "";
+        for( int ix = 0; ix < buf_size-1; ix++ )
+        {
+            if( buf[ix] == '\0' )
+            {
+                ret_list << tmp;
+                tmp = "";
+            }
+            else
+                tmp += (char)buf[ix];
+        }*/
+        ret_list.append("C");
+        return ret_list;
+    }
+
+public:
+    DrivesList()
+    {
+        QStringList drives = getDrives();
+        foreach(QString drive, drives)
+        {
+            this->insert(drive, DriveInfo(drive));
+        }
+    }
+
+    void update()
+    {
+        foreach(QString drive, this->keys())
+        {
+            (*this)[drive].update();
+        }
+    }
+
+};
+
+#endif // LH_MONITORINGTYPES_DRIVESTATS_H

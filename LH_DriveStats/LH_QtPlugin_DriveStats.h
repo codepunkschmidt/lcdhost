@@ -25,13 +25,20 @@
 #ifndef LH_QTPLUGIN_DRIVESTATS_H
 #define LH_QTPLUGIN_DRIVESTATS_H
 
-#include "LH_QtPlugin.h"
+#include "LH_QtMonitoringPlugin.h"
+#include "LH_MonitoringSources.h"
+
+#include "LH_MonitoringSource_DriveStats.h"
 
 #include <QDebug>
 
-class LH_QtPlugin_DriveStats : public LH_QtPlugin
+class LH_QtPlugin_DriveStats : public LH_QtMonitoringPlugin
 {
     Q_OBJECT
+
+public:
+    const char *userInit();
+
 };
 
 #endif // LH_QTPLUGIN_DRIVESTATS_H

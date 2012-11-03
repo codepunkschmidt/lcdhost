@@ -52,7 +52,7 @@ public:
         lastVal = 0;
 
         setMin(0.0);
-        setMax(1000);
+        setMax(1000, BoundGrowthFixed);
         setYUnit("kb/s");
 
         net_.smoothingHidden(true);
@@ -90,7 +90,7 @@ public:
             {
                 if (valCount!=0) {
                     lastVal = valCache/valCount;
-                    setMax( state()->net_max_out);
+                    setMax( state()->net_max_out, BoundGrowthFixed);
                     addValue(lastVal);
                 }
                 valCache = 0;
@@ -99,7 +99,7 @@ public:
         }
         else
         {
-            setMax( state()->net_max_out);
+            setMax( state()->net_max_out, BoundGrowthFixed);
             callback(lh_cb_render,NULL);
         }
         return LH_Graph::notify(n,p) | net_.notify(n,p) | LH_NOTE_SECOND;

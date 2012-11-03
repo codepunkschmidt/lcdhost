@@ -35,7 +35,7 @@ class LH_GraphMemVirtual : public LH_Graph
     void initialize(){
         if( state()->mem_data.tot_virt ) {
             initialized = true;
-            setMax( state()->mem_data.tot_virt / GRAPH_MEM_UNIT_BASE );
+            setMax( state()->mem_data.tot_virt / GRAPH_MEM_UNIT_BASE, BoundGrowthFixed );
         }
     }
 
@@ -44,7 +44,7 @@ public:
     LH_GraphMemVirtual() : LH_Graph(gdmHybrid, mem_virtual_)
     {
         setMin(0.0);
-        setMax(1000.0);
+        setMax(1000.0, BoundGrowthFixed);
         setYUnit("GB");
         initialized = false;
     }

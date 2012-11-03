@@ -40,6 +40,7 @@
 #include "LH_Qt_QFileInfo.h"
 #include "QList"
 #include "QHash"
+#include "qmath.h"
 
 #include "DataCollection.h"
 
@@ -62,6 +63,13 @@ enum GraphDataMode
      * been done, the graph will maintain it's own collection and changes to the    *
      * 3rd party collection will be ignored.                                         */
     gdmHybrid
+};
+
+enum GraphBoundGrowState
+{
+    BoundGrowthDefault = 0,
+    BoundGrowthFixed = 1,
+    BoundGrowthCanGrow = 2
 };
 
 class LH_Graph : public LH_QtInstance
@@ -93,9 +101,6 @@ class LH_Graph : public LH_QtInstance
 
     bool userDefinableLimits_;
 
-    qreal max(qreal);
-    qreal min(qreal);
-
     bool hasDeadValue_;
     qreal deadValue_;
 
@@ -104,6 +109,9 @@ class LH_Graph : public LH_QtInstance
     DataLineCollection* lineData_;
     int lastVisibleLine();
     void addMissingConfigs();
+
+    bool setMax( qreal r ); // return true if rendering needed
+
 protected:
     bool graph_empty_;
 
@@ -148,6 +156,11 @@ protected:
         return lineData_;
     }
 
+    qreal dataDeltaY()
+    {
+        return dataDeltaY_;
+    }
+
 public:
     LH_Graph( float defaultMin = 0, float defaultMax = 0) : lines_(30), lineData_(&lines_)
     { __ctor(defaultMin, defaultMax, gdmInternallyManaged, NULL); }
@@ -162,13 +175,14 @@ public:
 
     qreal max();
     qreal min();
+    void setCanGrow(bool);
     bool canGrow();
-    bool canGrow(bool);
 
     bool setMin( qreal r ); // return true if rendering needed
-    bool setMax( qreal r, bool b = false ); // return true if rendering needed
+    bool setMax( qreal r, GraphBoundGrowState b ); // return true if rendering needed
 
     void addLine(QString name);
+    void updateLinesList(bool fullResync = false);
     int linesCount();
     int lineConfigsCount();
     void clearLines();
@@ -200,7 +214,7 @@ public:
     void loadColors(int lineID, QColor& penColor, QColor& fillColor1, QColor& fillColor2, QString& fgImgPath, int& fgImgAlpha, bool compensateForHidden);
     QString buildColorConfig();
 
-    void findDataBounds();
+    //void findDataBounds();
     void addText(QPainter& painter, QRect rect, int flags, QString text);
     void addText(QPainter& painter, QRect rect, int flags, QString text, int Xmod, int Ymod);
     QString getLabelText(qreal val);
@@ -215,6 +229,19 @@ public:
     void setDeadValue(qreal v){
         hasDeadValue_ = true;
         deadValue_ = v;
+    }
+
+    virtual qreal adaptToUnits(qreal val, QString *units = 0, int *prec = 0)
+    {
+        if(units)
+            *units = unitText_;
+        if(prec)
+        {
+            *prec = 1 - int(log10(dataDeltaY_/ divisorY_));
+            if (*prec<0)
+                *prec = 0;
+        }
+        return val / divisorY_;
     }
 
 public slots:

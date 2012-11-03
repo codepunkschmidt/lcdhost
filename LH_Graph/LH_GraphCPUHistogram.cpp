@@ -67,7 +67,7 @@ public:
         initialized = false;
 
         setMin(0.0);
-        setMax(100.0);
+        setMax(100.0, BoundGrowthFixed);
         setYUnit("%");
 
         cpu_.smoothingHidden(true);

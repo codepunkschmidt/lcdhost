@@ -44,7 +44,7 @@ public:
         lastVal = 0;
 
         setMin(0.0);
-        setMax(100);
+        setMax(100, BoundGrowthFixed);
         setYUnit("%");
 
         cpu_.smoothingHidden(true);

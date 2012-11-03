@@ -35,7 +35,7 @@ class LH_GraphMemPhysical : public LH_Graph
     void initialize(){
         if( state()->mem_data.tot_phys ) {
             initialized = true;
-            setMax( state()->mem_data.tot_phys / GRAPH_MEM_UNIT_BASE );
+            setMax( state()->mem_data.tot_phys / GRAPH_MEM_UNIT_BASE, BoundGrowthFixed );
         }
     }
 
@@ -44,7 +44,7 @@ public:
     LH_GraphMemPhysical() : LH_Graph(gdmHybrid, mem_physical_)
     {
         setMin(0.0);
-        setMax(1000.0);
+        setMax(1000.0, BoundGrowthFixed);
         setYUnit("GB");
         initialized = false;
     }

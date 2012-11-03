@@ -193,7 +193,10 @@ void LH_Graph::__ctor( float defaultMin, float defaultMax, GraphDataMode dataMod
     setup_label_shadow_->setHelp( "<p>The color used for for the \"Glow/Shadow\" effect around Axis labels (designed to improve legibility).</p>"
                                   "<p>Set the transparency to 0 to remove the effect.</p>");
 
-    addLine("Default");
+    if(dataMode==gdmInternallyManaged)
+        addLine("Default");
+    else
+        updateLinesList(true);
 
     connect( setup_fg_type_, SIGNAL(changed()), this, SLOT(changeType()) );
     connect( setup_bg_type_, SIGNAL(changed()), this, SLOT(changeType()) );
@@ -214,11 +217,14 @@ void LH_Graph::__ctor( float defaultMin, float defaultMax, GraphDataMode dataMod
     connect( this, SIGNAL(initialized()), this, SLOT(updateDescText()) );
     connect( this, SIGNAL(initialized()), this, SLOT(updateLabelSelection()) );
 
+    if (isDebug) qDebug() << "Line Count (Init): " << lineData_->count() << " lines;";
+
     if (isDebug) qDebug() << "graph: init: done";
     return;
 }
 
 void LH_Graph::setExternalSource(DataLineCollection* externalSource) {
+    Q_ASSERT_X(dataMode_!=gdmInternallyManaged || externalSource == NULL, "LH_Graph::setExternalSource", "Cannot set the external source if the data is managed internally.");
     externalSource_=externalSource;
     switch(dataMode_)
     {
@@ -226,10 +232,9 @@ void LH_Graph::setExternalSource(DataLineCollection* externalSource) {
         lineData_ = externalSource;
         break;
     case gdmHybrid:
+        lines_.clear();
         if(externalSource_)
             lines_.copyFrom((*externalSource_).averageOver(DEFAULT_SAMPLE_RATE * 1000));
-        else
-            lines_.clear();
         lineData_ = &lines_;
         break;
     case gdmInternallyManaged:
@@ -246,51 +251,61 @@ qreal LH_Graph::max()
     else
         return setup_min_->value()+1;
 }
-qreal LH_Graph::max(qreal val)
-{
-    setup_max_->setValue(val);
-    return max();
-}
 
 qreal LH_Graph::min()
 {
     return setup_min_->value();
-}
-qreal LH_Graph::min(qreal val)
-{
-    setup_min_->setValue(val);
-    return min();
 }
 
 bool LH_Graph::canGrow()
 {
     return setup_max_grow_->value();
 }
-bool LH_Graph::canGrow(bool val)
+void LH_Graph::setCanGrow(bool val)
 {
     setup_max_grow_->setValue(val);
     updateLimitControls();
-    return canGrow();
 }
 
 void LH_Graph::findDataBounds(DataLineCollection* lineData)
 {
+    qreal _dataMaxY;
+    qreal _dataMinY;
+    qreal _dataDeltaY;
+
+    qreal _graphMaxY;
+    qreal _graphMinY;
+
+    qreal _min;
+    qreal _max;
+
+    bool _graph_empty;
+
     if (isDebug) qDebug() << "graph: find bounds: begin";
 
+    _min = min();
+    _max = max();
+
     // apply fixes for cases where somehow graph limits have become NaN
-    if(graphMinY_ != graphMinY_) graphMinY_ = min();
-    if(graphMaxY_ != graphMaxY_) graphMaxY_ = max();
+    if(graphMinY_ != graphMinY_)
+        _graphMinY = _min;
+    else
+        _graphMinY = graphMinY_;
+    if(graphMaxY_ != graphMaxY_)
+        _graphMaxY = _max;
+    else
+        _graphMaxY = graphMaxY_;
 
     // set the bounds such that min is suitably high (so it can be correctly
     // brought down) and max is suitably low (so it can be correctly raised)
-    dataMinY_ = max();
-    dataMaxY_ = min();
+    _dataMinY = _max;
+    _dataMaxY = _min;
 
     // examine data points for each line and shift the data boundries accordingly
     for(int lineID=0;lineID<linesCount(); lineID++)
     {
-        qreal valueMin = max();
-        qreal valueMax = min();
+        qreal valueMin = _max;
+        qreal valueMax = _min;
         bool isConstant = true;
         float constantValue = 0;
         for(int i=0;i<(*lineData)[lineID].length() && i<(*lineData).limit();i++)
@@ -306,53 +321,66 @@ void LH_Graph::findDataBounds(DataLineCollection* lineData)
         bool doDraw = !(hasDeadValue_ && isConstant && (deadValue_ == constantValue));
         if(doDraw)
         {
-            if(dataMinY_>valueMin) dataMinY_ = valueMin;
-            if(dataMaxY_<valueMax) dataMaxY_ = valueMax;
+            if(_dataMinY>valueMin) _dataMinY = valueMin;
+            if(_dataMaxY<valueMax) _dataMaxY = valueMax;
         }
     }
 
     // if the set maximum value is allowed to move itself, apply any necessary movement
-    if(canGrow() && dataMaxY_ > max()) max(dataMaxY_ * 1.1);
+    if(canGrow() && _dataMaxY > _max)
+        _max = _dataMaxY * 1.1;
 
     // calculate the visible range drawn
-    dataDeltaY_ = (setup_auto_scale_y_max_->value()? dataMaxY_ : max()) -
-                  (setup_auto_scale_y_min_->value()? dataMinY_ : min());
+    _dataDeltaY = (setup_auto_scale_y_max_->value()? _dataMaxY : _max) -
+                  (setup_auto_scale_y_min_->value()? _dataMinY : _min);
 
     //set whether the graph is empty
-    graph_empty_ = (dataMaxY_ == dataMinY_) && (dataMinY_ == 0);
+    _graph_empty = (_dataMaxY == _dataMinY) && (_dataMinY == 0);
 
     // if the range is 0 and is left as such the graph will experience weird behaviour
     // so to fix this a small alteration is made in this case.
-    if(dataDeltaY_ == 0)
-        dataDeltaY_ = 0.01 * (max()-min());
+    if(_dataDeltaY == 0)
+        _dataDeltaY = 0.01 * (_max-_min);
 
     //set the graph's max
     if (!setup_auto_scale_y_max_->value())
         //unzoomed
-        graphMaxY_ = max();
-    else if (dataMaxY_ > graphMaxY_ || dataMaxY_ + dataDeltaY_ * 0.667 < graphMaxY_)
+        _graphMaxY = _max;
+    else if (_dataMaxY > _graphMaxY || _dataMaxY + _dataDeltaY * 0.667 < _graphMaxY)
     {
         //auto-zoom
-        graphMaxY_ = dataMaxY_ + dataDeltaY_ * 0.333;
-        if(canGrow() && graphMaxY_ > max())max(graphMaxY_ * 1.1);
-        if(graphMaxY_ > max())
-            graphMaxY_ = max();
+        _graphMaxY = _dataMaxY + _dataDeltaY * 0.333;
+        if(canGrow() && _graphMaxY > _max)
+            _max = (_graphMaxY * 1.1);
+        if(_graphMaxY > _max)
+            _graphMaxY = _max;
     }
 
     //set the graph's min
     if (!setup_auto_scale_y_min_->value())
          //unzoomed
-        graphMinY_ = min();
-    else if (dataMinY_ < graphMinY_ || dataMinY_ - dataDeltaY_ * 0.667 > graphMinY_)
+        _graphMinY = _min;
+    else if (_dataMinY < _graphMinY || _dataMinY - _dataDeltaY * 0.667 > _graphMinY)
     {
         //auto-zoom
-        graphMinY_ = dataMinY_ - dataDeltaY_ * 0.333;
-        if(graphMinY_ < min())
-            graphMinY_ = min();
+        _graphMinY = _dataMinY - _dataDeltaY * 0.333;
+        if(_graphMinY < _min)
+            _graphMinY = _min;
     }
 
     // if a graph min = graph max has slipped through, fix it with a hammer here.
-    if (graphMaxY_ == graphMinY_) graphMaxY_ += dataDeltaY_;
+    if (_graphMaxY == _graphMinY) _graphMaxY += _dataDeltaY;
+
+    // update values
+    dataMaxY_ = _dataMaxY;
+    dataMinY_ = _dataMinY;
+    dataDeltaY_ = _dataDeltaY;
+    graphMaxY_ = _graphMaxY;
+    graphMinY_ = _graphMinY;
+    graph_empty_ = _graph_empty;
+
+    setMin(_min);
+    setMax(_max);
 
     if (isDebug) qDebug() << "graph: find bounds: done";
 }
@@ -361,7 +389,7 @@ int LH_Graph::lastVisibleLine()
 {
     if(!lineData_)
         return -1;
-#ifdef LH_MONITORING_LIBRARY
+#ifdef MONITORING_CLASS
     for( int i=lineData_->count()-1; i>=0; i-- )
         if( !lineData_->at(i).group && !lineData_->at(i).hidden )
             return i;
@@ -377,6 +405,7 @@ void LH_Graph::drawSingle(int lineID)
         return;
     if (lineID>=linesCount()) return;
 
+    if (isDebug) qDebug() << "Line Count (Draw Single): " << lineData_->count() << " lines;";
     if (isDebug) qDebug() << "graph: draw line: begin " << lineID;
     QColor penColor = QColor();
     QColor fillColor1 = QColor();
@@ -660,12 +689,13 @@ void LH_Graph::drawSingle(int lineID)
 
 QString LH_Graph::getLabelText(qreal val)
 {
-    int prec = 1 - int(log10(dataDeltaY_/ divisorY_));
-    if (prec<0) prec = 0;
+    int prec = 0;
+    QString units;
+    val = adaptToUnits(val, &units, &prec);
 
-    QString str = QString::number(val / divisorY_,'f',prec);
+    QString str = QString::number(val,'f',prec);
     while( str.contains(".") && ( str.endsWith("0") || str.endsWith(".") ) ) str.remove(str.length()-1,1);
-    return str + unitText_;
+    return str + units;
 }
 
 void LH_Graph::addText(QPainter& painter, QRect rect, int flags, QString text)
@@ -696,11 +726,33 @@ void LH_Graph::addText(QPainter& painter, QRect rect, int flags, QString text, i
 
 void LH_Graph::addLine(QString name)
 {
+    if (isDebug) qDebug() << "Add Line: " << name;
+
     setup_line_selection_->list().append(name);
-    setup_line_selection_->refreshList();
     cacheCount_.append(0);
     cacheVal_.append(0);
     lines_.add(name);
+
+    updateLinesList();
+}
+
+void LH_Graph::updateLinesList(bool fullResync)
+{
+    if(fullResync)
+    {
+        setup_line_selection_->list().clear();
+        cacheCount_.clear();
+        cacheVal_.clear();
+
+        for(int i=0; i<lines_.count(); i++)
+        {
+            setup_line_selection_->list().append(lines_[i].name);
+            cacheCount_.append(0);
+            cacheVal_.append(0);
+        }
+    }
+
+    setup_line_selection_->refreshList();
 
     addMissingConfigs();
 
@@ -744,6 +796,7 @@ void LH_Graph::clearLines()
     if (dataMode_ == gdmHybrid)
     {
         int desired_duration = (setup_sample_rate_->value() * 1000);
+        lines_.clear();
         lines_.copyFrom((*externalSource_).averageOver(desired_duration));
     }
 
@@ -753,18 +806,23 @@ void LH_Graph::clearLines()
 bool LH_Graph::setMin( qreal r )
 {
     if( min() == r ) return false;
-    min(r);
+    setup_min_->setValue(r);
     graphMinY_ = r;
-    if(graphMaxY_==r) setMax(r+1, canGrow());
+    if(graphMaxY_==r) setMax(r+1);
     return true;
 }
 
-bool LH_Graph::setMax( qreal r, bool b )
+bool LH_Graph::setMax( qreal r, GraphBoundGrowState gbg )
 {
-    if(!userDefinableLimits_) canGrow( b );
+    if(!userDefinableLimits_ && gbg != BoundGrowthDefault) setCanGrow( gbg == BoundGrowthCanGrow );
+    return setMax(r);
+}
+
+bool LH_Graph::setMax( qreal r )
+{
     if(graphMinY_==r) r++;
     if( max() == r ) return false;
-    max(r);
+    setup_max_->setValue(r);
     graphMaxY_ = r;
     return true;
 }
@@ -787,6 +845,7 @@ void LH_Graph::addValue(float value, int lineID )
     Q_ASSERT_X(dataMode_!=gdmExternallyManaged, "LH_Graph::addValue", "Cannot add a value to the internal cache if the data is managed externally.");
     Q_ASSERT_X(lineID<linesCount(), "LH_Graph::addValue", "Line out of bounds.");
 
+    if (isDebug) qDebug() << "Line Count (add value): " << lineData_->count() << " lines;";
     if (isDebug) qDebug() << "graph: add value: begin " << lineID;
     cacheCount_[lineID] ++;
     cacheVal_[lineID] += (qreal)value;
@@ -801,6 +860,8 @@ void LH_Graph::addValue(float value, int lineID )
 
 void LH_Graph::loadColors(int lineID, QColor& penColor, QColor& fillColor1, QColor& fillColor2, QString& fgImgPath, int& fgImgAlpha, bool compensateForHidden)
 {
+    Q_ASSERT_X(lineID!=-1, "LH_Graph::loadColors", "Illegal line id!");
+
     if (isDebug) qDebug() << "graph: load colours: begin " << lineID;
     QStringList configs = setup_line_configs_->value().split('~',QString::SkipEmptyParts);
 
@@ -814,7 +875,6 @@ void LH_Graph::loadColors(int lineID, QColor& penColor, QColor& fillColor1, QCol
         for(int i = 0; i<realLineID; i++)
             if(!lineData_->at(i).hidden)
                 lineID++;
-
     }
 #else
     Q_UNUSED(compensateForHidden);
@@ -928,13 +988,16 @@ void LH_Graph::changeSelectedLine()
     if (setup_line_selection_->value() >= lineConfigsCount()) setup_line_selection_->setValue(lineConfigsCount()-1);
     if (setup_line_selection_->value() < 0) setup_line_selection_->setValue(0);
 
-    loadColors(setup_line_selection_->value(), penColor, fillColor1, fillColor2, fgImgPath, fgImgAlpha, false);
+    if (setup_line_selection_->value() >= 0)
+    {
+        loadColors(setup_line_selection_->value(), penColor, fillColor1, fillColor2, fgImgPath, fgImgAlpha, false);
 
-    setup_pencolor_->setValue(penColor);
-    setup_fillcolor1_->setValue(fillColor1);
-    setup_fillcolor2_->setValue(fillColor2);
-    setup_fg_image_->setValue(QFileInfo(fgImgPath));
-    setup_fg_alpha_->setValue(fgImgAlpha);
+        setup_pencolor_->setValue(penColor);
+        setup_fillcolor1_->setValue(fillColor1);
+        setup_fillcolor2_->setValue(fillColor2);
+        setup_fg_image_->setValue(QFileInfo(fgImgPath));
+        setup_fg_alpha_->setValue(fgImgAlpha);
+    }
 }
 
 void LH_Graph::updateSelectedLine()
@@ -966,9 +1029,9 @@ void LH_Graph::clear(float newMin, float newMax, bool newGrow)
         for(int lineID=0;lineID<linesCount(); lineID++)
             lines_[lineID].clear();
     graphMinY_ = graphMaxY_ = 0.0;
-    min(newMin);
-    max(newMax);
-    canGrow(newGrow);
+    setup_min_->setValue(newMin);
+    setup_max_->setValue(newMax);
+    setCanGrow(newGrow);
 }
 
 bool LH_Graph::userDefinableLimits()

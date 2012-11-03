@@ -4,6 +4,7 @@
 #include <QList>
 #include <QStringList>
 #include <QDebug>
+#include <qmath.h>
 
 typedef struct {qreal value; int duration;} DataPoint;
 
@@ -34,7 +35,7 @@ class DataLine : public DataPointCollection
             append( src[i] );
     }
 
-#ifndef LH_MONITORING_LIBRARY
+#ifndef MONITORING_CLASS
     DataLine() : DataPointCollection()
     {
         name = "Unnamed";
@@ -46,8 +47,10 @@ class DataLine : public DataPointCollection
 
 public:
 
-#ifdef LH_MONITORING_LIBRARY
+#ifdef MONITORING_CLASS
     QString units;
+    QStringList adaptiveUnitsList;
+    int adaptiveUnitsFactor;
     bool aggregate;
     bool group;
     bool hidden;
@@ -58,6 +61,49 @@ public:
         totalDuration_ = 0;
         popDuration_ = 0;
     }
+
+    double adaptToUnits(qreal val, bool autoAdapt, QString sourceUnits, QString desiredUnits, QString* units = 0, qreal *logDivisor = 0)
+    {
+        int sourcePos = adaptiveUnitsList.indexOf(sourceUnits);
+        if(units) *units = sourceUnits;
+
+        if(logDivisor) *logDivisor = 0;
+        if(!autoAdapt)
+        {
+            int desiredPos = adaptiveUnitsList.indexOf(desiredUnits);
+            if(units) *units = desiredUnits;
+            if(desiredPos > sourcePos)
+                for(int i = sourcePos; i < desiredPos; i++)
+                {
+                    val /= adaptiveUnitsFactor;
+                    if(logDivisor) *logDivisor -= log10(adaptiveUnitsFactor);
+                }
+            if(desiredPos < sourcePos)
+                for(int i = sourcePos; i > desiredPos; i--)
+                {
+                    val *= adaptiveUnitsFactor;
+                    if(logDivisor) *logDivisor += log10(adaptiveUnitsFactor);
+                }
+        }
+        else
+        {
+            for(int i = sourcePos-1; i >= 0 && val < 1; i--)
+            {
+                val *= adaptiveUnitsFactor;
+                if(logDivisor) *logDivisor += log10(adaptiveUnitsFactor);
+                if(units) *units = adaptiveUnitsList[i];
+            }
+
+            for(int i = sourcePos; i < adaptiveUnitsList.count() && val >= adaptiveUnitsFactor; i++)
+            {
+                val /= adaptiveUnitsFactor;
+                if(logDivisor) *logDivisor -= log10(adaptiveUnitsFactor);
+                if(units) *units = adaptiveUnitsList[i];
+            }
+        }
+        return val;
+    }
+
 #endif
 
     QString name;
@@ -147,7 +193,7 @@ public:
         limit_ = limit;
     }
 
-#ifdef LH_MONITORING_LIBRARY
+#ifdef MONITORING_CLASS
     DataLine &operator[](QString name)
     {
         for(int i = 0; i<this->count(); i++)
@@ -172,6 +218,7 @@ public:
                 return i;
         return -1;
     }
+
 #endif
 
     //const DataLine &operator[](int i) const;

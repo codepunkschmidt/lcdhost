@@ -2,14 +2,12 @@
 #include <limits>
 #include <typeinfo>
 
-LH_MonitoringObject::LH_MonitoringObject(LH_QtObject *object, monitoringDataMode dataMode, bool includeGroups, bool adaptiveUnits)
+LH_MonitoringObject::LH_MonitoringObject(LH_QtObject *object, monitoringDataMode dataMode, bool includeGroups, bool adaptiveUnitsAllowed)
 {
     obj_ = object;
     dataMode_ = dataMode;
     includeGroups_ = includeGroups;
-    adaptiveUnitsAllowed_ = adaptiveUnits;
-    adaptiveUnits_ = adaptiveUnits;
-    desiredUnits_ = "";
+    adaptiveUnitsAllowed_ = adaptiveUnitsAllowed;
 
     int LH_FLAG_SAVEOBJECT_VISIBILITY = LH_FLAG_HIDDEN; //for debugging, set this to LH_FLAG_READONLY, or LH_FLAG_HIDDEN for normal operation
     int LH_FLAG_LINKOBJECT_VISIBILITY = LH_FLAG_HIDDEN; //for debugging, set this to LH_FLAG_READONLY, or LH_FLAG_HIDDEN for normal operation
@@ -18,8 +16,6 @@ LH_MonitoringObject::LH_MonitoringObject(LH_QtObject *object, monitoringDataMode
     setup_value_units_->setOrder(-3);
     setup_value_str_ = new LH_Qt_QString(object, "Value (String)", "N/A", LH_FLAG_LINKOBJECT_VISIBILITY | LH_FLAG_NOSAVE_LINK | LH_FLAG_NOSAVE_DATA);
     setup_value_str_->setOrder(-3);
-    setup_value_num_ = new LH_Qt_float(object, "Value (Numeric)", 0, std::numeric_limits<float>::min(), std::numeric_limits<float>::max(), LH_FLAG_LINKOBJECT_VISIBILITY | LH_FLAG_NOSAVE_LINK | LH_FLAG_NOSAVE_DATA);
-    setup_value_num_->setOrder(-3);
     setup_value_ptr_ = new LH_Qt_int(object, "Value (ArrayPtr)", 0, std::numeric_limits<float>::min(), std::numeric_limits<float>::max(), LH_FLAG_LINKOBJECT_VISIBILITY | LH_FLAG_NOSAVE_LINK | LH_FLAG_NOSAVE_DATA);
     setup_value_ptr_->setOrder(-3);
     setup_value_valid_ = new LH_Qt_bool(object, "Value (Valid)", false, LH_FLAG_LINKOBJECT_VISIBILITY | LH_FLAG_NOSAVE_LINK | LH_FLAG_NOSAVE_DATA);
@@ -76,7 +72,10 @@ LH_MonitoringObject::LH_MonitoringObject(LH_QtObject *object, monitoringDataMode
 
 }
 
-void LH_MonitoringObject::monitoringInit(const char* refreshMonitoringOptionsSlot,const char* connectChangeEventsSlot,const char* changeAppSelectionSlot,const char* changeTypeSelectionSlot,const char* changeGroupSelectionSlot,const char* changeItemSelectionSlot,const char* dataValidityChangedSlot)
+void LH_MonitoringObject::monitoringInit(
+        const char* refreshMonitoringOptionsSlot, const char* connectChangeEventsSlot, const char* changeAppSelectionSlot,
+        const char* changeTypeSelectionSlot, const char* changeGroupSelectionSlot, const char* changeItemSelectionSlot,
+        const char* dataValidityChangedSlot, const char* renderRequiredSlot)
 {
     changeAppSelectionSlot_ = changeAppSelectionSlot;
     changeTypeSelectionSlot_ = changeTypeSelectionSlot;
@@ -84,6 +83,7 @@ void LH_MonitoringObject::monitoringInit(const char* refreshMonitoringOptionsSlo
     changeItemSelectionSlot_ = changeItemSelectionSlot;
     refreshMonitoringOptionsSlot_ = refreshMonitoringOptionsSlot;
     dataValidityChangedSlot_ = dataValidityChangedSlot;
+    renderRequiredSlot_ = renderRequiredSlot;
 
     obj_->connect(obj_, SIGNAL(initialized()), obj_, connectChangeEventsSlot);
 }
@@ -103,6 +103,8 @@ void LH_MonitoringObject::connectChangeEvents()
     obj_->connect(setup_value_group_, SIGNAL(changed()), obj_, changeGroupSelectionSlot_ );
     obj_->connect(setup_value_item_, SIGNAL(changed()), obj_, changeItemSelectionSlot_ );
     obj_->connect(setup_value_valid_, SIGNAL(changed()), obj_, dataValidityChangedSlot_ );
+
+    obj_->connect(setup_unit_selection_, SIGNAL(changed()), obj_, renderRequiredSlot_ );
 }
 
 void LH_MonitoringObject::refreshMonitoringOptions()
@@ -204,9 +206,6 @@ void LH_MonitoringObject::reset()
     setup_value_str_->setSubscribePath("");
     setup_value_str_->setValue("N/A");
 
-    setup_value_num_->setSubscribePath("");
-    setup_value_num_->setValue(0);
-
     setup_value_ptr_->setSubscribePath("");
     setup_value_ptr_->setValue(0);
 
@@ -221,6 +220,56 @@ void LH_MonitoringObject::reset()
     showOffset(false);
     showFormat(false);
 }
+
+QString LH_MonitoringObject::value_str() {
+    return setup_value_str_->value();
+}
+
+double LH_MonitoringObject::value_num(bool *ok, QString *units) {
+    bool _ok;
+    double val = setup_value_str_->value().toDouble(&_ok);
+    if(ok) *ok = _ok;
+    if(units) *units = setup_value_units_->value();
+    if(!_ok)
+        return 0;
+    if(adaptiveUnitsAllowed_ && setup_unit_selection_->list().count() > 1)
+    {
+        SensorItem itm = selectedSensor(&_ok);
+        if(ok) *ok = _ok;
+        if(_ok)
+            val = itm.adaptToUnits(val, (setup_unit_selection_->value()==0), setup_value_units_->value(), setup_unit_selection_->valueText(), units);
+    }
+    return val;
+}
+
+QString LH_MonitoringObject::value_units(bool allowAdaptation)
+{
+    if(allowAdaptation)
+        return value_units();
+    else
+        return setup_value_units_->value();
+}
+
+QString LH_MonitoringObject::value_units() {
+    if(adaptiveUnitsAllowed_ && setup_unit_selection_->list().count() > 1)
+    {
+        if(setup_unit_selection_->value()!=0)
+            return setup_unit_selection_->valueText();
+        else
+        {
+            bool ok;
+            QString units;
+            value_num(&ok, &units);
+            if(ok)
+                return units;
+            else
+                return setup_value_units_->value();
+        }
+    }
+    else
+        return setup_value_units_->value();
+}
+
 
 void LH_MonitoringObject::showOffset(bool b)
 {
@@ -332,6 +381,24 @@ void LH_MonitoringObject::refresh(int et)
 void LH_MonitoringObject::updateUnitOptions()
 {
     // update the list of possible options for the adaptive units
+    bool ok;
+    SensorItem itm = selectedSensor(&ok);
+    if(ok)
+    {
+        setup_unit_selection_->list().clear();
+        if(adaptiveUnitsAllowed_ && itm.adaptiveUnitsFactor > 1)
+        {
+            setup_unit_selection_->list().append("(Auto)");
+            setup_unit_selection_->list().append(itm.adaptiveUnitsList);
+            setup_unit_selection_->setVisible(true);
+        }
+        else
+        {
+            setup_unit_selection_->list().append(itm.units);
+            setup_unit_selection_->setVisible(false);
+        }
+        setup_unit_selection_->refreshList();
+    }
 }
 
 bool LH_MonitoringObject::dataValid()
@@ -361,9 +428,6 @@ QString LH_MonitoringObject::updateLinkPaths()
             setup_value_str_->setSubscribePath("");
             setup_value_str_->setValue("N/A");
 
-            setup_value_num_->setSubscribePath("");
-            setup_value_num_->setValue(0);
-
             setup_value_ptr_->setSubscribePath("");
             setup_value_ptr_->setValue(0);
         }
@@ -378,17 +442,6 @@ QString LH_MonitoringObject::updateLinkPaths()
         setup_value_units_->setValue(ok? itm.units : "");
 
         setup_value_str_->setSubscribePath(linkPath+"/String");
-
-        switch(source->getValueType(linkPath))
-        {
-        case QMetaType::Float:
-        case QMetaType::Int:
-            setup_value_num_->setSubscribePath(linkPath);
-            break;
-        default:
-            setup_value_num_->setSubscribePath("");
-            setup_value_num_->setValue(0);
-        }
 
         QString linkPath_ArrayPtr = source->getLinkPath(setup_value_type_->valueText(), setup_value_group_->valueText(), "__array_ptr");
         setup_value_ptr_->setSubscribePath(linkPath_ArrayPtr);

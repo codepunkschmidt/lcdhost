@@ -1,5 +1,6 @@
 #include "LH_MonitoringSource.h"
-#include "LH_QtPlugin_Monitoring.h"
+#include "LH_QtMonitoringPlugin.h"
+
 #include "json.h"
 #include <QDebug>
 #include <algorithm>
@@ -12,13 +13,12 @@ LH_MonitoringSource::LH_MonitoringSource(LH_QtObject *parent, QString appName, b
     appName_ = appName;
     dataAvailable_ = false;
     alwaysShowAllSelectors_ = alwaysShowAllSelectors;
-    NA_ = (OptionalValue){ false, 0 };
     pollTimer_.start(1000,this);
 }
 
 const char *LH_MonitoringSource::userInit()
 {
-    LH_QtPlugin_Monitoring* plugin = dynamic_cast<LH_QtPlugin_Monitoring*>(parent());
+    LH_QtMonitoringPlugin* plugin = dynamic_cast<LH_QtMonitoringPlugin*>(parent());
     setup_enabled_ = plugin->createUI_Element_Enabled(appName());
     setup_rate_ = plugin->createUI_Element_Rate(appName());
     plugin->createUI_Element_Divider(appName());
@@ -62,7 +62,7 @@ void LH_MonitoringSource::clearSensors()
 // updateValue: Force the existance of the type.group.item, then update the value via updateValueItem
 void LH_MonitoringSource::updateValue(QString type, QString group, QString item, QVariant val)
 {
-    updateValue(type, group, item, val, (SensorDefinition) { "", (minmax){NA_, NA_}, NA_ }, false, false);
+    updateValue(type, group, item, val, SensorDefinition(), false, false);
 }
 void LH_MonitoringSource::updateValue(QString type, QString group, QString item, QVariant val, SensorDefinition def)
 {
@@ -109,6 +109,15 @@ void LH_MonitoringSource::updateValue(QString type, QString group, QString item,
             SensorItem sensorItem;
             sensorItem.name = item;
             sensorItem.units = def.units;
+            sensorItem.adaptiveUnitsList.clear();
+            if(def.adaptiveUnits.active)
+            {
+                sensorItem.adaptiveUnitsList.append(def.adaptiveUnits.list);
+                sensorItem.adaptiveUnitsFactor = def.adaptiveUnits.factor;
+            }
+            else
+                sensorItem.adaptiveUnitsFactor = 1;
+
             sensorItem.aggregate = isAggregate;
             sensorItem.group = isGroup;
             sensors_[type].groups[group].items.append(sensorItem);
@@ -154,6 +163,8 @@ void LH_MonitoringSource::updateValueItem(QString key, QVariant val, QMetaType::
             reinterpret_cast<LH_Qt_int*>(setupItems_.value(key))->setValue(val.toInt());
             break;
         case QMetaType::QString:
+        case QMetaType::LongLong:
+        case QMetaType::Double:
             reinterpret_cast<LH_Qt_QString*>(setupItems_.value(key))->setValue(val.toString());
             break;
         default:
@@ -187,6 +198,8 @@ void LH_MonitoringSource::updateValueItem(QString key, QVariant val, QMetaType::
                                LH_FLAG_NOSAVE_LINK | LH_FLAG_NOSAVE_DATA | LH_FLAG_NOSINK | LH_FLAG_HIDDEN);
             break;
         case QMetaType::QString:
+        case QMetaType::LongLong:
+        case QMetaType::Double:
             si = new LH_Qt_QString(obj, fieldName, val.toString(),
                                    LH_FLAG_NOSAVE_LINK | LH_FLAG_NOSAVE_DATA | LH_FLAG_NOSINK | LH_FLAG_HIDDEN);
             break;
@@ -271,7 +284,6 @@ void LH_MonitoringSource::updateAggregates(QString type, QString group)
                 {
                     def.units = item.units;
                     def.limits = sensorGroup.limits;
-                    def.deadValue = NA_;
                 }
                 min = (count==1? fltVal : qMin(min, fltVal));
                 max = (count==1? fltVal : qMax(max, fltVal));

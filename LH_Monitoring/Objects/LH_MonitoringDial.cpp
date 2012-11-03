@@ -51,7 +51,9 @@ LH_MonitoringDial::LH_MonitoringDial() : LH_Dial(), LH_MonitoringObject(this, md
                    SLOT(changeTypeSelection()),
                    SLOT(changeGroupSelection()),
                    SLOT(changeItemSelection()),
-                   SLOT(dataValidityChanged()));
+                   SLOT(dataValidityChanged()),
+                   SLOT(updateNeedles())
+                   );
 }
 
 
@@ -59,8 +61,8 @@ const char *LH_MonitoringDial::userInit()
 {
     if( const char *err = LH_Dial::userInit() ) return err;
 
-    this->LH_Dial::connect( setup_value_str_, SIGNAL(changed()), this, SLOT(updateNeedles()) );
-    this->LH_Dial::connect( setup_value_str_, SIGNAL(set()), this, SLOT(updateNeedles()) );
+    this->LH_Dial::connect( value_str_obj(), SIGNAL(changed()), this, SLOT(updateNeedles()) );
+    this->LH_Dial::connect( value_str_obj(), SIGNAL(set()), this, SLOT(updateNeedles()) );
 
     setup_max_ = new LH_Qt_int(this, "Maximum", 100, 0, 99999);
     setup_max_->setHelp( "<p>The dial's maximum value.</p>");
@@ -104,7 +106,7 @@ void LH_MonitoringDial::updateNeedles()
             if(needleCount() != 1)
                 updateNeedlesList(&names);
 
-            float valFlt = (setup_value_str_->value().toFloat(&ok));
+            float valFlt = (value_str().toFloat(&ok));
             if(ok)
                 setVal( valFlt );
         } else {

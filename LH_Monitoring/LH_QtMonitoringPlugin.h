@@ -23,31 +23,49 @@
 
   */
 
-#ifndef LH_QTPLUGIN_MONITORING_H
-#define LH_QTPLUGIN_MONITORING_H
+#ifndef LH_QTMONITORINGPLUGIN_H
+#define LH_QTMONITORINGPLUGIN_H
 
-#include "LH_QtMonitoringPlugin.h"
+#include "LH_QtPlugin.h"
+#include "LH_MonitoringSources.h"
 
-#include "LH_MonitoringSource_Afterburner.h"
-#include "LH_MonitoringSource_Aida64.h"
-#include "LH_MonitoringSource_ATITrayTools.h"
-#include "LH_MonitoringSource_CoreTemp.h"
-#include "LH_MonitoringSource_Fraps.h"
-#include "LH_MonitoringSource_GPUZ.h"
-#include "LH_MonitoringSource_HWiNFO.h"
-#include "LH_MonitoringSource_HWMonitor.h"
-#include "LH_MonitoringSource_Logitech.h"
-#include "LH_MonitoringSource_RivaTuner.h"
-#include "LH_MonitoringSource_SpeedFan.h"
+#include "QList"
+#include "LH_Qt_QString.h"
+#include "LH_Qt_QSlider.h"
+#include "LH_Qt_bool.h"
 
-
-class LH_QtPlugin_Monitoring : public LH_QtMonitoringPlugin
+class LH_QtMonitoringPlugin : public LH_QtPlugin
 {   
     Q_OBJECT
 
 public:
-    const char *userInit();
+    QList<LH_Qt_bool*> enabled_;
+    QList<LH_Qt_QSlider*> rates_;
+    QList<LH_Qt_QString*> rate_helpers_;
+    QList<LH_Qt_QString*> dividers_;
+
+    LH_Qt_bool* createUI_Element_Enabled(QString appName);
+
+    LH_Qt_QSlider* createUI_Element_Rate(QString appName);
+
+    LH_Qt_QString* createUI_Element_Divider(QString appName);
+
+    virtual const char *userInit();
+
+    virtual void userTerm() { dataSources->userTerm(); }
+
+    virtual int notify( int code, void *param )
+    {
+        if(dataSources)
+            dataSources->rebuild();
+        return LH_NOTE_SECOND;
+    }
+
+public slots:
+    void enabledStateChanged();
+    void enabledFreqChanged();
+    void connectEnabledStateChangeEvents();
 
 };
 
-#endif // LH_QTPLUGIN_MONITORING_H
+#endif // LH_QTMONITORINGPLUGIN_H

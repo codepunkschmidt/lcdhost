@@ -28,6 +28,8 @@ public:
 
     void updateDataCache();
 
+    qreal adaptToUnits(qreal val, QString *units = 0, int *prec = 0);
+
 public slots:
     void doInitialize();
     void clearData();
@@ -59,6 +61,9 @@ public slots:
     }
     void dataValidityChanged() {
         LH_MonitoringObject::dataValidityChanged();
+    }
+    void renderRequired() {
+        requestRender();
     }
 };
 

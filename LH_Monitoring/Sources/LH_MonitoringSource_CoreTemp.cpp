@@ -3,11 +3,10 @@
 
 LH_MonitoringSource_CoreTemp::LH_MonitoringSource_CoreTemp(LH_QtObject *parent): LH_MonitoringSource(parent, "CoreTemp")
 {
-
-    temp_ = (SensorDefinition){ "°?", (minmax){NA_, NA_}, NA_ };
-    freq_ = (SensorDefinition){ "MHz", (minmax){NA_, NA_}, NA_ };
-    toTj_ = (SensorDefinition){ "°? to TjMax", (minmax){NA_, NA_}, NA_ };
-    perc_ = (SensorDefinition){ "%", (minmax){(OptionalValue){true, 0}, (OptionalValue){true, 100}}, NA_ };
+    temp_ = SensorDefinition("°?");
+    freq_ = SensorDefinition("MHz");
+    toTj_ = SensorDefinition("°? to TjMax");
+    perc_ = SensorDefinition("%", 0, 100);
 
 }
 

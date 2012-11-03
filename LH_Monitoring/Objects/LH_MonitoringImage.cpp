@@ -59,15 +59,17 @@ LH_MonitoringImage::LH_MonitoringImage() : LH_QImage(), LH_MonitoringObject(this
                    SLOT(changeTypeSelection()),
                    SLOT(changeGroupSelection()),
                    SLOT(changeItemSelection()),
-                   SLOT(dataValidityChanged()));
+                   SLOT(dataValidityChanged()),
+                   SLOT(updateValue())
+                   );
 }
 
 const char *LH_MonitoringImage::userInit()
 {
     if( const char *err = LH_QImage::userInit() ) return err;
 
-    this->LH_QImage::connect( setup_value_str_, SIGNAL(changed()), this, SLOT(updateValue()) );
-    this->LH_QImage::connect( setup_value_str_, SIGNAL(set()), this, SLOT(updateValue()) );
+    this->LH_QImage::connect( value_str_obj(), SIGNAL(changed()), this, SLOT(updateValue()) );
+    this->LH_QImage::connect( value_str_obj(), SIGNAL(set()), this, SLOT(updateValue()) );
 
     setup_image_file_->setFlags( LH_FLAG_AUTORENDER | LH_FLAG_READONLY | LH_FLAG_NOSAVE_LINK | LH_FLAG_NOSAVE_DATA );
 
@@ -85,5 +87,5 @@ const char *LH_MonitoringImage::userInit()
 
 void LH_MonitoringImage::updateValue()
 {
-    setup_value_->setValue(setup_value_str_->value());
+    setup_value_->setValue(value_str());
 }

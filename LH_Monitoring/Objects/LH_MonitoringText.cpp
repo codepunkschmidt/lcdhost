@@ -66,15 +66,17 @@ LH_MonitoringText::LH_MonitoringText() : LH_Text(), LH_MonitoringObject(this, md
                    SLOT(changeTypeSelection()),
                    SLOT(changeGroupSelection()),
                    SLOT(changeItemSelection()),
-                   SLOT(dataValidityChanged()));
+                   SLOT(dataValidityChanged()),
+                   SLOT(updateText())
+                   );
 }
 
 const char *LH_MonitoringText::userInit()
 {
     if( const char *err = LH_Text::userInit() ) return err;
 
-    this->LH_Text::connect( setup_value_str_, SIGNAL(changed()), this, SLOT(updateText()) );
-    this->LH_Text::connect( setup_value_str_, SIGNAL(set()), this, SLOT(updateText()) );
+    this->LH_Text::connect( value_str_obj(), SIGNAL(changed()), this, SLOT(updateText()) );
+    this->LH_Text::connect( value_str_obj(), SIGNAL(set()), this, SLOT(updateText()) );
 
     setup_value_round_ = new LH_Qt_bool(this,"Round",false, LH_FLAG_AUTORENDER);
     setup_value_round_->setHelp( "<p>Round non integer values.</p>");
@@ -107,19 +109,20 @@ const char *LH_MonitoringText::userInit()
 
 void LH_MonitoringText::updateText()
 {
-    QString val = setup_value_str_->value();
+    QString val = value_str();
+    QString units;
 
     bool ok;
-    float valFlt = (val.toFloat(&ok));
+    double numericValue = value_num(&ok, &units);
     if(ok)
     {
         if(setup_value_round_->value())
-            val = QString::number(valFlt,'f',0);
+            val = QString::number(numericValue,'f',0);
         else
-            val = QString::number(qRound(valFlt * 10000) / 10000.0);
+            val = QString::number(numericValue,'f',6).replace(QRegExp("\\.?0*$"),"");
     }
 
-    QString units = (!setup_append_units_->value()? "" : setup_value_units_->value());
+    units = (!setup_append_units_->value()? "" : units);
     val = QString("%1%2%3%4")
             .arg(setup_pre_text_->value())
             .arg(val)

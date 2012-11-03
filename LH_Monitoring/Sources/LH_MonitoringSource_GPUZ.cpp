@@ -34,10 +34,9 @@ bool LH_MonitoringSource_GPUZ::doUpdate()
                         if(units=="%%") units = "%";
                         float value = sensor.value;
 
-                        minmax mm = (minmax){NA_, NA_};
+                        SensorDefinition def = SensorDefinition(units);
                         if(units=="%%")
-                            mm = (minmax){(OptionalValue){true, 0}, (OptionalValue){true, 100}};
-                        SensorDefinition def = (SensorDefinition){ units, mm, NA_ };
+                            def.limits = (minmax){(OptionalValue){true, 0}, (OptionalValue){true, 100}};
 
                         updateValue(name, "", "", value, def);
                     }

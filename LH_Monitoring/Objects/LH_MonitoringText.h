@@ -49,7 +49,6 @@ public slots:
     void dataValidityChanged() {
         LH_MonitoringObject::dataValidityChanged();
     }
-
 };
 
 #endif // LH_MONITORINGTEXT_H

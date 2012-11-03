@@ -9,6 +9,7 @@
 #include "LH_Qt_int.h"
 #include "LH_Qt_bool.h"
 #include "json.h"
+#include <qmath.h>
 
 #include "LH_MonitoringSources.h"
 
@@ -36,10 +37,6 @@ class LH_MonitoringObject
     bool includeGroups_;
     bool isReset_;
 
-    bool adaptiveUnitsAllowed_;
-    bool adaptiveUnits_;
-    QString desiredUnits_;
-
     void updateUnitOptions();
 
     const char* changeAppSelectionSlot_;
@@ -48,24 +45,28 @@ class LH_MonitoringObject
     const char* changeItemSelectionSlot_;
     const char* refreshMonitoringOptionsSlot_;
     const char* dataValidityChangedSlot_;
+    const char* renderRequiredSlot_;
 
     void setSelection(LH_Qt_QStringList* list_obj, LH_Qt_QString* name_obj, int et);
     void changeSelection(LH_Qt_QStringList* list_obj, LH_Qt_QString* name_obj, int et);
 
     bool dataValid();
 
+    LH_Qt_QString     *setup_value_str_;
+    LH_Qt_QString     *setup_value_units_;
+
 protected:
+    bool adaptiveUnitsAllowed_;
+
     LH_MonitoringSource* selectedMonitoringApp(bool *ok);
     SensorItem selectedSensor(bool *ok=0, int *selectedIndex=0);
     SensorGroup* selectedSensorGroup(bool *ok=0);
     QList<SensorItem> groupSensors(bool *ok=0);
     QVector<qreal> getValuesVector(bool hasDead, float deadVal, bool &ok, QStringList *names = NULL);
 
+    QString value_units(bool allowAdaptation);
 
 public:
-    LH_Qt_QString     *setup_value_units_;
-    LH_Qt_QString     *setup_value_str_;
-    LH_Qt_float       *setup_value_num_;
     LH_Qt_int         *setup_value_ptr_;
     LH_Qt_bool        *setup_value_valid_;
 
@@ -83,18 +84,28 @@ public:
 
     LH_Qt_QStringList *setup_unit_selection_;
 
-    LH_Qt_bool *setup_value_offset_;
-    LH_Qt_bool *setup_value_format_;
+    LH_Qt_bool        *setup_value_offset_;
+    LH_Qt_bool        *setup_value_format_;
 
     LH_Qt_QString     *setup_monitoring_options_;
 
+    QString value_str();
+
+    double value_num(bool *ok = 0, QString *units = 0);
+
+    QString value_units();
+
+    QObject* value_str_obj() { return setup_value_str_;}
+    QObject* value_units_obj() { return setup_value_units_;}
+
     LH_MonitoringObject(LH_QtObject *object, monitoringDataMode dataMode, bool includeGroups = false, bool adaptiveUnits = false);
-    void monitoringInit(const char* refreshMonitoringOptionsSlot,const char* connectChangeEventsSlot,const char* changeAppSelectionSlot,const char* changeTypeSelectionSlot,const char* changeGroupSelectionSlot,const char* changeItemSelectionSlot,const char* dataValidityChangedSlot);
+    void monitoringInit(
+            const char* refreshMonitoringOptionsSlot, const char* connectChangeEventsSlot, const char* changeAppSelectionSlot,
+            const char* changeTypeSelectionSlot, const char* changeGroupSelectionSlot, const char* changeItemSelectionSlot,
+            const char* dataValidityChangedSlot, const char* renderRequiredSlot);
 
     monitoringDataMode dataMode() { return dataMode_; }
     bool includeGroups() { return includeGroups_; }
-    bool adaptiveUnitsAllowed() { return adaptiveUnitsAllowed_;}
-    bool adaptiveUnits() { return adaptiveUnitsAllowed_;}
 
     void setAppSelection();
     void setTypeSelection();

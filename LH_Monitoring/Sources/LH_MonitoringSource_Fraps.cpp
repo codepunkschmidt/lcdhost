@@ -3,7 +3,7 @@
 
 LH_MonitoringSource_Fraps::LH_MonitoringSource_Fraps(LH_QtObject *parent): LH_MonitoringSource(parent, "Fraps")
 {
-    fps_ = (SensorDefinition){ "fps", (minmax){ NA_, NA_ }, NA_ };
+    fps_ = SensorDefinition("fps");
 }
 
 FRAPS_SHARED_DATA *(WINAPI *FrapsSharedData) ();

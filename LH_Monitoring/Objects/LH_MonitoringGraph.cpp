@@ -47,7 +47,7 @@ lh_class *LH_MonitoringGraph::classInfo()
 
 LH_MonitoringGraph::LH_MonitoringGraph() :
     LH_Graph(0, 2, gdmExternallyManaged, NULL),
-    LH_MonitoringObject(this, mdmNumbers, true, false),
+    LH_MonitoringObject(this, mdmNumbers, true, true),
     was_empty_(true),
     setup_append_units_(0)
 {
@@ -57,15 +57,14 @@ LH_MonitoringGraph::LH_MonitoringGraph() :
                    SLOT(changeTypeSelection()),
                    SLOT(changeGroupSelection()),
                    SLOT(changeItemSelection()),
-                   SLOT(dataValidityChanged()));
+                   SLOT(dataValidityChanged()),
+                   SLOT(renderRequired())
+                   );
 }
 
 const char *LH_MonitoringGraph::userInit()
 {
     if( const char *err = LH_Graph::userInit() ) return err;
-
-    //this->LH_Text::connect( setup_value_str_, SIGNAL(changed()), this, SLOT(updateText()) );
-    //this->LH_Text::connect( setup_value_str_, SIGNAL(set()), this, SLOT(updateText()) );
 
     setUserDefinableLimits(true);
     //canGrow(true);
@@ -107,37 +106,7 @@ int LH_MonitoringGraph::notify(int n, void *p)
 
     if(!n || n&LH_NOTE_SECOND)
         callback(lh_cb_render,NULL);
-    /*
-        if(ui_ && ui_->data_)
-        {
-            float deadVal;
-            bool hasDead = (ui_->data_->getDeadValue_Transformed(deadVal));
 
-            int count;
-            ui_->data_->getCount(count);
-            if(lineCount() != count)
-                updateLines();
-
-            if(!ui_->data_->isGroup())
-            {
-                float currVal=0;
-                ui_->data_->getValue(currVal);
-                addValue(currVal);
-            } else {
-                if(hasDead) setDeadValue((qreal)deadVal);
-
-                for(int i=0; i<lineCount(); i++)
-                {
-                    float currVal=0;
-                    int index = ui_->data_->lookupIndex(i);
-                    ui_->data_->getValue(currVal, index);
-                    addValue(currVal, i);
-                }
-            }
-            if(was_empty_ && !graph_empty_) updateUnits();
-            was_empty_ = graph_empty_;
-            callback(lh_cb_render,NULL);
-        }*/
     return LH_QtInstance::notify(n,p) | LH_NOTE_SECOND;
 }
 
@@ -214,4 +183,26 @@ void LH_MonitoringGraph::updateDataCache()
         LH_Graph::setExternalSource(NULL);
         clearLines();
     }
+}
+
+qreal LH_MonitoringGraph::adaptToUnits(qreal val, QString *units, int *prec)
+{
+    if(units) *units = value_units(false);
+    if(adaptiveUnitsAllowed_ && setup_unit_selection_->list().count() > 1)
+    {
+        bool _ok;
+        SensorItem itm = selectedSensor(&_ok);
+        if(_ok)
+        {
+            qreal logDivisor;
+            val = itm.adaptToUnits(val, (setup_unit_selection_->value()==0), value_units(false), setup_unit_selection_->valueText(), units, &logDivisor);
+            if(prec)
+            {
+                *prec = 1 - int(log10(dataDeltaY()) + logDivisor);
+                if (*prec<0)
+                    *prec = 0;
+            }
+        }
+    }
+    return val;
 }

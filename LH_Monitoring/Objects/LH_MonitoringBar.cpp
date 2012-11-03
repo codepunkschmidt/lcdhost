@@ -50,15 +50,17 @@ LH_MonitoringBar::LH_MonitoringBar() : LH_Bar(), LH_MonitoringObject(this, mdmAl
                    SLOT(changeTypeSelection()),
                    SLOT(changeGroupSelection()),
                    SLOT(changeItemSelection()),
-                   SLOT(dataValidityChanged()));
+                   SLOT(dataValidityChanged()),
+                   SLOT(updateBar())
+                   );
 }
 
 const char *LH_MonitoringBar::userInit()
 {
     if( const char *err = LH_Bar::userInit() ) return err;
 
-    this->LH_Bar::connect( setup_value_str_, SIGNAL(changed()), this, SLOT(updateBar()) );
-    this->LH_Bar::connect( setup_value_str_, SIGNAL(set()), this, SLOT(updateBar()) );
+    this->LH_Bar::connect( value_str_obj(), SIGNAL(changed()), this, SLOT(updateBar()) );
+    this->LH_Bar::connect( value_str_obj(), SIGNAL(set()), this, SLOT(updateBar()) );
 
     setup_max_ = new LH_Qt_int(this, "Maximum", 100, 0, 99999);
     setup_max_->setHelp( "<p>The bar's maximum value.</p>");
@@ -88,7 +90,7 @@ QImage *LH_MonitoringBar::render_qimage( int w, int h )
     {
         if(!si.group)
         {
-            float valFlt = (setup_value_str_->value().toFloat(&ok));
+            float valFlt = (value_str().toFloat(&ok));
             if(ok)
                 drawSingle( valFlt );
         } else {

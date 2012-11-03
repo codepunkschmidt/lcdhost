@@ -50,15 +50,17 @@ LH_MonitoringColorSwatch::LH_MonitoringColorSwatch() : LH_ColorSwatch(), LH_Moni
                    SLOT(changeTypeSelection()),
                    SLOT(changeGroupSelection()),
                    SLOT(changeItemSelection()),
-                   SLOT(dataValidityChanged()));
+                   SLOT(dataValidityChanged()),
+                   SLOT(updateValue())
+                   );
 }
 
 const char *LH_MonitoringColorSwatch::userInit()
 {
     if( const char *err = LH_ColorSwatch::userInit() ) return err;
 
-    this->LH_ColorSwatch::connect( setup_value_num_, SIGNAL(changed()), this, SLOT(updateValue()) );
-    this->LH_ColorSwatch::connect( setup_value_num_, SIGNAL(set()), this, SLOT(updateValue()) );
+    this->LH_ColorSwatch::connect( value_str_obj(), SIGNAL(changed()), this, SLOT(updateValue()) );
+    this->LH_ColorSwatch::connect( value_str_obj(), SIGNAL(set()), this, SLOT(updateValue()) );
 
     //this->LH_ColorSwatch::connect( setup_max_, SIGNAL(changed()), this, SLOT(updateValue()) );
 
@@ -80,5 +82,5 @@ void LH_MonitoringColorSwatch::updateBounds()
 
 void LH_MonitoringColorSwatch::updateValue()
 {
-    setup_current_value_->setValue(setup_value_num_->value());
+    setup_current_value_->setValue((float)value_num());
 }

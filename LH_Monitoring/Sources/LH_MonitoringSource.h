@@ -32,7 +32,71 @@ typedef QHash<QString, SensorGroup> SensorGroups;
 typedef struct {QString name; SensorGroups groups;} SensorType;
 typedef QHash<QString, SensorType> SensorTypes;
 
-typedef struct {QString units; minmax limits; OptionalValue deadValue;} SensorDefinition;
+typedef struct {bool active; int factor; QStringList list;} AdaptiveUnits;
+
+class SensorDefinition
+{
+
+    void init()
+    {
+        OptionalValue NA_ = (OptionalValue){ false, 0 };
+        this->units = "";
+        this->limits = (minmax) { NA_, NA_ };
+        this->deadValue = NA_;
+        adaptiveUnits.active = false;
+        adaptiveUnits.factor = 1;
+    }
+
+public:
+    QString units;
+    minmax limits;
+    OptionalValue deadValue;
+    AdaptiveUnits adaptiveUnits;
+
+    SensorDefinition()
+    {
+        init();
+    }
+
+    SensorDefinition(QString units)
+    {
+        init();
+        this->units = units;
+    }
+
+    SensorDefinition(QString units, float minimum_limit, float maximum_limit)
+    {
+        init();
+        this->units = units;
+        this->limits.minimum = (OptionalValue){ true, minimum_limit };
+        this->limits.maximum = (OptionalValue){ true, maximum_limit };
+    }
+
+    SensorDefinition(QString units, float minimum_limit, float maximum_limit, float deadValue)
+    {
+        init();
+        this->units = units;
+        this->limits.minimum = (OptionalValue){ true, minimum_limit };
+        this->limits.maximum = (OptionalValue){ true, maximum_limit };
+        this->deadValue = (OptionalValue){ true, deadValue };
+    }
+
+    SensorDefinition(QString units, float deadValue)
+    {
+        init();
+        this->units = units;
+        this->deadValue = (OptionalValue){ true, deadValue };
+    }
+
+    void setAdaptiveUnits(int factor, QStringList unitsList)
+    {
+        adaptiveUnits.active = true;
+        adaptiveUnits.factor = factor;
+        adaptiveUnits.list.clear();
+        adaptiveUnits.list.append(unitsList);
+    }
+
+};
 
 class LH_MonitoringSource : public LH_QtObject
 {
@@ -54,8 +118,6 @@ class LH_MonitoringSource : public LH_QtObject
 protected:
     LH_Qt_bool* setup_enabled_;
     LH_Qt_QSlider* setup_rate_;
-
-    OptionalValue NA_;
 
     void updateAggregates(QString type, QString group);
 

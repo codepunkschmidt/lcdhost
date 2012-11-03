@@ -61,7 +61,7 @@ bool LH_MonitoringSource_HWMonitor::doUpdate()
             if(!aggGroups.contains(QString("%1|~>|%2").arg(type).arg(groupName)))
                 aggGroups.append(QString("%1|~>|%2").arg(type).arg(groupName));
 
-            updateValue(type,groupName,keyName,val,(SensorDefinition){units});
+            updateValue(type,groupName,keyName,val,SensorDefinition(units));
         }
         foreach(QString aggGroup, aggGroups)
         {

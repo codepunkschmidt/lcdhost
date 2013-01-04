@@ -1,6 +1,7 @@
 TARGET = WebKitServer
 TEMPLATE = app
-QT += webkit network
+QT += network webkit
+greaterThan(QT_MAJOR_VERSION, 4): QT *= webkitwidgets
 CONFIG -= app_bundle
 
 include(../../Plugins.pri)

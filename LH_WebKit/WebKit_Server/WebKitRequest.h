@@ -36,6 +36,9 @@
 #define WEBKITREQUEST_H
 
 #include <QtWebKit>
+#if (QT_VERSION >= QT_VERSION_CHECK(5, 0, 0))
+# include <QtWebKitWidgets/QtWebKitWidgets>
+#endif
 #include <QtNetwork>
 
 #include <QObject>

@@ -52,10 +52,10 @@ lgLcdOpenContext LH_LgLcdLegacyThread::qvga_cxt;
 
 #define LCD_ERR(x) ( LH_LgLcdMan::lglcd_Err((x),__FILE__,__LINE__) == NULL )
 
-#ifdef Q_WS_WIN
+#ifdef Q_OS_WIN32
 DWORD WINAPI LH_LgLcdLegacyThread::LH_LogitechButtonCB(int device, DWORD dwButtons, const PVOID pContext)
 #endif
-#ifdef Q_WS_MAC
+#ifdef Q_OS_MAC
 unsigned long LH_LgLcdLegacyThread::LH_LogitechButtonCB(int device, unsigned long dwButtons, const void* pContext)
 #endif
 {
@@ -199,7 +199,7 @@ void LH_LgLcdLegacyThread::run()
                 QTime last_enum;
                 last_enum.start();
                 lgLcdSetDeviceFamiliesToUse( connectContext.connection, LGLCD_DEVICE_FAMILY_ALL
-#ifdef Q_WS_WIN
+#ifdef Q_OS_WIN32
                                              ,0
 #endif
                                              );

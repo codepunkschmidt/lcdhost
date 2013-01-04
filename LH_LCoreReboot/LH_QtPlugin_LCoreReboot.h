@@ -28,7 +28,7 @@
 #include "LH_QtPlugin.h"
 #include "LH_Qt_QString.h"
 
-#ifdef Q_WS_WIN
+#ifdef Q_OS_WIN32
 #include <windows.h>
 #include <winbase.h>
 #include <Psapi.h>

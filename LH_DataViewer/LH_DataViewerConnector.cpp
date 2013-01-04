@@ -193,7 +193,7 @@ QString LH_DataViewerConnector::formatData(QString data, QString formatting)
         if (formatting.startsWith("rx:"))
         {
             QRegExp rx = QRegExp(formatting.mid(3));
-            if(rx.numCaptures()!=0)
+            if(rx.captureCount()!=0)
                 result = result.replace(rx,"\\1").trimmed();
             else
                 result = result.remove(rx).trimmed();
@@ -447,7 +447,7 @@ void LH_DataViewerConnector::mapFileChanged()
                                         for(int i = 0; i<memAddress.count()-1; i++)
                                         {
                                             uint val;
-                                            sscanf(memAddress.at(i+1).toAscii().data(), "%x", &val);
+                                            sscanf(memAddress.at(i+1).toLatin1().data(), "%x", &val);
                                             offsets.append(val);
                                         }
                                     }

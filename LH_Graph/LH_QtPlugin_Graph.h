@@ -70,7 +70,7 @@ public:
     {
         if (cpu_.count()!=0 && cpu_histogram_ != NULL)
         {
-            if(cpu_histogram_->count()==0)
+            if(cpu_histogram_->count()!=cpu_.count())
                 cpu_histogram_->setCount(cpu_.count());
             if(cpu_average_->count()==0)
                 cpu_average_->setCount(1);

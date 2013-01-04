@@ -53,7 +53,7 @@ int LH_RivaWriter::notify(int code,void* param)
 
 bool LH_RivaWriter::updateRivaMemory()
 {
-#ifdef Q_WS_WIN
+#ifdef Q_OS_WIN32
     const char* mapname = "MAHMSharedMemory";
     bool resultVal = true;
 
@@ -79,7 +79,7 @@ bool LH_RivaWriter::updateRivaMemory()
                     rx.setPatternSyntax(QRegExp::RegExp2);
                     sensorName = reverse(reverse(sensorName).replace(rx,"\\1\\3 :\\2#"));
 
-                    memcpy( RTHMMemory->czSrc , sensorName.toAscii().data(), 32);
+                    memcpy( RTHMMemory->czSrc , sensorName.toLatin1().data(), 32);
                     memcpy( RTHMMemory->czDim , MAHMMemory->szSrcUnits, 16);
                     RTHMMemory->data = MAHMMemory->data;
                     RTHMMemory->offset = 0;
@@ -106,7 +106,7 @@ bool LH_RivaWriter::updateRivaMemory()
 
 QString LH_RivaWriter::reverse(QString str)
 {
-    QByteArray ba = str.toAscii();
+    QByteArray ba = str.toLatin1();
     char *d = ba.data();
     std::reverse(d, d+str.length());
     return QString(d);
@@ -114,7 +114,7 @@ QString LH_RivaWriter::reverse(QString str)
 
 bool LH_RivaWriter::createRivaMemory(int entryCount, DWORD dwSignature)
 {
-#ifdef Q_WS_WIN
+#ifdef Q_OS_WIN32
     const char* mapname_riva = "RTHMSharedMemory";
 
     DWORD sz = sizeof(RTHM_SHARED_MEMORY_HEADER) + entryCount * sizeof(RTHM_SHARED_MEMORY_ENTRY);
@@ -143,7 +143,7 @@ bool LH_RivaWriter::createRivaMemory(int entryCount, DWORD dwSignature)
 
 void LH_RivaWriter::destroyRivaMemory()
 {
-#ifdef Q_WS_WIN
+#ifdef Q_OS_WIN32
     if (RTHMHeader) UnmapViewOfFile(RTHMHeader);
     if (filemap_riva) CloseHandle(filemap_riva);
 #endif

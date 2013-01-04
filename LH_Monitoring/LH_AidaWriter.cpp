@@ -58,9 +58,9 @@ bool LH_AidaWriter::updateAidaMemory()
 
 bool LH_AidaWriter::createAidaMemory()
 {
-#ifdef Q_WS_WIN
+#ifdef Q_OS_WIN32
     const char* mapname_aida = "AIDA64_SensorValues";
-    QByteArray bytXML  = setup_xml_->value().toAscii();
+    QByteArray bytXML  = setup_xml_->value().toLatin1();
 
     sz = bytXML.length();
     filemap_aida = (HANDLE)CreateFileMappingA(INVALID_HANDLE_VALUE,NULL,PAGE_READWRITE,0,sz,mapname_aida);
@@ -82,7 +82,7 @@ bool LH_AidaWriter::createAidaMemory()
 
 void LH_AidaWriter::destroyAidaMemory()
 {
-#ifdef Q_WS_WIN
+#ifdef Q_OS_WIN32
     if (aidaData)
     {
         memset(aidaData, '\0', sz);

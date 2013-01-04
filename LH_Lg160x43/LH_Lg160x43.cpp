@@ -37,7 +37,7 @@
 #include <QBasicTimer>
 #include <QTime>
 
-#ifdef Q_WS_WIN
+#ifdef Q_OS_WIN32
 #include <windows.h>
 #endif
 
@@ -71,7 +71,7 @@ char __lcdhostplugin_xml[] =
 
 const char *LH_Lg160x43::userInit()
 {
-#ifdef Q_WS_WIN
+#ifdef Q_OS_WIN32
     // make sure neither LCDMon.exe nor LCORE.EXE is running on Windows
     if( FindWindowA( "Logitech LCD Monitor Window", "LCDMon" ) ||
         FindWindowA( "QWidget", "LCore" ) )

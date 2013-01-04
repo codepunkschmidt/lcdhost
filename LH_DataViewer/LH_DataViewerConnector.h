@@ -38,7 +38,7 @@
 
 #include "LH_DataViewerData.h"
 
-#ifdef Q_WS_WIN
+#ifdef Q_OS_WIN32
 #include <windows.h>
 #include <winbase.h>
 #include <tlhelp32.h>

@@ -107,7 +107,7 @@ void LH_QtSetupItem::setMimeType( const char * s )
 void LH_QtSetupItem::setPublishPath( QString s )
 {
     memset( item_.link.publish, 0, sizeof(item_.link.publish) );
-    strncpy( item_.link.publish, s.toAscii().constData(), sizeof(item_.link.publish)-1 );
+    strncpy( item_.link.publish, s.toLatin1().constData(), sizeof(item_.link.publish)-1 );
     parent()->callback( lh_cb_setup_refresh, item() );
     return;
 }
@@ -115,7 +115,7 @@ void LH_QtSetupItem::setPublishPath( QString s )
 void LH_QtSetupItem::setSubscribePath( QString s )
 {
     memset( item_.link.subscribe, 0, sizeof(item_.link.subscribe) );
-    strncpy( item_.link.subscribe, s.toAscii().constData(), sizeof(item_.link.subscribe)-1 );
+    strncpy( item_.link.subscribe, s.toLatin1().constData(), sizeof(item_.link.subscribe)-1 );
     parent()->callback( lh_cb_setup_refresh, item() );
     return;
 }

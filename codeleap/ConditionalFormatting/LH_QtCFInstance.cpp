@@ -438,7 +438,7 @@ void LH_QtCFInstance::cf_copy_rules()
     if (!file.open(QIODevice::WriteOnly | QIODevice::Text))
         return;
     else
-        file.write(setup_cf_XML_->value().toAscii());
+        file.write(setup_cf_XML_->value().toLatin1());
     /*QClipboard *clipboard = QApplication::clipboard();
     QString newText = setup_cf_XML_->value();
     qDebug() << newText;

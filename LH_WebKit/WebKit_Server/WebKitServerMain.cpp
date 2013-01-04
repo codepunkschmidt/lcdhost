@@ -3,34 +3,32 @@
 
 #include <QApplication>
 #include <QThread>
-#include <QDesktopServices>
 #include <QSettings>
 
+#include "LH_Logger.h"
 #include "WebKitServerWindow.h"
 #include "EventWebKitHeartbeat.h"
 #include "WebKitCommand.h"
 
-QString datadir;
+#if 0
 
+QString datadir;
 const char *get_log_filename()
 {
     static char log_filename[512];
 
     if( !*log_filename )
     {
+        QSettings settings;
+        QString logdir;
         QString name;
         int len;
 
-        if( datadir.isEmpty() )
-        {
-            QSettings settings("linkdata.se","LCDHost");
-            QString defaultdata = QDesktopServices::storageLocation(QDesktopServices::DocumentsLocation) + "/LCDHost/";
-            datadir = settings.value( "installPath", defaultdata ).toString();
-        }
+        logdir = QStandardPaths::writableLocation(QStandardPaths::DataLocation);
+        if( !logdir.endsWith('/') ) logdir.append('/');
+        logdir.append("logs/");
 
-        // Create log dir
-        if( !datadir.endsWith('/') ) datadir.append('/');
-        QDir dir( datadir+"logs/" );
+        QDir dir( logdir );
         dir.mkpath( dir.absolutePath() );
 
         // Clean up old logs
@@ -46,10 +44,10 @@ const char *get_log_filename()
 
         // Make our filename
         name =
-            datadir+"/logs/WebKitServer-" +
+            dir.absolutePath()+"/WebKitServer-" +
             QDateTime::currentDateTime().toString("yyyyMMdd-HHmmss-") +
             QString::number( (quintptr) QThread::currentThreadId() ) + ".log";
-        QByteArray ary = name.toAscii();
+        QByteArray ary = name.toLatin1();
         memset( log_filename, 0, sizeof(log_filename) );
         if( ary.size() > (int) (sizeof(log_filename)-1) ) len = sizeof(log_filename)-1;
         else len = ary.size();
@@ -59,8 +57,8 @@ const char *get_log_filename()
     return log_filename;
 }
 
-static QtMsgHandler oldMessageHandler = 0;
-void newMessageHandler( QtMsgType type, const char *msg )
+static QtMessageHandler oldMessageHandler = 0;
+void newMessageHandler(QtMsgType type, const QMessageLogContext &context, const QString &msg)
 {
     FILE *f;
     struct tm *lt;
@@ -69,25 +67,23 @@ void newMessageHandler( QtMsgType type, const char *msg )
 
     log_filename = get_log_filename();
 
-    if( msg == NULL ) return;
+    if( msg.isEmpty() ) return;
+    if( msg.startsWith("QGLShader::link") ) return;
 
 #ifndef QT_NO_DEBUG
     if( oldMessageHandler )
-        oldMessageHandler( type, msg );
+        oldMessageHandler( type, context, msg );
     else
     {
-        qInstallMsgHandler( 0 );
+        qInstallMessageHandler( 0 );
         switch( type )
         {
         case QtDebugMsg: qDebug() << msg; break;
         case QtWarningMsg: qWarning() << msg; break;
         case QtCriticalMsg: qCritical() << msg; break;
-        case QtFatalMsg:
-            qCritical() << msg;
-            abort();
-            break;
+        case QtFatalMsg: qCritical() << msg; break;
         }
-        qInstallMsgHandler( newMessageHandler );
+        qInstallMessageHandler( newMessageHandler );
     }
 #endif
 
@@ -106,20 +102,21 @@ void newMessageHandler( QtMsgType type, const char *msg )
 
                 switch( type )
                 {
-                case QtDebugMsg:    fprintf( f, "D.. | %s\n", msg ); break;
-                case QtWarningMsg:  fprintf( f, ".W. | %s\n", msg ); break;
-                case QtCriticalMsg: fprintf( f, "..E | %s\n", msg ); break;
-                case QtFatalMsg:    fprintf( f, "*** | %s\n", msg ); break;
+                case QtDebugMsg:    fprintf( f, "D.. | %s\n", msg.toLatin1().constData() ); break;
+                case QtWarningMsg:  fprintf( f, ".W. | %s\n", msg.toLatin1().constData() ); break;
+                case QtCriticalMsg: fprintf( f, "..E | %s\n", msg.toLatin1().constData() ); break;
+                case QtFatalMsg:    fprintf( f, "*** | %s\n", msg.toLatin1().constData() ); break;
                 }
 
                 fclose( f );
+#ifndef QT_NO_DEBUG
+                fflush( f );
+#endif
             }
         }
 
         if( type == QtFatalMsg )
-        {
-            QApplication::quit();
-        }
+            qApp->quit();
     }
 
     return;
@@ -140,20 +137,20 @@ void qFatal(const char *msg, ...)
     va_end(ap);
 }
 #endif
+#endif
 
 int main(int argc, char *argv[])
 {
-    WebKitServerWindow *w;
     QApplication app(argc,argv);
     QString plugindir;
     bool hidden = false;
     bool verbose = false;
+    WebKitServerWindow *w = 0;
 
     QCoreApplication::setOrganizationName("Link Data");
     QCoreApplication::setOrganizationDomain("linkdata.se");
     QCoreApplication::setApplicationName("WebKitServer");
-
-    oldMessageHandler = qInstallMsgHandler( newMessageHandler );
+    LH_Logger logger("WebKitServer");
 
     // parse command line
     QStringList args = QCoreApplication::arguments();
@@ -172,11 +169,13 @@ int main(int argc, char *argv[])
             verbose = true;
         }
 
+#if 0
         if( theArg=="--datadir" )
         {
             datadir = args[1];
             args.removeAt(1);
         }
+#endif
 
         if( theArg=="--plugindir" )
         {

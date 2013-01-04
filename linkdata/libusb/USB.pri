@@ -15,8 +15,9 @@ win32 {
 
 macx {
         DEFINES += OS_DARWIN THREADS_POSIX HAVE_SYS_TIME_H HAVE_POLL_H
+        DEFINES += MAC_OS_X_VERSION_MIN_REQUIRED=1060
         SOURCES += $$PWD/os/darwin_usb.c $$PWD/os/threads_posix.c
-	LIBS += -framework CoreFoundation -framework IOKit
+        LIBS += -framework CoreFoundation -framework IOKit -lobjc
 }
 
 unix:!macx {

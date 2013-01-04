@@ -34,7 +34,7 @@
 
 #include <QtGlobal>
 
-#ifdef Q_WS_WIN
+#ifdef Q_OS_WIN32
 #include "windows.h"
 #include "wow64.h"
 

@@ -10,6 +10,8 @@
 # and URL's if you want to use it.
 #
 
+contains(QT, gui): greaterThan(QT_MAJOR_VERSION, 4): QT *= widgets
+
 exists($$PWD/PluginsConfig.prf) {
     CONFIG(debug, debug|release):RELDEB = Debug
     else:RELDEB = Release
@@ -64,7 +66,7 @@ exists($$PWD/PluginsConfig.prf) {
             $$QTSUPPORT/LH_QtSetupItem.h \
             $$QTSUPPORT/LH_Qt_QString.h
 
-    load($$PWD/PluginsConfig.prf)
+    include($$PWD/PluginsConfig.prf)
 
     contains( TEMPLATE, lib ): exists($$PWD/../lcdhost-private.pem) {
         QMAKE_POST_LINK = \

@@ -42,12 +42,12 @@ LH_LgLcdThread::LH_LgLcdThread(QObject *parent)
      : QThread(parent), time_to_die_(false), sem_(1), appname_(NULL)
 {
     int appname_len = QCoreApplication::applicationName().length();
-#ifdef Q_WS_WIN
+#ifdef Q_OS_WIN32
     appname_ = new wchar_t[appname_len+1];
     QCoreApplication::applicationName().toWCharArray(appname_);
     appname_[appname_len] = 0;
 #endif
-#ifdef Q_WS_MAC
+#ifdef Q_OS_MAC
     appname_ = CFStringCreateWithCharacters(
                 0, reinterpret_cast<const UniChar *>(QCoreApplication::applicationName().unicode()),
                 appname_len );
@@ -58,10 +58,10 @@ LH_LgLcdThread::~LH_LgLcdThread()
 {
     if( appname_ )
     {
-#ifdef Q_WS_WIN
+#ifdef Q_OS_WIN32
         delete[] (wchar_t *)appname_;
 #endif
-#ifdef Q_WS_MAC
+#ifdef Q_OS_MAC
         CFRelease( (CFStringRef) appname_ );
 #endif
     }
@@ -100,7 +100,7 @@ void LH_LgLcdThread::setQVGA( QImage img )
 
     qvga_bm.bmp_qvga32.hdr.Format = LGLCD_BMP_FORMAT_QVGAx32;
     memcpy( qvga_bm.bmp_qvga32.pixels,
-#ifdef Q_WS_MAC
+#ifdef Q_OS_MAC
             img.rgbSwapped().bits(),
 #else
             img.bits(),

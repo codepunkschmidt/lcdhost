@@ -390,7 +390,7 @@ void LH_Graph::drawSingle(int lineID)
 
     QPainter painter;
 
-    QPointF points[(*lineData_).limit()+2];
+    QVector<QPointF> points((*lineData_).limit()+2);
 
     int w = image_->width();
     int h = image_->height();
@@ -570,11 +570,11 @@ void LH_Graph::drawSingle(int lineID)
             switch(setup_fg_type_->value())
             {
             case Foreground_LineOnly:
-                painter.drawPolyline(points, point_count-2);
+                painter.drawPolyline(points.constData(), point_count-2);
                 break;
             case Foreground_AreaFill:
                 painter.setBrush(QBrush(gradient));
-                painter.drawPolygon(points, point_count);
+                painter.drawPolygon(points.constData(), point_count);
                 break;
             case Foreground_Image:
                 {
@@ -590,7 +590,7 @@ void LH_Graph::drawSingle(int lineID)
                         QColor maskCol = QColor(0,0,0,fgImgAlpha);
                         maskPaint.setPen(maskCol);
                         maskPaint.setBrush(QBrush(maskCol));
-                        maskPaint.drawPolygon(points, point_count);
+                        maskPaint.drawPolygon(points.constData(), point_count);
                         maskPaint.end();
                     }
 
@@ -609,7 +609,7 @@ void LH_Graph::drawSingle(int lineID)
                         }
                         painter.drawImage(graph_area, tempImg);
                     }
-                    painter.drawPolyline(points, (*lineData_).at(lineID).length());
+                    painter.drawPolyline(points.constData(), (*lineData_).at(lineID).length());
                 }
                 break;
             }

@@ -1,7 +1,7 @@
 #ifndef LH_CORETEMPTYPES_H
 #define LH_CORETEMPTYPES_H
 
-#ifdef Q_WS_WIN
+#ifdef Q_OS_WIN32
 # include <windows.h>
 #endif
 

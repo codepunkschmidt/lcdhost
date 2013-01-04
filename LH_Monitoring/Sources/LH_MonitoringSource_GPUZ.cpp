@@ -6,7 +6,7 @@ LH_MonitoringSource_GPUZ::LH_MonitoringSource_GPUZ(LH_QtObject *parent): LH_Moni
 
 bool LH_MonitoringSource_GPUZ::doUpdate()
 {
-#ifndef Q_WS_WIN
+#ifndef Q_OS_WIN32
     return false;
 #else
     bool resultVal = false;

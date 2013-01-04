@@ -64,7 +64,7 @@ bool dataNode::getProcessValue(uint address, QList<uint> offsets, void *dest, si
         }
     }
     if( len == 0 ) len = sizeof(dest);
-#ifdef Q_WS_WIN
+#ifdef Q_OS_WIN32
     ReadProcessMemory( processHandle(), (BYTE *) address, dest, len, &r );
 #endif
     return (r == len);
@@ -88,7 +88,7 @@ bool dataNode::getProcessValue(uint address, QList<uint> offsets, QString *dest,
         while( srcdata.size() < MAX_STRING )
         {
             char ch = '\0';
-#ifdef Q_WS_WIN
+#ifdef Q_OS_WIN32
             if( ! ReadProcessMemory(hProcess, (BYTE *) address ++, &ch, 1, 0) )
                 return false;
 #else
@@ -108,7 +108,7 @@ bool dataNode::getProcessValue(uint address, QList<uint> offsets, QString *dest,
 
 bool dataNode::validatePID( DWORD pid, QString exeFile )
 {
-#ifdef Q_WS_WIN
+#ifdef Q_OS_WIN32
     PROCESSENTRY32 processInfo;
     processInfo.dwSize = sizeof(processInfo);
 
@@ -137,7 +137,7 @@ bool dataNode::validatePID( DWORD pid, QString exeFile )
 
 DWORD dataNode::getProcessId(QString exeFile)
 {
-#ifdef Q_WS_WIN
+#ifdef Q_OS_WIN32
     PROCESSENTRY32 processInfo;
     processInfo.dwSize = sizeof(processInfo);
 
@@ -165,7 +165,7 @@ DWORD dataNode::getProcessId(QString exeFile)
 
 void dataNode::indexModules( DWORD pid )
 {
-#ifdef Q_WS_WIN
+#ifdef Q_OS_WIN32
     MODULEENTRY32 moduleInfo;
     moduleInfo.dwSize = sizeof(moduleInfo);
 
@@ -194,7 +194,7 @@ void dataNode::indexModules( DWORD pid )
 
 QString dataNode::getProcessVersion(QString exeFile)
 {
-#ifdef Q_WS_WIN
+#ifdef Q_OS_WIN32
     QString version = "";
 
     HANDLE moduleSnapshot = CreateToolhelp32Snapshot(TH32CS_SNAPMODULE, processID_);
@@ -216,7 +216,7 @@ QString dataNode::getProcessVersion(QString exeFile)
                 UINT size = 0;
                 LPSTR verData = new char[verSize];
                 if( GetFileVersionInfo(moduleInfo.szExePath, verLength, verSize, verData) )
-                    if (VerQueryValueA(verData,QString("\\").toAscii().data(),(VOID FAR* FAR*)&lpBuffer,&size) && size)
+                    if (VerQueryValueA(verData,QString("\\").toLatin1().data(),(VOID FAR* FAR*)&lpBuffer,&size) && size)
                     {
                         VS_FIXEDFILEINFO *verInfo = (VS_FIXEDFILEINFO *)lpBuffer;
                         if (verInfo->dwSignature == 0xfeef04bd)
@@ -288,7 +288,7 @@ dataNode::dataNode(dataNode* parentNode, itemDefinition def, QString nodeValue )
 dataNode::~dataNode()
 {
     mutex->lock();
-#ifdef Q_WS_WIN
+#ifdef Q_OS_WIN32
     if(processHandle_)
         CloseHandle(processHandle_);
 #endif
@@ -427,7 +427,7 @@ void dataNode::debugTree()
 bool dataNode::refreshProcessValues()
 {
     bool changed = false;
-#ifdef Q_WS_WIN
+#ifdef Q_OS_WIN32
     QString newVal = getProcessValue();
     if(newVal!=value_)
     {
@@ -444,7 +444,7 @@ bool dataNode::refreshProcessValues()
 
 bool dataNode::openProcess(QString exeFile, QString targetVersion, QString &feedbackMessage)
 {
-#ifdef Q_WS_WIN
+#ifdef Q_OS_WIN32
     DWORD pid = processID_;
     feedbackMessage = "";
     if(processHandle_)
@@ -531,7 +531,7 @@ bool dataNode::getModuleAddress(QString moduleName, uint &moduleAddress)
 uint dataNode::memoryAddress()
 {
     uint addressVal = 0;
-#ifdef Q_WS_WIN
+#ifdef Q_OS_WIN32
     //return definition_.memory;
     if(definition_.startAddress.contains("+"))
     {
@@ -539,12 +539,12 @@ uint dataNode::memoryAddress()
         QStringList baseParts = definition_.startAddress.split('+',QString::SkipEmptyParts);
         if(getModuleAddress(baseParts.at(0), moduleAddress))
         {
-            sscanf(baseParts.at(1).toAscii().data(), "%x", &addressVal);
+            sscanf(baseParts.at(1).toLatin1().data(), "%x", &addressVal);
             addressVal += moduleAddress;
         } else
             addressVal = 0;
     } else
-        sscanf(definition_.startAddress.toAscii().data(), "%x", &addressVal);
+        sscanf(definition_.startAddress.toLatin1().data(), "%x", &addressVal);
 #endif
     return addressVal;
 }

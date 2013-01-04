@@ -80,7 +80,7 @@ LogitechG19::LogitechG19( libusb_context *ctx, libusb_device *usbdev, libusb_dev
     setName("Logitech G19 LCD (USB)");
     setSize(320,240);
     setDepth(16);
-#ifdef Q_WS_WIN
+#ifdef Q_OS_WIN32
     setAutoselect(false);
 #else
     setAutoselect(true);

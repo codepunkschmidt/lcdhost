@@ -33,6 +33,18 @@ static void lh_log_handler(QtMsgType type, const char *msg)
 }
 #endif
 
+QString lh_data_dir()
+{
+#if (QT_VERSION >= QT_VERSION_CHECK(5, 0, 0))
+    QString data_dir(QStandardPaths::writableLocation(QStandardPaths::DataLocation));
+#else
+    QString data_dir(QDesktopServices::storageLocation(QDesktopServices::DataLocation));
+#endif
+    if(! data_dir.endsWith('/'))
+        data_dir.append('/');
+    return data_dir;
+}
+
 QMutex LH_Logger::mutex_;
 LH_Logger *LH_Logger::instance_ = 0;
 
@@ -51,12 +63,7 @@ LH_Logger::LH_Logger(const QString &app_name, QObject *parent) :
 {
     Q_ASSERT(lh_old_log_handler == 0);
     Q_ASSERT(instance_ == 0);
-#if (QT_VERSION >= QT_VERSION_CHECK(5, 0, 0))
-    QString data_dir(QStandardPaths::writableLocation(QStandardPaths::DataLocation));
-#else
-    QString data_dir(QDesktopServices::storageLocation(QDesktopServices::DataLocation));
-#endif
-    QDir logdir(data_dir);
+    QDir logdir(lh_data_dir());
     logdir.mkdir("logs");
     logdir.cd("logs");
     log_path_ = logdir.absolutePath();

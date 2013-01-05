@@ -5,6 +5,8 @@
 #include <QDateTime>
 #include <QString>
 
+QString lh_data_dir();
+
 class LH_Logger : public QObject
 {
     Q_OBJECT

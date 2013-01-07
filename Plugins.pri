@@ -10,6 +10,11 @@
 # and URL's if you want to use it.
 #
 
+macx-g++:exists("$(HOME)/.ccache") {
+    QMAKE_CXX="ccache g++"
+    QMAKE_CC="ccache gcc"
+}
+
 contains(QT, gui): greaterThan(QT_MAJOR_VERSION, 4): QT *= widgets
 
 exists($$PWD/PluginsConfig.prf) {

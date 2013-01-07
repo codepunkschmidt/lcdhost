@@ -1,28 +1,33 @@
+
 #include <QtGlobal>
 #include <QObject>
-#include <QMutex>
-#include <QEvent>
 #include <QDateTime>
+#include <QMutex>
 #include <QString>
 
-QString lh_data_dir();
+#if (QT_VERSION >= QT_VERSION_CHECK(5, 0, 0))
+typedef QtMessageHandler lh_log_handler_t;
+#else
+typedef QtMsgHandler lh_log_handler_t;
+#endif
 
 class LH_Logger : public QObject
 {
     Q_OBJECT
 
 public:
-    static LH_Logger *instance() { return instance_; }
-    static void handler(QtMsgType type, const QString &msg);
+    static LH_Logger *lock();
 
-    LH_Logger(const QString &app_name, QObject *parent = 0);
+    LH_Logger(const QString &app_name = QString(), QObject *parent = 0);
     virtual ~LH_Logger();
 
-    void install();
-    void cleanOldLogs();
-    void log(QtMsgType type, const QString &msg);
-    void uninstall();
-    QString logFile() const { return QString::fromLocal8Bit(file_name_); }
+    QString fileName() const;
+    void removeOld(int days_old = 30) const;
+    void log(QtMsgType type, const QString &msg) const;
+    void unlock() const;
+
+signals:
+    void logged(uint msgtime, int msgtype, const QString &msgtext) const;
 
 protected:
     static QMutex mutex_;
@@ -33,26 +38,8 @@ protected:
     QByteArray file_name_;
 };
 
-class LH_LogMessage : public QEvent
-{
-public:
-    static Type type()
-    {
-        static Type event_type = (Type) QEvent::registerEventType();
-        return event_type;
-    }
-
-    QDateTime msgtime;
-    QtMsgType msgtype;
-    QString msgtext;
-
-    LH_LogMessage(QtMsgType severity, const QString &message) :
-        QEvent(type()),
-        msgtime(QDateTime::currentDateTime()),
-        msgtype(severity),
-        msgtext(message)
-    {}
-};
+QString lh_data_dir();
+QString lh_log_dir();
 
 #if defined(Q_OS_WIN32)
 QString Win32Message( int dw );

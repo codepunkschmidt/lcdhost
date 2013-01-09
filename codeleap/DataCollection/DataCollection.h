@@ -5,7 +5,12 @@
 #include <QStringList>
 #include <QDebug>
 
-typedef struct {qreal value; int duration;} DataPoint;
+struct DataPoint
+{
+    qreal value;
+    int duration;
+    DataPoint(qreal v = 0.0, int d = 0) : value(v), duration(d) {}
+};
 
 class DataPointCollection : public QList<DataPoint> {
 public:
@@ -118,7 +123,7 @@ public:
             }
             //if(popDuration_ != 0) qDebug() << "popped: " << popped_duration;
         }
-        push_front( (DataPoint){value, duration} );
+        push_front( DataPoint(value, duration) );
         totalDuration_ += duration;
     }
 };

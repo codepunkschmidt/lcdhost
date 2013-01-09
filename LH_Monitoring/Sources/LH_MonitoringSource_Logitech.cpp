@@ -13,7 +13,7 @@ LH_MonitoringSource_Logitech::LH_MonitoringSource_Logitech(LH_QtObject *parent):
     batteryStates_.append(QStringList()<<"Unknown"<<"Low"<<"Medium-Low"<<"Medium"<<"Medium"<<"Medium-High"<<"High");
     batteryStates_.append(QStringList()<<"Unknown"<<"Low"<<"Medium-Low"<<"Medium"<<"Medium"<<"Medium"<<"Medium-High"<<"High");
 
-    pcnt_ = (SensorDefinition){ "%", (minmax){ NA_, NA_ }, NA_};
+    pcnt_ = SensorDefinition( "%" );
 }
 
 
@@ -39,11 +39,9 @@ bool LH_MonitoringSource_Logitech::doUpdate()
         if(reg.contains("MouseBatteryState"))
             MouseBatteryState = reg.value("MouseBatteryState").toString();
 
-        SensorDefinition current_lvl = (SensorDefinition){
-                QString("/%1").arg(MouseBatteryRange),
-                (minmax){ (OptionalValue) { true, 0}, (OptionalValue) { true, MouseBatteryRange} },
-                NA_
-        };
+        SensorDefinition current_lvl(
+                    QString("/%1").arg(MouseBatteryRange),
+                    minmax(OptionalValue(true, 0), OptionalValue(true, MouseBatteryRange)));
 
         updateValue("Mouse Battery Level","","",MouseBatteryLevel, current_lvl);
         updateValue("Mouse Battery Level (Max)","","",MouseBatteryRange);

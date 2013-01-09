@@ -34,7 +34,7 @@ bool LH_MonitoringSource_RivaTuner::doUpdate()
                     if(sensorGroup.startsWith(":")) sensorGroup.remove(0,1);
                     sensorGroup = sensorGroup.trimmed();
 
-                    SensorDefinition def = (SensorDefinition){QString(RTHMMemory->czDim)};
+                    SensorDefinition def(QString::fromLatin1(RTHMMemory->czDim));
 
                     updateValue(sensorGroup,"Standard Data",sensorName, QVariant((float)RTHMMemory->data), def);
 

@@ -6,9 +6,9 @@
 #endif
 
 LH_MonitoringSource_SpeedFan::LH_MonitoringSource_SpeedFan(LH_QtObject *parent): LH_MonitoringSource(parent, "SpeedFan") {
-    temp_ = (SensorDefinition){ "°C",  (minmax){ NA_, NA_ }, (OptionalValue){true, -128.0} };
-    fans_ = (SensorDefinition){ "rpm", (minmax){ NA_, NA_ }, (OptionalValue){true, 0} };
-    volt_ = (SensorDefinition){ "V",   (minmax){ NA_, NA_ }, NA_ };
+    temp_ = SensorDefinition( "\176C",  minmax(), OptionalValue(true, -128.0) );
+    fans_ = SensorDefinition( "rpm", minmax(), OptionalValue(true, 0) );
+    volt_ = SensorDefinition( "V" );
 }
 
 

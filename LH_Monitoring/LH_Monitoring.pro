@@ -11,6 +11,8 @@ CONFIG += cf json datacollection
 
 include(../Plugins.pri)
 
+win32: LIBS *= -luser32
+
 INCLUDEPATH += $$PWD/LH_QImage
 INCLUDEPATH += $$PWD/Sources \
                $$PWD/Objects \

@@ -10,7 +10,7 @@
 # and URL's if you want to use it.
 #
 
-macx-g++:exists("$(HOME)/.ccache") {
+macx-g++|linux-g++-64:exists("$(HOME)/.ccache") {
     QMAKE_CXX="ccache g++"
     QMAKE_CC="ccache gcc"
 }

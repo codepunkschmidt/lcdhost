@@ -1,0 +1,9 @@
+syntax: glob
+*.pro.user
+3rdParty/taglib/taglib.pro.user
+*.orig
+*.?pre?
+moc_*.*
+*.o
+.DS_Store
+codeleap/GoogleTranslator/TranslationAPIKey.h

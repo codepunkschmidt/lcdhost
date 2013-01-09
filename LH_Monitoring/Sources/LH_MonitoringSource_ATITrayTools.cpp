@@ -40,23 +40,23 @@ bool LH_MonitoringSource_ATITrayTools::doUpdate()
                 Current3DAPI = QString("Unknown API (%1)").arg(memoryData->Cur3DApi);
             }
 
-            updateValue("Speeds", "GPU", "GPU", (int)memoryData->CurGPU, (SensorDefinition){"MHz"} );
-            updateValue("Speeds", "MEM", "MEM", (int)memoryData->CurMEM, (SensorDefinition){"MHz"} );
+            updateValue("Speeds", "GPU", "GPU", (int)memoryData->CurGPU, SensorDefinition("MHz") );
+            updateValue("Speeds", "MEM", "MEM", (int)memoryData->CurMEM, SensorDefinition("MHz") );
 
-            updateValue("Temperatures", "GPU", "Current", (int)memoryData->GPUTemp, (SensorDefinition){"°C"} );
-            updateValue("Temperatures", "GPU", "Maximum", (int)memoryData->MAXGpuTemp, (SensorDefinition){"°C"} );
-            updateValue("Temperatures", "GPU", "Minimum", (int)memoryData->MINGpuTemp, (SensorDefinition){"°C"} );
-            updateValue("Temperatures", "ENV", "Current", (int)memoryData->ENVTemp, (SensorDefinition){"°C"} );
-            updateValue("Temperatures", "ENV", "Maximum", (int)memoryData->MAXEnvTemp, (SensorDefinition){"°C"} );
-            updateValue("Temperatures", "ENV", "Minimum", (int)memoryData->MINEnvTemp, (SensorDefinition){"°C"} );
+            updateValue("Temperatures", "GPU", "Current", (int)memoryData->GPUTemp, SensorDefinition("\176C") );
+            updateValue("Temperatures", "GPU", "Maximum", (int)memoryData->MAXGpuTemp, SensorDefinition("\176C") );
+            updateValue("Temperatures", "GPU", "Minimum", (int)memoryData->MINGpuTemp, SensorDefinition("\176C") );
+            updateValue("Temperatures", "ENV", "Current", (int)memoryData->ENVTemp, SensorDefinition("\176C") );
+            updateValue("Temperatures", "ENV", "Maximum", (int)memoryData->MAXEnvTemp, SensorDefinition("\176C") );
+            updateValue("Temperatures", "ENV", "Minimum", (int)memoryData->MINEnvTemp, SensorDefinition("\176C") );
 
-            updateValue("FAN Duty", "", "", (int)memoryData->FanDuty, (SensorDefinition){"%"} );
+            updateValue("FAN Duty", "", "", (int)memoryData->FanDuty, SensorDefinition("%") );
 
-            updateValue("FPS", "", "", (int)memoryData->CurFPS, (SensorDefinition){"FPS"} );
+            updateValue("FPS", "", "", (int)memoryData->CurFPS, SensorDefinition("FPS") );
 
-            updateValue("Memory", "Used Memory", "Used Memory", (int)memoryData->MemUsed, (SensorDefinition){"MB"} );
-            updateValue("Memory", "Free Memory", "Free Video Memory", (int)memoryData->FreeVideo, (SensorDefinition){"MB"} );
-            updateValue("Memory", "Free Memory", "Free Texture Memory", (int)memoryData->FreeTexture, (SensorDefinition){"MB"} );
+            updateValue("Memory", "Used Memory", "Used Memory", (int)memoryData->MemUsed, SensorDefinition("MB") );
+            updateValue("Memory", "Free Memory", "Free Video Memory", (int)memoryData->FreeVideo, SensorDefinition("MB") );
+            updateValue("Memory", "Free Memory", "Free Texture Memory", (int)memoryData->FreeTexture, SensorDefinition("MB") );
 
             updateValue("ATI Options", "Game Profile Active", "Game Profile Active", (memoryData->isGameActive==1? "Yes" : "No") );
             updateValue("ATI Options", "Temp Mon Supported", "Temp Mon Supported", (memoryData->isTempMonSupported==1? "Yes" : "No") );

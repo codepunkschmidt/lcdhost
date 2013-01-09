@@ -20,19 +20,70 @@
 
 #include "../json/json.h"
 
-typedef struct {bool exists; float value;} OptionalValue;
-inline bool operator==(OptionalValue v1, OptionalValue v2) { return v1.exists == v2.exists && v1.value == v2.value; }
-typedef struct {OptionalValue minimum; OptionalValue maximum;} minmax;
-inline bool operator==(minmax v1, minmax v2) { return v1.minimum == v2.minimum && v1.maximum == v2.maximum; }
+
+struct OptionalValue
+{
+    bool exists;
+    float value;
+    OptionalValue(bool e=false, float v=0.0) :
+        exists(e), value(v)
+    {}
+    bool operator ==(const OptionalValue &other) const
+    {
+        return exists == other.exists && value == other.value;
+    }
+};
+
+struct minmax
+{
+    OptionalValue minimum;
+    OptionalValue maximum;
+    minmax(const OptionalValue &v1=OptionalValue(), const OptionalValue &v2=OptionalValue()) :
+        minimum(v1), maximum(v2)
+    {}
+    bool operator ==(const minmax &other) const
+    {
+        return minimum == other.minimum && maximum == other.maximum;
+    }
+};
 
 typedef DataLine SensorItem ;
 
-typedef struct {QString name; DataLineCollection items; minmax limits;} SensorGroup;
+struct SensorGroup
+{
+    QString name;
+    DataLineCollection items;
+    minmax limits;
+    SensorGroup(const QString &n = QString(),
+                const DataLineCollection &i = DataLineCollection(),
+                const minmax &l = minmax()) :
+        name(n), items(i), limits(l)
+    {}
+};
 typedef QHash<QString, SensorGroup> SensorGroups;
-typedef struct {QString name; SensorGroups groups;} SensorType;
+
+struct SensorType
+{
+    QString name;
+    SensorGroups groups;
+    SensorType(const QString &n=QString(),
+               const SensorGroups &g=SensorGroups()) :
+        name(n), groups(g)
+    {}
+};
 typedef QHash<QString, SensorType> SensorTypes;
 
-typedef struct {QString units; minmax limits; OptionalValue deadValue;} SensorDefinition;
+struct SensorDefinition
+{
+    QString units;
+    minmax limits;
+    OptionalValue deadValue;
+    SensorDefinition(const QString &u=QString(),
+                     const minmax &l=minmax(),
+                     const OptionalValue &d=OptionalValue()) :
+        units(u), limits(l), deadValue(d)
+    {}
+};
 
 class LH_MonitoringSource : public LH_QtObject
 {

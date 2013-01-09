@@ -80,9 +80,9 @@ bool LH_MonitoringSource_Aida64::doUpdate()
                         bool ok;
                         float valueFloat = valueString.toFloat(&ok);
                         if(ok)
-                            updateValue(typeName,groupName,itemName, valueFloat, (SensorDefinition){units, (minmax){NA_, NA_}, NA_});
+                            updateValue(typeName,groupName,itemName, valueFloat, SensorDefinition(units));
                         else
-                            updateValue(typeName,groupName,itemName, valueString, (SensorDefinition){units, (minmax){NA_, NA_}, NA_});
+                            updateValue(typeName,groupName,itemName, valueString, SensorDefinition(units));
                     }
                 }
                 n = n.nextSibling();

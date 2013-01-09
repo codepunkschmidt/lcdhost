@@ -13,6 +13,29 @@
 #include <QString>
 #include <QDir>
 
+#ifdef Q_OS_WIN32
+#include <Windows.h>
+QString Win32Message( int dw )
+{
+    QString s;
+    LPVOID lpMsgBuf;
+
+    FormatMessageW(
+        FORMAT_MESSAGE_ALLOCATE_BUFFER |
+        FORMAT_MESSAGE_FROM_SYSTEM |
+        FORMAT_MESSAGE_IGNORE_INSERTS,
+        NULL,
+        (DWORD) dw,
+        MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT),
+        (LPTSTR) &lpMsgBuf,
+        0, NULL );
+
+    s = QString::fromUtf16( (const ushort*) lpMsgBuf ).trimmed();
+    LocalFree(lpMsgBuf);
+    return s;
+}
+#endif
+
 QMutex LH_Logger::mutex_;
 LH_Logger *LH_Logger::instance_ = 0;
 static lh_log_handler_t lh_log_old_handler = 0;
@@ -249,25 +272,3 @@ LH_LogMessage::LH_LogMessage(QtMsgType severity, const QString &message) :
 }
 #endif
 
-
-#ifdef Q_OS_WIN32
-QString Win32Message( int dw )
-{
-    QString s;
-    LPVOID lpMsgBuf;
-
-    FormatMessageW(
-        FORMAT_MESSAGE_ALLOCATE_BUFFER |
-        FORMAT_MESSAGE_FROM_SYSTEM |
-        FORMAT_MESSAGE_IGNORE_INSERTS,
-        NULL,
-        (DWORD) dw,
-        MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT),
-        (LPTSTR) &lpMsgBuf,
-        0, NULL );
-
-    s = QString::fromUtf16( (const ushort*) lpMsgBuf ).trimmed();
-    LocalFree(lpMsgBuf);
-    return s;
-}
-#endif

@@ -74,6 +74,15 @@ hid_device *Lg160x43Device::lock()
         error_.append(": ");
         error_.append(strerror(errno));
     }
+#ifdef Q_OS_LINUX
+    if(errno == EACCES)
+    {
+        qDebug("Try adding the following line to <strong><tt>/etc/udev/rules.d/99-logitech.rules</tt></strong>");
+        qDebug("<strong><tt>SUBSYSTEM==\"hidraw\", ATTRS{idVendor}==\"%04x\", "
+               "ATTRS{idProduct}==\"%04x\", MODE=\"0666\"</tt></strong>",
+               0x046d, product_id_);
+    }
+#endif
     return 0;
 }
 

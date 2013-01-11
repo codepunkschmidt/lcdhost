@@ -108,7 +108,7 @@ void LH_LgBacklight::scan()
             {
                 switch( hdi->product_id )
                 {
-                case 0xC222: /* G15 */
+                // case 0xC222: /* G15 has no backlight control */
                 case 0xC225: /* G11 */
                 case 0xC227: /* G15v2 */
                 case 0xC21C: /* G13 */

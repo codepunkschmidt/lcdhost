@@ -12,6 +12,7 @@ class Lg160x43Device : public LH_QtDevice
     unsigned product_id_;
     hid_device *hiddev_;
     QByteArray path_;
+    QString error_;
     bool offline_;
 
 public:

@@ -2,6 +2,7 @@
 #include <QImage>
 #include <QDebug>
 #include "Lg160x43Device.h"
+#include <errno.h>
 
 enum
 {
@@ -45,7 +46,8 @@ Lg160x43Device::~Lg160x43Device()
 const char* Lg160x43Device::open()
 {
     hiddev_ = hid_open_path( path_.constData() );
-    if( !hiddev_ ) return "Can't open HID device";
+    if( !hiddev_ )
+        return errno ? strerror(errno) : "Cant open device";
     return NULL;
 }
 
@@ -102,7 +104,11 @@ const char* Lg160x43Device::render_qimage(QImage *img)
 
     if( !img ) return NULL;
     if( offline_ ) return NULL;
-    if( !hiddev_ ) return "Device not open";
+    if( !hiddev_ )
+    {
+        const char *msg = open();
+        if(!hiddev_) return msg ? msg : "Device not open";
+    }
 
     if( img->depth() == 1 ) make_output_report( buffer, img->bits() );
     else

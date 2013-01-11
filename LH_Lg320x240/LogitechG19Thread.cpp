@@ -58,17 +58,21 @@ void LogitechG19Thread::run()
 
                 if( g19dev )
                 {
+                    int retv = LIBUSB_SUCCESS;
                     struct timeval tv = { 0, 1000*100 };
                     LogitechG19 *the_g19 = new LogitechG19( ctx, g19dev, &dd );
                     the_g19->arrive();
-                    while( !time_to_die_ && the_g19 && ! the_g19->offline() )
+                    while( !time_to_die_ && ! the_g19->offline() )
                     {
-                        if( libusb_handle_events_timeout( ctx, & tv ) )
+                        retv = libusb_handle_events_timeout_completed(ctx, & tv, NULL);
+                        if( retv != LIBUSB_SUCCESS )
                             break;
                     }
                     the_g19->leave();
                     delete the_g19;
                     libusb_unref_device( g19dev );
+                    if(retv != LIBUSB_SUCCESS)
+                        qWarning("LogitechG19Thread: %s", libusb_error_name(retv));
                 }
             }
             libusb_exit(ctx);

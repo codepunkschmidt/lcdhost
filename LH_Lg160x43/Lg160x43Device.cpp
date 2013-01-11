@@ -13,13 +13,13 @@ enum
         G15_BUFFER_LEN = 0x03e0	/* total length of the HID output report */
 };
 
-Lg160x43Device::Lg160x43Device( const struct hid_device_info *di, LH_QtPlugin *drv ) : LH_QtDevice(drv)
+Lg160x43Device::Lg160x43Device( const struct hid_device_info *di, LH_QtPlugin *drv ) :
+    LH_QtDevice(drv),
+    to_remove_(false),
+    offline_(true),
+    product_id_(di->product_id),
+    path_(di->path)
 {
-    to_remove_ = false;
-    product_id_ = di->product_id;
-    hiddev_ = 0;
-    path_ = di->path;
-    offline_ = false;
     char buf[64];
     qsnprintf( buf, sizeof(buf), "Lg160x43-%04x:%04x:%04x",
                di->vendor_id, di->product_id, di->release_number );
@@ -45,17 +45,42 @@ Lg160x43Device::~Lg160x43Device()
 
 const char* Lg160x43Device::open()
 {
-    hiddev_ = hid_open_path( path_.constData() );
-    if( !hiddev_ )
-        return errno ? strerror(errno) : "Cant open device";
-    return NULL;
+    if(hid_device *hd = lock())
+    {
+        unlock(hd);
+        return NULL;
+    }
+    return offline_ ? NULL : error_.constData();
 }
 
 const char* Lg160x43Device::close()
 {
-    if( hiddev_ ) hid_close( hiddev_ );
-    hiddev_ = 0;
     return NULL;
+}
+
+hid_device *Lg160x43Device::lock()
+{
+    error_.clear();
+    errno = 0;
+    if(hid_device *hd = hid_open_path( path_.constData() ))
+    {
+        offline_ = false;
+        return hd;
+    }
+    error_.append("Failed to open ");
+    error_.append(path_);
+    if(errno)
+    {
+        error_.append(": ");
+        error_.append(strerror(errno));
+    }
+    return 0;
+}
+
+void Lg160x43Device::unlock(hid_device *hd)
+{
+    if(hd)
+        hid_close(hd);
 }
 
 static void make_output_report(unsigned char *lcd_buffer, unsigned char const *data)
@@ -104,25 +129,30 @@ const char* Lg160x43Device::render_qimage(QImage *img)
 
     if( !img ) return NULL;
     if( offline_ ) return NULL;
-    if( !hiddev_ )
+    if(hid_device *hd = lock())
     {
-        const char *msg = open();
-        if(!hiddev_) return msg ? msg : "Device not open";
+        if( img->depth() == 1 ) make_output_report( buffer, img->bits() );
+        else
+        {
+            QImage tmp = img->convertToFormat(QImage::Format_Mono,Qt::ThresholdDither|Qt::NoOpaqueDetection);
+            make_output_report( buffer, tmp.bits() );
+        }
+
+        errno = 0;
+        retv = hid_write( hd, buffer, sizeof(buffer) );
+        if( retv != sizeof(buffer) )
+        {
+            error_.clear();
+            error_.append(path_);
+            error_.append(": hid_write() error: ");
+            error_.append(strerror(errno));
+        }
+        unlock(hd);
     }
 
-    if( img->depth() == 1 ) make_output_report( buffer, img->bits() );
-    else
-    {
-        QImage tmp = img->convertToFormat(QImage::Format_Mono,Qt::ThresholdDither|Qt::NoOpaqueDetection);
-        make_output_report( buffer, tmp.bits() );
-    }
-
-    retv = hid_write( hiddev_, buffer, sizeof(buffer) );
-    if( retv != sizeof(buffer) )
-    {
-        offline_ = true;
-        return "hid_write() error";
-    }
-    return NULL;
+    if(error_.isEmpty())
+        return NULL;
+    offline_ = true;
+    return error_.constData();
 }
 

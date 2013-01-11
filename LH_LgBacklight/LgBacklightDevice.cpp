@@ -3,6 +3,8 @@
 #include "LgBacklightDevice.h"
 #include "LH_LgBacklight.h"
 
+#include <errno.h>
+
 LgBacklightDevice::LgBacklightDevice( const struct hid_device_info *di, LH_LgBacklight *parent )
 {
     parent_ = parent;
@@ -10,7 +12,6 @@ LgBacklightDevice::LgBacklightDevice( const struct hid_device_info *di, LH_LgBac
     // name_ = di->path;
     to_remove_ = true;
     product_id_ = di->product_id;
-    hiddev_ = 0;
     path_ = di->path;
     color_ = QColor(Qt::transparent);
     backlightid_ = 7;
@@ -39,7 +40,8 @@ LgBacklightDevice::LgBacklightDevice( const struct hid_device_info *di, LH_LgBac
     }
     else
     {
-        qDebug() << "LgBacklightDevice can't open" << name_ << "at" << path_.constData();
+        qDebug() << "LgBacklightDevice can't open" << name_ << "at" << path_.constData() <<
+                    strerror(errno);
     }
 }
 
@@ -62,5 +64,6 @@ void LgBacklightDevice::setColor( QColor c )
         hid_close( dev );
     }
     else
-        qDebug() << "Backlight::setColor() failed to open" << name() << "at" << path_.constData();
+        qDebug() << "Backlight::setColor() failed to open" << name() << "at" << path_.constData() <<
+                    strerror(errno);
 }

@@ -15,11 +15,12 @@ LgBacklightDevice::LgBacklightDevice( const struct hid_device_info *di, LH_LgBac
     path_ = di->path;
     color_ = QColor(Qt::transparent);
     backlightid_ = 7;
+    errno = 0;
 
     hid_device *dev = hid_open_path( path_.constData() );
     if( dev )
     {
-        unsigned char report[5];
+        unsigned char report[256];
         memset( report, 0, sizeof(report) );
         report[0] = backlightid_; // hidapi leading byte
         if( hid_get_feature_report( dev, report, sizeof(report) ) > 0 )
@@ -35,14 +36,24 @@ LgBacklightDevice::LgBacklightDevice( const struct hid_device_info *di, LH_LgBac
             // qDebug() << "LgBacklightDevice:" << path_.constData() << r << g << b;
         }
         else
-            qDebug() << "LgBacklightDevice can't get feature report for" << name_;
+            qDebug() << "LgBacklightDevice can't get feature report for"
+                     << name_ << "at" << path_.constData() << strerror(errno);
         hid_close( dev );
     }
     else
     {
-        qDebug() << "LgBacklightDevice can't open" << name_ << "at" << path_.constData() <<
-                    strerror(errno);
+        qDebug() << "LgBacklightDevice can't open"
+                 << name_ << "at" << path_.constData() << strerror(errno);
     }
+#ifdef Q_OS_LINUX
+    if(errno == EACCES)
+    {
+        qDebug("Try adding the following line to <strong><tt>/etc/udev/rules.d/99-logitech.rules</tt></strong>");
+        qDebug("<strong><tt>SUBSYSTEM==\"hidraw\", ATTRS{idVendor}==\"%04x\", "
+               "ATTRS{idProduct}==\"%04x\", MODE=\"0666\"</tt></strong>",
+               0x046d, product_id_);
+    }
+#endif
 }
 
 // automatic intensity correction

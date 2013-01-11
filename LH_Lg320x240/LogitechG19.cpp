@@ -30,8 +30,8 @@ LogitechG19::LogitechG19( libusb_context *ctx, libusb_device *usbdev, libusb_dev
     ctx_(ctx),
     usbdev_(usbdev),
     lcdhandle_(0),
-    menukeys_if_number_(0),
     lcd_if_number_(0),
+    menukeys_if_number_(1),
     endpoint_in_(0),
     endpoint_out_(0),
     offline_(false),
@@ -46,15 +46,14 @@ LogitechG19::LogitechG19( libusb_context *ctx, libusb_device *usbdev, libusb_dev
         const struct libusb_endpoint_descriptor *endpoint = 0;
 
         libusb_get_config_descriptor( usbdev_, config_num, &conf_desc );
-
         for(int i=0; i<conf_desc->bNumInterfaces && i<1; i++)
         {
             for (int j=0; j<conf_desc->interface[i].num_altsetting; j++)
             {
 #if 0
-                printf("interface[%d].altsetting[%d]: num endpoints = %d\n",
+                qDebug("interface[%d].altsetting[%d]: num endpoints = %d\n",
                        i, j, conf_desc->interface[i].altsetting[j].bNumEndpoints);
-                printf("   Class.SubClass.Protocol: %02X.%02X.%02X\n",
+                qDebug("   Class.SubClass.Protocol: %02X.%02X.%02X\n",
                        conf_desc->interface[i].altsetting[j].bInterfaceClass,
                        conf_desc->interface[i].altsetting[j].bInterfaceSubClass,
                        conf_desc->interface[i].altsetting[j].bInterfaceProtocol);
@@ -63,9 +62,9 @@ LogitechG19::LogitechG19( libusb_context *ctx, libusb_device *usbdev, libusb_dev
                 {
                     endpoint = & conf_desc->interface[i].altsetting[j].endpoint[k];
 #if 0
-                    printf("       endpoint[%d].address: %02X\n", k, endpoint->bEndpointAddress);
-                    printf("           max packet size: %04X\n", endpoint->wMaxPacketSize);
-                    printf("          polling interval: %02X\n", endpoint->bInterval);
+                    qDebug("       endpoint[%d].address: %02X\n", k, endpoint->bEndpointAddress);
+                    qDebug("           max packet size: %04X\n", endpoint->wMaxPacketSize);
+                    qDebug("          polling interval: %02X\n", endpoint->bInterval);
 #endif
                     if( endpoint->bEndpointAddress & LIBUSB_ENDPOINT_IN )
                         endpoint_in_ = endpoint->bEndpointAddress;
@@ -97,7 +96,7 @@ LogitechG19::~LogitechG19()
 const char* LogitechG19::open()
 {
     int retv = 0;
-    const char * errstr = 0;
+    int cfg = -1;
 
     Q_ASSERT( button_transfer_ == 0 );
     Q_ASSERT( button_completed_ == 1 );
@@ -107,33 +106,48 @@ const char* LogitechG19::open()
     button_transfer_ = 0;
     button_completed_ = 1;
 
-    ASSERT_USB( libusb_open(usbdev_, &lcdhandle_) );
-    if( lcdhandle_ )
+    retv = libusb_open(usbdev_, &lcdhandle_);
+
+    switch(retv)
     {
-        ASSERT_USB( libusb_set_configuration( lcdhandle_, 1 ) );
-        ASSERT_USB( libusb_claim_interface( lcdhandle_, lcd_if_number_ ) );
-        ASSERT_USB( libusb_claim_interface( lcdhandle_, menukeys_if_number_ ) );
-        offline_ = false;
-        button_transfer_ = libusb_alloc_transfer( 0 );
-        libusb_fill_interrupt_transfer(
-                    button_transfer_,
-                    lcdhandle_,
-                    endpoint_in_,
-                    (unsigned char*) &new_buttons_,
-                    sizeof(new_buttons_),
-                    g19_button_cb,
-                    this, 60000
-                    );
-        libusb_submit_transfer( button_transfer_ );
-        button_completed_ = 0;
-        return NULL;
+    case LIBUSB_SUCCESS:
+        Q_ASSERT(lcdhandle_ != 0);
+        if(libusb_get_configuration(lcdhandle_, &cfg) || cfg != 1)
+            libusb_set_configuration(lcdhandle_, 1);
+        retv = libusb_claim_interface(lcdhandle_, lcd_if_number_);
+        if(retv == LIBUSB_SUCCESS)
+        {
+            button_transfer_ = libusb_alloc_transfer( 0 );
+            libusb_fill_interrupt_transfer(
+                        button_transfer_,
+                        lcdhandle_,
+                        endpoint_in_,
+                        (unsigned char*) &new_buttons_,
+                        sizeof(new_buttons_),
+                        g19_button_cb,
+                        this, 500
+                        );
+            libusb_submit_transfer( button_transfer_ );
+            button_completed_ = 0;
+            offline_ = false;
+            return NULL;
+        }
+        libusb_close(lcdhandle_);
+        lcdhandle_ = 0;
+        break;
+    case LIBUSB_ERROR_ACCESS:
+#ifdef Q_OS_LINUX
+        qDebug("Try adding the following line to <strong><tt>/etc/udev/rules.d/99-logitech.rules</tt></strong>");
+        qDebug("<strong><tt>SUBSYSTEM==\"usb\", ATTRS{idVendor}==\"046d\", ATTRS{idProduct}==\"c229\", MODE=\"0666\"</tt></strong>");
+#endif
+        break;
+    default:
+        break;
     }
 
-    offline_ = true;
-    if( retv ) errstr = libusb_error_name( retv );
-    if( errstr == 0 || !*errstr ) errstr = "libusb_open() returned NULL handle";
-    qCritical( "LogitechG19::open() failed: '%s'", errstr );
-    return errstr;
+    Q_ASSERT(lcdhandle_ == 0);
+    qDebug("Failed to open G19: %s", libusb_error_name( retv ));
+    return libusb_error_name( retv );
 }
 
 const char* LogitechG19::close()
@@ -149,6 +163,8 @@ const char* LogitechG19::close()
     }
     if( lcdhandle_ )
     {
+        // libusb_release_interface(lcdhandle_, menukeys_if_number_);
+        libusb_release_interface(lcdhandle_, lcd_if_number_);
         libusb_close( lcdhandle_ );
         lcdhandle_ = 0;
     }
@@ -213,9 +229,8 @@ const char* LogitechG19::render_qimage(QImage *img)
     int len = 0;
     int usberr = 0;
 
-    if( offline_ ) return NULL;
+    if( offline_ || !img ) return NULL;
     if( !lcdhandle_ ) return "G19 not opened";
-    if( !img ) return NULL;
 
     lcd_buffer[0] = 0x02;
     memcpy( lcd_buffer, header, sizeof(header) );
@@ -239,7 +254,7 @@ const char* LogitechG19::render_qimage(QImage *img)
             lcd_buffer,
             sizeof(lcd_buffer),
             &len,
-            1000
+            250
             );
 
     if( usberr || len != sizeof(lcd_buffer) )

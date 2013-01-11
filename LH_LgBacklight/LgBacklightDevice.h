@@ -22,7 +22,6 @@ class LgBacklightDevice
     LH_LgBacklight *parent_;
     bool to_remove_;
     unsigned product_id_;
-    hid_device *hiddev_;
     QByteArray path_;
     QString name_;
     QColor color_;

@@ -55,7 +55,8 @@ class LH_LgBacklight : public LH_QtPlugin
     void scan();
 
 public:
-    virtual const char *userInit();
+    const char *userInit();
+    void userTerm();
 
 public slots:
     void wantRescan();

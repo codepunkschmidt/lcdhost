@@ -9,11 +9,10 @@ class Lg160x43Device : public LH_QtDevice
     Q_OBJECT
 
     bool to_remove_;
-    unsigned product_id_;
-    hid_device *hiddev_;
-    QByteArray path_;
-    QString error_;
     bool offline_;
+    unsigned product_id_;
+    QByteArray path_;
+    QByteArray error_;
 
 public:
     Lg160x43Device( const struct hid_device_info *di, LH_QtPlugin *drv );
@@ -21,6 +20,7 @@ public:
 
     void setRemoval( bool b ) { to_remove_ = b; }
     bool removal() const { return to_remove_; }
+    bool offline() const { return offline_; }
     QByteArray path() const { return path_; }
 
     unsigned productId() const { return product_id_; }
@@ -34,6 +34,10 @@ public:
     const char* close();
 
     const char* render_qimage(QImage *img);
+
+protected:
+    hid_device *lock();
+    void unlock(hid_device *);
 };
 
 #endif // LG160X43DEVICE_H

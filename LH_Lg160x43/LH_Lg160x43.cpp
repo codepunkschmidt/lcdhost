@@ -77,9 +77,15 @@ const char *LH_Lg160x43::userInit()
         FindWindowA( "QWidget", "LCore" ) )
         return "Logitech drivers are loaded";
 #endif
+    hid_init();
     scan();
     timer_.start( 2000, this );
     return NULL;
+}
+
+void LH_Lg160x43::userTerm()
+{
+    hid_exit();
 }
 
 void LH_Lg160x43::scan()
@@ -114,7 +120,7 @@ void LH_Lg160x43::scan()
                     if( d && d->path() == hdi->path )
                     {
                         Q_ASSERT( hdi->product_id == d->productId() );
-                        Q_ASSERT( d->removal() == true );
+                        Q_ASSERT( d->offline() || d->removal() == true );
                         d->setRemoval( false );
                         found = true;
                     }

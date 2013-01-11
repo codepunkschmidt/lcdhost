@@ -47,8 +47,9 @@ class LH_Lg160x43 : public LH_QtPlugin
 
 public:
     LH_Lg160x43() : LH_QtPlugin() {}
-    virtual const char *userInit();
-    virtual void timerEvent(QTimerEvent *) { scan(); }
+    const char *userInit();
+    void userTerm();
+    void timerEvent(QTimerEvent *) { scan(); }
 };
 
 #endif // LH_LG160X43_H

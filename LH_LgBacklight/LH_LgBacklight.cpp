@@ -85,8 +85,14 @@ const char *LH_LgBacklight::userInit()
     connect( rescanbutton_, SIGNAL(changed()), this, SLOT(wantRescan()) );
 #endif
 
+    hid_init();
     scan();
     return NULL;
+}
+
+void LH_LgBacklight::userTerm()
+{
+    hid_exit();
 }
 
 void LH_LgBacklight::scan()

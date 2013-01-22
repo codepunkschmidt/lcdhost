@@ -32,10 +32,6 @@ translator {
     include($$CODELEAP/SimpleTranslator/SimpleTranslator.pri)
 }
 
-hid {
-    include($$LINKDATA/hidapi/HID.pri)
-}
-
 usb {
     include($$LINKDATA/libusb/USB.pri)
 }

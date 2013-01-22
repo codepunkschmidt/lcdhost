@@ -43,6 +43,7 @@ exists($$PWD/PluginsConfig.prf) {
             LCDHOST_BINARIES = $$PWD/../$$RELDEB
     }
 
+    LIBS *= -L$$LCDHOST_BINARIES
     DESTDIR = $$LCDHOST_PLUGINS
 
     LINKDATA = $$PWD/linkdata

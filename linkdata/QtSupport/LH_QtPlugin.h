@@ -98,7 +98,6 @@ public:
     virtual ~LH_QtPlugin() {}
     virtual const lh_class **class_list();
     const lh_object_calltable * objtable() { return & objtable_; }
-    int notify( int code, void *param );
 };
 
 /**

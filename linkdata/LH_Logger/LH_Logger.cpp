@@ -158,7 +158,8 @@ LH_Logger *LH_Logger::lock()
 }
 
 LH_Logger::LH_Logger(const QString &app_name, QObject *parent) :
-    QObject(parent)
+    QObject(parent),
+    filter_count_(0)
 {
     Q_ASSERT(instance_ == 0);
     Q_ASSERT(lh_log_old_handler == 0);
@@ -188,6 +189,7 @@ LH_Logger::~LH_Logger()
     mutex_.lock();
     instance_ = 0;
     mutex_.unlock();
+    qDebug("LH_Logger: %d filtered, %d known", filter_count_, last_seen_.size());
     return;
 }
 
@@ -211,13 +213,25 @@ void LH_Logger::removeOld(int days_old) const
     return;
 }
 
-void LH_Logger::log(QtMsgType type, const QString &msg) const
+void LH_Logger::log(QtMsgType type, const QString &msg)
 {
-    if(msg.isEmpty()) return;
-    // if(msg.startsWith("QGLShader::link")) return;
+    if(msg.isEmpty())
+        return;
 
     time_t t;
     time(&t);
+
+    if(type == QtWarningMsg)
+    {
+        uint v = (uint) t;
+        if(last_seen_.value(msg) + 30 > v)
+        {
+            ++ filter_count_;
+            return;
+        }
+        last_seen_[msg] = v;
+    }
+
     if(struct tm *lt = localtime(&t))
     {
         if(FILE *f = fopen(file_name_.constData(), "a"))

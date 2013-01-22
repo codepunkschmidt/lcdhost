@@ -4,6 +4,7 @@
 #include <QDateTime>
 #include <QMutex>
 #include <QString>
+#include <QHash>
 
 #if (QT_VERSION >= QT_VERSION_CHECK(5, 0, 0))
 typedef QtMessageHandler lh_log_handler_t;
@@ -23,7 +24,7 @@ public:
 
     QString fileName() const;
     void removeOld(int days_old = 30) const;
-    void log(QtMsgType type, const QString &msg) const;
+    void log(QtMsgType type, const QString &msg);
     void unlock() const;
 
 signals:
@@ -36,6 +37,8 @@ protected:
     QString app_name_;
     QString log_path_;
     QByteArray file_name_;
+    QHash<QString, uint> last_seen_;
+    int filter_count_;
 };
 
 QString lh_data_dir();

@@ -1,80 +1,59 @@
 
-#include <QDebug>
 #include "LgBacklightDevice.h"
 #include "LH_LgBacklight.h"
+#include "LH_HidDevice.h"
+#include <QDebug>
 
-#include <errno.h>
+static const int backlightid_ = 7;
 
-LgBacklightDevice::LgBacklightDevice( const struct hid_device_info *di, LH_LgBacklight *parent )
+LgBacklightDevice::LgBacklightDevice(LH_HidDevice *hd, QObject *parent) :
+    QObject(parent),
+    hd_(hd),
+    color_(Qt::transparent)
 {
-    parent_ = parent;
-    name_ = QString::fromWCharArray(di->product_string);
-    // name_ = di->path;
-    to_remove_ = true;
-    product_id_ = di->product_id;
-    path_ = di->path;
-    color_ = QColor(Qt::transparent);
-    backlightid_ = 7;
-    errno = 0;
+    setObjectName(hd_->objectName());
+    color_ = getDeviceColor();
+}
 
-    hid_device *dev = hid_open_path( path_.constData() );
-    if( dev )
+void LgBacklightDevice::setColor(QColor c)
+{
+    if(color_ != c && setDeviceColor(c))
+        emit colorChanged();
+}
+
+QColor LgBacklightDevice::getDeviceColor()
+{
+    if(hd_->online())
     {
-        unsigned char report[256];
-        memset( report, 0, sizeof(report) );
-        report[0] = backlightid_; // hidapi leading byte
-        if( hid_get_feature_report( dev, report, sizeof(report) ) > 0 )
+        QByteArray d(hd_->readFeature(backlightid_));
+        if(d.size() > 3)
         {
+            const unsigned char *report = (const unsigned char *) d.constData();
             int r, g, b;
             r = report[1] * 255 / 140;
             if( r > 255 ) r = 255;
             g = report[2];
             b = report[3] * 255 / 150;
             if( b > 255 ) b = 255;
-            color_ = QColor( r, g, b );
-            to_remove_ = false;
-            // qDebug() << "LgBacklightDevice:" << path_.constData() << r << g << b;
+            return QColor(r, g, b);
         }
-        else
-            qDebug() << "LgBacklightDevice can't get feature report for"
-                     << name_ << "at" << path_.constData() << strerror(errno);
-        hid_close( dev );
     }
-    else
-    {
-        qDebug() << "LgBacklightDevice can't open"
-                 << name_ << "at" << path_.constData() << strerror(errno);
-    }
-#ifdef Q_OS_LINUX
-    if(errno == EACCES)
-    {
-        qDebug("Try adding the following line to <strong><tt>/etc/udev/rules.d/99-logitech.rules</tt></strong>");
-        qDebug("<strong><tt>SUBSYSTEM==\"hidraw\", ATTRS{idVendor}==\"%04x\", "
-               "ATTRS{idProduct}==\"%04x\", MODE=\"0666\"</tt></strong>",
-               0x046d, product_id_);
-    }
-#endif
+    return QColor(Qt::transparent);
 }
 
 // automatic intensity correction
-void LgBacklightDevice::setColor( QColor c )
+bool LgBacklightDevice::setDeviceColor(const QColor &c)
 {
-    color_ = c;
-    hid_device *dev = hid_open_path( path_.constData() );
-    if( dev )
+    if(hd_->online())
     {
         unsigned char report[5];
         report[0] = backlightid_;
-        report[1] = 140 * color_.red() / 255; // 140
-        report[2] = color_.green(); // 255
-        report[3] = 150 * color_.blue() / 255; // 150
+        report[1] = 140 * c.red() / 255; // 140
+        report[2] = c.green(); // 255
+        report[3] = 150 * c.blue() / 255; // 150
         report[4] = 0;
-        int retv = hid_send_feature_report( dev, report, sizeof(report) );
-        if( retv != sizeof(report) )
-            qDebug() << "Backlight::setColor() failed for" << name() << "only" << retv << "bytes sent";
-        hid_close( dev );
+        if(hd_->writeFeature(QByteArray((const char *)report, 5)) > 0)
+            return true;
     }
-    else
-        qDebug() << "Backlight::setColor() failed to open" << name() << "at" << path_.constData() <<
-                    strerror(errno);
+    return false;
 }

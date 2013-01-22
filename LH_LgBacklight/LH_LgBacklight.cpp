@@ -32,9 +32,10 @@
   POSSIBILITY OF SUCH DAMAGE.
   */
 
-#include <QFile>
-#include <QDebug>
 #include "LH_LgBacklight.h"
+#include "LgBacklightDevice.h"
+#include "LH_HidDevice.h"
+#include <QDebug>
 
 LH_PLUGIN(LH_LgBacklight)
 
@@ -78,130 +79,87 @@ const char *LH_LgBacklight::userInit()
     allcolor_->setLink("=/plugin/backlight/all/set");
     connect( allcolor_, SIGNAL(changed()), this, SLOT(setAllColor()) );
 
-#ifdef lh_cb_reload
-    rescanbutton_ = new LH_Qt_QString( this, "Rescan",tr("Reload to scan for new devices"),
-                                       LH_FLAG_LAST|LH_FLAG_HIDETITLE|LH_FLAG_NOSAVE|LH_FLAG_NOSOURCE|LH_FLAG_NOSINK,
-                                       lh_type_string_button );
-    connect( rescanbutton_, SIGNAL(changed()), this, SLOT(wantRescan()) );
-#endif
-
-    hid_init();
-    scan();
-    return NULL;
+    LH_HidDevice::subscribe(this, SLOT(onlineChanged(LH_HidDevice*,bool)));
+    return 0;
 }
 
 void LH_LgBacklight::userTerm()
 {
-    hid_exit();
 }
 
-void LH_LgBacklight::scan()
+void LH_LgBacklight::onlineChanged(LH_HidDevice *hd, bool b)
 {
-    // Maintain list of available devices
-    foreach( LgBacklightDevice *d, devs_ ) d->setRemoval( true );
-
-    if( struct hid_device_info *hdi_head = hid_enumerate( 0x0, 0x0 ) )
+    Q_UNUSED(b);
+    LgBacklightDevice *bld = 0;
+    if(hd->vendor_id() == 0x046d)
     {
-        for( struct hid_device_info *hdi = hdi_head; hdi; hdi = hdi->next )
+        switch(hd->product_id())
         {
-            if( hdi->vendor_id == 0x046d )
-            {
-                switch( hdi->product_id )
-                {
-                // case 0xC222: /* G15 has no backlight control */
-                case 0xC225: /* G11 */
-                case 0xC227: /* G15v2 */
-                case 0xC21C: /* G13 */
-                case 0xC22D: /* G510 without audio */
-                case 0xC22E: /* G510 with audio */
-                case 0xC229: /* G19 */
-                    {
-                        bool found = false;
-                        foreach( LgBacklightDevice *d, devs_ )
-                        {
-                            if( d->path() == hdi->path )
-                            {
-                                d->setRemoval( false );
-                                found = true;
-                                break;
-                            }
-                        }
-                        if( !found ) devs_.append( new LgBacklightDevice(hdi,this) );
-                    }
-                    break;
-                case 0x0A07: /* Z10 */
-                default:
-                    break;
-                }
-            }
+        case 0xC225: /* G11 */
+        case 0xC227: /* G15v2 */
+        case 0xC21C: /* G13 */
+        case 0xC22D: /* G510 without audio */
+        case 0xC22E: /* G510 with audio */
+        case 0xC229: /* G19 */
+            bld = findChild<LgBacklightDevice *>(hd->objectName());
+            if(bld == 0)
+                bld = new LgBacklightDevice(hd, this);
+            break;
         }
-        hid_free_enumeration( hdi_head );
     }
-    else
-        qDebug() << "LH_LgBacklight: hid_enumerate() failed";
+    if(bld)
+        refreshList();
+}
 
+void LH_LgBacklight::refreshList()
+{
+    LgBacklightDevice *current_bld = 0;
+    if(devselect_->index() >= 0 && devselect_->index() < dev_list_.size())
+        current_bld = dev_list_.value(devselect_->index());
 
-    QString current = devselect_->valueText();
+    dev_list_.clear();
+    foreach(LgBacklightDevice *bld, findChildren<LgBacklightDevice *>())
+        if(bld->hd()->online())
+            dev_list_.append(bld);
+
+    if(! dev_list_.contains(current_bld))
+        current_bld = dev_list_.isEmpty() ? 0 : dev_list_.first();
+
+    int bld_index = 0;
     QStringList sl;
-    foreach( LgBacklightDevice *d, devs_ )
+    foreach(LgBacklightDevice *bld, dev_list_)
     {
-        if( d->removal() )
-        {
-            devs_.removeAll(d);
-            delete d;
-        }
-        else
-            sl.append( d->name() );
+        if(bld == current_bld)
+            bld_index = sl.size();
+        sl.append(bld->hd()->product_text());
     }
 
-    devselect_->setVisible( devs_.size() > 0 );
-    devcolor_->setVisible( devs_.size() > 0 );
+    devselect_->setVisible(sl.size() > 0);
+    devcolor_->setVisible(sl.size() > 0);
     devselect_->setList(sl);
-    devselect_->setValue(current);
-
-    if( devselect_->index() < 0 && devselect_->list().size() > 0 )
-        devselect_->setIndex(0);
-
-    changeDev(); // make sure color value is up-to-date
+    devselect_->setIndex(bld_index);
+    devcolor_->setValue(current_bld ? current_bld->color() : QColor(Qt::transparent));
 
     return;
 }
 
 void LH_LgBacklight::changeDev()
 {
-    foreach( LgBacklightDevice *d, devs_ )
-    {
-        if( d->name() == devselect_->valueText() )
-        {
-            devcolor_->setValue( d->color() );
-            break;
-        }
-    }
+    if(devselect_->index() >= 0 && devselect_->index() < dev_list_.size())
+        devcolor_->setValue(dev_list_.at(devselect_->index())->color());
 }
 
 void LH_LgBacklight::changeColor()
 {
-    foreach( LgBacklightDevice *d, devs_ )
-    {
-        if( d->name() == devselect_->valueText() )
-        {
-            d->setColor( devcolor_->value() );
-            break;
-        }
-    }
+    if(devselect_->index() >= 0 && devselect_->index() < dev_list_.size())
+        if(LgBacklightDevice *bld = dev_list_.at(devselect_->index()))
+            if(bld->setDeviceColor(devcolor_->value()))
+                bld->setColor(devcolor_->value());
 }
 
 void LH_LgBacklight::setAllColor()
 {
-    foreach( LgBacklightDevice *d, devs_ )
-    {
-        d->setColor( allcolor_->value() );
-    }
-}
-
-void LH_LgBacklight::wantRescan()
-{
-#ifdef lh_cb_reload
-    callback( lh_cb_reload, (void*) "rescan for devices" );
-#endif
+    foreach(LgBacklightDevice *bld, dev_list_)
+        if(bld->setDeviceColor(allcolor_->value()))
+            bld->setColor(allcolor_->value());
 }

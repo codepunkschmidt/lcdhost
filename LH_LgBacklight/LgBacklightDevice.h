@@ -4,9 +4,8 @@
 #include <QString>
 #include <QByteArray>
 #include <QColor>
-#include "hidapi.h"
 
-class LH_LgBacklight;
+class LH_HidDevice;
 
 typedef struct LgBacklightReport_
 {
@@ -17,26 +16,25 @@ typedef struct LgBacklightReport_
     uchar Blue;
 } LgBacklightReport;
 
-class LgBacklightDevice
+class LgBacklightDevice : public QObject
 {
-    LH_LgBacklight *parent_;
-    bool to_remove_;
-    unsigned product_id_;
-    QByteArray path_;
-    QString name_;
+    Q_OBJECT
+
+    LH_HidDevice *hd_;
     QColor color_;
-    int backlightid_;
 
 public:
-    LgBacklightDevice( const struct hid_device_info *di, LH_LgBacklight *parent );
+    LgBacklightDevice(LH_HidDevice *hd, QObject *parent);
 
-    QString name() const { return name_; }
+    LH_HidDevice *hd() const { return hd_; }
     QColor color() const { return color_; }
-    void setColor( QColor c );
-    void setRemoval( bool b ) { to_remove_ = b; }
-    bool removal() const { return to_remove_; }
-    QByteArray path() const { return path_; }
-    unsigned productId() const { return product_id_; }
+    void setColor(QColor c);
+
+    QColor getDeviceColor();
+    bool setDeviceColor(const QColor &c);
+
+signals:
+    void colorChanged();
 };
 
 #endif // LGBACKLIGHTDEVICE_H

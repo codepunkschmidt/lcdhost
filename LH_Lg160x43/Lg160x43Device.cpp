@@ -1,8 +1,8 @@
 
-#include <QImage>
-#include <QDebug>
 #include "Lg160x43Device.h"
-#include <errno.h>
+#include "LH_HidDevice.h"
+
+#include <QImage>
 
 enum
 {
@@ -13,83 +13,27 @@ enum
         G15_BUFFER_LEN = 0x03e0	/* total length of the HID output report */
 };
 
-Lg160x43Device::Lg160x43Device( const struct hid_device_info *di, LH_QtPlugin *drv ) :
+Lg160x43Device::Lg160x43Device(LH_HidDevice *hi, LH_QtPlugin *drv) :
     LH_QtDevice(drv),
-    to_remove_(false),
-    offline_(true),
-    product_id_(di->product_id),
-    path_(di->path)
+    hd_(hi)
 {
-    char buf[64];
-    qsnprintf( buf, sizeof(buf), "Lg160x43-%04x:%04x:%04x",
-               di->vendor_id, di->product_id, di->release_number );
-    QByteArray dev_id( buf );
-    if( di->serial_number && *(di->serial_number) )
-    {
-        dev_id.append( '-' );
-        dev_id.append( QString::fromWCharArray(di->serial_number).toLatin1() );
-    }
-    setDevid( dev_id );
-    setName( QString::fromWCharArray(di->product_string) );
+    setDevid(hi->devid());
+    setName(hi->product_text());
     setSize(160,43);
     setDepth(1);
     setAutoselect(true);
+    connect(hd_, SIGNAL(onlineChanged(bool)), this, SLOT(onlineChanged(bool)));
     arrive();
 }
 
-Lg160x43Device::~Lg160x43Device()
+void Lg160x43Device::onlineChanged(bool b)
 {
-    close();
-    leave();
-}
-
-const char* Lg160x43Device::open()
-{
-    if(hid_device *hd = lock())
+    if(hd_ && ! b)
     {
-        unlock(hd);
-        return NULL;
+        hd_ = 0;
+        leave();
+        deleteLater();
     }
-    return offline_ ? NULL : error_.constData();
-}
-
-const char* Lg160x43Device::close()
-{
-    return NULL;
-}
-
-hid_device *Lg160x43Device::lock()
-{
-    error_.clear();
-    errno = 0;
-    if(hid_device *hd = hid_open_path( path_.constData() ))
-    {
-        offline_ = false;
-        return hd;
-    }
-    error_.append("Failed to open ");
-    error_.append(path_);
-    if(errno)
-    {
-        error_.append(": ");
-        error_.append(strerror(errno));
-    }
-#ifdef Q_OS_LINUX
-    if(errno == EACCES)
-    {
-        qDebug("Try adding the following line to <strong><tt>/etc/udev/rules.d/99-logitech.rules</tt></strong>");
-        qDebug("<strong><tt>SUBSYSTEM==\"hidraw\", ATTRS{idVendor}==\"%04x\", "
-               "ATTRS{idProduct}==\"%04x\", MODE=\"0666\"</tt></strong>",
-               0x046d, product_id_);
-    }
-#endif
-    return 0;
-}
-
-void Lg160x43Device::unlock(hid_device *hd)
-{
-    if(hd)
-        hid_close(hd);
 }
 
 static void make_output_report(unsigned char *lcd_buffer, unsigned char const *data)
@@ -133,35 +77,19 @@ static void make_output_report(unsigned char *lcd_buffer, unsigned char const *d
 
 const char* Lg160x43Device::render_qimage(QImage *img)
 {
-    int retv;
-    unsigned char buffer[ G15_BUFFER_LEN ];
-
-    if( !img ) return NULL;
-    if( offline_ ) return NULL;
-    if(hid_device *hd = lock())
+    if(img && hd_ && hd_->online())
     {
-        if( img->depth() == 1 ) make_output_report( buffer, img->bits() );
+        unsigned char buffer[G15_BUFFER_LEN];
+        if( img->depth() == 1 )
+            make_output_report( buffer, img->bits() );
         else
         {
             QImage tmp = img->convertToFormat(QImage::Format_Mono,Qt::ThresholdDither|Qt::NoOpaqueDetection);
             make_output_report( buffer, tmp.bits() );
         }
 
-        errno = 0;
-        retv = hid_write( hd, buffer, sizeof(buffer) );
-        if( retv != sizeof(buffer) )
-        {
-            error_.clear();
-            error_.append(path_);
-            error_.append(": hid_write() error: ");
-            error_.append(strerror(errno));
-        }
-        unlock(hd);
+        hd_->write(QByteArray((char*)buffer, sizeof(buffer)));
     }
 
-    if(error_.isEmpty())
-        return NULL;
-    offline_ = true;
-    return error_.constData();
+    return 0;
 }
-

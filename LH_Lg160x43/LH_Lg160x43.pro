@@ -1,9 +1,11 @@
 TARGET = LH_Lg160x43
 TEMPLATE = lib
 DEFINES += LG160X43_LIBRARY
-CONFIG += device hid wow64
+CONFIG += device wow64
 
 include(../Plugins.pri)
+
+LIBS *= -llh_hidapi
 
 SOURCES += \
     $$PLUGIN_SOURCES \

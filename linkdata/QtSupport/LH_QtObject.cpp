@@ -111,40 +111,25 @@ void LH_QtObject::build_object_calltable( lh_object_calltable *ct )
     return;
 }
 
-LH_QtObject::LH_QtObject( LH_QtObject *parent ) : QObject( parent ), cb_(0), cb_id_(0), state_(0)
+LH_QtObject::LH_QtObject( LH_QtObject *parent ) :
+    QObject(parent),
+    cb_(0),
+    cb_id_(0),
+    state_(0)
 {
-    if( parent )
+    if(parent)
     {
+        Q_ASSERT(parent->state_ == 0 || parent->state_->size == sizeof(lh_systemstate));
         cb_ = parent->cb_;
         state_ = parent->state_;
     }
 }
 
-void LH_QtObject::warnings( QByteArray text )
+void LH_QtObject::callback( lh_callbackcode_t code, void *param ) const
 {
-    static QList<QByteArray> list_;
-    if( text.isEmpty() )
-    {
-        if( ! list_.isEmpty() )
-        {
-            foreach( const QByteArray & s, list_ )
-                qWarning( "%s", s.constData() );
-            list_.clear();
-        }
-    }
-    else
-    {
-         QList<QByteArray>::iterator it = qLowerBound( list_.begin(), list_.end(), text );
-         if( it != list_.end() && (*it) == text ) return;
-         Q_ASSERT( ! list_.contains( text ) );
-         list_.insert( it, text );
-    }
+    if( cb_ )
+        cb_( cb_id_, this, code, param );
     return;
-}
-
-void LH_QtObject::warn( QByteArray s )
-{
-    warnings( s.prepend(": ").prepend( metaObject()->className() ) );
 }
 
 const char *LH_QtObject::init( lh_callback_t cb, int cb_id, const char *name, const lh_systemstate* state )

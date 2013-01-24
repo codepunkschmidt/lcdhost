@@ -13,9 +13,10 @@ enum
         G15_BUFFER_LEN = 0x03e0	/* total length of the HID output report */
 };
 
-Lg160x43Device::Lg160x43Device(LH_HidDevice *hi, LH_QtPlugin *drv) :
+Lg160x43Device::Lg160x43Device(LH_HidDevice *hi, int output_report_id, LH_QtPlugin *drv) :
     LH_QtDevice(drv),
-    hd_(hi)
+    hd_(hi),
+    output_report_id_((unsigned char)output_report_id)
 {
     setDevid(hi->objectName());
     setName(hi->product_text());
@@ -42,8 +43,6 @@ static void make_output_report(unsigned char *lcd_buffer, unsigned char const *d
     unsigned int base_offset = 0;
 
     memset( lcd_buffer, 0, G15_LCD_OFFSET );
-    lcd_buffer[0] = 0x03;
-
     for( int row=0; row<6; ++row )
     {
         for( int col=0; col<G15_LCD_WIDTH; ++col)
@@ -87,10 +86,8 @@ const char* Lg160x43Device::render_qimage(QImage *img)
             QImage tmp = img->convertToFormat(QImage::Format_Mono,Qt::ThresholdDither|Qt::NoOpaqueDetection);
             make_output_report( buffer, tmp.bits() );
         }
-
-        if(hd_->write(QByteArray((char*)buffer, sizeof(buffer))) < 0)
-            return hd_->error();
+        buffer[0] = output_report_id_;
+        hd_->write(QByteArray((char*)buffer, sizeof(buffer)));
     }
-
-    return 0;
+    return hd_->error();
 }

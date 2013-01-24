@@ -86,7 +86,7 @@ void LH_Lg160x43::onlineChanged(LH_HidDevice *hd, bool b)
         case 0xC21C: /* G13 */
         case 0xC22D: /* G510 without audio */
         case 0xC22E: /* G510 with audio */
-            new Lg160x43Device(hd, this);
+            new Lg160x43Device(hd, 3, this);
             break;
         }
     }

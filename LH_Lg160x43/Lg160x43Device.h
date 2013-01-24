@@ -10,9 +10,10 @@ class Lg160x43Device : public LH_QtDevice
     Q_OBJECT
 
     LH_HidDevice *hd_;
+    unsigned char output_report_id_;
 
 public:
-    Lg160x43Device(LH_HidDevice *hi, LH_QtPlugin *drv = 0);
+    Lg160x43Device(LH_HidDevice *hi, int output_report_id, LH_QtPlugin *drv = 0);
 
     const char* open() { return NULL; }
     const char* render_argb32(int,int,const void*) { return NULL; }

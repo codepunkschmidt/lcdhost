@@ -89,5 +89,5 @@ const char* Lg160x43Device::render_qimage(QImage *img)
         buffer[0] = output_report_id_;
         hd_->write(QByteArray((char*)buffer, sizeof(buffer)));
     }
-    return hd_->error();
+    return 0;
 }

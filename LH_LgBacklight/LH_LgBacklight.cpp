@@ -119,8 +119,10 @@ void LH_LgBacklight::refreshList()
 
     dev_list_.clear();
     foreach(LgBacklightDevice *bld, findChildren<LgBacklightDevice *>())
+    {
         if(bld->hd()->online())
             dev_list_.append(bld);
+    }
 
     if(! dev_list_.contains(current_bld))
         current_bld = dev_list_.isEmpty() ? 0 : dev_list_.first();

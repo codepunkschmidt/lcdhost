@@ -17,7 +17,7 @@ Lg160x43Device::Lg160x43Device(LH_HidDevice *hi, LH_QtPlugin *drv) :
     LH_QtDevice(drv),
     hd_(hi)
 {
-    setDevid(hi->devid());
+    setDevid(hi->objectName());
     setName(hi->product_text());
     setSize(160,43);
     setDepth(1);
@@ -88,7 +88,8 @@ const char* Lg160x43Device::render_qimage(QImage *img)
             make_output_report( buffer, tmp.bits() );
         }
 
-        hd_->write(QByteArray((char*)buffer, sizeof(buffer)));
+        if(hd_->write(QByteArray((char*)buffer, sizeof(buffer))) < 0)
+            return hd_->error();
     }
 
     return 0;

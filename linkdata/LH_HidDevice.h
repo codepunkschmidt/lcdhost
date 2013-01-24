@@ -24,10 +24,10 @@ public:
     QString product_text() const { return product_text_; }
     int usage_page() const { return usage_page_; }
     int usage() const { return usage_; }
-    bool online() const { return online_; }
-    QString error() const { return error_; }
-    QString devid() const { return devid_; }
+    const char *error() const { return error_.constData(); }
+    int errorCount() const { return error_count_; }
 
+    bool online();
     QByteArray read(int max_size = 256);
     int write(const QByteArray &report);
     QByteArray readFeature(int n, int max_size = 256);
@@ -50,6 +50,7 @@ protected:
             int usage_page,
             int usage,
             QObject *parent = 0);
+    void setError(const QString &text);
 
     void *handle_;
     bool unused_;
@@ -63,8 +64,8 @@ protected:
     QString product_text_;
     int usage_page_;
     int usage_;
-    QString error_;
-    QString devid_;
+    QByteArray error_; // local 8 bit
+    int error_count_;
 };
 
 #endif // LH_HIDDEVICE_H

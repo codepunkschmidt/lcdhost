@@ -151,7 +151,7 @@ public:
         jobject.insert("range", rangeMap);
 
 
-        return QString(Json::serialize(jobject));
+        return QString::fromUtf8(Json::serialize(jobject));
     }
 
     QString getState(QStringList mycoords, bool &newSelected, bool &newActive)

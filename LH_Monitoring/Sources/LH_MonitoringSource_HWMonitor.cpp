@@ -52,7 +52,7 @@ bool LH_MonitoringSource_HWMonitor::doUpdate()
             QString units = ""; QString type="Other";
 
             if(keyType=="F") {units="rpm"; type = "Fan Speed";}
-            if(keyType=="T") {units="\176C"; type = "Temperature";}
+            if(keyType=="T") {units="°C"; type = "Temperature";}
             if(keyType=="P") {units="W"; type = "Powers";}
             if(keyType=="V") {units="V"; type = "Voltage";}
 
@@ -61,7 +61,7 @@ bool LH_MonitoringSource_HWMonitor::doUpdate()
             if(!aggGroups.contains(QString("%1|~>|%2").arg(type).arg(groupName)))
                 aggGroups.append(QString("%1|~>|%2").arg(type).arg(groupName));
 
-            updateValue(type,groupName,keyName,val,SensorDefinition(units));
+            updateValue(type,groupName,keyName,val,(SensorDefinition){units});
         }
         foreach(QString aggGroup, aggGroups)
         {

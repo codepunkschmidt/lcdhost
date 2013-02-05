@@ -17,6 +17,8 @@ macx-g++|linux-g++-64:exists("$(HOME)/.ccache") {
 
 contains(QT, gui): greaterThan(QT_MAJOR_VERSION, 4): QT *= widgets
 
+win32-msvc2010: DEFINES *= _CRT_SECURE_NO_WARNINGS
+
 exists($$PWD/PluginsConfig.prf) {
     CONFIG(debug, debug|release):RELDEB = Debug
     else:RELDEB = Release

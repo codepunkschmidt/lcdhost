@@ -3,7 +3,7 @@
 #include "json.h"
 #include <QDebug>
 #include <algorithm>
-#include <float.h>
+#include <limits>
 #include <typeinfo>
 #include <QVariant>
 
@@ -12,7 +12,7 @@ LH_MonitoringSource::LH_MonitoringSource(LH_QtObject *parent, QString appName, b
     appName_ = appName;
     dataAvailable_ = false;
     alwaysShowAllSelectors_ = alwaysShowAllSelectors;
-    NA_ = OptionalValue();
+    NA_ = (OptionalValue){ false, 0 };
     pollTimer_.start(1000,this);
 }
 
@@ -62,7 +62,7 @@ void LH_MonitoringSource::clearSensors()
 // updateValue: Force the existance of the type.group.item, then update the value via updateValueItem
 void LH_MonitoringSource::updateValue(QString type, QString group, QString item, QVariant val)
 {
-    updateValue(type, group, item, val, SensorDefinition("", minmax(NA_, NA_), NA_), false, false);
+    updateValue(type, group, item, val, (SensorDefinition) { "", (minmax){NA_, NA_}, NA_ }, false, false);
 }
 void LH_MonitoringSource::updateValue(QString type, QString group, QString item, QVariant val, SensorDefinition def)
 {
@@ -173,7 +173,7 @@ void LH_MonitoringSource::updateValueItem(QString key, QVariant val, QMetaType::
         {
         case QMetaType::Float:
             si = new LH_Qt_float(obj, fieldName, val.toFloat(),
-                                 FLT_MIN, FLT_MAX,
+                                 std::numeric_limits<float>::min(), std::numeric_limits<float>::max(),
                                  LH_FLAG_NOSAVE_LINK | LH_FLAG_NOSAVE_DATA | LH_FLAG_NOSINK | LH_FLAG_HIDDEN);
             break;
         case QMetaType::Bool:
@@ -183,7 +183,7 @@ void LH_MonitoringSource::updateValueItem(QString key, QVariant val, QMetaType::
         case QMetaType::Int:
         case QMetaType::UInt:
             si = new LH_Qt_int(obj, fieldName, val.toInt(),
-                               INT_MIN, INT_MAX,
+                               std::numeric_limits<int>::min(), std::numeric_limits<int>::max(),
                                LH_FLAG_NOSAVE_LINK | LH_FLAG_NOSAVE_DATA | LH_FLAG_NOSINK | LH_FLAG_HIDDEN);
             break;
         case QMetaType::QString:

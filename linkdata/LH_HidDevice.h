@@ -5,9 +5,15 @@
 #include <QByteArray>
 #include <QString>
 
+#if defined(LH_HID_LIBRARY)
+# define LH_HID_EXPORT Q_DECL_EXPORT
+#else
+# define LH_HID_EXPORT Q_DECL_IMPORT
+#endif
+
 class LH_HidWorker;
 
-class LH_HidDevice : public QObject
+class LH_HID_EXPORT LH_HidDevice : public QObject
 {
     Q_OBJECT
 

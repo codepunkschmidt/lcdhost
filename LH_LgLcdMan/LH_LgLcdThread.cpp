@@ -96,7 +96,7 @@ void LH_LgLcdThread::setQVGA( QImage img )
         return;
     }
 
-    Q_ASSERT( img.numBytes() == sizeof( qvga_bm.bmp_qvga32.pixels ) );
+    // Q_ASSERT( img.byteCount() == sizeof( qvga_bm.bmp_qvga32.pixels ) );
 
     qvga_bm.bmp_qvga32.hdr.Format = LGLCD_BMP_FORMAT_QVGAx32;
     memcpy( qvga_bm.bmp_qvga32.pixels,

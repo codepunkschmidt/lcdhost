@@ -125,7 +125,7 @@ const char* LogitechG19::open()
                         (unsigned char*) &new_buttons_,
                         sizeof(new_buttons_),
                         g19_button_cb,
-                        this, 500
+                        this, 60000
                         );
             libusb_submit_transfer( button_transfer_ );
             button_completed_ = 0;

@@ -59,7 +59,7 @@ void LogitechG19Thread::run()
                 if( g19dev )
                 {
                     int retv = LIBUSB_SUCCESS;
-                    struct timeval tv = { 0, 1000*100 };
+                    struct timeval tv = { 0, 1000*500 };
                     LogitechG19 *the_g19 = new LogitechG19( ctx, g19dev, &dd );
                     the_g19->arrive();
                     while( !time_to_die_ && ! the_g19->offline() )

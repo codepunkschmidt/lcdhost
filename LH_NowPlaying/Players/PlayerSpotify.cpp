@@ -104,7 +104,7 @@ void CPlayerSpotify::UpdateData()
                         QString qtitle = QString::fromStdWString(title);
                         int pos = -1;
                         while(pos++ < qtitle.length())
-                            if((int)qtitle.at(pos).toAscii() == 0) break;
+                            if((int)qtitle.at(pos).toLatin1() == 0) break;
                         if(pos >= qtitle.length()) pos = -1; else pos--;
 
                         //std::wstring::size_type pos = title.find(L" – ");

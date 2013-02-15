@@ -4,7 +4,7 @@ DEFINES += LGBACKLIGHT_LIBRARY
 
 include(../Plugins.pri)
 
-LIBS *= -llh_hidapi
+LIBS *= -llh_hid
 
 SOURCES += \
     $$PLUGIN_SOURCES \

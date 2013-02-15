@@ -5,7 +5,7 @@ CONFIG += device wow64
 
 include(../Plugins.pri)
 
-LIBS *= -llh_hidapi
+LIBS *= -llh_hid
 
 SOURCES += \
     $$PLUGIN_SOURCES \

@@ -1,10 +1,10 @@
 #include "LH_MonitoringSource_Fraps.h"
 #include "LH_MonitoringTypes_Fraps.h"
 
-LH_MonitoringSource_Fraps::LH_MonitoringSource_Fraps(LH_QtObject *parent) :
-    LH_MonitoringSource(parent, "Fraps"),
-    fps_("fps")
-{}
+LH_MonitoringSource_Fraps::LH_MonitoringSource_Fraps(LH_QtObject *parent): LH_MonitoringSource(parent, "Fraps")
+{
+    fps_ = (SensorDefinition){ "fps", (minmax){ NA_, NA_ }, NA_ };
+}
 
 FRAPS_SHARED_DATA *(WINAPI *FrapsSharedData) ();
 bool LH_MonitoringSource_Fraps::doUpdate()

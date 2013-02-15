@@ -53,7 +53,7 @@ public:
     {
         item_.data.f = value;
         item_.param.range.min = 0.0;
-        item_.param.range.max = 99.99;
+        item_.param.range.max = (float)99.99;
     }
 
     void setMinimum( float min )

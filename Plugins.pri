@@ -76,12 +76,14 @@ exists($$PWD/PluginsConfig.prf) {
 
     include($$PWD/PluginsConfig.prf)
 
-    contains( TEMPLATE, lib ): exists($$PWD/../lcdhost-private.pem) {
-        QMAKE_POST_LINK = \
-            $$LCDHOST_BINARIES/SignPlugin -c -o \
-            $$PWD/../lcdhost-private.pem \
-            http://www.linkdata.se/downloads/software/lcdhost/lcdhost-public.pem \
-            $$DESTDIR/$$TARGET
+    contains(TEMPLATE, lib) {
+        exists($$PWD/../lcdhost-private.pem) {
+            QMAKE_POST_LINK = \
+                $$LCDHOST_BINARIES/SignPlugin -c -o \
+                $$PWD/../lcdhost-private.pem \
+                http://www.linkdata.se/downloads/software/lcdhost/lcdhost-public.pem \
+                $$DESTDIR/$$TARGET
+        }
     }
 } else {
     CONFIG += lh_api5_plugin
@@ -94,7 +96,8 @@ exists($$PWD/PluginsConfig.prf) {
     translator: include($$CODELEAP/SimpleTranslator/SimpleTranslator.pri)
 }
 
-contains( TEMPLATE, lib ) {
+contains(TEMPLATE, lib) {
+    macx: QMAKE_LFLAGS_SONAME = -Wl,-install_name,@rpath/
     exists($$PWD/../sign.local) {
         QMAKE_POST_LINK = \
             $$LCDHOST_BINARIES/SignPlugin -c -o \

@@ -330,9 +330,9 @@ static const char *lh_state_key(int w)
 
     switch( w )
     {
-    case 0: snprintf(core_str,sizeof(core_str),"cpu_core_system_%d",core); break;
-    case 1: snprintf(core_str,sizeof(core_str),"cpu_core_user_%d",core); break;
-    case 2: snprintf(core_str,sizeof(core_str),"cpu_core_total_%d",core); break;
+    case 0: qsnprintf(core_str,sizeof(core_str),"cpu_core_system_%d",core); break;
+    case 1: qsnprintf(core_str,sizeof(core_str),"cpu_core_user_%d",core); break;
+    case 2: qsnprintf(core_str,sizeof(core_str),"cpu_core_total_%d",core); break;
     }
 
     return core_str;

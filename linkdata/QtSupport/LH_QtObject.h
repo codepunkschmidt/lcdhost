@@ -57,7 +57,6 @@ class LH_QtObject : public QObject
     QVector<lh_setup_item*> setup_item_vector_;
 
 public:
-    static void warnings( QByteArray text = QByteArray() );
     static void set_plugin( LH_QtPlugin *p ) { plugin_ = p; }
     static LH_QtPlugin *plugin() { return plugin_; }
     static void build_object_calltable( lh_object_calltable *ct );
@@ -67,11 +66,7 @@ public:
 
     LH_QtObject *parent() const { return static_cast<LH_QtObject *>( QObject::parent() ); }
 
-    void callback( lh_callbackcode_t code, void *param ) const
-    {
-        if( cb_ ) cb_( cb_id_, this, code, param );
-    }
-    void warn( QByteArray s );
+    void callback( lh_callbackcode_t code, void *param ) const;
 
     // These implement the lh_object_callback functions. If you reimplement them, make
     // sure to call the base class copy of them and preserve or modify the return value

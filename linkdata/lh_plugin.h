@@ -228,7 +228,7 @@ typedef struct lh_signature_t
     int size; /* sizeof(lh_signature) */
 } lh_signature;
 
-#define LH_SIGNATURE_MARKER {7,98,120,242,114,174,176,97,178,246,229,116,243,34,2,92}
+#define LH_SIGNATURE_MARKER {'\x07', '\x62', '\x78', '\xf2', '\x72', '\xae', '\xb0', '\x61', '\xb2', '\xf6', '\xe5', '\x74', '\xf3', '\x22', '\x02', '\x5c' }
 
 /* Declare a signature area - don't mess with the constants, */
 /* they're there so that SignPlugin can find the right spot. */
@@ -577,8 +577,10 @@ extern "C" {
 #endif
 
 /* Utility functions in lh_plugin.c */
+#if 0
 lh_blob *lh_binaryfile_to_blob( const char *filename ); /* Caller must free() the blob */
 void lh_blob_to_headerfile( lh_blob *blob, const char *filename, const char *varname );
+#endif
 int lh_cpuload( lh_cpudata *from, lh_cpudata *to ); /* Returns average load between those times as permille */
 
 #ifdef __cplusplus

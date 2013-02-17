@@ -306,7 +306,7 @@ void LH_MonitoringSource::updateAggregates(QString type, QString group)
 // reverse: string function to reverse a string, e.g. reverse("String") == "gnirtS"
 QString LH_MonitoringSource::reverse(QString str)
 {
-    QByteArray ba = str.toAscii();
+    QByteArray ba = str.toLatin1();
     char *d = ba.data();
     std::reverse(d, d+str.length());
     return QString(d);

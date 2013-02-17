@@ -1,11 +1,5 @@
 #include "LH_RSSInterface.h"
 
-#include <QDebug>
-#include <QPainter>
-#include <QDesktopServices>
-#include <QNetworkProxyQuery>
-#include <QNetworkReply>
-
 LH_RSSInterface::LH_RSSInterface(LH_QtObject* parent)
 {
     // Hide inherited attributes we don't use

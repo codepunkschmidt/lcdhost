@@ -105,6 +105,7 @@ void LH_QtPlugin_Cursor::changeKeyPresses()
 
 void LH_QtPlugin_Cursor::keyPressed(QString key,int flags,int value)
 {
+    Q_UNUSED(key);
     Q_UNUSED(flags);
     Q_UNUSED(value);
     if( !setup_enable_favourite_shortcut_->value() )

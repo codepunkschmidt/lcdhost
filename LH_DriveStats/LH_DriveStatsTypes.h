@@ -38,7 +38,7 @@ class DriveInfo
 
     bool GetDrivePerformanceInfo()
     {
-        HANDLE hDevice = CreateFileA(QString("\\\\.\\%1:").arg(drive_).toAscii().data(),0,FILE_SHARE_READ|FILE_SHARE_WRITE,NULL,OPEN_EXISTING,0,NULL);
+        HANDLE hDevice = CreateFileA(QString("\\\\.\\%1:").arg(drive_).toLatin1().data(),0,FILE_SHARE_READ|FILE_SHARE_WRITE,NULL,OPEN_EXISTING,0,NULL);
 
         if(hDevice == INVALID_HANDLE_VALUE)
             return false;
@@ -83,6 +83,7 @@ public:
             return false;
     }
 
+
     bool valid()
     {
         return validOld_ && validNew_;
@@ -100,7 +101,7 @@ public:
             TotalBytes_.QuadPart = 0L;
             FreeBytes_.QuadPart = 0L;
 
-            GetDiskFreeSpaceExA(QString("%1:\\").arg(drive_).toAscii().data(), &BytesAvailable, &TotalBytes_, &FreeBytes_);
+            GetDiskFreeSpaceExA(QString("%1:\\").arg(drive_).toLatin1().data(), &BytesAvailable, &TotalBytes_, &FreeBytes_);
         }
         return valid();
     }

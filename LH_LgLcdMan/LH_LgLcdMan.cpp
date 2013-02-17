@@ -74,7 +74,7 @@ char __lcdhostplugin_xml[] =
 
 const char *LH_LgLcdMan::userInit()
 {
-#ifdef Q_WS_WIN
+#ifdef Q_OS_WIN32
     thread_ = new LH_LgLcdCallbackThread(this);
 
     // connected, log logitech version
@@ -116,7 +116,7 @@ const char *LH_LgLcdMan::userInit()
         }
     }
 #endif
-#ifdef Q_WS_MAC
+#ifdef Q_OS_MAC
     thread_ = new LH_LgLcdLegacyThread( this );
 #endif
 
@@ -193,7 +193,7 @@ const char* LH_LgLcdMan::lglcd_Err( int result, const char *filename, unsigned l
     case ERROR_FAILED:                  return "Failed.";
 #endif
 
-#ifdef Q_WS_WIN
+#ifdef Q_OS_WIN32
     case RPC_S_SERVER_UNAVAILABLE:	return "Logitech LCD subsystem is not available.";
     case ERROR_OLD_WIN_VERSION:		return "Attempted to initialize for Windows 9x.";
     case ERROR_NO_SYSTEM_RESOURCES:	return "Not enough system resources.";
@@ -215,12 +215,13 @@ const char* LH_LgLcdMan::lglcd_Err( int result, const char *filename, unsigned l
     case RPC_X_WRONG_PIPE_VERSION:	return "LCDMon does not understand the protocol.";
     }
 
-#ifdef Q_WS_WIN
+#ifdef Q_OS_WIN32
     LPWSTR lpMsgBuf;
     FormatMessageW(FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_FROM_SYSTEM,
                    NULL, result, MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT),
                    (LPWSTR) &lpMsgBuf, 0, NULL);
-    qWarning( "LH_LgLcdMan: Unknown LCD error '%ls' (%x)\n", lpMsgBuf, result );
+    qWarning( "LH_LgLcdMan: %s(%d) Unknown LCD error '%ls' (%x)\n",
+              filename, line, lpMsgBuf, result );
     LocalFree(lpMsgBuf);
 #else
     qWarning( "LH_LgLcdMan: %s(%d) Unknown LCD error %x\n", filename, line, result );

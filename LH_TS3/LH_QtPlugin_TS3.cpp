@@ -205,9 +205,9 @@ responseResult LH_QtPlugin_TS3::parseResult(QString msg)
 {
     QRegExp rx("error id=(\\S+) msg=(\\S+)(?: extra_msg=(\\S+)){0,1}");
     if(rx.indexIn(msg)==-1)
-        return (responseResult){false, false, 0, "", ""};
+        return responseResult();
     else
-        return (responseResult){true, (rx.cap(1)=="0"), (rx.cap(1).toInt()), rx.cap(2).replace("\\s"," "), rx.cap(3).replace("\\s"," ")};
+        return responseResult(true, (rx.cap(1)=="0"), (rx.cap(1).toInt()), rx.cap(2).replace("\\s"," "), rx.cap(3).replace("\\s"," "));
 }
 
 void LH_QtPlugin_TS3::TS3DataReceived()

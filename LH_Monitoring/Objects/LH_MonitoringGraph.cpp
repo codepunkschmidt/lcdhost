@@ -93,9 +93,9 @@ void LH_MonitoringGraph::doInitialize()
     //connect(ui_->setup_unit_selection_, SIGNAL(changed()), SLOT(clearData()) );
 
     if(canGrow())
-        LH_Graph::clear(min(), min()+1, canGrow());
+        LH_Graph::clear(min_val(), min_val()+1, canGrow());
     else
-        LH_Graph::clear(min(), max(), canGrow());
+        LH_Graph::clear(min_val(), max_val(), canGrow());
     updateDataCache();
     updateUnits();
 }
@@ -136,7 +136,7 @@ void LH_MonitoringGraph::configChanged()  {
 
 void LH_MonitoringGraph::clearData()
 {
-    LH_Graph::clear(min(), max(), canGrow());
+    LH_Graph::clear(min_val(), max_val(), canGrow());
     updateUnits();
     callback(lh_cb_render,NULL);
 }

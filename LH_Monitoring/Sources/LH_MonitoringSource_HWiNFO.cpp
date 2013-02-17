@@ -4,7 +4,7 @@ LH_MonitoringSource_HWiNFO::LH_MonitoringSource_HWiNFO(LH_QtObject *parent): LH_
 
 bool LH_MonitoringSource_HWiNFO::doUpdate()
 {
-#ifndef Q_WS_WIN
+#ifndef Q_OS_WIN32
     return false;
 #else
     bool resultVal = false;

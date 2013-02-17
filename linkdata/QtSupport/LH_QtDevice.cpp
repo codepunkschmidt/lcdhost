@@ -86,17 +86,18 @@ void LH_QtDevice::leave()
     if( plugin() ) plugin()->callback(lh_cb_leave,lh_dev());
 }
 
-void LH_QtDevice::setDevid( QByteArray a )
+void LH_QtDevice::setDevid(const QString &a)
 {
     devid_ = a;
-    lh_dev_.devid = devid_.constData();
+    devid_latin1_ = devid_.toLatin1();
+    lh_dev_.devid = devid_latin1_.constData();
     return;
 }
 
-void LH_QtDevice::setName( QString s )
+void LH_QtDevice::setObjectName(const QString &s)
 {
-    setObjectName(s);
-    name_ = s.toUtf8();
-    lh_dev_.name = name_.constData();
+    QObject::setObjectName(s);
+    name_utf8_ = s.toUtf8();
+    lh_dev_.name = name_utf8_.constData();
     return;
 }

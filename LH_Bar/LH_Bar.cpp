@@ -57,7 +57,7 @@ static inline uint PREMUL(uint x) {
 
 LH_Bar::LH_Bar() : LH_QtCFInstance()
 {
-    uchar *data = (uchar[4]){255,0,0,0};
+    uchar data[4] = {255,0,0,0};
     bar_img_emptyMask_ = QImage(data,1,1,QImage::Format_ARGB32);
 
     QStringList valueTypes = QStringList();

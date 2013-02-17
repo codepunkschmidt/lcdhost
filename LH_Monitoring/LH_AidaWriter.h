@@ -4,7 +4,7 @@
 #include "LH_Text/LH_Text.h"
 #include "LH_Qt_QTextEdit.h"
 
-#ifdef Q_WS_WIN
+#ifdef Q_OS_WIN32
 # include <windows.h>
 #else
 # ifndef DWORD

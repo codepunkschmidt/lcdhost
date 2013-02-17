@@ -155,7 +155,7 @@ void LH_CursorAction::fire(int startAt)
             {
                 QString layout = action.getParameter(e,0);
                 if (!layout.contains(":"))
-                    layout = QString("%1\%2").arg(state()->dir_layout).arg(layout);
+                    layout = QString("%1\\%2").arg(state()->dir_layout).arg(layout);
                 static QByteArray ary;
                 ary = layout.toUtf8();
                 callback(lh_cb_load_layout, ary.data() );

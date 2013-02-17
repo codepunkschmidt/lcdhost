@@ -231,9 +231,8 @@ void LH_QtPlugin_Weather::fetchWOEID()
     QString appid = "itP1aXDV34FW8OAAepdI2XJOKWWqJRUvV0NC_QaGlLwTryEZGw228CtxtzzYv9wceq73jDvqTYFhhA--";
     QString locationName = setup_location_name_->value();
     locationName = QString(QUrl::toPercentEncoding(locationName.replace(' ','-')));
-    QUrl url = QUrl::fromUserInput(QString("http://where.yahooapis.com/v1/places.q('%1')").arg(locationName));
-    url.addQueryItem("appid",appid);
-
+    QUrl url = QUrl::fromUserInput(QString("http://where.yahooapis.com/v1/places.q('%1')?appid=%2")
+                                   .arg(locationName).arg(appid));
     QNetworkProxyQuery npq(url);
     QList<QNetworkProxy> listOfProxies = QNetworkProxyFactory::systemProxyForQuery(npq);
     if(listOfProxies.count()!=0)
@@ -411,7 +410,7 @@ void LH_QtPlugin_Weather::parseXmlWeather(bool is5Day, QXmlStreamReader& xml_)
                 }
                 if( xml_.name() == "units" )
                 {
-                    weather_data.units.temperature = getWeatherValue(xml_, "temperature", "°");
+                    weather_data.units.temperature = getWeatherValue(xml_, "temperature", QChar(0x00B0));
                     weather_data.units.distance = getWeatherValue(xml_, "distance");
                     weather_data.units.pressure = getWeatherValue(xml_, "pressure");
                     weather_data.units.speed = getWeatherValue(xml_, "speed");

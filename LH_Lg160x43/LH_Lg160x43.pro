@@ -1,9 +1,11 @@
 TARGET = LH_Lg160x43
 TEMPLATE = lib
 DEFINES += LG160X43_LIBRARY
-CONFIG += device hid wow64
+CONFIG += device wow64
 
 include(../Plugins.pri)
+
+LIBS *= -llh_hid
 
 SOURCES += \
     $$PLUGIN_SOURCES \
@@ -14,3 +16,5 @@ HEADERS += \
     $$PLUGIN_HEADERS \
     LH_Lg160x43.h \
     Lg160x43Device.h
+
+win32: LIBS += -luser32

@@ -330,18 +330,19 @@ static int l_cairo_set_dash(lua_State* L)
         break;
     case LUA_TTABLE: { // Borrowed from Chris Osgood's binding
             int num_dashes = (int)lua_objlen(L, 2);
+            int i;
+            double offset;
 
             double *dashes = malloc(num_dashes * sizeof(double));
             if (dashes == NULL) luaL_error(L, "memory error");
 
-            int i;
             for (i = 0; i < num_dashes; i++) {
                 lua_rawgeti(L, 2, i+1);
                 dashes[i] = lua_tonumber(L, -1);
                 lua_pop(L, 1);
             }
 
-            double offset = luaL_checknumber(L, 4);
+            offset = luaL_checknumber(L, 4);
             cairo_set_dash(cr, dashes, num_dashes, offset);
             free(dashes);
         }
@@ -358,8 +359,9 @@ static int l_cairo_set_dash(lua_State* L)
 //              double limit);
 static int l_cairo_set_miter_limit(lua_State* L)
 {
+    double limit;
     cairo_t *cr = get_cairo_t (L, 1);
-    double limit = luaL_checknumber(L, 2);
+    limit = luaL_checknumber(L, 2);
     cairo_set_miter_limit(cr, limit);
     return 0;
 }
@@ -1265,9 +1267,11 @@ static int l_cairo_status(lua_State* L)
 // cairo_status_to_string (cairo_status_t status);
 static int l_cairo_status_to_string(lua_State* L)
 {
+    cairo_status_t status;
+    const char *v;
     remove_Context(L, 1); // if called via Context userdata
-    cairo_status_t status = (cairo_status_t) luaL_checkinteger(L, 1);
-    const char *v = cairo_status_to_string(status);
+    status = (cairo_status_t) luaL_checkinteger(L, 1);
+    v = cairo_status_to_string(status);
     lua_pushstring(L, v);
     return 1;
 }

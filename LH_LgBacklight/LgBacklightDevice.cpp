@@ -1,63 +1,59 @@
 
-#include <QDebug>
 #include "LgBacklightDevice.h"
 #include "LH_LgBacklight.h"
+#include "LH_HidDevice.h"
+#include <QDebug>
 
-LgBacklightDevice::LgBacklightDevice( const struct hid_device_info *di, LH_LgBacklight *parent )
+static const int backlightid_ = 7;
+
+LgBacklightDevice::LgBacklightDevice(LH_HidDevice *hd, QObject *parent) :
+    QObject(parent),
+    hd_(hd),
+    color_(Qt::transparent)
 {
-    parent_ = parent;
-    name_ = QString::fromWCharArray(di->product_string);
-    to_remove_ = false;
-    product_id_ = di->product_id;
-    hiddev_ = 0;
-    path_ = di->path;
-    color_ = QColor(Qt::transparent);
-    backlightid_ = 7;
+    setObjectName(hd_->objectName());
+    color_ = getDeviceColor();
+}
 
-    hid_device *dev = hid_open_path( path_.constData() );
-    if( dev )
+void LgBacklightDevice::setColor(QColor c)
+{
+    if(color_ != c && setDeviceColor(c))
+        emit colorChanged();
+}
+
+QColor LgBacklightDevice::getDeviceColor()
+{
+    if(hd_->online())
     {
-        unsigned char report[5];
-        memset( report, 0, sizeof(report) );
-        report[0] = backlightid_; // hidapi leading byte
-        if( hid_get_feature_report( dev, report, sizeof(report) ) > 0 )
+        QByteArray d(hd_->readFeature(backlightid_));
+        if(d.size() > 3)
         {
+            const unsigned char *report = (const unsigned char *) d.constData();
             int r, g, b;
             r = report[1] * 255 / 140;
             if( r > 255 ) r = 255;
             g = report[2];
             b = report[3] * 255 / 150;
             if( b > 255 ) b = 255;
-            color_ = QColor( r, g, b );
+            return QColor(r, g, b);
         }
-        else
-            qDebug() << "LgBacklightDevice can't get feature report for" << name_;
-        hid_close( dev );
     }
-    else
-        qDebug() << "LgBacklightDevice can't open" << name_;
+    return QColor(Qt::transparent);
 }
 
 // automatic intensity correction
-void LgBacklightDevice::setColor( QColor c )
+bool LgBacklightDevice::setDeviceColor(const QColor &c)
 {
-    color_ = c;
-    hid_device *dev = hid_open_path( path_.constData() );
-    if( dev )
+    if(hd_->online())
     {
         unsigned char report[5];
         report[0] = backlightid_;
-        report[1] = 140 * color_.red() / 255; // 140
-        report[2] = color_.green(); // 255
-        report[3] = 150 * color_.blue() / 255; // 150
+        report[1] = 140 * c.red() / 255; // 140
+        report[2] = c.green(); // 255
+        report[3] = 150 * c.blue() / 255; // 150
         report[4] = 0;
-        int retv = hid_send_feature_report( dev, report, sizeof(report) );
-        if( retv != sizeof(report) )
-        {
-            qDebug() << "Backlight: failed to set color for" << name() << "only" << retv << "bytes sent";
-        }
-        hid_close( dev );
+        if(hd_->writeFeature(QByteArray((const char *)report, 5)) > 0)
+            return true;
     }
-    else
-        qDebug() << "Backlight: failed to open" << name();
+    return false;
 }

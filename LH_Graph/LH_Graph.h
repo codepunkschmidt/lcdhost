@@ -42,7 +42,7 @@
 #include "QHash"
 #include "qmath.h"
 
-#include "DataCollection.h"
+#include "../DataCollection/DataCollection.h"
 
 enum GraphDataMode
 {
@@ -173,8 +173,8 @@ public:
 
     QImage *render_qimage( int w, int h );
 
-    qreal max();
-    qreal min();
+    qreal max_val();
+    qreal min_val();
     void setCanGrow(bool);
     bool canGrow();
 

@@ -68,14 +68,15 @@ bool LH_QtPlugin_WebKit::startServer()
     {
         last_start_ = QTime::currentTime();
         QString wksname = QFileInfo(QCoreApplication::applicationFilePath()).canonicalPath() + "/WebKitServer";
-        qDebug() << "LH_WebKit: attempting to start" << wksname;
-        QProcess::startDetached( wksname, QStringList("--hidden")
-                                << "--datadir"
-                                << QString::fromUtf8( state()->dir_data )
-                                << "--plugindir"
-                                << QString::fromUtf8( state()->dir_plugins )
-                                << "--verbose"
-                                );
+        QStringList wksargs;
+        wksargs << "--hidden"
+               << "--datadir"
+               << QString::fromUtf8(state()->dir_data)
+               << "--plugindir"
+               << QString::fromUtf8(state()->dir_plugins)
+               << "--verbose";
+        qDebug() << "LH_WebKit: attempting to start" << wksname << wksargs;
+        QProcess::startDetached( wksname, wksargs );
     }
     return true;
 }

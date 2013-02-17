@@ -20,7 +20,7 @@
 
 #include "json.h"
 
-typedef struct {bool exists; float value;} OptionalValue;
+typedef struct {bool exists; qreal value;} OptionalValue;
 inline bool operator==(OptionalValue v1, OptionalValue v2) { return v1.exists == v2.exists && v1.value == v2.value; }
 typedef struct {OptionalValue minimum; OptionalValue maximum;} minmax;
 inline bool operator==(minmax v1, minmax v2) { return v1.minimum == v2.minimum && v1.maximum == v2.maximum; }
@@ -64,7 +64,7 @@ public:
         this->units = units;
     }
 
-    SensorDefinition(QString units, float minimum_limit, float maximum_limit)
+    SensorDefinition(QString units, qreal minimum_limit, qreal maximum_limit)
     {
         init();
         this->units = units;
@@ -72,7 +72,7 @@ public:
         this->limits.maximum = (OptionalValue){ true, maximum_limit };
     }
 
-    SensorDefinition(QString units, float minimum_limit, float maximum_limit, float deadValue)
+    SensorDefinition(QString units, qreal minimum_limit, qreal maximum_limit, qreal deadValue)
     {
         init();
         this->units = units;
@@ -81,7 +81,7 @@ public:
         this->deadValue = (OptionalValue){ true, deadValue };
     }
 
-    SensorDefinition(QString units, float deadValue)
+    SensorDefinition(QString units, qreal deadValue)
     {
         init();
         this->units = units;

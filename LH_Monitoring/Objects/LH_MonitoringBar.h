@@ -13,6 +13,7 @@ class LH_MonitoringBar : public LH_Bar, public LH_MonitoringObject
 protected:
     LH_Qt_int *setup_max_;
     LH_Qt_int *setup_min_;
+    LH_Qt_QString *setup_minmax_hr_;
 
 public:
     LH_MonitoringBar();

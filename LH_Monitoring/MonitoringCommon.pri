@@ -26,6 +26,7 @@ MONOBJECTS_HEADERS = \
     $$PWD/Objects/LH_MonitoringGraph.h \
     $$PWD/../LH_Dial/LH_Dial.h \
     $$PWD/Objects/LH_MonitoringDial.h \
+    #$$PWD/Objects/LH_MonitoringPie.h \
     $$PWD/../LH_Bar/LH_Bar.h \
     $$PWD/Objects/LH_MonitoringBar.h \
     $$PWD/../LH_Decor/LH_Rectangle.h \
@@ -44,6 +45,7 @@ MONOBJECTS_SOURCES = \
     $$PWD/Objects/LH_MonitoringGraph.cpp \
     $$PWD/../LH_Dial/LH_Dial.cpp \
     $$PWD/Objects/LH_MonitoringDial.cpp \
+    #$$PWD/Objects/LH_MonitoringPie.cpp \
     $$PWD/../LH_Bar/LH_Bar.cpp \
     $$PWD/Objects/LH_MonitoringBar.cpp \
     $$PWD/../LH_Decor/LH_Rectangle.cpp \

@@ -56,7 +56,6 @@ LH_MonitoringDial::LH_MonitoringDial() : LH_Dial(), LH_MonitoringObject(this, md
                    );
 }
 
-
 const char *LH_MonitoringDial::userInit()
 {
     if( const char *err = LH_Dial::userInit() ) return err;
@@ -74,7 +73,8 @@ const char *LH_MonitoringDial::userInit()
     setup_min_->setOrder(-3);
     this->LH_Dial::connect( setup_min_, SIGNAL(changed()), this, SLOT(updateBounds()) );
 
-    (new LH_Qt_QString(this,("image-hr2"), QString("<hr>"), LH_FLAG_NOSAVE_LINK | LH_FLAG_NOSAVE_DATA | LH_FLAG_NOSOURCE | LH_FLAG_NOSINK | LH_FLAG_HIDETITLE,lh_type_string_html ))->setOrder(-3);
+    setup_minmax_hr_ = new LH_Qt_QString(this,("image-hr2"), QString("<hr>"), LH_FLAG_NOSAVE_LINK | LH_FLAG_NOSAVE_DATA | LH_FLAG_NOSOURCE | LH_FLAG_NOSINK | LH_FLAG_HIDETITLE,lh_type_string_html );
+    setup_minmax_hr_->setOrder(-3);
 
     updateBounds();
 
@@ -88,8 +88,43 @@ void LH_MonitoringDial::refresh()
 
 void LH_MonitoringDial::updateBounds()
 {
-    setMax(setup_max_->value());
-    setMin(setup_min_->value());
+    bool ok;
+    SensorGroup *group = this->selectedSensorGroup(&ok);
+
+    qreal _max = setup_max_->value();
+    qreal _min = setup_min_->value();
+
+    bool minExists = false;
+    bool maxExists = false;
+
+    if(ok)
+    {
+        minExists = group->limits.minimum.exists;
+        if(group->limits.minimum.exists)
+        {
+            _min = group->limits.minimum.value;
+            setup_min_->setValue(_min);
+        }
+
+        maxExists = group->limits.maximum.exists;
+        if(group->limits.maximum.exists)
+        {
+            _max = group->limits.maximum.value;
+            setup_max_->setValue(_max);
+        }
+    }
+
+    setMax(_max);
+    setMin(_min);
+
+    //qDebug() << "Min: " << ok << "; minExists: " << minExists << "; min=" << _min << "; min():" << min() << "; setup_min_:" << setup_min_->value() << "; actual=set:" << (setup_min_->value() == min());
+    //qDebug() << "Max: " << ok << "; maxExists: " << maxExists << "; max=" << _max << "; max():" << max() << "; setup_max_:" << setup_max_->value() << "; actual=set:" << (setup_max_->value() == max());
+
+    bool _visible = (!minExists || setup_min_->value() == min()) && (!maxExists || setup_max_->value() == max());
+    setup_min_->setVisible(_visible);
+    setup_max_->setVisible(_visible);
+    setup_minmax_hr_->setVisible(_visible);
+
     requestRender();
 }
 

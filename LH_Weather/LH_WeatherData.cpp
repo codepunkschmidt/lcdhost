@@ -118,5 +118,5 @@ QString weatherData::serialize()
         jobject.insert(QString("forecast_%1").arg(i),forecastMap[i]);
     jobject.insert("url",url);
 
-    return QString(Json::serialize(jobject));
+    return QString::fromUtf8(Json::serialize(jobject));
 }

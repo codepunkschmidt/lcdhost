@@ -71,7 +71,13 @@
 #endif
 
 /* IOUSBDeviceInterface */
-#if defined (kIOUSBDeviceInterfaceID320)
+#if defined (kIOUSBDeviceInterfaceID500)
+
+#define usb_device_t    IOUSBDeviceInterface500
+#define DeviceInterfaceID kIOUSBDeviceInterfaceID500
+#define DeviceVersion 500
+
+#elif defined (kIOUSBDeviceInterfaceID320)
 
 #define usb_device_t    IOUSBDeviceInterface320
 #define DeviceInterfaceID kIOUSBDeviceInterfaceID320
@@ -147,7 +153,7 @@ struct darwin_device_handle_priv {
 struct darwin_transfer_priv {
   /* Isoc */
   IOUSBIsocFrame *isoc_framelist;
-  size_t num_iso_packets;
+  int num_iso_packets;
 
   /* Control */
 #if !defined (LIBUSB_NO_TIMEOUT_DEVICE)

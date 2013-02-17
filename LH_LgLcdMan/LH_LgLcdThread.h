@@ -39,7 +39,7 @@
 #include <QImage>
 #include <QSemaphore>
 
-#ifdef Q_WS_WIN
+#ifdef Q_OS_WIN32
 # ifndef UNICODE
 #  error ("This isn't going to work")
 # endif
@@ -48,7 +48,7 @@
 # include "win/lglcd.h"
 #endif
 
-#ifdef Q_WS_MAC
+#ifdef Q_OS_MAC
 # include "mac/lgLcdError.h"
 # include "mac/lgLcd.h"
 # ifndef ERROR_FILE_NOT_FOUND
@@ -69,10 +69,10 @@ class LH_LgLcdThread : public QThread
 
 protected:
     QSemaphore sem_;
-#ifdef Q_WS_WIN
+#ifdef Q_OS_WIN32
     wchar_t *appname_;
 #endif
-#ifdef Q_WS_MAC
+#ifdef Q_OS_MAC
     CFStringRef appname_;
 #endif
 

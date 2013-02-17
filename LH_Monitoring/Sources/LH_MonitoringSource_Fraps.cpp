@@ -9,7 +9,7 @@ LH_MonitoringSource_Fraps::LH_MonitoringSource_Fraps(LH_QtObject *parent): LH_Mo
 FRAPS_SHARED_DATA *(WINAPI *FrapsSharedData) ();
 bool LH_MonitoringSource_Fraps::doUpdate()
 {
-#ifndef Q_WS_WIN
+#ifndef Q_OS_WIN32
     return false;
 #else
     HMODULE frapsDLL;
@@ -41,7 +41,7 @@ bool LH_MonitoringSource_Fraps::doUpdate()
 
 void LH_MonitoringSource_Fraps::pingFraps()
 {
-#ifndef Q_WS_WIN
+#ifndef Q_OS_WIN32
     return;
 #else
     if( FindWindowA( "#32770", NULL ) != (HWND)NULL )

@@ -28,7 +28,7 @@
 #define LH_QTPLUGIN_GRAPH_H
 
 #include "LH_QtPlugin.h"
-#include "DataCollection.h"
+#include "../DataCollection/DataCollection.h"
 #include "LH_QtCPU.h"
 #include "LH_QtNetwork.h"
 #include <QTime>
@@ -70,7 +70,7 @@ public:
     {
         if (cpu_.count()!=0 && cpu_histogram_ != NULL)
         {
-            if(cpu_histogram_->count()==0)
+            if(cpu_histogram_->count()!=cpu_.count())
                 cpu_histogram_->setCount(cpu_.count());
             if(cpu_average_->count()==0)
                 cpu_average_->setCount(1);

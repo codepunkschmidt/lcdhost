@@ -1,7 +1,8 @@
 
-#include <QImage>
-#include <QDebug>
 #include "Lg160x43Device.h"
+#include "LH_HidDevice.h"
+
+#include <QImage>
 
 enum
 {
@@ -12,48 +13,28 @@ enum
         G15_BUFFER_LEN = 0x03e0	/* total length of the HID output report */
 };
 
-Lg160x43Device::Lg160x43Device( const struct hid_device_info *di, LH_QtPlugin *drv ) : LH_QtDevice(drv)
+Lg160x43Device::Lg160x43Device(LH_HidDevice *hi, int output_report_id, LH_QtPlugin *drv) :
+    LH_QtDevice(drv),
+    hd_(hi),
+    output_report_id_((unsigned char)output_report_id)
 {
-    to_remove_ = false;
-    product_id_ = di->product_id;
-    hiddev_ = 0;
-    path_ = di->path;
-    offline_ = false;
-    char buf[64];
-    qsnprintf( buf, sizeof(buf), "Lg160x43-%04x:%04x:%04x",
-               di->vendor_id, di->product_id, di->release_number );
-    QByteArray dev_id( buf );
-    if( di->serial_number && *(di->serial_number) )
-    {
-        dev_id.append( '-' );
-        dev_id.append( QString::fromWCharArray(di->serial_number).toLatin1() );
-    }
-    setDevid( dev_id );
-    setName( QString::fromWCharArray(di->product_string) );
+    setDevid(hi->objectName());
+    setName(hi->product_text());
     setSize(160,43);
     setDepth(1);
     setAutoselect(true);
+    connect(hd_, SIGNAL(onlineChanged(bool)), this, SLOT(onlineChanged(bool)));
     arrive();
 }
 
-Lg160x43Device::~Lg160x43Device()
+void Lg160x43Device::onlineChanged(bool b)
 {
-    close();
-    leave();
-}
-
-const char* Lg160x43Device::open()
-{
-    hiddev_ = hid_open_path( path_.constData() );
-    if( !hiddev_ ) return "Can't open HID device";
-    return NULL;
-}
-
-const char* Lg160x43Device::close()
-{
-    if( hiddev_ ) hid_close( hiddev_ );
-    hiddev_ = 0;
-    return NULL;
+    if(hd_ && ! b)
+    {
+        hd_ = 0;
+        leave();
+        deleteLater();
+    }
 }
 
 static void make_output_report(unsigned char *lcd_buffer, unsigned char const *data)
@@ -62,8 +43,6 @@ static void make_output_report(unsigned char *lcd_buffer, unsigned char const *d
     unsigned int base_offset = 0;
 
     memset( lcd_buffer, 0, G15_LCD_OFFSET );
-    lcd_buffer[0] = 0x03;
-
     for( int row=0; row<6; ++row )
     {
         for( int col=0; col<G15_LCD_WIDTH; ++col)
@@ -97,26 +76,18 @@ static void make_output_report(unsigned char *lcd_buffer, unsigned char const *d
 
 const char* Lg160x43Device::render_qimage(QImage *img)
 {
-    int retv;
-    unsigned char buffer[ G15_BUFFER_LEN ];
-
-    if( !img ) return NULL;
-    if( offline_ ) return NULL;
-    if( !hiddev_ ) return "Device not open";
-
-    if( img->depth() == 1 ) make_output_report( buffer, img->bits() );
-    else
+    if(img && hd_ && hd_->online())
     {
-        QImage tmp = img->convertToFormat(QImage::Format_Mono,Qt::ThresholdDither|Qt::NoOpaqueDetection);
-        make_output_report( buffer, tmp.bits() );
+        unsigned char buffer[G15_BUFFER_LEN];
+        if( img->depth() == 1 )
+            make_output_report( buffer, img->bits() );
+        else
+        {
+            QImage tmp = img->convertToFormat(QImage::Format_Mono,Qt::ThresholdDither|Qt::NoOpaqueDetection);
+            make_output_report( buffer, tmp.bits() );
+        }
+        buffer[0] = output_report_id_;
+        hd_->write(QByteArray((char*)buffer, sizeof(buffer)));
     }
-
-    retv = hid_write( hiddev_, buffer, sizeof(buffer) );
-    if( retv != sizeof(buffer) )
-    {
-        offline_ = true;
-        return "hid_write() error";
-    }
-    return NULL;
+    return 0;
 }
-

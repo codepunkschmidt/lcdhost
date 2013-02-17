@@ -235,7 +235,7 @@ void LH_Text::makeTextImage( int forheight )
         else
         {
             textsize_ = painter.boundingRect( QRect(), flags, text() ).size();
-#ifdef Q_WS_MAC
+#ifdef Q_OS_MAC
             // Until the Qt team fixes QTBUG-13561
             // http://bugreports.qt.nokia.com/browse/QTBUG-13561
             QFontMetrics fm( font(), &textimage_ );

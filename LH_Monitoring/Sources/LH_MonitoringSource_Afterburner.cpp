@@ -8,7 +8,7 @@ LH_MonitoringSource_Afterburner::LH_MonitoringSource_Afterburner(LH_QtObject *pa
 
 bool LH_MonitoringSource_Afterburner::doUpdate()
 {
-#ifndef Q_WS_WIN
+#ifndef Q_OS_WIN32
     return false;
 #else
     bool resultVal = false;

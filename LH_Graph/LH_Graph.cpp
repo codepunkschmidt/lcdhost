@@ -28,6 +28,7 @@
 #include <QDebug>
 #include <QLinearGradient>
 #include <QPainter>
+#include <QVarLengthArray>
 
 #include "LH_Graph.h"
 #include <math.h>
@@ -244,7 +245,7 @@ void LH_Graph::setExternalSource(DataLineCollection* externalSource) {
 }
 
 
-qreal LH_Graph::max()
+qreal LH_Graph::max_val()
 {
     if (setup_min_->value() < setup_max_->value())
         return setup_max_->value();
@@ -252,7 +253,7 @@ qreal LH_Graph::max()
         return setup_min_->value()+1;
 }
 
-qreal LH_Graph::min()
+qreal LH_Graph::min_val()
 {
     return setup_min_->value();
 }
@@ -283,8 +284,8 @@ void LH_Graph::findDataBounds(DataLineCollection* lineData)
 
     if (isDebug) qDebug() << "graph: find bounds: begin";
 
-    _min = min();
-    _max = max();
+    _min = min_val();
+    _max = max_val();
 
     // apply fixes for cases where somehow graph limits have become NaN
     if(graphMinY_ != graphMinY_)
@@ -418,7 +419,7 @@ void LH_Graph::drawSingle(int lineID)
 
     QPainter painter;
 
-    QPointF points[(*lineData_).limit()+2];
+    QVector<QPointF> points((*lineData_).limit()+2);
 
     int w = image_->width();
     int h = image_->height();
@@ -598,18 +599,18 @@ void LH_Graph::drawSingle(int lineID)
             switch(setup_fg_type_->value())
             {
             case Foreground_LineOnly:
-                painter.drawPolyline(points, point_count-2);
+                painter.drawPolyline(points.constData(), point_count-2);
                 break;
             case Foreground_AreaFill:
                 painter.setBrush(QBrush(gradient));
-                painter.drawPolygon(points, point_count);
+                painter.drawPolygon(points.constData(), point_count);
                 break;
             case Foreground_Image:
                 {
                     QRectF graph_area = QRectF( 0,0, w, h );
 
                     //build mask
-                    uchar *blank_data = (uchar[4]){0,0,0,0};
+                    uchar blank_data[4] = {0,0,0,0};
                     QImage maskImg = QImage(blank_data,1,1,QImage::Format_ARGB32).scaled(w,h);
                     QPainter maskPaint;
                     if( maskPaint.begin( &maskImg ) )
@@ -618,7 +619,7 @@ void LH_Graph::drawSingle(int lineID)
                         QColor maskCol = QColor(0,0,0,fgImgAlpha);
                         maskPaint.setPen(maskCol);
                         maskPaint.setBrush(QBrush(maskCol));
-                        maskPaint.drawPolygon(points, point_count);
+                        maskPaint.drawPolygon(points.constData(), point_count);
                         maskPaint.end();
                     }
 
@@ -637,7 +638,7 @@ void LH_Graph::drawSingle(int lineID)
                         }
                         painter.drawImage(graph_area, tempImg);
                     }
-                    painter.drawPolyline(points, (*lineData_).at(lineID).length());
+                    painter.drawPolyline(points.constData(), (*lineData_).at(lineID).length());
                 }
                 break;
             }
@@ -805,7 +806,7 @@ void LH_Graph::clearLines()
 
 bool LH_Graph::setMin( qreal r )
 {
-    if( min() == r ) return false;
+    if( min_val() == r ) return false;
     setup_min_->setValue(r);
     graphMinY_ = r;
     if(graphMaxY_==r) setMax(r+1);
@@ -821,7 +822,7 @@ bool LH_Graph::setMax( qreal r, GraphBoundGrowState gbg )
 bool LH_Graph::setMax( qreal r )
 {
     if(graphMinY_==r) r++;
-    if( max() == r ) return false;
+    if( max_val() == r ) return false;
     setup_max_->setValue(r);
     graphMaxY_ = r;
     return true;

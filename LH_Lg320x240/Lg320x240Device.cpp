@@ -1,7 +1,6 @@
 
 #include <QImage>
 #include <QDebug>
-#include "libusb.h"
 #include "Lg320x240Device.h"
 
 Lg320x240Device::Lg320x240Device( libusb_device *dev, libusb_device_descriptor *dd, LH_QtPlugin *drv ) : LH_QtDevice(drv)
@@ -20,11 +19,11 @@ Lg320x240Device::Lg320x240Device( libusb_device *dev, libusb_device_descriptor *
         unsigned char buffer[255];
 
         if( libusb_get_string_descriptor_ascii( dh_, dd->iProduct, buffer, sizeof(buffer) ) > 0 )
-            setName( QString::fromAscii((const char*)buffer) );
+            setName( QString::fromLatin1((const char*)buffer) );
         else setName( "Lg320x240Device" );
 
         if( libusb_get_string_descriptor_ascii( dh_, dd->iSerialNumber, buffer, sizeof(buffer) ) > 0 )
-            setId( QString::fromAscii((const char*)buffer) );
+            setId( QString::fromLatin1((const char*)buffer) );
         else setId( QString("Lg320x240Device-%1").arg( (qptrdiff) dev_ ) );
 
         qDebug() << "adding" << objectName() << id();

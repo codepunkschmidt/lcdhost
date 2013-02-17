@@ -45,6 +45,12 @@ struct cursorMode{
     selectMode select;
     bool activate;
     QString description;
+    cursorMode(selectMode s, bool a, const QString & d)
+    {
+        select = s;
+        activate = a;
+        description = d;
+    }
 };
 
 #ifdef LH_CF

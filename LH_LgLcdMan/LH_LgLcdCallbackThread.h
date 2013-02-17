@@ -57,17 +57,17 @@ public:
     bool hasBW() const { return has_bw_>0?true:false; }
     bool hasQVGA() const { return has_qvga_>0?true:false; }
 
-#ifdef Q_WS_WIN
+#ifdef Q_OS_WIN32
     static DWORD WINAPI LH_LogitechButtonCB(int device, DWORD dwButtons, const PVOID pContext);
 #endif
-#ifdef Q_WS_MAC
+#ifdef Q_OS_MAC
     static unsigned long LH_LogitechButtonCB(int device, unsigned long dwButtons, const void* pContext);
 #endif
 
-#ifdef Q_WS_WIN
+#ifdef Q_OS_WIN32
     static DWORD WINAPI LH_LogitechCB( int connection, const PVOID pContext, DWORD code, DWORD p1, DWORD p2, DWORD p3, DWORD p4 );
 #endif
-#ifdef Q_WS_MAC
+#ifdef Q_OS_MAC
     static unsigned long LH_LogitechCB( int connection, const void* pContext, unsigned long code, unsigned long p1, unsigned long p2, unsigned long p3, unsigned long p4 );
 #endif
 };

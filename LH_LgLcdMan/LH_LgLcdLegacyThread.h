@@ -56,10 +56,10 @@ public:
     bool hasBW() const { return bw_cxt.index != -1; }
     bool hasQVGA() const { return qvga_cxt.index != -1; }
 
-#ifdef Q_WS_WIN
+#ifdef Q_OS_WIN32
     static DWORD WINAPI LH_LogitechButtonCB(int device, DWORD dwButtons, const PVOID pContext);
 #endif
-#ifdef Q_WS_MAC
+#ifdef Q_OS_MAC
     static unsigned long LH_LogitechButtonCB(int device, unsigned long dwButtons, const void* pContext);
 #endif
 };

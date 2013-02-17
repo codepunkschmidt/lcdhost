@@ -78,10 +78,10 @@ public:
     QString link() { return subscribePath(); }
 
     void setPublishPath( QString s );
-    QString publishPath() { return QString::fromAscii(item_.link.publish); }
+    QString publishPath() { return QString::fromLatin1(item_.link.publish); }
 
     void setSubscribePath( QString s );
-    QString subscribePath() { return QString::fromAscii(item_.link.subscribe); }
+    QString subscribePath() { return QString::fromLatin1(item_.link.subscribe); }
 
     void setMimeType( const char * s );
     const char *mimeType() const { return item_.link.mime; }

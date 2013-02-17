@@ -7,7 +7,7 @@
 #include <QTimer>
 
 #include "LH_MonitoringSource.h"
-#include "json.h"
+#include "../json/json.h"
 
 class LH_MonitoringSources: public LH_QtObject
 {

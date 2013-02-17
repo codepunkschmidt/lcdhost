@@ -15,11 +15,15 @@ extern QHash<QString, QString> postback_data;
 struct minmax {
     int min;
     int max;
+    minmax() : min(0), max(0) {}
+    minmax(int min_value, int max_value) : min(min_value), max(max_value) {}
 };
 
 struct bounds {
     minmax x;
     minmax y;
+    bounds() {}
+    bounds(minmax x_values, minmax y_values) : x(x_values), y(y_values) {}
 };
 
 /*struct cursorData
@@ -56,7 +60,7 @@ private:
         sendSelect = false;
         lastSelX2 = 0;
         lastSelY2 = 0;
-        range = (bounds){(minmax){0,0},(minmax){0,0}};
+        range = bounds();
     }
 
 public:
@@ -108,10 +112,10 @@ public:
             QVariantMap rangeYMap = rangeMap["y"].toMap();
             QVariantMap rangeXMap = rangeMap["x"].toMap();
 
-            range = (bounds){
-                        (minmax){rangeXMap["min"].toInt(),rangeXMap["max"].toInt()},
-                        (minmax){rangeYMap["min"].toInt(),rangeYMap["max"].toInt()}
-                    };
+            range.x.min = rangeXMap["min"].toInt();
+            range.x.max = rangeXMap["max"].toInt();
+            range.y.min = rangeYMap["min"].toInt();
+            range.y.max = rangeYMap["max"].toInt();
         }
         return ok;
     }
@@ -147,7 +151,7 @@ public:
         jobject.insert("range", rangeMap);
 
 
-        return QString(Json::serialize(jobject));
+        return QString::fromUtf8(Json::serialize(jobject));
     }
 
     QString getState(QStringList mycoords, bool &newSelected, bool &newActive)

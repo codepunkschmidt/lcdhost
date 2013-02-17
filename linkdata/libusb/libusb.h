@@ -934,7 +934,7 @@ struct libusb_transfer {
 #if defined(__STDC_VERSION__) && (__STDC_VERSION__ >= 199901L)
 	[] /* valid C99 code */
 #else
-	[0] /* non-standard, but usually working code */
+    [] /* non-standard, but usually working code */
 #endif
 	;
 };

@@ -53,12 +53,6 @@ const lh_class **LH_QtPlugin::class_list()
     return LH_QtInstance::auto_class_list();
 }
 
-int LH_QtPlugin::notify( int code, void *param )
-{
-    if( ! code ) warnings();
-    return LH_QtObject::notify( code, param );
-}
-
 LH_QtPlugin::LH_QtPlugin() : LH_QtObject(0)
 {
     LH_QtObject::build_object_calltable( & objtable_ );

@@ -36,19 +36,19 @@
 #define LH_LG160X43_H
 
 #include "LH_QtPlugin.h"
-#include <QBasicTimer>
+
+class LH_HidDevice;
 
 class LH_Lg160x43 : public LH_QtPlugin
 {
     Q_OBJECT
 
-    void scan();
-    QBasicTimer timer_;
+public slots:
+    void onlineChanged(LH_HidDevice *hd, bool b);
 
 public:
     LH_Lg160x43() : LH_QtPlugin() {}
-    virtual const char *userInit();
-    virtual void timerEvent(QTimerEvent *) { scan(); }
+    const char *userInit();
 };
 
 #endif // LH_LG160X43_H

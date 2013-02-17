@@ -11,8 +11,8 @@ class LogitechG19 : public LH_QtDevice
     libusb_context *ctx_;
     libusb_device *usbdev_;
     libusb_device_handle *lcdhandle_;
-    int menukeys_if_number_;
     int lcd_if_number_;
+    int menukeys_if_number_;
     uint8_t endpoint_in_;
     uint8_t endpoint_out_;
     volatile bool offline_;

@@ -48,8 +48,9 @@
 class LH_QtDevice : public LH_QtObject
 {
     Q_OBJECT
-    QByteArray devid_;
-    QByteArray name_;
+    QString devid_;
+    QByteArray devid_latin1_;
+    QByteArray name_utf8_;
     lh_device lh_dev_;
 
 public:
@@ -74,10 +75,11 @@ public:
     void arrive();
     void leave();
 
-    QByteArray devid() const { return QByteArray(lh_dev_.devid); }
-    void setDevid( QByteArray );
-    QString name() const { return QString::fromUtf8(lh_dev_.name); }
-    void setName( QString );
+    QString devid() const { return devid_; }
+    void setDevid(const QString &);
+    QString name() const { return objectName(); }
+    void setObjectName(const QString &name);
+    void setName(const QString &name) { setObjectName(name); }
     QSize size() const { return QSize( lh_dev_.width, lh_dev_.height); }
     void setSize( QSize s ) { lh_dev_.width = s.width(); lh_dev_.height = s.height(); }
     void setSize( int w, int h ) { lh_dev_.width = w; lh_dev_.height = h; }

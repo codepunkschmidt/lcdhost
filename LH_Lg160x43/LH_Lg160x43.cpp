@@ -32,20 +32,15 @@
   POSSIBILITY OF SUCH DAMAGE.
   */
 
-#include <QFile>
-#include <QDebug>
-#include <QBasicTimer>
-#include <QTime>
+#include <QtGlobal>
 
-#ifdef Q_WS_WIN
+#ifdef Q_OS_WIN32
 #include <windows.h>
 #endif
 
-#include "hidapi.h"
-#include "LH_QtDevice.h"
 #include "LH_Lg160x43.h"
 #include "Lg160x43Device.h"
-#include "LH_Qt_QImage.h"
+#include "LH_HidDevice.h"
 
 LH_PLUGIN(LH_Lg160x43)
 
@@ -71,71 +66,30 @@ char __lcdhostplugin_xml[] =
 
 const char *LH_Lg160x43::userInit()
 {
-#ifdef Q_WS_WIN
+#ifdef Q_OS_WIN32
     // make sure neither LCDMon.exe nor LCORE.EXE is running on Windows
     if( FindWindowA( "Logitech LCD Monitor Window", "LCDMon" ) ||
         FindWindowA( "QWidget", "LCore" ) )
         return "Logitech drivers are loaded";
 #endif
-    scan();
-    timer_.start( 2000, this );
-    return NULL;
+    LH_HidDevice::subscribe(this, SLOT(onlineChanged(LH_HidDevice*,bool)));
+    return 0;
 }
 
-void LH_Lg160x43::scan()
+void LH_Lg160x43::onlineChanged(LH_HidDevice *hd, bool b)
 {
-    // Maintain list of available devices
-    struct hid_device_info *hdi_head = hid_enumerate( 0x0, 0x0 );
-    if( hdi_head )
+    if(b && hd->vendor_id() == 0x046d)
     {
-        struct hid_device_info *hdi = 0;
-
-        foreach( QObject *kid, children() )
+        switch(hd->product_id())
         {
-            Lg160x43Device *d = qobject_cast<Lg160x43Device*>(kid);
-            if( d ) d->setRemoval( true );
-        }
-
-        for( hdi = hdi_head; hdi; hdi = hdi->next )
-        {
-            if( hdi->vendor_id == 0x046d && (
-                hdi->product_id == 0xC222 /* G15 */ ||
-                hdi->product_id == 0x0A07 /* Z10 */ ||
-                hdi->product_id == 0xC227 /* G15v2 */ ||
-                hdi->product_id == 0xC21C /* G13 */ ||
-                hdi->product_id == 0xC22D /* G510 without audio */ ||
-                hdi->product_id == 0xC22E /* G510 with audio */
-                ) )
-            {
-                bool found = false;
-                foreach( QObject *kid, children() )
-                {
-                    Lg160x43Device *d = qobject_cast<Lg160x43Device*>(kid);
-                    if( d && d->path() == hdi->path )
-                    {
-                        Q_ASSERT( hdi->product_id == d->productId() );
-                        Q_ASSERT( d->removal() == true );
-                        d->setRemoval( false );
-                        found = true;
-                    }
-                }
-                if( !found )
-                {
-                    new Lg160x43Device( hdi, this );
-                }
-            }
-        }
-
-        hid_free_enumeration( hdi_head );
-
-        foreach( QObject *kid, children() )
-        {
-            Lg160x43Device *d = qobject_cast<Lg160x43Device*>(kid);
-            if( d && d->removal() )
-            {
-                delete d;
-            }
+        case 0xC222: /* G15 */
+        case 0x0A07: /* Z10 */
+        case 0xC227: /* G15v2 */
+        case 0xC21C: /* G13 */
+        case 0xC22D: /* G510 without audio */
+        case 0xC22E: /* G510 with audio */
+            new Lg160x43Device(hd, 3, this);
+            break;
         }
     }
-    return;
 }

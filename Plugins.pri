@@ -10,6 +10,15 @@
 # and URL's if you want to use it.
 #
 
+macx-g++|linux-g++-64:exists("$(HOME)/.ccache") {
+    QMAKE_CXX="ccache g++"
+    QMAKE_CC="ccache gcc"
+}
+
+contains(QT, gui): greaterThan(QT_MAJOR_VERSION, 4): QT *= widgets
+
+win32-msvc2010: DEFINES *= _CRT_SECURE_NO_WARNINGS
+
 exists($$PWD/PluginsConfig.prf) {
     CONFIG(debug, debug|release):RELDEB = Debug
     else:RELDEB = Release
@@ -36,6 +45,7 @@ exists($$PWD/PluginsConfig.prf) {
             LCDHOST_BINARIES = $$PWD/../$$RELDEB
     }
 
+    LIBS *= -L$$LCDHOST_BINARIES
     DESTDIR = $$LCDHOST_PLUGINS
 
     LINKDATA = $$PWD/linkdata
@@ -64,14 +74,16 @@ exists($$PWD/PluginsConfig.prf) {
             $$QTSUPPORT/LH_QtSetupItem.h \
             $$QTSUPPORT/LH_Qt_QString.h
 
-    load($$PWD/PluginsConfig.prf)
+    include($$PWD/PluginsConfig.prf)
 
-    contains( TEMPLATE, lib ): exists($$PWD/../lcdhost-private.pem) {
-        QMAKE_POST_LINK = \
-            $$LCDHOST_BINARIES/SignPlugin -c -o \
-            $$PWD/../lcdhost-private.pem \
-            http://www.linkdata.se/downloads/software/lcdhost/lcdhost-public.pem \
-            $$DESTDIR/$$TARGET
+    contains(TEMPLATE, lib) {
+        exists($$PWD/../lcdhost-private.pem) {
+            QMAKE_POST_LINK = \
+                $$LCDHOST_BINARIES/SignPlugin -c -o \
+                $$PWD/../lcdhost-private.pem \
+                http://www.linkdata.se/downloads/software/lcdhost/lcdhost-public.pem \
+                $$DESTDIR/$$TARGET
+        }
     }
 } else {
     CONFIG += lh_api5_plugin
@@ -84,7 +96,8 @@ exists($$PWD/PluginsConfig.prf) {
     translator: include($$CODELEAP/SimpleTranslator/SimpleTranslator.pri)
 }
 
-contains( TEMPLATE, lib ) {
+contains(TEMPLATE, lib) {
+    macx: QMAKE_LFLAGS_SONAME = -Wl,-install_name,@rpath/
     exists($$PWD/../sign.local) {
         QMAKE_POST_LINK = \
             $$LCDHOST_BINARIES/SignPlugin -c -o \

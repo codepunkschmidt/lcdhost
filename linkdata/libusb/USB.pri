@@ -9,13 +9,15 @@ SOURCES += $$PWD/core.c $$PWD/descriptor.c $$PWD/io.c $$PWD/sync.c
 win32 {
         DEFINES += OS_WINDOWS
         SOURCES += $$PWD/os/windows_usb.c $$PWD/os/threads_windows.c $$PWD/os/poll_windows.c
-        LIBS += -lole32 -lsetupapi -lcfgmgr32
+        LIBS += -luser32 -lole32 -lsetupapi
+# -lcfgmgr32
 }
 
 macx {
         DEFINES += OS_DARWIN THREADS_POSIX HAVE_SYS_TIME_H HAVE_POLL_H
+        DEFINES += MAC_OS_X_VERSION_MIN_REQUIRED=1060
         SOURCES += $$PWD/os/darwin_usb.c $$PWD/os/threads_posix.c
-	LIBS += -framework CoreFoundation -framework IOKit
+        LIBS += -framework CoreFoundation -framework IOKit -lobjc
 }
 
 unix:!macx {

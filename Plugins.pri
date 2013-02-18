@@ -74,7 +74,7 @@ exists($$PWD/PluginsConfig.prf) {
             $$QTSUPPORT/LH_QtSetupItem.h \
             $$QTSUPPORT/LH_Qt_QString.h
 
-    include($$PWD/PluginsConfig.prf)
+    load($$PWD/PluginsConfig.prf)
 
     contains(TEMPLATE, lib) {
         exists($$PWD/../lcdhost-private.pem) {

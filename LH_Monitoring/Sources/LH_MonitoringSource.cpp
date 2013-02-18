@@ -8,6 +8,9 @@
 #include <typeinfo>
 #include <QVariant>
 
+//#define LH_FLAG_HIDDEN_UNLESS_DEBUGGING LH_FLAG_LAST
+#define LH_FLAG_HIDDEN_UNLESS_DEBUGGING LH_FLAG_HIDDEN
+
 LH_MonitoringSource::LH_MonitoringSource(LH_QtObject *parent, QString appName, bool alwaysShowAllSelectors) : LH_QtObject(parent), setup_enabled_(0), sensors_()
 {
     appName_ = appName;
@@ -173,7 +176,7 @@ void LH_MonitoringSource::updateValueItem(QString key, QVariant val, QMetaType::
     }
     else
     {
-        LH_QtSetupItem* si;
+        LH_QtSetupItem* si = NULL;
         LH_QtObject* obj = this->parent();
 
         QString fieldName = QString("SourceFields/%1").arg(QString(key).replace("/"+QString(STRINGIZE(MONITORING_FOLDER)),""));
@@ -185,23 +188,23 @@ void LH_MonitoringSource::updateValueItem(QString key, QVariant val, QMetaType::
         case QMetaType::Float:
             si = new LH_Qt_float(obj, fieldName, val.toFloat(),
                                  std::numeric_limits<float>::min(), std::numeric_limits<float>::max(),
-                                 LH_FLAG_NOSAVE_LINK | LH_FLAG_NOSAVE_DATA | LH_FLAG_NOSINK | LH_FLAG_HIDDEN);
+                                 LH_FLAG_NOSAVE_LINK | LH_FLAG_NOSAVE_DATA | LH_FLAG_NOSINK | LH_FLAG_HIDDEN_UNLESS_DEBUGGING);
             break;
         case QMetaType::Bool:
             si = new LH_Qt_bool(obj, fieldName, val.toBool(),
-                                 LH_FLAG_NOSAVE_LINK | LH_FLAG_NOSAVE_DATA | LH_FLAG_NOSINK | LH_FLAG_HIDDEN);
+                                 LH_FLAG_NOSAVE_LINK | LH_FLAG_NOSAVE_DATA | LH_FLAG_NOSINK | LH_FLAG_HIDDEN_UNLESS_DEBUGGING);
             break;
         case QMetaType::Int:
         case QMetaType::UInt:
             si = new LH_Qt_int(obj, fieldName, val.toInt(),
                                std::numeric_limits<int>::min(), std::numeric_limits<int>::max(),
-                               LH_FLAG_NOSAVE_LINK | LH_FLAG_NOSAVE_DATA | LH_FLAG_NOSINK | LH_FLAG_HIDDEN);
+                               LH_FLAG_NOSAVE_LINK | LH_FLAG_NOSAVE_DATA | LH_FLAG_NOSINK | LH_FLAG_HIDDEN_UNLESS_DEBUGGING);
             break;
         case QMetaType::QString:
         case QMetaType::LongLong:
         case QMetaType::Double:
             si = new LH_Qt_QString(obj, fieldName, val.toString(),
-                                   LH_FLAG_NOSAVE_LINK | LH_FLAG_NOSAVE_DATA | LH_FLAG_NOSINK | LH_FLAG_HIDDEN);
+                                   LH_FLAG_NOSAVE_LINK | LH_FLAG_NOSAVE_DATA | LH_FLAG_NOSINK | LH_FLAG_HIDDEN_UNLESS_DEBUGGING);
             break;
         default:
             Q_ASSERT_X(false,"LH_MonitoringSource::updateValueItem","Unhandled type");

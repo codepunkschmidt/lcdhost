@@ -7,3 +7,5 @@ moc_*.*
 *.o
 .DS_Store
 codeleap/GoogleTranslator/TranslationAPIKey.h
+LH_Monitoring/LH_Monitoring.7z
+LH_Monitoring/Sources/__2.12/*.*

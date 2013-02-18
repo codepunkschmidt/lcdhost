@@ -139,10 +139,10 @@ void LH_MonitoringBar::updateBounds()
     setMax(_max);
     setMin(_min);
 
-    //qDebug() << "Min: " << ok << "; minExists: " << minExists << "; min=" << _min << "; min():" << min() << "; setup_min_:" << setup_min_->value() << "; actual=set:" << (setup_min_->value() == min());
-    //qDebug() << "Max: " << ok << "; maxExists: " << maxExists << "; max=" << _max << "; max():" << max() << "; setup_max_:" << setup_max_->value() << "; actual=set:" << (setup_max_->value() == max());
+    //qDebug() << "Min: " << ok << "; minExists: " << minExists << "; min=" << _min << "; min_val():" << min_val() << "; setup_min_:" << setup_min_->value() << "; actual=set:" << (setup_min_->value() == min_val());
+    //qDebug() << "Max: " << ok << "; maxExists: " << maxExists << "; max=" << _max << "; max_val():" << max_val() << "; setup_max_:" << setup_max_->value() << "; actual=set:" << (setup_max_->value() == max_val());
 
-    bool _visible = (!minExists || setup_min_->value() == LH_Bar::min()) && (!maxExists || setup_max_->value() == LH_Bar::max());
+    bool _visible = (!minExists || setup_min_->value() == LH_Bar::min_val()) && (!maxExists || setup_max_->value() == LH_Bar::max_val());
     setup_min_->setVisible(_visible);
     setup_max_->setVisible(_visible);
     setup_minmax_hr_->setVisible(_visible);

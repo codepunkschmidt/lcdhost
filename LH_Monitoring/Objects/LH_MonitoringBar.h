@@ -4,7 +4,7 @@
 #include "LH_Qt_int.h"
 #include "LH_Bar/LH_Bar.h"
 
-#include "Objects/LH_MonitoringObject.h"
+#include "../Objects/LH_MonitoringObject.h"
 
 class LH_MonitoringBar : public LH_Bar, public LH_MonitoringObject
 {

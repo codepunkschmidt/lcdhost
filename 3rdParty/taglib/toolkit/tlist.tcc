@@ -42,6 +42,7 @@ class ListPrivateBase : public RefCounter
 {
 public:
   ListPrivateBase() : autoDelete(false) {}
+  virtual ~ListPrivateBase() {}
   bool autoDelete;
 };
 
@@ -52,6 +53,7 @@ template <class TP> class List<T>::ListPrivate  : public ListPrivateBase
 {
 public:
   ListPrivate() : ListPrivateBase() {}
+  virtual ~ListPrivate() {}
   ListPrivate(const std::list<TP> &l) : ListPrivateBase(), list(l) {}
   void clear() {
     list.clear();
@@ -68,7 +70,7 @@ template <class TP> class List<T>::ListPrivate<TP *>  : public ListPrivateBase
 public:
   ListPrivate() : ListPrivateBase() {}
   ListPrivate(const std::list<TP *> &l) : ListPrivateBase(), list(l) {}
-  ~ListPrivate() {
+  virtual ~ListPrivate() {
     clear();
   }
   void clear() {

@@ -41,7 +41,7 @@
 
 #include "LH_Text/LH_Text.h"
 
-#include "LH_QtPlugin_NowPlaying.h"
+#include "../LH_QtPlugin_NowPlaying.h"
 
 class LH_NowPlayingText : public LH_Text
 {

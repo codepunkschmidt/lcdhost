@@ -28,7 +28,7 @@
 #include "LH_QImage.h"
 #include "LH_Qt_QString.h"
 
-#include "Objects/LH_MonitoringObject.h"
+#include "../Objects/LH_MonitoringObject.h"
 
 class LH_MonitoringImage : public LH_QImage, public LH_MonitoringObject
 {

@@ -162,7 +162,8 @@ void CPlayerWLM::SendKeyInput(WORD key)
 	kbi.wVk = key;
 	kbi.dwExtraInfo = (ULONG_PTR)GetMessageExtraInfo();
 
-	INPUT input = {0};
+    INPUT input;
+    memset(&input, 0, sizeof(input));
 	input.type = INPUT_KEYBOARD;
 	input.ki = kbi;
 

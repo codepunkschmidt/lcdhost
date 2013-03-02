@@ -1006,12 +1006,11 @@ void LH_Graph::updateSelectedLine()
     QStringList configs = setup_line_configs_->value().split('~',QString::SkipEmptyParts);
 
     int lineID = setup_line_selection_->value();
-    if( lineID < 0 ) lineID = 0;
-    if( lineID >= configs.length() ) lineID = configs.length()-1;
-
-    configs.replace(lineID, buildColorConfig());
-
-    setup_line_configs_->setValue(configs.join("~"));
+    if( lineID >= 0 && lineID < configs.length())
+    {
+        configs.replace(lineID, buildColorConfig());
+        setup_line_configs_->setValue(configs.join("~"));
+    }
 }
 
 void LH_Graph::updateLabelSelection()

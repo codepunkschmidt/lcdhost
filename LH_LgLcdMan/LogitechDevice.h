@@ -38,7 +38,7 @@
 #include "LH_LgLcdMan.h"
 #include "LH_QtDevice.h"
 
-#ifdef Q_OS_WIN32
+#ifdef Q_OS_WIN
 # ifndef UNICODE
 #  error ("This isn't going to work")
 # endif

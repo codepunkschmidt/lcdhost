@@ -56,7 +56,7 @@ public:
     bool hasBW() const { return bw_cxt.index != -1; }
     bool hasQVGA() const { return qvga_cxt.index != -1; }
 
-#ifdef Q_OS_WIN32
+#ifdef Q_OS_WIN
     static DWORD WINAPI LH_LogitechButtonCB(int device, DWORD dwButtons, const PVOID pContext);
 #endif
 #ifdef Q_OS_MAC

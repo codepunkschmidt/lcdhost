@@ -2,7 +2,7 @@
 #include <QRegExp>
 #include <QSharedMemory>
 
-#ifdef Q_WS_WIN
+#ifdef Q_OS_WIN
 # include <windows.h>
 #endif
 
@@ -12,7 +12,7 @@ LH_MonitoringSource_Aida64::LH_MonitoringSource_Aida64(LH_QtObject *parent): LH_
 
 bool LH_MonitoringSource_Aida64::doUpdate()
 {
-#ifdef Q_WS_WIN
+#ifdef Q_OS_WIN
     bool resultVal = true;
 
     const char* mapnameAida64  = "AIDA64_SensorValues";
@@ -60,7 +60,7 @@ bool LH_MonitoringSource_Aida64::doUpdate()
                         if(typeName=="temp")
                         {
                             typeName = "Temperatures";
-                            units="°C";
+                            units="\176C";
                         }
                         if(typeName=="fan")
                         {
@@ -100,7 +100,6 @@ bool LH_MonitoringSource_Aida64::doUpdate()
 
     return resultVal;
 #else
-    Q_UNUSED(doListUpdate);
     return false;
 #endif
 }

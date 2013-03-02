@@ -42,7 +42,7 @@ LH_LgLcdThread::LH_LgLcdThread(QObject *parent)
      : QThread(parent), time_to_die_(false), sem_(1), appname_(NULL)
 {
     int appname_len = QCoreApplication::applicationName().length();
-#ifdef Q_OS_WIN32
+#ifdef Q_OS_WIN
     appname_ = new wchar_t[appname_len+1];
     QCoreApplication::applicationName().toWCharArray(appname_);
     appname_[appname_len] = 0;
@@ -58,7 +58,7 @@ LH_LgLcdThread::~LH_LgLcdThread()
 {
     if( appname_ )
     {
-#ifdef Q_OS_WIN32
+#ifdef Q_OS_WIN
         delete[] (wchar_t *)appname_;
 #endif
 #ifdef Q_OS_MAC

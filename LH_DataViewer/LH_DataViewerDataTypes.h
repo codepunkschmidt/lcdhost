@@ -10,7 +10,7 @@
 
 #define polling_rate 200
 
-#ifdef Q_OS_WIN32
+#ifdef Q_OS_WIN
 #include <windows.h>
 #include <winbase.h>
 #include <Psapi.h>

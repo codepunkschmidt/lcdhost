@@ -55,7 +55,7 @@ char __lcdhostplugin_xml[] =
 "</longdesc>"
 "</lcdhostplugin>";
 
-#ifdef Q_OS_WIN32
+#ifdef Q_OS_WIN
 static inline QString GetFullProcessImageName(HANDLE h)
 {
     TCHAR szProcessFile[MAX_PATH];
@@ -84,7 +84,7 @@ const char *LH_QtPlugin_LCoreReboot::userInit()
 {
     if( const char *err = LH_QtPlugin::userInit() ) return err;
 
-#ifndef Q_OS_WIN32
+#ifndef Q_OS_WIN
     return "Not supported on this OS";
 #else
     // make sure either LCDMon.exe or LCORE.EXE is running on Windows
@@ -110,7 +110,7 @@ const char *LH_QtPlugin_LCoreReboot::userInit()
 
 bool LH_QtPlugin_LCoreReboot::getLCorePath(QString& filePath)
 {  
-#ifdef Q_OS_WIN32
+#ifdef Q_OS_WIN
     HWND hWnd = FindWindowA( NULL, "LCore" );
     if(hWnd)
     {
@@ -144,7 +144,7 @@ void LH_QtPlugin_LCoreReboot::rebootLCore()
 
 void LH_QtPlugin_LCoreReboot::launchLCore()
 {
-#ifdef Q_OS_WIN32
+#ifdef Q_OS_WIN
     QString filename = setup_lcore_path_->value();
     long result = (long)ShellExecute(0, 0, reinterpret_cast<const WCHAR*>(filename.utf16()), reinterpret_cast<const WCHAR*>(QString("/minimized").utf16()), 0, SW_NORMAL);
     if(result > 32)
@@ -156,7 +156,7 @@ void LH_QtPlugin_LCoreReboot::launchLCore()
 
 bool LH_QtPlugin_LCoreReboot::killLCore()
 {
-#ifdef Q_OS_WIN32
+#ifdef Q_OS_WIN
     HWND hWnd = FindWindowA( NULL, "LCore" );
     if(hWnd)
     {
@@ -194,7 +194,7 @@ bool LH_QtPlugin_LCoreReboot::killLCore()
 
 QString LH_QtPlugin_LCoreReboot::getLastErrorMessage()
 {
-#ifdef Q_OS_WIN32
+#ifdef Q_OS_WIN
     DWORD dwError;
     wchar_t errBuf[256];
 
@@ -207,7 +207,7 @@ QString LH_QtPlugin_LCoreReboot::getLastErrorMessage()
 
 bool LH_QtPlugin_LCoreReboot::enableDebugPrivileges()
 {
-#ifdef Q_OS_WIN32
+#ifdef Q_OS_WIN
     TOKEN_PRIVILEGES tp;
     LUID luid;
 

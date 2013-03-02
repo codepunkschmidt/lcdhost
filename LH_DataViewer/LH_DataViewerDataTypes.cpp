@@ -64,7 +64,7 @@ bool dataNode::getProcessValue(uint address, QList<uint> offsets, void *dest, si
         }
     }
     if( len == 0 ) len = sizeof(dest);
-#ifdef Q_OS_WIN32
+#ifdef Q_OS_WIN
     ReadProcessMemory( processHandle(), (BYTE *) address, dest, len, &r );
 #endif
     return (r == len);
@@ -88,7 +88,7 @@ bool dataNode::getProcessValue(uint address, QList<uint> offsets, QString *dest,
         while( srcdata.size() < MAX_STRING )
         {
             char ch = '\0';
-#ifdef Q_OS_WIN32
+#ifdef Q_OS_WIN
             if( ! ReadProcessMemory(hProcess, (BYTE *) address ++, &ch, 1, 0) )
                 return false;
 #else
@@ -108,11 +108,11 @@ bool dataNode::getProcessValue(uint address, QList<uint> offsets, QString *dest,
 
 bool dataNode::validatePID( DWORD pid, QString exeFile )
 {
-#ifdef Q_OS_WIN32
+#ifdef Q_OS_WIN
     PROCESSENTRY32 processInfo;
     processInfo.dwSize = sizeof(processInfo);
 
-    HANDLE processesSnapshot = CreateToolhelp32Snapshot(TH32CS_SNAPPROCESS, NULL);
+    HANDLE processesSnapshot = CreateToolhelp32Snapshot(TH32CS_SNAPPROCESS, 0);
     if ( processesSnapshot == INVALID_HANDLE_VALUE )
         return false;
 
@@ -137,11 +137,11 @@ bool dataNode::validatePID( DWORD pid, QString exeFile )
 
 DWORD dataNode::getProcessId(QString exeFile)
 {
-#ifdef Q_OS_WIN32
+#ifdef Q_OS_WIN
     PROCESSENTRY32 processInfo;
     processInfo.dwSize = sizeof(processInfo);
 
-    HANDLE processesSnapshot = CreateToolhelp32Snapshot(TH32CS_SNAPPROCESS, NULL);
+    HANDLE processesSnapshot = CreateToolhelp32Snapshot(TH32CS_SNAPPROCESS, 0);
     if ( processesSnapshot == INVALID_HANDLE_VALUE )
         return 0;
 
@@ -165,7 +165,7 @@ DWORD dataNode::getProcessId(QString exeFile)
 
 void dataNode::indexModules( DWORD pid )
 {
-#ifdef Q_OS_WIN32
+#ifdef Q_OS_WIN
     MODULEENTRY32 moduleInfo;
     moduleInfo.dwSize = sizeof(moduleInfo);
 
@@ -194,7 +194,7 @@ void dataNode::indexModules( DWORD pid )
 
 QString dataNode::getProcessVersion(QString exeFile)
 {
-#ifdef Q_OS_WIN32
+#ifdef Q_OS_WIN
     QString version = "";
 
     HANDLE moduleSnapshot = CreateToolhelp32Snapshot(TH32CS_SNAPMODULE, processID_);
@@ -288,7 +288,7 @@ dataNode::dataNode(dataNode* parentNode, itemDefinition def, QString nodeValue )
 dataNode::~dataNode()
 {
     mutex->lock();
-#ifdef Q_OS_WIN32
+#ifdef Q_OS_WIN
     if(processHandle_)
         CloseHandle(processHandle_);
 #endif
@@ -427,7 +427,7 @@ void dataNode::debugTree()
 bool dataNode::refreshProcessValues()
 {
     bool changed = false;
-#ifdef Q_OS_WIN32
+#ifdef Q_OS_WIN
     QString newVal = getProcessValue();
     if(newVal!=value_)
     {
@@ -444,7 +444,7 @@ bool dataNode::refreshProcessValues()
 
 bool dataNode::openProcess(QString exeFile, QString targetVersion, QString &feedbackMessage)
 {
-#ifdef Q_OS_WIN32
+#ifdef Q_OS_WIN
     DWORD pid = processID_;
     feedbackMessage = "";
     if(processHandle_)
@@ -531,7 +531,7 @@ bool dataNode::getModuleAddress(QString moduleName, uint &moduleAddress)
 uint dataNode::memoryAddress()
 {
     uint addressVal = 0;
-#ifdef Q_OS_WIN32
+#ifdef Q_OS_WIN
     //return definition_.memory;
     if(definition_.startAddress.contains("+"))
     {

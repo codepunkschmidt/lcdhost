@@ -5,7 +5,7 @@ LH_MonitoringSource_ATITrayTools::LH_MonitoringSource_ATITrayTools(LH_QtObject *
 
 bool LH_MonitoringSource_ATITrayTools::doUpdate()
 {
-#ifndef Q_WS_WIN
+#ifndef Q_OS_WIN
     return false;
 #else
     bool resultVal = false;
@@ -43,12 +43,12 @@ bool LH_MonitoringSource_ATITrayTools::doUpdate()
             updateValue("Speeds", "GPU", "GPU", (int)memoryData->CurGPU, SensorDefinition("MHz") );
             updateValue("Speeds", "MEM", "MEM", (int)memoryData->CurMEM, SensorDefinition("MHz") );
 
-            updateValue("Temperatures", "GPU", "Current", (int)memoryData->GPUTemp, SensorDefinition("°C") );
-            updateValue("Temperatures", "GPU", "Maximum", (int)memoryData->MAXGpuTemp, SensorDefinition("°C") );
-            updateValue("Temperatures", "GPU", "Minimum", (int)memoryData->MINGpuTemp, SensorDefinition("°C") );
-            updateValue("Temperatures", "ENV", "Current", (int)memoryData->ENVTemp, SensorDefinition("°C") );
-            updateValue("Temperatures", "ENV", "Maximum", (int)memoryData->MAXEnvTemp, SensorDefinition("°C") );
-            updateValue("Temperatures", "ENV", "Minimum", (int)memoryData->MINEnvTemp, SensorDefinition("°C") );
+            updateValue("Temperatures", "GPU", "Current", (int)memoryData->GPUTemp, SensorDefinition("\176C") );
+            updateValue("Temperatures", "GPU", "Maximum", (int)memoryData->MAXGpuTemp, SensorDefinition("\176C") );
+            updateValue("Temperatures", "GPU", "Minimum", (int)memoryData->MINGpuTemp, SensorDefinition("\176C") );
+            updateValue("Temperatures", "ENV", "Current", (int)memoryData->ENVTemp, SensorDefinition("\176C") );
+            updateValue("Temperatures", "ENV", "Maximum", (int)memoryData->MAXEnvTemp, SensorDefinition("\176C") );
+            updateValue("Temperatures", "ENV", "Minimum", (int)memoryData->MINEnvTemp, SensorDefinition("\176C") );
 
             updateValue("FAN Duty", "", "", (int)memoryData->FanDuty, SensorDefinition("%") );
 

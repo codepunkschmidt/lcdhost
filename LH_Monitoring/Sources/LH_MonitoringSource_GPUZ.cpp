@@ -6,7 +6,7 @@ LH_MonitoringSource_GPUZ::LH_MonitoringSource_GPUZ(LH_QtObject *parent): LH_Moni
 
 bool LH_MonitoringSource_GPUZ::doUpdate()
 {
-#ifndef Q_OS_WIN32
+#ifndef Q_OS_WIN
     return false;
 #else
     bool resultVal = false;
@@ -36,7 +36,10 @@ bool LH_MonitoringSource_GPUZ::doUpdate()
 
                         SensorDefinition def = SensorDefinition(units);
                         if(units=="%%")
-                            def.limits = (minmax){(OptionalValue){true, 0}, (OptionalValue){true, 100}};
+                        {
+                            minmax _tmp = { {true, 0}, {true, 100} };
+                            def.limits = _tmp;
+                        }
 
                         updateValue(name, "", "", value, def);
                     }

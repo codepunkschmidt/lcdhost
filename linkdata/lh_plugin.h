@@ -66,9 +66,6 @@
 #ifndef LH_PLUGIN_H
 #define LH_PLUGIN_H
 
-#include <stddef.h>
-#include <limits.h>
-
 #include "lh_systemstate.h"
 
 #define LH_API_MAJOR 5

@@ -142,7 +142,7 @@ void LH_CursorAction::fire(int startAt)
         cursorData cursor_data = rcvr_->data();
         bool cursor_data_dirty = false;
         QDomNode rootNode = actionsXML.firstChild();
-        for(uint i = startAt; i< rootNode.childNodes().length(); i++)
+        for(int i = startAt; i< rootNode.childNodes().length(); i++)
         {
             lastStep = i;
             QDomNode n = rootNode.childNodes().at(i);
@@ -244,7 +244,7 @@ void LH_CursorAction::xmlChanged()
     if(actionsXML.setContent(setup_actions_xml_->value()))
     {
         QDomNode rootNode = actionsXML.firstChild();
-        for(uint i = 0; i< rootNode.childNodes().length(); i++)
+        for(int i = 0; i< rootNode.childNodes().length(); i++)
         {
             QDomNode n = rootNode.childNodes().at(i);
             QDomElement e = n.toElement();

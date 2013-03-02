@@ -1,9 +1,8 @@
 #ifndef LH_RIVAWRITER_H
 #define LH_RIVAWRITER_H
 
-#include "LH_QtInstance.h"
-
-#ifdef Q_WS_WIN
+#include <QtGlobal>
+#ifdef Q_OS_WIN
 # include <windows.h>
 #else
 # ifndef DWORD
@@ -16,6 +15,8 @@
 #  define HANDLE void*
 # endif
 #endif
+
+#include "LH_QtInstance.h"
 
 // MSI Afterburner Data
 struct MAHM_SHARED_MEMORY_HEADER
@@ -52,9 +53,9 @@ struct MAHM_SHARED_MEMORY_ENTRY
                //data source units (e.g. "MHz")
 
        char	szLocalizedSrcName[MAX_PATH];
-               //localized data source name (e.g. "×àñòîòà ÿäðà" for Russian GUI)
+               //localized data source name
        char	szLocalizedSrcUnits[MAX_PATH];
-               //localized data source units (e.g. "ÌÃö" for Russian GUI)
+               //localized data source units
 
        char	szRecommendedFormat[MAX_PATH];
                //recommended output format (e.g. "%.3f" for "Core voltage" data source)
@@ -103,9 +104,9 @@ struct RTHM_SHARED_MEMORY_ENTRY
     char	czSrc[32];
             //data source name (e.g. "Core temperature")
     char	czDim[16];
-            //data source dimansion (e.g. "°C")
+            //data source dimansion (e.g. "\176C")
     float	data;
-            //last polled data in raw format (e.g. 50°C)
+            //last polled data in raw format (e.g. 50\176C)
             //(this field can be set to FLT_MAX if data is not available)
 
             //take a note that the user can enable raw data transforming mode and
@@ -113,7 +114,7 @@ struct RTHM_SHARED_MEMORY_ENTRY
             //be translated to mapped core voltages).
             //In this case you may use dataTransformed field to get transformed value
     float	offset;
-            //user specified data offset (e.g. +10°C temerature compensation)
+            //user specified data offset (e.g. +10\176C temerature compensation)
 
             //take a note that this value is not automatically added to transformed
             //data, it is up to you to add offset to it

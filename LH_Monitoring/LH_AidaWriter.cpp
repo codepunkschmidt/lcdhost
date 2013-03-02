@@ -31,7 +31,9 @@ lh_class *LH_AidaWriter::classInfo()
         "Test",
         "AidaWriter",
         "Aida64 DataWriter",
-        48,48
+        48,48,
+        lh_object_calltable_NULL,
+        lh_instance_calltable_NULL
     };
 
     return &classInfo;
@@ -58,7 +60,7 @@ bool LH_AidaWriter::updateAidaMemory()
 
 bool LH_AidaWriter::createAidaMemory()
 {
-#ifdef Q_OS_WIN32
+#ifdef Q_OS_WIN
     const char* mapname_aida = "AIDA64_SensorValues";
     QByteArray bytXML  = setup_xml_->value().toLatin1();
 
@@ -82,7 +84,7 @@ bool LH_AidaWriter::createAidaMemory()
 
 void LH_AidaWriter::destroyAidaMemory()
 {
-#ifdef Q_OS_WIN32
+#ifdef Q_OS_WIN
     if (aidaData)
     {
         memset(aidaData, '\0', sz);

@@ -80,7 +80,11 @@ typedef interface IProvideRuntimeContext IProvideRuntimeContext;
 extern "C"{
 #endif 
 
+#if defined(__MINGW32__) && (__GNUC__ < 4 || (__GNUC__ == 4 && __GNUC_MINOR__ < 7))
+void * __RPC_USER MIDL_user_allocate(size_t);
+#else
 void * __RPC_USER MIDL_user_allocate(SIZE_T);
+#endif
 void __RPC_USER MIDL_user_free( void * ); 
 
 /* interface __MIDL_itf_dispex_0000 */

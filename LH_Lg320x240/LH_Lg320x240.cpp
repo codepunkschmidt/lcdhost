@@ -32,14 +32,14 @@
   POSSIBILITY OF SUCH DAMAGE.
   */
 
+#include <QtGlobal>
+#include <QDateTime>
 #include <QFile>
 #include <QDebug>
 #include <QCoreApplication>
 
-#include <stdarg.h>
-
 #ifdef Q_OS_WIN
-#include <windows.h>
+# include <windows.h>
 #endif
 
 #include "LH_QtDevice.h"

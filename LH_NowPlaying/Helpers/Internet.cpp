@@ -67,7 +67,7 @@ QString CInternet::getLastErrorMessage()
 bool CInternet::TestUrl(const std::wstring& url)
 {
     DWORD flags = INTERNET_FLAG_RESYNCHRONIZE;
-    HINTERNET hUrlDump = InternetOpenUrl(c_NetHandle, url.c_str(), NULL, NULL, flags, 0);
+    HINTERNET hUrlDump = InternetOpenUrl(c_NetHandle, url.c_str(), NULL, 0, flags, 0);
 
     if (!hUrlDump)
         return false;
@@ -89,7 +89,7 @@ std::wstring CInternet::DownloadUrl(const std::wstring& url, int codepage)
 	// From WebParser.cpp
 	std::wstring result;
 	DWORD flags = INTERNET_FLAG_RESYNCHRONIZE;
-	HINTERNET hUrlDump = InternetOpenUrl(c_NetHandle, url.c_str(), NULL, NULL, flags, 0);
+    HINTERNET hUrlDump = InternetOpenUrl(c_NetHandle, url.c_str(), NULL, 0, flags, 0);
 
 	if (!hUrlDump)
 	{

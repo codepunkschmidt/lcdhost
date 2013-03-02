@@ -55,7 +55,9 @@ QString lh_data_dir()
 static void lh_log_handler(QtMsgType type, const QMessageLogContext &context, const QString &msg)
 {
 #ifdef Q_OS_WIN
+# ifdef _MSC_VER
     OutputDebugStringW((LPCWSTR) (const void*) msg.utf16());
+# endif
 #endif
     if(lh_log_old_handler)
         lh_log_old_handler(type, context, msg);

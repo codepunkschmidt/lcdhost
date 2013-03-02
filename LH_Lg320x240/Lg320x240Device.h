@@ -2,9 +2,10 @@
 #define LG320x240DEVICE_H
 
 #include "LH_QtDevice.h"
-extern "C" {
-    #include "libusb.h"
-}
+
+typedef struct libusb_device libusb_device;
+typedef struct libusb_device_handle libusb_device_handle;
+struct libusb_device_descriptor;
 
 class Lg320x240Device : public LH_QtDevice
 {

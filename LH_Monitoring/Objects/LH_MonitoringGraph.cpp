@@ -38,8 +38,9 @@ lh_class *LH_MonitoringGraph::classInfo()
         STRINGIZE(MONITORING_FOLDER),
         STRINGIZE(COMMON_OBJECT_NAME)"Graph",
         STRINGIZE(COMMON_OBJECT_NAME)" (Graph)",
-        48,48
-
+        48,48,
+        lh_object_calltable_NULL,
+        lh_instance_calltable_NULL
     };
 
     return &classInfo;

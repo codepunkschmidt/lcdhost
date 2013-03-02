@@ -22,6 +22,7 @@ lh_class *LH_NowPlayingAlbumArt::classInfo()
         "NowPlayingAlbumArt",
         "Now Playing (Album Art)",
         -1, -1,
+        lh_object_calltable_NULL,
         lh_instance_calltable_NULL
     };
 

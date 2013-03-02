@@ -73,7 +73,8 @@ CPlayer* CPlayerFoobar::Create()
 void CPlayerFoobar::Initialize()
 {
 	// Create windows class
-	WNDCLASS wc = {0};
+    WNDCLASS wc;
+    memset(&wc, 0, sizeof(wc));
 	wc.hInstance = g_Instance;
 	wc.lpfnWndProc = WndProc;
 	wc.lpszClassName = L"NowPlayingFoobarClass";

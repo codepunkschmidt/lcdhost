@@ -34,8 +34,9 @@ CPlayerWLM::CPlayerWLM() : CPlayer(),
     m_Window()
 {
 	// Create windows class
-	WNDCLASS wc = {0};
-	wc.hInstance = g_Instance;
+    WNDCLASS wc;
+    memset(&wc, 0, sizeof(wc));
+    wc.hInstance = g_Instance;
 	wc.lpfnWndProc = WndProc;
 	wc.lpszClassName = L"MsnMsgrUIManager";
 	RegisterClass(&wc);
@@ -156,7 +157,8 @@ LRESULT CALLBACK CPlayerWLM::WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM 
 
 void CPlayerWLM::SendKeyInput(WORD key)
 {
-	KEYBDINPUT kbi = {0};
+    KEYBDINPUT kbi;
+    memset(&kbi, 0, sizeof(kbi));
 	kbi.wVk = key;
 	kbi.dwExtraInfo = (ULONG_PTR)GetMessageExtraInfo();
 

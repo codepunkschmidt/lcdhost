@@ -80,7 +80,7 @@ typedef interface IProvideRuntimeContext IProvideRuntimeContext;
 extern "C"{
 #endif 
 
-void * __RPC_USER MIDL_user_allocate(size_t);
+void * __RPC_USER MIDL_user_allocate(SIZE_T);
 void __RPC_USER MIDL_user_free( void * ); 
 
 /* interface __MIDL_itf_dispex_0000 */

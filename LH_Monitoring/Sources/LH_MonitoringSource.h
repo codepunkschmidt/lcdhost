@@ -39,9 +39,10 @@ class SensorDefinition
 
     void init()
     {
-        OptionalValue NA_ = (OptionalValue){ false, 0 };
+        OptionalValue NA_ = { false, 0 };
+        minmax _def_limits = { NA_, NA_ };
         this->units = "";
-        this->limits = (minmax) { NA_, NA_ };
+        this->limits = _def_limits;
         this->deadValue = NA_;
         adaptiveUnits.active = false;
         adaptiveUnits.factor = 1;
@@ -66,26 +67,32 @@ public:
 
     SensorDefinition(QString units, qreal minimum_limit, qreal maximum_limit)
     {
+        OptionalValue _def_min = { true, minimum_limit };
+        OptionalValue _def_max = { true, maximum_limit };
         init();
         this->units = units;
-        this->limits.minimum = (OptionalValue){ true, minimum_limit };
-        this->limits.maximum = (OptionalValue){ true, maximum_limit };
+        this->limits.minimum = _def_min;
+        this->limits.maximum = _def_max;
     }
 
     SensorDefinition(QString units, qreal minimum_limit, qreal maximum_limit, qreal deadValue)
     {
+        OptionalValue _def_min = { true, minimum_limit };
+        OptionalValue _def_max = { true, maximum_limit };
+        OptionalValue _def_dead = { true, deadValue };
         init();
         this->units = units;
-        this->limits.minimum = (OptionalValue){ true, minimum_limit };
-        this->limits.maximum = (OptionalValue){ true, maximum_limit };
-        this->deadValue = (OptionalValue){ true, deadValue };
+        this->limits.minimum = _def_min;
+        this->limits.maximum = _def_max;
+        this->deadValue = _def_dead;
     }
 
     SensorDefinition(QString units, qreal deadValue)
     {
+        OptionalValue _def_dead = { true, deadValue };
         init();
         this->units = units;
-        this->deadValue = (OptionalValue){ true, deadValue };
+        this->deadValue = _def_dead;
     }
 
     void setAdaptiveUnits(int factor, QStringList unitsList)

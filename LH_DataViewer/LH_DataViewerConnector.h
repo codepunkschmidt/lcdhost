@@ -28,6 +28,7 @@
 #include <QDateTime>
 #include <QFileSystemWatcher>
 #include <QHash>
+#include <QtXml>
 
 #include "LH_Text/LH_Text.h"
 #include "LH_Qt_QFileInfo.h"
@@ -38,7 +39,7 @@
 
 #include "LH_DataViewerData.h"
 
-#ifdef Q_OS_WIN32
+#ifdef Q_OS_WIN
 #include <windows.h>
 #include <winbase.h>
 #include <tlhelp32.h>

@@ -2,6 +2,7 @@
 #define LH_QT_CF_SOURCE_TARGET_H
 
 #include <QtGlobal>
+#include <QDebug>
 #include <QDateTime>
 #include <QList>
 #include <QHash>

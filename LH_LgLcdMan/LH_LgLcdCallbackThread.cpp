@@ -44,7 +44,7 @@
 lgLcdOpenByTypeContext LH_LgLcdCallbackThread::bw_cxt;
 lgLcdOpenByTypeContext LH_LgLcdCallbackThread::qvga_cxt;
 
-#ifdef Q_OS_WIN32
+#ifdef Q_OS_WIN
 DWORD WINAPI LH_LgLcdCallbackThread::LH_LogitechCB( int connection, const PVOID pContext, DWORD code, DWORD p1, DWORD p2, DWORD p3, DWORD p4 )
 #endif
 #ifdef Q_OS_MAC
@@ -91,7 +91,7 @@ unsigned long LH_LgLcdCallbackThread::LH_LogitechCB( int connection, const void*
 
 #define LCD_ERR(x) ( LH_LgLcdMan::lglcd_Err((x),__FILE__,__LINE__) == NULL )
 
-#ifdef Q_OS_WIN32
+#ifdef Q_OS_WIN
 DWORD WINAPI LH_LgLcdCallbackThread::LH_LogitechButtonCB(int device, DWORD dwButtons, const PVOID pContext)
 #endif
 #ifdef Q_OS_MAC

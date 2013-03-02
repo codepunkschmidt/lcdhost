@@ -15,7 +15,7 @@ LH_MonitoringSource_DriveStats::LH_MonitoringSource_DriveStats(LH_QtObject *pare
 
 bool LH_MonitoringSource_DriveStats::doUpdate()
 {
-#ifndef Q_WS_WIN
+#ifndef Q_OS_WIN
     return false;
 #else
     bool resultVal = true;

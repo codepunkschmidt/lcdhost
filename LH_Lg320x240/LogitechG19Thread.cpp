@@ -1,9 +1,13 @@
 
 #include "LogitechG19Thread.h"
-#include "libusb.h"
+
 #include <QDebug>
 #include <QTime>
 #include <QMutex>
+
+extern "C" {
+#include "libusb.h"
+}
 
 LogitechG19Thread::LogitechG19Thread(QObject *parent) : QThread(parent)
 {

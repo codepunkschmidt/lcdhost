@@ -3,7 +3,7 @@
 
 #include "LH_QtPlugin_Mailcount.h"
 
-#ifdef Q_OS_WIN32
+#ifdef Q_OS_WIN
 #include <windows.h>
 /* Make sure unread mail function is declared */
 typedef HRESULT (WINAPI *SHGetUnreadMailCountW_t)(
@@ -65,7 +65,7 @@ LH_QtPlugin_Mailcount::~LH_QtPlugin_Mailcount()
 
 const char *LH_QtPlugin_Mailcount::userInit()
 {
-#ifdef Q_OS_WIN32
+#ifdef Q_OS_WIN
     hShell32Dll = LoadLibraryW( L"SHELL32.DLL" );
     if( hShell32Dll != NULL )
         SHGetUnreadMailCountW_p = (SHGetUnreadMailCountW_t) GetProcAddress( (HMODULE) hShell32Dll, "SHGetUnreadMailCountW" );
@@ -92,7 +92,7 @@ int LH_QtPlugin_Mailcount::notify( int code, void *param )
 
 void LH_QtPlugin_Mailcount::userTerm()
 {
-#ifdef Q_OS_WIN32
+#ifdef Q_OS_WIN
     if( hShell32Dll )
     {
             FreeLibrary( (HMODULE) hShell32Dll );
@@ -107,7 +107,7 @@ void LH_QtPlugin_Mailcount::getUnreadMailcount()
 {
     int total = manual_adjust_->value();
 
-#ifdef Q_OS_WIN32
+#ifdef Q_OS_WIN
     if( SHGetUnreadMailCountW_p )
     {
         HRESULT retv;

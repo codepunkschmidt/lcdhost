@@ -8,7 +8,7 @@ LH_MonitoringSource_HWMonitor::LH_MonitoringSource_HWMonitor(LH_QtObject *parent
 
 bool LH_MonitoringSource_HWMonitor::doUpdate()
 {
-#ifndef Q_WS_WIN
+#ifndef Q_OS_WIN
     return false;
 #else
     bool resultVal = false;
@@ -52,7 +52,7 @@ bool LH_MonitoringSource_HWMonitor::doUpdate()
             QString units = ""; QString type="Other";
 
             if(keyType=="F") {units="rpm"; type = "Fan Speed";}
-            if(keyType=="T") {units="°C"; type = "Temperature";}
+            if(keyType=="T") {units="\176C"; type = "Temperature";}
             if(keyType=="P") {units="W"; type = "Powers";}
             if(keyType=="V") {units="V"; type = "Voltage";}
 

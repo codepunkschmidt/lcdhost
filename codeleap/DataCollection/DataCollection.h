@@ -50,7 +50,7 @@ public:
 #ifdef MONITORING_CLASS
     QString units;
     QStringList adaptiveUnitsList;
-    int adaptiveUnitsFactor;
+    qreal adaptiveUnitsFactor;
     bool aggregate;
     bool group;
     bool hidden;
@@ -164,7 +164,8 @@ public:
             }
             //if(popDuration_ != 0) qDebug() << "popped: " << popped_duration;
         }
-        push_front( (DataPoint){value, duration} );
+        DataPoint _tmp = {value, duration};
+        push_front( _tmp );
         totalDuration_ += duration;
     }
 };

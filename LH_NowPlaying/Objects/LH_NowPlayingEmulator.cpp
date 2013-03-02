@@ -54,6 +54,7 @@ lh_class *LH_NowPlayingEmulator::classInfo()
         "NowPlayingEmulator",
         "Now Playing Emulator (Text)",
         -1, -1,
+        lh_object_calltable_NULL,
         lh_instance_calltable_NULL
     };
 
@@ -99,6 +100,7 @@ LH_NowPlayingEmulator::~LH_NowPlayingEmulator()
 
 int LH_NowPlayingEmulator::notify(int code, void *param)
 {
+    Q_UNUSED(param);
     if(code & LH_NOTE_SECOND )
         sendMessage(setup_enabled_->value());
     return LH_NOTE_SECOND;

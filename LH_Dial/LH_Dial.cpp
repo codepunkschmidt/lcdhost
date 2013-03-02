@@ -474,13 +474,13 @@ float LH_Dial::getRadians(qreal degrees, float& offsetRadians)
         case 0: //left / bottom left
             break;
         case 1: //top / top left
-            offsetRadians += M_PI/2;
+            offsetRadians += M_PI/2.0;
             break;
         case 2: //right / top right
             offsetRadians += M_PI;
             break;
         case 3: //bottom / bottom right
-            offsetRadians += -M_PI/2;
+            offsetRadians += -M_PI/2.0;
             break;
         }
         break;

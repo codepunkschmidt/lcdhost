@@ -38,7 +38,7 @@
 
 #include <QtGlobal>
 #include <QImage>
-#include <QtXml>
+// #include <QtXml>
 
 #include "LH_QtPlugin.h"
 #include "LH_QtObject.h"

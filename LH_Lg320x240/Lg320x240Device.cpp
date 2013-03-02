@@ -2,6 +2,10 @@
 #include <QImage>
 #include <QDebug>
 #include "Lg320x240Device.h"
+extern "C"
+{
+#include "libusb.h"
+}
 
 Lg320x240Device::Lg320x240Device( libusb_device *dev, libusb_device_descriptor *dd, LH_QtPlugin *drv ) : LH_QtDevice(drv)
 {

@@ -319,7 +319,7 @@ void LH_QtCFInstance::cf_XML_changed()
     int selIndex = setup_cf_rules_->value();
     if(cf_rule_editing_!=Existing) selIndex = -1;
     setup_cf_rules_->list().clear();
-    for(int i=0; i<root.childNodes().length(); i++)
+    for(int i=0; i<root.childNodes().size(); i++)
     {
         cf_rule rule(root.childNodes().at(i));
         setup_cf_rules_->list().append(rule.description());
@@ -339,7 +339,7 @@ void LH_QtCFInstance::cf_rules_changed()
     doc.setContent(setup_cf_XML_->value());
     QDomElement root = doc.firstChild().toElement();
 
-    bool validSel = setup_cf_rules_->value()>=0 && setup_cf_rules_->value() < (int)root.childNodes().length();
+    bool validSel = setup_cf_rules_->value()>=0 && setup_cf_rules_->value() < (int)root.childNodes().size();
     if(validSel)
     {
         cf_rule rule(root.childNodes().at(setup_cf_rules_->value()));
@@ -429,7 +429,7 @@ void LH_QtCFInstance::cf_apply_rules(bool allowRender)
 
         bool doRender = false;
 
-        for(int i=0; i<root.childNodes().length(); i++)
+        for(int i=0; i<root.childNodes().size(); i++)
             doRender |= cf_rule(root.childNodes().at(i)).apply(this, sources_, targets_);
 
         if(doRender && allowRender) this->requestRender();
@@ -493,7 +493,7 @@ void LH_QtCFInstance::cf_move_rule_up()
     doc.setContent(setup_cf_XML_->value());
     QDomElement root = doc.firstChild().toElement();
 
-    if(i>=1 && i < (int)root.childNodes().length())
+    if(i>=1 && i < (int)root.childNodes().size())
     {
         root.insertBefore(root.childNodes().at(i),root.childNodes().at(i-1));
         setup_cf_rules_->setValue(i-1);
@@ -511,7 +511,7 @@ void LH_QtCFInstance::cf_move_rule_down()
     doc.setContent(setup_cf_XML_->value());
     QDomElement root = doc.firstChild().toElement();
 
-    if(i>=0 && i < (int)root.childNodes().length()-1)
+    if(i>=0 && i < (int)root.childNodes().size()-1)
     {
         root.insertAfter(root.childNodes().at(i),root.childNodes().at(i+1));
         setup_cf_rules_->setValue(i+1);

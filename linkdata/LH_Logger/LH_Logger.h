@@ -44,6 +44,6 @@ protected:
 QString lh_data_dir();
 QString lh_log_dir();
 
-#if defined(Q_OS_WIN32)
+#if defined(Q_OS_WIN)
 QString Win32Message( int dw );
 #endif

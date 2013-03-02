@@ -13,7 +13,7 @@
 #include <QString>
 #include <QDir>
 
-#ifdef Q_OS_WIN32
+#ifdef Q_OS_WIN
 #include <Windows.h>
 QString Win32Message( int dw )
 {
@@ -54,6 +54,9 @@ QString lh_data_dir()
 
 static void lh_log_handler(QtMsgType type, const QMessageLogContext &context, const QString &msg)
 {
+#ifdef Q_OS_WIN
+    OutputDebugStringW((LPCWSTR) (const void*) msg.utf16());
+#endif
     if(lh_log_old_handler)
         lh_log_old_handler(type, context, msg);
     if(LH_Logger *logger = LH_Logger::lock())

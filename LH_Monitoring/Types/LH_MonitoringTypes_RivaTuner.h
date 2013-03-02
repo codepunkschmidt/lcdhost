@@ -1,13 +1,10 @@
 #ifndef LH_RIVATUNERTYPES_H
 #define LH_RIVATUNERTYPES_H
 
-#ifdef Q_WS_WIN
+#include <QtGlobal>
+#ifdef Q_OS_WIN
 # include <windows.h>
 #endif
-
-//#ifndef DWORD
-//# define DWORD quint32
-//#endif
 
 struct RTHM_SHARED_MEMORY_HEADER
 {
@@ -39,9 +36,9 @@ struct RTHM_SHARED_MEMORY_ENTRY
     char	czSrc[32];
             //data source name (e.g. "Core temperature")
     char	czDim[16];
-            //data source dimansion (e.g. "°C")
+            //data source dimansion (e.g. "\176C")
     float	data;
-            //last polled data in raw format (e.g. 50°C)
+            //last polled data in raw format (e.g. 50\176C)
             //(this field can be set to FLT_MAX if data is not available)
 
             //take a note that the user can enable raw data transforming mode and
@@ -49,7 +46,7 @@ struct RTHM_SHARED_MEMORY_ENTRY
             //be translated to mapped core voltages).
             //In this case you may use dataTransformed field to get transformed value
     float	offset;
-            //user specified data offset (e.g. +10°C temerature compensation)
+            //user specified data offset (e.g. +10\176C temerature compensation)
 
             //take a note that this value is not automatically added to transformed
             //data, it is up to you to add offset to it

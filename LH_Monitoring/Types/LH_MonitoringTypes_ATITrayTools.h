@@ -1,7 +1,7 @@
 #ifndef LH_ATITRAYTOOLSTYPES_H
 #define LH_ATITRAYTOOLSTYPES_H
 
-#ifdef Q_OS_WIN32
+#ifdef Q_OS_WIN
 # include <windows.h>
 #endif
 

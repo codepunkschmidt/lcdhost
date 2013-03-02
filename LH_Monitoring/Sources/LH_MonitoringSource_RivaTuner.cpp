@@ -7,7 +7,7 @@ LH_MonitoringSource_RivaTuner::LH_MonitoringSource_RivaTuner(LH_QtObject *parent
 
 bool LH_MonitoringSource_RivaTuner::doUpdate()
 {
-#ifndef Q_OS_WIN32
+#ifndef Q_OS_WIN
     return false;
 #else
     bool resultVal = false;

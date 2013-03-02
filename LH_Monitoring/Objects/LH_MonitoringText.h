@@ -6,7 +6,7 @@
 #include "LH_Qt_float.h"
 #include <QFontMetrics>
 #include <QDebug>
-#include "Objects/LH_MonitoringObject.h"
+#include "../Objects/LH_MonitoringObject.h"
 
 class LH_MonitoringText : public LH_Text, public LH_MonitoringObject
 {

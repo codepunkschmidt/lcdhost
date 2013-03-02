@@ -4,7 +4,7 @@
 #include "LH_Qt_int.h"
 #include "LH_ColorSwatch/LH_ColorSwatch.h"
 
-#include "Objects/LH_MonitoringObject.h"
+#include "../Objects/LH_MonitoringObject.h"
 
 class LH_MonitoringColorSwatch : public LH_ColorSwatch, public LH_MonitoringObject
 {

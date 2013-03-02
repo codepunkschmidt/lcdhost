@@ -1,5 +1,5 @@
 #include "LH_MonitoringSource.h"
-#include "LH_QtMonitoringPlugin.h"
+#include "../LH_QtMonitoringPlugin.h"
 
 #include "json.h"
 #include <QDebug>
@@ -297,7 +297,7 @@ void LH_MonitoringSource::updateAggregates(QString type, QString group)
     if(count>1)
     {
         QString commonName = (group == ""? type : group);
-        QString jsonData = QString(Json::serialize(jobject));
+        QString jsonData = QString::fromUtf8(Json::serialize(jobject));
         avg = qRound((avg*10.0) / count)/10.0;
         updateValue(type, group, QString("Average %1").arg(commonName), avg     , def, true, false);
         updateValue(type, group, QString("Minimum %1").arg(commonName), min     , def, true, false);
@@ -437,7 +437,7 @@ QVariantMap LH_MonitoringSource::getMonitoringOptions()
 // afterUpdate: actions performed after an update is complete
 void LH_MonitoringSource::afterUpdate()
 {
-    QString currentOptionsData = QString(Json::serialize(getMonitoringOptions()));
+    QString currentOptionsData = QString::fromUtf8(Json::serialize(getMonitoringOptions()));
     if (optionsData_ != currentOptionsData)
     {
         optionsData_ = currentOptionsData;

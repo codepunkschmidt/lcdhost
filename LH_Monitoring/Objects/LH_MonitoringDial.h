@@ -4,7 +4,7 @@
 #include "LH_Dial/LH_Dial.h"
 #include <QTime>
 
-#include "Objects/LH_MonitoringObject.h"
+#include "../Objects/LH_MonitoringObject.h"
 
 class LH_MonitoringDial : public LH_Dial, public LH_MonitoringObject
 {

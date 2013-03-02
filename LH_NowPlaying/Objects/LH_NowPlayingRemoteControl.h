@@ -8,7 +8,7 @@
 #include <LH_QtInstance.h>
 #include <LH_Qt_InputState.h>
 #include <LH_Qt_QFileInfo.h>
-#include "LH_QtPlugin_NowPlaying.h"
+#include "../LH_QtPlugin_NowPlaying.h"
 
 class LH_NowPlayingRemoteControl : public LH_QtInstance
 {

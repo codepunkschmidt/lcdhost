@@ -674,7 +674,7 @@ void LH_DataViewerConnector::updateNodes(QDomNode n, dataNode* currentNode)
         currentNode->attributes.insert(attr.name(), attr.value());
     }
 
-    for(int i = 0; i<n.childNodes().length(); i++)
+    for(int i = 0; i<n.childNodes().size(); i++)
     {
         QDomNode child = n.childNodes().at(i);
         if(child.nodeType()==QDomNode::TextNode)

@@ -1,13 +1,11 @@
 #ifndef LH_AFTERBURNERTYPES_H
 #define LH_AFTERBURNERTYPES_H
 
-#ifdef Q_WS_WIN
+#include <QtGlobal>
+
+#ifdef Q_OS_WIN
 # include <windows.h>
 #endif
-
-//#ifndef DWORD
-//# define DWORD quint32
-//#endif
 
 struct MAHM_SHARED_MEMORY_HEADER
 {
@@ -48,9 +46,9 @@ struct MAHM_SHARED_MEMORY_ENTRY
                //data source units (e.g. "MHz")
 
        char	szLocalizedSrcName[MAX_PATH];
-               //localized data source name (e.g. "„астота €дра" for Russian GUI)
+               //localized data source name
        char	szLocalizedSrcUnits[MAX_PATH];
-               //localized data source units (e.g. "ћ√ц" for Russian GUI)
+               //localized data source units
 
        char	szRecommendedFormat[MAX_PATH];
                //recommended output format (e.g. "%.3f" for "Core voltage" data source)

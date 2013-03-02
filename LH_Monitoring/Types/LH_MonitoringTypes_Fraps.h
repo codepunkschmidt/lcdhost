@@ -1,7 +1,7 @@
 #ifndef LH_FRAPSTYPES_H
 #define LH_FRAPSTYPES_H
 
-#ifdef Q_OS_WIN32
+#ifdef Q_OS_WIN
 # include <windows.h>
 #endif
 

@@ -1,12 +1,12 @@
 #include "LH_MonitoringSource_SpeedFan.h"
 #include "LH_MonitoringTypes_SpeedFan.h"
 
-#ifdef Q_WS_WIN
+#ifdef Q_OS_WIN
 # include <windows.h>
 #endif
 
 LH_MonitoringSource_SpeedFan::LH_MonitoringSource_SpeedFan(LH_QtObject *parent): LH_MonitoringSource(parent, "SpeedFan") {
-    temp_ = SensorDefinition( "°C", -128.0 );
+    temp_ = SensorDefinition( "\176C", -128.0 );
     fans_ = SensorDefinition( "rpm", 0 );
     volt_ = SensorDefinition( "V" );
 }
@@ -14,7 +14,7 @@ LH_MonitoringSource_SpeedFan::LH_MonitoringSource_SpeedFan(LH_QtObject *parent):
 
 bool LH_MonitoringSource_SpeedFan::doUpdate()
 {
-#ifndef Q_WS_WIN
+#ifndef Q_OS_WIN
     return false;
 #else
     bool resultVal = false;

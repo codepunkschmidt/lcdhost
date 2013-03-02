@@ -3,16 +3,16 @@
 
 LH_MonitoringSource_CoreTemp::LH_MonitoringSource_CoreTemp(LH_QtObject *parent): LH_MonitoringSource(parent, "CoreTemp")
 {
-    temp_ = SensorDefinition("°?");
+    temp_ = SensorDefinition("\176?");
     freq_ = SensorDefinition("MHz");
-    toTj_ = SensorDefinition("°? to TjMax");
+    toTj_ = SensorDefinition("\176? to TjMax");
     perc_ = SensorDefinition("%", 0, 100);
 
 }
 
 bool LH_MonitoringSource_CoreTemp::doUpdate()
 {
-#ifndef Q_WS_WIN
+#ifndef Q_OS_WIN
     return false;
 #else
     const char* mapname  = "CoreTempMappingObject";
@@ -28,7 +28,7 @@ bool LH_MonitoringSource_CoreTemp::doUpdate()
             if( !((ctmemory->uiCPUCnt==0) && (ctmemory->uiCoreCnt==0)) )
             {
                 resultVal = true;
-                temp_.units = (ctmemory->ucFahrenheit? "°F" : "°C");
+                temp_.units = (ctmemory->ucFahrenheit? "\176F" : "\176C");
                 toTj_.units = temp_.units +  " to TjMax";
 
                 updateFromArray("Core Temperature", "Core", ctmemory->uiCoreCnt, ctmemory->fTemp  , (ctmemory->ucDeltaToTjMax? toTj_ : temp_));

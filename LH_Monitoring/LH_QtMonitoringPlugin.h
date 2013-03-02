@@ -54,7 +54,7 @@ public:
 
     virtual void userTerm() { dataSources->userTerm(); }
 
-    virtual int notify( int code, void *param )
+    virtual int notify( int /* code */, void * /* param */ )
     {
         if(dataSources)
             dataSources->rebuild();

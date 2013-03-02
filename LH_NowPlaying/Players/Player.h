@@ -29,9 +29,9 @@
 #include <string>
 #include <map>
 #include <process.h>
-
 #include <windows.h>
 #include <winuser.h>
+
 #include <QString>
 #include <QRegExp>
 #include <QTime>
@@ -101,12 +101,12 @@ public:
 	virtual void Stop() {}
 	virtual void Next() {}
 	virtual void Previous() {}
-	virtual void SetPosition(int position) {}		// position: position in seconds
-	virtual void SetRating(int rating) {}			// rating: 0 - 5
-	virtual void SetVolume(int volume) {}			// volume: 0 - 100
-	virtual void SetShuffle(bool state) {}			// state: off = 0, on = 1
-	virtual void SetRepeat(bool state) {}			// state: off = 0, on = 1
-	virtual void OpenPlayer(std::wstring& path) {}
+    virtual void SetPosition(int /*position*/) {}		// position: position in seconds
+    virtual void SetRating(int /*rating*/) {}			// rating: 0 - 5
+    virtual void SetVolume(int /*volume*/) {}			// volume: 0 - 100
+    virtual void SetShuffle(bool /*state*/) {}			// state: off = 0, on = 1
+    virtual void SetRepeat(bool /*state*/) {}			// state: off = 0, on = 1
+    virtual void OpenPlayer(std::wstring& /*path*/) {}
 	virtual void ClosePlayer() {}
 
     PLAYSTATE GetState()   { return m_State; }

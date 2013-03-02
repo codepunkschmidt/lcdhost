@@ -30,6 +30,8 @@ HWND CPlayerVLC::m_VLCHandle = NULL;
 
 BOOL CALLBACK CPlayerVLC::EnumWindowsProc(HWND hWnd, LPARAM lParam)
 {
+    Q_UNUSED(lParam);
+
     if (!hWnd)
         return TRUE;		// Not a window
 
@@ -60,7 +62,7 @@ HWND CPlayerVLC::FindVLCWindow()
 {
     m_VLCHandle = NULL;
     qDebug() << "Finding VLC...";
-    EnumWindows(EnumWindowsProc, NULL);
+    EnumWindows(EnumWindowsProc, 0);
     return m_VLCHandle;
 }
 
@@ -324,6 +326,7 @@ void CPlayerVLC::SetVolume(int volume)
 */
 void CPlayerVLC::SetShuffle(bool state)
 {
+    Q_UNUSED(state);
     CInternet::DownloadUrl(L"http://127.0.0.1:"+m_Port+L"/requests/status.xml?command=pl_random", CP_UTF8);
     /*if (!m_PlayingStream)
 	{
@@ -341,6 +344,7 @@ void CPlayerVLC::SetShuffle(bool state)
 */
 void CPlayerVLC::SetRepeat(bool state)
 {
+    Q_UNUSED(state);
     CInternet::DownloadUrl(L"http://127.0.0.1:"+m_Port+L"/requests/status.xml?command=pl_repeat", CP_UTF8);
     /*if (!m_PlayingStream)
 	{

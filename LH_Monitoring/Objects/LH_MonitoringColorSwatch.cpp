@@ -36,7 +36,9 @@ lh_class *LH_MonitoringColorSwatch::classInfo()
         STRINGIZE(MONITORING_FOLDER),
         STRINGIZE(COMMON_OBJECT_NAME)"ColorSwatch",
         STRINGIZE(COMMON_OBJECT_NAME)" (ColorSwatch)",
-        24,24
+        24,24,
+        lh_object_calltable_NULL,
+        lh_instance_calltable_NULL
     };
 
     return &classInfo;

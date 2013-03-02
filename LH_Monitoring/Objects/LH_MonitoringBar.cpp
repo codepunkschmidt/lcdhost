@@ -36,7 +36,9 @@ lh_class *LH_MonitoringBar::classInfo()
         STRINGIZE(MONITORING_FOLDER),
         STRINGIZE(COMMON_OBJECT_NAME)"Bar",
         STRINGIZE(COMMON_OBJECT_NAME)" (Bar)",
-        48,48        
+        48,48,
+        lh_object_calltable_NULL,
+        lh_instance_calltable_NULL
     };
 
     return &classInfo;

@@ -45,7 +45,9 @@ lh_class *LH_MonitoringImage::classInfo()
         STRINGIZE(MONITORING_FOLDER),
         STRINGIZE(COMMON_OBJECT_NAME)"Image",
         STRINGIZE(COMMON_OBJECT_NAME)" (Image)",
-        48,48
+        48,48,
+        lh_object_calltable_NULL,
+        lh_instance_calltable_NULL
     };
 
     return &classInfo;

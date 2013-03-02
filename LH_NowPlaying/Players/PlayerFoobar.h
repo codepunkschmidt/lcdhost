@@ -36,7 +36,7 @@ public:
 	virtual void Next();
 	virtual void Previous();
 	virtual void SetPosition(int position);
-	virtual void SetRating(int rating) {}
+    virtual void SetRating(int /*rating*/) {}
 	virtual void SetVolume(int volume);
 	virtual void SetShuffle(bool state);
 	virtual void SetRepeat(bool state);

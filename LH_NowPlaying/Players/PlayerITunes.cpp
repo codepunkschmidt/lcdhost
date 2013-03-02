@@ -123,8 +123,9 @@ CPlayerITunes::CPlayerITunes() : CPlayer(),
 	m_iTunesEvent()
 {
 	// Create windows class
-	WNDCLASS wc = {0};
-	wc.hInstance = g_Instance;
+    WNDCLASS wc;
+    memset(&wc, 0, sizeof(wc));
+    wc.hInstance = g_Instance;
 	wc.lpfnWndProc = WndProc;
 	wc.lpszClassName = L"NowPlayingITunesClass";
 	RegisterClass(&wc);

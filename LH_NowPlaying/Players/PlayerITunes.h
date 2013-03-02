@@ -67,7 +67,7 @@ private:
 	{
 	public:
 		CEventHandler(CPlayerITunes* player);
-		~CEventHandler();
+        virtual ~CEventHandler();
 
 		// IUnknown
 		HRESULT STDMETHODCALLTYPE QueryInterface(REFIID iid, void** ppvObject);

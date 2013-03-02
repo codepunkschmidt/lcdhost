@@ -87,6 +87,6 @@ void LH_MonitoringSources::refreshMonitoringOptions()
         if(source->enabled())
             options.insert(source->appName(),source->getMonitoringOptions());
 
-    QString jsonData = QString(Json::serialize(options));
+    QString jsonData = QString::fromUtf8(Json::serialize(options));
     setup_monitoring_options_->setValue(jsonData);
 }

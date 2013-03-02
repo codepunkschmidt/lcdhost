@@ -1,8 +1,12 @@
 #ifndef LOGITECHG19_H
 #define LOGITECHG19_H
 
+#include <QDateTime>
 #include <LH_QtDevice.h>
+extern "C" {
 #include "libusb.h"
+}
+
 
 class LogitechG19 : public LH_QtDevice
 {

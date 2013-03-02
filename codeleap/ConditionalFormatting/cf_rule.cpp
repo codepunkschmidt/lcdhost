@@ -400,13 +400,13 @@ cf_rule::cf_rule( QDomNode ruleNode, QObject *parent ) : QObject(parent)
 {
     QDomNode conditionsNode = ruleNode.firstChildElement("conditions");
     Q_ASSERT(conditionsNode.childNodes().length()>0);
-    for(uint i=0; i<conditionsNode.childNodes().length(); i++)
+    for(int i=0; i<conditionsNode.childNodes().length(); i++)
         conditions.append(new cf_rule_condition(conditionsNode.childNodes().at(i), this));
     Q_ASSERT(conditions.length()>0);
 
     QDomNode actionsNode = ruleNode.firstChildElement("actions");
     Q_ASSERT(actionsNode.childNodes().length()>0);
-    for(uint i=0; i<actionsNode.childNodes().length(); i++)
+    for(int i=0; i<actionsNode.childNodes().length(); i++)
     {
         QDomNode actNode = actionsNode.childNodes().at(i);
         if(actNode.toElement().attribute("type")=="property")

@@ -319,7 +319,7 @@ void LH_QtCFInstance::cf_XML_changed()
     int selIndex = setup_cf_rules_->value();
     if(cf_rule_editing_!=Existing) selIndex = -1;
     setup_cf_rules_->list().clear();
-    for(uint i=0; i<root.childNodes().length(); i++)
+    for(int i=0; i<root.childNodes().length(); i++)
     {
         cf_rule rule(root.childNodes().at(i));
         setup_cf_rules_->list().append(rule.description());
@@ -429,7 +429,7 @@ void LH_QtCFInstance::cf_apply_rules(bool allowRender)
 
         bool doRender = false;
 
-        for(uint i=0; i<root.childNodes().length(); i++)
+        for(int i=0; i<root.childNodes().length(); i++)
             doRender |= cf_rule(root.childNodes().at(i)).apply(this, sources_, targets_);
 
         if(doRender && allowRender) this->requestRender();

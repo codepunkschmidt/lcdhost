@@ -1,3 +1,2 @@
 TEMPLATE = subdirs
-CONFIG += lh_target_config
-SUBDIRS = # $$files(LH_*)
+SUBDIRS = $$files(LH_*)

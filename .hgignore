@@ -1,11 +1,11 @@
 syntax: glob
+.DS_Store
+lcdhost.pri
+TranslationAPIKey.h
 *.pro.user
-3rdParty/taglib/taglib.pro.user
 *.orig
 *.?pre?
 moc_*.*
 *.o
-.DS_Store
-codeleap/GoogleTranslator/TranslationAPIKey.h
 LH_Monitoring/LH_Monitoring.7z
 LH_Monitoring/Sources/__2.12/*.*

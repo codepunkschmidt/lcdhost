@@ -1,0 +1,94 @@
+#
+# lcdhost.prf
+#
+# This file is included into CONFIG using .qmake.cache.
+# Note that CONFIG directives are processed *after* normal .pro/.pri handling.
+#
+
+!isEmpty(LH_DIR_INSTALL): error(LH_DIR_INSTALL already set: \"$$LH_DIR_INSTALL\")
+!isEmpty(DESTDIR): error(DESTDIR is set: \"$$DESTDIR\")
+
+defineTest(lh_log_target_config) {
+    cfgtext += $$quote(CONFIG=$$CONFIG)
+    cfgtext += $$quote(LH_DIR_INSTALL=$$LH_DIR_INSTALL)
+    cfgtext += $$quote(LH_DIR_BINARIES=$$LH_DIR_BINARIES)
+    cfgtext += $$quote(LH_DIR_PLUGINS=$$LH_DIR_PLUGINS)
+    cfgtext += $$quote(TEMPLATE=$$TEMPLATE)
+    cfgtext += $$quote(TARGET=$$TARGET)
+    cfgtext += $$quote(DESTDIR=$$DESTDIR)
+    for(x, DEFINES): cfgtext += $$quote(DEFINES: $$x)
+    for(x, INSTALLS): cfgtext += $$quote(INSTALLS: $$x)
+    for(x, LIBS): cfgtext += $$quote(LIBS: $$x)
+    win32: system(echo \"\">\"$$1\")
+    else: system(echo \'\'>\"$$1\")
+    for(x, cfgtext) {
+        win32: system(echo $$quote($$x)>>\"$$1\")
+        else: system(echo \'$$quote($$x)\'>>\"$$1\")
+    }
+    return(true)
+}
+
+defineReplace(lh_changeset_revision) {
+    hg_output = $$system(hg log -l 1 --template {node}/{rev} \"$$1\")
+    changeset = $$section(hg_output,"/",0,0)
+    isEmpty(changeset): return()
+    revision = $$section(hg_output,"/",1,1)
+    isEmpty(revision): revision = 1
+    return(CHANGESET=\"\\\"$$changeset\\\"\" REVISION=$$revision)
+}
+
+contains(QT, gui): greaterThan(QT_MAJOR_VERSION, 4): QT *= widgets
+*-g++*: exists($(HOME)/.ccache): CONFIG *= lh_ccache
+CONFIG -= declarative_debug
+
+
+CONFIG(debug, debug|release): LH_DIR_INSTALL=$$quote($$dirname(PWD)/debug)
+else: LH_DIR_INSTALL=$$quote($$dirname(PWD)/release)
+
+win32 {
+    LH_DIR_PLUGINS = $$LH_DIR_INSTALL/plugins
+    LH_DIR_BINARIES = $$LH_DIR_INSTALL
+    win32-msvc2010: DEFINES *= _CRT_SECURE_NO_WARNINGS
+}
+
+macx {
+    LH_DIR_PLUGINS = $$LH_DIR_INSTALL/LCDHost.app/Contents/PlugIns
+    LH_DIR_BINARIES = $$LH_DIR_INSTALL/LCDHost.app/Contents/MacOS
+    contains(TEMPLATE, app): QMAKE_LFLAGS += -Wl,-rpath,@loader_path,-rpath,@loader_path/../Frameworks
+    contains(TEMPLATE, lib) {
+        lh_plugin: QMAKE_LFLAGS_SONAME = -Wl,-install_name,@executable_path/../PlugIns/
+        else: QMAKE_LFLAGS_SONAME = -Wl,-install_name,@executable_path/
+    }
+}
+
+unix:!macx {
+    LH_DIR_PLUGINS = $$LH_DIR_INSTALL/plugins
+    LH_DIR_BINARIES = $$LH_DIR_INSTALL
+    contains(TEMPLATE, app): QMAKE_LFLAGS += '-Wl,-rpath,\'\$$ORIGIN\''
+}
+
+contains(TEMPLATE, lib|app) {
+    lh_plugin {
+        DESTDIR = $$quote($$LH_DIR_PLUGINS$$join(DESTDIR,,/,))
+        exists($$dirname(PWD)/private.pem) {
+            SIGNATURE_PRIVATE_FILE=$$quote($$dirname(PWD)/private.pem)
+            SIGNATURE_PUBLIC_URL=http://my.website/myplugin/public.pem
+            include($$PWD/linkdata/SignPlugin.pri)
+        }
+    } else {
+        DESTDIR = $$quote($$LH_DIR_BINARIES$$join(DESTDIR,,/,))
+    }
+    DEFINES *= $$lh_changeset_revision($$_PRO_FILE_PWD_)
+}
+
+lh_ccache {
+    QMAKE_CXX="ccache g++"
+    QMAKE_CC="ccache gcc"
+}
+
+lh_log_config {
+    lh_log_target_config($$join(TARGET,,$$_PRO_FILE_PWD_/,.config))
+}
+
+LIBS *= -L$$LH_DIR_BINARIES
+INCLUDEPATH *= $$PWD/linkdata $$PWD/codeleap

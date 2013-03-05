@@ -1,0 +1,8 @@
+#
+# .qmake.cache.in
+#
+# qmakecache.pro uses QMAKE_SUBSTITUTES to create the .qmake.cache in the build directory.
+# Note that .qmake.cache is processed before any other .pro/.pri/.prf.
+#
+
+CONFIG *= $$PWD/lcdhost.prf

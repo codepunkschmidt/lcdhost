@@ -1,8 +1,3 @@
-TARGET = Plugins
 TEMPLATE = subdirs
-CONFIG += ordered
-
-include($$PWD/linkdata/linkdata.pri)
-include($$PWD/codeleap/codeleap.pri)
-
-SUBDIRS = $$SIRREAL $$TRISCOPIC
+CONFIG += lh_target_config
+SUBDIRS = # $$files(LH_*)

@@ -4,6 +4,8 @@ DEFINES += LG320x240_LIBRARY
 CONFIG += device usb wow64
 
 include(../Plugins.pri)
+INCLUDEPATH *= $$LH_DIR_LINKDATA/lh_libusb
+LIBS *= -llh_libusb
 
 SOURCES += \
     $$PLUGIN_SOURCES \

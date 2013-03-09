@@ -45,40 +45,21 @@
 # define EXPORT extern "C" Q_DECL_EXPORT
 #endif
 
-
-/**
-  Automatic registration of LCDHost layout classes written using this
-  framework. You can also manually register/deregister classes using
-  the lh_add_class() and lh_remove_class() functions in LH_QtPlugin.
-  */
 typedef lh_class *(*lh_class_info_t)();
 typedef void *(*lh_class_factory_t)(const lh_class *);
 class LH_QtClassLoader
 {
 public:
-    static LH_QtClassLoader *first_;
     LH_QtClassLoader *next_;
     lh_class_info_t info_;
     lh_class_factory_t factory_;
-    LH_QtClassLoader( lh_class_info_t info, lh_class_factory_t factory ) : info_(info), factory_(factory)
+    LH_QtClassLoader(LH_QtClassLoader **first_p, lh_class_info_t info, lh_class_factory_t factory) :
+        next_(*first_p),
+        info_(info),
+        factory_(factory)
     {
-        next_ = first_;
-        first_ = this;
+        *first_p = this;
     }
-};
-
-/*
- Support class, keeps info for classes added with lh_add_class()
- (as opposed to automatically added using LH_PLUGIN_CLASS)
- */
-class lh_layout_class
-{
-    lh_class *info_;
-    lh_class_factory_t factory_;
-public:
-    lh_layout_class(lh_class *p,lh_class_factory_t f) : info_(p), factory_(f) {}
-    lh_class *info() const { return info_; }
-    lh_class_factory_t factory() const { return factory_; }
 };
 
 /**
@@ -91,13 +72,17 @@ public:
 class LH_QtPlugin : public LH_QtObject
 {
     Q_OBJECT
+
+    LH_QtClassLoader **first_p_;
+    const lh_class **classlist_;
     lh_object_calltable objtable_;
 
 public:
     LH_QtPlugin();
-    virtual ~LH_QtPlugin() {}
+    void setFirstClass(LH_QtClassLoader **first_p) { first_p_ = first_p; }
     virtual const lh_class **class_list();
     const lh_object_calltable * objtable() { return & objtable_; }
+    void addClass(LH_QtClassLoader *next);
 };
 
 /**
@@ -105,16 +90,19 @@ public:
   for your LH_QtPlugin descendant.
   */
 #define LH_PLUGIN(classname) \
+    LH_SIGNATURE(); \
+    classname *lh_the_plugin = 0; \
+    LH_QtClassLoader *lh_first_class = 0; \
     EXPORT void *lh_create() \
     { \
-        classname *the_plugin = 0; \
-        the_plugin = new classname; \
-        LH_QtObject::set_plugin( the_plugin ); \
-        return reinterpret_cast<void*>(the_plugin); \
+        lh_the_plugin = new classname; \
+        lh_the_plugin->setFirstClass(&lh_first_class); \
+        return reinterpret_cast<void*>(lh_the_plugin); \
     } \
-    EXPORT void lh_destroy( void *ref ) { delete reinterpret_cast<classname*>(ref); }
+    EXPORT LH_QtPlugin *lh_plugin() { return static_cast<LH_QtPlugin *>(lh_the_plugin); } \
+    EXPORT void lh_destroy( void *ref ) { lh_the_plugin = 0; delete reinterpret_cast<classname*>(ref); }
 
-extern void lh_add_class( lh_class *p, lh_class_factory_t f );
-extern void lh_remove_class( lh_class *p );
+// extern void lh_add_class( lh_class *p, lh_class_factory_t f );
+// extern void lh_remove_class( lh_class *p );
 
 #endif // LH_QTPLUGIN_H

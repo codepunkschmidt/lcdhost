@@ -12,7 +12,7 @@ DEFINES += _WIN32_WINNT=0x0601
 CONFIG += cf
 
 include(../Plugins.pri)
-include(../3rdParty/taglib/taglib.pri)
+include(../../3rdParty/taglib/taglib.pri)
 
 # We don't want warnings from 3rd party C code
 QMAKE_CFLAGS_WARN_ON = -w

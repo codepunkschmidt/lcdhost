@@ -4,4 +4,6 @@
 
 TEMPLATE = subdirs
 CONFIG += ordered
-SUBDIRS = qmakecache.pro linkdata codeleap plugins
+isEmpty(LH_DIR_SOURCES): SUBDIRS = qmakecache.pro
+SUBDIRS += linkdata plugins
+OTHER_FILES = lh_features/*.pri

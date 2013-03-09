@@ -1,5 +1,6 @@
-# Generates a .qmake.cache file in the build directory from .qmake.cache.in
+TEMPLATE=subdirs
+LH_DIR_SOURCES=$$quote($$PWD)
+QMAKE_SUBSTITUTES=.qmake.cache.in
+OTHER_FILES=.qmake.cache.in
+SUBDIRS=
 
-TEMPLATE = subdirs
-SUBDIRS =
-QMAKE_SUBSTITUTES += .qmake.cache.in

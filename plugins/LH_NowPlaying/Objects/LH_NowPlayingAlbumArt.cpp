@@ -5,7 +5,7 @@ LH_PLUGIN_CLASS(LH_NowPlayingAlbumArt)
 
 LH_NowPlayingAlbumArt::LH_NowPlayingAlbumArt()
 {
-    connect( this->plugin(), SIGNAL(updated_data()), this, SLOT(refresh_image()) );
+    connect( lh_plugin(), SIGNAL(updated_data()), this, SLOT(refresh_image()) );
 
     setup_file_ = new LH_Qt_QFileInfo( this, tr("Image"), QFileInfo(), LH_FLAG_AUTORENDER | LH_FLAG_READONLY | LH_FLAG_NOSAVE);
     refresh_image();

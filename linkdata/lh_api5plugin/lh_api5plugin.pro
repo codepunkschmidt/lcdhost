@@ -33,3 +33,5 @@ HEADERS += \
 	LH_Qt_bool.h \
 	LH_Qt_float.h \
 	LH_Qt_int.h
+
+DESTDIR = $$lh_destdir()

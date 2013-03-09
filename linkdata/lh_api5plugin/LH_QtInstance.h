@@ -50,9 +50,6 @@
   Base class for LCDHost plugin classes using Qt. For normal use, the macro
   LH_PLUGIN_CLASS(classname) will export the class from the implementation
   file (not from the header file!).
-
-  See LH_Lua for an example on how to handle dynamically creating and
-  removing classes.
   */
 class LH_QtInstance : public LH_QtObject
 {
@@ -76,7 +73,7 @@ public:
     virtual QImage *render_qimage( int, int ) { return NULL; }
 
     static void build_instance_calltable( lh_instance_calltable *ct, lh_class_factory_t cf );
-    static const lh_class **auto_class_list();
+    // static const lh_class **auto_class_list();
 
     /** You MUST reimplement this in your classes if you use the class loader and macros below */
     static lh_class *classInfo() { Q_ASSERT(!"classInfo() not reimplemented"); return NULL; }
@@ -89,8 +86,9 @@ public:
   statically allocated lh_class structure pointer.
   */
 #define LH_PLUGIN_CLASS(classname)  \
+    extern LH_QtClassLoader *lh_first_class; \
     classname *_lh_##classname##_factory(const lh_class *) { return new classname; } \
     lh_class *_lh_##classname##_info() { return classname::classInfo(); } \
-    LH_QtClassLoader _lh_##classname##_loader( _lh_##classname##_info, reinterpret_cast<lh_class_factory_t>(_lh_##classname##_factory) );
+    LH_QtClassLoader _lh_##classname##_loader( &lh_first_class, _lh_##classname##_info, reinterpret_cast<lh_class_factory_t>(_lh_##classname##_factory) );
 
 #endif // LH_QTINSTANCE_H

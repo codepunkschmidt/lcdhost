@@ -39,7 +39,7 @@
 #include "LH_QtSetupItem.h"
 #include "LH_QtPlugin.h"
 
-LH_QtPlugin *LH_QtObject::plugin_ = 0;
+// LH_QtPlugin *LH_QtObject::plugin_ = 0;
 
 static int compareSetupItems( const LH_QtSetupItem *a, const LH_QtSetupItem *b )
 {

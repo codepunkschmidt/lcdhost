@@ -40,7 +40,7 @@ LH_PLUGIN_CLASS(LH_NowPlayingText)
 
 LH_NowPlayingText::LH_NowPlayingText()
 {
-    connect( this->plugin(), SIGNAL(updated_data()), this, SLOT(refresh_text()) );
+    connect( lh_plugin(), SIGNAL(updated_data()), this, SLOT(refresh_text()) );
 
     setup_item_ = new LH_Qt_QStringList(this, "Item",
                                         QStringList()

@@ -5,9 +5,7 @@ DEFINES += LH_IMAGE_LIBRARY
 include(../Plugins.pri)
 
 SOURCES += \
-    LH_Image.c \
-    ../linkdata/lh_plugin.c
+    LH_Image.c
 
 HEADERS += \
-    LH_Image.h \
-    ../linkdata/lh_plugin.h
+    LH_Image.h

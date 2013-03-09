@@ -35,9 +35,9 @@
 #include <QDebug>
 #include "LH_QtInstance.h"
 
-LH_QtClassLoader *LH_QtClassLoader::first_ = NULL;
-static const lh_class **classlist_ = NULL;
-static QList<lh_layout_class> *manual_list_ = NULL;
+// LH_QtClassLoader *LH_QtClassLoader::first_ = NULL;
+// static const lh_class **classlist_ = NULL;
+// static QList<lh_layout_class> *manual_list_ = NULL;
 
 #define RECAST(obj) reinterpret_cast<LH_QtInstance*>(obj)
 static void obj_prerender(void *obj) { RECAST(obj)->prerender(); }
@@ -100,6 +100,7 @@ QImage *LH_QtInstance::initImage(int w, int h)
     return image_;
 }
 
+#if 0
 /**
   Return the autoregistered classes.
 */
@@ -119,6 +120,8 @@ const lh_class ** LH_QtInstance::auto_class_list(void)
             ++ count;
         }
     }
+
+#if 0
     if( manual_list_ )
     {
         for( int i=0; i<manual_list_->size(); ++i )
@@ -131,35 +134,38 @@ const lh_class ** LH_QtInstance::auto_class_list(void)
             }
         }
     }
+#endif
 
     // free the old list, if any
-    if( classlist_ )
+    if( LH_QtClassLoader::classlist_ )
     {
-        free( classlist_ );
-        classlist_ = 0;
+        free( LH_QtClassLoader::classlist_ );
+        LH_QtClassLoader::classlist_ = 0;
     }
 
     // allocate list and fill it
     if( count > 0 )
     {
         int n = 0;
-        classlist_ = (const lh_class**) malloc( sizeof(lh_class*) * (count+1) );
+        LH_QtClassLoader::classlist_ = (const lh_class**) malloc( sizeof(lh_class*) * (count+1) );
         for( LH_QtClassLoader *load=LH_QtClassLoader::first_; load; load=load->next_)
         {
             if( n<count && load->info_() )
-                classlist_[n++] = load->info_();
+                LH_QtClassLoader::classlist_[n++] = load->info_();
         }
+#if 0
         if( manual_list_ )
         {
             for( int i=0; i<manual_list_->size(); ++i )
                 if( n<count && manual_list_->at(i).info() )
                     classlist_[n++] = manual_list_->at(i).info();
         }
+#endif
         Q_ASSERT( n==count );
-        classlist_[n] = NULL;
+        LH_QtClassLoader::classlist_[n] = NULL;
     }
 
-    return classlist_;
+    return LH_QtClassLoader::classlist_;
 }
 
 void lh_add_class( lh_class *p, lh_class_factory_t f )
@@ -177,4 +183,4 @@ void lh_remove_class( lh_class *p )
         if( manual_list_->at(i).info() == p )
             manual_list_->removeAt(i), i=0;
 }
-
+#endif

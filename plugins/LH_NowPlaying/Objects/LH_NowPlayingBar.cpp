@@ -41,7 +41,7 @@ LH_PLUGIN_CLASS(LH_NowPlayingBar)
 
 LH_NowPlayingBar::LH_NowPlayingBar()
 {
-    connect( this->plugin(), SIGNAL(updated_data()), this, SLOT(refresh_pos()) );
+    connect( lh_plugin(), SIGNAL(updated_data()), this, SLOT(refresh_pos()) );
     setMin(0);
     setValue(0,1);
 

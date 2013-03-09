@@ -1,3 +1,4 @@
+QT += network
 DEFINES += SIMPLETRANSLATOR
 INCLUDEPATH += $$PWD
 SOURCES += $$PWD/SimpleTranslator.cpp

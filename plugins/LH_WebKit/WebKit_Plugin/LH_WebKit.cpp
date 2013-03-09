@@ -189,7 +189,7 @@ void LH_WebKit::error(QLocalSocket::LocalSocketError err)
 {
     if( err == QLocalSocket::ServerNotFoundError  )
     {
-        static_cast<LH_QtPlugin_WebKit*>(plugin())->startServer();
+        static_cast<LH_QtPlugin_WebKit*>(lh_plugin())->startServer();
         return;
     }
 

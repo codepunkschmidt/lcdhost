@@ -1,2 +1,2 @@
 TEMPLATE = subdirs
-SUBDIRS = lh_logger lh_api5plugin
+SUBDIRS = lh_api5plugin lh_libusb

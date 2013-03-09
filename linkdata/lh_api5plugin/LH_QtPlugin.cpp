@@ -35,8 +35,6 @@
 #include "LH_QtPlugin.h"
 #include "LH_QtInstance.h"
 
-LH_SIGNATURE();
-
 /**
   Exported from all LCDHost plugins.
   Note that lh_create() and lh_destroy() are defined with the LH_PLUGIN(classname) macro.
@@ -50,10 +48,52 @@ EXPORT const lh_object_calltable* lh_get_object_calltable( void *ref )
 
 const lh_class **LH_QtPlugin::class_list()
 {
-    return LH_QtInstance::auto_class_list();
+    int count = 0;
+
+    if(first_p_ == 0)
+        return 0;
+
+    // count and check classes
+    for( LH_QtClassLoader *load=*first_p_; load; load=load->next_)
+    {
+        Q_ASSERT( load->info_ != NULL );
+        lh_class *p = load->info_();
+        if( p )
+        {
+            LH_QtObject::build_object_calltable( &p->objtable );
+            LH_QtInstance::build_instance_calltable( &p->table, load->factory_ );
+            ++ count;
+        }
+    }
+
+    // free the old list, if any
+    if( classlist_ )
+    {
+        free( classlist_ );
+        classlist_ = 0;
+    }
+
+    // allocate list and fill it
+    if( count > 0 )
+    {
+        int n = 0;
+        classlist_ = (const lh_class**) malloc( sizeof(lh_class*) * (count+1) );
+        for( LH_QtClassLoader *load=*first_p_; load; load=load->next_)
+        {
+            if( n<count && load->info_() )
+                classlist_[n++] = load->info_();
+        }
+        Q_ASSERT( n==count );
+        classlist_[n] = NULL;
+    }
+
+    return classlist_;
 }
 
-LH_QtPlugin::LH_QtPlugin() : LH_QtObject(0)
+LH_QtPlugin::LH_QtPlugin() :
+    LH_QtObject(0),
+    first_p_(0),
+    classlist_(0)
 {
     LH_QtObject::build_object_calltable( & objtable_ );
 }

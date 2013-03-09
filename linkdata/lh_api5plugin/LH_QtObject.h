@@ -41,6 +41,8 @@
 
 class LH_QtPlugin;
 
+extern "C" Q_DECL_EXPORT LH_QtPlugin *lh_plugin();
+
 /**
   Base class for Qt-based LCDHost plugin objects,
   such as plugins, layout class instances or devices.
@@ -49,7 +51,7 @@ class LH_QtObject : public QObject
 {
     Q_OBJECT
 
-    static LH_QtPlugin *plugin_;
+    // static LH_QtPlugin *plugin_;
 
     lh_callback_t cb_;
     int cb_id_;
@@ -57,8 +59,8 @@ class LH_QtObject : public QObject
     QVector<lh_setup_item*> setup_item_vector_;
 
 public:
-    static void set_plugin( LH_QtPlugin *p ) { plugin_ = p; }
-    static LH_QtPlugin *plugin() { return plugin_; }
+    // static void set_plugin( LH_QtPlugin *p ) { plugin_ = p; }
+    // static LH_QtPlugin *plugin() { return lh_plugin(); }
     static void build_object_calltable( lh_object_calltable *ct );
 
     LH_QtObject( LH_QtObject *parent = 0);

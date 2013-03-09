@@ -77,7 +77,7 @@ const char *LH_NowPlayingImage::userInit()
 
     setup_value_ = new LH_Qt_QString(this, "Current Value","", LH_FLAG_READONLY);
 
-    connect( this->plugin(), SIGNAL(updated_data()), this, SLOT(updateValue()) );
+    connect( lh_plugin(), SIGNAL(updated_data()), this, SLOT(updateValue()) );
     connect(setup_item_, SIGNAL(changed()), this, SLOT(updateValue()));
 
     add_cf_target(setup_image_file_);

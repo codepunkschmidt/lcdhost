@@ -106,7 +106,7 @@ class cf_rule_action_property: public cf_rule_action
 
         //If we didn't find a common prefix then throw
         if (lastCommonRoot == -1)
-        throw QString("Paths do not have a common base");
+            Q_ASSERT(!"Paths do not have a common base");
 
         //Build up the relative path
         QString relativePath;

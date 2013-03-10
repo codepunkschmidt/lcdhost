@@ -26,7 +26,7 @@ void LIBUSB_CALL LogitechG19::g19_button_cb( struct libusb_transfer * transfer )
 }
 
 LogitechG19::LogitechG19( libusb_context *ctx, libusb_device *usbdev, libusb_device_descriptor *dd ) :
-    LH_QtDevice( 0 ),
+    LH_QtDevice(0),
     ctx_(ctx),
     usbdev_(usbdev),
     lcdhandle_(0),

@@ -51,5 +51,5 @@ LH_LOGGER_EXPORT QString lh_data_dir();
 LH_LOGGER_EXPORT QString lh_log_dir();
 
 #if defined(Q_OS_WIN)
-QString Win32Message( int dw );
+LH_LOGGER_EXPORT QString Win32Message( int dw );
 #endif

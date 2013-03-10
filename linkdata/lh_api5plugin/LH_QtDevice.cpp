@@ -78,12 +78,12 @@ void LH_QtDevice::arrive()
     Q_ASSERT( !devid().isEmpty() );
     Q_ASSERT( !size().isEmpty() );
     Q_ASSERT( depth() > 0 );
-    if( parent() ) parent()->callback(lh_cb_arrive,lh_dev());
+    if(lh_plugin()) lh_plugin()->callback(lh_cb_arrive,lh_dev());
 }
 
 void LH_QtDevice::leave()
 {
-    if( parent() ) parent()->callback(lh_cb_leave,lh_dev());
+    if(lh_plugin()) lh_plugin()->callback(lh_cb_leave,lh_dev());
 }
 
 void LH_QtDevice::setDevid(const QString &a)

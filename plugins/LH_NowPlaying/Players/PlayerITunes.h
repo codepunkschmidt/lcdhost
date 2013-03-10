@@ -19,6 +19,8 @@
 #ifndef __PLAYERITUNES_H__
 #define __PLAYERITUNES_H__
 
+#include <QDateTime>
+
 #include <windows.h>
 #include <shlobj.h>
 #include "Player.h"

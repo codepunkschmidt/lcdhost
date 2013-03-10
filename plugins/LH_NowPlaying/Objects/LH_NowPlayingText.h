@@ -38,6 +38,7 @@
 #include <QFontMetrics>
 #include <QTime>
 #include <QRegExp>
+#include <QDateTime>
 
 #include "LH_Text/LH_Text.h"
 

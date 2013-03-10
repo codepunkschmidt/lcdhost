@@ -1,6 +1,7 @@
 #ifndef LH_NOWPLAYINGREMOTECONTROL_H
 #define LH_NOWPLAYINGREMOTECONTROL_H
 
+#include <QDateTime>
 #include <stdio.h>
 #include <windows.h>
 #include <shellapi.h>

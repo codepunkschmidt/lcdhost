@@ -25,6 +25,8 @@
 #ifndef LH_QTPLUGIN_DRIVESTATS_H
 #define LH_QTPLUGIN_DRIVESTATS_H
 
+#include <QDateTime>
+
 #include "LH_QtMonitoringPlugin.h"
 #include "LH_MonitoringSources.h"
 

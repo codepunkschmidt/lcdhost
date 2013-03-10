@@ -20,7 +20,7 @@ exists($(HOME)/.ccache): *-g++*: {
 }
 
 defineTest(lh_changeset_revision) {
-    hg_output=$$system(cd \"$$1\" && hg log -l 1 --template {node}/{rev} .)
+    hg_output=$$system(hg log -l 1 --template {node}/{rev} \"$$PWD/$$1\")
     LH_CHANGESET=$$section(hg_output,"/",0,0)
     isEmpty(LH_CHANGESET): return(false)
     LH_REVISION=$$section(hg_output,"/",1,1)
@@ -48,7 +48,9 @@ defineTest(lh_log_config) {
     isEmpty(cfgsuffix): cfgsuffix=.config
     else: cfgsuffix=$$quote(.$${cfgsuffix}.config)
     cfgfile=$$quote($${_PRO_FILE_}$${cfgsuffix})
-    exists($$cfgfile): system($$QMAKE_DEL_FILE \"$$cfgfile\")
+    exists($$cfgfile) {
+        system($$QMAKE_DEL_FILE \"$$cfgfile\")
+    }
     for(x, cfgtext) {
         win32: system(echo $$quote($$x)>>\"$$cfgfile\")
         else: system(echo \'$$quote($$x)\'>>\"$$cfgfile\")
@@ -74,7 +76,7 @@ defineReplace(lh_destdir) {
         LH_DIR_PLUGINS=$$LH_DIR_INSTALL/LCDHost.app/Contents/PlugIns
         LH_DIR_LAYOUTS=$$LH_DIR_INSTALL/LCDHost.app/Contents/Resources/layouts
     } else {
-        LH_DIR_BINARIES=$$LH_DIR_INSTALL/bin
+        LH_DIR_BINARIES=$$LH_DIR_INSTALL
         LH_DIR_PLUGINS=$$LH_DIR_INSTALL/plugins
         LH_DIR_LAYOUTS=$$LH_DIR_INSTALL/layouts
     }
@@ -98,8 +100,10 @@ defineReplace(lh_destdir) {
     }
 
     !isEmpty(DESTDIR): lh_changeset_revision() {
-        DEFINES *= CHANGESET=\"\\\"$$LH_CHANGESET\\\"\"
-        DEFINES *= REVISION=$$LH_REVISION
+        # message($$_PRO_FILE_: CHANGESET=\"$$LH_CHANGESET\")
+        # DEFINES*=CHANGESET=\"\\\"$$LH_CHANGESET\\\"\"
+        DEFINES*=$$quote(CHANGESET=\\\"$$LH_CHANGESET\\\")
+        DEFINES*=$$quote(REVISION=$$LH_REVISION)
     }
 
     win32 {

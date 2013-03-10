@@ -1,4 +1,5 @@
 TEMPLATE = lib
+CONFIG += staticlib
 TARGET = lh_api5plugin
 
 SOURCES += \

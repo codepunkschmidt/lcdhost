@@ -72,6 +72,36 @@ char __lcdhostplugin_xml[] =
 ////////////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////////////
 
+#ifdef Q_OS_WIN
+#ifndef KEY_WOW64_64KEY
+# define KEY_WOW64_64KEY		0x0100
+# define KEY_WOW64_32KEY		0x0200
+#endif
+
+typedef BOOL (WINAPI *IsWow64Process_t)( HANDLE, PBOOL );
+
+static int isWoW64()
+{
+    static int is_wow64 = -1;
+
+    if( is_wow64 == -1 )
+    {
+        HINSTANCE hKernel;
+        IsWow64Process_t p_IsWow64Process = (IsWow64Process_t)NULL;
+        is_wow64 = 0;
+        hKernel = LoadLibraryA( "KERNEL32.DLL" );
+        if( hKernel )
+        {
+            p_IsWow64Process = (IsWow64Process_t) GetProcAddress( hKernel, "IsWow64Process" );
+            if( p_IsWow64Process != NULL ) p_IsWow64Process( GetCurrentProcess(), &is_wow64 );
+            FreeLibrary( hKernel );
+        }
+    }
+
+    return is_wow64;
+}
+#endif
+
 const char *LH_LgLcdMan::userInit()
 {
 #ifdef Q_OS_WIN

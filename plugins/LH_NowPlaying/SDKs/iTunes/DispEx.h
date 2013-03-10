@@ -83,7 +83,11 @@ extern "C"{
 #if defined(__MINGW32__) && (__GNUC__ < 4 || (__GNUC__ == 4 && __GNUC_MINOR__ < 7))
 void * __RPC_USER MIDL_user_allocate(size_t);
 #else
+# ifdef _MSC_VER
+void * __RPC_USER MIDL_user_allocate(size_t);
+# else
 void * __RPC_USER MIDL_user_allocate(SIZE_T);
+# endif
 #endif
 void __RPC_USER MIDL_user_free( void * ); 
 

@@ -1,9 +1,11 @@
 TEMPLATE = lib
+CONFIG += staticlib
 TARGET = lh_libusb
 
 QMAKE_CFLAGS_WARN_ON = -w
 
 HEADERS += libusb.h
+INCLUDEPATH *= $$PWD
 SOURCES += core.c descriptor.c io.c sync.c
 
 win32 {

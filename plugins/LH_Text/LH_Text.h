@@ -44,6 +44,7 @@
 #include <QColor>
 #include <QFont>
 #include <QSize>
+#include <QDateTime>
 
 #include "LH_QtPlugin.h"
 #include "LH_QtCFInstance.h"

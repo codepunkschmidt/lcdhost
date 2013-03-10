@@ -38,6 +38,8 @@
 #ifndef LH_QTPLUGIN_NOWPLAYING_H
 #define LH_QTPLUGIN_NOWPLAYING_H
 
+#include <QDateTime>
+
 #include "LH_QtPlugin.h"
 #include "LH_Qt_QString.h"
 #include "LH_Qt_int.h"

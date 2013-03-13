@@ -7,6 +7,8 @@ include(../Plugins.pri)
 INCLUDEPATH *= $$LH_DIR_LINKDATA/lh_libusb
 LIBS *= -llh_libusb
 
+win32: LIBS *= -luser32
+
 SOURCES += \
     $$PLUGIN_SOURCES \
     LH_Lg320x240.cpp \

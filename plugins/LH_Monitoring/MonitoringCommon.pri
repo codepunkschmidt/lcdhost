@@ -2,6 +2,7 @@ DEFINES += MONITORING_CLASS
 DEFINES += DATA_CACHE_MAX_POINTS=2048
 
 CONFIG += cf json datacollection
+win32: LIBS *= -luser32
 
 INCLUDEPATH += $$PWD/LH_QImage \
                $$PWD/Sources \

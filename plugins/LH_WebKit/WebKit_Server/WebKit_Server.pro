@@ -1,6 +1,7 @@
 TARGET = WebKitServer
 TEMPLATE = app
 QT += network webkit
+CONFIG += lh_logger
 CONFIG -= app_bundle
 INCLUDEPATH *= $$dirname(PWD)
 LIBS *= -llh_logger

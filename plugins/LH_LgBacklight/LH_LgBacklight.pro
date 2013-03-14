@@ -1,10 +1,9 @@
 TARGET = LH_LgBacklight
 TEMPLATE = lib
+CONFIG += lh_hid
 DEFINES += LGBACKLIGHT_LIBRARY
 
 include(../Plugins.pri)
-
-LIBS *= -llh_hid
 
 SOURCES += \
     $$PLUGIN_SOURCES \

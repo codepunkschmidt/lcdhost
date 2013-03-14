@@ -1,2 +1,6 @@
 LH_DIR_SOURCES=\$\$quote($$LH_DIR_SOURCES)
-include(\$\$LH_DIR_SOURCES/lh_features/lcdhost.pri)
+LH_DIR_FEATURES=\$\$quote(\$\$LH_DIR_SOURCES/lh_features)
+
+include(\$\$LH_DIR_FEATURES/lcdhost.pri)
+LH_FEATURES_FILES=\$\$files(\$\$LH_DIR_FEATURES/lh_*.pri)
+for(lh_featfile, LH_FEATURES_FILES): include(\$\${lh_featfile})

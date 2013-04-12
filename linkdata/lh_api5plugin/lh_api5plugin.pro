@@ -1,5 +1,5 @@
 TEMPLATE = lib
-CONFIG += staticlib
+CONFIG += shared lh_shared
 TARGET = lh_api5plugin
 
 SOURCES += \
@@ -35,4 +35,5 @@ HEADERS += \
 	LH_Qt_float.h \
 	LH_Qt_int.h
 
+LH_SHARED_HEADERS += $$HEADERS
 DESTDIR = $$lh_destdir()

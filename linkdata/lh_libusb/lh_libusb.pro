@@ -1,5 +1,5 @@
 TEMPLATE = lib
-CONFIG += staticlib
+CONFIG += shared lh_shared
 TARGET = lh_libusb
 
 QMAKE_CFLAGS_WARN_ON = -w
@@ -26,5 +26,7 @@ unix:!macx {
     DEFINES += OS_LINUX THREADS_POSIX HAVE_SYS_TIME_H HAVE_POLL_H
     SOURCES += os/linux_usbfs.c os/threads_posix.c
 }
+
+LH_SHARED_HEADERS += libusb.h
 
 DESTDIR = $$lh_destdir()

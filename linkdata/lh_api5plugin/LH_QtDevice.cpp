@@ -63,7 +63,6 @@ LH_QtDevice::LH_QtDevice( LH_QtObject *parent ) : LH_QtObject( parent )
     lh_dev_.table.obj_get_backlight = obj_get_backlight;
     lh_dev_.table.obj_set_backlight = obj_set_backlight;
     lh_dev_.table.obj_close = obj_close;
-
     return;
 }
 
@@ -78,12 +77,22 @@ void LH_QtDevice::arrive()
     Q_ASSERT( !devid().isEmpty() );
     Q_ASSERT( !size().isEmpty() );
     Q_ASSERT( depth() > 0 );
-    if(lh_plugin()) lh_plugin()->callback(lh_cb_arrive,lh_dev());
+    if(parent() == 0)
+        qCritical() << "LH_QtDevice::arrive():"
+                    << metaObject()->className() << objectName()
+                    << "has no parent";
+    // if(lh_plugin()) lh_plugin()->
+    callback(lh_cb_arrive,lh_dev());
 }
 
 void LH_QtDevice::leave()
 {
-    if(lh_plugin()) lh_plugin()->callback(lh_cb_leave,lh_dev());
+    if(parent() == 0)
+        qCritical() << "LH_QtDevice::leave():"
+                    << metaObject()->className() << objectName()
+                    << "has no parent";
+    // if(lh_plugin()) lh_plugin()->
+    callback(lh_cb_leave,lh_dev());
 }
 
 void LH_QtDevice::setDevid(const QString &a)

@@ -42,7 +42,7 @@
 #include "QHash"
 #include "qmath.h"
 
-#include "../DataCollection/DataCollection.h"
+#include "DataCollection.h"
 
 enum GraphDataMode
 {

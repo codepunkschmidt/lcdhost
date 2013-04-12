@@ -66,6 +66,7 @@
 #ifndef LH_PLUGIN_H
 #define LH_PLUGIN_H
 
+#include <stdlib.h>
 #include "lh_systemstate.h"
 
 #define LH_API_MAJOR 5
@@ -269,6 +270,7 @@ typedef enum lh_setup_type_t
 #define LH_FLAG_HIDEVALUE   0x0800 /* Setup item value is not shown in GUI (all space to title) */
 #define LH_FLAG_NOSAVE_LINK 0x1000
 #define LH_FLAG_NOSAVE_DATA 0x2000
+#define LH_FLAG_NEEDREFRESH 0x4000
 
 typedef union lh_setup_param_t
 {

@@ -28,7 +28,7 @@
 #define LH_QTPLUGIN_GRAPH_H
 
 #include "LH_QtPlugin.h"
-#include "../DataCollection/DataCollection.h"
+#include "DataCollection.h"
 #include "LH_QtCPU.h"
 #include "LH_QtNetwork.h"
 #include <QTime>

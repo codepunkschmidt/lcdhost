@@ -1,0 +1,10 @@
+TEMPLATE = lib
+CONFIG += shared lh_shared
+TARGET = lh_simpletranslator
+QT += network
+DEFINES += SIMPLETRANSLATOR
+INCLUDEPATH += $$LH_DIR_INCLUDE/lh_api5plugin
+SOURCES += SimpleTranslator.cpp
+HEADERS += SimpleTranslator.h
+LH_SHARED_HEADERS += $$HEADERS
+DESTDIR=$$lh_destdir()

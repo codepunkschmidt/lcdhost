@@ -69,6 +69,34 @@ void LH_QtSetupItem::setup_input( int flags, int value )
     return;
 }
 
+void LH_QtSetupItem::refresh()
+{
+    // bool old_need = (item()->flags & LH_FLAG_NEEDREFRESH);
+    if(parent()->callable())
+    {
+        /*
+        if(old_need)
+            qDebug() << "Setup item"
+                     << parent()->metaObject()->className()
+                     << parent()->objectName()
+                     << objectName()
+                     << "<strong>PROCESSING</strong>"
+                        ;
+                        */
+        return parent()->callback(lh_cb_setup_refresh, item());
+    }
+    item()->flags |= LH_FLAG_NEEDREFRESH;
+    /*
+    qDebug() << "Setup item"
+             << parent()->metaObject()->className()
+             << parent()->objectName()
+             << objectName()
+             << (old_need ? "<strong>STILL WAITING</strong>" : "WAITING")
+                ;
+                */
+    return;
+}
+
 void LH_QtSetupItem::setFlag( int f, bool state )
 {
     if( state )
@@ -81,7 +109,7 @@ void LH_QtSetupItem::setFlag( int f, bool state )
         if( !(item_.flags & f) ) return;
         item_.flags &= ~f;
     }
-    parent()->callback(lh_cb_setup_refresh, item() );
+    refresh();
     return;
 }
 
@@ -100,7 +128,7 @@ void LH_QtSetupItem::setLink( QString s )
 void LH_QtSetupItem::setMimeType( const char * s )
 {
     item_.link.mime = s;
-    parent()->callback( lh_cb_setup_refresh, item() );
+    refresh();
     return;
 }
 
@@ -108,7 +136,7 @@ void LH_QtSetupItem::setPublishPath( QString s )
 {
     memset( item_.link.publish, 0, sizeof(item_.link.publish) );
     strncpy( item_.link.publish, s.toLatin1().constData(), sizeof(item_.link.publish)-1 );
-    parent()->callback( lh_cb_setup_refresh, item() );
+    refresh();
     return;
 }
 
@@ -116,7 +144,7 @@ void LH_QtSetupItem::setSubscribePath( QString s )
 {
     memset( item_.link.subscribe, 0, sizeof(item_.link.subscribe) );
     strncpy( item_.link.subscribe, s.toLatin1().constData(), sizeof(item_.link.subscribe)-1 );
-    parent()->callback( lh_cb_setup_refresh, item() );
+    refresh();
     return;
 }
 

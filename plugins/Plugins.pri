@@ -1,8 +1,10 @@
-# (empty)
+# Provides legacy .pro file compatibility
 
-CONFIG *= lh_plugin
-LIBS *= -llh_api5plugin
-INCLUDEPATH *= $$dirname(PWD)/linkdata/lh_api5plugin
+CONFIG *= lh_plugin lh_api5plugin
 INCLUDEPATH *= $$PWD
-include($$dirname(PWD)/codeleap/codeleap.pri)
+cf: CONFIG *= lh_cf
+datacollection: CONFIG *= lh_datacollection
+json: CONFIG *= lh_json
+translator: CONFIG *= lh_simpletranslator
+# include(../codeleap/codeleap.pri)
 DESTDIR=$$lh_destdir()

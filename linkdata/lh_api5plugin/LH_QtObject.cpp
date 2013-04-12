@@ -127,8 +127,23 @@ LH_QtObject::LH_QtObject( LH_QtObject *parent ) :
 
 void LH_QtObject::callback( lh_callbackcode_t code, void *param ) const
 {
-    if( cb_ )
-        cb_( cb_id_, this, code, param );
+    if(cb_)
+        return cb_(cb_id_, this, code, param);
+    if(parent() == 0)
+    {
+        qWarning() << "LH_QtObject::callback()"
+                 << metaObject()->className() << objectName()
+                 << "has no callback data for"
+                 << code;
+    }
+    else
+    {
+        qWarning() << "LH_QtObject::callback()"
+                 << metaObject()->className() << objectName()
+                 << "using parent callback for"
+                 << code;
+        parent()->callback(code, param);
+    }
     return;
 }
 
@@ -224,7 +239,15 @@ int LH_QtObject::notify( int code, void *param )
 {
     Q_UNUSED(param);
     if( !code )
+    {
+        for( QObjectList::const_iterator i = children().constBegin(); i != children().constEnd(); ++i )
+        {
+            if(LH_QtSetupItem *si = qobject_cast<LH_QtSetupItem *>(*i))
+                if(si->flags() & LH_FLAG_NEEDREFRESH)
+                    si->refresh();
+        }
         emit initialized();
+    }
     return 0;
 }
 

@@ -38,6 +38,7 @@
 #include "LH_QtDevice.h"
 #include "LH_VirtualLCD.h"
 #include "LH_Qt_QImage.h"
+#include "VirtualDevice.h"
 
 LH_PLUGIN(LH_VirtualLCD)
 
@@ -60,65 +61,10 @@ char __lcdhostplugin_xml[] =
   "</longdesc>"
 "</lcdhostplugin>";
 
-class VirtualLCD : public LH_QtDevice
-{
-protected:
-    LH_Qt_QImage *setup_output_;
-
-public:
-    VirtualLCD( LH_QtPlugin *drv ) : LH_QtDevice(drv)
-    {
-        setup_output_ = new LH_Qt_QImage(this,"Output",QImage(),LH_FLAG_HIDDEN);
-    }
-
-    ~VirtualLCD()
-    {
-        leave();
-    }
-
-    const char* open()
-    {
-        setup_output_->setFlag( LH_FLAG_HIDDEN, false );
-        return NULL;
-    }
-
-    const char* render_argb32(int,int,const void*) { return NULL; }
-    const char* render_mono(int,int,const void*) { return NULL; }
-    int buttons() { return 0; }
-    const char* get_backlight(lh_device_backlight*) { return NULL; }
-    const char* set_backlight(lh_device_backlight*) { return NULL; }
-
-    const char* close()
-    {
-        setup_output_->setValue(QImage());
-        setup_output_->setFlag( LH_FLAG_HIDDEN, true );
-        return NULL;
-    }
-
-    const char* render_qimage(QImage *img)
-    {
-        if( img )
-        {
-            if( depth() == 1 )
-            {
-                if( img->format() == QImage::Format_Mono ) setup_output_->setValue( *img );
-                else setup_output_->setValue(  img->convertToFormat( QImage::Format_Mono ) );
-            }
-            else if( depth() == 32 )
-            {
-                if( img->format() == QImage::Format_ARGB32_Premultiplied ) setup_output_->setValue( *img );
-                else setup_output_->setValue( img->convertToFormat( QImage::Format_ARGB32_Premultiplied ) );
-            }
-        }
-        return NULL;
-    }
-};
-
-
-class VirtualQVGA : public VirtualLCD
+class VirtualQVGA : public VirtualDevice
 {
 public:
-    VirtualQVGA( LH_QtPlugin *drv ) : VirtualLCD( drv )
+    VirtualQVGA( LH_QtPlugin *drv ) : VirtualDevice( drv )
     {
         setDevid("320x240x32");
         setName("Virtual 320x240x32 device");
@@ -129,10 +75,10 @@ public:
     }
 };
 
-class VirtualBW : public VirtualLCD
+class VirtualBW : public VirtualDevice
 {
 public:
-    VirtualBW( LH_QtPlugin *drv ) : VirtualLCD( drv )
+    VirtualBW( LH_QtPlugin *drv ) : VirtualDevice( drv )
     {
         setDevid("160x43x1");
         setName("Virtual 160x43x1 device");

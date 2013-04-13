@@ -68,7 +68,13 @@ LH_QtDevice::LH_QtDevice( LH_QtObject *parent ) : LH_QtObject( parent )
 
 LH_QtDevice::~LH_QtDevice()
 {
-    memset( &lh_dev_, 0, sizeof(lh_dev_) );
+    memset(&lh_dev_, 0, sizeof(lh_dev_));
+    return;
+}
+
+void LH_QtDevice::userTerm()
+{
+    leave();
     return;
 }
 
@@ -77,22 +83,33 @@ void LH_QtDevice::arrive()
     Q_ASSERT( !devid().isEmpty() );
     Q_ASSERT( !size().isEmpty() );
     Q_ASSERT( depth() > 0 );
-    if(parent() == 0)
-        qCritical() << "LH_QtDevice::arrive():"
-                    << metaObject()->className() << objectName()
-                    << "has no parent";
-    // if(lh_plugin()) lh_plugin()->
-    callback(lh_cb_arrive,lh_dev());
+    if(depth() > 0)
+    {
+        if(parent() && parent()->callable())
+            parent()->callback(lh_cb_arrive,lh_dev());
+        else
+            qCritical() << "LH_QtDevice::arrive():"
+                        << metaObject()->className() << objectName()
+                        << "no callback in parent"
+                        << (parent() ? parent()->metaObject()->className() : "NULL")
+                           ;
+    }
+    return;
 }
 
 void LH_QtDevice::leave()
 {
-    if(parent() == 0)
-        qCritical() << "LH_QtDevice::leave():"
-                    << metaObject()->className() << objectName()
-                    << "has no parent";
-    // if(lh_plugin()) lh_plugin()->
-    callback(lh_cb_leave,lh_dev());
+    if(depth() > 0)
+    {
+        if(parent() && parent()->callable())
+            parent()->callback(lh_cb_leave,lh_dev());
+        else
+            qCritical() << "LH_QtDevice::leave():"
+                        << metaObject()->className() << objectName()
+                        << "no callback in parent"
+                        << (parent() ? parent()->metaObject()->className() : "NULL")
+                           ;
+    }
 }
 
 void LH_QtDevice::setDevid(const QString &a)

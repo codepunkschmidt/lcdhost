@@ -64,12 +64,11 @@ public:
     static void build_object_calltable( lh_object_calltable *ct );
 
     LH_QtObject( LH_QtObject *parent = 0);
-    virtual ~LH_QtObject() {}
 
     LH_QtObject *parent() const { return static_cast<LH_QtObject *>( QObject::parent() ); }
 
     void callback( lh_callbackcode_t code, void *param ) const;
-    bool callable() const { return cb_ && cb_id_; }
+    bool callable() const { return cb_ != 0; }
 
     // These implement the lh_object_callback functions. If you reimplement them, make
     // sure to call the base class copy of them and preserve or modify the return value
@@ -90,7 +89,7 @@ public:
     // userInit() when it's done and term() will call userTerm() before it does
     // it's work.
     virtual const char *userInit() { return 0; }
-    virtual void userTerm() { return; }
+    virtual void userTerm() {}
 
     // Convenience wrappers
     void show() const { int b = 0; callback( lh_cb_sethidden, (void*)&b ); }

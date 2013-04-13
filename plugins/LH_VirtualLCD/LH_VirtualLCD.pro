@@ -7,10 +7,12 @@ include(../Plugins.pri)
 
 SOURCES += \
     $$PLUGIN_SOURCES \
-    LH_VirtualLCD.cpp
+    LH_VirtualLCD.cpp \
+    VirtualDevice.cpp
 
 HEADERS += \
     $$PLUGIN_HEADERS \
-    LH_VirtualLCD.h
+    LH_VirtualLCD.h \
+    VirtualDevice.h
 
 RESOURCES += LH_VirtualLCD.qrc

@@ -55,7 +55,9 @@ class LH_QtDevice : public LH_QtObject
 
 public:
     LH_QtDevice( LH_QtObject *parent );
-    virtual ~LH_QtDevice();
+    ~LH_QtDevice();
+
+    void userTerm();
 
     lh_device *lh_dev() { return &lh_dev_; }
 

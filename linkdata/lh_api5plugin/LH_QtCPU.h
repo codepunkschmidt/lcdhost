@@ -40,7 +40,7 @@
 #include "LH_QtInstance.h"
 #include "LH_Qt_QSlider.h"
 
-class LH_QtCPU
+class LH_API5PLUGIN_EXPORT LH_QtCPU
 {
     QQueue<lh_cpudata*> load_;
     LH_QtObject *parent_;

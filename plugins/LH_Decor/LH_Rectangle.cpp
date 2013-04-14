@@ -38,7 +38,7 @@
 #include <QPainter>
 
 #include "LH_Rectangle.h"
-#include "ConditionalFormatting/LH_QtCFInstance.h"
+#include "LH_QtCFInstance.h"
 
 LH_Rectangle::LH_Rectangle()
 {

@@ -45,7 +45,7 @@
   don't need to inherit from this, but it does provide a good starting
   point.
   */
-class LH_QtDevice : public LH_QtObject
+class LH_API5PLUGIN_EXPORT LH_QtDevice : public LH_QtObject
 {
     Q_OBJECT
     QString devid_;

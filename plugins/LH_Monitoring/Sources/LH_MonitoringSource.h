@@ -16,9 +16,8 @@
 #include "LH_Qt_QString.h"
 #include "LH_Qt_QSlider.h"
 
-#include "../DataCollection/DataCollection.h"
-
-#include "../json/json.h"
+#include "DataCollection.h"
+#include "json.h"
 
 typedef struct {bool exists; qreal value;} OptionalValue;
 inline bool operator==(OptionalValue v1, OptionalValue v2) { return v1.exists == v2.exists && v1.value == v2.value; }

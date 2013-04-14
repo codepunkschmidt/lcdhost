@@ -3,7 +3,7 @@
 
 #include "LH_Graph/LH_Graph.h"
 #include "../Objects/LH_MonitoringObject.h"
-#include "../DataCollection/DataCollection.h"
+#include "DataCollection.h"
 
 class LH_MonitoringGraph : public LH_Graph, public LH_MonitoringObject
 {

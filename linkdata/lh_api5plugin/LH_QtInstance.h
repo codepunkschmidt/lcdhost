@@ -42,16 +42,12 @@
 #include "LH_QtObject.h"
 #include "LH_QtPlugin.h"
 
-#ifndef EXPORT
-# define EXPORT extern "C" Q_DECL_EXPORT
-#endif
-
 /**
   Base class for LCDHost plugin classes using Qt. For normal use, the macro
   LH_PLUGIN_CLASS(classname) will export the class from the implementation
   file (not from the header file!).
   */
-class LH_QtInstance : public LH_QtObject
+class LH_API5PLUGIN_EXPORT LH_QtInstance : public LH_QtObject
 {
     Q_OBJECT
 

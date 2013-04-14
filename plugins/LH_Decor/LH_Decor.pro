@@ -1,6 +1,7 @@
 TARGET = LH_Decor
 TEMPLATE = lib
 DEFINES += LH_DECOR_LIBRARY
+CONFIG += cf
 
 include(../Plugins.pri)
 

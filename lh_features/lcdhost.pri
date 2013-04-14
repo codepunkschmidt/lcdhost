@@ -68,8 +68,7 @@ defineTest(lh_qmakevars) {
         export(LH_DIR_CODELEAP)
     }
     isEmpty(LH_DIR_INSTALL) {
-        macx: LH_DIR_INSTALL=$$quote($${LH_DIR_DSTROOT}/LCDHost.app)
-        else: LH_DIR_INSTALL=$$quote($${LH_DIR_DSTROOT}/LCDHost)
+        LH_DIR_INSTALL=$$quote($${LH_DIR_DSTROOT}/LCDHost.app)
         export(LH_DIR_INSTALL)
     }
     isEmpty(LH_DIR_BINARIES) {
@@ -125,7 +124,7 @@ defineReplace(lh_destdir) {
         LIBS*=$$quote(-L$$LH_DIR_BINARIES)
         LIBS*=$$quote(-L$$LH_DIR_LIB)
         INCLUDEPATH*=$$quote($$LH_DIR_INCLUDE)
-        INCLUDEPATH*=$$quote($$LH_DIR_CODELEAP)
+        # INCLUDEPATH*=$$quote($$LH_DIR_CODELEAP)
 
         win32 {
             win32-msvc2010: DEFINES*=_CRT_SECURE_NO_WARNINGS

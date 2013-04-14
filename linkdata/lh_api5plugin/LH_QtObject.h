@@ -39,15 +39,20 @@
 #include <QVector>
 #include "lh_plugin.h"
 
-class LH_QtPlugin;
+#if defined(LH_API5PLUGIN_LIBRARY)
+# define LH_API5PLUGIN_EXPORT Q_DECL_EXPORT
+#else
+# define LH_API5PLUGIN_EXPORT Q_DECL_IMPORT
+#endif
 
-extern "C" Q_DECL_EXPORT LH_QtPlugin *lh_plugin();
+class LH_QtPlugin;
+LH_QtPlugin *lh_plugin();
 
 /**
   Base class for Qt-based LCDHost plugin objects,
   such as plugins, layout class instances or devices.
   */
-class LH_QtObject : public QObject
+class LH_API5PLUGIN_EXPORT LH_QtObject : public QObject
 {
     Q_OBJECT
 

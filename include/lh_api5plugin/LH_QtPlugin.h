@@ -41,13 +41,9 @@
 
 #include "LH_QtObject.h"
 
-#ifndef EXPORT
-# define EXPORT extern "C" Q_DECL_EXPORT
-#endif
-
 typedef lh_class *(*lh_class_info_t)();
 typedef void *(*lh_class_factory_t)(const lh_class *);
-class LH_QtClassLoader
+class LH_API5PLUGIN_EXPORT LH_QtClassLoader
 {
 public:
     LH_QtClassLoader *next_;
@@ -69,7 +65,7 @@ public:
   and destroyed in lh_destroy(). These two functions are
   defined when you use the LH_PLUGIN(classname) macro.
   */
-class LH_QtPlugin : public LH_QtObject
+class LH_API5PLUGIN_EXPORT LH_QtPlugin : public LH_QtObject
 {
     Q_OBJECT
 
@@ -93,15 +89,20 @@ public:
     LH_SIGNATURE(); \
     classname *lh_the_plugin = 0; \
     LH_QtClassLoader *lh_first_class = 0; \
-    EXPORT void *lh_create() \
+    LH_QtPlugin * lh_plugin() { return static_cast<LH_QtPlugin *>(lh_the_plugin); } \
+    extern "C" Q_DECL_EXPORT void * lh_create() \
     { \
         lh_the_plugin = new classname; \
         lh_the_plugin->setFirstClass(&lh_first_class); \
         return reinterpret_cast<void*>(lh_the_plugin); \
     } \
-    EXPORT LH_QtPlugin *lh_plugin() { return static_cast<LH_QtPlugin *>(lh_the_plugin); } \
-    EXPORT void lh_destroy( void *ref ) { lh_the_plugin = 0; delete reinterpret_cast<classname*>(ref); }
-
+    extern "C" Q_DECL_EXPORT void lh_destroy( void *ref ) { lh_the_plugin = 0; delete reinterpret_cast<classname*>(ref); } \
+    extern "C" Q_DECL_EXPORT const lh_object_calltable* lh_get_object_calltable( void *ref ) \
+    { \
+        if( LH_QtPlugin * p = reinterpret_cast<LH_QtPlugin *>( ref ) ) \
+            return p->objtable(); \
+        return 0; \
+    }
 // extern void lh_add_class( lh_class *p, lh_class_factory_t f );
 // extern void lh_remove_class( lh_class *p );
 

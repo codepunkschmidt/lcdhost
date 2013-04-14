@@ -1,6 +1,7 @@
 TEMPLATE = lib
 CONFIG += shared lh_shared
 TARGET = lh_api5plugin
+DEFINES += LH_API5PLUGIN_LIBRARY
 
 SOURCES += \
 	LH_QtCPU.cpp \

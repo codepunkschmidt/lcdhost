@@ -69,9 +69,14 @@ LH_QtCFInstance::LH_QtCFInstance() : LH_QtInstance()
 
 int LH_QtCFInstance::notify(int n,void* p)
 {
-    if( n&LH_NOTE_SECOND )
-        cf_apply_rules();
-    return LH_QtInstance::notify(n, p) | (watching_non_setup_item_ && setup_cf_enabled_->value()? LH_NOTE_SECOND : 0);
+    int retv = 0;
+    if(cf_initialized_)
+    {
+        if( n&LH_NOTE_SECOND )
+            cf_apply_rules();
+        retv = (watching_non_setup_item_ && setup_cf_enabled_->value()? LH_NOTE_SECOND : 0);
+    }
+    return retv | LH_QtInstance::notify(n, p);
 }
 
 void LH_QtCFInstance::cf_initialize()
@@ -407,7 +412,7 @@ void LH_QtCFInstance::cf_update_visibility()
 
 void LH_QtCFInstance::cf_apply_rules(bool allowRender)
 {
-    if(!setup_cf_enabled_->value())
+    if(!cf_initialized_ || !setup_cf_enabled_->value())
         return;
 
     if(cf_applying_rules_)

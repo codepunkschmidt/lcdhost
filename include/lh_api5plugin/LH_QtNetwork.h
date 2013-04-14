@@ -40,7 +40,7 @@
 #include "LH_QtInstance.h"
 #include "LH_Qt_QSlider.h"
 
-class LH_QtNetwork
+class LH_API5PLUGIN_EXPORT LH_QtNetwork
 {
     LH_QtObject *parent_;
     QQueue<lh_netdata*> data_;

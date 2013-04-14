@@ -37,7 +37,7 @@
 
 #include "LH_QtSetupItem.h"
 
-class LH_Qt_QString : public LH_QtSetupItem
+class LH_API5PLUGIN_EXPORT LH_Qt_QString : public LH_QtSetupItem
 {
     QString str_;
     QByteArray array_;

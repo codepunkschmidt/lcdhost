@@ -42,7 +42,7 @@
 /**
   Helper class to manage setup items. Subclass this, mapping the LCDHost setup types to Qt classes.
   */
-class LH_QtSetupItem : public QObject
+class LH_API5PLUGIN_EXPORT LH_QtSetupItem : public QObject
 {
     Q_OBJECT
 

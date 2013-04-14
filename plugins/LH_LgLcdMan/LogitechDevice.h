@@ -43,7 +43,7 @@
 #  error ("This isn't going to work")
 # endif
 # include "windows.h"
-# include "../wow64.h"
+// # include "../wow64.h"
 # include "win/lglcd.h"
 #endif
 

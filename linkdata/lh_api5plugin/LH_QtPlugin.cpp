@@ -35,16 +35,18 @@
 #include "LH_QtPlugin.h"
 #include "LH_QtInstance.h"
 
+#if 0
 /**
   Exported from all LCDHost plugins.
   Note that lh_create() and lh_destroy() are defined with the LH_PLUGIN(classname) macro.
 */
-EXPORT const lh_object_calltable* lh_get_object_calltable( void *ref )
+extern "C" LH_API5PLUGIN_EXPORT const lh_object_calltable* lh_get_object_calltable( void *ref )
 {
     if( LH_QtPlugin * p = reinterpret_cast<LH_QtPlugin *>( ref ) )
         return p->objtable();
     return 0;
 }
+#endif
 
 const lh_class **LH_QtPlugin::class_list()
 {

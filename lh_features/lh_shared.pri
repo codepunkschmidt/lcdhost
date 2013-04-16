@@ -9,14 +9,6 @@ defineTest(lh_shared) {
                 exists($$hdr_file): lh_copy($$hdr_file, $$hdr_destdir)
             }
         }
-
-        disabled_: win32 {
-            lib_srcfiles=$$lh_systempath($${LH_DIR_BINARIES}/$${TARGET})
-            lib_destdir=$$lh_systempath($${LH_DIR_LIB})
-            lh_mkdir($${lib_destdir})
-            QMAKE_POST_LINK+=$$quote($${QMAKE_COPY} \"$${lib_srcfiles}\"*.lib \"$${lib_destdir}\")
-            export(QMAKE_POST_LINK)
-        }
     }
     return(true)
 }

@@ -9,6 +9,12 @@
 
 #include "LH_QtObject.h"
 
+#ifdef LH_SIMPLETRANSLATOR_LIBRARY
+# define LH_SIMPLETRANSLATOR_EXPORT Q_DECL_EXPORT
+#else
+# define LH_SIMPLETRANSLATOR_EXPORT Q_DECL_IMPORT
+#endif
+
 enum TranslationType
 {
     ttAll,
@@ -17,7 +23,7 @@ enum TranslationType
     ttNoun
 };
 
-class IndexedPairList
+class LH_SIMPLETRANSLATOR_EXPORT IndexedPairList
 {
     QStringList codes_;
     QStringList names_;
@@ -79,7 +85,7 @@ public:
     }
 };
 
-class SimpleTranslator: public QObject
+class LH_SIMPLETRANSLATOR_EXPORT SimpleTranslator: public QObject
 {
     Q_OBJECT
     bool loaded_;

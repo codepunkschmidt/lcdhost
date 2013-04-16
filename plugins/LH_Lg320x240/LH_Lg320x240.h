@@ -35,19 +35,19 @@
 #ifndef LH_LG320x240_H
 #define LH_LG320x240_H
 
-#include "LH_QtPlugin.h"
-#include "LogitechG19Thread.h"
-#include "LogitechG19.h"
+#include <QEvent>
+#include <LH_QtPlugin.h>
 
 typedef struct libusb_context libusb_context;
 typedef struct libusb_device libusb_device;
+class LogitechG19;
 
 class LH_Lg320x240 : public LH_QtPlugin
 {
     Q_OBJECT
 
-    LogitechG19Thread *g19thread_;
     int timer_id_;
+    int g19_event_;
     LogitechG19 *g19_;
     libusb_context *usb_ctx_;
     libusb_device **usb_device_list_;
@@ -58,6 +58,7 @@ public:
     const char *userInit();
     void userTerm();
     void timerEvent(QTimerEvent *ev);
+    void customEvent(QEvent *ev);
 
 protected:
 };

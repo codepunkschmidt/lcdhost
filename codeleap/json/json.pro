@@ -8,6 +8,4 @@ SOURCES += \
 HEADERS += \
     json.h
 
-LH_SHARED_HEADERS += $$HEADERS
-
 DESTDIR=$$lh_destdir()

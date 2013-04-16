@@ -10,4 +10,3 @@ isEmpty(LH_DIR_SOURCES) {
 }
 SUBDIRS += linkdata codeleap plugins
 OTHER_FILES += lh_features/*.pri
-OTHER_FILES += include/miniz.c

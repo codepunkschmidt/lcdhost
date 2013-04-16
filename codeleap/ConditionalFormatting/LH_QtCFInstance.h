@@ -54,13 +54,15 @@
 
 #include "cf_sources_targets.h"
 
-#ifndef EXPORT
-# define EXPORT extern "C" Q_DECL_EXPORT
+#ifdef LH_CF_LIBRARY
+# define LH_CF_EXPORT Q_DECL_EXPORT
+#else
+# define LH_CF_EXPORT Q_DECL_IMPORT
 #endif
 
 class cf_rule;
 
-class LH_QtCFInstance : public LH_QtInstance
+class LH_CF_EXPORT LH_QtCFInstance : public LH_QtInstance
 {
     Q_OBJECT
 

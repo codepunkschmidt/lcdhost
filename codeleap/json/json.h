@@ -8,6 +8,12 @@
 #include <QVariant>
 #include <QString>
 
+#ifdef LH_JSON_LIBRARY
+# define LH_JSON_EXPORT Q_DECL_EXPORT
+#else
+# define LH_JSON_EXPORT Q_DECL_IMPORT
+#endif
+
 /**
  * \enum JsonToken
  */
@@ -33,7 +39,7 @@ enum JsonToken
  *
  * Json parses a JSON data into a QVariant hierarchy.
  */
-class Json
+class LH_JSON_EXPORT Json
 {
 	public:
 		/**

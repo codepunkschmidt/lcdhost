@@ -2,7 +2,7 @@ TEMPLATE = lib
 CONFIG += shared lh_shared lh_api5plugin
 TARGET = lh_cf
 QT += xml
-DEFINES += LH_CF
+DEFINES += LH_CF LH_CF_LIBRARY
 
 SOURCES += \
     LH_QtCFInstance.cpp \

@@ -46,10 +46,6 @@ defineTest(lh_qmakevars) {
         LH_DIR_TOP=$$dirname(LH_DIR_SRCROOT)
         export(LH_DIR_TOP)
     }
-    isEmpty(LH_DIR_LIB) {
-        LH_DIR_LIB=$$quote($${LH_DIR_SRCROOT}/lib)
-        export(LH_DIR_LIB)
-    }
     isEmpty(LH_DIR_INCLUDE) {
         LH_DIR_INCLUDE=$$quote($${LH_DIR_SRCROOT}/include)
         export(LH_DIR_INCLUDE)
@@ -122,9 +118,7 @@ defineReplace(lh_destdir) {
 
         lh_changeset_revision()
         LIBS*=$$quote(-L$$LH_DIR_BINARIES)
-        LIBS*=$$quote(-L$$LH_DIR_LIB)
         INCLUDEPATH*=$$quote($$LH_DIR_INCLUDE)
-        # INCLUDEPATH*=$$quote($$LH_DIR_CODELEAP)
 
         win32 {
             win32-msvc2010: DEFINES*=_CRT_SECURE_NO_WARNINGS

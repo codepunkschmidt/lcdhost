@@ -44,31 +44,15 @@ class LH_ColorSwatch : public LH_Rectangle
 protected:
     LH_Qt_QColor *setup_lowerbound_color_;
     LH_Qt_float *setup_lowerbound_value_;
-
     LH_Qt_QColor *setup_upperbound_color_;
     LH_Qt_float *setup_upperbound_value_;
-
     LH_Qt_QColor *setup_current_color_;
     LH_Qt_float *setup_current_value_;
 
 public:
-    LH_ColorSwatch(): LH_Rectangle()
-    {
-        lowVal_ = 0;
-        lowCol_ = Qt::white;
-        highVal_ = 100;
-        highCol_ = Qt::black;
-        lockDown_ = false;
-    }
-    LH_ColorSwatch(float lowVal, QColor lowCol, float highVal, QColor highCol, bool lockDown): LH_Rectangle()
-    {
-        lowVal_ = lowVal;
-        lowCol_ = lowCol;
-        highVal_ = highVal;
-        highCol_ = highCol;
-        lockDown_ = lockDown;
-    }
-
+    LH_ColorSwatch(float lowVal = 0, QColor lowCol = Qt::white,
+                   float highVal = 100, QColor highCol = Qt::black,
+                   bool lockDown = false);
     const char *userInit();
     static lh_class *classInfo();
     void setValue(float val) { setup_current_value_->setValue(val); }

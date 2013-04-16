@@ -44,6 +44,24 @@ lh_class *LH_ColorSwatch::classInfo()
     return &classInfo;
 }
 
+LH_ColorSwatch::LH_ColorSwatch(float lowVal, QColor lowCol,
+               float highVal, QColor highCol,
+               bool lockDown) :
+    LH_Rectangle(),
+    lowVal_(lowVal),
+    lowCol_(lowCol),
+    highVal_(highVal),
+    highCol_(highCol),
+    lockDown_(lockDown),
+    setup_lowerbound_color_(0),
+    setup_lowerbound_value_(0),
+    setup_upperbound_color_(0),
+    setup_upperbound_value_(0),
+    setup_current_color_(0),
+    setup_current_value_(0)
+{
+}
+
 const char *LH_ColorSwatch::userInit()
 {
     if( const char *err = LH_Rectangle::userInit() ) return err;

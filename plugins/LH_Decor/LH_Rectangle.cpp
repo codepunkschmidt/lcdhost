@@ -47,9 +47,9 @@ LH_Rectangle::LH_Rectangle()
     setup_pencolor_ = new LH_Qt_QColor(this,tr("Pen color"),Qt::black,LH_FLAG_AUTORENDER);
     setup_bgcolor1_ = new LH_Qt_QColor(this,tr("Fill color 1"),Qt::white,LH_FLAG_AUTORENDER);
     setup_gradient_ = new LH_Qt_bool(this,tr("^Background is a gradient"),false);
-    connect( setup_gradient_, SIGNAL(change(bool)), this, SLOT(enableGradient(bool)) );
     setup_bgcolor2_ = new LH_Qt_QColor(this,tr("Fill color 2"),Qt::lightGray,LH_FLAG_HIDDEN|LH_FLAG_AUTORENDER);
     setup_horizontal_ = new LH_Qt_bool(this,tr("^Gradient is horizontal"),false,LH_FLAG_HIDDEN|LH_FLAG_AUTORENDER);
+    connect( setup_gradient_, SIGNAL(change(bool)), this, SLOT(enableGradient(bool)) );
 }
 
 void LH_Rectangle::enableGradient(bool b)

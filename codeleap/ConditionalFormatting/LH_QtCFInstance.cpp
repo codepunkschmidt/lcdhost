@@ -40,10 +40,39 @@
 
 #include <limits>
 
-LH_QtCFInstance::LH_QtCFInstance() : LH_QtInstance()
+LH_QtCFInstance::LH_QtCFInstance() :
+    LH_QtInstance(),
+    cf_initialized_(false),
+    cf_applying_rules_(false),
+    cf_rule_editing_(None),
+    watching_non_setup_item_(false),
+    setup_cf_enabled_(0),
+    setup_cf_state_(0),
+    setup_cf_visibility_(0),
+    setup_cf_XML_(0),
+    setup_cf_rules_(0),
+    setup_cf_new_(0),
+    setup_cf_save_(0),
+    setup_cf_cancel_(0),
+    setup_cf_delete_(0),
+    setup_cf_move_up_(0),
+    setup_cf_move_down_(0),
+    setup_cf_copy_(0),
+    setup_cf_paste_(0),
+    setup_cf_source_(0),
+    setup_cf_source_mode_(0),
+    setup_cf_test_(0),
+    setup_cf_testValue1_(0),
+    setup_cf_testValue2_(0),
+    setup_cf_target_(0),
+    setup_cf_newValue_Color_(0),
+    setup_cf_newValue_Font_(0),
+    setup_cf_newValue_String_(0),
+    setup_cf_newValue_File_(0),
+    setup_cf_newValue_Bool_(0),
+    setup_cf_newValue_Int_(0),
+    setup_cf_newValue_Float_(0)
 {
-    cf_initialized_ = false;
-    cf_applying_rules_ = false;
     connect(this, SIGNAL(initialized()), this, SLOT(cf_apply_rules()));
     return;
 }

@@ -1,7 +1,7 @@
 TARGET = LH_Lg320x240
 TEMPLATE = lib
 DEFINES += LG320x240_LIBRARY
-CONFIG += lh_plugin lh_api5plugin lh_libusb
+CONFIG += lh_plugin lh_api5plugin lh_libusbx
 
 SOURCES += \
     LH_Lg320x240.cpp \

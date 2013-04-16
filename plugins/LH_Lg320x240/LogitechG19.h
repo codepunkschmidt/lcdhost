@@ -27,8 +27,10 @@ class LogitechG19 : public LH_QtDevice
 
 public:
     static void LIBUSB_CALL g19_button_cb( struct libusb_transfer * transfer );
-    LogitechG19( libusb_context *ctx, libusb_device *usbdev, libusb_device_descriptor *dd );
+    LogitechG19(libusb_context *ctx, libusb_device *usbdev, libusb_device_descriptor *dd, LH_QtObject *parent = 0);
     ~LogitechG19();
+
+    libusb_device *usb_device() const { return usbdev_; }
 
     const char* render_argb32(int,int,const void*) { return NULL; }
     const char* render_mono(int,int,const void*) { return NULL; }

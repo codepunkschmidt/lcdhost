@@ -83,17 +83,14 @@ extern "C"
     }
 }
 
+int LH_Lg320x240::g19_event_ = QEvent::registerEventType();
+
 LH_Lg320x240::LH_Lg320x240() :
     LH_QtPlugin(),
     timer_id_(0),
-    g19_event_(0),
     g19_(0),
     usb_ctx_(0),
     usb_device_list_(0)
-{
-}
-
-LH_Lg320x240::~LH_Lg320x240()
 {
 }
 
@@ -132,16 +129,6 @@ void LH_Lg320x240::userTerm()
     if(g19_)
     {
         Q_ASSERT(g19_->thread() == thread());
-        if(g19_->thread() != thread())
-        {
-            g19_->close();
-            for(int i = 0; g19_ && i < 10; ++i)
-            {
-                g19_->thread()->wait(100);
-                if(g19_)
-                    qDebug("LH_Lg320x240::userTerm(): waiting for libusb");
-            }
-        }
         delete g19_;
         g19_ = 0;
     }
@@ -216,6 +203,7 @@ void LH_Lg320x240::timerEvent(QTimerEvent *ev)
                 Q_ASSERT(g19_ == 0);
                 g19_ = g19_device;
                 g19_->arrive();
+                QCoreApplication::postEvent(this, new QEvent((QEvent::Type)g19_event_));
             }
         }
     }

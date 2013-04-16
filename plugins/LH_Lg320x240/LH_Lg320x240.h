@@ -46,15 +46,15 @@ class LH_Lg320x240 : public LH_QtPlugin
 {
     Q_OBJECT
 
+    static int g19_event_;
+
     int timer_id_;
-    int g19_event_;
     LogitechG19 *g19_;
     libusb_context *usb_ctx_;
     libusb_device **usb_device_list_;
 
 public:
     LH_Lg320x240();
-    ~LH_Lg320x240();
     const char *userInit();
     void userTerm();
     void timerEvent(QTimerEvent *ev);

@@ -25,8 +25,8 @@ void LIBUSB_CALL LogitechG19::g19_button_cb( struct libusb_transfer * transfer )
     return;
 }
 
-LogitechG19::LogitechG19( libusb_context *ctx, libusb_device *usbdev, libusb_device_descriptor *dd ) :
-    LH_QtDevice(0),
+LogitechG19::LogitechG19(libusb_context *ctx, libusb_device *usbdev, libusb_device_descriptor *dd , LH_QtObject *parent) :
+    LH_QtDevice(parent),
     ctx_(ctx),
     usbdev_(usbdev),
     lcdhandle_(0),
@@ -89,6 +89,8 @@ LogitechG19::LogitechG19( libusb_context *ctx, libusb_device *usbdev, libusb_dev
 LogitechG19::~LogitechG19()
 {
     close();
+    libusb_unref_device(usbdev_);
+    usbdev_ = 0;
 }
 
 #define ASSERT_USB(x) if( retv == 0 ) { retv = x; if( retv != 0 ) { qDebug() << #x << libusb_error_name( retv ); } }

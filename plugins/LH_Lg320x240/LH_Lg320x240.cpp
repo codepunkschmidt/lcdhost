@@ -37,6 +37,7 @@
 #include <QFile>
 #include <QDebug>
 #include <QCoreApplication>
+#include <QTimerEvent>
 
 #ifdef Q_OS_WIN
 # include <windows.h>
@@ -81,11 +82,21 @@ extern "C"
     }
 }
 
+LH_Lg320x240::LH_Lg320x240() :
+    LH_QtPlugin(),
+    g19thread_(0),
+    timer_id_(0),
+    g19_(0),
+    usb_ctx_(0),
+    usb_device_list_(0)
+{
+}
+
 LH_Lg320x240::~LH_Lg320x240()
 {
+    userTerm();
     if( g19thread_ )
     {
-        g19thread_->timeToDie();
         g19thread_->quit();
         for( int waited = 0; g19thread_ && g19thread_->isRunning(); ++ waited )
         {
@@ -112,12 +123,117 @@ const char *LH_Lg320x240::userInit()
         return "Logitech drivers are loaded";
 #endif
 
-    g19thread_ = new LogitechG19Thread(this);
-    g19thread_->start();
+    // g19thread_ = new LogitechG19Thread(this);
+    // g19thread_->start();
+
+    if(!usb_ctx_)
+    {
+        if(libusb_init(&usb_ctx_) || !usb_ctx_)
+            return "libusb_init() failed";
+        libusb_set_debug(usb_ctx_, 1);
+    }
+
+    if(!timer_id_)
+        timer_id_ = startTimer(2000);
+
     return NULL;
 }
 
 void LH_Lg320x240::userTerm()
 {
-    if( g19thread_ ) g19thread_->timeToDie();
+    if(g19thread_)
+    {
+        g19thread_->timeToDie();
+    }
+    if(timer_id_)
+    {
+        killTimer(timer_id_);
+        timer_id_ = 0;
+    }
+    if(usb_device_list_)
+    {
+        qCritical("LH_Lg320x240::userTerm(): device enumeration in progress");
+        libusb_free_device_list(usb_device_list_, 0);
+        usb_device_list_ = 0;
+    }
+    if(g19_)
+    {
+        if(g19_->thread() != thread())
+        {
+            g19_->close();
+            for(int i = 0; g19_ && i < 10; ++i)
+            {
+                g19_->thread()->wait(100);
+                if(g19_)
+                    qDebug("LH_Lg320x240::userTerm(): waiting for libusb");
+            }
+        }
+        delete g19_;
+        g19_ = 0;
+    }
+    if(usb_ctx_)
+    {
+        libusb_exit(usb_ctx_);
+        usb_ctx_ = 0;
+    }
+}
+
+void LH_Lg320x240::timerEvent(QTimerEvent *ev)
+{
+    if(!usb_ctx_ || ev->timerId() != timer_id_)
+        return;
+
+    if(g19_)
+    {
+        struct timeval tv = {0, 1000 * 100};
+        int retv = libusb_handle_events_timeout_completed(usb_ctx_, &tv, NULL);
+        if(retv != LIBUSB_SUCCESS || g19_->offline())
+        {
+            g19_->leave();
+            delete g19_;
+            g19_ = 0;
+            if(retv != LIBUSB_SUCCESS)
+                qWarning("LH_Lg320x240: libusb error %s", libusb_error_name(retv));
+        }
+        else
+        {
+            QCoreApplication::postEvent(this, new QTimerEvent(timer_id_));
+        }
+        return;
+    }
+
+    if(!usb_device_list_)
+    {
+        int usb_device_count = libusb_get_device_list(usb_ctx_, &usb_device_list_);
+        if(usb_device_list_)
+        {
+            struct libusb_device_descriptor dd;
+            memset(&dd, 0, sizeof(dd));
+            for(int i = 0; usb_device_list_ && i < usb_device_count; ++i)
+            {
+                if(usb_device_list_[i])
+                {
+                    if(g19_ == 0 &&
+                            !libusb_get_device_descriptor(usb_device_list_[i], &dd) &&
+                            dd.idVendor == 0x046d &&
+                            dd.idProduct == 0xc229)
+                    {
+                        g19_ = new LogitechG19(usb_ctx_, usb_device_list_[i], &dd, this);
+                    }
+                    else
+                    {
+                        libusb_unref_device(usb_device_list_[i]);
+                    }
+                    usb_device_list_[i] = 0;
+                }
+            }
+            if(usb_device_list_)
+            {
+                libusb_free_device_list(usb_device_list_, 0);
+                usb_device_list_ = 0;
+            }
+            if(g19_)
+                g19_->arrive();
+        }
+    }
 }

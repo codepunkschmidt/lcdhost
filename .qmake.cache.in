@@ -2,7 +2,6 @@ exists("$$LH_DIR_SRCROOT/lcdhost.pro"):exists("$$LH_DIR_SRCROOT/lh_features/lcdh
     LH_DIR_SRCROOT=\$\$quote($$LH_DIR_SRCROOT)
     LH_DIR_DSTROOT=\$\$quote($$LH_DIR_DSTROOT)
     LH_DIR_TOP=\$\$dirname(LH_DIR_SRCROOT)
-    LH_DIR_LIB=\$\$quote(\$\$LH_DIR_SRCROOT/lib)
     LH_DIR_INCLUDE=\$\$quote(\$\$LH_DIR_SRCROOT/include)
     LH_DIR_FEATURES=\$\$quote(\$\$LH_DIR_SRCROOT/lh_features)
     include(\$\$LH_DIR_FEATURES/lcdhost.pri)

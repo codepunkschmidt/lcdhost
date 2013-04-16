@@ -104,7 +104,7 @@ defineReplace(lh_destdir) {
     contains(TEMPLATE, app|lib) {
         contains(TEMPLATE, app) {
             unix {
-                macx: QMAKE_LFLAGS+=-Wl,-rpath,@executable_path/,-rpath,@executable_path/../Frameworks/,-rpath,@executable_path/../PlugIns/
+                macx: QMAKE_LFLAGS+=-Wl,-rpath,@executable_path/.,-rpath,@executable_path/../Frameworks,-rpath,@executable_path/../PlugIns
                 else: QMAKE_LFLAGS+='-Wl,-rpath,\'$$ORIGIN\''
                 export(QMAKE_LFLAGS)
             }

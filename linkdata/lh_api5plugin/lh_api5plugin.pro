@@ -36,5 +36,4 @@ HEADERS += \
 	LH_Qt_float.h \
 	LH_Qt_int.h
 
-LH_SHARED_HEADERS += $$HEADERS
 DESTDIR = $$lh_destdir()

@@ -27,6 +27,4 @@ unix:!macx {
     SOURCES += os/linux_usbfs.c os/threads_posix.c
 }
 
-LH_SHARED_HEADERS += libusb.h
-
 DESTDIR = $$lh_destdir()

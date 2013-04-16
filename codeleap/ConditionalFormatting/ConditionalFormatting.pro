@@ -13,6 +13,4 @@ HEADERS += \
     cf_sources_targets.h \
     cf_rule.h
 
-LH_SHARED_HEADERS += $$HEADERS
-
 DESTDIR=$$lh_destdir()

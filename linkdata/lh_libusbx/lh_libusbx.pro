@@ -1,29 +1,31 @@
 TEMPLATE = lib
 CONFIG += shared lh_shared
-TARGET = lh_libusb
+TARGET = lh_libusbx
 
 QMAKE_CFLAGS_WARN_ON = -w
-
-HEADERS += libusb.h
+HEADERS += libusb.h config.h
 INCLUDEPATH *= $$PWD
 SOURCES += core.c descriptor.c io.c sync.c
+DEFINES += HAVE_STDLIB_H=1 HAVE_SIGNAL_H=1 HAVE_STDINT_H=1 HAVE_STRING_H=1 HAVE_SYS_STAT_H=1 HAVE_SYS_TYPES_H=1 STDC_HEADERS=1
 
 win32 {
-    DEFINES += OS_WINDOWS
+    DEFINES += OS_WINDOWS=1 HAVE_MEMORY_H=1
+    DEF_FILE = libusb-1.0.def
     SOURCES += os/windows_usb.c os/threads_windows.c os/poll_windows.c
     LIBS += -luser32 -lole32 -lsetupapi
+    OTHER_FILES += libusb-1.0.def
 # -lcfgmgr32
 }
 
 macx {
-    DEFINES += OS_DARWIN THREADS_POSIX HAVE_SYS_TIME_H HAVE_POLL_H
+    DEFINES += OS_DARWIN=1 THREADS_POSIX=1 HAVE_SYS_TIME_H=1 HAVE_POLL_H=1
     DEFINES += MAC_OS_X_VERSION_MIN_REQUIRED=1060
     SOURCES += os/darwin_usb.c os/threads_posix.c
     LIBS += -framework CoreFoundation -framework IOKit -lobjc
 }
 
 unix:!macx {
-    DEFINES += OS_LINUX THREADS_POSIX HAVE_SYS_TIME_H HAVE_POLL_H
+    DEFINES += OS_LINUX=1 THREADS_POSIX=1 HAVE_SYS_TIME_H=1 HAVE_POLL_H=1 HAVE_UNISTD_H=1
     SOURCES += os/linux_usbfs.c os/threads_posix.c
 }
 

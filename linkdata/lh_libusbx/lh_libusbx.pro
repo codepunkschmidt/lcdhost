@@ -10,11 +10,12 @@ DEFINES += HAVE_STDLIB_H=1 HAVE_SIGNAL_H=1 HAVE_STDINT_H=1 HAVE_STRING_H=1 HAVE_
 
 win32 {
     DEFINES += OS_WINDOWS=1 HAVE_MEMORY_H=1
-    DEF_FILE = libusb-1.0.def
     SOURCES += os/windows_usb.c os/threads_windows.c os/poll_windows.c
     LIBS += -luser32 -lole32 -lsetupapi
-    OTHER_FILES += libusb-1.0.def
-# -lcfgmgr32
+    win32-msvc* {
+        DEF_FILE = libusb-1.0.def
+        OTHER_FILES += libusb-1.0.def
+    }
 }
 
 macx {

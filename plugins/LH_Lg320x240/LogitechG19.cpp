@@ -1,8 +1,8 @@
-
-#include <QDebug>
-#include <QMutex>
-#include <QWaitCondition>
 #include "LogitechG19.h"
+#include <QDebug>
+#include <QCoreApplication>
+
+int LogitechG19::g19_event_ = QEvent::registerEventType();
 
 void LIBUSB_CALL LogitechG19::g19_button_cb( struct libusb_transfer * transfer )
 {
@@ -27,14 +27,13 @@ void LIBUSB_CALL LogitechG19::g19_button_cb( struct libusb_transfer * transfer )
 
 LogitechG19::LogitechG19(libusb_context *ctx, libusb_device *usbdev, libusb_device_descriptor *dd , LH_QtObject *parent) :
     LH_QtDevice(parent),
-    ctx_(ctx),
+    usb_ctx_(ctx),
     usbdev_(usbdev),
     lcdhandle_(0),
     lcd_if_number_(0),
     menukeys_if_number_(1),
     endpoint_in_(0),
     endpoint_out_(0),
-    offline_(false),
     button_transfer_(0),
     button_completed_(1),
     last_buttons_(0),
@@ -84,13 +83,23 @@ LogitechG19::LogitechG19(libusb_context *ctx, libusb_device *usbdev, libusb_devi
 #else
     setAutoselect(true);
 #endif
+    arrive();
+}
+
+void LogitechG19::userTerm()
+{
+    if(usbdev_)
+    {
+        close();
+        leave();
+        libusb_unref_device(usbdev_);
+        usbdev_ = 0;
+    }
 }
 
 LogitechG19::~LogitechG19()
 {
-    close();
-    libusb_unref_device(usbdev_);
-    usbdev_ = 0;
+    userTerm();
 }
 
 #define ASSERT_USB(x) if( retv == 0 ) { retv = x; if( retv != 0 ) { qDebug() << #x << libusb_error_name( retv ); } }
@@ -100,9 +109,10 @@ const char* LogitechG19::open()
     int retv = 0;
     int cfg = -1;
 
-    Q_ASSERT( button_transfer_ == 0 );
-    Q_ASSERT( button_completed_ == 1 );
-    Q_ASSERT( lcdhandle_ == 0 );
+    Q_ASSERT(usbdev_);
+    Q_ASSERT(button_transfer_ == 0);
+    Q_ASSERT(button_completed_ == 1);
+    Q_ASSERT(!lcdhandle_);
 
     last_buttons_ = new_buttons_ = 0;
     button_transfer_ = 0;
@@ -131,7 +141,7 @@ const char* LogitechG19::open()
                         );
             libusb_submit_transfer( button_transfer_ );
             button_completed_ = 0;
-            offline_ = false;
+            QCoreApplication::postEvent(this, new QEvent((QEvent::Type)g19_event_));
             return NULL;
         }
         libusb_close(lcdhandle_);
@@ -154,12 +164,11 @@ const char* LogitechG19::open()
 
 const char* LogitechG19::close()
 {
-    offline_ = true;
     if( button_transfer_ )
     {
         libusb_cancel_transfer( button_transfer_ );
         while( ! button_completed_ )
-            libusb_handle_events_completed( ctx_, & button_completed_ );
+            libusb_handle_events_completed( usb_ctx_, & button_completed_ );
         libusb_free_transfer( button_transfer_ );
         button_transfer_ = 0;
     }
@@ -175,7 +184,7 @@ const char* LogitechG19::close()
 
 void LogitechG19::buttons( libusb_transfer * )
 {
-    if( offline_ || lcdhandle_ == 0 )
+    if(offline())
         return;
 
     new_buttons_ &= 0x7FFF;
@@ -222,6 +231,11 @@ void LogitechG19::buttons( libusb_transfer * )
     return;
 }
 
+bool LogitechG19::offline() const
+{
+    return !(usbdev_ && lcdhandle_ && usb_ctx_);
+}
+
 #define G19_BUFFER_LEN ((320*240*2)+512)
 
 const char* LogitechG19::render_qimage(QImage *img)
@@ -231,8 +245,7 @@ const char* LogitechG19::render_qimage(QImage *img)
     int len = 0;
     int usberr = 0;
 
-    if( offline_ || !img ) return NULL;
-    if( !lcdhandle_ ) return "G19 not opened";
+    if( offline() || !img ) return NULL;
 
     lcd_buffer[0] = 0x02;
     memcpy( lcd_buffer, header, sizeof(header) );
@@ -261,7 +274,7 @@ const char* LogitechG19::render_qimage(QImage *img)
 
     if( usberr || len != sizeof(lcd_buffer) )
     {
-        offline_ = true;
+        userTerm();
         qDebug() << "LogitechG19::render_qimage():" << libusb_error_name((libusb_error)usberr);
         return libusb_error_name((libusb_error)usberr);
     }
@@ -270,5 +283,22 @@ const char* LogitechG19::render_qimage(QImage *img)
 }
 
 
-
-
+void LogitechG19::customEvent(QEvent *ev)
+{
+    if(!offline() && ev->type() == g19_event_)
+    {
+        struct timeval tv = {0, 1000 * 10};
+        int usb_result = libusb_handle_events_timeout_completed(usb_ctx_, &tv, NULL);
+        if(usb_result != LIBUSB_SUCCESS)
+        {
+            close();
+            leave();
+            qWarning("LogitechG19: libusb error %s", libusb_error_name(usb_result));
+        }
+        else
+        {
+            QCoreApplication::postEvent(this, new QEvent((QEvent::Type)g19_event_));
+        }
+        return;
+    }
+}

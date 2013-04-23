@@ -46,7 +46,7 @@ class LH_WeatherImage:public LH_QtInstance
 {
     Q_OBJECT
 
-    QHash<int, QStringList> *imageDefinitions;
+    QHash<int, QStringList> imageDefinitions;
     QString weatherCode;
     bool isNight;
 

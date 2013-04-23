@@ -130,28 +130,28 @@ void LH_Lg320x240::userTerm()
 
 void LH_Lg320x240::timerEvent(QTimerEvent *ev)
 {
-    if(usb_ctx_ &&!usb_device_list_&& ev->timerId() == timer_id_)
+    if(usb_ctx_ && !usb_device_list_ && ev->timerId() == timer_id_)
     {
-        struct libusb_device_descriptor dd;
-        libusb_device *g19_usb_device = 0;
+        LogitechG19 *g19 = findChild<LogitechG19 *>();
 
-        if(findChild<LogitechG19 *>())
+        if(g19)
             return;
 
         int usb_device_count = libusb_get_device_list(usb_ctx_, &usb_device_list_);
         if(usb_device_list_)
         {
+            struct libusb_device_descriptor dd;
             memset(&dd, 0, sizeof(dd));
             for(int i = 0; i < usb_device_count; ++i)
             {
                 if(usb_device_list_[i])
                 {
-                    if(g19_usb_device == 0 &&
+                    if(!g19 &&
                             !libusb_get_device_descriptor(usb_device_list_[i], &dd) &&
                             dd.idVendor == 0x046d &&
                             dd.idProduct == 0xc229)
                     {
-                        g19_usb_device = usb_device_list_[i];
+                        g19 = new LogitechG19(usb_ctx_, usb_device_list_[i], &dd, this);
                     }
                     else
                     {
@@ -162,7 +162,6 @@ void LH_Lg320x240::timerEvent(QTimerEvent *ev)
             }
             libusb_free_device_list(usb_device_list_, 0);
             usb_device_list_ = 0;
-            new LogitechG19(usb_ctx_, g19_usb_device, &dd, this);
         }
     }
 }

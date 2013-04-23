@@ -309,7 +309,7 @@ typedef union lh_setup_data_t
     link = "=system/cpu/count"; // error, missing initial path slash
 */
 
-#define LH_LINK_SIZE 128
+#define LH_LINK_SIZE 256
 
 /**
     You can have LCDHost automatically update a setup item with data
@@ -345,8 +345,8 @@ typedef union lh_setup_data_t
 */
 typedef struct lh_setup_link_t
 {
-    const char * mime;
-    char publish[LH_LINK_SIZE];
+    const char *mime;
+    const char *publish;
     char subscribe[LH_LINK_SIZE];
 } lh_setup_link;
 

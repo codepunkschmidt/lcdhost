@@ -132,20 +132,47 @@ void LH_QtSetupItem::setMimeType( const char * s )
     return;
 }
 
-void LH_QtSetupItem::setPublishPath( QString s )
+void LH_QtSetupItem::setPublishPath(const QString &s)
 {
-    memset( item_.link.publish, 0, sizeof(item_.link.publish) );
-    strncpy( item_.link.publish, s.toLatin1().constData(), sizeof(item_.link.publish)-1 );
+    publish_path_ = s.toUtf8();
+    item_.link.publish = publish_path_.constData();
     refresh();
     return;
 }
 
-void LH_QtSetupItem::setSubscribePath( QString s )
+QString LH_QtSetupItem::publishPath() const
 {
-    memset( item_.link.subscribe, 0, sizeof(item_.link.subscribe) );
-    strncpy( item_.link.subscribe, s.toLatin1().constData(), sizeof(item_.link.subscribe)-1 );
+    return QString::fromUtf8(publish_path_);
+}
+
+void LH_QtSetupItem::setSubscribePath(const QString &s)
+{
+    bool is_publish = s.startsWith('@');
+    bool need_fix = is_publish || s.startsWith('=');
+
+    if(need_fix)
+    {
+        const QString new_path(s.trimmed().remove(0, 1));
+        qWarning( "<b>%s</b>: old link style: <tt>%s</tt> FIXME!",
+                  parent() ? parent()->metaObject()->className() : qPrintable(objectName()),
+                  qPrintable(s));
+        if(is_publish)
+            setPublishPath(new_path);
+        else
+            setSubscribePath(new_path);
+        return;
+    }
+
+    const QByteArray ba(s.toUtf8());
+    memset(item_.link.subscribe, 0, sizeof(item_.link.subscribe));
+    qstrncpy(item_.link.subscribe, ba.constData(), sizeof(item_.link.subscribe));
     refresh();
     return;
+}
+
+QString LH_QtSetupItem::subscribePath() const
+{
+    return QString::fromUtf8(item_.link.subscribe);
 }
 
 void LH_QtSetupItem::setHelp(QString s)

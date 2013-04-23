@@ -49,6 +49,7 @@ class LH_API5PLUGIN_EXPORT LH_QtSetupItem : public QObject
     int order_;
     QByteArray name_array_;
     QByteArray help_;
+    QByteArray publish_path_;
 
 protected:
     lh_setup_item item_;
@@ -77,11 +78,11 @@ public:
     void setLink(QString s);
     QString link() { return subscribePath(); }
 
-    void setPublishPath( QString s );
-    QString publishPath() { return QString::fromLatin1(item_.link.publish); }
+    void setPublishPath(const QString &s);
+    QString publishPath() const;
 
-    void setSubscribePath( QString s );
-    QString subscribePath() { return QString::fromLatin1(item_.link.subscribe); }
+    void setSubscribePath(const QString &s);
+    QString subscribePath() const;
 
     void setMimeType( const char * s );
     const char *mimeType() const { return item_.link.mime; }

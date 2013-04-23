@@ -14,6 +14,8 @@ SOURCES += \
 	LH_Qt_QString.cpp
 
 HEADERS += \
+        lh_plugin.h \
+        lh_systemstate.h \
 	LH_QtCPU.h \
 	LH_QtDevice.h \
 	LH_QtInstance.h \

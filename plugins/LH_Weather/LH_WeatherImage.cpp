@@ -81,7 +81,7 @@ LH_WeatherImage::LH_WeatherImage()
     setup_text_ = new LH_Qt_QString( this, tr("~"), QString(), LH_FLAG_READONLY|LH_FLAG_NOSAVE|LH_FLAG_HIDDEN|LH_FLAG_AUTORENDER );
     setup_text_->setOrder(-1);
 
-    imageDefinitions = new QHash<int, QStringList>();
+    // imageDefinitions = new QHash<int, QStringList>();
 
     weatherCode = "3200";
     isNight = false;
@@ -112,10 +112,10 @@ QImage *LH_WeatherImage::render_qimage(int w, int h)
 QString LH_WeatherImage::getWeatherImageName()
 {
     QStringList imageItem;
-    if (imageDefinitions->contains(weatherCode.toInt()))
-        imageItem = imageDefinitions->value(weatherCode.toInt());
-    else if (imageDefinitions->contains(3200))
-        imageItem = imageDefinitions->value(3200);
+    if (imageDefinitions.contains(weatherCode.toInt()))
+        imageItem = imageDefinitions.value(weatherCode.toInt());
+    else if (imageDefinitions.contains(3200))
+        imageItem = imageDefinitions.value(3200);
     else
         imageItem = QStringList();
 
@@ -151,14 +151,14 @@ void LH_WeatherImage::fileChanged()
             QString fileContent = stream.readAll();
 
             QStringList items = fileContent.split('\r',QString::SkipEmptyParts);
-            imageDefinitions->clear();
+            imageDefinitions.clear();
             foreach (QString item, items)
             {
                 item = item.remove(re).trimmed();
                 if (item!="")
                 {
                      QStringList parts = item.split('\t',QString::SkipEmptyParts);
-                     imageDefinitions->insert(QString(parts.at(0)).toInt(), parts);
+                     imageDefinitions.insert(QString(parts.at(0)).toInt(), parts);
                 }
             }
             updateImage(true);

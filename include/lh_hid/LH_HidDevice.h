@@ -44,7 +44,7 @@ protected:
     friend class LH_HidWorker;
 
     explicit LH_HidDevice(
-            const QString &device_path,
+            const QByteArray &device_path,
             int vendor_id,
             int product_id,
             int device_version,
@@ -58,7 +58,7 @@ protected:
     void *handle_;
     bool unused_;
     bool online_;
-    QByteArray device_path_; // objectName() in UTF-8
+    QByteArray device_path_;
     int vendor_id_;
     int product_id_;
     int device_version_;

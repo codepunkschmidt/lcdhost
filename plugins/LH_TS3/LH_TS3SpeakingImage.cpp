@@ -1,6 +1,3 @@
-#ifndef LH_TS3SPEAKINGIMAGE_H
-#define LH_TS3SPEAKINGIMAGE_H
-
 #include "LH_QImage.h"
 #include "LH_Qt_QStringList.h"
 
@@ -9,13 +6,11 @@ class LH_TS3SpeakingImage : public LH_QImage
 protected:
     LH_Qt_QString *setup_talking_;
 
-    QImage* getPlaceholder()
+    bool loadPlaceholderImage(QImage *img)
     {
-        QImage* image = new QImage();
-        image->load(QString(":/images/%1.png")
+        return img->load(QString(":/images/%1.png")
                     .arg(setup_talking_->value()==""?"empty":"talking")
                     );
-        return image;
     }
 
 public:
@@ -53,5 +48,3 @@ public:
 };
 
 LH_PLUGIN_CLASS(LH_TS3SpeakingImage)
-
-#endif // LH_TS3SPEAKINGIMAGE_H

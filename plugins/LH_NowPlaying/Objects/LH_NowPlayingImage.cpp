@@ -86,7 +86,7 @@ const char *LH_NowPlayingImage::userInit()
     return 0;
 }
 
-QImage* LH_NowPlayingImage::getPlaceholder()
+bool LH_NowPlayingImage::loadPlaceholderImage(QImage *img)
 {
     QString placeholderName = "";
     QString playerName = player->GetPlayer();
@@ -161,13 +161,8 @@ QImage* LH_NowPlayingImage::getPlaceholder()
     }
 
     if(placeholderName=="")
-        return LH_QImage::getPlaceholder();
-    else
-    {
-        QImage* image = new QImage();
-        image->load(QString(":/images/%1.png").arg(placeholderName) );
-        return image;
-    }
+        return LH_QImage::loadPlaceholderImage(img);
+    return img->load(QString(":/images/%1.png").arg(placeholderName));
 }
 
 void LH_NowPlayingImage::updateValue()

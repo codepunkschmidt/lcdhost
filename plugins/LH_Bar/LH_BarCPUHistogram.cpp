@@ -71,16 +71,19 @@ public:
 
     QImage *render_qimage( int w, int h )
     {
-        if( LH_Bar::render_qimage(w,h) == NULL ) return NULL;
-        qreal *loads = new qreal[ cpu_.count() ];
-        if( loads )
+        if(QImage *img = LH_Bar::render_qimage(w,h))
         {
-            for( int i=0; i<cpu_.count(); i++ )
-                loads[i] = cpu_.coreload(i);
-            drawList( loads, cpu_.count() );
-            delete[] loads;
+            qreal *loads = new qreal[ cpu_.count() ];
+            if( loads )
+            {
+                for( int i=0; i<cpu_.count(); i++ )
+                    loads[i] = cpu_.coreload(i);
+                drawList( loads, cpu_.count() );
+                delete[] loads;
+            }
+            return img;
         }
-        return image_;
+        return 0;
     }
 };
 

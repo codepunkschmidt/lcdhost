@@ -55,7 +55,13 @@
 #include "LH_Qt_QStringList.h"
 #include "LH_Qt_QSlider.h"
 
-class LH_Text : public LH_QtCFInstance
+#ifdef LH_TEXT_LIBRARY
+# define LH_TEXT_EXPORT Q_DECL_EXPORT
+#else
+# define LH_TEXT_EXPORT Q_DECL_IMPORT
+#endif
+
+class LH_TEXT_EXPORT LH_Text : public LH_QtCFInstance
 {
     Q_OBJECT
     QTextDocument doc_;
@@ -120,7 +126,7 @@ public:
     QTextDocument& doc() { return doc_; }
     bool richtext() const { return richtext_; }
     QImage& textimage() { return textimage_; }
-    bool prepareForRender(int w, int h);
+    QImage *prepareForRender(int w, int h);
     bool monochrome() const { return state() ? state()->dev_depth == 1 : false; }
     bool setStyleStrategy();
 

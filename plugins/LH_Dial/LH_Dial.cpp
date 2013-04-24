@@ -298,8 +298,9 @@ QString LH_Dial::colString(QColor col)
 QImage LH_Dial::getFace()
 {
     QString faceCode = "";
-    int w = image_->width();
-    int h = image_->height();
+
+    int w = image()->width();
+    int h = image()->height();
 
     switch(setup_face_style_->value())
     {
@@ -452,8 +453,8 @@ QImage LH_Dial::getFace()
 void LH_Dial::getDimensions(qreal degrees, int& h, int& w, float& radH, float& radW, float& radians, float& drawLen)
 {
     float radiansM;
-    h = image_->height();
-    w = image_->width();
+    h = image()->height();
+    w = image()->width();
 
     getRadii(radH, radW);
     radians = getRadians(degrees, radiansM);
@@ -508,8 +509,8 @@ float LH_Dial::getDrawLen(float boxHeight, float boxWidth, float radians)
 
 void LH_Dial::getRadii(float& radH, float& radW)
 {
-    float w = image_->width();
-    float h = image_->height();
+    float w = image()->width();
+    float h = image()->height();
     radH = h/2;
     radW = w/2;
 
@@ -543,8 +544,8 @@ void LH_Dial::getRadii(float& radH, float& radW)
 
 void LH_Dial::getCenter(QPointF& center)
 {
-    float w = image_->width();
-    float h = image_->height();
+    float w = image()->width();
+    float h = image()->height();
 
     //h*0.9, w*0.9
     center.setX(w/2-.5) ;
@@ -974,11 +975,12 @@ void LH_Dial::setNeedleVisibility(bool visible, int index)
 
 void LH_Dial::drawDial()
 {
-    if( image_ == NULL || image_->isNull() ) return;
+    if(!hasImage())
+        return;
 
     QPainter painter;
 
-    if( painter.begin( image_ ) )
+    if( painter.begin( image() ) )
     {
         //Draw Face
         painter.drawImage(0,0, getFace() );
@@ -1060,10 +1062,13 @@ int LH_Dial::polling()
 
 QImage *LH_Dial::render_qimage( int w, int h )
 {
-    if( LH_QtInstance::initImage(w,h) == NULL ) return NULL;
-    image_->fill( PREMUL( setup_bgcolor_->value().rgba() ) );
-    drawDial();
-    return image_;
+    if(QImage *img = initImage(w, h))
+    {
+        img->fill(PREMUL(setup_bgcolor_->value().rgba()));
+        drawDial();
+        return img;
+    }
+    return 0;
 }
 
 void LH_Dial::changeType()

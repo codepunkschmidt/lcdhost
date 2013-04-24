@@ -51,14 +51,14 @@ class LH_API5PLUGIN_EXPORT LH_QtInstance : public LH_QtObject
 {
     Q_OBJECT
 
-protected:
     QImage *image_;
 
 public:
-    LH_QtInstance( LH_QtObject *parent = 0 ) : LH_QtObject(parent), image_(0) {}
+    explicit LH_QtInstance(LH_QtObject *parent = 0);
 
     virtual void term();
 
+    bool hasImage() const { return image_ && !image_->isNull(); }
     QImage *image() const { return image_; }
     QImage *initImage(int w, int h);
 

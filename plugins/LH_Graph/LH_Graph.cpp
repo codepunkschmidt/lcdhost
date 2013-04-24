@@ -421,8 +421,8 @@ void LH_Graph::drawSingle(int lineID)
 
     QVector<QPointF> points((*lineData_).limit()+2);
 
-    int w = image_->width();
-    int h = image_->height();
+    int w = image()->width();
+    int h = image()->height();
 
     //assemble the array of points for the graph (based on values & orientation)
     bool isConstant = true;
@@ -448,27 +448,26 @@ void LH_Graph::drawSingle(int lineID)
         if (img_size_.width() != w || img_size_.height()!= h)
             reload_images();
 
-        delete image_;
-
-        switch(setup_bg_type_->value())
+        if(QImage *img = initImage(w, h))
         {
-        case Background_Image:
-            if(setup_bg_image_->value().isFile())
+            switch(setup_bg_type_->value())
             {
-                image_ = new QImage(bgImg_);
+            case Background_Image:
+                if(!bgImg_.isNull() && setup_bg_image_->value().isFile())
+                {
+                    *img = bgImg_;
+                    break;
+                }
+            case Background_None:
+                img->fill(PREMUL(QColor(0,0,0,0).rgba()));
+                break;
+            case Background_AreaFill:
+                img->fill(PREMUL( setup_bgcolor_->value().rgba()));
                 break;
             }
-        case Background_None:
-            image_ = new QImage(w,h,QImage::Format_ARGB32_Premultiplied);
-            image_->fill( PREMUL( QColor(0,0,0,0).rgba() ) );
-            break;
-        case Background_AreaFill:
-            image_ = new QImage(w,h,QImage::Format_ARGB32_Premultiplied);
-            image_->fill( PREMUL( setup_bgcolor_->value().rgba() ) );
-            break;
-        }
 
-        findDataBounds(&avgData);
+            findDataBounds(&avgData);
+        }
     }
 
     qreal axis_max = (qMin(setup_max_samples_->value(), avgData.limit())-1) * desired_duration;
@@ -587,7 +586,7 @@ void LH_Graph::drawSingle(int lineID)
         }
     }
 
-    if( painter.begin( image_ ) )
+    if( painter.begin(image()) )
     {
         painter.setRenderHint( QPainter::Antialiasing, true );
         painter.setPen(penColor);
@@ -659,26 +658,26 @@ void LH_Graph::drawSingle(int lineID)
             case TimeHorizontal_NowRight_MaxTop:
             case TimeHorizontal_NowLeft_MaxTop:
                 flags = flags | (setup_y_labels_right_->value() ? Qt::AlignRight : Qt::AlignLeft);
-                if(setup_show_y_max_->value() && !emptyHide) addText(painter, image_->rect(), flags|Qt::AlignTop,    maxLabel);
-                if(setup_show_y_min_->value() && !emptyHide) addText(painter, image_->rect(), flags|Qt::AlignBottom, minLabel);
+                if(setup_show_y_max_->value() && !emptyHide) addText(painter, image()->rect(), flags|Qt::AlignTop,    maxLabel);
+                if(setup_show_y_min_->value() && !emptyHide) addText(painter, image()->rect(), flags|Qt::AlignBottom, minLabel);
                 break;
             case TimeHorizontal_NowRight_MaxBottom:
             case TimeHorizontal_NowLeft_MaxBottom:
                 flags = flags | (setup_y_labels_right_->value() ? Qt::AlignRight : Qt::AlignLeft);
-                if(setup_show_y_max_->value() && !emptyHide) addText(painter, image_->rect(), flags|Qt::AlignBottom, maxLabel);
-                if(setup_show_y_min_->value() && !emptyHide) addText(painter, image_->rect(), flags|Qt::AlignTop,    minLabel);
+                if(setup_show_y_max_->value() && !emptyHide) addText(painter, image()->rect(), flags|Qt::AlignBottom, maxLabel);
+                if(setup_show_y_min_->value() && !emptyHide) addText(painter, image()->rect(), flags|Qt::AlignTop,    minLabel);
                 break;
             case TimeVertical_NowTop_MaxLeft:
             case TimeVertical_NowBottom_MaxLeft:
                 flags = flags | (setup_y_labels_right_->value() ? Qt::AlignTop : Qt::AlignBottom);
-                if(setup_show_y_max_->value() && !emptyHide) addText(painter, image_->rect(), flags|Qt::AlignLeft,   maxLabel);
-                if(setup_show_y_min_->value() && !emptyHide) addText(painter, image_->rect(), flags|Qt::AlignRight,  minLabel);
+                if(setup_show_y_max_->value() && !emptyHide) addText(painter, image()->rect(), flags|Qt::AlignLeft,   maxLabel);
+                if(setup_show_y_min_->value() && !emptyHide) addText(painter, image()->rect(), flags|Qt::AlignRight,  minLabel);
                 break;
             case TimeVertical_NowTop_MaxRight:
             case TimeVertical_NowBottom_MaxRight:
                 flags = flags | (setup_y_labels_right_->value() ? Qt::AlignTop : Qt::AlignBottom);
-                if(setup_show_y_max_->value()) addText(painter, image_->rect(), flags|Qt::AlignRight,  maxLabel);
-                if(setup_show_y_min_->value()) addText(painter, image_->rect(), flags|Qt::AlignLeft,   minLabel);
+                if(setup_show_y_max_->value()) addText(painter, image()->rect(), flags|Qt::AlignRight,  maxLabel);
+                if(setup_show_y_min_->value()) addText(painter, image()->rect(), flags|Qt::AlignLeft,   minLabel);
                 break;
             }
         }      
@@ -836,9 +835,13 @@ void LH_Graph::setYUnit( QString str, qreal divisor )
 
 QImage *LH_Graph::render_qimage( int w, int h )
 {
-    if( LH_QtInstance::initImage(w,h) == NULL ) return NULL;
-    image_->fill( PREMUL( setup_bgcolor_->value().rgba() ) );
-    return image_;
+    if(QImage *img = initImage(w, h))
+    {
+        if(setup_bgcolor_)
+            img->fill(PREMUL(setup_bgcolor_->value().rgba()));
+        return img;
+    }
+    return 0;
 }
 
 void LH_Graph::addValue(float value, int lineID )
@@ -1074,11 +1077,11 @@ void LH_Graph::updateBGImage()
 
 void LH_Graph::reload_images()
 {
-    if(image_ == NULL)
+    if(!hasImage())
         return;
 
-    int w = image_->width();
-    int h = image_->height();
+    int w = image()->width();
+    int h = image()->height();
 
     img_size_.setHeight(h);
     img_size_.setWidth(w);

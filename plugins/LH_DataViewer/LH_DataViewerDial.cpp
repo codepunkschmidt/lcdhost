@@ -56,9 +56,12 @@ int LH_DataViewerDial::polling()
 
 QImage *LH_DataViewerDial::render_qimage( int w, int h )
 {
-    if( LH_Dial::render_qimage(w,h) == NULL ) return NULL;
-    drawDial();
-    return image_;
+    if(QImage *img = LH_Dial::render_qimage(w, h))
+    {
+        drawDial();
+        return img;
+    }
+    return 0;
 }
 
 void LH_DataViewerDial::updateDial(bool rerender)

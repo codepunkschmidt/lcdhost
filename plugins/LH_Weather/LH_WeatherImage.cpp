@@ -94,19 +94,20 @@ LH_WeatherImage::LH_WeatherImage()
 
 QImage *LH_WeatherImage::render_qimage(int w, int h)
 {
-    delete image_;
-    if( setup_file_->value().isFile() )
+    if(QImage *img = initImage(w, h))
     {
-        QString folderPath = setup_file_->value().dir().path() + "/";
-        QString imageName = getWeatherImageName();
-
-        if (imageName=="")
-            image_ = new QImage();
+        const QFileInfo fi(setup_file_ ? setup_file_->value() : QFileInfo());
+        if(fi.isFile())
+        {
+            const QString imageName(getWeatherImageName());
+            if(imageName.isEmpty() || !img->load(fi.dir().filePath(imageName)))
+                img->fill(Qt::transparent);
+        }
         else
-            image_ = new QImage(folderPath + imageName);
-    } else
-        image_ = new QImage(w,h,QImage::Format_Invalid);
-    return image_;
+            img->fill(QColor(0, 0, 0, 255));
+        return img;
+    }
+    return 0;
 }
 
 QString LH_WeatherImage::getWeatherImageName()

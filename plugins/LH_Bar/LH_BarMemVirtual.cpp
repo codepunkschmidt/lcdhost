@@ -74,13 +74,16 @@ public:
 
     QImage *render_qimage( int w, int h )
     {
-        if( LH_Bar::render_qimage(w,h) == NULL ) return NULL;
-        if( state()->mem_data.tot_virt )
+        if(state()->mem_data.tot_virt)
         {
-            qreal used_mem = ( state()->mem_data.tot_virt - state()->mem_data.free_virt );
-            drawSingle( used_mem * 1000.0 / (qreal) (state()->mem_data.tot_virt) );
+            if(QImage *img = LH_Bar::render_qimage(w,h))
+            {
+                qreal used_mem = ( state()->mem_data.tot_virt - state()->mem_data.free_virt );
+                drawSingle( used_mem * 1000.0 / (qreal) (state()->mem_data.tot_virt) );
+                return img;
+            }
         }
-        return image_;
+        return 0;
     }
 };
 

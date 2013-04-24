@@ -63,6 +63,11 @@ void LH_QtInstance::build_instance_calltable( lh_instance_calltable *ct, lh_clas
     return;
 }
 
+LH_QtInstance::LH_QtInstance(LH_QtObject *parent) :
+    LH_QtObject(parent),
+    image_(0)
+{}
+
 void LH_QtInstance::term()
 {
     if( image_ )
@@ -88,14 +93,13 @@ QImage *LH_QtInstance::initImage(int w, int h)
         delete image_;
         image_ = NULL;
     }
-    if( image_ == NULL )
+    if(!image_ && w > 0 && h > 0)
     {
-        image_ = new QImage(w,h,QImage::Format_ARGB32_Premultiplied);
-        if( image_ && image_->isNull() )
-        {
-            delete image_;
-            image_ = NULL;
-        }
+        QImage *img = new QImage(w, h, QImage::Format_ARGB32_Premultiplied);
+        if(img->isNull())
+            delete img;
+        else
+            image_ = img;
     }
     return image_;
 }

@@ -59,10 +59,22 @@ static inline uint PREMUL(uint x) {
     return x;
 }
 
-LH_Text::LH_Text() : LH_QtCFInstance()
+LH_Text::LH_Text() :
+    LH_QtCFInstance(),
+    scrollposx_(0),
+    scrollposy_(0),
+    richtext_(false),
+    setup_text_(0),
+    setup_font_(0),
+    setup_fontresize_(0),
+    setup_pencolor_(0),
+    setup_bgcolor_(0),
+    setup_horizontal_(0),
+    setup_vertical_(0),
+    setup_scrollrate_(0),
+    setup_scrollstep_(0),
+    setup_scrollgap_(0)
 {
-    richtext_ = false;
-
     setup_text_ = new LH_Qt_QString( this, tr("Text"), QString(), LH_FLAG_FOCUS|LH_FLAG_AUTORENDER );
     setup_text_->setOrder(-2);
     setup_text_->setHelp( "<p>The displayed text. Note that this supports "
@@ -195,7 +207,7 @@ void LH_Text::makeTextImage( int forheight )
     if( forheight < 0 ) forheight = 0;
     if( forheight && forheight < 4 )
     {
-        if( image_ ) forheight = image_->height();
+        if(hasImage()) forheight = image()->height();
         else forheight = textimage_.height();
     }
 
@@ -333,18 +345,14 @@ void LH_Text::makeTextImage( int forheight )
 
 void LH_Text::fontChanged()
 {
-    int h = image_ ? image_->height() : textimage_.height();
+    int h = hasImage() ? image()->height() : textimage_.height();
     font_ = QFont( setup_font_->value(), &textimage_ );
     makeTextImage( fontresize() ? h : 0 );
 }
 
 void LH_Text::textChanged()
 {
-    if( image_ )
-    {
-        delete image_;
-        image_ = NULL;
-    }
+    initImage(0, 0);
     richtext_ = Qt::mightBeRichText( setup_text_->value() );
     if( richtext_)
     {
@@ -464,17 +472,17 @@ int LH_Text::polling()
 {
     if( (horizontal() < 3 && vertical() < 3) ) return 0;
 
-    if( image_ )
+    if(hasImage())
     {
         int mody =  textimage_.height() + scrollgap();
-        int ymax = (mody + image_->height() );
+        int ymax = (mody + image()->height() );
         if( vertical() >= 5 )
-            ymax = ( (image_->height() / mody)+1 ) * mody;
+            ymax = ( (image()->height() / mody)+1 ) * mody;
 
         int modx =  textimage_.width() + scrollgap();
-        int xmax = (modx + image_->width());
+        int xmax = (modx + image()->width());
         if( horizontal() >= 5 )
-            xmax = ( (image_->width()  / modx)+1 ) * modx;
+            xmax = ( (image()->width()  / modx)+1 ) * modx;
 
         if( horizontal() >= 3 )
         {
@@ -589,26 +597,28 @@ int LH_Text::height( int forWidth )
   Internal function to let subclasses who do their own
   rendering have an easier time.
   */
-bool LH_Text::prepareForRender(int w, int h)
+QImage *LH_Text::prepareForRender(int w, int h)
 {
-    if( (image_ = initImage(w,h)) == NULL ) return false;
-    image_->fill( PREMUL( bgcolor().rgba() ) );
+    if(QImage *img = initImage(w, h))
+    {
+        img->fill(PREMUL(bgcolor().rgba()));
 
-    if( richtext_ && w != textimage_.width() )
-    {
-        doc_.setTextWidth( w );
-        makeTextImage();
+        if( richtext_ && w != textimage_.width() )
+        {
+            doc_.setTextWidth( w );
+            makeTextImage();
+        }
+        else if( fontresize() && textimage_.height() != h )
+        {
+            makeTextImage( h );
+        }
+        else if( setStyleStrategy() )
+        {
+            makeTextImage();
+        }
+        return img;
     }
-    else if( fontresize() && textimage_.height() != h )
-    {
-        makeTextImage( h );
-    }
-    else if( setStyleStrategy() )
-    {
-        makeTextImage();
-    }
-
-    return true;
+    return 0;
 }
 
 /**
@@ -627,107 +637,108 @@ bool LH_Text::prepareForRender(int w, int h)
   */
 QImage *LH_Text::render_qimage(int w, int h)
 {
-    if( !prepareForRender(w,h) ) return NULL;
-
-    QPainter painter;
-    if( painter.begin(image_) )
+    if(QImage *img = prepareForRender(w, h))
     {
-        QRectF target;
-        QRectF source = textimage_.rect();
-
-        target.setSize( textimage_.size() );
-
-        switch( horizontal() )
+        QPainter painter;
+        if( painter.begin(img) )
         {
-        case 0: // center
-            target.moveLeft( image_->width()/2 - textimage_.width()/2 );
-            break;
-        case 1: // left
-            target.moveLeft( 0 );
-            break;
-        case 2: // right
-            target.moveLeft( image_->width() - textimage_.width() );
-            break;
-        case 3: // scroll
-        case 5: // scroll
-            target.moveLeft( image_->width() - scrollposx_ );
-            break;
-        case 4: // reverse scroll
-        case 6: // reverse scroll
-            target.moveLeft( scrollposx_ - textimage_.width() );
-            break;
-        }
+            QRectF target;
+            QRectF source = textimage_.rect();
 
-        switch( vertical() )
-        {
-        case 0: // center
-            target.moveTop( image_->height()/2 - textimage_.height()/2 );
-            break;
-        case 1: // left
-            target.moveTop( 0 );
-            break;
-        case 2: // right
-            target.moveTop( image_->height() - textimage_.height() );
-            break;
-        case 3: // scroll
-        case 5: // scroll
-            target.moveTop( image_->height() - scrollposy_ );
-            break;
-        case 4: // reverse scroll
-        case 6: // reverse scroll
-            target.moveTop( scrollposy_ - textimage_.height() );
-            break;
-        }
+            target.setSize( textimage_.size() );
 
-        painter.drawImage( target, textimage_, source );
-
-        if(horizontal()>=3)
-        {
-            if(horizontal()>=5)
+            switch( horizontal() )
             {
-                int pos;
-                int mod =  textimage_.width() + scrollgap();
-
-                pos = ( horizontal()==5? image_->width() - scrollposx_ : scrollposx_ - textimage_.width());
-                while(pos < image_->width())
-                {
-                    pos += mod;
-                    target.moveLeft( pos );
-                    painter.drawImage( target, textimage_, source );
-                }
-
-                pos = ( horizontal()==5? image_->width() - scrollposx_ : scrollposx_ - textimage_.width() );
-                while(pos > 0)
-                {
-                    pos -= mod;
-                    target.moveLeft( pos );
-                    painter.drawImage( target, textimage_, source );
-                }
-            }
-        } else
-            if(vertical()>=5)
-            {
-                int pos;
-                int mod =  textimage_.height() + scrollgap();
-                pos = ( vertical()==5? image_->height() - scrollposy_ : scrollposy_ - textimage_.height() );
-                while(pos < image_->height())
-                {
-                    pos += mod;
-                    target.moveTop( pos );
-                    painter.drawImage( target, textimage_, source );
-                }
-
-                pos = ( vertical()==5? image_->height() - scrollposy_ : scrollposy_ - textimage_.height() );
-                while(pos > 0)
-                {
-                    pos -= mod;
-                    target.moveTop( pos );
-                    painter.drawImage( target, textimage_, source );
-                }
+            case 0: // center
+                target.moveLeft( img->width()/2 - textimage_.width()/2 );
+                break;
+            case 1: // left
+                target.moveLeft( 0 );
+                break;
+            case 2: // right
+                target.moveLeft( img->width() - textimage_.width() );
+                break;
+            case 3: // scroll
+            case 5: // scroll
+                target.moveLeft( img->width() - scrollposx_ );
+                break;
+            case 4: // reverse scroll
+            case 6: // reverse scroll
+                target.moveLeft( scrollposx_ - textimage_.width() );
+                break;
             }
 
-        painter.end();
+            switch( vertical() )
+            {
+            case 0: // center
+                target.moveTop( img->height()/2 - textimage_.height()/2 );
+                break;
+            case 1: // left
+                target.moveTop( 0 );
+                break;
+            case 2: // right
+                target.moveTop( img->height() - textimage_.height() );
+                break;
+            case 3: // scroll
+            case 5: // scroll
+                target.moveTop( img->height() - scrollposy_ );
+                break;
+            case 4: // reverse scroll
+            case 6: // reverse scroll
+                target.moveTop( scrollposy_ - textimage_.height() );
+                break;
+            }
+
+            painter.drawImage( target, textimage_, source );
+
+            if(horizontal()>=3)
+            {
+                if(horizontal()>=5)
+                {
+                    int pos;
+                    int mod =  textimage_.width() + scrollgap();
+
+                    pos = ( horizontal()==5? img->width() - scrollposx_ : scrollposx_ - textimage_.width());
+                    while(pos < img->width())
+                    {
+                        pos += mod;
+                        target.moveLeft( pos );
+                        painter.drawImage( target, textimage_, source );
+                    }
+
+                    pos = ( horizontal()==5? img->width() - scrollposx_ : scrollposx_ - textimage_.width() );
+                    while(pos > 0)
+                    {
+                        pos -= mod;
+                        target.moveLeft( pos );
+                        painter.drawImage( target, textimage_, source );
+                    }
+                }
+            } else
+                if(vertical()>=5)
+                {
+                    int pos;
+                    int mod =  textimage_.height() + scrollgap();
+                    pos = ( vertical()==5? img->height() - scrollposy_ : scrollposy_ - textimage_.height() );
+                    while(pos < img->height())
+                    {
+                        pos += mod;
+                        target.moveTop( pos );
+                        painter.drawImage( target, textimage_, source );
+                    }
+
+                    pos = ( vertical()==5? img->height() - scrollposy_ : scrollposy_ - textimage_.height() );
+                    while(pos > 0)
+                    {
+                        pos -= mod;
+                        target.moveTop( pos );
+                        painter.drawImage( target, textimage_, source );
+                    }
+                }
+
+            painter.end();
+        }
+        return img;
     }
-
-    return image_;
+    return 0;
 }

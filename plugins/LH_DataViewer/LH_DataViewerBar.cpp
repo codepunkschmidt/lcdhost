@@ -55,9 +55,12 @@ int LH_DataViewerBar::polling()
 
 QImage *LH_DataViewerBar::render_qimage( int w, int h )
 {
-    if( LH_Bar::render_qimage(w,h) == NULL ) return NULL;
-    drawSingle(barValue_);
-    return image_;
+    if(QImage *img = LH_Bar::render_qimage(w,h))
+    {
+        drawSingle(barValue_);
+        return img;
+    }
+    return 0;
 }
 
 void LH_DataViewerBar::updateBar()

@@ -55,7 +55,7 @@ protected:
     lh_setup_item item_;
 
 public:
-    LH_QtSetupItem( LH_QtObject *parent, QString name, lh_setup_type type, int flags );
+    explicit LH_QtSetupItem(LH_QtObject *parent, QString name, lh_setup_type type, int flags);
 
     LH_QtObject *parent() const { return static_cast<LH_QtObject *>(QObject::parent()); }
 

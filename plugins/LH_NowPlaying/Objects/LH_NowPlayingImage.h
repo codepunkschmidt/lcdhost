@@ -37,7 +37,7 @@ class LH_NowPlayingImage : public LH_QImage
 protected:
     LH_Qt_QStringList* setup_item_;
     LH_Qt_QString* setup_value_;
-    QImage* getPlaceholder();
+    bool loadPlaceholderImage(QImage *img);
 
 public:
     LH_NowPlayingImage();

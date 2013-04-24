@@ -74,15 +74,18 @@ public:
 
     QImage *render_qimage( int w, int h )
     {
-        if( LH_Bar::render_qimage(w,h) == NULL ) return NULL;
-        if( state()->mem_data.tot_phys )
+        if(state()->mem_data.tot_phys)
         {
-            qreal used_mem = ( state()->mem_data.tot_phys - state()->mem_data.free_phys );
-            used_mem *= 1000.0;
-            used_mem /= (qreal) state()->mem_data.tot_phys;
-            drawSingle( used_mem );
+            if(QImage *img = LH_Bar::render_qimage(w,h))
+            {
+                qreal used_mem = ( state()->mem_data.tot_phys - state()->mem_data.free_phys );
+                used_mem *= 1000.0;
+                used_mem /= (qreal) state()->mem_data.tot_phys;
+                drawSingle( used_mem );
+                return img;
+            }
         }
-        return image_;
+        return 0;
     }
 };
 

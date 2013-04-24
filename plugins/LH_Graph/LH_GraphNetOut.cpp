@@ -107,9 +107,12 @@ public:
 
     QImage *render_qimage( int w, int h )
     {
-        if( LH_Graph::render_qimage(w,h) == NULL ) return NULL;
-        drawSingle( );
-        return image_;
+        if(QImage *img = LH_Graph::render_qimage(w, h))
+        {
+            drawSingle( );
+            return img;
+        }
+        return 0;
     }
 
     void changeUnits()

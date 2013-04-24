@@ -53,7 +53,7 @@ class LH_RSSFeed: public QObject
     QTime lastmove_;
 
     QNetworkAccessManager *nam_;
-    int connectionId;
+    // int connectionId;
 
     void parseXml();
 

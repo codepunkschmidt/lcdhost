@@ -43,14 +43,9 @@
 #include "LH_Qt_QColor.h"
 
 #include "LH_Decor.h"
-
-#ifdef LH_CF
 #include "LH_QtCFInstance.h"
+
 class LH_DECOR_EXPORT LH_Rectangle : public LH_QtCFInstance
-#else
-#include "LH_QtInstance.h"
-class LH_DECOR_EXPORT LH_Rectangle : public LH_QtInstance
-#endif
 {
     Q_OBJECT
 

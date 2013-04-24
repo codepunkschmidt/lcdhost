@@ -25,7 +25,7 @@
 #ifndef LH_CURSORCONTROLLER_H
 #define LH_CURSORCONTROLLER_H
 
-#include "../LH_Text/LH_Text.h"
+#include <LH_Text/LH_Text.h>
 #include "LH_Qt_InputState.h"
 #include "LH_Qt_QFileInfo.h"
 #include "LH_Qt_int.h"
@@ -53,11 +53,7 @@ struct cursorMode{
     }
 };
 
-#ifdef LH_CF
 class LH_CursorController : public LH_QtCFInstance
-#else
-class LH_CursorController : public LH_QtInstance
-#endif
 {
     Q_OBJECT
 

@@ -80,6 +80,7 @@ public:
     virtual const lh_class **class_list();
     const lh_object_calltable * objtable() { return & objtable_; }
     void addClass(LH_QtClassLoader *next);
+    int notify( int code, void *param );
 };
 
 /**

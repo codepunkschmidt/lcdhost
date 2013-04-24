@@ -1,6 +1,9 @@
 #include "LH_WeatherData.h"
 
-weatherData::weatherData() {}
+weatherData::weatherData() :
+    isNight(false),
+    forecastDays(5)
+{}
 
 weatherData::weatherData(QString jsonData, bool& ok)
 {

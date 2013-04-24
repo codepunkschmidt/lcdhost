@@ -118,6 +118,7 @@ defineReplace(lh_destdir) {
 
         lh_changeset_revision()
         LIBS*=$$quote(-L$$LH_DIR_BINARIES)
+        LIBS*=$$quote(-L$$LH_DIR_PLUGINS)
         INCLUDEPATH*=$$quote($$LH_DIR_INCLUDE)
 
         win32 {

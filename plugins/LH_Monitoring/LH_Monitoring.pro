@@ -50,7 +50,6 @@ MONSOURCES_SOURCES += \
     Sources/LH_MonitoringSource_SpeedFan.cpp
 
 HEADERS += \
-    $$PLUGIN_HEADERS \
     LH_QtPlugin_Monitoring.h \
     $$MONOBJECTS_HEADERS \
     $$MONTYPES_HEADERS \
@@ -59,7 +58,6 @@ HEADERS += \
     LH_RivaWriter.h
 
 SOURCES += \
-    $$PLUGIN_SOURCES \
     LH_QtPlugin_Monitoring.cpp \
     $$MONOBJECTS_SOURCES \
     $$MONSOURCES_SOURCES \

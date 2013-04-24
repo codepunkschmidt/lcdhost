@@ -122,12 +122,13 @@ void LH_MonitoringGraph::updateLines()
 
 QImage *LH_MonitoringGraph::render_qimage( int w, int h )
 {
-    if( LH_Graph::render_qimage(w,h) == NULL ) return NULL;
-
-    if(setup_value_ptr_->value()==(int)(externalSource()))
-        drawAll();
-
-    return image_;
+    if(QImage *img = LH_Graph::render_qimage(w, h))
+    {
+        if(setup_value_ptr_->value()==(int)(externalSource()))
+            drawAll();
+        return img;
+    }
+    return 0;
 }
 
 void LH_MonitoringGraph::configChanged()  {

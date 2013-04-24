@@ -42,8 +42,9 @@
 #include "LH_QtInstance.h"
 #include "LH_Qt_bool.h"
 #include "LH_Qt_QColor.h"
+#include "LH_Decor.h"
 
-class LH_Background : public LH_QtInstance
+class LH_DECOR_EXPORT LH_Background : public LH_QtInstance
 {
     Q_OBJECT
 

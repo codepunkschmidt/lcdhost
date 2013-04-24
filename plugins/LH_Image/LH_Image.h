@@ -36,7 +36,10 @@
 #ifndef LH_IMAGE_H
 #define LH_IMAGE_H
 
-#include "lh_plugin.h"
-#define VERSION "0.0.1"
+#ifdef LH_IMAGE_LIBRARY
+# define LH_IMAGE_EXPORT Q_DECL_EXPORT
+#else
+# define LH_IMAGE_EXPORT Q_DECL_IMPORT
+#endif
 
 #endif // LH_IMAGE_H

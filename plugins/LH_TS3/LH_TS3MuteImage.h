@@ -1,8 +1,8 @@
 #ifndef LH_TS3MUTEIMAGE_H
 #define LH_TS3MUTEIMAGE_H
 
-#include "LH_QImage.h"
-#include "LH_Qt_QStringList.h"
+#include <LH_Image/LH_QImage.h>
+#include <LH_Qt_QStringList.h>
 
 #include <QDebug>
 

@@ -4,18 +4,15 @@ QT += network \
     xml
 DEFINES += LH_DATAVIEWER_LIBRARY
 DEFINES += VERSION=1.05
+CONFIG += cf
 
 win32:LIBS += -L"C:/Program Files/Microsoft SDKs/Windows/v7.0/Lib" -lversion
 
-CONFIG += cf
+LIBS *= -lLH_Text -lLH_Bar -lLH_Dial
 
 include(../Plugins.pri)
 
 SOURCES += \
-    $$PLUGIN_SOURCES \
-    ../LH_Dial/LH_Dial.cpp \
-    ../LH_Text/LH_Text.cpp \
-    ../LH_Bar/LH_Bar.cpp \
     LH_QtPlugin_DataViewer.cpp \
     LH_DataViewerConnector.cpp \
     LH_DataViewerText.cpp \
@@ -27,10 +24,6 @@ SOURCES += \
     LH_DataViewerDataTypes.cpp
 
 HEADERS += \
-    $$PLUGIN_HEADERS \
-    ../LH_Dial/LH_Dial.h \
-    ../LH_Text/LH_Text.h \
-    ../LH_Bar/LH_Bar.h \
     LH_QtPlugin_DataViewer.h \
     LH_DataViewerConnector.h \
     LH_DataViewerText.h \

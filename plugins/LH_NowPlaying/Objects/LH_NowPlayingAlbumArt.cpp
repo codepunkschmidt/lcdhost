@@ -31,16 +31,16 @@ lh_class *LH_NowPlayingAlbumArt::classInfo()
 
 QImage *LH_NowPlayingAlbumArt::render_qimage(int w, int h)
 {
-    delete image_;
-    if( setup_file_->value().isFile())
+    if(QImage *img = initImage(w, h))
     {
-        image_ = new QImage();
-        if(!image_->load(setup_file_->value().absoluteFilePath()))
-            qDebug() << "Cannot load image: " << setup_file_->value().absoluteFilePath();
+        if(setup_file_->value().isFile())
+        {
+            if(!img->load(setup_file_->value().absoluteFilePath()))
+                qDebug() << "Cannot load image: " << setup_file_->value().absoluteFilePath();
+        }
+        return img;
     }
-    else
-        image_ = new QImage(w,h,QImage::Format_Invalid);
-    return image_;
+    return 0;
 }
 
 void LH_NowPlayingAlbumArt::refresh_image()

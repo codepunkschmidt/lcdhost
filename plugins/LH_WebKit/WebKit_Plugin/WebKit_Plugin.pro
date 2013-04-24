@@ -7,11 +7,10 @@ CONFIG += cf
 
 include(../../Plugins.pri)
 
-INCLUDEPATH += ..
+INCLUDEPATH *= $$dirname(PWD)
+LIBS *= -lLH_Text
 
 SOURCES += \
-    $$PLUGIN_SOURCES \
-    ../../LH_Text/LH_Text.cpp \
     ../WebKitCommand.cpp \
     LH_QtPlugin_WebKit.cpp \
     LH_WebKit.cpp \
@@ -24,8 +23,6 @@ SOURCES += \
     LH_RSSBody.cpp
 
 HEADERS += \
-    $$PLUGIN_HEADERS \
-    ../../LH_Text/LH_Text.h \
     ../WebKitCommand.h \
     LH_QtPlugin_WebKit.h \
     LH_WebKit.h \

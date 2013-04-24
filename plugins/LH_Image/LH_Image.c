@@ -45,6 +45,8 @@
 #include "logo_blob.h"
 #include "lh_plugin.h"
 
+#define VERSION "0.0.1"
+
 #ifndef Q_UNUSED
 # if defined(Q_CC_INTEL) && !defined(Q_OS_WIN) || defined(Q_CC_RVCT)
 template <typename T>

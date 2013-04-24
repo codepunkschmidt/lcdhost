@@ -1,5 +1,5 @@
-#include "LH_QImage.h"
-#include "LH_Qt_QStringList.h"
+#include <LH_Image/LH_QImage.h>
+#include <LH_Qt_QStringList.h>
 
 class LH_TS3SpeakingImage : public LH_QImage
 {

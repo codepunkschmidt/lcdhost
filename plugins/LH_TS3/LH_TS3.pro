@@ -7,13 +7,9 @@ CONFIG += cf
 
 include(../Plugins.pri)
 
-INCLUDEPATH += $$PWD/../LH_Monitoring/LH_QImage
+LIBS *= -lLH_Image -lLH_Text
 
 SOURCES += \
-    $$PLUGIN_SOURCES \
-    ../LH_Monitoring/LH_QImage/logo_blob.c \
-    ../LH_Monitoring/LH_QImage/LH_QImage.cpp \
-    ../LH_Text/LH_Text.cpp \
     LH_QtPlugin_TS3.cpp \
     LH_TS3SpeakingImage.cpp \
     LH_TS3MuteImage.cpp \
@@ -24,9 +20,6 @@ SOURCES += \
     LH_TS3CombinedStatusImage.cpp
 
 HEADERS += \
-    $$PLUGIN_HEADERS \
-    ../LH_Monitoring/LH_QImage/LH_QImage.h \
-    ../LH_Text/LH_Text.h \
     LH_QtPlugin_TS3.h \
     LH_TS3_ClientList.h \
     LH_TS3_ChannelList.h \

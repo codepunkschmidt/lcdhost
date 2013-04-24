@@ -26,7 +26,7 @@
 #define LH_CURSORIMAGE_H
 
 #include "LH_CursorReceiver.h"
-#include "LH_QImage.h"
+#include "LH_Image/LH_QImage.h"
 
 class LH_CursorImage : public LH_QImage
 {

@@ -25,9 +25,8 @@
 #ifndef LH_NOWPLAYINGIMAGE_H
 #define LH_NOWPLAYINGIMAGE_H
 
-#include "../../LH_Monitoring/LH_QImage/LH_QImage.h"
-#include "LH_Qt_QString.h"
-
+#include <LH_Image/LH_QImage.h>
+#include <LH_Qt_QString.h>
 #include "../LH_QtPlugin_NowPlaying.h"
 
 class LH_NowPlayingImage : public LH_QImage

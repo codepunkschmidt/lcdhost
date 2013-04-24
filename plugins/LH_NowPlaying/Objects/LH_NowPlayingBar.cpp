@@ -88,8 +88,11 @@ bool LH_NowPlayingBar::setValue(int val,int max)
 
 QImage *LH_NowPlayingBar::render_qimage( int w, int h )
 {
-    if( LH_Bar::render_qimage(w,h) == NULL ) return NULL;
-    drawSingle( value_ );
-    return image_;
+    if(QImage *img = LH_Bar::render_qimage(w, h))
+    {
+        drawSingle( value_ );
+        return img;
+    }
+    return 0;
 }
 

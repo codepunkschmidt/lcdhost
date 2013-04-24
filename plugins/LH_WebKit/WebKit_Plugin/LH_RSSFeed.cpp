@@ -6,17 +6,19 @@
 #include <QNetworkProxyQuery>
 #include <QNetworkReply>
 
-LH_RSSFeed::LH_RSSFeed(QString feedUrl, int refreshTime, int delayTime)
+LH_RSSFeed::LH_RSSFeed(QString feedUrl, int refreshTime, int delayTime) :
+    nowshowing_(-1),
+    switchwait_(0),
+    nam_(0),
+    // connectionId(0),
+    refresh_(refreshTime),
+    delay_(delayTime)
 {
+    nam_ = new QNetworkAccessManager(this);
     lastrefresh_ = QDateTime::currentDateTime();
     lastopen_.start();
     lastmove_.start();
-
-    nam_ = new QNetworkAccessManager(this);
-
     url_ = QUrl::fromUserInput(feedUrl);
-    refresh_ = refreshTime;
-    delay_ = delayTime;
 
     QObject::connect(nam_, SIGNAL(finished(QNetworkReply*)), this, SLOT(finished(QNetworkReply*)));
 

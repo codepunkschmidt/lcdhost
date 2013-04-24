@@ -58,7 +58,6 @@ const char *LH_CursorRectangle::userInit()
 
     connect(setup_layout_trigger_, SIGNAL(changed()), this, SLOT(changeLayoutTrigger()));
 
-#ifdef LH_CF
     add_cf_target(setup_penwidth_);
     add_cf_target(setup_pencolor_);
     add_cf_target(setup_bgcolor1_);
@@ -85,7 +84,6 @@ const char *LH_CursorRectangle::userInit()
                  "<actions><action type='property'><target>Fill color 1</target><value>FF800080</value></action></actions>"
                  "</rule>"
                  "</rules>");
-#endif
     return 0;
 }
 

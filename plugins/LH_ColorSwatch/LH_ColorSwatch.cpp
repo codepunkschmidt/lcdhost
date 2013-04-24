@@ -107,13 +107,11 @@ const char *LH_ColorSwatch::userInit()
     connect( setup_current_color_, SIGNAL(set()), this, SLOT(updateColor()) );
     connect( setup_current_value_, SIGNAL(set()), this, SLOT(updateColor()) );
 
-#ifdef LH_CF
     add_cf_target(setup_lowerbound_value_);
     add_cf_target(setup_lowerbound_color_);
     add_cf_target(setup_upperbound_value_);
     add_cf_target(setup_upperbound_color_);
     add_cf_source(setup_current_value_);
-#endif
     return 0;
 }
 

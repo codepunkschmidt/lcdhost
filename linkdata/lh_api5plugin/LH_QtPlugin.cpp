@@ -108,3 +108,10 @@ LH_QtPlugin::~LH_QtPlugin()
         classlist_ = 0;
     }
 }
+
+int LH_QtPlugin::notify( int code, void *param )
+{
+    // if( code & LH_NOTE_SECOND )
+    //     qDebug("LH_QtPlugin::notify(): %s QObject count: %d", qPrintable(objectName()), (findChildren<QObject *>()).size());
+    return LH_QtObject::notify(code, param);
+}

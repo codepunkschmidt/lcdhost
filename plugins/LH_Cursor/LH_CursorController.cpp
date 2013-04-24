@@ -182,7 +182,6 @@ LH_CursorController::LH_CursorController()
 
     updateLocation(0,0);
 
-#ifdef LH_CF
     add_cf_target(setup_cursor_active_);
     add_cf_source(setup_cursor_active_);
     add_cf_target(setup_cursor_sel_x_);
@@ -193,8 +192,6 @@ LH_CursorController::LH_CursorController()
     add_cf_source(setup_cursor_x_);
     add_cf_target(setup_cursor_y_);
     add_cf_source(setup_cursor_y_);
-#endif
-
 }
 
 void LH_CursorController::initialiseLinking()

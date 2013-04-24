@@ -99,3 +99,12 @@ LH_QtPlugin::LH_QtPlugin() :
 {
     LH_QtObject::build_object_calltable( & objtable_ );
 }
+
+LH_QtPlugin::~LH_QtPlugin()
+{
+    if( classlist_ )
+    {
+        free( classlist_ );
+        classlist_ = 0;
+    }
+}

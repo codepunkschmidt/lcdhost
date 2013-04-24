@@ -75,6 +75,7 @@ class LH_API5PLUGIN_EXPORT LH_QtPlugin : public LH_QtObject
 
 public:
     LH_QtPlugin();
+    ~LH_QtPlugin();
     void setFirstClass(LH_QtClassLoader **first_p) { first_p_ = first_p; }
     virtual const lh_class **class_list();
     const lh_object_calltable * objtable() { return & objtable_; }

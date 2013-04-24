@@ -91,12 +91,15 @@ int LH_DataViewerExpiredImage::height( void*obj,int h )
 
 QImage *LH_DataViewerExpiredImage::render_qimage(int w, int h)
 {
-    delete image_;
-    if( setup_file_->value().isFile() )
-        image_ = new QImage(setup_file_->value().absoluteFilePath());
-    else
-        image_ = new QImage(w,h,QImage::Format_Invalid);
-    return image_;
+    if(QImage *img = initImage(w, h))
+    {
+        if(!(setup_file_ &&
+                setup_file_->value().isFile() &&
+                img->load(setup_file_->value().absoluteFilePath())))
+            img->fill(qRgba(0, 0, 0, 255));
+        return img;
+    }
+    return 0;
 }
 
 void LH_DataViewerExpiredImage::fileChanged()

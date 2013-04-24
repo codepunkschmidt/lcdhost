@@ -273,17 +273,17 @@ void LH_WebKit::sendRequest( QUrl url, QString html )
 
 QImage *LH_WebKit::render_qimage(int w, int h)
 {
-    if( size_ != QSize(w,h) )
+    if(QImage *img = initImage(w, h))
     {
-        size_ = QSize(w,h);
-        initImage(w,h);
-        if( image_ )
+        if(size_ != img->size())
         {
-            image_->fill( qRgba(0,0,0,0) );
-            if( verifySocket() ) sendData(true);
+            size_ = img->size();
+            img->fill(qRgba(0, 0, 0, 0));
+            if(verifySocket()) sendData(true);
         }
+        return img;
     }
-    return image_;
+    return 0;
 }
 
 void LH_WebKit::readyRead()
@@ -315,11 +315,11 @@ void LH_WebKit::readyRead()
         progress_->setFlag( LH_FLAG_HIDDEN, (kitdata_.progress == 0 || kitdata_.progress == 100) );
         progress_->setValue( kitdata_.progress );
     }
-    if( image_ )
+    if(hasImage())
     {
         QImage tmp( (uchar*)bits.data(), kitdata_.w, kitdata_.h, QImage::Format_ARGB32_Premultiplied );
-        if( size() == tmp.size() ) *image_ = tmp.copy();
-        else *image_ = tmp.scaled( size(), Qt::IgnoreAspectRatio, Qt::SmoothTransformation );
+        if( size() == tmp.size() ) *image() = tmp.copy();
+        else *image() = tmp.scaled( size(), Qt::IgnoreAspectRatio, Qt::SmoothTransformation );
     }
 
     lastpong_ = QTime::currentTime();

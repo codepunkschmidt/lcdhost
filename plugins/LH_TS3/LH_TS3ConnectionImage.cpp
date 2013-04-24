@@ -1,6 +1,3 @@
-#ifndef LH_TS3CONNECTIONIMAGE_H
-#define LH_TS3CONNECTIONIMAGE_H
-
 #include "LH_QImage.h"
 #include "LH_Qt_QStringList.h"
 
@@ -9,15 +6,16 @@ class LH_TS3ConnectionImage : public LH_QImage
 protected:
     LH_Qt_QStringList *setup_connection_status_;
 
-    QImage* getPlaceholder()
+    bool loadPlaceholderImage(QImage *img)
     {
-        QImage* image = new QImage();
+        if(!setup_connection_status_)
+            return LH_QImage::loadPlaceholderImage(img);
         QString status = setup_connection_status_->valueText();
-        image->load(QString(":/images/%1.png")
+        return img->load(QString(":/images/%1.png")
                     .arg(status=="Not Running"?"notrunning":(status=="Not Connected"?"unconnected":"active"))
                     );
-        return image;
     }
+
 public:
     const char *userInit()
     {
@@ -55,5 +53,3 @@ public:
 };
 
 LH_PLUGIN_CLASS(LH_TS3ConnectionImage)
-
-#endif // LH_TS3CONNECTIONIMAGE_H

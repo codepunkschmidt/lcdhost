@@ -102,11 +102,25 @@ int LH_DataViewerImage::height( void*obj,int h )
 
 QImage *LH_DataViewerImage::render_qimage(int w, int h)
 {
+    QFileInfo fi(setup_file_ ? setup_file_->value() : QFileInfo());
+    if(fi.isFile())
+    {
+        if(QImage *img = initImage(w, h))
+        {
+            const QString imageName(getImageName());
+            QDir imagedir(fi.dir());
+            if(imageName.isEmpty() || !img->load(imagedir.filePath(imageName)))
+                img->fill(qRgba(0, 0, 0, 255));
+            return img;
+        }
+    }
+    return 0;
+
+#if 0
     delete image_;
     if( setup_file_->value().isFile() )
     {
-        QString folderPath = setup_file_->value().dir().path() + "/";
-        QString imageName = getImageName();
+        const QString imageName(getImageName());
         if (imageName=="")
         {
             uchar *data = new uchar[4];
@@ -122,6 +136,7 @@ QImage *LH_DataViewerImage::render_qimage(int w, int h)
     } else
         image_ = new QImage(w,h,QImage::Format_Invalid);
     return image_;
+#endif
 }
 
 QString LH_DataViewerImage::getImageName()

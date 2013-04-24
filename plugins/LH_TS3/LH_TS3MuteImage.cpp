@@ -2,16 +2,14 @@
 
 LH_PLUGIN_CLASS(LH_TS3MuteImage)
 
-QImage* LH_TS3MuteImage::getPlaceholder()
+bool LH_TS3MuteImage::loadPlaceholderImage(QImage *img)
 {
-    QImage* image = new QImage();
     QString source = setup_mute_source_->valueText();
     QString status = setup_mute_status_->valueText();
-    image->load(QString(":/images/%1%2.png")
+    return img->load(QString(":/images/%1%2.png")
                 .arg(status=="N/A"?"empty":(source=="Microphone"?"microphone":"sound"))
                 .arg(status=="None"?"-disabled":(status=="Muted"?"-mute":""))
                 );
-    return image;
 }
 
 const char *LH_TS3MuteImage::userInit()

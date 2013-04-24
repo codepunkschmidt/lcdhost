@@ -71,9 +71,12 @@ public:
 
     QImage *render_qimage( int w, int h )
     {
-        if( LH_Bar::render_qimage(w,h) == NULL ) return NULL;
-        drawSingle( net_.inPermille() );
-        return image_;
+        if(QImage *img = LH_Bar::render_qimage(w,h))
+        {
+            drawSingle( net_.inPermille() );
+            return img;
+        }
+        return 0;
     }
 };
 

@@ -65,16 +65,19 @@ QImage *LH_Rectangle::render_qimage( int w, int h )
     qreal rounding;
     qreal penpixels;
 
-    if( LH_QtInstance::initImage(w,h) == NULL ) return NULL;
-    image_->fill( qRgba(0,0,0,0) );
+    QImage *img = initImage(w,h);
+    if(img == 0)
+        return 0;
 
-    minside = qMin( image_->width(), image_->height() ) / 2;
+    img->fill( qRgba(0,0,0,0) );
+
+    minside = qMin( img->width(), img->height() ) / 2;
     rounding = ( minside * (qreal) this->rounding() ) / 100.0;
 
     QPainter painter;
-    if( painter.begin( image_ ) )
+    if( painter.begin( img ) )
     {
-        QRectF rect = image_->rect();
+        QRectF rect = img->rect();
 
         if( state()->dev_depth == 1 )
         {
@@ -105,8 +108,8 @@ QImage *LH_Rectangle::render_qimage( int w, int h )
         {
             QLinearGradient gradient;
             gradient.setStart(0,0);
-            if( horizontal() ) gradient.setFinalStop(image_->width(),0);
-            else gradient.setFinalStop(0,image_->height());
+            if( horizontal() ) gradient.setFinalStop(img->width(),0);
+            else gradient.setFinalStop(0,img->height());
             gradient.setColorAt(0, bgcolor1() );
             gradient.setColorAt(1, bgcolor2() );
             QBrush brush(gradient);
@@ -132,15 +135,15 @@ QImage *LH_Rectangle::render_qimage( int w, int h )
         rounding += penpixels;
         qreal dx = (rect.left() + 0.31 * rounding);
         qreal dy = (rect.top() + 0.31 * rounding);
-        if( dx >= image_->width()/2 ) dx = (image_->width()/2)-1;
-        if( dy >= image_->height()/2 ) dy = (image_->height()/2)-1;
+        if( dx >= img->width()/2 ) dx = (img->width()/2)-1;
+        if( dy >= img->height()/2 ) dy = (img->height()/2)-1;
         if( dx < 0 ) dx = 0;
         if( dy < 0 ) dy = 0;
 
         painter.end();
     }
 
-    return image_;
+    return img;
 }
 
 int LH_Rectangle::notify( int code,void* param )

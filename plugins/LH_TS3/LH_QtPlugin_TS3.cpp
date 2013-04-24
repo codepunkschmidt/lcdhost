@@ -332,13 +332,13 @@ void LH_QtPlugin_TS3::talkChanged(QString params)
     QRegExp rx("status=([0-9]*) isreceivedwhisper=([0-9]*) clid=([0-9]*)");
 
     bool status = false;
-    bool whisper = false;
+    // bool whisper = false;
     int clid = -1;
 
     if(rx.indexIn(params)!=-1)
     {
         status = (rx.cap(1).toInt()==1);
-        whisper = (rx.cap(2).toInt()==1);
+        // whisper = (rx.cap(2).toInt()==1);
         clid = rx.cap(3).toInt();
     }
 

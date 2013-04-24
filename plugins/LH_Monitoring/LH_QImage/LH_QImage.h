@@ -37,7 +37,7 @@ protected:
     LH_Qt_QFileInfo *setup_image_file_;
     LH_Qt_bool *setup_show_placeholder_;
 
-    virtual QImage *getPlaceholder();
+    virtual bool loadPlaceholderImage(QImage *img);
 
 public:
     LH_QImage() : LH_QtCFInstance(), setup_image_file_(0), setup_show_placeholder_(0) {}

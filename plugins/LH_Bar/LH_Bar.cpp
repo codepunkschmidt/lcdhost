@@ -143,11 +143,11 @@ void LH_Bar::draw_bar( qreal value, int pos, int total )
     QRectF rect;
     QRectF rect_full;
 
-    if( image_ == NULL || image_->isNull() ) return;
+    if(!hasImage()) return;
     if( max_ == min_ ) return;
 
-    image_width = image_->width();
-    image_height = image_->height();
+    image_width = image()->width();
+    image_height = image()->height();
     tot = total;
 
     Q_ASSERT( total > 0 );
@@ -202,7 +202,7 @@ void LH_Bar::draw_bar( qreal value, int pos, int total )
     }
 
 
-    if( painter.begin( image_ ) )
+    if( painter.begin(image()) )
     {
         gradient.setStart( QPointF(0, 0) );
         switch( direction )
@@ -330,9 +330,12 @@ bool LH_Bar::setMax( qreal r )
 
 QImage *LH_Bar::render_qimage( int w, int h )
 {
-    if( LH_QtInstance::initImage(w,h) == NULL ) return NULL;
-    image_->fill( PREMUL( setup_bgcolor_->value().rgba() ) );
-    return image_;
+    if(QImage * img = initImage(w, h))
+    {
+        img->fill(PREMUL(setup_bgcolor_->value().rgba()));
+        return img;
+    }
+    return 0;
 }
 
 void LH_Bar::changeType()

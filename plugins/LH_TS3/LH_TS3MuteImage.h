@@ -14,7 +14,7 @@ protected:
     LH_Qt_QStringList *setup_mute_source_;
     LH_Qt_QStringList *setup_mute_status_;
 
-    QImage* getPlaceholder();
+    bool loadPlaceholderImage(QImage *img);
 
 public:
     const char *userInit();

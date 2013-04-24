@@ -75,30 +75,31 @@ void LH_Background::enableGradient(bool b)
 
 QImage *LH_Background::render_qimage( int w, int h )
 {
-    if( LH_QtInstance::initImage(w,h) == NULL ) return NULL;
-    image_->fill( qRgba(0,0,0,0) );
-
-    QPainter painter;
-
-    if( painter.begin(image_) )
+    if(QImage *img = initImage(w,h))
     {
-        painter.setPen(Qt::NoPen);
-        if( setup_gradient_->value() )
-        {
-            QLinearGradient gradient;
-            gradient.setStart(0,0);
-            if( setup_horizontal_->value() ) gradient.setFinalStop(image_->width(),0);
-            else gradient.setFinalStop(0,image_->height());
-            gradient.setColorAt(0, setup_startcolor_->value() );
-            gradient.setColorAt(1, setup_stopcolor_->value() );
-            QBrush brush(gradient);
-            painter.setBrush( brush );
-        }
-        else
-            painter.setBrush( setup_startcolor_->value() );
-        painter.drawRect( image_->rect() );
-        painter.end();
-    }
+        img->fill( qRgba(0,0,0,0) );
 
-    return image_;
+        QPainter painter;
+        if( painter.begin(img) )
+        {
+            painter.setPen(Qt::NoPen);
+            if( setup_gradient_->value() )
+            {
+                QLinearGradient gradient;
+                gradient.setStart(0,0);
+                if( setup_horizontal_->value() ) gradient.setFinalStop(img->width(),0);
+                else gradient.setFinalStop(0,img->height());
+                gradient.setColorAt(0, setup_startcolor_->value() );
+                gradient.setColorAt(1, setup_stopcolor_->value() );
+                QBrush brush(gradient);
+                painter.setBrush( brush );
+            }
+            else
+                painter.setBrush( setup_startcolor_->value() );
+            painter.drawRect( img->rect() );
+            painter.end();
+        }
+        return img;
+    }
+    return 0;
 }

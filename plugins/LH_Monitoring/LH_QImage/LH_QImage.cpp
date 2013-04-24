@@ -53,28 +53,21 @@ const char *LH_QImage::userInit()
     return 0;
 }
 
-QImage* LH_QImage::getPlaceholder()
+bool LH_QImage::loadPlaceholderImage(QImage *img)
 {
-    QImage* image = new QImage();
-    image->loadFromData(_logo_blob_d.data, _logo_blob_d.len);
-    return image;
+    return img ? img->loadFromData(_logo_blob_d.data, _logo_blob_d.len) : false;
 }
 
 QImage *LH_QImage::render_qimage(int w, int h)
 {
-    delete image_;
-    if( setup_image_file_->value().isFile())
+    if(QImage *img = initImage(w, h))
     {
-        image_ = new QImage();
-        image_->load(setup_image_file_->value().absoluteFilePath());
+        const QFileInfo fi(setup_image_file_ ? setup_image_file_->value() : QFileInfo());
+        if(!(fi.isFile() && img->load(fi.absoluteFilePath())))
+            if(setup_show_placeholder_ && setup_show_placeholder_->value())
+                loadPlaceholderImage(img);
+        return img;
     }
-    else
-    {
-        if(setup_show_placeholder_->value())
-            image_ = getPlaceholder();
-        else
-            image_ = new QImage(w,h,QImage::Format_Invalid);
-    }
-    return image_;
+    return 0;
 }
 

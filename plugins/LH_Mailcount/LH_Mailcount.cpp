@@ -131,13 +131,13 @@ void LH_Mailcount::makeEnvelope()
     int dx, dy, span;
     QImage stamp;
 
-    if( !image_ || image_->isNull() ) return;
+    if(!hasImage()) return;
 
     if( mail_image_->value().isFile() ) stamp.load( mail_image_->value().filePath() );
     else stamp.load( ":/mailcount/images/envelope48.png" );
-    stamp = stamp.scaled( image_->size(), Qt::KeepAspectRatio, Qt::SmoothTransformation );
+    stamp = stamp.scaled( image()->size(), Qt::KeepAspectRatio, Qt::SmoothTransformation );
 
-    envelope_ = *image_;
+    envelope_ = *image();
     envelope_.fill( QColor( Qt::transparent ).rgba() );
 
     if( count() < 1 )
@@ -146,11 +146,11 @@ void LH_Mailcount::makeEnvelope()
         return;
     }
 
-    if( ((qreal)image_->width()/(qreal)stamp.width()) >=
-        ((qreal)image_->height()/(qreal)stamp.height()) )
+    if( ((qreal)image()->width()/(qreal)stamp.width()) >=
+        ((qreal)image()->height()/(qreal)stamp.height()) )
     {
         // left to right
-        span = (image_->width() / 2) - (stamp.width() / 2);
+        span = (image()->width() / 2) - (stamp.width() / 2);
         dx = span / count();
         if( dx > stamp.width() / 2 ) dx = stamp.width() / 2;
         if( dx < 1 ) dx = 1;
@@ -161,7 +161,7 @@ void LH_Mailcount::makeEnvelope()
     else
     {
         // top to bottom
-        span = (image_->height() / 2) - (stamp.height() / 2);
+        span = (image()->height() / 2) - (stamp.height() / 2);
         dy = span / count();
         if( dy > stamp.height() / 2 ) dy = stamp.height() / 2;
         if( dy < 1 ) dy = 1;
@@ -188,71 +188,55 @@ void LH_Mailcount::makeEnvelope()
 
 QImage *LH_Mailcount::render_qimage( int w, int h )
 {
-    if( image_ && ( w != image_->width() || h != image_->height() ) )
-    {
-        delete image_;
-        image_ = NULL;
+    QImage *old_image = image();
+    QImage *img = initImage(w, h);
+    if(img != old_image)
         envelope_count_ = -1;
-    }
 
-    if( image_ == NULL )
+    if(img)
     {
-        image_ = new QImage(w,h,QImage::Format_ARGB32_Premultiplied);
-        if( image_ && image_->isNull() )
-        {
-            delete image_;
-            image_ = NULL;
-        }
-        if( image_ )
-        {
+        if(count() != envelope_count_)
             makeEnvelope();
-        }
-    }
+        img->fill( qRgba(0,0,0,0) );
+        if( !count() ) return img;
 
-    if( image_ == NULL ) return image_;
-
-    if( count() != envelope_count_ )
-    {
-        makeEnvelope();
-    }
-
-    image_->fill( qRgba(0,0,0,0) );
-    if( !count() ) return image_;
-
-    if( !flashing_->value() )
-    {
-        *image_ = envelope_;
-        return image_;
-    }
-
-    if( !smoothflash_->value() && flash_on_ ) return image_;
-
-    QPainter painter;
-    QImage fadedenv = envelope_;
-
-    if( smoothflash_->value() )
-    {
-        int ms = QTime::currentTime().msec();
-        if( ms < 500 ) fadedenv.fill( QColor(0,0,0,(255*ms)/500).rgba() );
-        else fadedenv.fill( QColor(0,0,0,(255*(1000-ms))/500).rgba() );
-        if( painter.begin( &fadedenv ) )
+        if( !flashing_->value() )
         {
-            painter.setCompositionMode( QPainter::CompositionMode_SourceIn );
-            painter.drawImage(0,0,envelope_);
+            *img = envelope_;
+            return img;
+        }
+
+        if( !smoothflash_->value() && flash_on_ ) return img;
+
+        QPainter painter;
+        QImage fadedenv = envelope_;
+
+        if( smoothflash_->value() )
+        {
+            int ms = QTime::currentTime().msec();
+            if( ms < 500 ) fadedenv.fill( QColor(0,0,0,(255*ms)/500).rgba() );
+            else fadedenv.fill( QColor(0,0,0,(255*(1000-ms))/500).rgba() );
+            if( painter.begin( &fadedenv ) )
+            {
+                painter.setCompositionMode( QPainter::CompositionMode_SourceIn );
+                painter.drawImage(0,0,envelope_);
+                painter.end();
+            }
+        }
+
+        if( painter.begin(img) )
+        {
+            painter.setCompositionMode( QPainter::CompositionMode_SourceOver );
+            painter.drawImage(
+                    (img->width()-fadedenv.width())/2,
+                    (img->height()-fadedenv.height())/2,
+                    fadedenv
+                    );
             painter.end();
         }
+
+        return img;
     }
 
-    if( painter.begin(image_) )
-    {
-        painter.setCompositionMode( QPainter::CompositionMode_SourceOver );
-        painter.drawImage(
-                (image_->width()-fadedenv.width())/2,
-                (image_->height()-fadedenv.height())/2,
-                fadedenv
-                );
-        painter.end();
-    }
-
-    return image_;
+    return 0;
 }

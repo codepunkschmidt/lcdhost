@@ -58,25 +58,28 @@ void LH_RSSText::setRssItem()
 
 QImage *LH_RSSText::render_qimage( int w, int h )
 {
-    if( !prepareForRender(w,h) ) return NULL;
-
-    QPainter painter;
-    if( painter.begin(image_) )
+    if(QImage *img = prepareForRender(w, h))
     {
-        QRectF target;
+        QPainter painter;
+        if( painter.begin(img) )
+        {
+            QRectF target;
 
-        target.setSize( textimage().size() );
-        target.moveLeft( image_->width()/2 - textimage().width()/2 );
-        target.moveTop( image_->height()/2 - textimage().height()/2 );
+            target.setSize( textimage().size() );
+            target.moveLeft( img->width()/2 - textimage().width()/2 );
+            target.moveTop( img->height()/2 - textimage().height()/2 );
 
-        if( textimage().width() > image_->width() )
-            target.moveLeft( 0 );
+            if( textimage().width() > img->width() )
+                target.moveLeft( 0 );
 
-        painter.drawImage( target, textimage(), textimage().rect() );
-        painter.end();
+            painter.drawImage( target, textimage(), textimage().rect() );
+            painter.end();
+        }
+
+        return img;
     }
 
-    return image_;
+    return 0;
 }
 
 

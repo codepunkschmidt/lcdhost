@@ -57,7 +57,7 @@ lh_class *LH_TS3CombinedStatusImage::classInfo()
     return &classInfo;
 }
 
-QImage* LH_TS3CombinedStatusImage::getPlaceholder()
+bool LH_TS3CombinedStatusImage::loadPlaceholderImage(QImage *img)
 {
     QString status = setup_connection_status_->valueText();
     QString talking = setup_talking_->value();
@@ -68,9 +68,7 @@ QImage* LH_TS3CombinedStatusImage::getPlaceholder()
                     setup_talking_me_->value()==false?"OtherSpeaking":
                     talking==setup_nickname_->value()?"MeSpeaking":"BothSpeaking"
                     );
-    QImage* image = new QImage();
-    image->load(QString(":/images/LED_%1.png").arg(imageName));
-    return image;
+    return img->load(QString(":/images/LED_%1.png").arg(imageName));
 }
 
 void LH_TS3CombinedStatusImage::updateCombinedStatus()

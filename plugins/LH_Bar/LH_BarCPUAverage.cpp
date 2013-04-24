@@ -71,9 +71,12 @@ public:
 
     QImage *render_qimage( int w, int h )
     {
-        if( LH_Bar::render_qimage(w,h) == NULL ) return NULL;
-        drawSingle( cpu_.averageload() );
-        return image_;
+        if(QImage *img = LH_Bar::render_qimage(w,h))
+        {
+            drawSingle( cpu_.averageload() );
+            return img;
+        }
+        return 0;
     }
 };
 

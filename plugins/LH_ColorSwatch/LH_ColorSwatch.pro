@@ -1,13 +1,14 @@
 TARGET = LH_ColorSwatch
 TEMPLATE = lib
 DEFINES += VERSION=1.00
+DEFINES += LH_COLORSWATCH_LIBRARY
 CONFIG += systemstats cf
 
 include(../Plugins.pri)
 
+LIBS *= -lLH_Decor
+
 SOURCES += \
-    $$PLUGIN_SOURCES \
-    ../LH_Decor/LH_Rectangle.cpp \
     LH_QtPlugin_ColorSwatch.cpp \
     LH_ColorSwatch.cpp \
     LH_ColorSwatchCPUAverage.cpp \
@@ -17,7 +18,5 @@ SOURCES += \
     LH_ColorSwatchNetOut.cpp
 
 HEADERS += \
-    $$PLUGIN_HEADERS \
-    ../LH_Decor/LH_Rectangle.h \
     LH_QtPlugin_ColorSwatch.h \
     LH_ColorSwatch.h

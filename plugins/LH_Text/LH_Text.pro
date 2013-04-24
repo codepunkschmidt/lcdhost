@@ -6,7 +6,6 @@ CONFIG += cf
 include(../Plugins.pri)
 
 SOURCES += \
-    $$PLUGIN_SOURCES \
     LH_QtPlugin_Text.cpp \
     LH_Text.cpp \
     LH_TextTime.cpp \
@@ -25,7 +24,6 @@ SOURCES += \
     LH_TextStatic.cpp
 
 HEADERS += \
-    $$PLUGIN_HEADERS \
     LH_QtPlugin_Text.h \
     LH_Text.h \
     LH_TextFile.h \

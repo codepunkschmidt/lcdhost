@@ -25,8 +25,8 @@
 #ifndef LH_MONITORINGIMAGE_H
 #define LH_MONITORINGIMAGE_H
 
-#include "LH_QImage.h"
-#include "LH_Qt_QString.h"
+#include <LH_Image/LH_QImage.h>
+#include <LH_Qt_QString.h>
 
 #include "../Objects/LH_MonitoringObject.h"
 

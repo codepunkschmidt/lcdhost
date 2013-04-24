@@ -31,7 +31,13 @@
 #include "LH_Qt_QColor.h"
 #include "LH_Qt_float.h"
 
-class LH_ColorSwatch : public LH_Rectangle
+#ifdef LH_COLORSWATCH_LIBRARY
+# define LH_COLORSWATCH_EXPORT Q_DECL_EXPORT
+#else
+# define LH_COLORSWATCH_EXPORT Q_DECL_IMPORT
+#endif
+
+class LH_COLORSWATCH_EXPORT LH_ColorSwatch : public LH_Rectangle
 {
     Q_OBJECT
 

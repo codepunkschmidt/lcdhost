@@ -8,7 +8,6 @@ CONFIG += systemstats datacollection
 include(../Plugins.pri)
 
 SOURCES += \
-    $$PLUGIN_SOURCES \
     LH_QtPlugin_Graph.cpp \
     LH_Graph.cpp \
     LH_GraphCPUAverage.cpp \
@@ -19,6 +18,5 @@ SOURCES += \
     LH_GraphNetOut.cpp
 
 HEADERS += \
-    $$PLUGIN_HEADERS \
     LH_QtPlugin_Graph.h \
     LH_Graph.h

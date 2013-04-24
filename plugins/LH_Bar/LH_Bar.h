@@ -47,7 +47,13 @@
 #include "LH_Qt_bool.h"
 #include "LH_Qt_int.h"
 
-class LH_Bar : public LH_QtCFInstance
+#ifdef LH_BAR_LIBRARY
+# define LH_BAR_EXPORT Q_DECL_EXPORT
+#else
+# define LH_BAR_EXPORT Q_DECL_IMPORT
+#endif
+
+class LH_BAR_EXPORT LH_Bar : public LH_QtCFInstance
 {
     Q_OBJECT
 

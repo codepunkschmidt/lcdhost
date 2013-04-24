@@ -1,9 +1,9 @@
 #ifndef LH_TS3COMBINEDSTATUSIMAGE_H
 #define LH_TS3COMBINEDSTATUSIMAGE_H
 
-#include "LH_QImage.h"
-#include "LH_Qt_QString.h"
-#include "LH_Qt_QStringList.h"
+#include <LH_Image/LH_QImage.h>
+#include <LH_Qt_QString.h>
+#include <LH_Qt_QStringList.h>
 #include <QDebug>
 
 class LH_TS3CombinedStatusImage : public LH_QImage

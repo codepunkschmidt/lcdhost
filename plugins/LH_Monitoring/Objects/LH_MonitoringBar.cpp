@@ -85,24 +85,26 @@ const char *LH_MonitoringBar::userInit()
 
 QImage *LH_MonitoringBar::render_qimage( int w, int h )
 {
-    if( LH_Bar::render_qimage(w,h) == NULL ) return NULL;
-
-    bool ok;
-    SensorItem si = this->selectedSensor(&ok);
-    if(ok)
+    if(QImage *img = LH_Bar::render_qimage(w, h))
     {
-        if(!si.group)
+        bool ok;
+        SensorItem si = this->selectedSensor(&ok);
+        if(ok)
         {
-            float valFlt = (value_str().toFloat(&ok));
-            if(ok)
-                drawSingle( valFlt );
-        } else {
-            QVector<qreal> currVals = getValuesVector(false, 0, ok);
-            if(ok)
-                drawList(currVals);
+            if(!si.group)
+            {
+                float valFlt = (value_str().toFloat(&ok));
+                if(ok)
+                    drawSingle( valFlt );
+            } else {
+                QVector<qreal> currVals = getValuesVector(false, 0, ok);
+                if(ok)
+                    drawList(currVals);
+            }
         }
+        return img;
     }
-    return image_;
+    return 0;
 }
 
 void LH_MonitoringBar::refresh()

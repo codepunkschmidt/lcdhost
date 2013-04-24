@@ -7,7 +7,6 @@ DEFINES += VERSION=1.05
 include(../Plugins.pri)
 
 SOURCES += \
-    $$PLUGIN_SOURCES \
     LH_QtPlugin_Dial.cpp \
     LH_Dial.cpp \
     LH_DialCPUAverage.cpp \
@@ -23,7 +22,6 @@ SOURCES += \
     LH_PieMem.cpp
 	
 HEADERS += \
-    $$PLUGIN_HEADERS \
     LH_QtPlugin_Dial.h \
     LH_Dial.h \
     LH_DialTime.h

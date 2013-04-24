@@ -8,9 +8,9 @@ CONFIG += cf translator json
 
 include(../Plugins.pri)
 
+LIBS *= -lLH_Text -lLH_Image
+
 SOURCES += \
-    $$PLUGIN_SOURCES \
-    ../LH_Text/LH_Text.cpp \
     LH_WeatherData.cpp \
     LH_QtPlugin_Weather.cpp \
     LH_WeatherText.cpp \
@@ -18,8 +18,6 @@ SOURCES += \
     LH_WeatherBrowserOpener.cpp
 
 HEADERS += \
-    $$PLUGIN_HEADERS \
-    ../LH_Text/LH_Text.h \
     LH_WeatherData.h \
     LH_QtPlugin_Weather.h \
     LH_WeatherText.h \

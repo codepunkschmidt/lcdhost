@@ -44,6 +44,13 @@
 
 #include "DataCollection.h"
 
+
+#ifdef LH_GRAPH_LIBRARY
+# define LH_GRAPH_EXPORT Q_DECL_EXPORT
+#else
+# define LH_GRAPH_EXPORT Q_DECL_IMPORT
+#endif
+
 enum GraphDataMode
 {
     /* Internally Managed Data means the graph uses it's own internal data store.   *
@@ -72,7 +79,7 @@ enum GraphBoundGrowState
     BoundGrowthCanGrow = 2
 };
 
-class LH_Graph : public LH_QtInstance
+class LH_GRAPH_EXPORT LH_Graph : public LH_QtInstance
 {
     Q_OBJECT
 

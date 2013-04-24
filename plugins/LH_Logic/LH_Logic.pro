@@ -10,13 +10,11 @@ CONFIG += cf
 include(../Plugins.pri)
 
 SOURCES += \
-    $$PLUGIN_SOURCES \
     LH_QtPlugin_Logic.cpp \
     LH_LogicBox.cpp \
     LH_Ticker.cpp
 
 HEADERS += \
-    $$PLUGIN_HEADERS \
     LH_QtPlugin_Logic.h \ 
     LH_LogicBox.h \
     LH_Ticker.h

@@ -8,12 +8,9 @@ CONFIG += cf json
 
 include(../Plugins.pri)
 
-INCLUDEPATH += $$PWD/../LH_Monitoring/LH_QImage
+LIBS *= -lLH_Decor -lLH_Image
 
 HEADERS += \
-    $$PLUGIN_HEADERS \
-    ../LH_Monitoring/LH_QImage/LH_QImage.h \
-    ../LH_Decor/LH_Rectangle.h \
     actionType.h \
     LH_QtPlugin_Cursor.h \
     LH_CursorData.h \
@@ -26,10 +23,6 @@ HEADERS += \
     LH_CursorAction.h
 
 SOURCES += \
-    $$PLUGIN_SOURCES \
-    ../LH_Monitoring/LH_QImage/logo_blob.c \
-    ../LH_Monitoring/LH_QImage/LH_QImage.cpp \
-    ../LH_Decor/LH_Rectangle.cpp \
     actionType.cpp \
     LH_QtPlugin_Cursor.cpp \
     LH_CursorData.cpp \

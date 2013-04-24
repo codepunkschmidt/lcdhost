@@ -40,6 +40,13 @@
 #include <QHash>
 #include <QString>
 
+#ifdef LH_DIAL_LIBRARY
+# define LH_DIAL_EXPORT Q_DECL_EXPORT
+#else
+# define LH_DIAL_EXPORT Q_DECL_IMPORT
+#endif
+
+
 class tickObject
 {
 public:
@@ -80,7 +87,7 @@ enum RotationType
     ROT_CENTER
 };
 
-class LH_Dial : public LH_QtInstance
+class LH_DIAL_EXPORT LH_Dial : public LH_QtInstance
 {
     Q_OBJECT
 

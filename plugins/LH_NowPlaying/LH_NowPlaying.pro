@@ -25,10 +25,9 @@ INCLUDEPATH += \
     Players \
     Helpers
 
-INCLUDEPATH += $$PWD/../LH_Monitoring/LH_QImage
+LIBS *= -lLH_Image -lLH_Bar -lLH_Text
 
 SOURCES += \
-    $$PLUGIN_SOURCES \
     LH_QtPlugin_NowPlaying.cpp \
     SDKs/iTunes/iTunesCOMInterface_i.c \
     Players/Player.cpp \
@@ -41,10 +40,6 @@ SOURCES += \
     Helpers/Lyrics.cpp \
     Helpers/Internet.cpp \
     Helpers/Cover.cpp \
-    ../LH_Text/LH_Text.cpp \
-    ../LH_Bar/LH_Bar.cpp \
-    ../LH_Monitoring/LH_QImage/LH_QImage.cpp \
-    ../LH_Monitoring/LH_QImage/logo_blob.c \
     Objects/LH_NowPlayingText.cpp \
     Objects/LH_NowPlayingBar.cpp \
     Objects/LH_NowPlayingEmulator.cpp \
@@ -53,7 +48,6 @@ SOURCES += \
     Objects/LH_NowPlayingImage.cpp
 
 HEADERS += \
-    $$PLUGIN_HEADERS \
     LH_QtPlugin_NowPlaying.h \
     SDKs/iTunes/iTunesCOMInterface.h \
     SDKs/iTunes/DispEx.h \
@@ -67,9 +61,6 @@ HEADERS += \
     Helpers/Lyrics.h \
     Helpers/Internet.h \
     Helpers/Cover.h \
-    ../LH_Text/LH_Text.h \
-    ../LH_Bar/LH_Bar.h \
-    ../LH_Monitoring/LH_QImage/LH_QImage.h \
     Objects/LH_NowPlayingText.h \
     Objects/LH_NowPlayingBar.h \
     Objects/LH_NowPlayingEmulator.h \

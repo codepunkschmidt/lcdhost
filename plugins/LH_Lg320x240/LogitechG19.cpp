@@ -44,7 +44,8 @@ LogitechG19::LogitechG19(libusb_context *ctx, libusb_device *usbdev, libusb_devi
         struct libusb_config_descriptor *conf_desc = 0;
         const struct libusb_endpoint_descriptor *endpoint = 0;
 
-        libusb_get_config_descriptor( usbdev_, config_num, &conf_desc );
+        if(libusb_get_config_descriptor(usbdev_, config_num, &conf_desc) != LIBUSB_SUCCESS)
+            continue;
         for(int i=0; i<conf_desc->bNumInterfaces && i<1; i++)
         {
             for (int j=0; j<conf_desc->interface[i].num_altsetting; j++)
@@ -278,6 +279,7 @@ const char* LogitechG19::render_qimage(QImage *img)
     {
         userTerm();
         qDebug() << "LogitechG19::render_qimage():" << libusb_error_name((libusb_error)usberr);
+        deleteLater();
         return libusb_error_name((libusb_error)usberr);
     }
 
@@ -310,6 +312,7 @@ void LogitechG19::customEvent(QEvent *ev)
         }
         userTerm();
         qWarning("LogitechG19: libusb error %s", libusb_error_name(usb_result));
+        deleteLater();
         return;
     }
 }

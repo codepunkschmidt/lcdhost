@@ -1,13 +1,15 @@
 #ifndef LH_MONITORINGTYPES_DRIVESTATS_H
 #define LH_MONITORINGTYPES_DRIVESTATS_H
 
-#include <windows.h>
-#include <winioctl.h>
+#include <QDateTime>
+#include <QHash>
 #include <QString>
 #include <QStringList>
-#include <QMath.h>
-#include <QHash>
-#include <QDateTime>
+
+#ifdef Q_OS_WIN
+#include <windows.h>
+#include <winioctl.h>
+#endif
 
 struct DISK_PERFORMANCE_STATS {
     LARGE_INTEGER BytesRead;
@@ -212,25 +214,15 @@ class DrivesList: public QHash<QString,DriveInfo>
 {
     QStringList getDrives()
     {
-        DWORD len = GetLogicalDriveStrings( 0, NULL );
-        TCHAR buf[ len ];
-        int buf_size = sizeof(buf) / sizeof(TCHAR);
-        GetLogicalDriveStrings( buf_size, buf );
-
-        QStringList ret_list;
-        /*QString tmp = "";
-        for( int ix = 0; ix < buf_size-1; ix++ )
+        QStringList result(QLatin1String("C"));
+        DWORD len = GetLogicalDriveStringsW(0, 0) + 1;
+        if(TCHAR *buf = new TCHAR[len])
         {
-            if( buf[ix] == '\0' )
-            {
-                ret_list << tmp;
-                tmp = "";
-            }
-            else
-                tmp += (char)buf[ix];
-        }*/
-        ret_list.append("C");
-        return ret_list;
+            if(GetLogicalDriveStrings(len, buf) <= len)
+                result = QString::fromWCharArray(buf, len).split(QChar(0), QString::SkipEmptyParts);
+            delete[] buf;
+        }
+        return result;
     }
 
 public:

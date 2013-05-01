@@ -6,7 +6,7 @@
 #endif
 
 LH_MonitoringSource_SpeedFan::LH_MonitoringSource_SpeedFan(LH_QtObject *parent): LH_MonitoringSource(parent, "SpeedFan") {
-    temp_ = SensorDefinition( "\176C", -128.0 );
+    temp_ = SensorDefinition( "\xB0C", -128.0 );
     fans_ = SensorDefinition( "rpm", 0 );
     volt_ = SensorDefinition( "V" );
 }

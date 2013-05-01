@@ -28,7 +28,7 @@ bool LH_MonitoringSource_CoreTemp::doUpdate()
             if( !((ctmemory->uiCPUCnt==0) && (ctmemory->uiCoreCnt==0)) )
             {
                 resultVal = true;
-                temp_.units = (ctmemory->ucFahrenheit? "\176F" : "\176C");
+                temp_.units = (ctmemory->ucFahrenheit? "\176F" : "\xB0C");
                 toTj_.units = temp_.units +  " to TjMax";
 
                 updateFromArray("Core Temperature", "Core", ctmemory->uiCoreCnt, ctmemory->fTemp  , (ctmemory->ucDeltaToTjMax? toTj_ : temp_));

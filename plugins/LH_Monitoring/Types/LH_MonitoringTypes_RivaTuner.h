@@ -36,9 +36,9 @@ struct RTHM_SHARED_MEMORY_ENTRY
     char	czSrc[32];
             //data source name (e.g. "Core temperature")
     char	czDim[16];
-            //data source dimansion (e.g. "\176C")
+            //data source dimansion (e.g. "\xB0C")
     float	data;
-            //last polled data in raw format (e.g. 50\176C)
+            //last polled data in raw format (e.g. 50\xB0C)
             //(this field can be set to FLT_MAX if data is not available)
 
             //take a note that the user can enable raw data transforming mode and
@@ -46,7 +46,7 @@ struct RTHM_SHARED_MEMORY_ENTRY
             //be translated to mapped core voltages).
             //In this case you may use dataTransformed field to get transformed value
     float	offset;
-            //user specified data offset (e.g. +10\176C temerature compensation)
+            //user specified data offset (e.g. +10\xB0C temerature compensation)
 
             //take a note that this value is not automatically added to transformed
             //data, it is up to you to add offset to it

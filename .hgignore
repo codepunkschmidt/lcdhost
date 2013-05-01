@@ -1,0 +1,11 @@
+syntax: glob
+.DS_Store
+lcdhost.pri
+TranslationAPIKey.h
+*.pro.user
+*.orig
+*.?pre?
+moc_*.*
+*.o
+LH_Monitoring/LH_Monitoring.7z
+LH_Monitoring/Sources/__2.12/*.*

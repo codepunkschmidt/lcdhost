@@ -3,10 +3,10 @@
 
 LH_MonitoringSource_CoreTemp::LH_MonitoringSource_CoreTemp(LH_QtObject *parent): LH_MonitoringSource(parent, "CoreTemp")
 {
-    temp_ = SensorDefinition("\176?");
-    freq_ = SensorDefinition("MHz");
-    toTj_ = SensorDefinition("\176? to TjMax");
-    perc_ = SensorDefinition("%", 0, 100);
+    temp_ = SensorDefinition(QLatin1Literal("\260?"));
+    freq_ = SensorDefinition(QLatin1Literal("MHz"));
+    toTj_ = SensorDefinition(QLatin1Literal("\260? to TjMax"));
+    perc_ = SensorDefinition(QLatin1Literal("%"), 0, 100);
 
 }
 
@@ -28,7 +28,7 @@ bool LH_MonitoringSource_CoreTemp::doUpdate()
             if( !((ctmemory->uiCPUCnt==0) && (ctmemory->uiCoreCnt==0)) )
             {
                 resultVal = true;
-                temp_.units = (ctmemory->ucFahrenheit? "\176F" : "\xB0C");
+                temp_.units = (ctmemory->ucFahrenheit? QLatin1Literal("\260F") : QLatin1Literal("\260C"));
                 toTj_.units = temp_.units +  " to TjMax";
 
                 updateFromArray("Core Temperature", "Core", ctmemory->uiCoreCnt, ctmemory->fTemp  , (ctmemory->ucDeltaToTjMax? toTj_ : temp_));

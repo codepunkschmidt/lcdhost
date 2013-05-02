@@ -52,7 +52,7 @@ bool LH_MonitoringSource_HWMonitor::doUpdate()
             QString units = ""; QString type="Other";
 
             if(keyType=="F") {units="rpm"; type = "Fan Speed";}
-            if(keyType=="T") {units="\xB0C"; type = "Temperature";}
+            if(keyType=="T") {units=QLatin1Literal("\260C"); type = "Temperature";}
             if(keyType=="P") {units="W"; type = "Powers";}
             if(keyType=="V") {units="V"; type = "Voltage";}
 

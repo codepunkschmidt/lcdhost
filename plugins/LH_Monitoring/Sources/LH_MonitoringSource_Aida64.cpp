@@ -60,7 +60,7 @@ bool LH_MonitoringSource_Aida64::doUpdate()
                         if(typeName=="temp")
                         {
                             typeName = "Temperatures";
-                            units="\xB0C";
+                            units=QLatin1Literal("\260C");
                         }
                         if(typeName=="fan")
                         {

@@ -62,7 +62,7 @@ void LH_MonitoringSource_HWiNFO::updateReadingListValues(QString sensorName, QSt
             if(QString(items[j].szUnit) == "Yes/No")
                 updateValue(typeName, sensorName, QString(items[j].szLabel), (val == 0? "No": "Yes") );
             else
-                updateValue(typeName, sensorName, QString(items[j].szLabel), val.toFloat(), SensorDefinition( items[j].szUnit ));
+                updateValue(typeName, sensorName, QString(items[j].szLabel), val.toFloat(), SensorDefinition(QLatin1String(items[j].szUnit)));
         }
     }
     if(aggregate)

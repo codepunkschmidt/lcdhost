@@ -21,7 +21,7 @@ weatherData::weatherData(QString jsonData, bool& ok)
         location.region = locationMap["region"].toString();
         location.country = locationMap["country"].toString();
 
-        units.temperature = "\176" + unitsMap["temperature"].toString();
+        units.temperature = QLatin1Char('\260') + unitsMap["temperature"].toString();
         units.distance = unitsMap["distance"].toString();
         units.pressure = unitsMap["pressure"].toString();
         units.speed = unitsMap["speed"].toString();
@@ -75,7 +75,7 @@ QString weatherData::serialize()
     locationMap.insert("region",location.region);
     locationMap.insert("country",location.country);
 
-    unitsMap.insert("temperature",units.temperature.remove("\176"));
+    unitsMap.insert("temperature",units.temperature.remove(QLatin1Char('\260')));
     unitsMap.insert("distance",units.distance);
     unitsMap.insert("pressure",units.pressure);
     unitsMap.insert("speed",units.speed);

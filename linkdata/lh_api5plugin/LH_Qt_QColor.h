@@ -52,7 +52,7 @@ public:
         return QColor::fromRgba(item_.data.i);
     }
 
-    void setValue(QColor c)
+    void setValue( const QColor &c )
     {
         if( item_.data.i != (int) c.rgba() )
         {

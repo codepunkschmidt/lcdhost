@@ -20,8 +20,6 @@ public:
 
     int polling() { return 0; }
     int notify(int n,void* p)  { Q_UNUSED(n); Q_UNUSED(p); return 0; }
-    int width( void*obj,int h ) { Q_UNUSED(obj); Q_UNUSED(h); return -1; }
-    int height( void*obj,int h ) { Q_UNUSED(obj); Q_UNUSED(h); return -1; }
     QImage *render_qimage( int w, int h );
 
     static lh_class *classInfo();

@@ -75,20 +75,6 @@ int LH_DataViewerExpiredImage::polling()
     return polling_rate;
 }
 
-int LH_DataViewerExpiredImage::width( void*obj,int h )
-{
-    Q_UNUSED(obj);
-    Q_UNUSED(h);
-    return -1;
-}
-
-int LH_DataViewerExpiredImage::height( void*obj,int h )
-{
-    Q_UNUSED(obj);
-    Q_UNUSED(h);
-    return -1;
-}
-
 QImage *LH_DataViewerExpiredImage::render_qimage(int w, int h)
 {
     if(QImage *img = initImage(w, h))

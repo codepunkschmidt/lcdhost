@@ -74,7 +74,7 @@ defineTest(lh_qmakevars) {
     }
     isEmpty(LH_DIR_PLUGINS) {
         macx: LH_DIR_PLUGINS=$$quote($${LH_DIR_INSTALL}/Contents/PlugIns)
-        else: LH_DIR_PLUGINS=$$quote($${LH_DIR_INSTALL}/plugins)
+        else: LH_DIR_PLUGINS=$$quote($${LH_DIR_BINARIES})
         export(LH_DIR_PLUGINS)
     }
     isEmpty(LH_DIR_LAYOUTS) {

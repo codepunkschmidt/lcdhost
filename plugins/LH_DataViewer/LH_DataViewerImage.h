@@ -56,8 +56,6 @@ public:
     ~LH_DataViewerImage();
 
     int polling();
-    int width( void*obj,int h );
-    int height( void*obj,int h );
     QImage *render_qimage( int w, int h );
 
     static lh_class *classInfo();

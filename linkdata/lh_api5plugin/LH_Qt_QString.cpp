@@ -18,7 +18,7 @@ void LH_Qt_QString::setup_change()
     return;
 }
 
-void LH_Qt_QString::setValue(const QString &s)
+void LH_Qt_QString::setValue(QString s)
 {
     Q_ASSERT( item_.data.s == array_.constData() );
     if( s != str_ )

@@ -86,20 +86,6 @@ int LH_DataViewerImage::polling()
     return polling_rate;
 }
 
-int LH_DataViewerImage::width( void*obj,int h )
-{
-    Q_UNUSED(obj);
-    Q_UNUSED(h);
-    return -1;
-}
-
-int LH_DataViewerImage::height( void*obj,int h )
-{
-    Q_UNUSED(obj);
-    Q_UNUSED(h);
-    return -1;
-}
-
 QImage *LH_DataViewerImage::render_qimage(int w, int h)
 {
     QFileInfo fi(setup_file_ ? setup_file_->value() : QFileInfo());

@@ -110,10 +110,9 @@ static void * image_new( const lh_class *cls )
     lh_image *img;
     Q_UNUSED(cls);
 
-    img = malloc( sizeof(lh_image) );
+    img = calloc(1, sizeof(lh_image));
     if( img )
     {
-        memset( img, 0, sizeof(img) );
         img->blob = NULL;
         img->state = 0;
         memset( &img->setup_filename, 0, sizeof(img->setup_filename) );

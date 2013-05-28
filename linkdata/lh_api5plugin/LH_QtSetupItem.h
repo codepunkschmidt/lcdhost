@@ -39,6 +39,11 @@
 
 #include "LH_QtObject.h"
 
+class QColor;
+class QFont;
+class QFileInfo;
+class QImage;
+
 /**
   Helper class to manage setup items. Subclass this, mapping the LCDHost setup types to Qt classes.
   */
@@ -119,6 +124,10 @@ public slots:
     virtual void setValue( int ) { emit set(); }
     virtual void setValue( float ) { emit set(); }
     virtual void setValue( QString ) { emit set(); }
+    virtual void setValue( const QColor & ) { emit set(); }
+    virtual void setValue( const QFont & ) { emit set(); }
+    virtual void setValue( const QFileInfo & ) { emit set(); }
+    virtual void setValue( const QImage & ) { emit set(); }
 };
 
 #endif // LH_QTSETUPITEM_H

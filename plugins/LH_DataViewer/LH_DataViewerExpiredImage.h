@@ -46,8 +46,6 @@ public:
     ~LH_DataViewerExpiredImage();
 
     int polling();
-    int width( void*obj,int h );
-    int height( void*obj,int h );
     QImage *render_qimage( int w, int h );
 
     static lh_class *classInfo();

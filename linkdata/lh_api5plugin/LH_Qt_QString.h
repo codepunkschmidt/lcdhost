@@ -43,10 +43,10 @@ class LH_API5PLUGIN_EXPORT LH_Qt_QString : public LH_QtSetupItem
     QByteArray array_;
 
 public:
-	// Reasonable subtypes:
+    // Reasonable subtypes:
     //  lh_type_string
     //  lh_type_string_button
-    
+
     LH_Qt_QString( LH_QtObject *parent, QString name, QString value, int flags = 0, lh_setup_type subtype = lh_type_string )
         : LH_QtSetupItem( parent, name, subtype, flags ),
           str_(value),
@@ -70,7 +70,7 @@ public:
         return str_;
     }
 
-    void setValue(const QString &s);
+    void setValue(QString);
 };
 
 #endif // LH_QT_QSTRING_H

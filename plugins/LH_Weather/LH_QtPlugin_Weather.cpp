@@ -188,8 +188,9 @@ QNetworkReply* LH_QtPlugin_Weather::fetchWeather(bool is5Day, QXmlStreamReader& 
     QString params = "";
     if(is5Day)
     {
+        // http://developer.yahoo.com/forum/General-Discussion-at-YDN/Yahoo-Weather-5-day-Forecast/1228762478000-84d25277-b9c6-35c0-8c54-c487a5093090#
         host = "xml.weather.yahoo.com";
-        path = QString("/forecastrss/%1_%2.xml").arg(setup_yahoo_5dayid_->value(),unitValue);
+        path = QString("/forecastrss/%1&d=5_%2.xml").arg(setup_yahoo_5dayid_->value(),unitValue);
     } else {
         host = "weather.yahooapis.com";
         path = QString("/forecastrss");

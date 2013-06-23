@@ -28,31 +28,14 @@
 
 #include "LH_QtPlugin_Graph.h"
 
-class LH_GraphMemPhysical : public LH_Graph
-{
-    bool initialized;
-
-    void initialize(){
-        if( state()->mem_data.tot_phys ) {
-            initialized = true;
-            setMax( state()->mem_data.tot_phys / GRAPH_MEM_UNIT_BASE, BoundGrowthFixed );
-        }
-    }
-
-
+class LH_GraphMemPhysical : public LH_Graph {
 public:
-    LH_GraphMemPhysical() : LH_Graph(gdmHybrid, mem_physical_)
+    LH_GraphMemPhysical(LH_QtObject *parent = 0)
+        : LH_Graph(gdmHybrid, mem_physical_, parent)
     {
-        setMin(0.0);
-        setMax(1000.0, BoundGrowthFixed);
+        setMin(0);
+        setMax(0, BoundGrowthFixed);
         setYUnit("GB");
-        initialized = false;
-    }
-
-    virtual const char *userInit()
-    {
-        initialize();
-        return 0;
     }
 
     static lh_class *classInfo()
@@ -70,17 +53,26 @@ public:
         return &classInfo;
     }
 
+    bool hasMemoryData()
+    {
+        if (state() && state()->mem_data.tot_phys) {
+            const qreal wanted_max = state()->mem_data.tot_phys / GRAPH_MEM_UNIT_BASE;
+            if (!qFuzzyCompare(max_val(), wanted_max)) {
+                setMax(wanted_max, BoundGrowthFixed);
+                addLine(classInfo()->name);
+            }
+            return true;
+        }
+        return false;
+    }
+
     int notify(int n, void *p)
     {
         Q_UNUSED(p);
 
-        if( state()->mem_data.tot_phys )
-        {
-            if (!initialized) initialize();
-            if (dataMode() != gdmExternallyManaged)
-            {
-                if(!n || n&LH_NOTE_SECOND)
-                {
+        if (hasMemoryData()) {
+            if (dataMode() != gdmExternallyManaged) {
+                if(!n || n&LH_NOTE_SECOND) {
                     qreal used_mem = ( state()->mem_data.tot_phys - state()->mem_data.free_phys ) / GRAPH_MEM_UNIT_BASE;
                     addValue(used_mem);
                 }

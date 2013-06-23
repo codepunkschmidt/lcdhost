@@ -30,29 +30,25 @@
 
 class LH_GraphMemVirtual : public LH_Graph
 {
-    bool initialized;
-
-    void initialize(){
-        if( state()->mem_data.tot_virt ) {
-            initialized = true;
-            setMax( state()->mem_data.tot_virt / GRAPH_MEM_UNIT_BASE, BoundGrowthFixed );
-        }
-    }
-
-
 public:
-    LH_GraphMemVirtual() : LH_Graph(gdmHybrid, mem_virtual_)
+    LH_GraphMemVirtual(LH_QtObject *parent = 0)
+        : LH_Graph(gdmHybrid, mem_virtual_, parent)
     {
-        setMin(0.0);
-        setMax(1000.0, BoundGrowthFixed);
+        setMin(0);
+        setMax(0, BoundGrowthFixed);
         setYUnit("GB");
-        initialized = false;
     }
 
-    virtual const char *userInit()
+    bool hasMemoryData()
     {
-        initialize();
-        return 0;
+        if (state() && state()->mem_data.tot_virt) {
+            if (max_val() < 1) {
+                setMax(state()->mem_data.tot_virt / GRAPH_MEM_UNIT_BASE, BoundGrowthFixed);
+                addLine("Virtual memory");
+            }
+            return true;
+        }
+        return false;
     }
 
     static lh_class *classInfo()
@@ -74,9 +70,8 @@ public:
     {
         Q_UNUSED(p);
 
-        if( state()->mem_data.tot_virt )
+        if(hasMemoryData())
         {
-            if (!initialized) initialize();
             if (dataMode() != gdmExternallyManaged)
             {
                 if(!n || n&LH_NOTE_SECOND)

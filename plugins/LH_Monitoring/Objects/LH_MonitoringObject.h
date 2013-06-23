@@ -62,7 +62,7 @@ protected:
     SensorItem selectedSensor(bool *ok=0, int *selectedIndex=0);
     SensorGroup* selectedSensorGroup(bool *ok=0);
     QList<SensorItem> groupSensors(bool *ok=0);
-    QVector<qreal> getValuesVector(bool hasDead, float deadVal, bool &ok, QStringList *names = NULL);
+    QVector<qreal> getValuesVector(bool hasDead, qreal deadVal, bool &ok, QStringList *names = NULL);
 
     QString value_units(bool allowAdaptation);
 

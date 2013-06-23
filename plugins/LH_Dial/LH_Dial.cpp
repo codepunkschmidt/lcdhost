@@ -450,9 +450,9 @@ QImage LH_Dial::getFace()
 }
 
 
-void LH_Dial::getDimensions(qreal degrees, int& h, int& w, float& radH, float& radW, float& radians, float& drawLen)
+void LH_Dial::getDimensions(qreal degrees, int& h, int& w, qreal& radH, qreal& radW, qreal& radians, qreal& drawLen)
 {
-    float radiansM;
+    qreal radiansM;
     h = image()->height();
     w = image()->width();
 
@@ -461,9 +461,9 @@ void LH_Dial::getDimensions(qreal degrees, int& h, int& w, float& radH, float& r
     drawLen = getDrawLen(radH, radW, radiansM);
 }
 
-float LH_Dial::getRadians(qreal degrees, float& offsetRadians)
+qreal LH_Dial::getRadians(qreal degrees, qreal& offsetRadians)
 {
-    float radians = degrees * M_PI/180;
+    qreal radians = degrees * M_PI/180;
     offsetRadians = radians;
     switch(setup_type_->value())
     {
@@ -491,11 +491,11 @@ float LH_Dial::getRadians(qreal degrees, float& offsetRadians)
     return radians;
 }
 
-float LH_Dial::getDrawLen(float boxHeight, float boxWidth, float radians)
+qreal LH_Dial::getDrawLen(qreal boxHeight, qreal boxWidth, qreal radians)
 {
-    float denom = qSqrt( qPow(boxHeight * qSin(radians),2) + qPow(boxWidth * qCos(radians),2) );    
+    qreal denom = qSqrt( qPow(boxHeight * qSin(radians),2) + qPow(boxWidth * qCos(radians),2) );    
     if(denom == 0) return 0;
-    float drawLen = boxHeight * boxWidth / denom;
+    qreal drawLen = boxHeight * boxWidth / denom;
     if( drawLen != drawLen )
     {
         qDebug() << "UNABLE TO CALCULATE drawLen!";
@@ -507,10 +507,10 @@ float LH_Dial::getDrawLen(float boxHeight, float boxWidth, float radians)
     return drawLen;
 }
 
-void LH_Dial::getRadii(float& radH, float& radW)
+void LH_Dial::getRadii(qreal& radH, qreal& radW)
 {
-    float w = image()->width();
-    float h = image()->height();
+    qreal w = image()->width();
+    qreal h = image()->height();
     radH = h/2;
     radW = w/2;
 
@@ -544,8 +544,8 @@ void LH_Dial::getRadii(float& radH, float& radW)
 
 void LH_Dial::getCenter(QPointF& center)
 {
-    float w = image()->width();
-    float h = image()->height();
+    qreal w = image()->width();
+    qreal h = image()->height();
 
     //h*0.9, w*0.9
     center.setX(w/2-.5) ;
@@ -596,14 +596,14 @@ void LH_Dial::getCenter(QPointF& center)
     }
 }
 
-void LH_Dial::getRotationData(qreal startAngle, qreal angle, float& centerX, float& centerY, float& radH, float& radW, float& radians)
+void LH_Dial::getRotationData(qreal startAngle, qreal angle, qreal& centerX, qreal& centerY, qreal& radH, qreal& radW, qreal& radians)
 {
     radians = (180+(angle+startAngle)) * M_PI/180;
     getRadii(radH, radW);
     getCenter(centerX, centerY);
 }
 
-QString LH_Dial::generateNeedleCode(float drawLen, QColor needleColor, int needleThick, int needleLength, int needleGap, int h, int w, QString needleImagePath, int needleStyle, bool sliceGradient, QColor sliceColor2)
+QString LH_Dial::generateNeedleCode(qreal drawLen, QColor needleColor, int needleThick, int needleLength, int needleGap, int h, int w, QString needleImagePath, int needleStyle, bool sliceGradient, QColor sliceColor2)
 {
     // Generates a description of the current needle settings used to check if the "cached" needle image is still correct
     QString needleCode = "";
@@ -637,7 +637,7 @@ QImage LH_Dial::getNeedle(int needleID, qreal degrees, int& needleStyle)
 
     loadNeedleConfig(needleID, needleStyle, needleColor, needleThick, needleLength, needleGap, needleImagePath, needleGradient, needleColor2);
 
-    int h; int w; float radH; float radW; float radians; float drawLen;
+    int h; int w; qreal radH; qreal radW; qreal radians; qreal drawLen;
     getDimensions(degrees, h, w, radH, radW, radians, drawLen);
 
     QString needleCode = generateNeedleCode(drawLen, needleColor, needleThick, needleLength, needleGap, h, w, needleImagePath, needleStyle, needleGradient, needleColor2);
@@ -650,7 +650,7 @@ QImage LH_Dial::getNeedle(int needleID, qreal degrees, int& needleStyle)
         {
             QImage needle_img(f.absoluteFilePath());
             //rescale needle image width to match the required height
-            int drawWid = qCeil(((float)(needle_img.width() * drawLen)) / needle_img.height());
+            int drawWid = qCeil(((qreal)(needle_img.width() * drawLen)) / needle_img.height());
 
             needleImage_[needleID] = new QImage(drawWid,drawLen,QImage::Format_ARGB32_Premultiplied);
             needleImage_[needleID]->fill( PREMUL( QColor(Qt::transparent).rgba() ) );
@@ -667,7 +667,7 @@ QImage LH_Dial::getNeedle(int needleID, qreal degrees, int& needleStyle)
         {
             QImage needle_img(f.absoluteFilePath());
             //rescale needle image width to match the required height
-            float drawWid = getDrawLen(radW, radH, radians);
+            qreal drawWid = getDrawLen(radW, radH, radians);
 
             needleImage_[needleID] = new QImage(drawWid*2,drawLen*2,QImage::Format_ARGB32_Premultiplied);
             needleImage_[needleID]->fill( PREMUL( QColor(Qt::transparent).rgba() ) );
@@ -720,7 +720,7 @@ QImage LH_Dial::getSlice(int sliceID, qreal degrees, qreal offsetAngle, int& sli
     QColor sliceColor2 = QColor();
     loadSliceConfig(sliceID, sliceStyle, sliceColor, sliceLength, sliceImagePath, sliceImageAlpha, sliceGradient, sliceColor2);
 
-    int h; int w; float radH; float radW; float radians; float drawLen;
+    int h; int w; qreal radH; qreal radW; qreal radians; qreal drawLen;
     getDimensions(degrees, h, w, radH, radW, radians, drawLen);
 
     QPainter painter;
@@ -728,8 +728,8 @@ QImage LH_Dial::getSlice(int sliceID, qreal degrees, qreal offsetAngle, int& sli
 
     if (needleCode != (sliceID==UNUSED_AREA? unusedAreaCode_ : needleCode_[sliceID]))
     {
-        float circleW = radW * 2;
-        float circleH = radH * 2;
+        qreal circleW = radW * 2;
+        qreal circleH = radH * 2;
         QImage* sliceImage;
 
         QFileInfo f(sliceImagePath);
@@ -819,7 +819,7 @@ QImage LH_Dial::getSlice(int sliceID, qreal degrees, qreal offsetAngle, int& sli
 
 void LH_Dial::paintLine(QPainter& painter, QPen& pen, qreal startAngle, qreal angle, qreal relLength, qreal gap)
 {
-    float centerX; float centerY; float radW; float radH; float radians;
+    qreal centerX; qreal centerY; qreal radW; qreal radH; qreal radians;
     getRotationData(startAngle, angle, centerX, centerY, radH, radW, radians);
 
     int x1 = centerX - (qSin(radians) * radW * gap);
@@ -834,7 +834,7 @@ void LH_Dial::paintLine(QPainter& painter, QPen& pen, qreal startAngle, qreal an
 
 void LH_Dial::paintImage(QPainter& painter, QImage srcImage, RotationType rotationType, qreal startAngle, qreal angle)
 {
-    float x; float y; float radW; float radH; float radians;
+    qreal x; qreal y; qreal radW; qreal radH; qreal radians;
 
     getRotationData(startAngle, (rotationType == ROT_NONE? 0 : angle), x, y, radW, radH, radians);
 
@@ -852,9 +852,9 @@ void LH_Dial::paintImage(QPainter& painter, QImage srcImage, RotationType rotati
         y = (srcImage.height()/2.0);
     case ROT_FACE:
     case ROT_NEEDLE:
-        float A = (x!=0? qAtan(y/x) : M_PI/2);
-        float Hyp = qSqrt( qPow(y,2) + qPow(x,2) );
-        float drawLen = getDrawLen(y,x,radians);
+        qreal A = (x!=0? qAtan(y/x) : M_PI/2);
+        qreal Hyp = qSqrt( qPow(y,2) + qPow(x,2) );
+        qreal drawLen = getDrawLen(y,x,radians);
 
         painter.rotate(startAngle + angle);
         x = Hyp * qCos(A - (radians-M_PI)) - (srcImage.width()/2.0);
@@ -930,7 +930,7 @@ bool LH_Dial::setVal(qreal value, int i, bool repoll )
     return repoll;
 }
 
-float LH_Dial::maxDegrees()
+qreal LH_Dial::maxDegrees()
 {
     switch(setup_type_->value())
     {
@@ -947,7 +947,7 @@ float LH_Dial::maxDegrees()
     return 360;
 }
 
-float LH_Dial::startDegrees()
+qreal LH_Dial::startDegrees()
 {
     switch(setup_orientation_->value())
     {

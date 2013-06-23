@@ -60,13 +60,13 @@ struct MAHM_SHARED_MEMORY_ENTRY
        char	szRecommendedFormat[MAX_PATH];
                //recommended output format (e.g. "%.3f" for "Core voltage" data source)
 
-       float	data;
+       qreal	data;
                //last polled data (e.g. 500MHz)
                //(this field can be set to FLT_MAX if data is not available at
                //the moment)
-       float	minLimit;
+       qreal	minLimit;
                //minimum limit for graphs (e.g. 0MHz)
-       float	maxLimit;
+       qreal	maxLimit;
                //maximum limit for graphs (e.g. 2000MHz)
 
        DWORD	dwFlags;
@@ -105,7 +105,7 @@ struct RTHM_SHARED_MEMORY_ENTRY
             //data source name (e.g. "Core temperature")
     char	czDim[16];
             //data source dimansion (e.g. QLatin1Literal("\260C"))
-    float	data;
+    qreal	data;
             //last polled data in raw format (e.g. 50\260C)
             //(this field can be set to FLT_MAX if data is not available)
 
@@ -113,12 +113,12 @@ struct RTHM_SHARED_MEMORY_ENTRY
             //display different values on the graph (e.g. raw core VID values can
             //be translated to mapped core voltages).
             //In this case you may use dataTransformed field to get transformed value
-    float	offset;
+    qreal	offset;
             //user specified data offset (e.g. +10\260C temerature compensation)
 
             //take a note that this value is not automatically added to transformed
             //data, it is up to you to add offset to it
-    float	dataTransformed;
+    qreal	dataTransformed;
             //last polled data in transformed format
     DWORD	flags;
             //bitmask, containing combination of RTHM_SHARED_MEMORY_ENTRY_FLAG_... flags

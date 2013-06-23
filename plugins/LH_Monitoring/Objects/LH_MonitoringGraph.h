@@ -14,7 +14,7 @@ protected:
     LH_Qt_bool *setup_append_units_;
 
 public:
-    LH_MonitoringGraph();
+    LH_MonitoringGraph(LH_QtObject* parent = 0);
 
     const char *userInit();
     int notify( int, void* );

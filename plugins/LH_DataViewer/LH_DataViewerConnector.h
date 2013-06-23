@@ -48,7 +48,7 @@
 
 struct thresholdItem
 {
-    float levelBase;
+    qreal levelBase;
     bool adaptiveBase;
     QStringList levelNames;
 };

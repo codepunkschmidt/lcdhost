@@ -40,7 +40,7 @@
 class LH_Qt_float : public LH_QtSetupItem
 {
 public:
-    LH_Qt_float( LH_QtObject *parent, QString name, float value, float min, float max, int flags = 0 )
+    LH_Qt_float( LH_QtObject *parent, QString name, qreal value, qreal min, qreal max, int flags = 0 )
         : LH_QtSetupItem( parent, name, lh_type_fraction, flags )
     {
         item_.data.f = value;
@@ -48,39 +48,39 @@ public:
         item_.param.range.max = max;
     }
 
-    LH_Qt_float( LH_QtObject *parent, QString name, float value, int flags = 0 )
+    LH_Qt_float( LH_QtObject *parent, QString name, qreal value, int flags = 0 )
         : LH_QtSetupItem( parent, name, lh_type_fraction, flags )
     {
         item_.data.f = value;
         item_.param.range.min = 0.0;
-        item_.param.range.max = (float)99.99;
+        item_.param.range.max = (qreal)99.99;
     }
 
-    void setMinimum( float min )
+    void setMinimum( qreal min )
     {
         item_.param.range.min = min;
         refresh();
     }
 
-    void setMaximum( float max )
+    void setMaximum( qreal max )
     {
         item_.param.range.max = max;
         refresh();
     }
 
-    void setMinMax( float min, float max )
+    void setMinMax( qreal min, qreal max )
     {
         item_.param.range.min = min;
         item_.param.range.max = max;
         refresh();
     }
 
-    float value() const
+    qreal value() const
     {
         return item_.data.f;
     }
 
-    void setValue(float f)
+    void setValue(qreal f)
     {
         if( !qFuzzyCompare( item_.data.f, f ) )
         {

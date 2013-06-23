@@ -6,7 +6,7 @@ QHash<QString, uint> modules_;
 
 QString dataNode::getProcessValue() {
     int val_int;
-    float val_flt;
+    qreal val_flt;
     double val_dbl;
     qlonglong val_lng;
     QString val_string;

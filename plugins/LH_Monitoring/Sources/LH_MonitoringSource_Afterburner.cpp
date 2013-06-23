@@ -34,7 +34,7 @@ bool LH_MonitoringSource_Afterburner::doUpdate()
                     QString sensorGroup = (rx.indexIn(reverse(sensorName))>-1? reverse(rx.cap(3)) + reverse(rx.cap(1)) : sensorName);
 
                     SensorDefinition def = SensorDefinition( QString(MAHMMemory->szSrcUnits), MAHMMemory->minLimit, MAHMMemory->maxLimit );
-                    updateValue(sensorGroup,"",sensorName,(float)MAHMMemory->data, def);
+                    updateValue(sensorGroup,"",sensorName,(qreal)MAHMMemory->data, def);
                 }
                 foreach(SensorType type, sensors_)
                     foreach(SensorGroup group, type.groups)

@@ -84,5 +84,5 @@ void LH_MonitoringColorSwatch::updateBounds()
 
 void LH_MonitoringColorSwatch::updateValue()
 {
-    setup_current_value_->setValue((float)value_num());
+    setup_current_value_->setValue((qreal)value_num());
 }

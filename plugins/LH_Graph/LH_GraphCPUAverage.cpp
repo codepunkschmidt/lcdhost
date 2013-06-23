@@ -36,17 +36,36 @@ class LH_GraphCPUAverage : public LH_Graph
     qreal valCache;
     qreal lastVal;
 
-public:
-    LH_GraphCPUAverage() : LH_Graph(gdmHybrid, cpu_average_), cpu_( this )
-    {
-        valCount = 0;
-        valCache = 0;
-        lastVal = 0;
+    int cpuCount() {
+        int cpucount = cpu_.count();
+        if (cpucount != linesCount()) {
+            valCount = 0;
+            valCache = 0;
+            lastVal = 0;
+            clearLines();
+            if (cpucount > 0) {
+                if (cpucount > 1) {
+                    for (int i = 0; i < cpucount; ++i)
+                        addLine("CPU" + QString::number(i));
+                } else {
+                    addLine("CPU");
+                }
+            }
+        }
+        return cpucount;
+    }
 
+public:
+    LH_GraphCPUAverage(LH_QtObject *parent = 0)
+        : LH_Graph(gdmHybrid, cpu_average_, parent)
+        , cpu_(this)
+        , valCount(0)
+        , valCache(0)
+        , lastVal(0)
+    {
         setMin(0.0);
         setMax(100, BoundGrowthFixed);
         setYUnit("%");
-
         cpu_.smoothingHidden(true);
     }
 
@@ -68,21 +87,20 @@ public:
 
     int notify(int n, void *p)
     {
-        if (dataMode() != gdmExternallyManaged)
-        {
-            if(n&LH_NOTE_CPU)
-            {
-                valCache+=cpu_.averageload()/100;
-                valCount+=1;
-            }
-            if(n&LH_NOTE_SECOND)
-            {
-                if (valCount!=0) {
-                    lastVal = valCache/valCount;
-                    addValue(lastVal);
+        if (dataMode() != gdmExternallyManaged) {
+            if (cpuCount() > 0) {
+                if(n&LH_NOTE_CPU) {
+                    valCache+=cpu_.averageload()/100;
+                    valCount+=1;
                 }
-                valCache = 0;
-                valCount = 0;
+                if(n&LH_NOTE_SECOND) {
+                    if (valCount!=0) {
+                        lastVal = valCache/valCount;
+                        addValue(lastVal);
+                    }
+                    valCache = 0;
+                    valCount = 0;
+                }
             }
         }
         else
@@ -94,7 +112,8 @@ public:
     {
         if(QImage *img = LH_Graph::render_qimage(w, h))
         {
-            drawSingle();
+            if (cpuCount() > 0)
+                drawSingle();
             return img;
         }
         return 0;

@@ -30,60 +30,57 @@
 
 #include "LH_QtPlugin_Graph.h"
 
+#include <QVector>
+
 class LH_GraphCPUHistogram : public LH_Graph
 {
-    LH_QtCPU cpu_;
-    int *valCount;
-    qreal *valCache;
-    qreal *lastVal;
-    bool initialized;
-
-    void initialize(int cpuCount){
-        if (cpuCount != 0) {
-            initialized = true;
-            if(linesCount() != cpuCount)
-            {
-                clearLines();
-                for( int i=0; i<cpu_.count(); i++ )
-                    addLine("CPU/Core #"+QString::number(i));
-            }
-
-            valCount = new int[cpuCount];
-            valCache = new qreal[cpuCount];
-            lastVal = new qreal[cpuCount];
-
-            for(int i =0; i<cpuCount; i++ )
-            {
-                valCount[i] = 0;
-                valCache[i] = 0;
-                lastVal[i] = 0;
-            }
-        }
-    }
+    QVector<int> m_valCount;
+    QVector<qreal> m_valCache;
+    QVector<qreal> m_lastVal;
+    LH_QtCPU m_cpu;
 
 public:
-    explicit LH_GraphCPUHistogram() : LH_Graph(gdmHybrid,cpu_histogram_), cpu_(this)
+    explicit LH_GraphCPUHistogram(LH_QtObject *parent = 0)
+        : LH_Graph(gdmHybrid, cpu_histogram_, parent)
+        , m_cpu(this)
     {
-        initialized = false;
-
         setMin(0.0);
         setMax(100.0, BoundGrowthFixed);
         setYUnit("%");
-
-        cpu_.smoothingHidden(true);
-    }
-
-    virtual const char *userInit()
-    {
-        initialize(cpu_.count());
-        return 0;
+        m_cpu.smoothingHidden(true);
     }
 
     ~LH_GraphCPUHistogram()
     {
-        delete valCount;
-        delete valCache;
-        delete lastVal;
+        clear();
+    }
+
+    int cpuCount()
+    {
+        int cpucount = m_cpu.count();
+        if (cpucount != linesCount()) {
+            clear();
+            if (cpucount > 0) {
+                m_valCount.resize(cpucount);
+                m_valCache.resize(cpucount);
+                m_lastVal.resize(cpucount);
+                if (cpucount > 1) {
+                    for (int i = 0; i < cpucount; ++i)
+                        addLine("CPU" + QString::number(i));
+                } else {
+                    addLine("CPU");
+                }
+            }
+        }
+        return cpucount;
+    }
+
+    void clear()
+    {
+        clearLines();
+        m_valCount.clear();
+        m_valCache.clear();
+        m_lastVal.clear();
     }
 
     static lh_class *classInfo()
@@ -106,40 +103,38 @@ public:
     {
         if (dataMode() != gdmExternallyManaged)
         {
-            if (cpu_.count()!=0)
-            {
-                if (!initialized) initialize(cpu_.count());
-
-                for(int i =0; i<cpu_.count(); i++ )
+            if (int n = cpuCount()) {
+                for(int i = 0; i < n; ++i)
                 {
                     if(n&LH_NOTE_CPU)
                     {
-                        valCache[i]+=cpu_.coreload(i)/100;
-                        valCount[i]+=1;
+                        m_valCache[i] += m_cpu.coreload(i)/100;
+                        m_valCount[i] += 1;
                     }
                     if(n&LH_NOTE_SECOND)
                     {
-                        if (valCount[i]!=0)
+                        if (m_valCount[i] != 0)
                         {
-                            lastVal[i] = valCache[i]/valCount[i];
-                            addValue(lastVal[i], i);
+                            m_lastVal[i] = m_valCache[i]/m_valCount[i];
+                            addValue(m_lastVal[i], i);
                         }
-                        valCache[i] = 0;
-                        valCount[i] = 0;
+                        m_valCache[i] = 0;
+                        m_valCount[i] = 0;
                     }
                 }
             }
         }
         else
             callback(lh_cb_render,NULL);
-        return LH_Graph::notify(n,p) | cpu_.notify(n,p) | LH_NOTE_SECOND;
+        return LH_Graph::notify(n,p) | m_cpu.notify(n,p) | LH_NOTE_SECOND;
     }
 
     QImage *render_qimage( int w, int h )
     {
         if(QImage *img = LH_Graph::render_qimage(w, h))
         {
-            drawAll();
+            if (cpuCount() > 0)
+                drawAll();
             return img;
         }
         return 0;

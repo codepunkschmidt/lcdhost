@@ -101,6 +101,7 @@
 #define LH_METHOD_BOTTOM    LH_METHOD_RIGHT
 #define LH_METHOD_MAX       LH_METHOD_ABSOLUTE
 
+typedef double qreal;
 typedef struct lh_class_t lh_class;
 
 /**
@@ -280,8 +281,8 @@ typedef union lh_setup_param_t
         int max;    /**< int, slider or progress maximum value */
     } slider;
     struct {
-        float min;  /**< float minimum value */
-        float max;  /**< float maximum value */
+        qreal min;  /**< qreal minimum value */
+        qreal max;  /**< qreal maximum value */
     } range;
     const char *list; /**< tab-delimited list of strings */
 } lh_setup_param;
@@ -289,7 +290,7 @@ typedef union lh_setup_param_t
 typedef union lh_setup_data_t
 {
     char *s; /* note that only 's' can be initialized in a global or static, see C syntax rules */
-    float f;
+    qreal f;
     int i;
 } lh_setup_data;
 

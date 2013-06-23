@@ -202,7 +202,7 @@ QString LH_DataViewerConnector::formatData(QString data, QString formatting)
         {
             QString segmentName = rxList.cap(1).toLower();
             int listIndex    = rxList.cap(2).toInt();
-            float levelVal   = result.toFloat();
+            qreal levelVal   = result.toFloat();
 
             if(!lists_.contains(segmentName))
                 qWarning()<<"List " << segmentName << " not found!";

@@ -201,7 +201,7 @@ static void lh_self_item_data_setvalue(lua_State *L, lua_setup_item* item, int w
             break;
         case lh_type_fraction:
             {
-                float f = (float) lua_tonumber(L,-1);
+                qreal f = (qreal) lua_tonumber(L,-1);
                 if( item->item()->param.range.min != item->item()->param.range.max )
                 {
                     if( f < item->item()->param.range.min ) f = item->item()->param.range.min;

@@ -106,7 +106,7 @@ signals:
     void changed();
     void change( bool );
     void change( int );
-    void change( float );
+    void change( qreal );
     void change( QString );
     void input( QString, int, int );
     void set();
@@ -122,7 +122,7 @@ public slots:
 
     virtual void setValue( bool ) { emit set(); }
     virtual void setValue( int ) { emit set(); }
-    virtual void setValue( float ) { emit set(); }
+    virtual void setValue( qreal ) { emit set(); }
     virtual void setValue( QString ) { emit set(); }
     virtual void setValue( const QColor & ) { emit set(); }
     virtual void setValue( const QFont & ) { emit set(); }

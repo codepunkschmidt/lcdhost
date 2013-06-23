@@ -16,7 +16,7 @@ LH_MonitoringObject::LH_MonitoringObject(LH_QtObject *object, monitoringDataMode
     setup_value_units_->setOrder(-3);
     setup_value_str_ = new LH_Qt_QString(object, "Value (String)", "N/A", LH_FLAG_LINKOBJECT_VISIBILITY | LH_FLAG_NOSAVE_LINK | LH_FLAG_NOSAVE_DATA);
     setup_value_str_->setOrder(-3);
-    setup_value_ptr_ = new LH_Qt_int(object, "Value (ArrayPtr)", 0, std::numeric_limits<float>::min(), std::numeric_limits<float>::max(), LH_FLAG_LINKOBJECT_VISIBILITY | LH_FLAG_NOSAVE_LINK | LH_FLAG_NOSAVE_DATA);
+    setup_value_ptr_ = new LH_Qt_int(object, "Value (ArrayPtr)", 0, std::numeric_limits<qreal>::min(), std::numeric_limits<qreal>::max(), LH_FLAG_LINKOBJECT_VISIBILITY | LH_FLAG_NOSAVE_LINK | LH_FLAG_NOSAVE_DATA);
     setup_value_ptr_->setOrder(-3);
     setup_value_valid_ = new LH_Qt_bool(object, "Value (Valid)", false, LH_FLAG_LINKOBJECT_VISIBILITY | LH_FLAG_NOSAVE_LINK | LH_FLAG_NOSAVE_DATA);
     setup_value_valid_->setOrder(-3);
@@ -480,7 +480,7 @@ SensorGroup* LH_MonitoringObject::selectedSensorGroup(bool *ok)
         return NULL;
 }
 
-QVector<qreal> LH_MonitoringObject::getValuesVector(bool hasDead, float deadVal, bool &ok, QStringList *names)
+QVector<qreal> LH_MonitoringObject::getValuesVector(bool hasDead, qreal deadVal, bool &ok, QStringList *names)
 {
     QVariantMap jvalues = Json::parse(setup_value_str_->value(), ok).toMap();
     QVector<qreal> currVals;
@@ -491,7 +491,7 @@ QVector<qreal> LH_MonitoringObject::getValuesVector(bool hasDead, float deadVal,
         for(int i=0; i<jvalues.keys().count(); i++)
         {
             QVariantMap jvalue = jvalues[jvalues.keys()[i]].toMap();
-            float currVal = jvalue["value"].toFloat();
+            qreal currVal = jvalue["value"].toFloat();
             QString currName = jvalue["name"].toString();
             if (!hasDead || (deadVal != currVal) )
             {

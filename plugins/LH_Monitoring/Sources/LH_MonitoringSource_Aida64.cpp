@@ -78,7 +78,7 @@ bool LH_MonitoringSource_Aida64::doUpdate()
                         }
 
                         bool ok;
-                        float valueFloat = valueString.toFloat(&ok);
+                        qreal valueFloat = valueString.toFloat(&ok);
                         if(ok)
                             updateValue(typeName,groupName,itemName, valueFloat, SensorDefinition(units));
                         else

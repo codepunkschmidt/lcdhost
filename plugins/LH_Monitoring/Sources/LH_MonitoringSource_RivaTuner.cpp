@@ -36,16 +36,16 @@ bool LH_MonitoringSource_RivaTuner::doUpdate()
 
                     SensorDefinition def = SensorDefinition(QString(RTHMMemory->czDim));
 
-                    updateValue(sensorGroup,"Standard Data",sensorName, QVariant((float)RTHMMemory->data), def);
+                    updateValue(sensorGroup,"Standard Data",sensorName, QVariant((qreal)RTHMMemory->data), def);
 
                     if(RTHMMemory->dataTransformed != RTHMMemory->data)
-                        updateValue(sensorGroup,"Transformed Data",sensorName, QVariant((float)RTHMMemory->dataTransformed), def);
+                        updateValue(sensorGroup,"Transformed Data",sensorName, QVariant((qreal)RTHMMemory->dataTransformed), def);
 
                     if(RTHMMemory->offset != 0)
                     {
-                        updateValue(sensorGroup,"Standard Data + Offset",sensorName, QVariant((float)RTHMMemory->data+(float)RTHMMemory->offset), def);
+                        updateValue(sensorGroup,"Standard Data + Offset",sensorName, QVariant((qreal)RTHMMemory->data+(qreal)RTHMMemory->offset), def);
                         if(RTHMMemory->dataTransformed != RTHMMemory->data)
-                            updateValue(sensorGroup,"Transformed Data + Offset",sensorName, QVariant((float)RTHMMemory->dataTransformed+(float)RTHMMemory->offset), def);
+                            updateValue(sensorGroup,"Transformed Data + Offset",sensorName, QVariant((qreal)RTHMMemory->dataTransformed+(qreal)RTHMMemory->offset), def);
                     }
                 }
                 foreach(SensorType type, sensors_)

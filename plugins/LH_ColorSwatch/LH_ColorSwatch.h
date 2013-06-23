@@ -41,9 +41,9 @@ class LH_COLORSWATCH_EXPORT LH_ColorSwatch : public LH_Rectangle
 {
     Q_OBJECT
 
-    float lowVal_;
+    qreal lowVal_;
     QColor lowCol_;
-    float highVal_;
+    qreal highVal_;
     QColor highCol_;
     bool lockDown_;
 
@@ -56,12 +56,12 @@ protected:
     LH_Qt_float *setup_current_value_;
 
 public:
-    LH_ColorSwatch(float lowVal = 0, QColor lowCol = Qt::white,
-                   float highVal = 100, QColor highCol = Qt::black,
+    LH_ColorSwatch(qreal lowVal = 0, QColor lowCol = Qt::white,
+                   qreal highVal = 100, QColor highCol = Qt::black,
                    bool lockDown = false);
     const char *userInit();
     static lh_class *classInfo();
-    void setValue(float val) { setup_current_value_->setValue(val); }
+    void setValue(qreal val) { setup_current_value_->setValue(val); }
 
 public slots:
     void updateColor();

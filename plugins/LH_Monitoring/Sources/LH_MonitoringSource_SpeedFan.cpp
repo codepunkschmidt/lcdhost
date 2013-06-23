@@ -41,29 +41,29 @@ bool LH_MonitoringSource_SpeedFan::doUpdate()
 #endif
 }
 
-void LH_MonitoringSource_SpeedFan::updateFromArray(QString type, int count, const int *valueSet, float modifier, SensorDefinition def)
+void LH_MonitoringSource_SpeedFan::updateFromArray(QString type, int count, const int *valueSet, qreal modifier, SensorDefinition def)
 {
     if (count == 0)
         return;
     for(int i = 0; i<count; i++)
-        updateValue(type, "", QString("%1 #%2").arg(type).arg(i+1), (modifier * (float)valueSet[i]), def);
+        updateValue(type, "", QString("%1 #%2").arg(type).arg(i+1), (modifier * (qreal)valueSet[i]), def);
     updateAggregates(type, "");
 }
 
-void LH_MonitoringSource_SpeedFan::updateFromArray(QString type, int count, const uint *valueSet, float modifier, SensorDefinition def)
+void LH_MonitoringSource_SpeedFan::updateFromArray(QString type, int count, const uint *valueSet, qreal modifier, SensorDefinition def)
 {
     if (count == 0)
         return;
     for(int i = 0; i<count; i++)
-        updateValue(type, "", QString("%1 #%2").arg(type).arg(i+1), (modifier * (float)valueSet[i]), def);
+        updateValue(type, "", QString("%1 #%2").arg(type).arg(i+1), (modifier * (qreal)valueSet[i]), def);
     updateAggregates(type, "");
 }
 
-void LH_MonitoringSource_SpeedFan::updateFromArray(QString type, int count, const float *valueSet, float modifier, SensorDefinition def)
+void LH_MonitoringSource_SpeedFan::updateFromArray(QString type, int count, const qreal *valueSet, qreal modifier, SensorDefinition def)
 {
     if (count == 0)
         return;
     for(int i = 0; i<count; i++)
-        updateValue(type, "", QString("%1 #%2").arg(type).arg(i+1), (modifier * (float)valueSet[i]), def);
+        updateValue(type, "", QString("%1 #%2").arg(type).arg(i+1), (modifier * (qreal)valueSet[i]), def);
     updateAggregates(type, "");
 }

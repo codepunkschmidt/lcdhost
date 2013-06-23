@@ -32,7 +32,7 @@ bool LH_MonitoringSource_GPUZ::doUpdate()
                     {
                         QString units = QString::fromWCharArray(sensor.unit);
                         if(units=="%%") units = "%";
-                        float value = sensor.value;
+                        qreal value = sensor.value;
 
                         SensorDefinition def = SensorDefinition(units);
                         if(units=="%%")

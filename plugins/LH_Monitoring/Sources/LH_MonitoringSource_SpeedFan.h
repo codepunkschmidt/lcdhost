@@ -6,9 +6,9 @@
 
 class LH_MonitoringSource_SpeedFan : public LH_MonitoringSource
 {
-    void updateFromArray(QString type, int count, const float *valueSet, float modifier, SensorDefinition def);
-    void updateFromArray(QString type, int count, const uint  *valueSet, float modifier, SensorDefinition def);
-    void updateFromArray(QString type, int count, const int   *valueSet, float modifier, SensorDefinition def);
+    void updateFromArray(QString type, int count, const qreal *valueSet, qreal modifier, SensorDefinition def);
+    void updateFromArray(QString type, int count, const uint  *valueSet, qreal modifier, SensorDefinition def);
+    void updateFromArray(QString type, int count, const int   *valueSet, qreal modifier, SensorDefinition def);
 
     SensorDefinition temp_;
     SensorDefinition fans_;

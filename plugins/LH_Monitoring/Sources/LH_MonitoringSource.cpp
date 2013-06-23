@@ -74,7 +74,7 @@ void LH_MonitoringSource::updateValue(QString type, QString group, QString item,
 void LH_MonitoringSource::updateValue(QString type, QString group, QString item, QVariant val, SensorDefinition def, bool isAggregate, bool isGroup)
 {
     bool isNumeric;
-    float fltVal = val.toFloat(&isNumeric);
+    qreal fltVal = val.toFloat(&isNumeric);
     if(def.deadValue.exists && isNumeric && def.deadValue.value == fltVal)
         return; //dead!
     else
@@ -187,7 +187,7 @@ void LH_MonitoringSource::updateValueItem(QString key, QVariant val, QMetaType::
         {
         case QMetaType::Float:
             si = new LH_Qt_float(obj, fieldName, val.toFloat(),
-                                 std::numeric_limits<float>::min(), std::numeric_limits<float>::max(),
+                                 std::numeric_limits<qreal>::min(), std::numeric_limits<qreal>::max(),
                                  LH_FLAG_NOSAVE_LINK | LH_FLAG_NOSAVE_DATA | LH_FLAG_NOSINK | LH_FLAG_HIDDEN_UNLESS_DEBUGGING);
             break;
         case QMetaType::Bool:
@@ -259,9 +259,9 @@ void LH_MonitoringSource::updateAggregates(QString type, QString group)
     }
 
     int count = 0;
-    float avg = 0;
-    float min = 0;
-    float max = 0;
+    qreal avg = 0;
+    qreal min = 0;
+    qreal max = 0;
 
     bool ok;
 
@@ -278,7 +278,7 @@ void LH_MonitoringSource::updateAggregates(QString type, QString group)
             jsensor.insert("value",val);
             jsensor.insert("units",item.units);
             jobject.insert(item.name,jsensor);
-            float fltVal = val.toFloat(&ok);
+            qreal fltVal = val.toFloat(&ok);
             if(ok)
             {
                 count++;
@@ -404,7 +404,7 @@ SensorItem LH_MonitoringSource::getItem(QString type, QString group, QString ite
     return dummy;
 }
 
-// getValueType: returns the data type for the requested link path (e.g. string, int, float)
+// getValueType: returns the data type for the requested link path (e.g. string, int, qreal)
 QMetaType::Type LH_MonitoringSource::getValueType(QString key)
 {
     if(setupTypes_.contains(key))

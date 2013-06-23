@@ -142,7 +142,7 @@ void LH_MonitoringDial::updateNeedles()
             if(needleCount() != 1)
                 updateNeedlesList(&names);
 
-            float valFlt = (value_str().toFloat(&ok));
+            qreal valFlt = (value_str().toFloat(&ok));
             if(ok)
                 setVal( valFlt );
         } else {

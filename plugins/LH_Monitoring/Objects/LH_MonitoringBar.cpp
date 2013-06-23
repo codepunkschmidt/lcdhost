@@ -93,7 +93,7 @@ QImage *LH_MonitoringBar::render_qimage( int w, int h )
         {
             if(!si.group)
             {
-                float valFlt = (value_str().toFloat(&ok));
+                qreal valFlt = (value_str().toFloat(&ok));
                 if(ok)
                     drawSingle( valFlt );
             } else {

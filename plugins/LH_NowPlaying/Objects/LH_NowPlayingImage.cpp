@@ -90,7 +90,7 @@ bool LH_NowPlayingImage::loadPlaceholderImage(QImage *img)
 {
     QString placeholderName = "";
     QString playerName = player->GetPlayer();
-    float ratingValue = 0;
+    qreal ratingValue = 0;
     switch(setup_item_->value())
     {
     case 0:     //Status
@@ -142,7 +142,7 @@ bool LH_NowPlayingImage::loadPlaceholderImage(QImage *img)
         placeholderName = QString("control_%1_blue").arg(placeholderName);
         break;
     case 4:     //Rating
-        ratingValue = (float)player->GetRating();
+        ratingValue = (qreal)player->GetRating();
         if(ratingValue<0.25) placeholderName = "0.0"; else
         if(ratingValue<0.75) placeholderName = "0.5"; else
         if(ratingValue<1.25) placeholderName = "1.0"; else

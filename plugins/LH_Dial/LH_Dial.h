@@ -50,7 +50,7 @@
 class tickObject
 {
 public:
-    tickObject(int _count, int _width, float _length, float _gap)//, QColor _color = Qt::black)
+    tickObject(int _count, int _width, qreal _length, qreal _gap)//, QColor _color = Qt::black)
     {
         //color = _color;
         width = _width;
@@ -62,8 +62,8 @@ public:
     int count;
     int width;
     //QColor color;
-    float gap;
-    float length;
+    qreal gap;
+    qreal length;
 };
 
 struct tickSet
@@ -102,27 +102,27 @@ class LH_DIAL_EXPORT LH_Dial : public LH_QtInstance
     //QSize img_size_;
     QHash<QString,QImage> fgImgs_;
 
-    void getRadii(float& radH, float& radW);
-    float getRadians(qreal degrees, float& offsetRadians);
-    float getRadians(qreal degrees) {float offsetRadians; return getRadians(degrees, offsetRadians);}
-    float getDrawLen(float boxHeight, float boxWidth, float radians);
-    void getDimensions(qreal degrees, int& h, int& w, float& radH, float& radW, float& radians, float& drawLen);
-    QString generateNeedleCode(float drawLen, QColor needleColor, int needleThick, int needleLength, int needleGap, int h, int w, QString needleImagePath, int needleStyle, bool sliceGradient, QColor sliceColor2);
+    void getRadii(qreal& radH, qreal& radW);
+    qreal getRadians(qreal degrees, qreal& offsetRadians);
+    qreal getRadians(qreal degrees) {qreal offsetRadians; return getRadians(degrees, offsetRadians);}
+    qreal getDrawLen(qreal boxHeight, qreal boxWidth, qreal radians);
+    void getDimensions(qreal degrees, int& h, int& w, qreal& radH, qreal& radW, qreal& radians, qreal& drawLen);
+    QString generateNeedleCode(qreal drawLen, QColor needleColor, int needleThick, int needleLength, int needleGap, int h, int w, QString needleImagePath, int needleStyle, bool sliceGradient, QColor sliceColor2);
 
     QImage getFace();
     QImage getNeedle(int needleID, qreal degrees, int& needleStyle);
     QImage getSlice(int needleID, qreal degrees, qreal offsetAngle, int& needleStyle);
     void getCenter(QPointF& center);
-    void getCenter(float& centerX, float& centerY) { QPointF center; getCenter(center); centerX = center.x(); centerY = center.y(); }
+    void getCenter(qreal& centerX, qreal& centerY) { QPointF center; getCenter(center); centerX = center.x(); centerY = center.y(); }
 
-    void getRotationData(qreal startAngle, qreal angle, float& centerX, float& centerY, float& radH, float& radW, float& radians);
+    void getRotationData(qreal startAngle, qreal angle, qreal& centerX, qreal& centerY, qreal& radH, qreal& radW, qreal& radians);
     void paintLine(QPainter& painter, QPen& pen, qreal startAngle, qreal angle, qreal relLength, qreal gap = 0);
     void paintImage(QPainter& painter, QImage needleImage, RotationType rotationType, qreal startAngle, qreal angle = 0);
     QString colString(QColor col);
 
-    QList<float> needle_pos_;
-    QList<float> needle_val_;
-    QList<float> needle_step_;
+    QList<qreal> needle_pos_;
+    QList<qreal> needle_val_;
+    QList<qreal> needle_step_;
     QList<QString> needleCode_;
     QString unusedAreaCode_;
     QImage* unusedImage_;
@@ -138,8 +138,8 @@ class LH_DIAL_EXPORT LH_Dial : public LH_QtInstance
 
     bool polling_on_;
 
-    float maxDegrees();
-    float startDegrees();
+    qreal maxDegrees();
+    qreal startDegrees();
 
 protected:
     bool isClock;

@@ -187,7 +187,7 @@ public:
         //qDebug() << "Parse Math: in: " << mathString;
 
         QRegExp rx = QRegExp("\\(([^)=]*)\\)");
-        float fltVal = 0;
+        qreal fltVal = 0;
         int loopCount = 0;
         while (rx.indexIn(mathString) != -1)
         {

@@ -164,7 +164,7 @@ void LH_QtCFInstance::cf_initialize()
         setup_cf_newValue_Bool_ = new LH_Qt_bool(this, "^New Value - Boolean","",LH_FLAG_UI | LH_FLAG_LAST | LH_FLAG_HIDDEN);
         setup_cf_newValue_File_  = new LH_Qt_QFileInfo(this,"^New Value - File",QFileInfo(""),LH_FLAG_UI | LH_FLAG_LAST | LH_FLAG_HIDDEN);
         setup_cf_newValue_Int_ = new LH_Qt_int(this, "^New Value - Integer",0,std::numeric_limits<int>::min(), std::numeric_limits<int>::max(),LH_FLAG_UI | LH_FLAG_LAST | LH_FLAG_HIDDEN);
-        setup_cf_newValue_Float_ = new LH_Qt_float(this, "^New Value - Float",0,std::numeric_limits<float>::min(), std::numeric_limits<float>::max(),LH_FLAG_UI | LH_FLAG_LAST | LH_FLAG_HIDDEN);
+        setup_cf_newValue_Float_ = new LH_Qt_float(this, "^New Value - Float",0,std::numeric_limits<qreal>::min(), std::numeric_limits<qreal>::max(),LH_FLAG_UI | LH_FLAG_LAST | LH_FLAG_HIDDEN);
 
 
         setup_cf_save_   = new LH_Qt_QString(this, "^Save Condition", "Save", LH_FLAG_UI | LH_FLAG_LAST | LH_FLAG_HIDDEN, lh_type_string_button);

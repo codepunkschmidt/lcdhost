@@ -46,12 +46,13 @@ lh_class *LH_MonitoringGraph::classInfo()
     return &classInfo;
 }
 
-LH_MonitoringGraph::LH_MonitoringGraph() :
-    LH_Graph(0, 2, gdmExternallyManaged, NULL),
-    LH_MonitoringObject(this, mdmNumbers, true, true),
-    was_empty_(true),
-    setup_append_units_(0)
+LH_MonitoringGraph::LH_MonitoringGraph(LH_QtObject* parent)
+    : LH_Graph(gdmExternallyManaged, 0, parent)
+    , LH_MonitoringObject(this, mdmNumbers, true, true)
+    , was_empty_(true)
+    , setup_append_units_(0)
 {
+    setMax(2);
     monitoringInit(SLOT(refreshMonitoringOptions()),
                    SLOT(connectChangeEvents()),
                    SLOT(changeAppSelection()),

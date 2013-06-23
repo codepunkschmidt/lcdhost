@@ -35,11 +35,10 @@
 #include "LH_QtCPU.h"
 #include "lh_plugin.h"
 
-LH_QtCPU::LH_QtCPU( LH_QtObject *parent )
+LH_QtCPU::LH_QtCPU(LH_QtObject *parent)
+    : parent_(parent)
 {
-    parent_ = parent;
-    setup_smoothing_ = new LH_Qt_QSlider(parent,"Smoothing",3,1,10);
-    load_.clear();
+    setup_smoothing_ = new LH_Qt_QSlider(parent_,"Smoothing",3,1,10);
     return;
 }
 
@@ -50,16 +49,11 @@ LH_QtCPU::~LH_QtCPU()
     return;
 }
 
-int LH_QtCPU::count()
-{
-    return state()->cpu_count;
-}
-
 int LH_QtCPU::notify(int n, void *p)
 {
     Q_UNUSED(p);
 
-    if( n & LH_NOTE_CPU )
+    if(n & LH_NOTE_CPU && parent_->state())
     {
         lh_cpudata *data;
 

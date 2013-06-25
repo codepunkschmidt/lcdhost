@@ -210,29 +210,29 @@ const char *LH_QtPlugin_NowPlaying::userInit() {
 #endif
     connect(&timer_, SIGNAL(timeout()), this, SLOT(refresh_data()));
 
-    setup_page_playerConfig_ = new LH_Qt_QString(this, "Page Button 1", "Player Configuration", LH_FLAG_HIDETITLE | LH_FLAG_NOSAVE | LH_FLAG_NOSOURCE | LH_FLAG_NOSINK, lh_type_string_button );
+    setup_page_playerConfig_ = new LH_Qt_QString(this, "Page Button 1", "Player Configuration", LH_FLAG_HIDETITLE | LH_FLAG_NOSAVE_DATA | LH_FLAG_NOSOURCE | LH_FLAG_NOSINK, lh_type_string_button );
     connect( setup_page_playerConfig_, SIGNAL(changed()), this, SLOT(selectPage()) );
 
-    setup_page_keyBindings_ = new LH_Qt_QString(this, "Page Button 2", "Key Bindings", LH_FLAG_HIDETITLE | LH_FLAG_NOSAVE | LH_FLAG_NOSOURCE | LH_FLAG_NOSINK, lh_type_string_button );
+    setup_page_keyBindings_ = new LH_Qt_QString(this, "Page Button 2", "Key Bindings", LH_FLAG_HIDETITLE | LH_FLAG_NOSAVE_DATA | LH_FLAG_NOSOURCE | LH_FLAG_NOSINK, lh_type_string_button );
     connect( setup_page_keyBindings_, SIGNAL(changed()), this, SLOT(selectPage()) );
 
-    setup_page_remoteControl_ = new LH_Qt_QString(this, "Page Button 3", "Remote Controls", LH_FLAG_HIDETITLE | LH_FLAG_NOSAVE | LH_FLAG_NOSOURCE | LH_FLAG_NOSINK, lh_type_string_button );
+    setup_page_remoteControl_ = new LH_Qt_QString(this, "Page Button 3", "Remote Controls", LH_FLAG_HIDETITLE | LH_FLAG_NOSAVE_DATA | LH_FLAG_NOSOURCE | LH_FLAG_NOSINK, lh_type_string_button );
     connect( setup_page_remoteControl_, SIGNAL(changed()), this, SLOT(selectPage()) );
 
-    setup_page_advanced_ = new LH_Qt_QString(this, "Page Button 4", "Advanced Options", LH_FLAG_HIDETITLE | LH_FLAG_NOSAVE | LH_FLAG_NOSOURCE | LH_FLAG_NOSINK, lh_type_string_button );
+    setup_page_advanced_ = new LH_Qt_QString(this, "Page Button 4", "Advanced Options", LH_FLAG_HIDETITLE | LH_FLAG_NOSAVE_DATA | LH_FLAG_NOSOURCE | LH_FLAG_NOSINK, lh_type_string_button );
     connect( setup_page_advanced_, SIGNAL(changed()), this, SLOT(selectPage()) );
 
-    new LH_Qt_QString(this, "~_hr1", "<hr />", LH_FLAG_HIDETITLE | LH_FLAG_NOSINK | LH_FLAG_NOSOURCE | LH_FLAG_NOSAVE, lh_type_string_html);
+    new LH_Qt_QString(this, "~_hr1", "<hr />", LH_FLAG_HIDETITLE | LH_FLAG_NOSINK | LH_FLAG_NOSOURCE | LH_FLAG_NOSAVE_DATA, lh_type_string_html);
 
     //---------------------------------------------------------------------------------------
 
-    (setup_heading_playerConfig_ = new LH_Qt_QString(this, "~pc_head", "Music Players:", LH_FLAG_HIDETITLE | LH_FLAG_NOSINK | LH_FLAG_NOSOURCE | LH_FLAG_NOSAVE, lh_type_string_html))->setHelp(
+    (setup_heading_playerConfig_ = new LH_Qt_QString(this, "~pc_head", "Music Players:", LH_FLAG_HIDETITLE | LH_FLAG_NOSINK | LH_FLAG_NOSOURCE | LH_FLAG_NOSAVE_DATA, lh_type_string_html))->setHelp(
                 "Here you can enable or disable access to specific music players if necessary.");
-    (setup_heading_keyBindings_ = new LH_Qt_QString(this, "~kb_head", "Media Key Bindings (Global):", LH_FLAG_HIDETITLE | LH_FLAG_NOSINK | LH_FLAG_NOSOURCE | LH_FLAG_NOSAVE, lh_type_string_html))->setHelp(
+    (setup_heading_keyBindings_ = new LH_Qt_QString(this, "~kb_head", "Media Key Bindings (Global):", LH_FLAG_HIDETITLE | LH_FLAG_NOSINK | LH_FLAG_NOSOURCE | LH_FLAG_NOSAVE_DATA, lh_type_string_html))->setHelp(
                 "This allows you to use the media keys to control players that are not automatically compatible with them.");
-    (setup_heading_remoteControl_ = new LH_Qt_QString(this, "~rc_head", "Remote Controls:", LH_FLAG_HIDETITLE | LH_FLAG_NOSINK | LH_FLAG_NOSOURCE | LH_FLAG_NOSAVE, lh_type_string_html))->setHelp(
+    (setup_heading_remoteControl_ = new LH_Qt_QString(this, "~rc_head", "Remote Controls:", LH_FLAG_HIDETITLE | LH_FLAG_NOSINK | LH_FLAG_NOSOURCE | LH_FLAG_NOSAVE_DATA, lh_type_string_html))->setHelp(
                 "These buttons are provided for convenience and testing purposes.");
-    (setup_heading_advanced_ = new LH_Qt_QString(this, "~adv_head", "Player Priorities:", LH_FLAG_HIDETITLE | LH_FLAG_NOSINK | LH_FLAG_NOSOURCE | LH_FLAG_NOSAVE, lh_type_string_html))->setHelp(
+    (setup_heading_advanced_ = new LH_Qt_QString(this, "~adv_head", "Player Priorities:", LH_FLAG_HIDETITLE | LH_FLAG_NOSINK | LH_FLAG_NOSOURCE | LH_FLAG_NOSAVE_DATA, lh_type_string_html))->setHelp(
                  "<p style='white-space:nowrap'>These settings determine what player will be selected when more than one is open.</p><p>Priority #1 will be chosen over #2, etc.</p><p>Note however that once NowPlaying has \"locked on\" to a player it will ignore all others (regardless of priority) until the selected player is closed. In other words, to ensure LCDHost takes it's now playing data from the correct player, open the correct player first!</p><p>Note also that due to the way the MSN protocol works, LCDHost cannot \"lock on\" to players using this method.</p>");
     //---------------------------------------------------------------------------------------
 
@@ -243,7 +243,7 @@ const char *LH_QtPlugin_NowPlaying::userInit() {
     setup_enable_players_.insert("VLC", new LH_Qt_bool(this, "^Read data from VLC"    , true, LH_FLAG_NOSOURCE | LH_FLAG_NOSINK) ) ;
     setup_enable_players_.insert("MSN", new LH_Qt_bool(this, "^Read data from other players (MSN interface)" , true, LH_FLAG_NOSOURCE | LH_FLAG_NOSINK | LH_FLAG_READONLY) ) ;
 
-    setup_heading_playerConfig_break1_ = new LH_Qt_QString(this, "~pc_hr1", "<hr />", LH_FLAG_HIDETITLE | LH_FLAG_NOSINK | LH_FLAG_NOSOURCE | LH_FLAG_NOSAVE, lh_type_string_html);
+    setup_heading_playerConfig_break1_ = new LH_Qt_QString(this, "~pc_hr1", "<hr />", LH_FLAG_HIDETITLE | LH_FLAG_NOSINK | LH_FLAG_NOSOURCE | LH_FLAG_NOSAVE_DATA, lh_type_string_html);
 
     (setup_vlc_port_ = new LH_Qt_QString(this, "VLC Port","8080", LH_FLAG_NOSOURCE | LH_FLAG_NOSINK))->setHelp(
                 "Specify the port the VLC web admin interface runs on (default is 8080).");
@@ -264,8 +264,8 @@ const char *LH_QtPlugin_NowPlaying::userInit() {
 
     setup_media_keys_VLC_ = new LH_Qt_bool(this, "^Enable VLC Player Control", true, LH_FLAG_NOSOURCE | LH_FLAG_NOSINK);
 
-    setup_heading_keyBindings_break1_ = new LH_Qt_QString(this, "~kb_hr2", "<hr />", LH_FLAG_HIDETITLE | LH_FLAG_NOSINK | LH_FLAG_NOSOURCE | LH_FLAG_NOSAVE, lh_type_string_html);
-    (setup_heading_keyBindings_break2_ = new LH_Qt_QString(this, "~kb_hr3", "Advanced Key Bindings (Global):", LH_FLAG_HIDETITLE | LH_FLAG_NOSINK | LH_FLAG_NOSOURCE | LH_FLAG_NOSAVE, lh_type_string_html))->setHelp(
+    setup_heading_keyBindings_break1_ = new LH_Qt_QString(this, "~kb_hr2", "<hr />", LH_FLAG_HIDETITLE | LH_FLAG_NOSINK | LH_FLAG_NOSOURCE | LH_FLAG_NOSAVE_DATA, lh_type_string_html);
+    (setup_heading_keyBindings_break2_ = new LH_Qt_QString(this, "~kb_hr3", "Advanced Key Bindings (Global):", LH_FLAG_HIDETITLE | LH_FLAG_NOSINK | LH_FLAG_NOSOURCE | LH_FLAG_NOSAVE_DATA, lh_type_string_html))->setHelp(
                 "<p>This allows you to set up \"extra\" multimedia keys, e.g. bind \"Scroll Lock\" to repeat the current track.</p>"
                 "<p>Keys configured here will <b>always</b> work, regardless of what layout is loaded. To make keys only work when a specific layout is loaded add the \"Remote Control\" object to the layout.</p>"
                 "<p>Note that not all players are compatible with these features.</p>");
@@ -281,25 +281,25 @@ const char *LH_QtPlugin_NowPlaying::userInit() {
 
     //---------------------------------------------------------------------------------------
 
-    setup_control_play_pause_ = new LH_Qt_QString(this, "Play_Pause Button", "Play/Pause", LH_FLAG_HIDETITLE | LH_FLAG_NOSAVE | LH_FLAG_NOSOURCE | LH_FLAG_NOSINK, lh_type_string_button );
+    setup_control_play_pause_ = new LH_Qt_QString(this, "Play_Pause Button", "Play/Pause", LH_FLAG_HIDETITLE | LH_FLAG_NOSAVE_DATA | LH_FLAG_NOSOURCE | LH_FLAG_NOSINK, lh_type_string_button );
     connect( setup_control_play_pause_, SIGNAL(changed()), this, SLOT(controlPlayPauseClick()) );
 
-    setup_control_stop_ = new LH_Qt_QString(this, "Stop Button", "Stop", LH_FLAG_HIDETITLE | LH_FLAG_NOSAVE | LH_FLAG_NOSOURCE | LH_FLAG_NOSINK, lh_type_string_button );
+    setup_control_stop_ = new LH_Qt_QString(this, "Stop Button", "Stop", LH_FLAG_HIDETITLE | LH_FLAG_NOSAVE_DATA | LH_FLAG_NOSOURCE | LH_FLAG_NOSINK, lh_type_string_button );
     connect( setup_control_stop_, SIGNAL(changed()), this, SLOT(controlStopClick()) );
 
-    setup_control_next_ = new LH_Qt_QString(this, "Next Button", "Next", LH_FLAG_HIDETITLE | LH_FLAG_NOSAVE | LH_FLAG_NOSOURCE | LH_FLAG_NOSINK, lh_type_string_button );
+    setup_control_next_ = new LH_Qt_QString(this, "Next Button", "Next", LH_FLAG_HIDETITLE | LH_FLAG_NOSAVE_DATA | LH_FLAG_NOSOURCE | LH_FLAG_NOSINK, lh_type_string_button );
     connect( setup_control_next_, SIGNAL(changed()), this, SLOT(controlNextClick()) );
 
-    setup_control_prev_ = new LH_Qt_QString(this, "Previous Button", "Previous", LH_FLAG_HIDETITLE | LH_FLAG_NOSAVE | LH_FLAG_NOSOURCE | LH_FLAG_NOSINK, lh_type_string_button );
+    setup_control_prev_ = new LH_Qt_QString(this, "Previous Button", "Previous", LH_FLAG_HIDETITLE | LH_FLAG_NOSAVE_DATA | LH_FLAG_NOSOURCE | LH_FLAG_NOSINK, lh_type_string_button );
     connect( setup_control_prev_, SIGNAL(changed()), this, SLOT(controlPrevClick()) );
 
-    setup_control_repeat_ = new LH_Qt_QString(this, "Repeat Button", "Repeat", LH_FLAG_HIDETITLE | LH_FLAG_NOSAVE | LH_FLAG_NOSOURCE | LH_FLAG_NOSINK, lh_type_string_button );
+    setup_control_repeat_ = new LH_Qt_QString(this, "Repeat Button", "Repeat", LH_FLAG_HIDETITLE | LH_FLAG_NOSAVE_DATA | LH_FLAG_NOSOURCE | LH_FLAG_NOSINK, lh_type_string_button );
     connect( setup_control_repeat_, SIGNAL(changed()), this, SLOT(controlRepeatClick()) );
 
-    setup_control_shuffle_ = new LH_Qt_QString(this, "Shuffle Button", "Shuffle", LH_FLAG_HIDETITLE | LH_FLAG_NOSAVE | LH_FLAG_NOSOURCE | LH_FLAG_NOSINK, lh_type_string_button );
+    setup_control_shuffle_ = new LH_Qt_QString(this, "Shuffle Button", "Shuffle", LH_FLAG_HIDETITLE | LH_FLAG_NOSAVE_DATA | LH_FLAG_NOSOURCE | LH_FLAG_NOSINK, lh_type_string_button );
     connect( setup_control_shuffle_, SIGNAL(changed()), this, SLOT(controlShuffleClick()) );
 
-    setup_control_close_ = new LH_Qt_QString(this, "Close Button", "Close Player", LH_FLAG_HIDETITLE | LH_FLAG_NOSAVE | LH_FLAG_NOSOURCE | LH_FLAG_NOSINK, lh_type_string_button );
+    setup_control_close_ = new LH_Qt_QString(this, "Close Button", "Close Player", LH_FLAG_HIDETITLE | LH_FLAG_NOSAVE_DATA | LH_FLAG_NOSOURCE | LH_FLAG_NOSINK, lh_type_string_button );
     connect( setup_control_close_, SIGNAL(changed()), this, SLOT(controlCloseClick()) );
 
     //---------------------------------------------------------------------------------------
@@ -317,7 +317,7 @@ const char *LH_QtPlugin_NowPlaying::userInit() {
 
     //---------------------------------------------------------------------------------------
 
-    new LH_Qt_QString(this, "~_hr3", "<hr />", LH_FLAG_HIDETITLE | LH_FLAG_NOSINK | LH_FLAG_NOSOURCE | LH_FLAG_NOSAVE, lh_type_string_html);
+    new LH_Qt_QString(this, "~_hr3", "<hr />", LH_FLAG_HIDETITLE | LH_FLAG_NOSINK | LH_FLAG_NOSOURCE | LH_FLAG_NOSAVE_DATA, lh_type_string_html);
 
     setup_source_player_ = new LH_Qt_QString(this, "Player Name", "", LH_FLAG_HIDDEN);
     setup_source_player_->setLink("@/3rdParty/Music/Music Player");

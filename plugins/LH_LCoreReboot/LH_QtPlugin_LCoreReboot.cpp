@@ -100,10 +100,10 @@ const char *LH_QtPlugin_LCoreReboot::userInit()
             if(!getLCorePath(filePath))
                 return "Cannot read LCore Path";
 
-    setup_reboot_ = new LH_Qt_QString(this, "Reboot", "Reboot Logitech Gaming Software", LH_FLAG_NOSAVE | LH_FLAG_NOSINK | LH_FLAG_NOSOURCE | LH_FLAG_HIDETITLE, lh_type_string_button);
+    setup_reboot_ = new LH_Qt_QString(this, "Reboot", "Reboot Logitech Gaming Software", LH_FLAG_NOSAVE_DATA | LH_FLAG_NOSINK | LH_FLAG_NOSOURCE | LH_FLAG_HIDETITLE, lh_type_string_button);
     connect(setup_reboot_, SIGNAL(changed()), this, SLOT(rebootLCore()));
 
-    setup_lcore_path_ = new LH_Qt_QString(this, "LGS Path", filePath, LH_FLAG_NOSAVE | LH_FLAG_NOSINK | LH_FLAG_NOSOURCE | LH_FLAG_HIDDEN);
+    setup_lcore_path_ = new LH_Qt_QString(this, "LGS Path", filePath, LH_FLAG_NOSAVE_DATA | LH_FLAG_NOSAVE_LINK | LH_FLAG_NOSINK | LH_FLAG_NOSOURCE | LH_FLAG_HIDDEN);
 #endif
     return 0;
 }

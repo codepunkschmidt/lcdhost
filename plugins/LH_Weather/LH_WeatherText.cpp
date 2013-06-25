@@ -62,7 +62,7 @@ LH_WeatherText::LH_WeatherText()
 {
     //setup_text_->setName( "Text" );
     setup_text_->setFlag( LH_FLAG_READONLY, true );
-    setup_text_->setFlag( LH_FLAG_NOSAVE, true );
+    setup_text_->setFlag( LH_FLAG_NOSAVE_DATA, true );
     setText("...");
 
     valueTypes = QStringList();

@@ -8,7 +8,7 @@ const char *LH_TS3CombinedStatusImage::userInit()
 
     //setup_show_placeholder_->setTitle("Use default images");
 
-    int LH_FLAG_SOURCEITEM =  LH_FLAG_HIDDEN | LH_FLAG_READONLY | LH_FLAG_NOSOURCE | LH_FLAG_NOSAVE | LH_FLAG_AUTORENDER;
+    int LH_FLAG_SOURCEITEM =  LH_FLAG_HIDDEN | LH_FLAG_READONLY | LH_FLAG_NOSOURCE | LH_FLAG_NOSAVE_DATA | LH_FLAG_NOSAVE_LINK | LH_FLAG_AUTORENDER;
 
     setup_combined_status_ = new LH_Qt_QStringList(this, "Combined Status", QStringList() << "Not Running" << "Not Connected" << "No Speaker" << "Self Speaking" << "Other Speaking" << "Both Speaking", LH_FLAG_SOURCEITEM);
 

@@ -42,7 +42,7 @@
 LH_WebKit::LH_WebKit(const bool enableParsing)
 {
     parsingEnabled_ = enableParsing;
-    int parseFlags = (!enableParsing? LH_FLAG_HIDDEN | LH_FLAG_READONLY | LH_FLAG_NOSAVE : 0);
+    int parseFlags = (!enableParsing? LH_FLAG_HIDDEN | LH_FLAG_READONLY | LH_FLAG_NOSAVE_DATA | LH_FLAG_NOSAVE_LINK : 0);
 
     zoom_ = new LH_Qt_QSlider(this,"Zoom",10,1,20,LH_FLAG_FOCUS);
     zoom_->setOrder(1);

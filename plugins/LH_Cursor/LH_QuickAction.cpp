@@ -56,7 +56,7 @@ LH_QuickAction::LH_QuickAction()
     setup_timeout_ = new LH_Qt_int(this,"Auto Trigger Timeout", 30, 5, 600);
     setup_timeout_->setHelp("Number of seconds after which to load the specified layout.");
 
-    setup_countdown_ = new LH_Qt_QString(this,"^CountDown","", LH_FLAG_NOSAVE | LH_FLAG_READONLY | LH_FLAG_HIDDEN);
+    setup_countdown_ = new LH_Qt_QString(this,"^CountDown","", LH_FLAG_NOSAVE_DATA|LH_FLAG_NOSAVE_LINK|LH_FLAG_READONLY|LH_FLAG_HIDDEN);
 
     setup_layout_ = new LH_Qt_QFileInfo(this, "Layout", QFileInfo(), 0);
     setup_layout_->setHelp("The layout to load when the associated key is pressed.<br/>"

@@ -74,7 +74,7 @@ const char *LH_DataViewerConnector::userInit(){
     LH_QtInstance::userInit();
     hide();
 
-    setup_feedback_ = new LH_Qt_QString(this, "Feedback", "", LH_FLAG_READONLY | LH_FLAG_NOSAVE | LH_FLAG_NOSINK | LH_FLAG_NOSOURCE);
+    setup_feedback_ = new LH_Qt_QString(this, "Feedback", "", LH_FLAG_READONLY | LH_FLAG_NOSAVE_DATA | LH_FLAG_NOSINK | LH_FLAG_NOSOURCE);
     QStringList langs = listLanguages();
     qDebug() << "languages: " << langs.count() << ": " << langs.join(",");
     setup_language_ = new LH_Qt_QStringList(this,"Language",langs, LH_FLAG_AUTORENDER | LH_FLAG_NOSINK | LH_FLAG_NOSOURCE);

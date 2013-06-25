@@ -60,12 +60,12 @@ const char *LH_DataViewerText::userInit()
 {
     if( const char *err = LH_Text::userInit() ) return err;
     setup_text_->setValue(" ");
-    setup_text_->setFlags(LH_FLAG_READONLY | LH_FLAG_NOSAVE);
+    setup_text_->setFlags(LH_FLAG_READONLY | LH_FLAG_NOSAVE_DATA);
 
     setup_lookup_code_ = new LH_Qt_QString( this, "Data Template", "", LH_FLAG_AUTORENDER);
     setup_lookup_code_->setOrder(-3);
 
-    setup_item_name_ = new LH_Qt_QString( this, "Data Names" , "", LH_FLAG_READONLY | LH_FLAG_NOSAVE);
+    setup_item_name_ = new LH_Qt_QString( this, "Data Names" , "", LH_FLAG_READONLY | LH_FLAG_NOSAVE_DATA);
     setup_item_name_->setOrder(-3);
 
     connect( setup_lookup_code_, SIGNAL(changed()), this, SLOT(updateText()) );

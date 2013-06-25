@@ -42,7 +42,7 @@ char __lcdhostplugin_xml[] =
 
 LH_QtPlugin_Mailcount::LH_QtPlugin_Mailcount()
 {
-    email_count_ = new LH_Qt_int(this,tr("Mail count"),0,LH_FLAG_READONLY|LH_FLAG_NOSAVE|LH_FLAG_NOSINK);
+    email_count_ = new LH_Qt_int(this,tr("Mail count"),0,LH_FLAG_READONLY|LH_FLAG_NOSAVE_DATA|LH_FLAG_NOSINK);
     email_count_->setHelp("This is the number of waiting e-mails, as reported by the "
                           "operating system.");
     email_count_->setLink("@/system/Mail count");

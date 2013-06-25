@@ -67,15 +67,15 @@ char __lcdhostplugin_xml[] =
 const char *LH_LgBacklight::userInit()
 {
     if( const char *err = LH_QtPlugin::userInit() ) return err;
-    devselect_ = new LH_Qt_QStringList( this, "Device", QStringList(), LH_FLAG_NOSAVE|LH_FLAG_NOSOURCE|LH_FLAG_NOSINK|LH_FLAG_HIDDEN );
+    devselect_ = new LH_Qt_QStringList( this, "Device", QStringList(), LH_FLAG_NOSAVE_DATA|LH_FLAG_NOSAVE_LINK|LH_FLAG_NOSOURCE|LH_FLAG_NOSINK|LH_FLAG_HIDDEN );
     devselect_->setHelp( "The device which backlight you want to control." );
     connect( devselect_, SIGNAL(changed()), this, SLOT(changeDev()) );
 
-    devcolor_ = new LH_Qt_QColor( this, "Color", Qt::white, LH_FLAG_NOSAVE|LH_FLAG_HIDDEN );
+    devcolor_ = new LH_Qt_QColor( this, "Color", Qt::white, LH_FLAG_NOSAVE_DATA|LH_FLAG_NOSAVE_LINK|LH_FLAG_HIDDEN );
     devcolor_->setHelp("The color you want to see used as backlight.");
     connect( devcolor_, SIGNAL(changed()), this, SLOT(changeColor()) );
 
-    allcolor_ = new LH_Qt_QColor( this, "SetAllColor", Qt::white, LH_FLAG_NOSAVE|LH_FLAG_HIDDEN|LH_FLAG_NOSOURCE );
+    allcolor_ = new LH_Qt_QColor( this, "SetAllColor", Qt::white, LH_FLAG_NOSAVE_DATA|LH_FLAG_NOSAVE_LINK|LH_FLAG_HIDDEN|LH_FLAG_NOSOURCE );
     allcolor_->setLink("=/plugin/backlight/all/set");
     connect( allcolor_, SIGNAL(changed()), this, SLOT(setAllColor()) );
 

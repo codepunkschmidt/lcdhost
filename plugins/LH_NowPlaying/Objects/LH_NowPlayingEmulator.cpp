@@ -75,7 +75,8 @@ lh_class *LH_NowPlayingEmulator::classInfo()
 LH_NowPlayingEmulator::LH_NowPlayingEmulator()
 {
     setup_text_->setFlag(LH_FLAG_HIDDEN, true);
-    setup_text_->setFlag(LH_FLAG_NOSAVE, true);
+    setup_text_->setFlag(LH_FLAG_NOSAVE_DATA, true);
+    setup_text_->setFlag(LH_FLAG_NOSAVE_LINK, true);
     setup_font_->setFlag(LH_FLAG_HIDDEN, true);
     setup_fontresize_->setFlag(LH_FLAG_HIDDEN, true);
     setup_pencolor_->setFlag(LH_FLAG_HIDDEN, true);

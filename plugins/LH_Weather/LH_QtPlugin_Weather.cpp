@@ -87,7 +87,7 @@ const char *LH_QtPlugin_Weather::userInit()
     lastrefresh_ = QDateTime::currentDateTime();
     translator.setTargetLanguage("en");
 
-    setup_show_all_languages_ = new LH_Qt_bool(this,"^Show Untranslated Languages", false, LH_FLAG_NOSAVE | LH_FLAG_NOSINK | LH_FLAG_NOSOURCE);
+    setup_show_all_languages_ = new LH_Qt_bool(this,"^Show Untranslated Languages", false, LH_FLAG_NOSAVE_DATA | LH_FLAG_NOSINK | LH_FLAG_NOSOURCE);
     connect(setup_show_all_languages_, SIGNAL(changed()), this, SLOT(updateLanguagesList()));
     setup_show_all_languages_->setHelp("<p>Ticking this box will allow you choose a language with no current translation. Unknown items will be added to a translation cache located in the LCDHost directory. Simply edit this cache to complete the translation.</p>");
 

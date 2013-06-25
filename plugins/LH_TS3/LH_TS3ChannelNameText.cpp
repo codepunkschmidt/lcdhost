@@ -17,7 +17,8 @@ public:
         if( const char *err = LH_Text::userInit() ) return err;
         setup_text_->setFlag(LH_FLAG_READONLY, true);
         setup_text_->setFlag(LH_FLAG_HIDDEN, true);
-        setup_text_->setFlag(LH_FLAG_NOSAVE, true);
+        setup_text_->setFlag(LH_FLAG_NOSAVE_DATA, true);
+        setup_text_->setFlag(LH_FLAG_NOSAVE_LINK, true);
         setText("");
         setup_text_->setLink("=/3rdParty/TeamSpeak 3/Channel Name");
 

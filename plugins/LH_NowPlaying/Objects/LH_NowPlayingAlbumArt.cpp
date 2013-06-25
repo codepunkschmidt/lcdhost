@@ -7,7 +7,7 @@ LH_NowPlayingAlbumArt::LH_NowPlayingAlbumArt()
 {
     connect( lh_plugin(), SIGNAL(updated_data()), this, SLOT(refresh_image()) );
 
-    setup_file_ = new LH_Qt_QFileInfo( this, tr("Image"), QFileInfo(), LH_FLAG_AUTORENDER | LH_FLAG_READONLY | LH_FLAG_NOSAVE);
+    setup_file_ = new LH_Qt_QFileInfo( this, tr("Image"), QFileInfo(), LH_FLAG_AUTORENDER | LH_FLAG_READONLY | LH_FLAG_NOSAVE_DATA);
     refresh_image();
     //setup_file_->setFlag( LH_FLAG_HIDDEN, true );
     return;

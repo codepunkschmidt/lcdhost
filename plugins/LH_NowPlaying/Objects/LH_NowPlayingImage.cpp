@@ -61,7 +61,7 @@ const char *LH_NowPlayingImage::userInit()
     if( const char *err = LH_QImage::userInit() ) return err;
 
 
-    setup_image_file_->setFlags( LH_FLAG_AUTORENDER | LH_FLAG_READONLY | LH_FLAG_NOSAVE );
+    setup_image_file_->setFlags( LH_FLAG_AUTORENDER | LH_FLAG_READONLY | LH_FLAG_NOSAVE_DATA );
 
     setup_item_ = new LH_Qt_QStringList(this, "Item",
                                         QStringList()

@@ -58,13 +58,13 @@ LH_DataViewerImage::LH_DataViewerImage() : data_(this)
     setup_lookup_code_ = new LH_Qt_QString(this, "Lookup Code", "");
     connect( setup_lookup_code_, SIGNAL(changed()), this, SLOT(updateImage()) );
 
-    setup_lookup_code_value_ = new LH_Qt_QString(this, " ", "", LH_FLAG_READONLY|LH_FLAG_NOSAVE|LH_FLAG_NOSAVE);
+    setup_lookup_code_value_ = new LH_Qt_QString(this, "^LookupCodeValue", "", LH_FLAG_READONLY|LH_FLAG_NOSAVE_DATA|LH_FLAG_NOSAVE_LINK);
 
     setup_file_ = new LH_Qt_QFileInfo( this, tr("File"), QFileInfo(), LH_FLAG_AUTORENDER );
     setup_file_->setOrder(-1);
     connect( setup_file_, SIGNAL(changed()), this, SLOT(fileChanged()) );
 
-    setup_text_ = new LH_Qt_QString( this, tr("~"), QString(), LH_FLAG_READONLY|LH_FLAG_NOSAVE|LH_FLAG_HIDDEN|LH_FLAG_AUTORENDER );
+    setup_text_ = new LH_Qt_QString( this, tr("~"), QString(), LH_FLAG_READONLY|LH_FLAG_NOSAVE_DATA|LH_FLAG_NOSAVE_LINK|LH_FLAG_HIDDEN|LH_FLAG_AUTORENDER );
 
     //setup_text_->setOrder(-1);
 

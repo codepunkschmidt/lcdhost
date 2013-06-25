@@ -23,9 +23,9 @@ LH_MailcountText::LH_MailcountText() : LH_Text()
     setup_text_->setName( "Unread mail count" );
     setup_text_->setValue("0");
     setup_text_->setFlag( LH_FLAG_READONLY, true );
-    setup_text_->setFlag( LH_FLAG_NOSAVE, true );
+    setup_text_->setFlag( LH_FLAG_NOSAVE_DATA, true );
 
-    email_count_ = new LH_Qt_int(this,tr("Mail count"),0,LH_FLAG_NOSAVE|LH_FLAG_NOSOURCE);
+    email_count_ = new LH_Qt_int(this,tr("Mail count"),0,LH_FLAG_NOSAVE_DATA|LH_FLAG_NOSOURCE);
     email_count_->setLink("=/system/Mail count");
     connect( email_count_, SIGNAL(changed()), this, SLOT(update()) );
 

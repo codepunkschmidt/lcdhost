@@ -39,7 +39,8 @@ LH_RSSText::LH_RSSText() : LH_Text(), rss_(this)
     setup_scrollrate_->setFlag( LH_FLAG_HIDDEN, true );
     setup_scrollstep_->setFlag( LH_FLAG_HIDDEN, true );
     setup_text_->setFlag( LH_FLAG_HIDDEN, true );
-    setup_text_->setFlag( LH_FLAG_NOSAVE, true );
+    setup_text_->setFlag( LH_FLAG_NOSAVE_DATA, true );
+    setup_text_->setFlag( LH_FLAG_NOSAVE_LINK, true );
     setup_text_->setFlag( LH_FLAG_READONLY, true );
 
     setRssItem();

@@ -58,8 +58,8 @@ const char *LH_QtPlugin_TS3::userInit()
     socket_ = new QTcpSocket(this);
     myclid_ = -1;
 
-    setup_connection_details_ = new LH_Qt_QString(this, "", "", LH_FLAG_NOSINK | LH_FLAG_NOSOURCE, lh_type_string_html );
-    setup_talking_details_ = new LH_Qt_QString(this, "~hr1", "", LH_FLAG_NOSINK | LH_FLAG_NOSOURCE, lh_type_string_html );
+    setup_connection_details_ = new LH_Qt_QString(this, "^ConnectionDetails", QString(), LH_FLAG_NOSINK | LH_FLAG_NOSOURCE, lh_type_string_html );
+    setup_talking_details_ = new LH_Qt_QString(this, "~hr1", QString(), LH_FLAG_NOSINK | LH_FLAG_NOSOURCE, lh_type_string_html );
     new LH_Qt_QString( this, "~hr2", "<hr/>", LH_FLAG_NOSINK | LH_FLAG_NOSOURCE , lh_type_string_html);
 
 #ifdef TS3_USER_DEFINED_UID

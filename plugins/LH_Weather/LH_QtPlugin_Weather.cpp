@@ -116,7 +116,7 @@ const char *LH_QtPlugin_Weather::userInit()
     setup_yahoo_5dayid_->setHelp("Internal use only: Yahoo id code for the 5-day feed");
     setup_yahoo_5dayid_->setOrder(-4);
 
-    setup_city_ = new LH_Qt_QString(this," ",QString(), LH_FLAG_READONLY | LH_FLAG_NOSINK | LH_FLAG_NOSOURCE);
+    setup_city_ = new LH_Qt_QString(this,"^City",QString(), LH_FLAG_READONLY | LH_FLAG_NOSINK | LH_FLAG_NOSOURCE);
     setup_city_->setHelp("<p>The location whose weather is currently being displayed.</p>"
                          "<p>The weather connector tries to look up the city as entered in the \"Location\" box, and displays the best result here.</p>");
     setup_city_->setOrder(-4);

@@ -71,8 +71,8 @@ LH_Mailcount::LH_Mailcount() : LH_QtInstance()
     envelope_count_ = -1;
 
     email_count_ = new LH_Qt_int(this,tr("Unread mail count"),0,
-                                 LH_FLAG_READONLY|LH_FLAG_NOSAVE_DATA|LH_FLAG_NOSOURCE|LH_FLAG_AUTORENDER);
-    email_count_->setLink("=/system/Mail count");
+                                 LH_FLAG_READONLY|LH_FLAG_NOSAVE_DATA|LH_FLAG_NOSAVE_LINK|LH_FLAG_NOSOURCE|LH_FLAG_AUTORENDER);
+    email_count_->setSubscribePath("/system/Mail count");
 
     mail_image_ = new LH_Qt_QFileInfo(this,tr("Mail envelope image"),QFileInfo(),LH_FLAG_NOSOURCE|LH_FLAG_NOSINK|LH_FLAG_AUTORENDER);
     connect( mail_image_, SIGNAL(changed()), this, SLOT(makeEnvelope()) );

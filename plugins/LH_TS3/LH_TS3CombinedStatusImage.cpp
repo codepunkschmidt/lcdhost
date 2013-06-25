@@ -13,26 +13,26 @@ const char *LH_TS3CombinedStatusImage::userInit()
     setup_combined_status_ = new LH_Qt_QStringList(this, "Combined Status", QStringList() << "Not Running" << "Not Connected" << "No Speaker" << "Self Speaking" << "Other Speaking" << "Both Speaking", LH_FLAG_SOURCEITEM);
 
     setup_connection_status_ = new LH_Qt_QStringList(this, "Connection Status", QStringList() << "Not Running" << "Not Connected" << "Connected", LH_FLAG_SOURCEITEM);
-    setup_connection_status_->setLink("=/3rdParty/TeamSpeak 3/Connection Status");
+    setup_connection_status_->setSubscribePath("/3rdParty/TeamSpeak 3/Connection Status");
     connect(setup_connection_status_, SIGNAL(changed()), this, SLOT(updateCombinedStatus()));
 
     setup_talking_ = new LH_Qt_QString(this, "Talking", "", LH_FLAG_SOURCEITEM);
-    setup_talking_->setLink("=/3rdParty/TeamSpeak 3/Speaking");
+    setup_talking_->setSubscribePath("/3rdParty/TeamSpeak 3/Speaking");
     connect(setup_talking_, SIGNAL(changed()), this, SLOT(updateCombinedStatus()));
 
     setup_talking_me_ = new LH_Qt_bool(this, "Me Talking", false, LH_FLAG_SOURCEITEM);
-    setup_talking_me_->setLink("=/3rdParty/TeamSpeak 3/Self Speaking");//, true);
+    setup_talking_me_->setSubscribePath("/3rdParty/TeamSpeak 3/Self Speaking");//, true);
     connect(setup_talking_me_, SIGNAL(changed()), this, SLOT(updateCombinedStatus()));
 
     setup_nickname_ = new LH_Qt_QString(this, "Nickname", "", LH_FLAG_SOURCEITEM);
-    setup_nickname_->setLink("=/3rdParty/TeamSpeak 3/Nickname");
+    setup_nickname_->setSubscribePath("/3rdParty/TeamSpeak 3/Nickname");
     connect(setup_nickname_, SIGNAL(changed()), this, SLOT(updateCombinedStatus()));
 
     setup_mute_status_spk_ = new LH_Qt_QStringList(this, "Speaker Mute Status", QStringList() << "N/A" << "None" << "Muted" << "Active", LH_FLAG_SOURCEITEM);
-    setup_mute_status_spk_->setLink("=/3rdParty/TeamSpeak 3/Speaker Status");
+    setup_mute_status_spk_->setSubscribePath("/3rdParty/TeamSpeak 3/Speaker Status");
 
     setup_mute_status_mic_ = new LH_Qt_QStringList(this, "Microphone Mute Status", QStringList() << "N/A" << "None" << "Muted" << "Active", LH_FLAG_SOURCEITEM);
-    setup_mute_status_mic_->setLink("=/3rdParty/TeamSpeak 3/Microphone Status");
+    setup_mute_status_mic_->setSubscribePath("/3rdParty/TeamSpeak 3/Microphone Status");
 
     add_cf_target(setup_image_file_);
     add_cf_source(setup_combined_status_);

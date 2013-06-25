@@ -5,11 +5,11 @@ LH_CursorReceiver::LH_CursorReceiver(LH_QtInstance *parent, const char *amember)
     setup_json_data_ = new LH_Qt_QString(parent, "Cursor Data", QString(), LH_FLAG_NOSAVE_DATA | LH_FLAG_NOSOURCE | LH_FLAG_FIRST); // | LH_FLAG_READONLY | LH_FLAG_HIDEVALUE
     setup_json_data_->setHelp("<p>This field holds the data for this cursor; all cursor objects by default link themselves to \"Primary Cursor\".</p>"
                               "<p>You only need change the name of this link if your layout needs more than one cursor.");
-    setup_json_data_->setLink("=/Cursors/Primary Cursor");
+    setup_json_data_->setSubscribePath("/Cursors/Primary Cursor");
     setup_json_data_->setMimeType("x-cursor/x-cursor");
 
     setup_json_postback_ = new LH_Qt_QString(parent, "Cursor Postback", "", LH_FLAG_NOSAVE_DATA | LH_FLAG_NOSAVE_LINK | LH_FLAG_NOSINK | LH_FLAG_FIRST | LH_FLAG_HIDDEN);
-    setup_json_postback_->setLink("@/Cursors/Postback");
+    setup_json_postback_->setPublishPath("/Cursors/Postback");
     setup_json_postback_->setMimeType("x-cursor/x-postback");
 
     new LH_Qt_QString(parent, "hr2", "<hr>", LH_FLAG_NOSOURCE | LH_FLAG_NOSINK | LH_FLAG_FIRST | LH_FLAG_HIDETITLE, lh_type_string_html);

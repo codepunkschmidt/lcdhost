@@ -319,20 +319,20 @@ const char *LH_QtPlugin_NowPlaying::userInit() {
 
     new LH_Qt_QString(this, "~_hr3", "<hr />", LH_FLAG_HIDETITLE | LH_FLAG_NOSINK | LH_FLAG_NOSOURCE | LH_FLAG_NOSAVE_DATA, lh_type_string_html);
 
-    setup_source_player_ = new LH_Qt_QString(this, "Player Name", "", LH_FLAG_HIDDEN);
-    setup_source_player_->setLink("@/3rdParty/Music/Music Player");
+    setup_source_player_ = new LH_Qt_QString(this, "Player Name", "", LH_FLAG_HIDDEN | LH_FLAG_NOSAVE_DATA | LH_FLAG_NOSAVE_LINK);
+    setup_source_player_->setPublishPath("/3rdParty/Music/Music Player");
 
-    setup_source_artist_ = new LH_Qt_QString(this, "Current Artist", "", LH_FLAG_HIDDEN);
-    setup_source_artist_->setLink("@/3rdParty/Music/Current Track/Artist");
+    setup_source_artist_ = new LH_Qt_QString(this, "Current Artist", "", LH_FLAG_HIDDEN | LH_FLAG_NOSAVE_DATA | LH_FLAG_NOSAVE_LINK);
+    setup_source_artist_->setPublishPath("/3rdParty/Music/Current Track/Artist");
 
-    setup_source_album_ = new LH_Qt_QString(this, "Current Album Name", "", LH_FLAG_HIDDEN);
-    setup_source_album_->setLink("@/3rdParty/Music/Current Track/Album Name");
+    setup_source_album_ = new LH_Qt_QString(this, "Current Album Name", "", LH_FLAG_HIDDEN | LH_FLAG_NOSAVE_DATA | LH_FLAG_NOSAVE_LINK);
+    setup_source_album_->setPublishPath("/3rdParty/Music/Current Track/Album Name");
 
-    setup_source_title_ = new LH_Qt_QString(this, "Current Track Title", "", LH_FLAG_HIDDEN);
-    setup_source_title_->setLink("@/3rdParty/Music/Current Track/Track Title");
+    setup_source_title_ = new LH_Qt_QString(this, "Current Track Title", "", LH_FLAG_HIDDEN | LH_FLAG_NOSAVE_DATA | LH_FLAG_NOSAVE_LINK);
+    setup_source_title_->setPublishPath("/3rdParty/Music/Current Track/Track Title");
 
-    setup_source_status_ = new LH_Qt_QString(this, "Playing Status", "", LH_FLAG_HIDDEN);
-    setup_source_status_->setLink("@/3rdParty/Music/Playing Status");
+    setup_source_status_ = new LH_Qt_QString(this, "Playing Status", "", LH_FLAG_HIDDEN | LH_FLAG_NOSAVE_DATA | LH_FLAG_NOSAVE_LINK);
+    setup_source_status_->setPublishPath("/3rdParty/Music/Playing Status");
 
     isElevated = (GetElevationState(GetCurrentProcessId()) == ELEVATION_ELEVATED);
     //if(isElevated)

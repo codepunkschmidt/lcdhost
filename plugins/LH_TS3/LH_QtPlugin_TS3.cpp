@@ -72,25 +72,25 @@ const char *LH_QtPlugin_TS3::userInit()
     setup_user_detail_ = new LH_Qt_QString(this, "~hr3", "", LH_FLAG_NOSINK | LH_FLAG_NOSOURCE , lh_type_string_html);
 
     setup_nickname_ = new LH_Qt_QString(this, "Nickname", "", LH_FLAG_HIDDEN | LH_FLAG_READONLY | LH_FLAG_NOSAVE_LINK | LH_FLAG_NOSAVE_DATA | LH_FLAG_NOSINK);
-    setup_nickname_->setLink("@/3rdParty/TeamSpeak 3/Nickname");
+    setup_nickname_->setPublishPath("/3rdParty/TeamSpeak 3/Nickname");
 
     setup_talking_ = new LH_Qt_QString(this, "Speaking", "", LH_FLAG_HIDDEN | LH_FLAG_READONLY | LH_FLAG_NOSAVE_LINK | LH_FLAG_NOSAVE_DATA | LH_FLAG_NOSINK);
-    setup_talking_->setLink("@/3rdParty/TeamSpeak 3/Speaking");
+    setup_talking_->setPublishPath("/3rdParty/TeamSpeak 3/Speaking");
 
     setup_talking_me_ = new LH_Qt_bool(this, "Self Speaking", false, LH_FLAG_HIDDEN | LH_FLAG_READONLY | LH_FLAG_NOSAVE_DATA | LH_FLAG_NOSAVE_LINK | LH_FLAG_NOSINK);
-    setup_talking_me_->setLink("@/3rdParty/TeamSpeak 3/Self Speaking");
+    setup_talking_me_->setPublishPath("/3rdParty/TeamSpeak 3/Self Speaking");
 
     setup_channelname_ = new LH_Qt_QString(this, "Channel", "", LH_FLAG_HIDDEN | LH_FLAG_READONLY | LH_FLAG_NOSAVE_DATA | LH_FLAG_NOSAVE_LINK | LH_FLAG_NOSINK);
-    setup_channelname_->setLink("@/3rdParty/TeamSpeak 3/Channel Name");
+    setup_channelname_->setPublishPath("/3rdParty/TeamSpeak 3/Channel Name");
 
     setup_connection_status_ = new LH_Qt_QStringList(this, "Connection Status", QStringList() << "Not Running" << "Not Connected" << "Connected", LH_FLAG_HIDDEN | LH_FLAG_READONLY | LH_FLAG_NOSAVE_DATA  | LH_FLAG_NOSAVE_LINK | LH_FLAG_NOSINK );
-    setup_connection_status_->setLink("@/3rdParty/TeamSpeak 3/Connection Status");
+    setup_connection_status_->setPublishPath("/3rdParty/TeamSpeak 3/Connection Status");
 
     setup_microphone_status_ = new LH_Qt_QStringList(this, "Microphone Status", QStringList() << "N/A" << "None" << "Muted" << "Active",  LH_FLAG_READONLY | LH_FLAG_NOSAVE_DATA | LH_FLAG_NOSINK );
-    setup_microphone_status_->setLink("@/3rdParty/TeamSpeak 3/Microphone Status");
+    setup_microphone_status_->setPublishPath("/3rdParty/TeamSpeak 3/Microphone Status");
 
     setup_speakers_status_   = new LH_Qt_QStringList(this, "Speaker Status"   , QStringList() << "N/A" << "None" << "Muted" << "Active",  LH_FLAG_READONLY | LH_FLAG_NOSAVE_DATA | LH_FLAG_NOSINK );
-    setup_speakers_status_->setLink("@/3rdParty/TeamSpeak 3/Speaker Status");
+    setup_speakers_status_->setPublishPath("/3rdParty/TeamSpeak 3/Speaker Status");
 
     connect(setup_nickname_, SIGNAL(changed()), this, SLOT(updateMyDetails()));
     connect(socket_, SIGNAL(connected()), this, SLOT(TS3Connected()));

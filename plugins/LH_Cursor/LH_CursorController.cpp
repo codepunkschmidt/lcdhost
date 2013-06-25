@@ -198,7 +198,7 @@ void LH_CursorController::initialiseLinking()
 {
     if( QString("Preview") != this->objectName() )
     {
-        setup_link_postback_->setLink("=/Cursors/Postback");
+        setup_link_postback_->setSubscribePath("/Cursors/Postback");
         setup_link_postback_->setMimeType("x-cursor/x-postback");
 
         //connect(setup_link_json_data_,SIGNAL(duplicateSource()),this,SLOT(changeSourceLink()));
@@ -207,13 +207,13 @@ void LH_CursorController::initialiseLinking()
         {
             if( QString( this->objectName() ).contains("Secondary") )
             {
-                setup_link_json_data_->setLink("@/Cursors/Secondary Cursor");
-                setup_link_current_pos->setLink("@/Cursors/Secondary Cursor/Cursor Position");
-                setup_link_selected_pos->setLink("@/Cursors/Secondary Cursor/Selected Position");
+                setup_link_json_data_->setPublishPath("/Cursors/Secondary Cursor");
+                setup_link_current_pos->setPublishPath("/Cursors/Secondary Cursor/Cursor Position");
+                setup_link_selected_pos->setPublishPath("/Cursors/Secondary Cursor/Selected Position");
             } else {
-                setup_link_json_data_->setLink("@/Cursors/Primary Cursor");
-                setup_link_current_pos->setLink("@/Cursors/Primary Cursor/Cursor Position");
-                setup_link_selected_pos->setLink("@/Cursors/Primary Cursor/Selected Position");
+                setup_link_json_data_->setPublishPath("/Cursors/Primary Cursor");
+                setup_link_current_pos->setPublishPath("/Cursors/Primary Cursor/Cursor Position");
+                setup_link_selected_pos->setPublishPath("/Cursors/Primary Cursor/Selected Position");
             }
         }
         setup_link_json_data_->setMimeType("x-cursor/x-cursor");

@@ -76,7 +76,7 @@ const char *LH_LgBacklight::userInit()
     connect( devcolor_, SIGNAL(changed()), this, SLOT(changeColor()) );
 
     allcolor_ = new LH_Qt_QColor( this, "SetAllColor", Qt::white, LH_FLAG_NOSAVE_DATA|LH_FLAG_NOSAVE_LINK|LH_FLAG_HIDDEN|LH_FLAG_NOSOURCE );
-    allcolor_->setLink("=/plugin/backlight/all/set");
+    allcolor_->setSubscribePath("/plugin/backlight/all/set");
     connect( allcolor_, SIGNAL(changed()), this, SLOT(setAllColor()) );
 
     LH_HidDevice::subscribe(this, SLOT(onlineChanged(LH_HidDevice*,bool)));

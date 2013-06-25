@@ -50,6 +50,10 @@ LH_QtSetupItem::LH_QtSetupItem( LH_QtObject *parent, QString name, lh_setup_type
 
 void LH_QtSetupItem::setName(QString s)
 {
+    if (s.isEmpty() || s != s.trimmed())
+        qCritical( "<b>%s</b>: invalid setup item name: <tt>\"%s\"</tt>",
+                  parent() ? parent()->metaObject()->className() : qPrintable(objectName()),
+                  qPrintable(s));
     setObjectName(s);
     name_array_ = s.toUtf8();
     item_.name = name_array_.constData();

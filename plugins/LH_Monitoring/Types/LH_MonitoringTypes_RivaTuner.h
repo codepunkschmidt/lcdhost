@@ -37,7 +37,7 @@ struct RTHM_SHARED_MEMORY_ENTRY
             //data source name (e.g. "Core temperature")
     char	czDim[16];
             //data source dimansion (e.g. QLatin1Literal("\260C"))
-    qreal	data;
+    float	data;
             //last polled data in raw format (e.g. 50\260C)
             //(this field can be set to FLT_MAX if data is not available)
 
@@ -45,12 +45,12 @@ struct RTHM_SHARED_MEMORY_ENTRY
             //display different values on the graph (e.g. raw core VID values can
             //be translated to mapped core voltages).
             //In this case you may use dataTransformed field to get transformed value
-    qreal	offset;
+    float	offset;
             //user specified data offset (e.g. +10\260C temerature compensation)
 
             //take a note that this value is not automatically added to transformed
             //data, it is up to you to add offset to it
-    qreal	dataTransformed;
+    float	dataTransformed;
             //last polled data in transformed format
     DWORD	flags;
             //bitmask, containing combination of RTHM_SHARED_MEMORY_ENTRY_FLAG_... flags

@@ -56,15 +56,15 @@ void LH_MonitoringSource_CoreTemp::updateFromArray(QString type, QString name, i
     if (count == 0)
         return;
     for(int i = 0; i<count; i++)
-        updateValue(type, "", QString("%1 #%2").arg(name).arg(i+1), (qreal)valueSet[i], def);
+        updateValue(type, "", QString("%1 #%2").arg(name).arg(i+1), valueSet[i], def);
     updateAggregates(type, "");
 }
 
-void LH_MonitoringSource_CoreTemp::updateFromArray(QString type, QString name, int count, const qreal *valueSet, SensorDefinition def)
+void LH_MonitoringSource_CoreTemp::updateFromArray(QString type, QString name, int count, const float *valueSet, SensorDefinition def)
 {
     if (count == 0)
         return;
     for(int i = 0; i<count; i++)
-        updateValue(type, "", QString("%1 #%2").arg(name).arg(i+1), (qreal)valueSet[i], def);
+        updateValue(type, "", QString("%1 #%2").arg(name).arg(i+1), valueSet[i], def);
     updateAggregates(type, "");
 }

@@ -53,13 +53,13 @@ struct MAHM_SHARED_MEMORY_ENTRY
        char	szRecommendedFormat[MAX_PATH];
                //recommended output format (e.g. "%.3f" for "Core voltage" data source)
 
-       qreal	data;
+       float	data;
                //last polled data (e.g. 500MHz)
                //(this field can be set to FLT_MAX if data is not available at
                //the moment)
-       qreal	minLimit;
+       float	minLimit;
                //minimum limit for graphs (e.g. 0MHz)
-       qreal	maxLimit;
+       float	maxLimit;
                //maximum limit for graphs (e.g. 2000MHz)
 
        DWORD	dwFlags;

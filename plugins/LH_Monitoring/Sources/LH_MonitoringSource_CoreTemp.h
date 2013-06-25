@@ -6,7 +6,7 @@
 class LH_MonitoringSource_CoreTemp : public LH_MonitoringSource
 {
     void updateFromArray(QString type, QString name, int count, const uint *valueSet, SensorDefinition def);
-    void updateFromArray(QString type, QString name, int count, const qreal *valueSet, SensorDefinition def);
+    void updateFromArray(QString type, QString name, int count, const float *valueSet, SensorDefinition def);
 
     SensorDefinition temp_;
     SensorDefinition toTj_;

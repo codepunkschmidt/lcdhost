@@ -11,12 +11,12 @@ struct CTMemory
         unsigned int	uiTjMax[128];
         unsigned int	uiCoreCnt;
         unsigned int	uiCPUCnt;
-        qreal		fTemp[256];
-        qreal		fVID;
-        qreal		fCPUSpeed;
-        qreal		fFSBSpeed;
-        qreal		fMultiplier;
-        char		sCPUName[100];
+        float           fTemp[256];
+        float           fVID;
+        float           fCPUSpeed;
+        float           fFSBSpeed;
+        float           fMultiplier;
+        char            sCPUName[100];
         unsigned char	ucFahrenheit;
         unsigned char	ucDeltaToTjMax;
 };

@@ -139,8 +139,8 @@ const char *LH_QtPlugin_Weather::userInit()
     connectionId_2Day = NULL;
     connectionId_5Day = NULL;
 
-    setup_json_weather_ = new LH_Qt_QString(this, "JSON Data", "", LH_FLAG_NOSINK | LH_FLAG_HIDDEN);
-    setup_json_weather_->setLink("@/JSON_Weather_Data");
+    setup_json_weather_ = new LH_Qt_QString(this, "JSON Data", QString(), LH_FLAG_NOSAVE_DATA | LH_FLAG_NOSAVE_LINK | LH_FLAG_NOSINK | LH_FLAG_HIDDEN);
+    setup_json_weather_->setPublishPath("/JSON_Weather_Data");
     setup_json_weather_->setMimeType("application/x-weather");
 
     connect(&nam2Day,  SIGNAL(finished(QNetworkReply*)), this, SLOT(finished2Day(QNetworkReply*)));

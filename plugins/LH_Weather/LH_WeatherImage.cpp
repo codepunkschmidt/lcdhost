@@ -86,8 +86,8 @@ LH_WeatherImage::LH_WeatherImage()
     weatherCode = "3200";
     isNight = false;
 
-    setup_json_weather_ = new LH_Qt_QString(this, "JSON Data", "", LH_FLAG_NOSOURCE | LH_FLAG_HIDDEN);
-    setup_json_weather_->setLink("=/JSON_Weather_Data");
+    setup_json_weather_ = new LH_Qt_QString(this, "JSON Data", "", LH_FLAG_NOSAVE_DATA | LH_FLAG_NOSAVE_LINK | LH_FLAG_NOSOURCE | LH_FLAG_HIDDEN);
+    setup_json_weather_->setSubscribePath("/JSON_Weather_Data");
     setup_json_weather_->setMimeType("application/x-weather");
     connect( setup_json_weather_, SIGNAL(changed()), this, SLOT(updateImage()) );
 }

@@ -20,7 +20,7 @@ public:
         setup_text_->setFlag(LH_FLAG_NOSAVE_DATA, true);
         setup_text_->setFlag(LH_FLAG_NOSAVE_LINK, true);
         setText("");
-        setup_text_->setLink("=/3rdParty/TeamSpeak 3/Nickname");
+        setup_text_->setSubscribePath("/3rdParty/TeamSpeak 3/Nickname");
         //setup_text_->refreshData();
         return 0;
     }

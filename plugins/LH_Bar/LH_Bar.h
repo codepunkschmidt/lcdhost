@@ -82,7 +82,7 @@ protected:
     LH_Qt_int *setup_discrete_count_;
 
 public:
-    LH_Bar();
+    LH_Bar(LH_QtObject *parent = 0);
 
     QImage *render_qimage( int w, int h );
 

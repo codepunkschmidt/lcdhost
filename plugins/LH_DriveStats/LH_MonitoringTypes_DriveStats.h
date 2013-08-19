@@ -215,11 +215,11 @@ class DrivesList: public QHash<QString,DriveInfo>
     QStringList getDrives()
     {
         QStringList result(QLatin1String("C"));
-        DWORD len = GetLogicalDriveStringsW(0, 0) + 1;
-        if(TCHAR *buf = new TCHAR[len])
+        DWORD maxlen = GetLogicalDriveStringsA(0, 0) + 1;
+        if(char *buf = new char[maxlen])
         {
-            if(GetLogicalDriveStrings(len, buf) <= len)
-                result = QString::fromWCharArray(buf, len).split(QChar(0), QString::SkipEmptyParts);
+            DWORD len = GetLogicalDriveStringsA(maxlen, buf);
+            result = QString::fromLocal8Bit(buf, len).split(QChar(0), QString::SkipEmptyParts);
             delete[] buf;
         }
         return result;

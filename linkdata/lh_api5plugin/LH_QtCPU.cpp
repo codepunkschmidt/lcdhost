@@ -78,17 +78,16 @@ int LH_QtCPU::notify(int n, void *p)
     return LH_NOTE_CPU;
 }
 
-int LH_QtCPU::load( lh_cpudata *from, lh_cpudata *to )
+int LH_QtCPU::load(const lh_cpudata* from, const lh_cpudata* to)
 {
-    int retv;
-    if( to->total <= from->total ) return 0;
-    if( to->system < from->system ) return 0;
-    if( to->user < from->user ) return 0;
-    Q_ASSERT( from->total < to->total );
-    retv = (((from->system - to->system)+(from->user - to->user)) * 10000) / (from->total - to->total);
-    if( retv < 0 ) retv = 0;
-    if( retv > 10000 ) retv = 10000;
-    return retv;
+    if (!from || !to || !to->when || !from->when || to->when == from->when)
+        return 0;
+    if (from->when > to->when)
+        qSwap(from, to);
+    qreal idle_delta = (qreal)(to->idle - from->idle);
+    qreal work_delta = (qreal)(to->work - from->work);
+    qreal load = 1.0 - idle_delta / (idle_delta + work_delta);
+    return (int) (10000.0 * load);
 }
 
 int LH_QtCPU::coreload(int n)

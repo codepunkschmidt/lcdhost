@@ -54,7 +54,7 @@ public:
 
     virtual void setup_resize( size_t needed )
     {
-        array_.resize(needed);
+        array_.resize((int) needed);
         item_.param.size = array_.capacity();
         item_.data.s = array_.data();
         return;

@@ -45,7 +45,7 @@ class LH_API5PLUGIN_EXPORT LH_QtCPU
     LH_QtObject *parent_;
     QQueue<lh_cpudata*> load_;
 
-    int load( lh_cpudata *from, lh_cpudata *to );
+    int load(const lh_cpudata* from, const lh_cpudata* to);
 
 protected:
     LH_Qt_QSlider *setup_smoothing_;

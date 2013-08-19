@@ -222,8 +222,9 @@ typedef void (*lh_callback_t)( int cb_id, const void *obj, lh_callbackcode code,
 typedef struct lh_signature_t
 {
     char marker[16]; /* unique series to allow finding the sig */
-    char sign[256]; /* 2048-bit RSA signature of the shared plugin's SHA-1 digest, PKCS1 padded */
-    char url[128]; /* URL to the public key */
+    char sha1[20]; /* SHA1 of the plugin binary excluding the lh_signature structure */
+    /* char sign[256]; */ /* 2048-bit RSA signature of the shared plugin's SHA-1 digest, PKCS1 padded */
+    /* char url[128]; */ /* URL to the public key */
     int size; /* sizeof(lh_signature) */
 } lh_signature;
 
@@ -231,7 +232,7 @@ typedef struct lh_signature_t
 
 /* Declare a signature area - don't mess with the constants, */
 /* they're there so that SignPlugin can find the right spot. */
-#define LH_SIGNATURE() lh_signature _lh_plugin_signature = { LH_SIGNATURE_MARKER, {0}, {0}, sizeof(lh_signature) }
+#define LH_SIGNATURE() lh_signature _lh_plugin_signature = { LH_SIGNATURE_MARKER, {0}, sizeof(lh_signature) }
 
 typedef enum lh_setup_type_t
 {
@@ -580,8 +581,8 @@ extern "C" {
 #if 0
 lh_blob *lh_binaryfile_to_blob( const char *filename ); /* Caller must free() the blob */
 void lh_blob_to_headerfile( lh_blob *blob, const char *filename, const char *varname );
-#endif
 int lh_cpuload( lh_cpudata *from, lh_cpudata *to ); /* Returns average load between those times as permille */
+#endif
 
 #ifdef __cplusplus
 }

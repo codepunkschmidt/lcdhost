@@ -53,9 +53,14 @@ typedef unsigned long long quint64; /* 64 bit unsigned */
 
 typedef struct lh_cpudata_t
 {
+    qint64 when;        /**< millisecond when this data was captured */
+    qint64 idle;
+    qint64 work;
+#if 0
     qint64 system;      /**< time spent in system processes (system wide cumulative, no unit specified) */
     qint64 user;        /**< time spent in user processes (system wide cumulative, no unit specified) */
     qint64 total;       /**< time passed (system wide cumulative, no unit specified) */
+#endif
 } lh_cpudata;
 
 typedef struct lh_netdata_t

@@ -21,11 +21,11 @@ LH_MonitoringObject::LH_MonitoringObject(LH_QtObject *object, monitoringDataMode
     setup_value_valid_ = new LH_Qt_bool(object, "Value (Valid)", false, LH_FLAG_LINKOBJECT_VISIBILITY | LH_FLAG_NOSAVE_LINK | LH_FLAG_NOSAVE_DATA);
     setup_value_valid_->setOrder(-3);
     setup_monitoring_options_ = new LH_Qt_QString(object,"Monitoring Options", "", LH_FLAG_LINKOBJECT_VISIBILITY | LH_FLAG_NOSAVE_LINK | LH_FLAG_NOSAVE_DATA | LH_FLAG_NOSOURCE);
-    setup_monitoring_options_->setSubscribePath(dataSources->getOptionsLinkPath());
+    setup_monitoring_options_->setSubscribePath(getDataSources()->getOptionsLinkPath());
     setup_monitoring_options_->setOrder(-3);
 
 
-    setup_monitoring_app_ = new LH_Qt_QStringList(object, "Application", dataSources->getApplications(), LH_FLAG_READONLY | LH_FLAG_NOSAVE_LINK | LH_FLAG_NOSAVE_DATA);
+    setup_monitoring_app_ = new LH_Qt_QStringList(object, "Application", getDataSources()->getApplications(), LH_FLAG_READONLY | LH_FLAG_NOSAVE_LINK | LH_FLAG_NOSAVE_DATA);
 
 //    setup_monitoring_app_->setHidden(setup_monitoring_app_->list().count()==1);
 
@@ -109,7 +109,7 @@ void LH_MonitoringObject::connectChangeEvents()
 
 void LH_MonitoringObject::refreshMonitoringOptions()
 {
-    setup_monitoring_app_->setList(dataSources->getApplications());
+    setup_monitoring_app_->setList(getDataSources()->getApplications());
     setAppSelection();
 }
 
@@ -453,7 +453,7 @@ QString LH_MonitoringObject::updateLinkPaths()
 
 LH_MonitoringSource* LH_MonitoringObject::selectedMonitoringApp(bool *ok)
 {
-    LH_MonitoringSource* source = dataSources->source(setup_monitoring_app_->valueText());
+    LH_MonitoringSource* source = getDataSources()->source(setup_monitoring_app_->valueText());
     if(ok) *ok = (source != NULL);
     return source;
 }

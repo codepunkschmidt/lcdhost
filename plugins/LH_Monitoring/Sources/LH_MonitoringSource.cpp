@@ -441,7 +441,7 @@ void LH_MonitoringSource::afterUpdate()
     if (optionsData_ != currentOptionsData)
     {
         optionsData_ = currentOptionsData;
-        dataSources->refreshMonitoringOptions();
+        getDataSources()->refreshMonitoringOptions();
     }
     updateValueItem(getLinkPath("","","")+"/dataAvailable", this->dataAvailable(), QMetaType::Bool, "private/bool");
 }

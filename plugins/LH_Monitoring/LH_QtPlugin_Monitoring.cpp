@@ -4,19 +4,19 @@ LH_PLUGIN(LH_QtPlugin_Monitoring)
 
 const char *LH_QtPlugin_Monitoring::userInit()
 {
-    dataSources = new LH_MonitoringSources(this);
-    dataSources->add(new LH_MonitoringSource_Aida64(this));
-    dataSources->add(new LH_MonitoringSource_Afterburner(this));
-    dataSources->add(new LH_MonitoringSource_ATITrayTools(this));
-    dataSources->add(new LH_MonitoringSource_CoreTemp(this));
-    dataSources->add(new LH_MonitoringSource_Fraps(this));
-    dataSources->add(new LH_MonitoringSource_GPUZ(this));
-    dataSources->add(new LH_MonitoringSource_HWiNFO(this));
-    dataSources->add(new LH_MonitoringSource_HWMonitor(this));
-    dataSources->add(new LH_MonitoringSource_Logitech(this));
-    dataSources->add(new LH_MonitoringSource_RivaTuner(this));
-    dataSources->add(new LH_MonitoringSource_SpeedFan(this));
-    dataSources->userInit();
+    // dataSources = new LH_MonitoringSources(this);
+    dataSources()->add(new LH_MonitoringSource_Aida64(this));
+    dataSources()->add(new LH_MonitoringSource_Afterburner(this));
+    dataSources()->add(new LH_MonitoringSource_ATITrayTools(this));
+    dataSources()->add(new LH_MonitoringSource_CoreTemp(this));
+    dataSources()->add(new LH_MonitoringSource_Fraps(this));
+    dataSources()->add(new LH_MonitoringSource_GPUZ(this));
+    dataSources()->add(new LH_MonitoringSource_HWiNFO(this));
+    dataSources()->add(new LH_MonitoringSource_HWMonitor(this));
+    dataSources()->add(new LH_MonitoringSource_Logitech(this));
+    dataSources()->add(new LH_MonitoringSource_RivaTuner(this));
+    dataSources()->add(new LH_MonitoringSource_SpeedFan(this));
+    // dataSources->userInit();
 
     return LH_QtMonitoringPlugin::userInit();
 }

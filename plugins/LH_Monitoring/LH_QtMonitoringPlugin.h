@@ -38,7 +38,13 @@ class LH_QtMonitoringPlugin : public LH_QtPlugin
 {   
     Q_OBJECT
 
+    LH_MonitoringSources* m_sources;
+
 public:
+    explicit LH_QtMonitoringPlugin()
+        : LH_QtPlugin()
+        , m_sources(new LH_MonitoringSources(this))
+    {}
     QList<LH_Qt_bool*> enabled_;
     QList<LH_Qt_QSlider*> rates_;
     QList<LH_Qt_QString*> rate_helpers_;
@@ -52,12 +58,13 @@ public:
 
     virtual const char *userInit();
 
-    virtual void userTerm() { dataSources->userTerm(); }
+    LH_MonitoringSources* dataSources() const { return m_sources; }
+
+    virtual void userTerm() { dataSources()->userTerm(); }
 
     virtual int notify( int /* code */, void * /* param */ )
     {
-        if(dataSources)
-            dataSources->rebuild();
+        dataSources()->rebuild();
         return LH_NOTE_SECOND;
     }
 

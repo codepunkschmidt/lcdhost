@@ -16,7 +16,7 @@ protected:
     LH_Qt_QString *setup_minmax_hr_;
 
 public:
-    LH_MonitoringBar();
+    LH_MonitoringBar(LH_QtObject *parent = 0);
     const char *userInit();
     static lh_class *classInfo();
 

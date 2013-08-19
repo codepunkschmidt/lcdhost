@@ -1,6 +1,13 @@
 #include "LH_MonitoringSources.h"
+#include "../LH_QtMonitoringPlugin.h"
 
-LH_MonitoringSources* dataSources;
+LH_MonitoringSources* getDataSources()
+{
+    if (LH_QtMonitoringPlugin* plugin = qobject_cast<LH_QtMonitoringPlugin*>(lh_plugin())) {
+        return plugin->dataSources();
+    }
+    return 0;
+}
 
 LH_MonitoringSources::LH_MonitoringSources(LH_QtObject *parent): LH_QtObject(parent), sources_(), setup_monitoring_options_(0)
 {   

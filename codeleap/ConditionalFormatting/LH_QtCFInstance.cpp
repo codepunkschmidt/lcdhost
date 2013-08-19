@@ -40,8 +40,8 @@
 
 #include <limits>
 
-LH_QtCFInstance::LH_QtCFInstance() :
-    LH_QtInstance(),
+LH_QtCFInstance::LH_QtCFInstance(LH_QtObject *parent) :
+    LH_QtInstance(parent),
     cf_initialized_(false),
     cf_applying_rules_(false),
     cf_rule_editing_(None),

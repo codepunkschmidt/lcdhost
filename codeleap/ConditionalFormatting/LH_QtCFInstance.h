@@ -133,7 +133,7 @@ public:
     LH_Qt_int         *setup_cf_newValue_Int_;
     LH_Qt_float       *setup_cf_newValue_Float_;
 
-    LH_QtCFInstance();
+    LH_QtCFInstance(LH_QtObject* parent = 0);
     int notify(int n,void* p);
 
     cf_source_list sources() { return sources_; }

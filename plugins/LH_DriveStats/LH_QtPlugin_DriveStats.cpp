@@ -30,9 +30,9 @@ LH_PLUGIN(LH_QtPlugin_DriveStats)
 
 const char *LH_QtPlugin_DriveStats::userInit()
 {
-    dataSources = new LH_MonitoringSources(this);
-    dataSources->add(new LH_MonitoringSource_DriveStats(this));
-    dataSources->userInit();
+    // dataSources = new LH_MonitoringSources(this);
+    dataSources()->add(new LH_MonitoringSource_DriveStats(this));
+    // dataSources()->userInit();
     return LH_QtMonitoringPlugin::userInit();
 }
 

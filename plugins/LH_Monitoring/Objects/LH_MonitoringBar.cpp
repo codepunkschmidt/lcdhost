@@ -44,7 +44,9 @@ lh_class *LH_MonitoringBar::classInfo()
     return &classInfo;
 }
 
-LH_MonitoringBar::LH_MonitoringBar() : LH_Bar(), LH_MonitoringObject(this, mdmAll, true, false)
+LH_MonitoringBar::LH_MonitoringBar(LH_QtObject *parent)
+    : LH_Bar(parent)
+    , LH_MonitoringObject(this, mdmAll, true, false)
 {
     monitoringInit(SLOT(refreshMonitoringOptions()),
                    SLOT(connectChangeEvents()),

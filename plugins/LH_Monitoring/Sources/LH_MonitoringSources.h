@@ -44,7 +44,6 @@ public slots:
 
 };
 
-
-extern LH_MonitoringSources* dataSources;
+LH_MonitoringSources* getDataSources();
 
 #endif // LH_MONITORINGSOURCES_H

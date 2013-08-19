@@ -2,6 +2,7 @@
 
 const char *LH_QtMonitoringPlugin::userInit()
 {
+    dataSources()->userInit();
     QTimer::singleShot(5000, this, SLOT(connectEnabledStateChangeEvents()));
     return 0;
 }
@@ -35,7 +36,7 @@ void LH_QtMonitoringPlugin::enabledStateChanged()
         rate_helpers_[i]->setVisible(enabled_[i]->value());
         rates_[i]->setVisible(enabled_[i]->value());
     }
-    dataSources->refreshMonitoringOptions();
+    dataSources()->refreshMonitoringOptions();
 }
 
 void LH_QtMonitoringPlugin::enabledFreqChanged()

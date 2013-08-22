@@ -98,7 +98,7 @@ public:
         Tera
     } NumberMode;
 
-    LH_Text();
+    LH_Text(LH_QtObject* parent = 0);
     ~LH_Text();
 
     int polling();

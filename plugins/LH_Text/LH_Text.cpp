@@ -59,9 +59,9 @@ static inline uint PREMUL(uint x) {
     return x;
 }
 
-LH_Text::LH_Text() :
-    LH_QtCFInstance(),
-    scrollposx_(0),
+LH_Text::LH_Text(LH_QtObject *parent)
+    : LH_QtCFInstance(parent)
+    , scrollposx_(0),
     scrollposy_(0),
     richtext_(false),
     setup_text_(0),

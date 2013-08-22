@@ -13,6 +13,7 @@ class LH_RSSText : public LH_Text
 public:
     LH_RSSText();
 
+    const char *userInit();
     int notify(int code,void* param);
     QImage *render_qimage( int w, int h );
 

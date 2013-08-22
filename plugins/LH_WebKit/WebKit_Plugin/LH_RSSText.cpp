@@ -28,12 +28,12 @@ lh_class *LH_RSSText::classInfo()
     return &classInfo;
 }
 
-LH_RSSText::LH_RSSText() : LH_Text(), rss_(this)
+LH_RSSText::LH_RSSText()
+    : LH_Text()
+    , rss_(this)
 {
-
     connect( &rss_, SIGNAL(changed()), this, SLOT(setRssItem()) );
     connect( &rss_, SIGNAL(begin()), this, SLOT(beginFetch()) );
-
     setup_horizontal_->setFlag( LH_FLAG_HIDDEN, true );
     setup_vertical_->setFlag( LH_FLAG_HIDDEN, true );
     setup_scrollrate_->setFlag( LH_FLAG_HIDDEN, true );
@@ -42,8 +42,13 @@ LH_RSSText::LH_RSSText() : LH_Text(), rss_(this)
     setup_text_->setFlag( LH_FLAG_NOSAVE_DATA, true );
     setup_text_->setFlag( LH_FLAG_NOSAVE_LINK, true );
     setup_text_->setFlag( LH_FLAG_READONLY, true );
+}
 
+const char *LH_RSSText::userInit()
+{
+    if(const char *err = LH_Text::userInit()) return err;
     setRssItem();
+    return 0;
 }
 
 int LH_RSSText::notify(int code,void* param)

@@ -356,8 +356,8 @@ void LH_Bar::changeDiscrete()
 
 void LH_Bar::changeFile()
 {
-    bar_img_ = QImage(setup_file_->value().absoluteFilePath());
-    bar_img_bg_ = QImage(setup_file_bg_->value().absoluteFilePath());
+    bar_img_ = setup_file_->value().isFile() ? QImage(setup_file_->value().absoluteFilePath()) : QImage();
+    bar_img_bg_ = setup_file_bg_->value().isFile() ? QImage(setup_file_bg_->value().absoluteFilePath()) : QImage();
 
     setup_file_endMask_->setFlag(LH_FLAG_HIDDEN, (setup_type_->value()!=2 || setup_masking_->value()!=2));
 
@@ -374,6 +374,6 @@ void LH_Bar::changeFile()
         maskFile = setup_file_endMask_->value().absoluteFilePath();
         break;
     }
-    bar_img_endMask_ = QImage(maskFile);
+    bar_img_endMask_ = QFile::exists(maskFile) ? QImage(maskFile) : QImage();
 }
 

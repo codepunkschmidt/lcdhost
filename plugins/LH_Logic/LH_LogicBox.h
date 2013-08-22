@@ -11,11 +11,10 @@ class LH_LogicBox : public LH_QtCFInstance
 protected:
     LH_Qt_QString *setup_input1_;
     LH_Qt_QString *setup_input2_;
-
     LH_Qt_QString *setup_output_;
 
 public:
-    LH_LogicBox();
+    LH_LogicBox(LH_QtObject* parent = 0);
 
     const char *userInit();
 

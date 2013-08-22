@@ -18,14 +18,19 @@ lh_class *LH_LogicBox::classInfo()
     return &classInfo;
 }
 
-LH_LogicBox::LH_LogicBox()
+LH_LogicBox::LH_LogicBox(LH_QtObject* parent)
+    : LH_QtCFInstance(parent)
+    , setup_input1_(0)
+    , setup_input2_(0)
+    , setup_output_(0)
 {
-    hide();
 }
 
 const char *LH_LogicBox::userInit()
 {
     if( const char *err = LH_QtCFInstance::userInit() ) return err;
+
+    hide();
 
     setup_input1_ = new LH_Qt_QString(this,"Input 1","", LH_FLAG_NOSOURCE | LH_FLAG_NOSAVE_DATA);
     setup_input1_->setHelp("<p>This field is one of the inputs to the Logic Box.</p> <p>Link this item to another item's value, then you can perform a logic operation using the rules to affect the \"Output\" field.</p>");

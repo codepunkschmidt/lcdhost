@@ -52,6 +52,7 @@ protected:
 
 public:
     LH_TextFile();
+    const char* userInit();
 
     int notify( int, void* );
     void checkFile();

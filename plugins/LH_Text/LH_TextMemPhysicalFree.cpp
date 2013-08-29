@@ -39,9 +39,8 @@
 class LH_TextMemPhysicalFree : public LH_TextNumber
 {
 public:
-    LH_TextMemPhysicalFree() : LH_TextNumber()
+    LH_TextMemPhysicalFree() : LH_TextNumber(true)
     {
-        setBytes(true);
     }
 
     static lh_class *classInfo()

@@ -75,6 +75,17 @@ LH_Text::LH_Text(LH_QtObject *parent)
     setup_scrollstep_(0),
     setup_scrollgap_(0)
 {
+    return;
+}
+
+LH_Text::~LH_Text()
+{
+    return;
+}
+
+const char *LH_Text::userInit()
+{
+    if (const char* msg = LH_QtCFInstance::userInit()) return msg;
     setup_text_ = new LH_Qt_QString( this, tr("Text"), QString(), LH_FLAG_FOCUS|LH_FLAG_AUTORENDER );
     setup_text_->setOrder(-2);
     setup_text_->setHelp( "<p>The displayed text. Note that this supports "
@@ -142,13 +153,7 @@ LH_Text::LH_Text(LH_QtObject *parent)
     add_cf_target(setup_pencolor_);
     add_cf_target(setup_bgcolor_);
     add_cf_target(setup_font_);
-
-    return;
-}
-
-LH_Text::~LH_Text()
-{
-    return;
+    return 0;
 }
 
 void LH_Text::setRenderHints( QPainter& p )

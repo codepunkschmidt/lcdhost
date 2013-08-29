@@ -39,10 +39,7 @@
 class LH_TextMemVirtualUsed : public LH_TextNumber
 {
 public:
-    LH_TextMemVirtualUsed()
-    {
-        setBytes(true);
-    }
+    LH_TextMemVirtualUsed() : LH_TextNumber(true) {}
 
     static lh_class *classInfo()
     {

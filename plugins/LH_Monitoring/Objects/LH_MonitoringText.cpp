@@ -47,7 +47,7 @@ lh_class *LH_MonitoringText::classInfo()
         lh_object_calltable_NULL,
         lh_instance_calltable_NULL
     };
-
+#if 0
     if( classInfo.width == -1 )
     {
         QFont font;
@@ -55,12 +55,24 @@ lh_class *LH_MonitoringText::classInfo()
         classInfo.height = fm.height();
         classInfo.width = fm.width("100%");
     }
-
+#endif
     return &classInfo;
 }
 
-LH_MonitoringText::LH_MonitoringText() : LH_Text(), LH_MonitoringObject(this, mdmAll, false, true)
+LH_MonitoringText::LH_MonitoringText()
+    : LH_Text()
+    , LH_MonitoringObject(this, mdmAll, false, true)
+    , setup_value_round_(0)
+    , setup_append_units_(0)
+    , setup_pre_text_(0)
+    , setup_post_text_(0)
 {
+}
+
+const char *LH_MonitoringText::userInit()
+{
+    if( const char *err = LH_Text::userInit() ) return err;
+
     monitoringInit(SLOT(refreshMonitoringOptions()),
                    SLOT(connectChangeEvents()),
                    SLOT(changeAppSelection()),
@@ -70,11 +82,6 @@ LH_MonitoringText::LH_MonitoringText() : LH_Text(), LH_MonitoringObject(this, md
                    SLOT(dataValidityChanged()),
                    SLOT(updateText())
                    );
-}
-
-const char *LH_MonitoringText::userInit()
-{
-    if( const char *err = LH_Text::userInit() ) return err;
 
     this->LH_Text::connect( value_str_obj(), SIGNAL(changed()), this, SLOT(updateText()) );
     this->LH_Text::connect( value_str_obj(), SIGNAL(set()), this, SLOT(updateText()) );

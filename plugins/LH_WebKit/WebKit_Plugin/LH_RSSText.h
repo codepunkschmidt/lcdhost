@@ -8,7 +8,7 @@ class LH_RSSText : public LH_Text
 {
     Q_OBJECT
 
-    LH_RSSInterface rss_;
+    LH_RSSInterface* rss_;
 
 public:
     LH_RSSText();

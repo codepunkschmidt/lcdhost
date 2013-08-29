@@ -43,12 +43,13 @@
 class LH_TextCPULoad : public LH_Text
 {
 public:
-    LH_TextCPULoad() : LH_Text()
+    const char *userInit()
     {
+        if (const char* msg = LH_Text::userInit()) return msg;
         setup_text_->setName( "Average CPU load" );
         setup_text_->setFlag( LH_FLAG_READONLY, true );
         setText( "?%" );
-        return;
+        return 0;
     }
 
     static lh_class *classInfo()
@@ -63,7 +64,7 @@ public:
             lh_object_calltable_NULL,
             lh_instance_calltable_NULL
         };
-
+#if 0
         if( classInfo.width == -1 )
         {
             QFont font;
@@ -71,7 +72,7 @@ public:
             classInfo.height = fm.height();
             classInfo.width = fm.width("100%");
         }
-
+#endif
         return &classInfo;
     }
 

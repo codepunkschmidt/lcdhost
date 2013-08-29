@@ -47,8 +47,16 @@ protected:
     LH_Qt_QString *setup_format_;
 
 public:
-    LH_TextDate() : LH_Text()
+    LH_TextDate()
+        : LH_Text()
+        , setup_format_(0)
     {
+        return;
+    }
+
+    const char *userInit()
+    {
+        if (const char* msg = LH_Text::userInit()) return msg;
         setup_format_ = new LH_Qt_QString(this,"<a href=\"http://doc.trolltech.com/4.6/qdate.html#toString\">Format</a>","yyyy-MM-dd dddd");
         setup_format_->setHelp("<p>Format to use. Common formats include:</p>"
                                "<ul>"
@@ -58,7 +66,7 @@ public:
                                "</ul>");
         setup_text_->setName("Current date");
         setup_text_->setFlag(LH_FLAG_READONLY,true);
-        return;
+        return 0;
     }
 
     /**
@@ -96,7 +104,7 @@ public:
             lh_object_calltable_NULL,
             lh_instance_calltable_NULL
         };
-
+#if 0
         if( classInfo.width == -1 )
         {
             QFont font;
@@ -104,7 +112,7 @@ public:
             classInfo.height = fm.height();
             classInfo.width = fm.width("9999-99-99 weekday");
         }
-
+#endif
         return &classInfo;
     }
 };

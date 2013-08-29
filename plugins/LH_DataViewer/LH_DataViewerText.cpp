@@ -44,7 +44,7 @@ lh_class *LH_DataViewerText::classInfo()
         lh_object_calltable_NULL,
         lh_instance_calltable_NULL
     };
-
+#if 0
     if( classInfo.width == -1 )
     {
         QFont font;
@@ -52,7 +52,7 @@ lh_class *LH_DataViewerText::classInfo()
         classInfo.height = fm.height();
         classInfo.width = fm.width("100%");
     }
-
+#endif
     return &classInfo;
 }
 

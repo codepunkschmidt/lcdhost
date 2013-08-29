@@ -39,9 +39,8 @@
 class LH_TextMemPhysicalTotal : public LH_TextNumber
 {
 public:
-    LH_TextMemPhysicalTotal() : LH_TextNumber()
+    LH_TextMemPhysicalTotal() : LH_TextNumber(true)
     {
-        setBytes(true);
     }
 
     static lh_class *classInfo()

@@ -39,10 +39,7 @@
 class LH_TextMemVirtualTotal : public LH_TextNumber
 {
 public:
-    LH_TextMemVirtualTotal()
-    {
-        setBytes(true);
-    }
+    LH_TextMemVirtualTotal() : LH_TextNumber(true) {}
 
     static lh_class *classInfo()
     {

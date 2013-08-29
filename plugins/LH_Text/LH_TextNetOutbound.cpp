@@ -39,9 +39,11 @@
 class LH_TextNetOutbound : public LH_TextNumber
 {
 public:
-    LH_TextNetOutbound(): LH_TextNumber()
+    const char *userInit()
     {
+        if (const char* msg = LH_TextNumber::userInit()) return msg;
         setup_bits_->setFlag( LH_FLAG_HIDDEN, false );
+        return 0;
     }
 
     static lh_class *classInfo()

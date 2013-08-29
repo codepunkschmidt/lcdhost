@@ -39,10 +39,7 @@
 class LH_TextMemPhysicalUsed : public LH_TextNumber
 {
 public:
-    LH_TextMemPhysicalUsed()
-    {
-        setBytes(true);
-    }
+    LH_TextMemPhysicalUsed() : LH_TextNumber(true) {}
 
     static lh_class *classInfo()
     {

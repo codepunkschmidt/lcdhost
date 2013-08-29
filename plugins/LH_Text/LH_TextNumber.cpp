@@ -36,10 +36,21 @@
 
 #include "LH_TextNumber.h"
 
-LH_TextNumber::LH_TextNumber() : LH_Text()
+LH_TextNumber::LH_TextNumber(bool bytes, LH_QtObject *parent)
+    : LH_Text(parent)
+    , value_(0)
+    , max_(0)
+    , bytes_(bytes)
+    , setup_showsuffix_(0)
+    , setup_showunits_(0)
+    , setup_bits_(0)
+    , setup_scale_(0)
 {
-    value_ = max_ = 0.0;
-    bytes_ = false;
+}
+
+const char *LH_TextNumber::userInit()
+{
+    if (const char* msg = LH_Text::userInit()) return msg;
     setup_text_->setFlag( LH_FLAG_READONLY, true );
     setup_bits_ = new LH_Qt_bool(this,"Bits instead of bytes",false,LH_FLAG_AUTORENDER|LH_FLAG_FIRST|LH_FLAG_HIDDEN);
     setup_bits_->setHelp("<p>If this is selected, the value will be shown in bits rather than bytes.</p>");
@@ -48,6 +59,7 @@ LH_TextNumber::LH_TextNumber() : LH_Text()
     setup_scale_ = new LH_Qt_QStringList(this,"Scale",
                         QStringList("Automatic")<<"Percentage"<<"No scaling"<<"Kilo"<<"Mega"<<"Giga"<<"Tera",
                         LH_FLAG_AUTORENDER|LH_FLAG_FIRST );
+    return 0;
 }
 
 bool LH_TextNumber::makeText()

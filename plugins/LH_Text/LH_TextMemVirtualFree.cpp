@@ -39,10 +39,7 @@
 class LH_TextMemVirtualFree : public LH_TextNumber
 {
 public:
-    LH_TextMemVirtualFree()
-    {
-        setBytes(true);
-    }
+    LH_TextMemVirtualFree() : LH_TextNumber(true) {}
 
     static lh_class *classInfo()
     {

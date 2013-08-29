@@ -57,7 +57,7 @@ lh_class *LH_NowPlayingEmulator::classInfo()
         lh_object_calltable_NULL,
         lh_instance_calltable_NULL
     };
-
+#if 0
     if( classInfo.width == -1 )
     {
         QFont font;
@@ -65,7 +65,7 @@ lh_class *LH_NowPlayingEmulator::classInfo()
         classInfo.height = fm.height();
         classInfo.width = fm.width("100%");
     }
-
+#endif
     return &classInfo;
 #else
     return NULL;
@@ -73,7 +73,19 @@ lh_class *LH_NowPlayingEmulator::classInfo()
 }
 
 LH_NowPlayingEmulator::LH_NowPlayingEmulator()
+    : LH_Text()
+    , setup_player_(0)
+    , setup_enabled_(0)
+    , setup_artist_(0)
+    , setup_track_(0)
+    , setup_album_(0)
 {
+}
+
+const char *LH_NowPlayingEmulator::userInit()
+{
+    if (const char* msg = LH_Text::userInit()) return msg;
+
     setup_text_->setFlag(LH_FLAG_HIDDEN, true);
     setup_text_->setFlag(LH_FLAG_NOSAVE_DATA, true);
     setup_text_->setFlag(LH_FLAG_NOSAVE_LINK, true);
@@ -92,6 +104,7 @@ LH_NowPlayingEmulator::LH_NowPlayingEmulator()
     setup_artist_  = new LH_Qt_QString(this,"Artist Name","Artist");
     setup_track_   = new LH_Qt_QString(this,"Track Name","Track");
     setup_album_   = new LH_Qt_QString(this,"Album Name","Album");
+    return 0;
 }
 
 LH_NowPlayingEmulator::~LH_NowPlayingEmulator()

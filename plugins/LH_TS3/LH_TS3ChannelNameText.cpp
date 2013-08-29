@@ -37,7 +37,7 @@ public:
             lh_object_calltable_NULL,
             lh_instance_calltable_NULL
         };
-
+#if 0
         if( classInfo.width == -1 )
         {
             QFont font;
@@ -45,7 +45,7 @@ public:
             classInfo.height = fm.height();
             classInfo.width = fm.width("LCDHost");
         }
-
+#endif
         return &classInfo;
     }
 };

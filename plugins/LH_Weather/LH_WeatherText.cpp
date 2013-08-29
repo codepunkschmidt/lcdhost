@@ -46,7 +46,7 @@ lh_class *LH_WeatherText::classInfo()
         lh_object_calltable_NULL,
         lh_instance_calltable_NULL
     };
-
+#if 0
     if( classInfo.width == -1 )
     {
         QFont font;
@@ -54,13 +54,24 @@ lh_class *LH_WeatherText::classInfo()
         classInfo.height = fm.height();
         classInfo.width = fm.width("100%");
     }
-
+#endif
     return &classInfo;
 }
 
 LH_WeatherText::LH_WeatherText()
+    : LH_Text()
+    , setup_value_type_(0)
+    , setup_append_units_(0)
+    , setup_pre_text_(0)
+    , setup_post_text_(0)
+    , setup_json_weather_(0)
 {
-    //setup_text_->setName( "Text" );
+    return;
+}
+
+const char *LH_WeatherText::userInit()
+{
+    if (const char* msg = LH_Text::userInit()) return msg;
     setup_text_->setFlag( LH_FLAG_READONLY, true );
     setup_text_->setFlag( LH_FLAG_NOSAVE_DATA, true );
     setText("...");
@@ -124,7 +135,7 @@ LH_WeatherText::LH_WeatherText()
     setup_json_weather_->setMimeType("application/x-weather");
     connect( setup_json_weather_, SIGNAL(changed()), this, SLOT(updateText()) );
 
-    return;
+    return 0;
 }
 
 void LH_WeatherText::updateText()

@@ -101,6 +101,8 @@ public:
     LH_Text(LH_QtObject* parent = 0);
     ~LH_Text();
 
+    const char *userInit();
+
     int polling();
     int notify(int code,void* param);
     void prerender();

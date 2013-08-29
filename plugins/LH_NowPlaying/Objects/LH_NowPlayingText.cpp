@@ -39,7 +39,17 @@
 LH_PLUGIN_CLASS(LH_NowPlayingText)
 
 LH_NowPlayingText::LH_NowPlayingText()
+    : LH_Text()
+    , setup_item_(0)
+    , setup_custom_(0)
+    , setup_hide_playing_state_(0)
 {
+    return;
+}
+
+const char *LH_NowPlayingText::userInit()
+{
+    if (const char* msg = LH_Text::userInit()) return msg;
     connect( lh_plugin(), SIGNAL(updated_data()), this, SLOT(refresh_text()) );
 
     setup_item_ = new LH_Qt_QStringList(this, "Item",
@@ -95,7 +105,7 @@ LH_NowPlayingText::LH_NowPlayingText()
     setup_text_->setFlag( LH_FLAG_NOSAVE_DATA, true );
     setup_text_->setFlag( LH_FLAG_NOSAVE_LINK, true );
     setText( "  " );
-    return;
+    return 0;
 }
 
 lh_class *LH_NowPlayingText::classInfo()
@@ -110,7 +120,7 @@ lh_class *LH_NowPlayingText::classInfo()
         lh_object_calltable_NULL,
         lh_instance_calltable_NULL
     };
-
+#if 0
     if( classInfo.width == -1 )
     {
         QFont font;
@@ -118,7 +128,7 @@ lh_class *LH_NowPlayingText::classInfo()
         classInfo.height = fm.height();
         classInfo.width = fm.width("100%");
     }
-
+#endif
     return &classInfo;
 }
 

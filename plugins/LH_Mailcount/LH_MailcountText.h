@@ -17,6 +17,7 @@ class LH_MailcountText: public LH_Text
 
 public:
     LH_MailcountText();
+    const char* userInit();
     static lh_class *classInfo();
 
 public slots:

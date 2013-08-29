@@ -48,12 +48,19 @@ protected:
     LH_Qt_QString *setup_format_;
 
 public:
-    LH_TextTime() : LH_Text()
+    LH_TextTime()
+        : LH_Text()
+        , setup_format_(0)
     {
+    }
+
+    const char *userInit()
+    {
+        if (const char* msg = LH_Text::userInit()) return msg;
         setup_format_ = new LH_Qt_QString(this,"<a href=\"http://doc.trolltech.com/4.6/qtime.html#toString\">Format</a>","HH:mm:ss");
         setup_text_->setName("Current time");
         setup_text_->setFlag(LH_FLAG_READONLY,true);
-        return;
+        return 0;
     }
 
     /**
@@ -90,7 +97,7 @@ public:
             lh_object_calltable_NULL,
             lh_instance_calltable_NULL
         };
-
+#if 0
         if( classInfo.width == -1 )
         {
             QFont font;
@@ -99,6 +106,7 @@ public:
             classInfo.width = fm.width("00:00:00");
             // *( (int*) 0 ) = 0; // test plugin segmentation violations
         }
+#endif
 
         return &classInfo;
     }

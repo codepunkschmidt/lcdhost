@@ -60,6 +60,8 @@ public:
     LH_NowPlayingEmulator();
     ~LH_NowPlayingEmulator();
 
+    const char *userInit();
+
     int notify(int code, void *param);
     static lh_class *classInfo();
 };

@@ -20,7 +20,7 @@ public:
             lh_object_calltable_NULL,
             lh_instance_calltable_NULL
         };
-
+/*
         if( classinfo.width == -1 )
         {
             QImage tmpimage = makeImage();
@@ -29,6 +29,7 @@ public:
             classinfo.height = fm.height();
             classinfo.width = fm.width("LCDHost");
         }
+        */
 
         return &classinfo;
     }

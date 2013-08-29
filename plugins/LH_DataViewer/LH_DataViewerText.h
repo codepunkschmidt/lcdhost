@@ -43,7 +43,13 @@ protected:
     LH_Qt_QString *setup_item_name_;
 
 public:
-    LH_DataViewerText() : data_(this){}
+    LH_DataViewerText()
+        : LH_Text()
+        , data_(this)
+        , scroll_poll_(0)
+        , setup_lookup_code_(0)
+        , setup_item_name_(0)
+    {}
     const char *userInit();
     int polling();
 

@@ -18,8 +18,16 @@ lh_class *LH_MailcountText::classInfo()
     return &classinfo;
 }
 
-LH_MailcountText::LH_MailcountText() : LH_Text()
+LH_MailcountText::LH_MailcountText()
+    : LH_Text()
+    , email_count_(0)
+    , hide_limit_(0)
 {
+}
+
+const char *LH_MailcountText::userInit()
+{
+    if (const char* msg = LH_Text::userInit()) return msg;
     setup_text_->setName( "Unread mail count" );
     setup_text_->setValue("0");
     setup_text_->setFlag( LH_FLAG_READONLY, true );
@@ -31,6 +39,7 @@ LH_MailcountText::LH_MailcountText() : LH_Text()
 
     hide_limit_ = new LH_Qt_int(this,tr("Hide when less than"),0,LH_FLAG_AUTORENDER);
     connect( hide_limit_, SIGNAL(changed()), this, SLOT(update()) );
+    return 0;
 }
 
 void LH_MailcountText::update()

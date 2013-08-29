@@ -59,8 +59,15 @@ lh_class *LH_TextFile::classInfo()
     return &classinfo;
 }
 
-LH_TextFile::LH_TextFile() : LH_Text()
+LH_TextFile::LH_TextFile()
+    : LH_Text()
+    , setup_file_(0)
 {
+}
+
+const char* LH_TextFile::userInit()
+{
+    if (const char* msg = LH_Text::userInit()) return msg;
     setup_file_ = new LH_Qt_QFileInfo( this, tr("File"), QFileInfo(), LH_FLAG_AUTORENDER );
     setup_file_->setOrder(-1);
     setup_file_->setHelp("<p>Select the file whose contents will be shown. "
@@ -68,6 +75,7 @@ LH_TextFile::LH_TextFile() : LH_Text()
     connect( setup_file_, SIGNAL(changed()), this, SLOT(fileChanged()) );
     setup_text_->setName("~HiddenText");
     setup_text_->setFlag(LH_FLAG_HIDDEN|LH_FLAG_READONLY,true);
+    return 0;
 }
 
 void LH_TextFile::fileChanged()

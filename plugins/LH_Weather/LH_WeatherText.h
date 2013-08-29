@@ -43,6 +43,7 @@ protected:
 
 public:
     LH_WeatherText();
+    const char* userInit();
 
     QString getSelectedValueText();
 

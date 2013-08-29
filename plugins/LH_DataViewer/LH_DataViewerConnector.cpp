@@ -48,7 +48,7 @@ lh_class *LH_DataViewerConnector::classInfo()
         lh_object_calltable_NULL,
         lh_instance_calltable_NULL
     };
-
+#if 0
     if( classInfo.width == -1 )
     {
         QFont arial10("Arial",10);
@@ -56,7 +56,7 @@ lh_class *LH_DataViewerConnector::classInfo()
         classInfo.height = fm.height();
         classInfo.width = classInfo.height * 4;
     }
-
+#endif
     return &classInfo;
 }
 

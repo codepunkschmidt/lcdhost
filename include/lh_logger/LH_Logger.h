@@ -30,11 +30,11 @@ public:
 
     QString fileName() const;
     void removeOld(int days_old = 30) const;
-    void log(QtMsgType type, const QString &msg);
+    void log(QtMsgType type, QString msg);
     void unlock() const;
 
 signals:
-    void logged(uint msgtime, int msgtype, const QString &msgtext) const;
+    void logged(uint msgtime, int msgtype, QString msgtext) const;
 
 protected:
     static QMutex mutex_;
@@ -43,8 +43,6 @@ protected:
     QString app_name_;
     QString log_path_;
     QByteArray file_name_;
-    QHash<QString, uint> last_seen_;
-    int filter_count_;
 };
 
 LH_LOGGER_EXPORT QString lh_data_dir();

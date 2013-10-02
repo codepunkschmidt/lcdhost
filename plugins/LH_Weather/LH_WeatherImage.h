@@ -42,7 +42,7 @@ struct imageMapData
     QString nightImage;
 };
 
-class LH_WeatherImage:public LH_QtInstance
+class LH_WeatherImage : public LH_QtInstance
 {
     Q_OBJECT
 
@@ -58,7 +58,7 @@ protected:
     LH_Qt_QString *setup_json_weather_;
 
 public:
-    LH_WeatherImage();
+    LH_WeatherImage(LH_QtObject *parent = 0);
 
     QImage *render_qimage( int w, int h );
 

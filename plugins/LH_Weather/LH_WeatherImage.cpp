@@ -53,7 +53,14 @@ lh_class *LH_WeatherImage::classInfo()
     return &classinfo;
 }
 
-LH_WeatherImage::LH_WeatherImage()
+LH_WeatherImage::LH_WeatherImage(LH_QtObject *parent)
+    : LH_QtInstance(parent)
+    , isNight(false)
+    , setup_value_type_(0)
+    , setup_file_(0)
+    , setup_text_(0)
+    , setup_usage_(0)
+    , setup_json_weather_(0)
 {
     QStringList valueTypes = QStringList();
     valueTypes.append("Current Conditions");
@@ -173,7 +180,7 @@ void LH_WeatherImage::fileChanged()
 
 void LH_WeatherImage::updateImage(bool rerender)
 {
-    bool ok;
+    bool ok = false;
     weatherData weather_data(setup_json_weather_->value(), ok);
     bool newIsNight = (setup_value_type_->value()<=1) && weather_data.isNight;
     if (isNight!=newIsNight) rerender = true;

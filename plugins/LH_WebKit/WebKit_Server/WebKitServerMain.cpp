@@ -5,7 +5,7 @@
 #include <QThread>
 #include <QSettings>
 
-#include "LH_Logger.h"
+// #include "LH_Logger.h"
 #include "WebKitServerWindow.h"
 #include "EventWebKitHeartbeat.h"
 #include "WebKitCommand.h"
@@ -21,7 +21,7 @@ int main(int argc, char *argv[])
     QCoreApplication::setOrganizationName("Link Data");
     QCoreApplication::setOrganizationDomain("linkdata.se");
     QCoreApplication::setApplicationName("WebKitServer");
-    LH_Logger logger;
+    // LH_Logger logger;
 
     // parse command line
     QStringList args = QCoreApplication::arguments();

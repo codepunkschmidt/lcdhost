@@ -5,7 +5,9 @@ weatherData::weatherData() :
     forecastDays(5)
 {}
 
-weatherData::weatherData(QString jsonData, bool& ok)
+weatherData::weatherData(QString jsonData, bool& ok):
+  isNight(false),
+  forecastDays(5)
 {
     QVariantMap jobject = Json::parse(jsonData, ok).toMap();
     if(ok)

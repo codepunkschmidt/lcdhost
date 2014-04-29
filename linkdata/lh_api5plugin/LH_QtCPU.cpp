@@ -87,6 +87,7 @@ int LH_QtCPU::load(const lh_cpudata* from, const lh_cpudata* to)
     qreal idle_delta = (qreal)(to->idle - from->idle);
     qreal work_delta = (qreal)(to->work - from->work);
     qreal load = 1.0 - idle_delta / (idle_delta + work_delta);
+    Q_ASSERT(load >= 0.0 && load <= 1.0);
     return (int) (10000.0 * load);
 }
 

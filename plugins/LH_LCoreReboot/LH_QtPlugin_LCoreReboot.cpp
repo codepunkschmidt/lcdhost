@@ -27,12 +27,11 @@
 #include "LH_QtPlugin_LCoreReboot.h"
 
 #include <QDebug>
-#include <QtCore/QLibrary>
-#include <QProcess>
-#include <QFileInfo>
+#include <QDir>
+// #include <QtCore/QLibrary>
+// #include <QFileInfo>
 
 LH_PLUGIN(LH_QtPlugin_LCoreReboot)
-
 
 char __lcdhostplugin_xml[] =
 "<?xml version=\"1.0\"?>"
@@ -49,34 +48,43 @@ char __lcdhostplugin_xml[] =
   "Reboots the Logitech Gaming Software"
   "</shortdesc>"
   "<longdesc>"
-    "<p>This plugin provides a facility to restart the Logitech Gaming Software (LGS). It simply locates the running LGS process (LCore.exe), kills it and then relaunches the Logitech Gaming Software (sending it directly to the system tray, rather than allowing the main LGS window to open).</p>"
+    "<p>This plugin provides a facility to restart the Logitech Gaming Software (LGS). "
+    "It simply locates the running LGS process (LCore.exe), kills it and then relaunches the Logitech Gaming Software (sending it directly to the system tray, rather than allowing the main LGS window to open).</p>"
     "<p>The purpose of this is to help the user quickly recover from a crashed LGS instance (i.e. when the lcd display appears frozen).</p>"
-    "<p><i>This plugin cannot be used if LCDHost is not running as an administrator on Windows 7 or Vista due to UAC.</i> Applications can be launched as an administrator at startup using <a href='http://www.sevenforums.com/tutorials/67503-task-create-run-program-startup-log.html'>scheduled tasks</a>. Note, however, that doing this will mean any applications launched by LCDHost (i.e. by a layout) will also be launched in admin mode.</p>"
+#if 0
+    "<p><i>This plugin cannot be used if LCDHost is not running as an administrator on Windows 7 or Vista due to UAC.</i> "
+    "Applications can be launched as an administrator at startup using <a href='http://www.sevenforums.com/tutorials/67503-task-create-run-program-startup-log.html'>scheduled tasks</a>. "
+    "Note, however, that doing this will mean any applications launched by LCDHost (i.e. by a layout) will also be launched in admin mode.</p>"
+#endif
 "</longdesc>"
 "</lcdhostplugin>";
 
 #ifdef Q_OS_WIN
-static inline QString GetFullProcessImageName(HANDLE h)
-{
-    TCHAR szProcessFile[MAX_PATH];
-    DWORD nSize = sizeof(szProcessFile)/sizeof(TCHAR);
-
-    // Resolve required symbols from the kernel32.dll
-    typedef BOOL (WINAPI *QueryFullProcessImageNameWProtoType)(HANDLE, DWORD, LPWSTR, PDWORD);
-
-    static QueryFullProcessImageNameWProtoType queryFullProcessImageNameW = 0;
-    if (!queryFullProcessImageNameW) {
-        QLibrary kernel32Lib(QLatin1String("kernel32.dll"), 0);
-        if (kernel32Lib.isLoaded() || kernel32Lib.load())
-            queryFullProcessImageNameW = (QueryFullProcessImageNameWProtoType)kernel32Lib.resolve("QueryFullProcessImageNameW");
+static DWORD GetLCoreProcessId(QString* p_path = 0) {
+    DWORD idProcess[4096];
+    DWORD cbNeeded = 0;
+    if (!EnumProcesses(idProcess, sizeof(idProcess), &cbNeeded))
+        return 0;
+    if (cbNeeded > sizeof(idProcess))
+        return 0;
+    DWORD numProcesses = cbNeeded / sizeof(DWORD);
+    for (DWORD i = 0; i < numProcesses; ++i) {
+        if (HANDLE hProcess = OpenProcess(PROCESS_QUERY_LIMITED_INFORMATION, FALSE, idProcess[i])) {
+            wchar_t szExeName[512];
+            DWORD dwSize = sizeof(szExeName) / sizeof(wchar_t);
+            if (QueryFullProcessImageNameW(hProcess, 0, szExeName, &dwSize)) {
+                QString path(QString::fromWCharArray(szExeName, dwSize));
+                if (path.endsWith(QLatin1String("LCore.exe"), Qt::CaseInsensitive)) {
+                    if (p_path)
+                        *p_path = path;
+                    CloseHandle(hProcess);
+                    return idProcess[i];
+                }
+            }
+            CloseHandle(hProcess);
+        }
     }
-    if (!queryFullProcessImageNameW)
-        return "";
-    // Read out process
-    if ((*queryFullProcessImageNameW)(h, (DWORD)0, szProcessFile, &nSize))
-        return QString::fromWCharArray(szProcessFile);
-    else
-        return "";
+    return 0;
 }
 #endif
 
@@ -87,109 +95,116 @@ const char *LH_QtPlugin_LCoreReboot::userInit()
 #ifndef Q_OS_WIN
     return "Not supported on this OS";
 #else
-    // make sure either LCDMon.exe or LCORE.EXE is running on Windows
-
     QString filePath;
-    HWND hWnd = FindWindowA( "QWidget", "LCore" );
-    if( !hWnd )
+    if (!GetLCoreProcessId(&filePath))
         return "Logitech drivers are not loaded";
-    else
-        if(!enableDebugPrivileges())
-            return "LCDHost not running as admin";
-        else
-            if(!getLCorePath(filePath))
-                return "Cannot read LCore Path";
+    if(filePath.isEmpty())
+        return "Cannot read LCore.exe image path";
 
-    setup_reboot_ = new LH_Qt_QString(this, "Reboot", "Reboot Logitech Gaming Software", LH_FLAG_NOSAVE_DATA | LH_FLAG_NOSINK | LH_FLAG_NOSOURCE | LH_FLAG_HIDETITLE, lh_type_string_button);
+#if 0
+    QDir lg_dir(filePath);
+    lg_dir.cdUp();
+    if (lg_dir.exists(QLatin1String("RestartLCore.exe"))) {
+        restartlcore_path_ = lg_dir.filePath(QLatin1String("RestartLCore.exe"));
+        qDebug() << "restartlcore_path_" << restartlcore_path_;
+    }
+    if(restartlcore_path_.isEmpty() && !enableDebugPrivileges())
+        return "LCDHost not running as admin";
+#endif
+
+    setup_reboot_ = new LH_Qt_QString(
+                this, "Reboot",
+                "Reboot Logitech Gaming Software",
+                LH_FLAG_NOSAVE_DATA | LH_FLAG_NOSINK | LH_FLAG_NOSOURCE | LH_FLAG_HIDETITLE, lh_type_string_button);
     connect(setup_reboot_, SIGNAL(changed()), this, SLOT(rebootLCore()));
 
-    setup_lcore_path_ = new LH_Qt_QString(this, "LGS Path", filePath, LH_FLAG_NOSAVE_DATA | LH_FLAG_NOSAVE_LINK | LH_FLAG_NOSINK | LH_FLAG_NOSOURCE | LH_FLAG_HIDDEN);
+    setup_lcore_path_ = new LH_Qt_QString(
+                this, "LGS Path",
+                filePath,
+                LH_FLAG_NOSAVE_DATA | LH_FLAG_NOSAVE_LINK | LH_FLAG_NOSINK | LH_FLAG_NOSOURCE | LH_FLAG_HIDDEN);
 #endif
     return 0;
 }
 
-bool LH_QtPlugin_LCoreReboot::getLCorePath(QString& filePath)
-{  
-#ifdef Q_OS_WIN
-    HWND hWnd = FindWindowA( NULL, "LCore" );
-    if(hWnd)
-    {
-        enableDebugPrivileges();
-
-        DWORD dwProcessId;
-        GetWindowThreadProcessId( hWnd, &dwProcessId );
-        HANDLE hProcess = OpenProcess(PROCESS_QUERY_INFORMATION | PROCESS_VM_READ | PROCESS_TERMINATE, false, dwProcessId);
-        if (hProcess != NULL)
-        {
-            QFileInfo LCore(GetFullProcessImageName(hProcess));
-            if(LCore.exists())
-            {
-                filePath = LCore.absoluteFilePath();
-                CloseHandle(hProcess);
-                return true;
-            }
-        }
-        else
-            qDebug() << "Could not open LCore Process. " << getLastErrorMessage();
-    }
-#endif
-    return false;
-}
-
 void LH_QtPlugin_LCoreReboot::rebootLCore()
 {
-    if(killLCore())
-        launchLCore();
+    if (restartlcore_path_.isEmpty()) {
+        if(killLCore())
+            launchLCore();
+    } else {
+#ifdef Q_OS_WIN
+        QString param;
+        HINSTANCE hInst = ShellExecuteW(
+                    NULL,
+                    NULL,
+                    reinterpret_cast<const WCHAR*>(restartlcore_path_.utf16()),
+                    reinterpret_cast<const WCHAR*>(param.utf16()),
+                    NULL,
+                    SW_SHOWMINNOACTIVE
+                    );
+        qDebug() << "LCoreReboot:" << restartlcore_path_ << "code" << (int)hInst;
+#endif
+    }
 }
 
 void LH_QtPlugin_LCoreReboot::launchLCore()
 {
 #ifdef Q_OS_WIN
+    QString param; //(QLatin1String("/minimized"));
     QString filename = setup_lcore_path_->value();
-    long result = (long)ShellExecute(0, 0, reinterpret_cast<const WCHAR*>(filename.utf16()), reinterpret_cast<const WCHAR*>(QString("/minimized").utf16()), 0, SW_NORMAL);
-    if(result > 32)
-        qDebug() << "Restarted LCore";
-    else
-        qDebug() << "Unable to restart LCore (Code: " << result << ")";
+    HINSTANCE hInst = ShellExecuteW(
+                NULL,
+                NULL,
+                reinterpret_cast<const WCHAR*>(filename.utf16()),
+                reinterpret_cast<const WCHAR*>(param.utf16()),
+                NULL,
+                SW_SHOWMINNOACTIVE
+                );
+    qDebug("LCoreReboot: LCore restart %s code %ld\n", ((int)hInst > 32) ? "succeeded" : "failed", hInst);
 #endif
 }
 
 bool LH_QtPlugin_LCoreReboot::killLCore()
 {
 #ifdef Q_OS_WIN
-    HWND hWnd = FindWindowA( NULL, "LCore" );
-    if(hWnd)
-    {
-        UINT uExitCode = 0;
-
-        DWORD dwProcessId;
-        GetWindowThreadProcessId( hWnd, &dwProcessId );
-        HANDLE hProcess = OpenProcess(PROCESS_QUERY_INFORMATION | PROCESS_VM_READ | PROCESS_TERMINATE, false, dwProcessId);
-        if (hProcess != NULL)
-        {
-            bool terminated = TerminateProcess(hProcess, uExitCode);
-            if(terminated)
-                qDebug() << "Killed LCore";
-            else
-                qDebug() << "Unable to kill LCore";
-
-            CloseHandle(hProcess);
-            return terminated;
-        }
-        else
-        {
-            qDebug() << "Could not open LCore Process. " << getLastErrorMessage();
-            return false;
+    QString path;
+    if (DWORD dwProcessId = GetLCoreProcessId(&path)) {
+        if (!path.isEmpty()) {
+            if (HANDLE hProcess = OpenProcess(PROCESS_TERMINATE | SYNCHRONIZE, false, dwProcessId)) {
+                UINT uExitCode = 0;
+                bool terminated = TerminateProcess(hProcess, uExitCode);
+                if(terminated) {
+                    switch (WaitForSingleObject(hProcess, 1000)) {
+                    case WAIT_ABANDONED:
+                        qDebug("LCoreReboot: WAIT_ABANDONED\n");
+                        break;
+                    case WAIT_OBJECT_0:
+                        break;
+                    case WAIT_TIMEOUT:
+                        qDebug("LCoreReboot: WAIT_TIMEOUT\n");
+                        terminated = false;
+                        break;
+                    case WAIT_FAILED:
+                        qDebug("LCoreReboot: WAIT_FAILED\n");
+                        break;
+                    default:
+                        qDebug("LCoreReboot: WaitForSingleObject error\n");
+                        terminated = false;
+                        break;
+                    }
+                } else {
+                    qDebug("LCoreReboot: Unable to kill LCore\n");
+                }
+                CloseHandle(hProcess);
+                return terminated;
+            }
+            qDebug() << "LCoreReboot: Could not open process:" << getLastErrorMessage();
+        } else {
+            qDebug("LCoreReboot: LCore path is empty");
         }
     }
-    else
-    {
-        qDebug() << "LCore not running";
-        return true;
-    }
-#else
-    return false;
 #endif
+    return false;
 }
 
 QString LH_QtPlugin_LCoreReboot::getLastErrorMessage()
@@ -205,6 +220,7 @@ QString LH_QtPlugin_LCoreReboot::getLastErrorMessage()
 #endif
 }
 
+#if 0
 bool LH_QtPlugin_LCoreReboot::enableDebugPrivileges()
 {
 #ifdef Q_OS_WIN
@@ -252,4 +268,4 @@ bool LH_QtPlugin_LCoreReboot::enableDebugPrivileges()
     return true;
 #endif
 }
-
+#endif

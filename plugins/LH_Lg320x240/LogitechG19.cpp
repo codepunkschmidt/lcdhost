@@ -147,8 +147,6 @@ const char* LogitechG19::open()
             QCoreApplication::postEvent(this, new QEvent((QEvent::Type)g19_event_));
             return NULL;
         }
-        libusb_close(lcdhandle_);
-        lcdhandle_ = 0;
         break;
     case LIBUSB_ERROR_ACCESS:
 #ifdef Q_OS_LINUX
@@ -160,9 +158,17 @@ const char* LogitechG19::open()
         break;
     }
 
-    Q_ASSERT(lcdhandle_ == 0);
-    qDebug("Failed to open G19: %s", libusb_error_name( retv ));
-    return libusb_error_name( retv );
+    if (lcdhandle_) {
+        libusb_close(lcdhandle_);
+        lcdhandle_ = 0;
+    }
+
+    const char* error_text = libusb_error_name(retv);
+    if (!error_text)
+        error_text = "Unknown libusb error";
+
+    // qDebug("Failed to open G19: %s\n", error_text);
+    return error_text;
 }
 
 const char* LogitechG19::close()

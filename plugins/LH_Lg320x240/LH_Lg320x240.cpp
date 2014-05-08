@@ -146,7 +146,7 @@ void LH_Lg320x240::timerEvent(QTimerEvent *ev)
             {
                 if(usb_device_list_[i])
                 {
-                    if(!g19 &&
+                    if (!g19 &&
                             !libusb_get_device_descriptor(usb_device_list_[i], &dd) &&
                             dd.idVendor == 0x046d &&
                             dd.idProduct == 0xc229)

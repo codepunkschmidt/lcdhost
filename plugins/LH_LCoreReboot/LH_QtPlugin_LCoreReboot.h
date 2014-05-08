@@ -38,20 +38,29 @@ class LH_QtPlugin_LCoreReboot : public LH_QtPlugin
 {
     Q_OBJECT
 
-    bool enableDebugPrivileges();
+    //bool enableDebugPrivileges();
     //bool SetPrivilege( HANDLE hToken, LPCTSTR lpszPrivilege, BOOL bEnablePrivilege );
     //void SetProcessPrivilege( );
+    // bool getLCorePath(QString&);
 
     QString getLastErrorMessage();
-    bool getLCorePath(QString&);
     bool killLCore();
     void launchLCore();
+    void restartLCore();
 
 protected:
     LH_Qt_QString *setup_reboot_;
     LH_Qt_QString *setup_lcore_path_;
+    QString restartlcore_path_;
 
 public:
+    LH_QtPlugin_LCoreReboot()
+        : LH_QtPlugin()
+        , setup_reboot_(0)
+        , setup_lcore_path_(0)
+        , restartlcore_path_()
+    {}
+
     const char *userInit();
 
 public slots:

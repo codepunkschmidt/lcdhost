@@ -7,3 +7,4 @@ TEMPLATE = subdirs
 # LH_SHARED_HEADERS += $$HEADERS
 # DESTDIR=$$lh_destdir()
 SUBDIRS =
+OTHER_FILES += DataCollection.h

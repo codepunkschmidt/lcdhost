@@ -93,12 +93,11 @@ public:
                 if(logDivisor) *logDivisor += log10(adaptiveUnitsFactor);
                 if(units) *units = adaptiveUnitsList[i];
             }
-
-            for(int i = sourcePos; i < adaptiveUnitsList.count() && val >= adaptiveUnitsFactor; i++)
-            {
+            while (sourcePos + 1 < adaptiveUnitsList.count() && val >= adaptiveUnitsFactor) {
+                ++sourcePos;
                 val /= adaptiveUnitsFactor;
                 if(logDivisor) *logDivisor -= log10(adaptiveUnitsFactor);
-                if(units) *units = adaptiveUnitsList[i];
+                if(units) *units = adaptiveUnitsList[sourcePos];
             }
         }
         return val;

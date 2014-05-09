@@ -39,10 +39,11 @@
 #include "LH_Qt_QString.h"
 #include "LH_Qt_QStringList.h"
 #include "LH_Qt_QColor.h"
-#include "LH_Qt_bool.h"
+#include "LH_Qt_int.h"
 
 class LH_HidDevice;
 class LgBacklightDevice;
+class QTimerEvent;
 
 class LH_LgBacklight : public LH_QtPlugin
 {
@@ -51,6 +52,7 @@ class LH_LgBacklight : public LH_QtPlugin
     LH_Qt_QStringList *devselect_;
     LH_Qt_QColor *devcolor_;
     LH_Qt_QColor *allcolor_;
+    LH_Qt_int *poll_interval_;
 
     QList<LgBacklightDevice *> dev_list_;
 
@@ -59,17 +61,22 @@ public:
         LH_QtPlugin(),
         devselect_(0),
         devcolor_(0),
-        allcolor_(0)
+        allcolor_(0),
+        poll_interval_(0)
     {}
     const char *userInit();
     void userTerm();
 
+    void timerEvent(QTimerEvent*);
+
 public slots:
     void onlineChanged(LH_HidDevice *hd, bool b);
+    void colorChanged();
     void refreshList();
     void changeDev();
     void changeColor();
     void setAllColor();
+    void pollIntervalChanged();
 };
 
 #endif // LH_LGBACKLIGHT_H

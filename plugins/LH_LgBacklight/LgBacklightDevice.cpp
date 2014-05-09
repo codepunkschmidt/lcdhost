@@ -9,7 +9,10 @@ static const int backlightid_ = 7;
 LgBacklightDevice::LgBacklightDevice(LH_HidDevice *hd, QObject *parent) :
     QObject(parent),
     hd_(hd),
-    color_(Qt::transparent)
+    color_(Qt::transparent),
+    red_max_(110), // 140
+    blue_max_(90), // 150
+    white_balance_(true)
 {
     setObjectName(hd_->objectName());
     color_ = getDeviceColor();
@@ -29,13 +32,21 @@ QColor LgBacklightDevice::getDeviceColor()
         if(d.size() > 3)
         {
             const unsigned char *report = (const unsigned char *) d.constData();
-            int r, g, b;
-            r = report[1] * 255 / 140;
-            if( r > 255 ) r = 255;
-            g = report[2];
-            b = report[3] * 255 / 150;
-            if( b > 255 ) b = 255;
-            return QColor(r, g, b);
+            int r = report[1];
+            int g = report[2];
+            int b = report[3];
+            if (white_balance_) {
+                int r2 = r * 255 / red_max_;
+                if( r2 > 255 ) r2 = 255;
+                int b2 = b * 255 / blue_max_;
+                if( b2 > 255 ) b2 = 255;
+                if (abs(r2 - g) < 3 && abs(b2 - g) < 3) {
+                    r = r2;
+                    b = b2;
+                }
+            }
+            QColor c(r, g, b);
+            return c;
         }
     }
     return QColor(Qt::transparent);
@@ -47,10 +58,19 @@ bool LgBacklightDevice::setDeviceColor(const QColor &c)
     if(hd_->online())
     {
         unsigned char report[5];
+        int r = c.red();
+        int g = c.green();
+        int b = c.blue();
+        if (white_balance_) {
+            if (abs(r - g) < 3 && abs(g - b) < 3) {
+                r = red_max_ * r / 255;
+                b = blue_max_ * b / 255;
+            }
+        }
         report[0] = backlightid_;
-        report[1] = 140 * c.red() / 255; // 140
-        report[2] = c.green(); // 255
-        report[3] = 150 * c.blue() / 255; // 150
+        report[1] = r;
+        report[2] = g;
+        report[3] = b;
         report[4] = 0;
         if(hd_->writeFeature(QByteArray((const char *)report, 5)) > 0)
             return true;

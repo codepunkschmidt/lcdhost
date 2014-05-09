@@ -56,9 +56,6 @@ char __lcdhostplugin_xml[] =
   "<longdesc>"
 "<p>HID-level driver for Logitech backlit devices, such as G13, G15 or G19. "
 "Note that to use this driver you may need to uninstall existing drivers for these devices.</p>"
-"<p>If there are no recognized devices connected, all you'll see is the 'Scan for available devices' "
-"button. If you connect or disconnect backlit Logitech devices while this plugin is running, click "
-"that button have them discovered.</p>"
 "<p>To set the backlight for all connected devices from a layout, create a <i>data source</i> named "
 "<tt>/plugin/backlight/all/set</tt> using the link button <img src=\":/LH_Backlight/source.png\"></img> at any color item.</p>"
   "</longdesc>"
@@ -79,12 +76,28 @@ const char *LH_LgBacklight::userInit()
     allcolor_->setSubscribePath("/plugin/backlight/all/set");
     connect( allcolor_, SIGNAL(changed()), this, SLOT(setAllColor()) );
 
+    poll_interval_ = new LH_Qt_int(this, "Poll interval", 500, 100, 5000);
+    poll_interval_->setHelp("Interval in milliseconds to check for device color changes");
+    connect(poll_interval_, SIGNAL(changed()), this, SLOT(pollIntervalChanged()));
+
     LH_HidDevice::subscribe(this, SLOT(onlineChanged(LH_HidDevice*,bool)));
+    pollIntervalChanged();
     return 0;
 }
 
 void LH_LgBacklight::userTerm()
 {
+}
+
+void LH_LgBacklight::timerEvent(QTimerEvent*) {
+    if(devselect_->index() >= 0 && devselect_->index() < dev_list_.size())
+        if(LgBacklightDevice *bld = dev_list_.at(devselect_->index()))
+            if (bld->hd()->online())
+                devcolor_->setValue(bld->getDeviceColor());
+}
+
+void LH_LgBacklight::pollIntervalChanged() {
+    startTimer(poll_interval_->value());
 }
 
 void LH_LgBacklight::onlineChanged(LH_HidDevice *hd, bool b)
@@ -102,13 +115,22 @@ void LH_LgBacklight::onlineChanged(LH_HidDevice *hd, bool b)
         case 0xC22E: /* G510 with audio */
         case 0xC229: /* G19 */
             bld = findChild<LgBacklightDevice *>(hd->objectName());
-            if(bld == 0)
+            if(bld == 0) {
                 bld = new LgBacklightDevice(hd, this);
+                connect(bld, SIGNAL(colorChanged()), this, SLOT(colorChanged()));
+            }
             break;
         }
     }
     if(bld)
         refreshList();
+}
+
+void LH_LgBacklight::colorChanged() {
+    if(devselect_->index() >= 0 && devselect_->index() < dev_list_.size())
+        if(LgBacklightDevice *bld = dev_list_.at(devselect_->index()))
+            devcolor_->setValue(bld->color());
+    return;
 }
 
 void LH_LgBacklight::refreshList()

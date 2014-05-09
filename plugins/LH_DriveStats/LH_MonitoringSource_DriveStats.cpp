@@ -37,9 +37,18 @@ bool LH_MonitoringSource_DriveStats::doUpdate()
 
         updateValue("Queue Depth", "", drive.driveLetter(), drive.QueueDepth());
 
+        if (qlonglong total_space = drive.TotalSpace()) {
+            updateValue("Disk Space", "Free Space Percent", drive.driveLetter(), (drive.FreeSpace() * 100) / total_space, defPerc_);
+            updateValue("Disk Space", "Used Space Percent", drive.driveLetter(), (drive.UsedSpace() * 100) / total_space, defPerc_);
+        } else {
+            updateValue("Disk Space", "Free Space Percent", drive.driveLetter(), 0, defPerc_);
+            updateValue("Disk Space", "Used Space Percent", drive.driveLetter(), 100, defPerc_);
+        }
+
         updateValue("Disk Space", "Free Space", drive.driveLetter(), drive.FreeSpace(), defBytes_);
         updateValue("Disk Space", "Used Space", drive.driveLetter(), drive.UsedSpace(), defBytes_);
         updateValue("Disk Space", "Total Space", drive.driveLetter(), drive.TotalSpace(), defBytes_);
+
 
         updateValue("Last Update", "", drive.driveLetter(), drive.lastUpdate().toString());
 

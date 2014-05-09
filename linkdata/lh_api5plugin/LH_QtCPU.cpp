@@ -80,7 +80,10 @@ int LH_QtCPU::notify(int n, void *p)
 
 int LH_QtCPU::load(const lh_cpudata* from, const lh_cpudata* to)
 {
-    if (!from || !to || !to->when || !from->when || to->when == from->when)
+    if (!from || !to ||
+        !to->when || !from->when ||
+        to->when == from->when ||
+        (to->idle == from->idle && to->work == from->work))
         return 0;
     if (from->when > to->when)
         qSwap(from, to);

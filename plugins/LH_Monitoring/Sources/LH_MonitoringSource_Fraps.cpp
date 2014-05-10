@@ -21,7 +21,11 @@ bool LH_MonitoringSource_Fraps::doUpdate()
 #else
     HMODULE frapsDLL;
     FRAPS_SHARED_DATA *fsd;
+#ifdef Q_PROCESSOR_X86_32
     frapsDLL = GetModuleHandleA("FRAPS32.DLL");
+#else
+    frapsDLL = GetModuleHandleA("FRAPS64.DLL");
+#endif
     bool resultVal = false;
 
     setDataAvailable(frapsDLL != NULL);

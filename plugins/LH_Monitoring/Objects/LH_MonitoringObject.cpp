@@ -3,12 +3,35 @@
 #include <typeinfo>
 
 LH_MonitoringObject::LH_MonitoringObject(LH_QtObject *object, monitoringDataMode dataMode, bool includeGroups, bool adaptiveUnitsAllowed)
+    : obj_(object)
+    , dataMode_(dataMode)
+    , includeGroups_(includeGroups)
+    , isReset_(false)
+    , changeAppSelectionSlot_(0)
+    , changeTypeSelectionSlot_(0)
+    , changeGroupSelectionSlot_(0)
+    , changeItemSelectionSlot_(0)
+    , refreshMonitoringOptionsSlot_(0)
+    , dataValidityChangedSlot_(0)
+    , renderRequiredSlot_(0)
+    , setup_value_str_(0)
+    , setup_value_units_(0)
+    , adaptiveUnitsAllowed_(adaptiveUnitsAllowed)
+    , setup_value_ptr_(0)
+    , setup_value_valid_(0)
+    , setup_monitoring_app_(0)
+    , setup_monitoring_app_name_(0)
+    , setup_value_type_(0)
+    , setup_value_type_name_(0)
+    , setup_value_group_(0)
+    , setup_value_group_name_(0)
+    , setup_value_item_(0)
+    , setup_value_item_name_(0)
+    , setup_unit_selection_(0)
+    , setup_value_offset_(0)
+    , setup_value_format_(0)
+    , setup_monitoring_options_(0)
 {
-    obj_ = object;
-    dataMode_ = dataMode;
-    includeGroups_ = includeGroups;
-    adaptiveUnitsAllowed_ = adaptiveUnitsAllowed;
-
     int LH_FLAG_SAVEOBJECT_VISIBILITY = LH_FLAG_HIDDEN; //for debugging, set this to LH_FLAG_READONLY, or LH_FLAG_HIDDEN for normal operation
     int LH_FLAG_LINKOBJECT_VISIBILITY = LH_FLAG_HIDDEN; //for debugging, set this to LH_FLAG_READONLY, or LH_FLAG_HIDDEN for normal operation
 

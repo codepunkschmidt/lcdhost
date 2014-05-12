@@ -11,8 +11,8 @@ class LH_MonitoringColorSwatch : public LH_ColorSwatch, public LH_MonitoringObje
     Q_OBJECT
 
 protected:
-    LH_Qt_int *setup_max_;
-    LH_Qt_int *setup_min_;
+    // LH_Qt_int *setup_max_;
+    // LH_Qt_int *setup_min_;
 
 public:
     LH_MonitoringColorSwatch();
@@ -28,6 +28,7 @@ public slots:
     }
     void connectChangeEvents() {
         LH_MonitoringObject::connectChangeEvents();
+        updateBounds();
     }
     void changeAppSelection() {
         LH_MonitoringObject::changeAppSelection();

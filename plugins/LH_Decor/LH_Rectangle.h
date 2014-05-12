@@ -59,8 +59,9 @@ protected:
     LH_Qt_bool *setup_horizontal_;
 
 public:
-    LH_Rectangle();
+    LH_Rectangle(LH_QtObject* parent = 0);
 
+    const char *userInit();
     virtual int notify( int code,void* param );
     QImage *render_qimage( int w, int h );
 

@@ -40,8 +40,20 @@
 #include "LH_Rectangle.h"
 #include "LH_QtCFInstance.h"
 
-LH_Rectangle::LH_Rectangle()
+LH_Rectangle::LH_Rectangle(LH_QtObject* parent)
+    : LH_QtCFInstance(parent)
+    , setup_penwidth_(0)
+    , setup_rounding_(0)
+    , setup_pencolor_(0)
+    , setup_bgcolor1_(0)
+    , setup_bgcolor2_(0)
+    , setup_gradient_(0)
+    , setup_horizontal_(0)
 {
+}
+
+const char *LH_Rectangle::userInit() {
+    if( const char *err = LH_QtCFInstance::userInit() ) return err;
     setup_penwidth_ = new LH_Qt_QSlider(this,tr("Pen width"),0,0,1000,LH_FLAG_AUTORENDER);
     setup_rounding_ = new LH_Qt_QSlider(this,tr("Corner rounding"),20,0,100,LH_FLAG_AUTORENDER);
     setup_pencolor_ = new LH_Qt_QColor(this,tr("Pen color"),Qt::black,LH_FLAG_AUTORENDER);
@@ -50,6 +62,7 @@ LH_Rectangle::LH_Rectangle()
     setup_bgcolor2_ = new LH_Qt_QColor(this,tr("Fill color 2"),Qt::lightGray,LH_FLAG_HIDDEN|LH_FLAG_AUTORENDER);
     setup_horizontal_ = new LH_Qt_bool(this,tr("^Gradient is horizontal"),false,LH_FLAG_HIDDEN|LH_FLAG_AUTORENDER);
     connect( setup_gradient_, SIGNAL(change(bool)), this, SLOT(enableGradient(bool)) );
+    return NULL;
 }
 
 void LH_Rectangle::enableGradient(bool b)

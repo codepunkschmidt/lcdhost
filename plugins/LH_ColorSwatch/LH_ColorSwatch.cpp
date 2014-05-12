@@ -23,7 +23,7 @@
 **/
 
 #include "LH_ColorSwatch.h"
-#include <limits>
+#include <climits>
 #include <QDebug>
 
 LH_PLUGIN_CLASS(LH_ColorSwatch)
@@ -81,13 +81,17 @@ const char *LH_ColorSwatch::userInit()
     setup_horizontal_->setFlags(LH_FLAG_READONLY | LH_FLAG_HIDDEN | LH_FLAG_NOSAVE_DATA | LH_FLAG_NOSAVE_LINK | LH_FLAG_NOSOURCE | LH_FLAG_NOSINK);
     setup_horizontal_->setValue(false);
 
-    setup_lowerbound_value_ = new LH_Qt_float(this,"Lower Bound Value", lowVal_, std::numeric_limits<qreal>::min(), std::numeric_limits<qreal>::max(), LH_FLAG_AUTORENDER);
+    setup_lowerbound_value_ = new LH_Qt_float(
+                this,"Lower Bound Value", lowVal_,
+                FLT_MIN, FLT_MAX, LH_FLAG_AUTORENDER);
     setup_lowerbound_color_ = new LH_Qt_QColor(this, "Lower Bound Color", lowCol_, LH_FLAG_AUTORENDER);
 
-    setup_upperbound_value_ = new LH_Qt_float(this,"Upper Bound Value", highVal_, std::numeric_limits<qreal>::min(), std::numeric_limits<qreal>::max(), LH_FLAG_AUTORENDER);
+    setup_upperbound_value_ = new LH_Qt_float(
+                this,"Upper Bound Value", highVal_,
+                FLT_MIN, FLT_MAX, LH_FLAG_AUTORENDER);
     setup_upperbound_color_ = new LH_Qt_QColor(this, "Upper Bound Color", highCol_, LH_FLAG_AUTORENDER);
 
-    setup_current_value_ = new LH_Qt_float(this,"Current Value", lowVal_, std::numeric_limits<qreal>::min(), std::numeric_limits<qreal>::max(), LH_FLAG_AUTORENDER);
+    setup_current_value_ = new LH_Qt_float(this,"Current Value", lowVal_);//, std::numeric_limits<qreal>::min(), std::numeric_limits<qreal>::max(), LH_FLAG_AUTORENDER);
     setup_current_color_ = new LH_Qt_QColor(this, "Current Color", lowCol_, LH_FLAG_AUTORENDER | LH_FLAG_READONLY | LH_FLAG_NOSAVE_DATA | LH_FLAG_NOSAVE_LINK | LH_FLAG_NOSINK );
 
     if(lockDown_)
@@ -112,6 +116,7 @@ const char *LH_ColorSwatch::userInit()
     add_cf_target(setup_upperbound_value_);
     add_cf_target(setup_upperbound_color_);
     add_cf_source(setup_current_value_);
+
     return 0;
 }
 

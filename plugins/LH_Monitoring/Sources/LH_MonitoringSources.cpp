@@ -66,9 +66,10 @@ bool LH_MonitoringSources::rebuild()
 QStringList LH_MonitoringSources::getApplications()
 {
     QStringList l;
-    foreach(LH_MonitoringSource* source, sources_)
+    foreach(LH_MonitoringSource* source, sources_) {
         if(source->enabled())
             l.append(source->appName());
+    }
     l.sort();
     if( sources_.count() >= 2 )
         l.insert(0,"(Please Select)");

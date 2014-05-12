@@ -134,6 +134,7 @@ public:
     LH_Qt_float       *setup_cf_newValue_Float_;
 
     LH_QtCFInstance(LH_QtObject* parent = 0);
+    const char* userInit();
     int notify(int n,void* p);
 
     cf_source_list sources() { return sources_; }

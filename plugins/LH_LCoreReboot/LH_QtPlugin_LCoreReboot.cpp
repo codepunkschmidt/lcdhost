@@ -34,32 +34,75 @@
 LH_PLUGIN(LH_QtPlugin_LCoreReboot)
 
 char __lcdhostplugin_xml[] =
-"<?xml version=\"1.0\"?>"
-"<lcdhostplugin>"
-  "<id>LCoreReboot</id>"
-  "<rev>" STRINGIZE(REVISION) "</rev>"
-  "<api>" STRINGIZE(LH_API_MAJOR) "." STRINGIZE(LH_API_MINOR) "</api>"
-  "<ver>" STRINGIZE(VERSION) "\nr" STRINGIZE(REVISION) "</ver>"
-  "<versionurl>http://www.linkdata.se/lcdhost/version.php?arch=$ARCH</versionurl>"
-  "<author>Andy \"Triscopic\" Bridges</author>"
-  "<homepageurl><a href=\"http://www.codeleap.co.uk\">CodeLeap</a></homepageurl>"
-  "<logourl></logourl>"
-  "<shortdesc>"
-  "Reboots the Logitech Gaming Software"
-  "</shortdesc>"
-  "<longdesc>"
-    "<p>This plugin provides a facility to restart the Logitech Gaming Software (LGS). "
-    "It simply locates the running LGS process (LCore.exe), kills it and then relaunches the Logitech Gaming Software (sending it directly to the system tray, rather than allowing the main LGS window to open).</p>"
-    "<p>The purpose of this is to help the user quickly recover from a crashed LGS instance (i.e. when the lcd display appears frozen).</p>"
-#if 0
-    "<p><i>This plugin cannot be used if LCDHost is not running as an administrator on Windows 7 or Vista due to UAC.</i> "
-    "Applications can be launched as an administrator at startup using <a href='http://www.sevenforums.com/tutorials/67503-task-create-run-program-startup-log.html'>scheduled tasks</a>. "
-    "Note, however, that doing this will mean any applications launched by LCDHost (i.e. by a layout) will also be launched in admin mode.</p>"
-#endif
-"</longdesc>"
-"</lcdhostplugin>";
+        "<?xml version=\"1.0\"?>"
+        "<lcdhostplugin>"
+        "<id>LCoreReboot</id>"
+        "<rev>" STRINGIZE(REVISION) "</rev>"
+        "<api>" STRINGIZE(LH_API_MAJOR) "." STRINGIZE(LH_API_MINOR) "</api>"
+        "<ver>" STRINGIZE(VERSION) "\nr" STRINGIZE(REVISION) "</ver>"
+        "<versionurl>http://www.linkdata.se/lcdhost/version.php?arch=$ARCH</versionurl>"
+        "<author>Andy \"Triscopic\" Bridges</author>"
+        "<homepageurl><a href=\"http://www.codeleap.co.uk\">CodeLeap</a></homepageurl>"
+        "<logourl></logourl>"
+        "<shortdesc>"
+        "Reboots the Logitech Gaming Software"
+        "</shortdesc>"
+        "<longdesc>"
+        "<p>This plugin provides a facility to restart the Logitech Gaming Software (LGS). "
+        "It simply locates the running LGS process (LCore.exe), kills it and then relaunches the Logitech Gaming Software (sending it directly to the system tray, rather than allowing the main LGS window to open).</p>"
+        "<p>The purpose of this is to help the user quickly recover from a crashed LGS instance (i.e. when the lcd display appears frozen).</p>"
+        "</longdesc>"
+        "</lcdhostplugin>";
 
 #ifdef Q_OS_WIN
+
+static bool TranslateDeviceNameToDriveLetter(const QString& exename, QString* out_path) {
+
+    // Translate path with device name to drive letters.
+    wchar_t szTemp[MAX_PATH];
+    szTemp[0] = L'\0';
+
+    if (GetLogicalDriveStringsW(MAX_PATH - 1, szTemp))
+    {
+        wchar_t szName[MAX_PATH];
+        wchar_t szDrive[3];
+        szDrive[0] = L' ';
+        szDrive[1] = L':';
+        szDrive[2] = L'\0';
+        wchar_t* p = szTemp;
+
+        qDebug() << "Exename" << exename;
+
+        do {
+            // Copy the drive letter to the template string
+            *szDrive = *p;
+
+            // Look up each device name
+            if (QueryDosDeviceW(szDrive, szName, MAX_PATH))
+            {
+                size_t uNameLen = wcslen(szName);
+                qDebug() << "DOS Drive" << QString::fromWCharArray(szDrive, 2) << uNameLen << QString::fromWCharArray(szName, uNameLen);
+                if (uNameLen && uNameLen < MAX_PATH && (size_t)exename.size() >= uNameLen && exename.at(uNameLen) == QChar('\\')) {
+                    QString drivename(QString::fromWCharArray(szName, uNameLen));
+                    qDebug() << exename << drivename;
+                    if (exename.startsWith(drivename)) {
+                        if (out_path) {
+                            out_path->append(QChar(szDrive[0]));
+                            out_path->append(QChar(szDrive[1]));
+                            out_path->append(exename.midRef(uNameLen));
+                        }
+                        return true;
+                    }
+                }
+            }
+            // Go to the next NULL character.
+            while (*p++)
+                ;
+        } while (*p);
+    }
+    return false;
+}
+
 static DWORD GetLCoreProcessId(QString* p_path = 0) {
     DWORD idProcess[4096];
     DWORD cbNeeded = 0;
@@ -70,13 +113,11 @@ static DWORD GetLCoreProcessId(QString* p_path = 0) {
     DWORD numProcesses = cbNeeded / sizeof(DWORD);
     for (DWORD i = 0; i < numProcesses; ++i) {
         if (HANDLE hProcess = OpenProcess(PROCESS_QUERY_LIMITED_INFORMATION, FALSE, idProcess[i])) {
-            wchar_t szExeName[512];
-            DWORD dwSize = sizeof(szExeName) / sizeof(wchar_t);
-            if (QueryFullProcessImageNameW(hProcess, 0, szExeName, &dwSize)) {
-                QString path(QString::fromWCharArray(szExeName, dwSize));
-                if (path.endsWith(QLatin1String("LCore.exe"), Qt::CaseInsensitive)) {
-                    if (p_path)
-                        *p_path = path;
+            wchar_t szExeName[MAX_PATH];
+            if (DWORD dwSize = GetProcessImageFileNameW(hProcess, szExeName, MAX_PATH)) {
+                QString exename(QString::fromWCharArray(szExeName, dwSize));
+                if (exename.endsWith(QLatin1String("LCore.exe"), Qt::CaseInsensitive)) {
+                    TranslateDeviceNameToDriveLetter(exename, p_path);
                     CloseHandle(hProcess);
                     return idProcess[i];
                 }
@@ -160,7 +201,7 @@ void LH_QtPlugin_LCoreReboot::launchLCore()
                 NULL,
                 SW_SHOWMINNOACTIVE
                 );
-    qDebug("LCoreReboot: LCore restart %s code %ld\n", ((int)hInst > 32) ? "succeeded" : "failed", hInst);
+    qDebug("LCoreReboot: LCore restart %s code %ld\n", ((int)hInst > 32) ? "succeeded" : "failed", (long int)hInst);
 #endif
 }
 

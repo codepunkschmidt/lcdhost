@@ -31,7 +31,7 @@
 #ifdef Q_OS_WIN
 #include <windows.h>
 #include <winbase.h>
-#include <Psapi.h>
+#include <psapi.h>
 #endif
 
 class LH_QtPlugin_LCoreReboot : public LH_QtPlugin

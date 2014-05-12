@@ -57,6 +57,8 @@ public:
     const lh_systemstate *state() const { return parent_->state(); }
 
     int samples() const { return setup_smoothing_->value() + 1; }
+    qint64 inTotal() const;
+    qint64 outTotal() const;
     qint64 inRate() const;
     qint64 outRate() const;
     int inPermille() const;

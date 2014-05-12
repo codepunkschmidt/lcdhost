@@ -70,6 +70,18 @@ int LH_QtNetwork::notify(int n, void *p)
     return LH_NOTE_NET;
 }
 
+qint64 LH_QtNetwork::inTotal() const {
+    if (data_.isEmpty())
+        return 0;
+    return data_.last()->in;
+}
+
+qint64 LH_QtNetwork::outTotal() const {
+    if (data_.isEmpty())
+        return 0;
+    return data_.last()->out;
+}
+
 qint64 LH_QtNetwork::inRate() const
 {
     if( data_.size() < 2 ) return 0;

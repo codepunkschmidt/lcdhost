@@ -21,7 +21,9 @@ SOURCES += \
     LH_TextMemVirtualFree.cpp \
     LH_TextMemVirtualTotal.cpp \
     LH_TextMemVirtualUsed.cpp \
-    LH_TextStatic.cpp
+    LH_TextStatic.cpp \
+    LH_TextNetInTotal.cpp \
+    LH_TextNetOutTotal.cpp
 
 HEADERS += \
     LH_QtPlugin_Text.h \

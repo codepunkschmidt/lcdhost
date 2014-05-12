@@ -77,6 +77,11 @@ LH_QtCFInstance::LH_QtCFInstance(LH_QtObject *parent) :
     return;
 }
 
+const char* LH_QtCFInstance::userInit() {
+    if( const char *err = LH_QtInstance::userInit() ) return err;
+    return 0;
+}
+
 /**
   Conditional Formatting Routines
 

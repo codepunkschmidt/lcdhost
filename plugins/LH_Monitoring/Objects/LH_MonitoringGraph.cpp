@@ -52,6 +52,12 @@ LH_MonitoringGraph::LH_MonitoringGraph(LH_QtObject* parent)
     , was_empty_(true)
     , setup_append_units_(0)
 {
+}
+
+const char *LH_MonitoringGraph::userInit()
+{
+    if( const char *err = LH_Graph::userInit() ) return err;
+
     setMax(2);
     monitoringInit(SLOT(refreshMonitoringOptions()),
                    SLOT(connectChangeEvents()),
@@ -62,11 +68,6 @@ LH_MonitoringGraph::LH_MonitoringGraph(LH_QtObject* parent)
                    SLOT(dataValidityChanged()),
                    SLOT(renderRequired())
                    );
-}
-
-const char *LH_MonitoringGraph::userInit()
-{
-    if( const char *err = LH_Graph::userInit() ) return err;
 
     setUserDefinableLimits(true);
     //canGrow(true);

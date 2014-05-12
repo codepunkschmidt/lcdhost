@@ -1,7 +1,7 @@
 /**
   \file     LH_TextNetInbound.cpp
   \author   Johan Lindh <johan@linkdata.se>
-  \legalese Copyright (c) 2009-2010 Johan Lindh
+  \legalese Copyright (c) 2009-2014 Johan Lindh
 
   All rights reserved.
 

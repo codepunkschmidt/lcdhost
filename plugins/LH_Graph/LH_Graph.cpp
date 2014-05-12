@@ -87,9 +87,9 @@ LH_Graph::LH_Graph(GraphDataMode dataMode, DataLineCollection* externalSource, L
     , hasDeadValue_(false)
     , deadValue_(0)
     , dataMode_(dataMode)
-    , lines_(30)
+    , lines_(0)
     , externalSource_(0)
-    , lineData_(&lines_)
+    , lineData_(0)
     , graph_empty_(true)
     , setup_fg_type_(0)
     , setup_bg_type_(0)
@@ -120,10 +120,26 @@ LH_Graph::LH_Graph(GraphDataMode dataMode, DataLineCollection* externalSource, L
     , setup_bg_image_(0)
     , setup_fg_alpha_(0)
 {
-    if (isDebug) qDebug() << "graph: init: begin";
-
     if (externalSource)
         setExternalSource(externalSource);
+    return;
+}
+
+LH_Graph::~LH_Graph() {
+    lineData_ = 0;
+    if (lines_) {
+        delete lines_;
+        lines_ = 0;
+    }
+}
+
+const char* LH_Graph::userInit() {
+    if( const char *err = LH_QtInstance::userInit() ) return err;
+
+    if (isDebug) qDebug() << "graph: init: begin";
+
+    lines_ = new DataLineCollection(30);
+    lineData_ = lines_;
 
     QStringList fgTypes = QStringList();
     fgTypes.append("Line Only");
@@ -158,7 +174,7 @@ LH_Graph::LH_Graph(GraphDataMode dataMode, DataLineCollection* externalSource, L
     setup_bg_image_ = new LH_Qt_QFileInfo(this, "Background Image", QFileInfo(""), LH_FLAG_AUTORENDER | LH_FLAG_HIDDEN);
     setup_bgcolor_->setHelp( "<p>The image used for the background.</p>");
 
-    setup_max_samples_ = new LH_Qt_int(this,"Max Samples",lines_.limit(),5,600,LH_FLAG_AUTORENDER);
+    setup_max_samples_ = new LH_Qt_int(this,"Max Samples",lines_->limit(),5,600,LH_FLAG_AUTORENDER);
     setup_max_samples_->setHelp( "<p>How many data points to store &amp; plot.</p>");
 
     setup_sample_rate_ = new LH_Qt_int(this,"Sample Rate",DEFAULT_SAMPLE_RATE,1,12,LH_FLAG_AUTORENDER);
@@ -231,7 +247,7 @@ LH_Graph::LH_Graph(GraphDataMode dataMode, DataLineCollection* externalSource, L
     setup_label_shadow_->setHelp( "<p>The color used for for the \"Glow/Shadow\" effect around Axis labels (designed to improve legibility).</p>"
                                   "<p>Set the transparency to 0 to remove the effect.</p>");
 
-    if(dataMode==gdmInternallyManaged)
+    if(dataMode_==gdmInternallyManaged)
         addLine("Default");
     else
         updateLinesList(true);
@@ -258,7 +274,8 @@ LH_Graph::LH_Graph(GraphDataMode dataMode, DataLineCollection* externalSource, L
     if (isDebug) qDebug() << "Line Count (Init): " << lineData_->count() << " lines;";
 
     if (isDebug) qDebug() << "graph: init: done";
-    return;
+
+    return 0;
 }
 
 void LH_Graph::setExternalSource(DataLineCollection* externalSource)
@@ -272,13 +289,13 @@ void LH_Graph::setExternalSource(DataLineCollection* externalSource)
         lineData_ = externalSource;
         break;
     case gdmHybrid:
-        lines_.clear();
+        lines_->clear();
         if(externalSource_)
-            lines_.copyFrom((*externalSource_).averageOver(DEFAULT_SAMPLE_RATE * 1000));
-        lineData_ = &lines_;
+            lines_->copyFrom((*externalSource_).averageOver(DEFAULT_SAMPLE_RATE * 1000));
+        lineData_ = lines_;
         break;
     case gdmInternallyManaged:
-        lineData_ = &lines_;
+        lineData_ = lines_;
         break;
     }
 }
@@ -783,7 +800,7 @@ void LH_Graph::addLine(QString name)
     setup_line_selection_->list().append(name);
     cacheCount_.append(0);
     cacheVal_.append(0);
-    lines_.add(name);
+    lines_->add(name);
 
     updateLinesList();
 }
@@ -796,9 +813,9 @@ void LH_Graph::updateLinesList(bool fullResync)
         cacheCount_.clear();
         cacheVal_.clear();
 
-        for(int i=0; i<lines_.count(); i++)
+        for(int i=0; i<lines_->count(); i++)
         {
-            setup_line_selection_->list().append(lines_[i].name);
+            setup_line_selection_->list().append(lines_->at(i).name);
             cacheCount_.append(0);
             cacheVal_.append(0);
         }
@@ -836,13 +853,13 @@ void LH_Graph::clearLines()
     setup_line_selection_->refreshList();
     cacheCount_.clear();
     cacheVal_.clear();
-    lines_.clear();
+    lines_->clear();
 
     if (dataMode_ == gdmHybrid)
     {
         int desired_duration = (setup_sample_rate_->value() * 1000);
-        lines_.clear();
-        lines_.copyFrom((*externalSource_).averageOver(desired_duration));
+        lines_->clear();
+        lines_->copyFrom((*externalSource_).averageOver(desired_duration));
     }
 
     setup_line_selection_->setFlag(LH_FLAG_HIDDEN, false);
@@ -907,7 +924,7 @@ void LH_Graph::addValue(qreal value, int lineID)
     cacheVal_[lineID] += (qreal)value;
     if(cacheCount_[lineID] >= setup_sample_rate_->value())
     {
-        lines_[lineID].addValue(cacheVal_[lineID] / cacheCount_[lineID], setup_sample_rate_->value() * 1000);
+        lines_->operator[](lineID).addValue(cacheVal_[lineID] / cacheCount_[lineID], setup_sample_rate_->value() * 1000);
         cacheCount_[lineID] = 0;
         cacheVal_[lineID] = 0;
     }
@@ -993,7 +1010,7 @@ QString LH_Graph::buildColorConfig()
 
 void LH_Graph::changeMaxSamples()
 {
-    lines_.setLimit( setup_max_samples_->value() );
+    lines_->setLimit( setup_max_samples_->value() );
     updateDescText();
 }
 
@@ -1082,7 +1099,7 @@ void LH_Graph::clear(qreal newMin, qreal newMax, bool newGrow)
 {
     if(dataMode_!=gdmExternallyManaged)
         for(int lineID=0;lineID<linesCount(); lineID++)
-            lines_[lineID].clear();
+            lines_->operator[](lineID).clear();
     graphMinY_ = graphMaxY_ = 0.0;
     setup_min_->setValue(newMin);
     setup_max_->setValue(newMax);

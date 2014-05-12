@@ -101,8 +101,8 @@ class LH_GRAPH_EXPORT LH_Graph : public LH_QtInstance {
     QHash<int,QImage> fgImgs_;
     QVector<int> cacheCount_;
     QVector<qreal> cacheVal_;
-    DataLineCollection lines_;
 
+    DataLineCollection* lines_;
     DataLineCollection* externalSource_;
     DataLineCollection* lineData_;
 
@@ -156,6 +156,9 @@ protected:
 
 public:
     explicit LH_Graph(GraphDataMode dataMode = gdmInternallyManaged, DataLineCollection* externalSource = 0, LH_QtObject *parent = 0);
+    virtual ~LH_Graph();
+
+    const char* userInit();
 /*
     LH_Graph( GraphDataMode dataMode, DataLineCollection* externalSource, LH_QtObject *parent = 0)
         : lines_(30)

@@ -23,7 +23,9 @@
 **/
 
 #include "LH_ColorSwatch.h"
+
 #include <climits>
+#include <cfloat>
 #include <QDebug>
 
 LH_PLUGIN_CLASS(LH_ColorSwatch)

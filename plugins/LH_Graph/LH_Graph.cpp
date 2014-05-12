@@ -120,26 +120,13 @@ LH_Graph::LH_Graph(GraphDataMode dataMode, DataLineCollection* externalSource, L
     , setup_bg_image_(0)
     , setup_fg_alpha_(0)
 {
-    if (externalSource)
-        setExternalSource(externalSource);
-    return;
-}
-
-LH_Graph::~LH_Graph() {
-    lineData_ = 0;
-    if (lines_) {
-        delete lines_;
-        lines_ = 0;
-    }
-}
-
-const char* LH_Graph::userInit() {
-    if( const char *err = LH_QtInstance::userInit() ) return err;
-
     if (isDebug) qDebug() << "graph: init: begin";
 
     lines_ = new DataLineCollection(30);
     lineData_ = lines_;
+
+    if (externalSource)
+        setExternalSource(externalSource);
 
     QStringList fgTypes = QStringList();
     fgTypes.append("Line Only");
@@ -275,6 +262,19 @@ const char* LH_Graph::userInit() {
 
     if (isDebug) qDebug() << "graph: init: done";
 
+    return;
+}
+
+LH_Graph::~LH_Graph() {
+    lineData_ = 0;
+    if (lines_) {
+        delete lines_;
+        lines_ = 0;
+    }
+}
+
+const char* LH_Graph::userInit() {
+    if( const char *err = LH_QtInstance::userInit() ) return err;
     return 0;
 }
 
@@ -289,9 +289,12 @@ void LH_Graph::setExternalSource(DataLineCollection* externalSource)
         lineData_ = externalSource;
         break;
     case gdmHybrid:
-        lines_->clear();
-        if(externalSource_)
-            lines_->copyFrom((*externalSource_).averageOver(DEFAULT_SAMPLE_RATE * 1000));
+        Q_ASSERT(lines_);
+        if (lines_) {
+            lines_->clear();
+            if(externalSource_)
+                lines_->copyFrom((*externalSource_).averageOver(DEFAULT_SAMPLE_RATE * 1000));
+        }
         lineData_ = lines_;
         break;
     case gdmInternallyManaged:
@@ -813,11 +816,13 @@ void LH_Graph::updateLinesList(bool fullResync)
         cacheCount_.clear();
         cacheVal_.clear();
 
-        for(int i=0; i<lines_->count(); i++)
-        {
-            setup_line_selection_->list().append(lines_->at(i).name);
-            cacheCount_.append(0);
-            cacheVal_.append(0);
+        if (lines_) {
+            for(int i=0; i<lines_->count(); i++)
+            {
+                setup_line_selection_->list().append(lines_->at(i).name);
+                cacheCount_.append(0);
+                cacheVal_.append(0);
+            }
         }
     }
 
@@ -853,13 +858,15 @@ void LH_Graph::clearLines()
     setup_line_selection_->refreshList();
     cacheCount_.clear();
     cacheVal_.clear();
-    lines_->clear();
 
-    if (dataMode_ == gdmHybrid)
-    {
-        int desired_duration = (setup_sample_rate_->value() * 1000);
+    if (lines_) {
         lines_->clear();
-        lines_->copyFrom((*externalSource_).averageOver(desired_duration));
+        if (dataMode_ == gdmHybrid)
+        {
+            int desired_duration = (setup_sample_rate_->value() * 1000);
+            lines_->clear();
+            lines_->copyFrom((*externalSource_).averageOver(desired_duration));
+        }
     }
 
     setup_line_selection_->setFlag(LH_FLAG_HIDDEN, false);
@@ -910,7 +917,7 @@ void LH_Graph::addValue(qreal value, int lineID)
 {
     Q_ASSERT_X(dataMode_!=gdmExternallyManaged, "LH_Graph::addValue", "Cannot add a value to the internal cache if the data is managed externally.");
 
-    if (lineID < 0 || lineID >= linesCount()) {
+    if (!lines_ || lineID < 0 || lineID >= linesCount()) {
         qCritical("LH_Graph::addValue(%f, %d): lineData_ == %p (count() == %d), objectName() == \"%s\"",
                   value, lineID,
                   (const void*) lineData_, linesCount(),
@@ -1010,7 +1017,9 @@ QString LH_Graph::buildColorConfig()
 
 void LH_Graph::changeMaxSamples()
 {
-    lines_->setLimit( setup_max_samples_->value() );
+    Q_ASSERT(lines_);
+    if (lines_)
+        lines_->setLimit( setup_max_samples_->value() );
     updateDescText();
 }
 
@@ -1097,7 +1106,7 @@ void LH_Graph::updateLabelSelection()
 
 void LH_Graph::clear(qreal newMin, qreal newMax, bool newGrow)
 {
-    if(dataMode_!=gdmExternallyManaged)
+    if(lines_ && dataMode_!=gdmExternallyManaged)
         for(int lineID=0;lineID<linesCount(); lineID++)
             lines_->operator[](lineID).clear();
     graphMinY_ = graphMaxY_ = 0.0;
